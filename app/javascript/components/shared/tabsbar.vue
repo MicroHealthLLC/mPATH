@@ -1,5 +1,5 @@
 <template>
-  <div id="tabbar" data-cy="main_tab">
+  <div id="tabbar" data-cy="main_tab" :class="[isPortfolioView ? 'd-none' : '']">
     <router-link v-if="permitted('map_view')" :to="routeMapSwap" tag="div">
       <div class="badge" :class="{ active: isMapView }" data-cy="map_tab">
         Map
@@ -45,7 +45,7 @@
     </div>
     <router-link
       v-if="permitted('members')"
-      :to="`/programs/${this.$route.params.programId}/member_list`"
+      :to="`/programs/${this.$route.params.programId}/members`"
       tag="div"
     >
       <div class="badge" :class="{ active: isMembersView }" data-cy="team_tab">
@@ -86,6 +86,9 @@ export default {
     isLessonsView() {
       return ["LessonsIndex", "LessonForm"].includes(this.$route.name);
     },
+    isPortfolioView() {
+      return this.$route.name.includes("PortfolioView");
+    },
     routeSheetSwap() {
       let route = this.$route.path;
       if (this.isMapView) {
@@ -99,7 +102,7 @@ export default {
       } else if (this.isLessonsView) {
         return `/programs/${this.$route.params.programId}/sheet`;
       }else {
-        return route.replace("member_list", "sheet");
+        return route.replace("members", "sheet");
       }
     },
     routeLessonSwap() {
@@ -111,7 +114,7 @@ export default {
         return route.replace("gantt_chart", "lessons");
      
       } else {
-        return route.replace("member_list", "lessons");
+        return route.replace("members", "lessons");
       }
     },
     routeMapSwap() {
@@ -127,7 +130,7 @@ export default {
       } else if(this.isLessonsView){
         return `/programs/${this.$route.params.programId}/map`;
       }else {
-        return route.replace("member_list", "map");
+        return route.replace("members", "map");
       }
     },
     routeKanbanSwap() {
@@ -164,7 +167,7 @@ export default {
       // } else if (this.isLessonsView) {
       //   return route.replace("lessons", "kanban");
       } else {
-        return route.replace("member_list", "kanban");
+        return route.replace("members", "kanban");
       }
     },
       routeCalendarSwap() {
@@ -201,13 +204,11 @@ export default {
       // } else if (this.isLessonsView) {
       //   return route.replace("lessons", "kanban");
       } else {
-        return route.replace("member_list", "calendar");
+        return route.replace("members", "calendar");
       }
     },
     permitted() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions[salut]["read"];
+      return (salut) => this.$topNavigationPermissions[salut] && this.$topNavigationPermissions[salut]["read"];
     },
   },
   watch: {

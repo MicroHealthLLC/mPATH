@@ -50,7 +50,7 @@ ActiveAdmin.register Risk do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_delete?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column "Risk Name", :text
     column "Risk Description", :risk_description, sortable: false
     column "Impact Description", :impact_description, sortable: false
@@ -130,8 +130,8 @@ ActiveAdmin.register Risk do
       f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, input_html: {class: 'program_select'}
+            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, input_html: {class: 'project_privileges_select'}
         end
       end
       f.input :start_date, label: 'Identified Date', as: :datepicker
@@ -179,7 +179,7 @@ ActiveAdmin.register Risk do
     end
     redirect_to collection_path, notice: "Successfully created Risk checklists"
   end
-    
+
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
@@ -234,10 +234,10 @@ ActiveAdmin.register Risk do
   filter :task_type, label: "Category"
   filter :start_date, label: "Identified Date"
   filter :due_date, label: "Risk Approach Due Date"
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program', input_html: {class: 'program_select'}
+  filter :facility_project_facility_facility_name,  as: :select, collection: -> {Facility.pluck(:facility_name, :id)}, label: 'Project', input_html: {class: 'project_privileges_select'}
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :user, label: "Owned by"
+  filter :user, label: "Owned by", as: :select, collection: -> { User.get_users_with_fullname }, input_html: { multiple: true }
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false

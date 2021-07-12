@@ -11,6 +11,7 @@ import taskStore from './modules/task-store'
 import issueStore from './modules/issue-store'
 import riskStore from './modules/risk-store'
 import lessonStore from "./modules/lesson-store";
+import portfolioModule from './modules/portfolio-store'
 
 // utility function
 const getSimpleDate = (date) => {
@@ -29,10 +30,11 @@ export default new Vuex.Store({
     taskStore,
     issueStore,
     riskStore,
-    lessonStore
+    lessonStore,
+    portfolioModule
   },
   state: {
-    advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
+    advancedFilter: [],
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
@@ -380,7 +382,7 @@ export default new Vuex.Store({
     // TODO: remove if not used anywhere
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
-        {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
@@ -463,7 +465,7 @@ export default new Vuex.Store({
     },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
-        {id: 'active', name: 'Active'},
+        {id: 'active', name: 'Not Completed'},
         {id: 'completed', name: 'Completed'}
       ]
     },
@@ -477,16 +479,16 @@ export default new Vuex.Store({
     getAdvancedFilterOptions: (state, getters) => {
 
       var options = [
-        {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},      
         {id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'},
+        {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'notImportant', name: 'Not Marked Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
         // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
@@ -1043,11 +1045,15 @@ export default new Vuex.Store({
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
+        if(state.mapFilters.length < 1) return valid
 
         var resources1 = []
-        resources1 = resources1.concat(facility.tasks)
-        resources1 = resources1.concat(facility.issues)
-        resources1 = resources1.concat(facility.risks)
+        resources1.push(...facility.tasks)
+        resources1.push(...facility.issues)
+        resources1.push(...facility.risks)
+        // resources1 = resources1.concat(facility.tasks)
+        // resources1 = resources1.concat(facility.issues)
+        // resources1 = resources1.concat(facility.risks)
 
         _.each(state.mapFilters, (f) => {
           let k = Object.keys(f)[0]
@@ -1376,7 +1382,7 @@ export default new Vuex.Store({
           }
         )
 
-        let f_read = Vue.prototype.$permissions.overview.read || false
+        let f_read = Vue.prototype.$topNavigationPermissions.gantt_view['read']  || false
         // for facilities under facility_groups
         let facility_count = 1
         for (let facility of groups[group]) {
@@ -1403,7 +1409,7 @@ export default new Vuex.Store({
             }
           )
 
-          if (Vue.prototype.$permissions.tasks.read)
+          if (f_read)
           {
             // for task_types under facilities
             let types = _.groupBy(facility.tasks, 'taskType')

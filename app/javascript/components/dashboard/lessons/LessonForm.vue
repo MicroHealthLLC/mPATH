@@ -33,12 +33,13 @@
       </div>
       <div class="ml-auto d-flex align-items-center">
         <button
+          v-if="_isallowed('write')"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Save Lesson
         </button>
         <button
-          v-show="false"
+          v-else
           disabled
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
@@ -98,11 +99,12 @@
             v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleImportant"
+            v-tooltip="`Important`"
           >
-            <span v-tooltip="`Important`" v-show="lesson.important">
+            <span v-show="lesson.important">
               <i class="fas fa-star text-warning"></i>
             </span>
-            <span v-tooltip="`Important`" v-show="!lesson.important">
+            <span v-show="!lesson.important">
               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
             </span>
             <small
@@ -117,12 +119,13 @@
             v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleReportable"
+            v-tooltip="`Briefings`" 
           >
-            <span v-tooltip="`Briefings`" v-show="lesson.reportable">
-              <i class="fas fa-flag text-primary"></i>
+            <span v-show="lesson.reportable">
+            <i class="fas fa-presentation text-primary"></i>
             </span>
-            <span v-tooltip="`Briefings`" v-show="!lesson.reportable">
-              <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+            <span v-show="!lesson.reportable">
+              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
             </span>
 
             <small
@@ -136,11 +139,12 @@
             v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
+            v-tooltip="`Draft`"
           >
-            <span v-tooltip="`Draft`" v-show="lesson.draft">
+            <span  v-show="lesson.draft">
               <i class="fas fa-pencil-alt text-warning"></i>
             </span>
-            <span v-tooltip="`Draft`" v-show="!lesson.draft">
+            <span v-show="!lesson.draft">
               <i
                 class="fas fa-pencil-alt"
                 style="color:lightgray;cursor:pointer"
@@ -163,6 +167,7 @@
           type="text"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
+          :readonly="!_isallowed('write')"
         />
         <div v-show="errors.has('Lesson Name')" class="text-danger">
           {{ errors.first("Name") }}
@@ -182,6 +187,7 @@
           :class="{
             error: errors.has('Description'),
           }"
+          :readonly="!_isallowed('write')"
         ></el-input>
         <div v-show="errors.has('Description')" class="text-danger">
           {{ errors.first("Description") }}
@@ -196,6 +202,7 @@
           value-key="id"
           name="Category"
           placeholder="Select Category"
+          :disabled="!_isallowed('write')"
         >
           <!--TODO: Change taskTypes to categoryTypes -->
           <el-option
@@ -221,6 +228,7 @@
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             class="w-100"
+            :disabled="!_isallowed('write')"
           />
         </div>
         <div v-show="errors.has('Date')" class="text-danger">
@@ -235,6 +243,7 @@
             v-show="lesson.lesson_stage_id"
             class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
+            :disabled="!this._isallowed('write')"
           >
             Clear Stages
           </button>
@@ -269,7 +278,11 @@
       <div class="row mt-1">
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
-          <span class="clickable" @click="openContextMenu($event, 'task')">
+          <span
+            v-if="_isallowed('write')"
+            class="clickable"
+            @click="openContextMenu($event, 'task')"
+          >
             <i class="fas fa-plus-circle"></i
           ></span>
 
@@ -304,13 +317,18 @@
                 icon="el-icon-delete"
                 title="Remove Related Task"
                 @click.prevent="removeRelatedTask(task)"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
         </div>
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Issues
-          <span class="clickable" @click="openContextMenu($event, 'issue')">
+          <span
+            v-if="_isallowed('write')"
+            class="clickable"
+            @click="openContextMenu($event, 'issue')"
+          >
             <i class="fas fa-plus-circle"></i>
           </span>
 
@@ -345,13 +363,18 @@
                 icon="el-icon-delete"
                 title="Remove Related Issue"
                 @click.prevent="removeRelatedIssue(issue)"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
         </div>
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Risks
-          <span class="clickable" @click="openContextMenu($event, 'risk')">
+          <span
+            v-if="_isallowed('write')"
+            class="clickable"
+            @click="openContextMenu($event, 'risk')"
+          >
             <i class="fas fa-plus-circle"></i>
           </span>
 
@@ -386,6 +409,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Risk"
                 @click.prevent="removeRelatedRisk(risk)"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -395,7 +419,11 @@
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'" class="mt-2">
       <label>Successes</label>
-      <span class="clickable" @click.prevent="addSuccess">
+      <span
+        v-if="_isallowed('write')"
+        class="clickable"
+        @click.prevent="addSuccess"
+      >
         <i class="fas fa-plus-circle"></i>
       </span>
       <paginate-links
@@ -433,6 +461,7 @@
               <i
                 class="el-icon-delete clickable ml-3"
                 @click="removeSuccess(index)"
+                v-if="_isallowed('delete')"
               ></i>
             </div>
           </div>
@@ -441,6 +470,7 @@
             v-model="success.finding"
             type="textarea"
             placeholder="Please enter findings here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -448,6 +478,7 @@
             v-model="success.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -455,7 +486,11 @@
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'" class="mt-2">
       <label>Failures</label>
-      <span class="clickable" @click.prevent="addFailure">
+      <span
+        v-if="_isallowed('write')"
+        class="clickable"
+        @click.prevent="addFailure"
+      >
         <i class="fas fa-plus-circle"></i>
       </span>
       <paginate-links
@@ -491,6 +526,7 @@
                 ></el-tag
               >
               <i
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeFailure(index)"
               ></i>
@@ -501,6 +537,7 @@
             v-model="failure.finding"
             type="textarea"
             placeholder="Please enter findings here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -508,6 +545,7 @@
             v-model="failure.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -516,7 +554,11 @@
     <!-- Best Practices Tab -->
     <div v-show="currentTab == 'tab5'" class="mt-2">
       <label>Best Practices</label>
-      <span class="clickable" @click.prevent="addBestPractice">
+      <span
+        v-if="_isallowed('write')"
+        class="clickable"
+        @click.prevent="addBestPractice"
+      >
         <i class="fas fa-plus-circle"></i>
       </span>
       <paginate-links
@@ -552,6 +594,7 @@
                 ></el-tag
               >
               <i
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeBestPractice(index)"
               ></i>
@@ -562,6 +605,7 @@
             v-model="bestPractice.finding"
             type="textarea"
             placeholder="Please enter findings here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -569,6 +613,7 @@
             v-model="bestPractice.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -577,7 +622,12 @@
     <!-- Files & Links Tab -->
     <div v-show="currentTab == 'tab6'" class="row mt-2">
       <div class="col-6">
-        <AttachmentInput @input="addFile" :show-label="true" class="mb-3" />
+        <AttachmentInput
+          v-if="_isallowed('write')"
+          @input="addFile"
+          :show-label="true"
+          class="mb-3"
+        />
         <div v-for="(file, index) in files" :key="index">
           <div
             class="clickable file-name d-flex justify-content-between w-100 py-1"
@@ -585,15 +635,19 @@
             <div @click.prevent="downloadFile(file)">
               <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
             </div>
-            <div @click="removeFile(file.id, index)">
+            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
         </div>
       </div>
       <div class="col-6">
-        Add Link
-        <span class="clickable" @click="addFileLink()">
+        <span v-if="_isallowed('write')">Add Link</span>
+        <span
+          v-if="_isallowed('write')"
+          class="clickable"
+          @click="addFileLink()"
+        >
           <i class="fas fa-plus-circle"></i
         ></span>
         <div v-for="(link, index) in fileLinks" :key="index">
@@ -601,11 +655,16 @@
             v-if="link.id"
             class="d-flex clickable file-name justify-content-between py-1"
           >
-            <div>
-              <i class="fas fa-link mr-1"></i>
-              {{ link.name }}
-            </div>
-            <div @click="removeFileLink(link.id, index)">
+            <a class="file-link" :href="link.uri" target="_blank"
+              ><div>
+                <i class="fas fa-link mr-1"></i>
+                {{ link.name }}
+              </div></a
+            >
+            <div
+              v-if="_isallowed('delete')"
+              @click="removeFileLink(link.id, index)"
+            >
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -625,7 +684,11 @@
     <!-- Updates Tab -->
     <div v-show="currentTab == 'tab7'" class="mt-2">
       <label>Updates</label>
-      <span class="clickable" @click.prevent="addUpdate">
+      <span
+        v-if="_isallowed('write')"
+        class="clickable"
+        @click.prevent="addUpdate"
+      >
         <i class="fas fa-plus-circle"></i>
       </span>
       <paginate-links
@@ -653,7 +716,7 @@
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
                 <span v-if="update.updated_at"
-                  >{{ author(update.user_id) }} on
+                  >{{ update.user.full_name }} on
                   {{ new Date(update.updated_at).toLocaleString() }}</span
                 ><span v-else
                   >{{ $currentUser.full_name }} on
@@ -661,6 +724,7 @@
                 ></el-tag
               >
               <i
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeUpdate(index)"
               ></i>
@@ -671,6 +735,7 @@
             v-model="update.body"
             type="textarea"
             placeholder="Please enter Description here..."
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -791,6 +856,11 @@ export default {
         if (!success) {
           return;
         }
+        //removes empty updates, sucesses, failures, and best practices
+        this.removeEmptyUpdates()
+        this.removeEmptySFBP(this.successes, this.deleteSuccesses)
+        this.removeEmptySFBP(this.failures, this.deleteFailures)
+        this.removeEmptySFBP(this.bestPractices, this.deleteBestPractices)
 
         let lessonData = {
           lesson: {
@@ -834,21 +904,31 @@ export default {
         }
       });
     },
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId;
-      // let fPrivilege = this.$projectPrivileges[programId][projectId]
-      var fPrivilege = _.filter(
-        this.$projectPrivileges,
-        (f) => f.program_id == programId && f.project_id == projectId
-      )[0];
-      if (!fPrivilege) {
-        return salut == "read";
+    removeEmptyUpdates(){
+      for (let i in this.updates) {
+        if(!this.updates[i].body && !this.updates[i]._destroy) {
+          this.updates[i]._destroy = true;
+          this.deleteUpdates.push(this.updates[i]);
+          this.updates.splice(i, 1);
+        }
       }
-      return (
-        this.$currentUser.role == "superadmin" || fPrivilege.lessons[salut]
-      );
+    },
+    removeEmptySFBP(sFBP, deleteSFBP){
+      for (let i in sFBP) {
+        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) {
+          sFBP[i]._destroy = true;
+          deleteSFBP.push(sFBP[i]);
+          sFBP.splice(i, 1);
+        }
+      }
+    },
+    _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.lessons.includes(s);      
     },
     close() {
       this.$router.push(
@@ -860,7 +940,9 @@ export default {
     },
     openContextMenu(e, item) {
       e.preventDefault();
-      this.$refs.menu.open(e, item);
+      if (this._isallowed("write")) {
+        this.$refs.menu.open(e, item);
+      }
     },
     addRelatedTasks(tasks) {
       tasks.forEach((task) => this.relatedTasks.push(task));
@@ -890,7 +972,9 @@ export default {
       );
     },
     addSuccess() {
-      this.successes.unshift({ id: "", finding: "", recommendation: "" });
+      if (this._isallowed("write")) {
+        this.successes.unshift({ id: "", finding: "", recommendation: "" });
+      }
     },
     removeSuccess(index) {
       this.$confirm(
@@ -910,7 +994,9 @@ export default {
         .catch(() => {});
     },
     addFailure() {
-      this.failures.unshift({ id: "", finding: "", recommendation: "" });
+      if (this._isallowed("write")) {
+        this.failures.unshift({ id: "", finding: "", recommendation: "" });
+      }
     },
     removeFailure(index) {
       this.$confirm(
@@ -930,7 +1016,9 @@ export default {
         .catch(() => {});
     },
     addBestPractice() {
-      this.bestPractices.unshift({ id: "", finding: "", recommendation: "" });
+      if (this._isallowed("write")) {
+        this.bestPractices.unshift({ id: "", finding: "", recommendation: "" });
+      }
     },
     removeBestPractice(index) {
       this.$confirm(
@@ -970,7 +1058,7 @@ export default {
         .catch(() => {});
     },
     author(id) {
-      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+      return this.projectUsers.find((user) => user.id == id).fullName;
     },
     addFile(files) {
       files.forEach((file) => {
@@ -984,25 +1072,49 @@ export default {
       });
     },
     removeFile(id, index) {
-      this.files.splice(index, 1);
-      if (id) {
-        this.destroyFileIds.push(id);
-      }
+      this.$confirm(
+        `Are you sure you want to delete this file?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.files.splice(index, 1);
+          if (id) {
+            this.destroyFileIds.push(id);
+          }
+        })
+        .catch(() => {});
     },
     removeFileLink(id, index) {
-      this.fileLinks.splice(index, 1);
-      if (id) {
-        this.destroyFileIds.push(id);
-      }
+      this.$confirm(
+        `Are you sure you want to delete this file link?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.fileLinks.splice(index, 1);
+          if (id) {
+            this.destroyFileIds.push(id);
+          }
+        })
+        .catch(() => {});
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      if (this.lesson.id) {
+      if (this.lesson.id && this._isallowed("write")) {
         this.lesson.lesson_stage_id = stage.id;
-      } else {
+      } else if (this._isallowed("write")) {
         this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
       }
     },
@@ -1021,7 +1133,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "activeProjectUsers",
+      "projectUsers",
       "contentLoaded",
       "facilities",
       "facilityGroups",
@@ -1245,5 +1357,8 @@ a:hover {
 }
 .delete-icon {
   color: #dc3545;
+}
+.file-link {
+  color: unset;
 }
 </style>

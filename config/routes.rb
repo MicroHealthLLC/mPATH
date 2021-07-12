@@ -15,6 +15,11 @@ Rails.application.routes.draw do
 
 
   namespace :api, defaults: {format: :json} do
+    namespace :v1 do
+      get "/portfolio/tasks", to: "portfolio#tasks"
+      get "/portfolio/risks", to: "portfolio#risks"
+      get "/portfolio/issues", to: "portfolio#issues"
+    end
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
     resources :statuses, only: [:index]
@@ -30,6 +35,11 @@ Rails.application.routes.draw do
     post '/sort-by', to: 'sorts#update'
   end
 
+  get '/facility_privileges/facility_privileges_partial' => "facility_privileges#facility_privileges_partial", as: :facility_privileges_partial
+  get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form", as: :add_facility_privilege_form
+
+  get '/project_privileges/load_form' => "project_privileges#load_form", as: :project_privileges_load_form
+
 
   ## New Routes for Vue
   get "/programs/:id/"  => "projects#show"
@@ -38,6 +48,8 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
   get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
+
+  get "/programs/:program_id/:tab/projects/:project_id/overview" => "projects#vue_js_route"
 
   get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
@@ -62,6 +74,13 @@ Rails.application.routes.draw do
   patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
+  get "/api/v1/portfolio/programs" => "projects#index"
+  get "/api/v1/portfolio/programs/:program_id/projects" => "projects#projects"
+  get "/api/v1/portfolio/programs/:program_id/tasks" => "projects#tasks"
+  get "/api/v1/portfolio/programs/:program_id/issues" => "projects#issues"
+  get "/api/v1/portfolio/programs/:program_id/risks" => "projects#risks"
+  get "/api/v1/portfolio/programs/:program_id/notes" => "projects#notes"
+  get "/api/v1/portfolio/programs/:program_id/lessons" => "projects#lessons"
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
@@ -83,7 +102,7 @@ Rails.application.routes.draw do
     end
 
     resources :facilities do
-      resources :notes, module: :facilities
+      resources :notes #, module: :facilities
       resources :issues do
         post :batch_update, on: :collection
         post :create_duplicate, on: :member

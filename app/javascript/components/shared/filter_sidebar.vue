@@ -9,7 +9,7 @@
       <div class="row my-2">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-             <button class="btn btn-sm float-right d-inline-block font-sm btn-secondary py-0 ml-1 mb-1" @click.prevent="resetFilters();resetMapFilter()" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button>
+             <button class="btn btn-sm float-right d-inline-block font-sm btn-secondary py-0 ml-1 mb-1" @click.prevent="resetFilters();resetMapFilter()" data-cy="clear_filter"><i class="far fa-redo text-light clickable mr-1"></i>Reset</button>
             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
@@ -47,7 +47,8 @@
               </div>
               <label class="font-sm mb-0">Project Names</label>
                   <el-select 
-                    v-model="C_facilityNameFilter"                    
+                    v-model="C_facilityNameFilter"   
+                                   
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -58,7 +59,8 @@
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames"                                                     
+                    v-for="item in C_activeProjectNames" 
+                      :load="log(JSON.stringify(C_activeProjectNames))"                                                    
                     :value="item"   
                     :key="item.id"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
@@ -412,7 +414,7 @@
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
-                <font-awesome-icon icon="save" class="text-light clickable mr-1" />
+               <i class="fas fa-save text-light clickable mr-1"></i>
                 Save to Favorites
               </button>            
               <button 
@@ -528,7 +530,7 @@ export default {
       'getUnfilteredFacilities'
     ]),
     hasAdminAccess() {
-      return salut => this.$currentUser.role == "superadmin" || this.$permissions.admin[salut] || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
+      return salut => this.$currentUser.role == "superadmin" || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
     },
     C_favoriteFilterSelectModel: {
       get() {
@@ -833,6 +835,9 @@ export default {
       } else {
         return str;
       }
+    },
+    log(e){
+      console.log("This is the facility name filet" + e)
     },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -1211,7 +1216,7 @@ export default {
       if(this.favoriteFilterData.id){
         this.setAdvancedFilter([])
       }else{
-        this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])        
+        this.setAdvancedFilter([])        
       }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])

@@ -83,7 +83,7 @@
         "
         class="d-flex align-items-center my-2"
       >
-        <span class="fbody-icon"><font-awesome-icon icon="suitcase"/></span>
+        <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
         <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
       </div>
       <ProjectTabs
@@ -174,7 +174,7 @@ export default {
       } else if (url.includes("kanban")) {
         return "/tasks";
       } else {
-        return "";
+        return "/overview";
       }
     },
   },

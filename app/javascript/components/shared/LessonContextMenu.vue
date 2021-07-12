@@ -10,7 +10,11 @@
     <el-menu collapse>
       <el-menu-item @click="openLesson(lesson.id)">Open</el-menu-item>
       <hr />
-      <el-menu-item @click="deleteSelectedLesson">Delete</el-menu-item>
+      <el-menu-item
+        @click="deleteSelectedLesson"
+        :disabled="!_isallowed('delete')"
+        >Delete</el-menu-item
+      >
     </el-menu>
   </div>
 </template>
@@ -25,7 +29,7 @@ export default {
     facilities: Array,
     facilityGroups: Array,
     lesson: Object,
-    routeName: String
+    routeName: String,
   },
   data() {
     return {
@@ -93,6 +97,14 @@ export default {
             showClose: true,
           });
         });
+    },
+     _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.lessons.includes(s);      
     },
   },
 };

@@ -10,7 +10,7 @@ class Task < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   validates :text, presence: true
-  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
+  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
@@ -108,6 +108,25 @@ class Task < ApplicationRecord
     }
   end
 
+  def porfolio_json
+    is_overdue = false
+    if !ongoing && !on_hold && !draft
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    merge_h = { 
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      is_overdue: is_overdue,
+      category: task_type.name,
+      last_update: self.notes.last&.porfolio_json,
+      notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
+      users: users.select(&:active?).map(&:full_name).join(",")
+    }
+
+    self.attributes.merge!(merge_h)
+  end
+
   def to_json(options = {})
     attach_files = []
     tf = self.task_files
@@ -176,17 +195,30 @@ class Task < ApplicationRecord
 
     if(progress >= 100)
       progress_status = "completed"
-    end
+    end  
 
     is_overdue = false
-    if !ongoing && !on_hold
+    if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
+    
+    planned = false
+    if ( !draft && start_date > Date.today)
+      planned = true
+    end
 
+    in_progress = false
+    if ( !draft && !on_hold && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today)
+      in_progress = true
+    end
+
+   
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: is_overdue,
+      planned: planned, 
+      in_progress: in_progress, 
       progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),

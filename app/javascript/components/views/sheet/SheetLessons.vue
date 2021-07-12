@@ -7,6 +7,7 @@
     </div>
     <div class="wrapper mt-3 p-3">
       <button
+        v-if="_isallowed('write')"
         class="btn btn-md btn-primary addLessonBtn mr-3"
         @click="addLesson"
       >
@@ -49,22 +50,18 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
-                      :class="{
+                     <i class="fas fa-sort-up sort-icon-arrow"
+                       :class="{                    
                         'sort-asc': sortAsc && activeSortValue == 'title',
                       }"
-                    />
+                    ></i>
                   </div>
-                  <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                  <div class="down-arrow">
+                      <i class="fas fa-sort-down sort-icon-arrow"
+                       :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'title',
                       }"
-                    />
+                    ></i>
                   </div></div
               ></span>
             </th>
@@ -73,22 +70,19 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
-                      :class="{
+                     <i class="fas fa-sort-up sort-icon-arrow"
+                       :class="{
                         'sort-asc': sortAsc && activeSortValue == 'date',
                       }"
-                    />
-                  </div>
-                  <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                     ></i>
+                   </div>
+                  <div class="down-arrow">
+                    <i class="fas fa-sort-down sort-icon-arrow"
+                         :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'date',
                       }"
-                    />
+                    ></i>
+                  
                   </div></div
               ></span>
             </th>
@@ -100,22 +94,18 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
+                     <i class="fas fa-sort-up sort-icon-arrow"                
                       :class="{
                         'sort-asc': sortAsc && activeSortValue == 'created_by',
                       }"
-                    />
+                    ></i>
                   </div>
-                  <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                  <div class="down-arrow">
+                    <i class="fas fa-sort-down sort-icon-arrow"
+                       :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'created_by',
                       }"
-                    />
+                    ></i>
                   </div></div
               ></span>
             </th>
@@ -125,8 +115,25 @@
             <th class="flags-col">
               Flags
             </th>
-            <th class="update-col">
+            <th class="update-col" @click="sortUpdates">
               Last Update
+              <span class="float-right"
+                ><div class="d-flex d-inline-flex">
+                  <div class="top-arrow">
+                     <i class="fas fa-sort-up sort-icon-arrow"
+                       :class="{
+                        'sort-asc': sortAsc && activeSortValue == 'updates',
+                      }"
+                    ></i>
+                  </div>
+                  <div class="down-arrow">
+                   <i class="fas fa-sort-down sort-icon-arrow"
+                       :class="{
+                        'sort-dsc': !sortAsc && activeSortValue == 'updates',
+                      }"
+                    ></i>
+                  </div></div
+              ></span>
             </th>
           </tr>
           <tr
@@ -139,17 +146,17 @@
             <td>{{ lesson.title }}</td>
             <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
             <td class="text-center">{{ lesson.created_by.full_name }}</td>
-            <td>{{ lesson.description }}</td>
+            <td><span class="truncate-line-five">{{ lesson.description }}</span></td>
             <td class="text-center">
               <span v-if="lesson.important == true" v-tooltip="`Important`">
                 <i class="fas fa-star text-warning mr-1"></i
               ></span>
               <span v-if="lesson.reportable" v-tooltip="`Briefings`"
-                ><font-awesome-icon icon="flag" class="text-primary mr-1"
-              /></span>
+                ><i class="fas fa-presentation mr-1 text-primary"></i>
+              </span>
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
-                ><font-awesome-icon icon="pencil-alt" class="text-warning"
-              /></span>
+                > <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
               <span
                 v-if="
                   lesson.important == false &&
@@ -162,15 +169,20 @@
             </td>
             <td>
               <span v-if="lesson.last_update.body"
-                ><div class="date-chip" v-tooltip="('By: ' + lesson.last_update.user)">
+                ><div
+                  class="date-chip"
+                  v-tooltip="'By: ' + lesson.last_update.user"
+                >
                   {{
                     moment(lesson.last_update.created_at).format(
                       "DD MMM YYYY, h:mm a"
                     )
                   }}
                 </div>
-                {{ lesson.last_update.body }}</span
-              >
+                <span class="truncate-line-five">
+                  {{ lesson.last_update.body }}
+                </span>
+              </span>
               <span v-else>No Updates</span>
             </td>
           </tr>
@@ -404,11 +416,68 @@ export default {
       // Store active sort value
       this.activeSortValue = "date";
     },
+    sortUpdates() {
+      // Determine whether to sort lessons ascending or descending
+      if (this.activeSortValue !== "updates" || !this.sortAsc) {
+        this.sortAsc = true;
+      } else {
+        this.sortAsc = false;
+      }
+      // Is used to replace empty values
+      let oldDate = new Date("12-31-1980");
+      // Sort ascending
+      if (this.sortAsc) {
+        this.projectLessons.sort((lesson1, lesson2) => {
+          if (!lesson1.notes_updated_at[0]) {
+            lesson1.notes_updated_at = oldDate;
+          }
+          if (!lesson2.notes_updated_at[0]) {
+            lesson2.notes_updated_at = oldDate;
+          }
+
+          return (
+            new Date(lesson2.notes_updated_at) -
+            new Date(lesson1.notes_updated_at)
+          );
+        });
+        // Sort descending
+      } else {
+        this.projectLessons.sort((lesson1, lesson2) => {
+          if (!lesson1.notes_updated_at[0]) {
+            lesson1.notes_updated_at = oldDate;
+          }
+          if (!lesson2.notes_updated_at[0]) {
+            lesson2.notes_updated_at = oldDate;
+          }
+
+          return (
+            new Date(lesson1.notes_updated_at) -
+            new Date(lesson2.notes_updated_at)
+          );
+        });
+      }
+      // Store active sort value
+      this.activeSortValue = "updates";
+    },
     openContextMenu(e, lesson) {
       this.clickedLesson = lesson;
       e.preventDefault();
       this.$refs.menu.open(e);
     },
+   _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.lessons.includes(s);      
+    },
+    // _isallowed(privilege) {
+    //   return (
+    //     this.$currentUser.role == "superadmin" ||
+    //     this.$permissions.lessons[privilege]
+    //   );
+    // },
   },
   computed: {
     ...mapGetters([
@@ -541,6 +610,10 @@ tr:hover {
   position: relative;
   left: 7px;
 }
+.down-arrow {
+  left: -2px;
+  position: relative;
+}
 .sort-asc,
 .sort-dsc {
   color: #17a2b8;
@@ -552,5 +625,18 @@ tr:hover {
   color: #fff;
   border-radius: 3px;
   width: fit-content;
+}
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+    overflow: hidden;
+  }
 }
 </style>

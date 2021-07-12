@@ -1,5 +1,5 @@
 <template>
-  <div id="customtabs" class="d-flex align-items-center p-2">
+  <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
     <div v-for="tab in tabs" :key="tab.key">
       <div
         v-if="!tab.hidden"
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { mapGetters } from "vuex";
 export default {
   name: "ProjectTabs",
   data() {
@@ -25,67 +25,63 @@ export default {
           label: "Overview",
           key: "overview",
           closable: false,
-          hidden: false
+          hidden: false,
         },
         {
           label: "Tasks",
           key: "tasks",
           closable: false,
-          hidden: false
+          hidden: false,
         },
         {
           label: "Issues",
           key: "issues",
           closable: false,
-          hidden: false
+          hidden: false,
         },
         {
           label: "Risks",
           key: "risks",
           closable: false,
-          hidden: false
+          hidden: false,
         },
         {
           label: "Lessons",
           key: "lessons",
           closable: false,
-          hidden: false
+          hidden: false,
         },
         {
           label: "Notes",
           key: "notes",
           closable: false,
-          hidden: false
+          hidden: false,
         },
       ],
     };
   },
   mounted() {
     var programId = this.$route.params.programId;
-    var projectId = this.$route.params.projectId
-    var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-    
-    if(fPrivilege){
-      for(var i = 0; i < this.tabs.length; i++){
-        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-      }      
-    }
+    var projectId = this.$route.params.projectId;
 
-  },
-  methods: {
-    changeTab(tab) {
-      if (tab.key === "overview") {
-        this.$router.push(this.path);
-      } else {
-        this.$router.push(this.path + `/${tab.key}`);
+    let fPrivilege = this.$projectPrivileges[programId][projectId];
+
+    // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+
+    if (fPrivilege) {
+      for (var i = 0; i < this.tabs.length; i++) {
+        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
       }
     }
   },
+  methods: {
+    changeTab(tab) {
+      this.$router.push(this.path + `/${tab.key}`);
+    },
+  },
   computed: {
-    ...mapGetters([
-      'contentLoaded',
-      'currentProject',   
-    ]),
+    ...mapGetters(["contentLoaded", "currentProject"]),
     currentTab() {
       return this.tabs
         .map((tab) => tab.key)
@@ -98,16 +94,35 @@ export default {
 
       if (url.includes("sheet")) {
         return "sheet";
-      } 
+      }
       if (url.includes("calendar")) {
         return "calendar";
-      } 
-      else {
+      } else {
         return "map";
       }
     },
     path() {
       return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+    },
+    tabsVisible() {
+      return this.tabs.some((tab) => tab.hidden === false);
+    },
+  },
+  watch: {
+    "$route.path": {
+      handler() {
+        if (this.contentLoaded) {
+          let privileges = this.$projectPrivileges[
+            this.$route.params.programId
+          ][this.$route.params.projectId];
+
+          if (privileges) {
+            for (var i = 0; i < this.tabs.length; i++) {
+              this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
+            }
+          }
+        }
+      },
     },
   },
 };

@@ -832,9 +832,6 @@
        isMapView() {
         return this.$route.name === 'ProjectMapView'
       },
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.overview[salut]
-      }
     },
     watch: {
       facility: {

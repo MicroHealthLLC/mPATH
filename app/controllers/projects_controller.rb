@@ -1,5 +1,6 @@
 class ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
+  layout :resolve_layout
 
   def vue_js_route
     view = "map_view"
@@ -13,7 +14,7 @@ class ProjectsController < AuthenticatedController
       view = "kanban_view"
     elsif ["gantt_chart", "gantt"].include?(params[:tab])
       view = "gantt_view"
-    elsif params[:tab] == "member_list"
+    elsif params[:tab] == "members"
       view = "members"
     elsif params[:tab] == "lessons" || params[:lesson_id]
       view = "lessons"
@@ -22,11 +23,14 @@ class ProjectsController < AuthenticatedController
   ##  elsif params[:tab] == "facility_manager"
   ##    view = "facility_manager_view" 
     else
-      raise CanCan::AccessDenied
+      redirect_to current_user.allowed_redirect_url(params[:program_id])
+      return
     end
 
     if !current_user.allowed?(view)
-      raise CanCan::AccessDenied
+      # raise CanCan::AccessDenied
+      redirect_to current_user.allowed_redirect_url(params[:program_id])
+      return
     end
     
     respond_to do |format|
@@ -42,13 +46,67 @@ class ProjectsController < AuthenticatedController
     end
   end
 
+  def tasks
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("tasks", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def issues
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("issues", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def risks
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("risks", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def projects
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("projects", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def notes
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("notes", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def lessons
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("lessons", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
   def show
     @project = current_user.projects.active.find_by(id: params[:id])
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
         
-        format.json {render json: {project: @project.build_json_response}, status: 200}
+        format.json {render json: {project: @project.build_json_response(current_user)}, status: 200}
         # format.json {render json: {project: @project.as_complete_json}, status: 200}
         format.html {render action: :index}
       end
@@ -165,4 +223,12 @@ class ProjectsController < AuthenticatedController
   def check_permit(view)
     return unless current_user.allowed?(view)
   end
+
+  def resolve_layout
+    case action_name
+    when "index" then "portfolio_viewer"
+    else "application"
+    end
+  end
+
 end

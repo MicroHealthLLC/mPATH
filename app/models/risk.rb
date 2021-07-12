@@ -16,7 +16,7 @@ class Risk < ApplicationRecord
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
   validates_presence_of :risk_description
-  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
+  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
@@ -100,7 +100,26 @@ class Risk < ApplicationRecord
   def probability_name
     probability_name_hash[probability] || probability_name_hash[1]
   end
-  
+
+  def porfolio_json
+    is_overdue = false
+    if !ongoing && !on_hold && !draft
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    merge_h = { 
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      category: task_type.name,
+      is_overdue: is_overdue,
+      last_update: self.notes.last&.porfolio_json,
+      notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
+      users: users.select(&:active?).map(&:full_name).join(",")
+    }
+
+    self.attributes.merge!(merge_h)
+  end
+
   def self.params_to_permit
     [
       :approved,
@@ -251,7 +270,7 @@ class Risk < ApplicationRecord
     end
 
     is_overdue = false
-    if !ongoing && !on_hold
+    if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
 

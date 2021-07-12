@@ -17,12 +17,12 @@
               <div class="t_actions float-right">
             <span v-show="risk.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
             <span v-show="risk.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
-            <span v-if="risk.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
+            <span v-if="risk.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-show="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>   
-            <span v-show="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mr-1"  /></span>   
-            <span v-show="risk.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
-            <span v-show="risk.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
+            <span v-show="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+            <span v-show="risk.onHold" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+            <span v-show="risk.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
             <span v-if="                    
                      risk.ongoing == false && 
                      risk.watched == false &&
@@ -49,11 +49,14 @@
                   {{formatDate(DV_risk.startDate)}}
                   </span>              
                 
-                  <span  v-if="risk.ongoing == false">
-                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                  <span  v-if="risk.ongoing == false && risk.dueDate !== null">
+                    <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>                  
                     {{formatDate(DV_risk.dueDate)}}
                   </span>
-                  <span v-else v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mx-2"  /></span>  
+                  <span  v-if="risk.onHold == true && risk.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`">                              
+                  <i class="fas fa-pause-circle text-primary"></i>
+                  </span>
+                  <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
                 </div>
             </div>
 
@@ -163,6 +166,15 @@
         'taskUpdated',
         'updateWatchedRisks'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+    },
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
         if (this.$route.path.includes("kanban")) {
@@ -223,9 +235,6 @@
         'currentIssues',
         'viewPermit'
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
-      },
       is_overdue() {
         return this.DV_risk.isOverdue
       },

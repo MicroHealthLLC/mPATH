@@ -34,7 +34,8 @@ class LessonsController < AuthenticatedController
     lesson = Lesson.includes(Lesson.lesson_preload_array).find(params[:lesson_id])
     # authorize!(:create, lesson)
 
-    lesson.create_or_update_lesson(params, current_user)
+    lesson = lesson.create_or_update_lesson(params, current_user)
+
     if lesson.errors.any?
       render json: {errors: lesson.errors.full_messages.join(" ")}, status: 402
     else

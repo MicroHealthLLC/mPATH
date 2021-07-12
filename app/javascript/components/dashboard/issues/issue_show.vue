@@ -17,11 +17,11 @@
                 <div class="t_actions float-right">
                   <span v-show="issue.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
                   <span v-show="issue.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
-                  <span v-if="issue.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
+                  <span v-if="issue.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
                   <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                   <span v-show="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>                  
-                  <span v-show="issue.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
-                  <span v-show="issue.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
+                  <span v-show="issue.onHold" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+                  <span v-show="issue.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
                 <span v-if="                 
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
@@ -47,8 +47,12 @@
                   <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(issue.startDate)}}              
                     </span>
-                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(issue.dueDate)}}
+                  <span  v-if="issue.onHold && issue.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`" class="mr-0">
+                    <i class="fas fa-calendar-alt"></i>                  
+                  </span>
+                  <span v-else>
+                    {{formatDate(issue.dueDate)}}
+                  </span>
                 </div>
               </div>
    <!-- ROW 3 -->
@@ -163,6 +167,15 @@
         'taskUpdated',
         'updateWatchedIssues'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+    },
       editIssue() {
         this.DV_edit_issue = this.DV_issue;
         if (this.$route.path.includes("kanban")) {
@@ -227,9 +240,6 @@
         'currentIssues',
         'viewPermit'
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
-      },
       is_overdue() {
         return this.DV_issue.isOverdue
       },

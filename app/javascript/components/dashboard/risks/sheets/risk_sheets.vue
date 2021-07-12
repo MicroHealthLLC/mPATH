@@ -14,8 +14,9 @@
        </td>
        <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
        <td class="eight text-center">
-         <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
-        <span v-else>
+         <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+         <span v-if="risk.onHold && risk.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>
          {{formatDate(risk.dueDate)}}
         </span>
        </td>
@@ -29,18 +30,18 @@
          </span>        
         </td>
         <td class="eight text-center" >
-        <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+        <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>{{risk.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
                 <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                 <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
-                <span v-if="risk.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
+                <span v-if="risk.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
                 <span v-if="risk.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
-                <span v-if="risk.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-                <span v-if="risk.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+                <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+                <span v-if="risk.onHold == true" v-tooltip="`On Hold`">   <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+                <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
                 <span v-if="                   
                      risk.ongoing == false && 
                      risk.watched == false &&
@@ -54,10 +55,13 @@
                 </span>          
          </td>  
         <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)">        
-           {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)">        
+           {{moment(risk.notesUpdatedAt[risk.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{risk.notes[0].body}}
+           <br> 
+           <span class="truncate-line-five">
+             {{risk.notes[risk.notes.length - 1].body}}
+           </span>
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -122,6 +126,15 @@
         'taskUpdated',
         'updateWatchedRisks'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+    },
       deleteRisk() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
         if (!confirm) {return}
@@ -183,9 +196,6 @@
         'viewPermit',
         'getToggleRACI',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
-      },
       is_overdue() {
         return this.DV_risk.progress !== 100 && new Date(this.DV_risk.dueDate).getTime() < new Date().getTime()
       },
@@ -333,5 +343,17 @@
   }
    .green1, .orange1, .red1 {   
     color:#fff;   
+  }
+  .truncate-line-five
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    &:hover
+    {
+      display: -webkit-box;
+      -webkit-line-clamp: unset;
+    }
   }
 </style>

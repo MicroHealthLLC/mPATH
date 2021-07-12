@@ -193,7 +193,15 @@
             <v-list-item>
               <v-list-item-title @click.prevent="scrollToEndDate" class="point"> 
               <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
-                {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
+                
+                 <span v-if="selectedEvent.isOnHold == true && selectedEvent.end == null">
+                 <i class="fas fa-pause-circle text-primary"></i>
+                </span>              
+               <span v-else> 
+              {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
+               </span>
+                
+                
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
@@ -205,13 +213,19 @@
             <v-list-item>
               <v-list-item-title>
               <span class="d-inline mr-1"><small><b>Flags</b></small></span>  
-                  <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                  <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
                   <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                   <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                   <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>  
-                  <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-                  <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>      
-                  <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
+                  <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>   
+                  <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>      
+                  <span v-if="
+                      selectedEvent.watch == false && 
+                      selectedEvent.pastDue == false &&     
+                      selectedEvent.hasStar == false && 
+                      selectedEvent.isOnHold == false && 
+                      selectedEvent.isDraft == false && 
+                      selectedEvent.progess < 100">
                     
                     No flags at this time
                     </span>                    
@@ -239,6 +253,7 @@
             color="error"
             small
             @click.prevent="deleteIssue"           
+            v-if="_isallowed('delete')"           
           >
           <font-awesome-icon icon="trash-alt" class="mr-1" />
           DELETE
@@ -313,20 +328,21 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
-      ...mapActions([
+       ...mapActions([
         'issueDeleted',
         'issueUpdated',
         'updateWatchedIssues'
       ]), 
       //TODO: change the method name of isAllowed
-      // _isallowed(salut) {
-      //   var programId = this.$route.params.programId;
-      //   var projectId = this.$route.params.projectId
-      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
-      // },
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      },
+
       reRenderCalendar() {
         this.componentKey += 1;
       },
@@ -450,6 +466,13 @@
         const days = (max.getTime() - min.getTime()) / 86400000   
         // For loop to determine length of Tasks 
         for (let i = 0; i < this.filteredCalendar.length; i++) {
+            if(this.issueData[i].onHold && this.issueEndDates[i] == null ) {        
+            this.issueEndDates[i] = '2099-01-01'
+            }
+          
+           if(this.issueData[i].onHold) {
+            this.issueNames[i] = this.issueNames[i] + " (On Hold)"          
+            }
             events.push({            
             name: this.issueNames[i],
             start: this.issueStartDates[i],
@@ -516,9 +539,6 @@
         'onWatchFilter',
         'viewPermit',     
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
-      },
       filteredCalendar() {
          let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')

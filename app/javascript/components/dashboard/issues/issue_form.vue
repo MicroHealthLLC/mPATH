@@ -12,7 +12,7 @@
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
-              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+              > <i class="fas fa-suitcase mb-1"></i>
             </span>
             <router-link :to="projectNameLink">{{
               facility.facilityName
@@ -111,15 +111,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
+              v-tooltip="`On Watch`" 
             >
-              <span 
-                v-tooltip="`On Watch`" 
+              <span               
                 v-show="DV_issue.watched" 
                 ><i class="fas fa-eye mr-1"></i
               ></span>
               <span 
-                v-tooltip="`On Watch`" 
-                v-show="!DV_issue.watched" 
+                 v-show="!DV_issue.watched" 
                 ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
               ></span>
            
@@ -132,16 +131,16 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
+              v-tooltip="`On Hold`" 
             >
               <span 
-                v-tooltip="`On Hold`" 
+              
                 v-show="DV_issue.onHold">
-               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+                <i class="fas fa-pause-circle mr-1 text-primary"></i>
               </span>
               <span 
-                v-tooltip="`On Hold`" 
-                v-show="!DV_issue.onHold">
-               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+               v-show="!DV_issue.onHold">
+              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
               </span>
              
               <small 
@@ -155,15 +154,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
+              v-tooltip="`Important`" 
             >
-               <span 
-                v-tooltip="`Important`" 
+               <span               
                 v-show="DV_issue.important">
                <i class="fas fa-star text-warning"></i>
               </span>
               <span 
-                v-tooltip="`Important`" 
-                v-show="!DV_issue.important">
+               v-show="!DV_issue.important">
                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
               </span>
               <small 
@@ -175,16 +173,17 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
+                v-tooltip="`Briefings`" 
               >
                 <span
-                  v-tooltip="`Briefings`" 
+              
                   v-show="DV_issue.reportable">
-                <i class="fas fa-flag text-primary"></i>
+                <i class="fas fa-presentation text-primary"></i>
                 </span>
                 <span 
-                  v-tooltip="`Briefings`" 
+               
                   v-show="!DV_issue.reportable">
-                <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
                 </span>
               
                 <small 
@@ -198,15 +197,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
+              v-tooltip="`Draft`" 
             >
-              <span 
-                v-tooltip="`Draft`" 
+              <span              
                 v-show="DV_issue.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
               </span>
               <span 
-                v-tooltip="`Draft`" 
-                v-show="!DV_issue.draft">
+               v-show="!DV_issue.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
               </span>
              
@@ -428,12 +426,19 @@ Tab 1 Row Begins here -->
               </div>
             </div>
             <div class="form-group w-75 ml-1">
+             <span v-if="DV_issue.onHold ">           
+                <label class="font-md">
+                Estimated Completion Date <span><small class="text-danger">(Not required if Issue is On Hold)</small></span>
+                 </label
+                  ></span>
+                  <span v-else>
               <label class="font-md"
                 >Estimated Completion Date
                 <span style="color: #dc3545">*</span></label
-              >
-              <v2-date-picker
-                v-validate="'required'"
+              ></span>
+             
+              <v2-date-picker           
+                v-validate="{ required: !DV_issue.onHold }"
                 v-model="DV_issue.dueDate"
                 value-type="YYYY-MM-DD"
                 format="DD MMM YYYY"
@@ -855,31 +860,24 @@ Tab 1 Row Begins here -->
                                     v-if="!progress.user"
                                     @click.prevent="saveIssue"
                                   >
-                                    <font-awesome-icon
-                                      icon="save"
-                                      class="text-primary clickable"
-                                    />
+                                 <i class="far fa-save text-primary clickable"></i>
                                   </span>
                                   <span
                                     v-tooltip="`Edit`"
                                     v-if="progress.user"
                                     class="px-2"
                                   >
-                                    <font-awesome-icon
-                                      icon="pencil-alt"
-                                      class="text-info clickable"
-                                      @click.prevent="editProgress"
-                                      :readonly="!_isallowed('write')"
-                                    />
+                                <i class="fas fa-pencil-alt text-info clickable"  
+                                  @click.prevent="editProgress"
+                                  :readonly="!_isallowed('write')">
+                                </i>       
                                   </span>
                                   <span
                                     v-tooltip="`Delete`"
                                     class="pl-1"
                                     v-if="progress.user"
                                   >
-                                    <font-awesome-icon
-                                      icon="trash"
-                                      class="text-danger clickable"
+                                  <i class="fal fa-trash-alt text-danger clickable"
                                       v-if="_isallowed('write')"
                                       @click.prevent="
                                         destroyProgressList(
@@ -887,8 +885,9 @@ Tab 1 Row Begins here -->
                                           progress,
                                           pindex
                                         )
-                                      "
-                                    />
+                                      "                                 
+                                  >
+                                  </i>                 
                                   </span>
                                 </td>
                               </tr>
@@ -1214,7 +1213,7 @@ Tab 1 Row Begins here -->
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
                       <span v-if="note.updatedAt"
-                        >{{ author(note.userId) }} on
+                        >{{ note.user.fullName }} on
                         {{ new Date(note.updatedAt).toLocaleString() }}</span
                       ><span v-else
                         >{{ $currentUser.full_name }} on
@@ -1397,6 +1396,15 @@ export default {
         checklists: [],
         notes: [],
       };
+    },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
     },
     selectedStage(item) {
       if (this._isallowed("write")) {
@@ -1589,6 +1597,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_issue = { ...this.DV_issue, onHold: !this.DV_issue.onHold };
+      this.DV_issue.dueDate = '';
     },
     toggleDraft() {
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
@@ -2002,9 +2011,6 @@ export default {
         1
       );
     },
-    author(id) {
-      return this.activeProjectUsers.find((user) => user.id == id).fullName;
-    },
   },
   computed: {
     ...mapGetters([
@@ -2077,11 +2083,6 @@ export default {
         "createdAt",
         "desc"
       );
-    },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.issues[salut];
     },
     tab() {
       if (this.$route.path.includes("map")) {

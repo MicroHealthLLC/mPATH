@@ -6,19 +6,18 @@
             <el-row>
              <el-col :span="9">
              <div class="input-group w-100 task-search-bar">
-                <div class="input-group-prepend">
-                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-            </div>
-               <input
-                type="text"
-                class="form-control searchbox form-control-sm"
+              <el-input
+                type="search"
                 placeholder="Search Team Member Names"
                 aria-label="Search"
-                v-on:keyup="memberSearch"
-                id="memberSearch"
                 aria-describedby="search-addon"
-                data-cy="search_team_member">
-            </div>
+                v-model="memberSearchQuery"
+                id="memberSearch"
+                data-cy="search_team_member"
+              >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+             </div>
             </el-col>
             <div class="total" data-cy="team_total">
               <button
@@ -183,6 +182,7 @@ import 'jspdf-autotable'
         currentPage:1,
         currentSort:'id',
         currentSortDir:'asc',
+        memberSearchQuery: '',
        }
      },
      computed: {
@@ -278,6 +278,13 @@ import 'jspdf-autotable'
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       }
     },
+    watch: {
+      memberSearchQuery: {
+        handler: function(value) {
+          this.memberSearch();
+        }
+      }
+    }
   }
 </script>
 <style scoped lang="scss">
