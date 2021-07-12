@@ -27,6 +27,14 @@ class Lesson < ApplicationRecord
   validates :title, :description, :date, :facility_project_id, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
 
   def to_json(options = {})
     attach_files = []

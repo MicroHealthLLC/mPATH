@@ -37,6 +37,13 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def porfolio_json
+    {
+      id: id,
+      full_name: full_name 
+    }
+  end
+
   def active_admin_facility_project_select_options
     fps_hash = FacilityProject.includes(:facility, :project).where(project_id: self.projects.active).group_by(&:project)
     options = []

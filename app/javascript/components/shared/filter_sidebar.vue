@@ -47,7 +47,8 @@
               </div>
               <label class="font-sm mb-0">Project Names</label>
                   <el-select 
-                    v-model="C_facilityNameFilter"                    
+                    v-model="C_facilityNameFilter"   
+                                   
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -58,7 +59,8 @@
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames"                                                     
+                    v-for="item in C_activeProjectNames" 
+                      :load="log(JSON.stringify(C_activeProjectNames))"                                                    
                     :value="item"   
                     :key="item.id"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
@@ -412,7 +414,7 @@
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
-                <font-awesome-icon icon="save" class="text-light clickable mr-1" />
+               <i class="fas fa-save text-light clickable mr-1"></i>
                 Save to Favorites
               </button>            
               <button 
@@ -833,6 +835,9 @@ export default {
       } else {
         return str;
       }
+    },
+    log(e){
+      console.log("This is the facility name filet" + e)
     },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
