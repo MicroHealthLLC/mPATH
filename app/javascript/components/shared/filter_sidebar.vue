@@ -59,8 +59,7 @@
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames" 
-                      :load="log(JSON.stringify(C_activeProjectNames))"                                                    
+                    v-for="item in C_activeProjectNames"                                            
                     :value="item"   
                     :key="item.id"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
@@ -835,9 +834,6 @@ export default {
       } else {
         return str;
       }
-    },
-    log(e){
-      console.log("This is the facility name filet" + e)
     },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
