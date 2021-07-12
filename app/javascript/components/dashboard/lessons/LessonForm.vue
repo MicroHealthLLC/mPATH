@@ -856,6 +856,11 @@ export default {
         if (!success) {
           return;
         }
+        //removes empty updates, sucesses, failures, and best practices
+        this.removeEmptyUpdates()
+        this.removeEmptySFBP(this.successes, this.deleteSuccesses)
+        this.removeEmptySFBP(this.failures, this.deleteFailures)
+        this.removeEmptySFBP(this.bestPractices, this.deleteBestPractices)
 
         let lessonData = {
           lesson: {
@@ -898,6 +903,25 @@ export default {
           });
         }
       });
+    },
+    removeEmptyUpdates(){
+      for (let i in this.updates) {
+        if(!this.updates[i].body && !this.updates[i]._destroy) {
+          this.updates[i]._destroy = true;
+          this.deleteUpdates.push(this.updates[i]);
+          this.updates.splice(i, 1);
+        }
+      }
+    },
+    removeEmptySFBP(sFBP, deleteSFBP){
+      for (let i in sFBP) {
+        //if(this.lesson.draft && sFBP[i].recommendation) continue;
+        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) {
+          sFBP[i]._destroy = true;
+          deleteSFBP.push(sFBP[i]);
+          sFBP.splice(i, 1);
+        }
+      }
     },
     _isallowed(salut) {
         var programId = this.$route.params.programId;
