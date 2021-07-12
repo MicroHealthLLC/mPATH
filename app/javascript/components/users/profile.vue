@@ -190,7 +190,7 @@
               filterable
               placeholder="Search and select Navigation"
               :disabled="!this.selectedProjectGroup"
-               @change="navigationSelectChane"
+               @change="navigationSelectChange"
             >
             <el-option
               v-for="item in navigationOptions"
@@ -289,12 +289,12 @@
       this.subNavigationOptions = allowed_sub_navigation_tabs
     },
     methods: {
-      navigationSelectChane(value){
+      navigationSelectChange(value){
         this.selectedSubNavigation = ''
-        if(value.id == "kanban"){
-          this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
+        if(value.id == "kanban" || value.id == "calendar"){
+          this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id], h => ["tasks", "issues", "risks"].includes(h.id))
         }else if(value.id == "map" || value.id == "sheet"){
-          this.subNavigationOptions = allowed_sub_navigation_tabs
+          this.subNavigationOptions = allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id]
         }else if(['gantt_chart', 'members'].includes(value.id) ){
           this.subNavigationOptions = []
         }
@@ -309,6 +309,9 @@
             this.allPrograms  = res.data.programs
             this.allProjectGroups = res.data.projectGroups
             this.allProjects = res.data.projects
+            
+            let program_id = this.preferences.programId
+            let project_id = this.preferences.projectId
 
             this.programOptions = this.allPrograms
             if(this.preferences.programId)
@@ -324,26 +327,41 @@
                 this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId );
               }
             }
-            this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
-
-            this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
-            console.log(this.selectedSubNavigation)
-            if(!this.selectedSubNavigation && this.subNavigationOptions.length > 0){
-              
-              console.log(this.preferences.subNavigationMenu)
-              this.selectedSubNavigation = this.subNavigationOptions[0]
+            if(program_id && program_id){
+              this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             }
 
+            console.log(this.navigationOptions)
+ 
+            // this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
+            if(program_id && program_id && allowed_sub_navigation_tabs[program_id][project_id]){
+              let subNavigationMenu = allowed_sub_navigation_tabs[program_id][project_id]
+              if(subNavigationMenu){
+                this.selectedSubNavigation = subNavigationMenu.find((t) => t.id === this.preferences.subNavigationMenu );
+              }
+            }else{
+              this.subNavigationOptions = []
+            }
+
+            // if(!this.selectedSubNavigation && this.subNavigationOptions.length > 0){
+              
+            //   console.log(this.preferences.subNavigationMenu)
+            //   this.selectedSubNavigation = this.subNavigationOptions[0]
+            // }
             if(this.selectedNavigation){
               if(this.selectedNavigation.id == "kanban"){
-                this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
+                // this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
+                this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[program_id][project_id], h => !["overview", "notes"].includes(h.id))
               }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
-                this.subNavigationOptions = allowed_sub_navigation_tabs
+                if(program_id && program_id && allowed_sub_navigation_tabs[program_id][project_id]){
+                  this.subNavigationOptions = allowed_sub_navigation_tabs[program_id][project_id]
+                }else{
+                  this.subNavigationOptions = []
+                }                
               }else if(['gantt_chart', 'members'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
               }              
             }
-
 
             this.gmap_address.formatted_address = this.profile.address
             if (this.C_addressDrawn) {
@@ -510,7 +528,7 @@
         handler: function(value) {
           if (value){           
               this.projectOptions = this.getProjects(this.selectedProgram, value)    
-               this.selectedProjectGroup = value 
+              this.selectedProjectGroup = value 
               this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId )
                
           }      

@@ -11,6 +11,7 @@ import taskStore from './modules/task-store'
 import issueStore from './modules/issue-store'
 import riskStore from './modules/risk-store'
 import lessonStore from "./modules/lesson-store";
+import portfolioModule from './modules/portfolio-store'
 
 // utility function
 const getSimpleDate = (date) => {
@@ -29,7 +30,8 @@ export default new Vuex.Store({
     taskStore,
     issueStore,
     riskStore,
-    lessonStore
+    lessonStore,
+    portfolioModule
   },
   state: {
     advancedFilter: [],
@@ -1380,7 +1382,7 @@ export default new Vuex.Store({
           }
         )
 
-        let f_read = Vue.prototype.$permissions.overview.read || false
+        let f_read = Vue.prototype.$topNavigationPermissions.gantt_view['read']  || false
         // for facilities under facility_groups
         let facility_count = 1
         for (let facility of groups[group]) {
@@ -1407,7 +1409,7 @@ export default new Vuex.Store({
             }
           )
 
-          if (Vue.prototype.$permissions.tasks.read)
+          if (f_read)
           {
             // for task_types under facilities
             let types = _.groupBy(facility.tasks, 'taskType')

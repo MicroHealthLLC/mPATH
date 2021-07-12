@@ -1,5 +1,6 @@
 class ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
+  layout :resolve_layout
 
   def vue_js_route
     view = "map_view"
@@ -41,6 +42,60 @@ class ProjectsController < AuthenticatedController
   def index
     respond_to do |format|
       format.json {render json: {projects: current_user.projects.includes(:project_type).active.as_json}}
+      format.html {}
+    end
+  end
+
+  def tasks
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("tasks", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def issues
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("issues", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def risks
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("risks", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def projects
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("projects", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def notes
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("notes", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
+  def lessons
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("lessons", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
       format.html {}
     end
   end
@@ -168,4 +223,12 @@ class ProjectsController < AuthenticatedController
   def check_permit(view)
     return unless current_user.allowed?(view)
   end
+
+  def resolve_layout
+    case action_name
+    when "index" then "portfolio_viewer"
+    else "application"
+    end
+  end
+
 end

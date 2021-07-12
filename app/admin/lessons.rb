@@ -24,11 +24,11 @@ ActiveAdmin.register Lesson do
       sub_task_ids: [],
       sub_issue_ids: [],
       sub_risk_ids: [],
-      facility_project_attributes: [
-        :id,
-        :project_id,
-        :facility_id
-      ]
+      # facility_project: [
+      #   :id,
+      #   :project_id,
+      #   :facility_id
+      # ]
     ]
     permitted
   end
@@ -116,16 +116,32 @@ ActiveAdmin.register Lesson do
       tab 'Lesson Info' do
         f.inputs 'Basic Details' do
           f.input :id, input_html: { value: f.object.id }, as: :hidden
-          f.input :title, label: 'Title'
+          f.input :title, label: 'Name'
           f.input :description
-          div id: 'facility_projects' do
-            f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-              fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-              fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+          f.input :date, label: 'Date', as: :datepicker
+          facility_project_options = []
+          
+          Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+            projects.each do |project|
+              facility_project_options << [project.name, project.id, {disabled: true}]
+              project.facility_projects.each do |fp|
+                facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+              end
             end
           end
-          f.input :task_type, label: 'Category', include_blank: false
+          
+          f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
+
+          # div id: 'facility_projects' do
+          #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+          #     fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+          #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+          #   end
+          # end
+          f.input :task_type, label: 'Category',  input_html: {class: "select2"}, include_blank: true
           f.input :lesson_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
+          f.input :user_id, label: 'User', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: "select2"}
+
         end
       end
 
