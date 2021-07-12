@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
     end
+    post '/login' => 'authentication#login'
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
     resources :statuses, only: [:index]

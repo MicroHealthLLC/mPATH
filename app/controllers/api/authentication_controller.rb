@@ -1,24 +1,21 @@
-class API::V1::AuthenticationController < ApplicationController
-  skip_before_action :authenticate_user!
+class Api::AuthenticationController < Api::ApplicationController
   
-  # TODO replace with JWT
-  def sign_in
-    user = User.where("LOWER(email) = ?", sign_in_params[:email].to_s.downcase).first
-    
-    if user&.valid_password?(sign_in_params[:password])
-      render :json => {
-        user_id: user.id,
-        email: user.email,
-        authentication_token: user.encrypted_authentication_token
-      }.to_json, :status => 200
+  def login
+    user = User.find_for_database_authentication(email: params[:email])
+    if user && user.valid_password?(params[:password])
+      render json: payload(user)
     else
-      render :json => {error: "invalid-credentials"}.to_json, :status => 401
+      render json: {errors: ['Invalid Username/Password']}, status: :unauthorized
     end
-    
   end
-  
+
   private
-    def sign_in_params
-      params.require(:user).permit(:email, :password)
-    end
+
+  def payload(user)
+    return nil unless user and user.id
+    {
+      auth_token: JsonWebToken.encode({user_id: user.id}),
+      user: {id: user.id, email: user.email}
+    }
+  end
 end

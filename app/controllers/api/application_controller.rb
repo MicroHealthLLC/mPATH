@@ -1,39 +1,30 @@
-class Api::ApplicationController
-  before_action :authorized
+class Api::ApplicationController < ActionController::API
 
-  def encode_token(payload)
-    JWT.encode(payload, 's3cr3t')
-  end
+  attr_reader :current_user
 
-  def auth_header
-    # { Authorization: 'Bearer <token>' }
-    request.headers['Authorization']
-  end
+  protected
 
-  def decoded_token
-    if auth_header
-      token = auth_header.split(' ')[1]
-      # header: { 'Authorization': 'Bearer <token>' }
-      begin
-        JWT.decode(token, 's3cr3t', true, algorithm: 'HS256')
-      rescue JWT::DecodeError
-        nil
-      end
+  def authenticate_request!
+    unless user_id_in_token?
+      render json: { errors: ['Not Authenticated'] }, status: :unauthorized
+      return
     end
+    @current_user = User.find(auth_token[:user_id])
+  rescue JWT::VerificationError, JWT::DecodeError
+    render json: { errors: ['Not Authenticated'] }, status: :unauthorized
   end
 
-  def logged_in_user
-    if decoded_token
-      user_id = decoded_token[0]['user_id']
-      @user = User.find_by(id: user_id)
-    end
+  private
+  def http_token
+    @http_token ||= ( request.headers['Authorization'].present? ?  request.headers['Authorization'].split(' ').last : nil)
+  end
+  
+  def auth_token
+    @auth_token ||= JsonWebToken.decode(http_token)
   end
 
-  def logged_in?
-    !!logged_in_user
+  def user_id_in_token?
+    http_token && auth_token && auth_token[:user_id].to_i
   end
 
-  def authorized
-    render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
-  end
 end
