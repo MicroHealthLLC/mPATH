@@ -275,6 +275,7 @@
             color="error"
             small
             @click.prevent="deleteRisk"           
+            v-if="_isallowed('delete')"           
           >
           <font-awesome-icon icon="trash-alt" class="mr-1" />
           DELETE

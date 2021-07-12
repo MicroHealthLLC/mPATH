@@ -18,8 +18,18 @@ class Privilege < ApplicationRecord
   # serialize :calendar_view, Array
   # serialize :members, Array
 
-  before_save :modify_values
 
+  # NOTE: sequence matters, because we parameters are sending an array and 
+  # we are saving it as string.
+  before_save :modify_values
+  before_save :assign_default_privilege
+
+  #NOTE: As per new privilege setting we are just checking few settings only.
+  def assign_default_privilege
+    if !self.sheets_view.include?("R") && !self.map_view.include?("R") && !self.gantt_view.include?("R") && !self.kanban_view.include?("R") && !self.calendar_view.include?("R") && !self.members.include?("R") 
+      self.sheets_view = (self.sheets_view.chars + ["R"]).join("")
+    end
+  end
 
   def modify_values
     att = self.attributes.dup

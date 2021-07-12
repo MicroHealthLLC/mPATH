@@ -22,6 +22,10 @@ class Facility < ApplicationRecord
       facility_group_status: self.facility_group.try(:status)
     ).as_json
   end
+  
+  def porfolio_json
+    self.attributes.to_json
+  end
 
   def reject_comment(comment)
     comment['body'].blank?
