@@ -1,5 +1,13 @@
 class Api::V1::PortfolioController < AuthenticatedController 
-  before_action :authenticate_user!
+
+  def lessons
+    all_resources = Lesson.unscoped.includes(Lesson.lesson_preload_array).where("facility_projects.project_id" => current_user.project_ids)
+    json_response = []
+    all_resources.in_batches(of: 1000) do |resources|
+      json_response += resources.map(&:porfolio_json)
+    end
+    render json: json_response
+  end
 
   def programs
     all_resources = current_user.projects.active
