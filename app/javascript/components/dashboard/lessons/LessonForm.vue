@@ -915,7 +915,6 @@ export default {
     },
     removeEmptySFBP(sFBP, deleteSFBP){
       for (let i in sFBP) {
-        //if(this.lesson.draft && sFBP[i].recommendation) continue;
         if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) {
           sFBP[i]._destroy = true;
           deleteSFBP.push(sFBP[i]);
