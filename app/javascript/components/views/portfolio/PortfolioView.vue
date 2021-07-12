@@ -1327,6 +1327,11 @@ export default {
         } else return true
 
       }).filter(task => {
+         if (this.hideBriefedTasks) {
+          return !task.reportable
+        } else return true
+
+      }).filter(task => {
          if (this.hideInprogressTasks) {
           return task.progress < 100 && task.start_date <= this.today 
         } else return true
@@ -1367,9 +1372,14 @@ export default {
           return !issue.on_hold
         } else return true
 
-     }).filter(issue => {
+      }).filter(issue => {
          if (this.hideInprogressIssues) {
           return issue.progress < 100 && issue.start_date <= this.today 
+        } else return true
+
+      }).filter(issue => {
+         if (this.hideBriefedIssues) {
+          return !issue.reportable
         } else return true
 
       }).filter(issue => {
@@ -1406,6 +1416,11 @@ export default {
       }).filter(risk => {
          if (this.hideOnholdRisks) {
           return !risk.on_hold
+        } else return true
+
+      }).filter(risk => {
+         if (this.hideBriefedRisks) {
+          return !risk.reportable
         } else return true
 
      }).filter(risk => {
@@ -2035,6 +2050,12 @@ ul > li {
 }
 i, .icons {
   cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 ul {
   margin-bottom: 0.5rem;
@@ -2051,8 +2072,7 @@ ul {
   th {
     background-color: #ededed !important;
     text-align: center;     
-    color: #383838;
-  
+    color: #383838;  
     }
   }
 
