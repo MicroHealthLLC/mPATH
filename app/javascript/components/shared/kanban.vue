@@ -113,15 +113,18 @@ export default {
       this.columns.push({
         stage: {id: null},
         title: "No stage",
-        tasks: []
+        tasks: [],
+        percentage: -1
       })   
       for (let stage of this.stages) {      
         this.columns.push({
           stage: stage,
           title: stage.name,
-          tasks: _.filter(cards, c => c[this.stageId] == stage.id)       
+          tasks: _.filter(cards, c => c[this.stageId] == stage.id),
+          percentage: stage.percentage
         })
       }
+      this.columns.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1)
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key

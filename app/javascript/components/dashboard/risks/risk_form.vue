@@ -342,8 +342,8 @@
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
-                  :class="{'overSixSteps': riskStages.length >= 6 }" 
-                  :active="riskStages.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
+                  :class="{'overSixSteps': riskStagesSorted.length >= 6 }" 
+                  :active="riskStagesSorted.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
@@ -351,7 +351,7 @@
                   value-key="id"
                   >         
                 <el-step
-                  v-for="item in riskStages"
+                  v-for="item in riskStagesSorted"
                   :key="item.id"                        
                   :value="item"
                   style="cursor:pointer"
@@ -372,7 +372,7 @@
                 <label class="font-md">Select Stage</label>
                 <el-steps
                   class="exampleOne"
-                  :class="{ overSixSteps: riskStages.length >= 6 }"
+                  :class="{ overSixSteps: riskStagesSorted.length >= 6 }"
                   finish-status="success"
                   :disabled="
                     !_isallowed('write') || (fixedStage && isKanbanView)
@@ -382,7 +382,7 @@
                   value-key="id"
                 >
                   <el-step
-                    v-for="item in riskStages"
+                    v-for="item in riskStagesSorted"
                     :key="item.id"
                     :value="item"
                     style="cursor:pointer"
@@ -2931,6 +2931,10 @@ export default {
       "riskStages",
       "taskTypes",
     ]),
+    riskStagesSorted() {
+      var riskStagesSortedReturn = [...this.riskStages]; 
+      return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
     readyToSave() {
       return (
         this.DV_risk &&
