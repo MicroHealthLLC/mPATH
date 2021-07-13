@@ -72,13 +72,15 @@ Rails.application.routes.draw do
   patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
-  get "/api/v1/portfolio/programs" => "projects#index"
-  get "/api/v1/portfolio/programs/:program_id/projects" => "projects#projects"
-  get "/api/v1/portfolio/programs/:program_id/tasks" => "projects#tasks"
-  get "/api/v1/portfolio/programs/:program_id/issues" => "projects#issues"
-  get "/api/v1/portfolio/programs/:program_id/risks" => "projects#risks"
-  get "/api/v1/portfolio/programs/:program_id/notes" => "projects#notes"
-  get "/api/v1/portfolio/programs/:program_id/lessons" => "projects#lessons"
+  get "/portfolio" => "dashboard#portfolio"
+
+  # get "/api/v1/portfolio/programs" => "projects#index"
+  # get "/api/v1/portfolio/programs/:program_id/projects" => "projects#projects"
+  # get "/api/v1/portfolio/programs/:program_id/tasks" => "projects#tasks"
+  # get "/api/v1/portfolio/programs/:program_id/issues" => "projects#issues"
+  # get "/api/v1/portfolio/programs/:program_id/risks" => "projects#risks"
+  # get "/api/v1/portfolio/programs/:program_id/notes" => "projects#notes"
+  # get "/api/v1/portfolio/programs/:program_id/lessons" => "projects#lessons"
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
@@ -139,6 +141,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/profile', to: 'profiles#index'
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'
