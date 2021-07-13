@@ -24,7 +24,7 @@
     "moment": "^2.26.0",
     "moment-range": "^4.0.2",
     "node-sass": "^4.13.0",
-    "sweet-modal-vue": "^2.0.0",
+    "sweet-modal-vue": "^2.0.0",  
     "v-click-outside": "^3.1.2",
     "v-tooltip": "^2.0.3",
     "vee-validate": "2.1.7",
@@ -58,7 +58,8 @@
   },
   "resolutions": {
     "postcss-svgo/is-svg": "^4.2.2",
-    "serialize-javascript": "^3.1.0"
+    "serialize-javascript": "^3.1.0",
+    "trim-newlines": "^3.0.1"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
