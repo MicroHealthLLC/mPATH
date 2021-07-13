@@ -69,7 +69,7 @@ function programSelectChange(element){
 
 function initializeProjectPrivilegeSelect2(){
 
-  $.map($(".project_selection_input"), function(element){
+  $.map($(".facility_privileges_project_select"), function(element){
     let selectedData = []
     if($(element).attr("data-selected")){
       selectedData = JSON.parse($(element).attr("data-selected"))
