@@ -17,6 +17,7 @@ class Issue < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
+  enum status: %i[draft on_hold overdue in_progress planned completed]
 
   amoeba do
     include_association :issue_type
@@ -85,8 +86,7 @@ class Issue < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
-      :on_hold, 
-      :draft, 
+      :status,
       issue_files: [],
       user_ids: [],
       sub_task_ids: [],
@@ -146,7 +146,7 @@ class Issue < ApplicationRecord
     end
 
     fp = self.facility_project
-    
+
     t_users = options[:all_issue_users] || []
     all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :issue_index].include?(options[:for])
@@ -162,35 +162,38 @@ class Issue < ApplicationRecord
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
 
-    p_users = [] 
+    p_users = []
     if all_users.any?
       p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
       p_users = users.select(&:active?) #User.where(id: resource_user_ids).active
     end
 
-    users_hash = {} 
+    users_hash = {}
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     # Last name values added for improved sorting in datatables
-    users_last_name_hash = {} 
+    users_last_name_hash = {}
     p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
     # First name values added for improved sorting in datatables
-    users_first_name_hash = {} 
+    users_first_name_hash = {}
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
-    if(progress >= 100)
-      progress_status = "completed"
-    end
 
-    is_overdue = false
-    if !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    if progress >= 100
+      progress_status = "completed"
+      self.completed!
+    elsif progress < 100 && (due_date.present? && due_date < Date.today)
+      self.overdue!
+    elsif start_date > Date.today
+      self.planned!
+    elsif start_date < Date.today
+      self.in_progress!
     end
 
     task_type_name = self.task_type&.name
@@ -198,7 +201,6 @@ class Issue < ApplicationRecord
       class_name: self.class.name,
       progress_status: progress_status,
       attach_files: attach_files,
-      is_overdue: is_overdue,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
@@ -208,10 +210,7 @@ class Issue < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       user_ids: p_users.map(&:id).compact.uniq,
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
-      on_hold: on_hold, 
-      draft: draft, 
-
-      
+      status: status,
 
       # Add RACI user name
       # Last name values added for improved sorting in datatables
@@ -221,13 +220,13 @@ class Issue < ApplicationRecord
       accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
       accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
       accountable_users_first_name: accountable_user_ids.map{|id| users_first_name_hash[id] }.compact,
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact, 
-      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact,
 
 
      # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
-      accountable_user_ids: accountable_user_ids,  
+      accountable_user_ids: accountable_user_ids,
       consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids,
 
@@ -335,7 +334,7 @@ class Issue < ApplicationRecord
           c.progress_lists.each do |p|
             p.user_id = user.id
           end
-          c.save       
+          c.save
         end
         Checklist.import(checklist_objs) if checklist_objs.any?
       end
@@ -420,9 +419,9 @@ class Issue < ApplicationRecord
       end
       users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
     end
-    
+
     records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
-    
+
     if users_to_delete.any?
       resource_users.where(user_id: users_to_delete).destroy_all
     end

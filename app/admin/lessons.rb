@@ -80,6 +80,13 @@ ActiveAdmin.register Lesson do
         "<span>#{lesson.facility&.facility_name}</span>".html_safe
       end
     end
+    column "Added By", :users, sortable: 'users.first_name' do |lesson|
+      if current_user.admin_write?
+        lesson.user
+      else
+        "<span>#{lesson.user.full_name}</span>".html_safe
+      end
+    end
     column 'Lesson Details' do |lesson|
       links = []
       if lesson.lesson_details.select{|ld| ld.detail_type == 'success'}.any?
@@ -202,7 +209,7 @@ ActiveAdmin.register Lesson do
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true}
+  filter :user, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true, id: 'q_user_id'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   
 end
