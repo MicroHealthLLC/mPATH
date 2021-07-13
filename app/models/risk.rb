@@ -268,7 +268,7 @@ class Risk < ApplicationRecord
     if progress >= 100
       progress_status = "completed"
       self.completed!
-    elsif progress < 100 && (due_date < Date.today)
+    elsif progress < 100 && (due_date.present? && due_date < Date.today)
       self.overdue!
     elsif start_date > Date.today
       self.planned!
