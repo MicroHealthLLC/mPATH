@@ -36,7 +36,7 @@ ActiveAdmin.register Lesson do
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
-    column :title
+    column 'Name', :title
     column "Category", :task_type, nil, sortable: 'task_types.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.task_type.name}", "#{edit_admin_task_type_path(lesson.task_type)}" if lesson.task_type.present?
@@ -200,7 +200,7 @@ ActiveAdmin.register Lesson do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Lessons"
   end
 
-  filter :title
+  filter :title, label: 'Name'
   filter :lesson_details_finding, as: :string, label: 'Finding'
   filter :lesson_details_recommendation, as: :string, label: 'Recommendation'
 
