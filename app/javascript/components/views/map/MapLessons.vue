@@ -169,7 +169,6 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      debugger;
       return this.$currentUser.role == "superadmin" || fPrivilege.lessons.includes(s); 
     },
     addLesson() {
