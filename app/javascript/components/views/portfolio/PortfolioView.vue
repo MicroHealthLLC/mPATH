@@ -12,7 +12,7 @@
    </span>
   </div>
   <el-tabs class="mt-1 mr-3 " type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="PORTFOLIO VIEWER" class="p-3" :load="log(filterOutWatched.length)">
+  <el-tab-pane label="PORTFOLIO VIEWER" class="p-3">
      <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
        <!-- TASKS -->
      <el-tab-pane class="px-3 pt-0" >
@@ -24,21 +24,21 @@
                 <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
-             <div class="row pt-2">          
-
-            
+             <div class="row pt-2" :load="log(C_programNameFilter.length)">              
              <div class="col-3 text-center py-0">
-                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
-                <el-select                                  
-                    class="w-100"                    
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Filter by Program"
+                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                <el-select     
+                    v-model="C_programNameFilter"                               
+                     class="w-100" 
+                     track-by="name" 
+                     multiple                                                                                                                                                                    
+                    placeholder="Filter By Program"
                   >
                   <el-option                   
-                     value="NEED DATA"                                                                             
+                    v-for="item, index in C_programNames"                                            
+                    :value="item"   
+                    :key="index"
+                    :label="item"                                                                          
                     >
                   </el-option>
                   </el-select> 
@@ -144,11 +144,11 @@
             <span class="count mt-3"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ tasksObj.length}}</button></span>   
                 
       
-        <div data-cy="tasks_table">
-          <table class="table table-sm mt-5 stickyTableHeader table-bordered">
-           
-            <thead style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('program_name')" >Program Name
+        <div class="xTable" style="overflow-x:auto;">
+          <table class="table table-sm mt-5 stickyTableHeader table-bordered">           
+          
+              <thead style="background-color:#ededed;">
+              <th class="sort-th twenty" @click="sort('program_name')" >Program Name
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'program_name'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'program_name'">
@@ -160,7 +160,7 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'program_name'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="sort-th" @click="sort('project_name')">Project Name
+              <th class="sort-th twenty" @click="sort('project_name')">Project Name
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== ''">
                  <i class="fas fa-sort"></i></span>
                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'project_name'">
@@ -173,7 +173,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class="pl-1 sort-th" @click="sort('text')">Task
+              <th class="pl-1 sort-th twenty" @click="sort('text')">Task
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'text'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'text'">
@@ -185,7 +185,7 @@
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="pl-1 sort-th" @click="sort('category')">Category
+              <th class="pl-1 sort-th twenty" @click="sort('category')">Category
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
@@ -197,12 +197,38 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+               <th class="sort-th" style="min-width:175px" @click="sort('due_date')">Due Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
               <th class="sort-th p-1">
                  <span class="py-2 d-inline-block">Assigned Users</span>
 
 
               </th>
-              <th class="sort-th" @click="sort('progress')">Progress
+              <th class="sort-th" style="min-width:175px" @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -215,10 +241,10 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th'>Flags
+              <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
+              <th class="sort-th twenty" @click="sort('notesUpdatedAt')" style="min-width:300px">Last Update
                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
@@ -231,24 +257,27 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-            </thead>
+              </thead>
          <tbody>
         <tr v-for="task, index in sortedTasks" :key="index">
         <td>{{ task.program_name }}</td>
         <td>{{ task.project_name }}</td>
         <td>{{ task.text }}</td>
         <td>{{ task.category }}</td>
+          <td>{{ task.start_date}}</td>
+            <td>{{ task.due_date }}</td>
         <td> {{ task.users }} </td>   
-        <td> {{ task.progress }} </td>
+        <td> {{ task.progress + '%' }} </td>
         <td class="text-center">
-            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
-            <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
-            <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-if="task.is_overdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
             <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+            <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+           
             <span v-if="
                       task.important == false &&
                       task.reportable == false &&
@@ -398,20 +427,22 @@
 
             
              <div class="col-3 text-center py-0">
-                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
-                <!-- <el-select                                  
-                    class="w-100"                    
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Filter by Program"
+                  <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                <el-select     
+                   v-model="C_programNameFilter"                                 
+                     class="w-100" 
+                     track-by="name" 
+                     multiple                                                                                                                                                                    
+                    placeholder="Filter By Program"
                   >
-                  <el-option 
-                    value="NEED DATA"                                                                              
+                  <el-option                   
+                    v-for="item, index in C_programNames"                                            
+                    :value="index"   
+                    :key="index"
+                    :label="item"                                                                          
                     >
                   </el-option>
-                  </el-select>  -->
+                  </el-select> 
               </div>           
               
                 <div class="col-6 text-center pt-2">
@@ -504,11 +535,11 @@
             <span class="count mt-3"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ issuesObj.length}}</button></span>   
                 
       
-        <div data-cy="issues_table">
+        <div class="xTable" style="overflow-x:auto;">
           <table class="table table-sm mt-5 stickyTableHeader table-bordered">
            
             <thead style="background-color:#ededed;">
-              <th class="sort-th" @click="sortI('program_name')" >Program Name
+              <th class="sort-th twenty" @click="sortI('program_name')" >Program Name
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'program_name'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'program_name'">
@@ -520,7 +551,7 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'program_name'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="sort-th" @click="sortI('project_name')">Project Name
+              <th class="sort-th twenty" @click="sortI('project_name')">Project Name
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== ''">
                  <i class="fas fa-sort"></i></span>
                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'project_name'">
@@ -533,7 +564,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class="pl-1 sort-th" @click="sortI('title')">Issue
+              <th class="pl-1 sort-th twenty" @click="sortI('title')">Issue
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
@@ -557,10 +588,36 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+              <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+               <th class="sort-th" style="min-width:175px" @click="sort('due_date')">Due Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
               <th class="sort-th p-1">
                  <span class="py-2 d-inline-block">Assigned Users</span>
               </th>
-              <th class="sort-th" @click="sortI('progress')">Progress
+              <th class="sort-th" style="min-width:175px" @click="sortI('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -573,10 +630,10 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th'>Flags
+              <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" @click="sortI('notesUpdatedAt')">Last Update
+              <th class="sort-th" style="min-width:300px" @click="sortI('notesUpdatedAt')">Last Update
                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
@@ -596,17 +653,20 @@
         <td>{{ issue.project_name }}</td>
         <td>{{ issue.title }}</td>
         <td>{{ issue.issue_type }}</td>
+        <td> {{ issue.start_date }} </td>   
+        <td> {{ issue.due_date }} </td>   
         <td> {{ issue.users }} </td>   
-        <td> {{ issue.progress }} </td>
+        <td> {{ issue.progress + '%' }} </td>
         <td class="text-center">
-            <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
-            <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
-            <span v-if="issue.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+            
             <span v-if="issue.is_overdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
  
             <span v-if="issue.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+            <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="issue.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-if="
                       issue.important == false &&
                       issue.reportable == false &&
@@ -756,21 +816,22 @@
 
             
              <div class="col-3 text-center py-0">
-                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
-                <!-- <el-select                                  
-                    class="w-100" 
-                   
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Filter by Program"
+                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                <el-select     
+                    v-model="C_programNameFilter"                                
+                     class="w-100" 
+                     track-by="name" 
+                     multiple                                                                                                                                                                    
+                    placeholder="Filter By Program"
                   >
                   <el-option                   
-                     value="NEED DATA"                                                                             
+                    v-for="item, index in C_programNames"                                            
+                    :value="index"   
+                    :key="index"
+                    :label="item"                                                                          
                     >
                   </el-option>
-                  </el-select>  -->
+                  </el-select> 
               </div>           
               
                 <div class="col-6 text-center pt-2">
@@ -873,11 +934,11 @@
             <span class="count mt-3"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ risksObj.length}}</button></span>   
                 
       
-        <div data-cy="tasks_table">
+        <div class="xTable" style="overflow-x:auto;">
           <table class="table table-sm mt-5 stickyTableHeader table-bordered">
            
             <thead style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('program_name')" >Program Name
+              <th class="sort-th twenty" @click="sort('program_name')" >Program Name
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'program_name'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'program_name'">
@@ -889,7 +950,7 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'program_name'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="sort-th" @click="sort('project_name')">Project Name
+              <th class="sort-th twenty" @click="sort('project_name')">Project Name
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== ''">
                  <i class="fas fa-sort"></i></span>
                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'project_name'">
@@ -902,7 +963,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class="pl-1 sort-th" @click="sort('text')">Risk
+              <th class="pl-1 sort-th twenty" @click="sort('text')">Risk
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'text'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'text'">
@@ -926,12 +987,38 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+              <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'start_date'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+               <th class="sort-th" @click="sort('due_date')">Risk Approach Due Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'due_date'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
               <th class="sort-th p-1">
                  <span class="py-2 d-inline-block">Assigned Users</span>
 
 
               </th>
-              <th class="sort-th" @click="sort('progress')">Progress
+              <th class="sort-th" style="min-width:175px" @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -944,10 +1031,10 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th'>Flags
+              <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
+              <th class="sort-th" style="min-width:300px" @click="sort('notesUpdatedAt')">Last Update
                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
@@ -967,17 +1054,20 @@
         <td>{{ risk.project_name }}</td>
         <td>{{ risk.text }}</td>
         <td>{{ risk.category }}</td>
+         <td>{{ risk.start_date }}</td>
+        <td> {{ risk.due_date }} </td>   
         <td> {{ risk.users }} </td>   
         <td> {{ risk.progress }} </td>
         <td class="text-center">
-            <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
-            <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
-            <span v-if="risk.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
             <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+            <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="risk.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+            
             <span v-if="
                       risk.important == false &&
                       risk.reportable == false &&
@@ -1027,99 +1117,166 @@
        </div>
                
      </el-tab-pane>
-    <el-tab-pane disabled class="p-3">
+        <el-tab-pane class="px-3 pt-0">  
           <template slot="label" class="text-right">
-           LESSONS LEARNED (Coming Soon)
+          LESSONS LEARNED
            <span class="badge badge-secondary badge-pill">
-           14
+           <span v-if="issuesObj">{{ portfolioLessons.length }}</span>
           </span>   
-          </template>
-           <div class="row pt-2 text-center w-50">          
-                <div class="pb-0 pl-2 pr-4 mb-0">                  
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
-                  <span class="smallerFont">COMPLETE</span>
-                   <h5 class="d-block">12</h5>  
-                </div>
-            
-                 <div class="py-0 px-4 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
-                     <span class="smallerFont">DRAFTS</span>   
-                       <h5 class="d-block">6</h5>              
-                </div>             
-              </div>
+          </template>    
+    
+      <div class="row text-center mt-2" v-if="issuesObj !== null">            
+            <span class="count mt-3"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ lessonsObj.length}}</button></span>   
+                
       
-    <!-- LESSONS LEARNED TABLE -->
-        <div class="row text-center mt-2" v-if="programObj !== null">      
-          <el-table
-          :data="programObj"
-          border
-          class="mt-4"
-          style="width: 100%">
-          <el-table-column
-            fixed
-            prop="name"
-            sortable
-            label="Program"
-            width="250">
-          </el-table-column>
-          <el-table-column
-            prop="project"
-            label="Project"
-            fixed
-            sortable
-            width="250">
-          </el-table-column>
-          <el-table-column
-            prop="lesson"
-            sortable
-            fixed
-            label="Lessons Learned"
-            width="250">
-          </el-table-column>
-          <el-table-column
-            prop="date"
-            label="Date"
-            sortable
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="addeBy"
-            label="Added By"
-            sortable
-            width="200">
-          </el-table-column>
-          <el-table-column
-            prop="description"
-            label="Description"
-            sortable
-            width="300">
-          </el-table-column>
-          <el-table-column
-            prop="flags"
-            label="Flags"
-            sortable
-            width="200">
-          </el-table-column>
-          <el-table-column
-            prop="lastUpdate"
-            label="Last Update"
-            sortable
-            fixed="right"
-            width="250">
-          </el-table-column>
-          <!-- <el-table-column
-            fixed="right"
-            label="Operations"
-            width="120"> -->
-            <!-- <template slot-scope="scope">
-              <el-button @click="handleClick" type="text" size="small">Detail</el-button>
-              <el-button type="text" size="small">Edit</el-button>
-            </template> -->
-          <!-- </el-table-column> -->
-          </el-table>             
-        </div>        
+        <div data-cy="issues_table">
+          <table class="table table-sm mt-5 stickyTableHeader table-bordered">
+           
+            <thead style="background-color:#ededed;">
+              <th class="sort-th" @click="sortL('program_name')">Program Name
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'program_name'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="sort-th" @click="sortL('project_name')">Project Name
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== ''">
+                 <i class="fas fa-sort"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-down"></i></span>
 
-     </el-tab-pane>
+              </th>
+              <th class="pl-1 sort-th" @click="sortL('title')">Lessons Learned
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="pl-1 sort-th" @click="sortL('issue_type')">Issue Type
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_type'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="sort-th p-1">
+                 <span class="py-2 d-inline-block">Assigned Users</span>
+              </th>
+              <th class="sort-th" @click="sortL('progress')">Progress
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+              
+              <th class="sort-th" @click="sortL('notesUpdatedAt')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+            </thead>
+         <tbody>
+        <tr v-for="lesson, index in sortedLessons" :key="index">
+        <td>{{ lesson.program_name }}</td>
+        <td>{{ lesson.project_name }}</td>
+        <td>{{ lesson.title }}</td>
+        <td>{{ lesson.issue_type }}</td>
+        <td> {{ lesson.users }} </td>   
+        <td> {{ lesson.progress }} </td>
+        <!-- <td class="text-center">
+            <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+            <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="issue.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+            <span v-if="issue.is_overdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+            <span v-if="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+ 
+            <span v-if="issue.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+            <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="
+                      issue.important == false &&
+                      issue.reportable == false &&
+                      issue.watched == false &&
+                      issue.isOverdue == false &&
+                      issue.onHold == false &&  
+                      issue.draft == false && 
+                      issue.progress < 100 "             
+                    >
+                  No flags at this time         
+              </span>              
+          </td> -->
+        <!-- <td v-if="issue.last_update !== null">{{issue.last_update.body}}</td>
+        <td v-else>No Update</td> -->
+     
+       
+        </tr>
+        </tbody>
+        </table> 
+          
+          <div class="float-right mb-4 mt-2 font-sm">
+           <div class="simple-select d-inline-block text-right font-sm">
+           <span class="mr-1">Displaying </span>
+            <el-select
+            v-model="C_lessonsPerPage"
+            class="w-33"
+            track-by="value"
+            value-key="id"
+            >
+            <el-option
+              v-for="item in getLessonsPerPageFilterOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+              >
+            </el-option>
+            </el-select>
+           </div> 
+          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+            <button class="btn btn-sm page-btns" @click="prevLessonsPage"><i class="fas fa-angle-left"></i></button>
+            <button class="btn btn-sm page-btns" id="page-count"> {{ currentLessonsPage }} of {{ Math.ceil(this.lessonsObj.length / this.C_lessonsPerPage.value) }} </button>
+            <button class="btn btn-sm page-btns" @click="nextLessonsPage"><i class="fas fa-angle-right"></i></button>
+        </div>
+        </div>
+          </div> 
+      </el-tab-pane>
+  
      </el-tabs>
     <div class="row pt-2">
     <div class="col-6 py-0 pl-0">      
@@ -1151,7 +1308,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Loader from "../../shared/loader.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
@@ -1166,8 +1322,10 @@ export default {
       currentSort:'program_name',
       currentSortDir:'asc',
       currentPage:1,
+      // selectedProgram: this.C_programNameFilter,
       currentIssuesPage:1,
       currentRisksPage:1,
+      currentLessonsPage:1,
 
 
       // 3 Tags for Tasks
@@ -1211,29 +1369,20 @@ export default {
       hideOngoingRisks:false, 
       hidePlannedRisks:false, 
       hideOnholdRisks:false, 
-
-      portfolioData: null,  
-    
-      issuesData: null, 
-      risksData: null, 
       programId: null, 
       programName: null, 
       page: 1,
       pageSize: 10,
-      // tasksRequest: axios.get("/api/v1/portfolio/tasks"),
-      // issuesRequest: axios.get("/api/v1/portfolio/issues"),
-      risksRequest: axios.get("/api/v1/portfolio/risks"),
-      portfolioRequest: axios.get("/api/v1/portfolio/programs.json"),
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
     };
   },
-   mounted() { 
-    //  this.fetchLessonsLearned(),
+   mounted() {     
+     this.fetchPortfolioLessons(),
      this.fetchPortfolioTasks(), 
      this.fetchPortfolioIssues(),
      this.fetchPortfolioRisks()
-  
+    //  this.fetchPortfolioPrograms()  
   },
   computed: {
     ...mapGetters([
@@ -1242,15 +1391,19 @@ export default {
       'getTasksPerPageFilterOptions',
       'getIssuesPerPageFilterOptions',
       'getRisksPerPageFilterOptions',
+      'getLessonsPerPageFilterOptions',
       'getPortfolioImportantTasksToggle', 
-      'getProgramNameFilter',
       'getTasksPerPageFilter',    
       'getIssuesPerPageFilter',  
-      'getRisksPerPageFilter',      
+      'getRisksPerPageFilter', 
+      'getLessonsPerPageFilter',         
       'programNameFilter',
+      'facilityNameFilter',
       'portfolioTasks',
       'portfolioIssues',
-      'portfolioRisks'      
+      'portfolioRisks', 
+      'portfolioLessons',
+      'portfolioPrograms',    
     ]),
    sortedTasks:function() {
           return this.tasksObj.sort((a,b) => {
@@ -1294,22 +1447,26 @@ export default {
           return this.end
         });
     },
-    programObj(){     
-      if (this.portfolioData !== null) {
-      return this.portfolioData
-      }
-    }, 
-    portfolioTaskObj(){      
-         return this.portfolioTasks      
-    },
-    portfolioIssueObj(){      
-         return this.portfolioIssues      
-    },
-    portfolioRiskObj(){      
-         return this.portfolioRisks
+     sortedLessons:function() {
+          return this.lessonsObj.sort((a,b) => {
+          let modifier = 1;
+          if(this.currentSortDir === 'desc') modifier = -1;
+          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+           }).filter((row, index) => {
+          let start = (this.currentLessonsPage-1)*this.C_lessonsPerPage.value;
+          let end = this.currentLessonsPage*this.C_lessonsPerPage.value;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
     },
     tasksObj(){      
-      return this.portfolioTaskObj.filter(task => {
+      return this.portfolioTasks.filter(task => {
+         for (let i = 0;  i < this.C_programNameFilter.length; i++ ) {
+             console.log(i)
+            return task.program_name.includes(this.C_programNameFilter)
+         }
         // Filtering 7 Task States        
         if (this.hideDraftTasks) {
           return !task.draft
@@ -1372,9 +1529,11 @@ export default {
           return task.important + task.reportable + task.watched
         } else return true    
       })
+       
+
     }, 
     issuesObj(){     
-      return this.portfolioIssueObj.filter(issue => {        
+      return this.portfolioIssues.filter(issue => {        
         if (this.hideDraftIssues) {
           return !issue.draft
         } else return true
@@ -1433,7 +1592,7 @@ export default {
 
     }, 
      risksObj(){     
-      return this.portfolioRiskObj.filter(risk => {        
+      return this.portfolioRisks.filter(risk => {        
         if (this.hideDraftRisks) {
           return !risk.draft
         } else return true
@@ -1468,6 +1627,7 @@ export default {
           return risk.progress < 100 && risk.start_date <= this.today
         } else return true
 
+    // Filtering 3 Risks Tags
     }).filter(risk => {
          if (this.hideBriefedRisks && !this.hideWatchedRisks && !this.hideImportantRisks ) {
           return risk.reportable
@@ -1498,10 +1658,9 @@ export default {
         } else return true     
       })
     }, 
-    //  pagedTableData() {
-    //    if (this.tasksObj && this.tasksObj !== undefined)
-    //    return this.tasksObj.slice(this.pageSize * this.page - this.pageSize, this.pageSize * this.page)
-    //  },
+   lessonsObj(){
+     return this.portfolioLessons
+   },
    taskVariation() {
       let planned = _.filter(
         this.portfolioTasks,
@@ -1714,14 +1873,27 @@ export default {
         },     
       };
     },
-    // C_programNames() {
-    //   return this.getProgramNameFilter
-    // },
+    C_programNames() {     
+      // this.portfolioTasks object will need to be replaced by portfolioPrograms obj to ensure accuracy
+      let pN = this.portfolioTasks
+      let programNames = pN.map(n => n.program_name)
+      return [...new Set(programNames)]
+    },
+    C_programNameFilter: {
+      get() {
+        return this.facilityNameFilter
+      },
+      set(value) {
+        this.setFacilityNameFilter(value)
+      }
+    },
     // C_programNameFilter: {
     //   get() {
+    //     console.log(this.programNameFilter)
     //     return this.programNameFilter
     //   },
     //   set(value) {
+    //     // console.log(value)
     //     this.setProgramNameFilter(value)
     //   }
     // },
@@ -1766,6 +1938,22 @@ export default {
         this.setRisksPerPageFilter(value)
        }
      },
+      C_lessonsPerPage: {
+      get() {
+        return this.getLessonsPerPageFilter || {id: 15, name: '15', value: 15}
+      },
+      set(value) {
+        this.setLessonsPerPageFilter(value)
+       }
+     },
+      C_programNameFilter: {
+      get() {
+        return this.facilityNameFilter
+      },
+      set(value) {
+        this.setFacilityNameFilter(value)
+      }
+    },
       C_hideBriefedTasks: {                  
       get() {       
         return this.getPortfolioBriefedTasksToggle                 
@@ -1782,6 +1970,8 @@ export default {
     'setTasksPerPageFilter',
     'setIssuesPerPageFilter',
     'setRisksPerPageFilter',
+    'setLessonsPerPageFilter',
+    'setFacilityNameFilter',
     'setPortfolioBriefedTasksToggle',
     'setPortfolioImportantTasksToggle',
     'setProgramNameFilter'
@@ -1789,7 +1979,10 @@ export default {
    ...mapActions([
       'fetchPortfolioTasks',
       'fetchPortfolioIssues',
-      'fetchPortfolioRisks'
+      'fetchPortfolioRisks',
+      'fetchPortfolioLessons'
+      // 'fetchPortfolioPrograms'
+
      ]),
       sort:function(s) {
       //if s == current sort, reverse
@@ -1830,8 +2023,21 @@ export default {
       prevRisksPage:function() {
         if(this.currentRisksPage > 1) this.currentRisksPage--;
       },
+     sortL:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
+      nextLessonsPage:function() {
+        if((this.currentLessonsPage*this.C_lessonsPerPage.value) < this.lessonsObj.length) this.currentLessonsPage++;
+      },
+      prevLessonsPage:function() {
+        if(this.currentLessonsPage > 1) this.currentLessonsPage--;
+      },
     log(e){
-      // console.log("Name consoleLogged value here" + e)
+      console.log("Portfolio Names Filter Length" + e)
     }, 
   // Toggle for 3 Action Tags
     toggleWatched(){
@@ -1953,23 +2159,6 @@ export default {
     handleClick(tab, event) {
         console.log(tab, event);
     },
-    // programRoute() {      
-    //     return  ;
-    // },
-     facilityGroupProgress(f_group) {
-      let ids = _.map(this.filteredFacilities("active"), "id");
-      let mean =
-        _.meanBy(
-          _.filter(
-            f_group.facilities,
-            (f) =>
-              ids.includes(f.facilityId) &&
-              f.projectId == this.currentProject.id
-          ),
-          "progress"
-        ) || 0;
-      return Number(mean.toFixed(0));
-    },
   },
    watch: {
     $route(to, from) {
@@ -2065,20 +2254,20 @@ ul > li {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 
-/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
-  border-bottom: none !important;
-}
+// /deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+//   border-bottom: none !important;
+// }
 
-/deep/.el-card__body {
-    padding-bottom: 0 !important;
-}
-/deep/.el-collapse-item__header {
-  font-size: 2rem;
-  }
+// /deep/.el-card__body {
+//     padding-bottom: 0 !important;
+// }
+// /deep/.el-collapse-item__header {
+//   font-size: 2rem;
+//   }
 
-/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
-  display: none;
-}
+// /deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+//   display: none;
+// }
 .programName {
   font-variant: small-caps;
 }
@@ -2156,8 +2345,6 @@ th {
   color: lightgray;
 }
   table {
-    table-layout: fixed;
-    width: 100%;
     position: relative;
     margin-bottom: 0 !important;
   }
@@ -2168,8 +2355,7 @@ th {
     justify-content: center;
     left: 15;
     top: 0;
-    width: 100%;
-  }  
+   }  
    .page-btns {
     width: 20px;
     line-height: 1 !important;
@@ -2191,5 +2377,30 @@ th {
     background-color: rgba(211, 211, 211, 10%);
     border:none !important;
  }
+
+ .ten {
+   width: 10%;
+ }
+
+ .fifteen {
+   width: 15%;
+ }
+
+ .twenty {
+   width: 20%;
+ }
+
+//  .xTable { 
+//    overflow-x: auto; 
+//    position: relative;   
+//    }
+
+  //  .xTableInner {
+
+  //  }
+.sort-th {
+  min-width: 225px;
+}
+
 
 </style>
