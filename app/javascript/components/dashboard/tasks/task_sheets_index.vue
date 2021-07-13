@@ -244,7 +244,6 @@
               v-for="task in sortedTasks"           
               class="taskHover"        
               href="#"
-              :load="log(task)"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -403,9 +402,6 @@
       }
         this.currentSort = s;
       },
-      log(e){
-        console.log(e)
-      },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
       },
@@ -432,9 +428,6 @@
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
-      },
-      log(e){
-        console.log(e)
       },
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
