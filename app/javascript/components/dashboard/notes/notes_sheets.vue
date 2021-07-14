@@ -83,7 +83,7 @@
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.notes.includes(s); 
+      return  fPrivilege.notes.includes(s); 
     },
      editNoteMode() {
         if (this.from == "manager_view") {                

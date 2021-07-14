@@ -334,7 +334,6 @@ class User < ApplicationRecord
       #NOTE: hard coding because lesson will go under project level. 
       # Once front end is working with project, do remove this permission.
       # This is used in topLevelNavigation for now 
-      lessons: p.lessons
     }
   end
 

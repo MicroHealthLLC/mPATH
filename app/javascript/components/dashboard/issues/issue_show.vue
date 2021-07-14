@@ -174,7 +174,7 @@
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      return  fPrivilege.issues.includes(s); 
     },
       editIssue() {
         this.DV_edit_issue = this.DV_issue;

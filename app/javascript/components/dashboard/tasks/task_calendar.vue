@@ -477,7 +477,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+        return  fPrivilege.tasks.includes(s); 
       },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 

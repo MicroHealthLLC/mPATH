@@ -95,7 +95,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
+      return  fPrivilege[view].includes(s);
     },
     viewPermit: () => (view, req) => {
       var programId = this.$route.params.programId;
@@ -103,7 +103,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[req]
-      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
+      return  fPrivilege[view].includes(s);
 
       //if (Vue.prototype.$currentUser.role === "superadmin") return true;
       //return Vue.prototype.$permissions[view][req]

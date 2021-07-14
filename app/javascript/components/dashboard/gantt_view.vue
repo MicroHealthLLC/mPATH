@@ -266,7 +266,7 @@
       ]),
       //TODO: change the method name of isAllowed
       _isallowed(salut) {
-        return this.$currentUser.role == "superadmin" || Vue.prototype.$topNavigationPermissions.gantt_view[salut] 
+        return  Vue.prototype.$topNavigationPermissions.gantt_view[salut] 
       },
       hasResourcePermission(salut, resource) {
         var programId = resource.projectId;
@@ -274,7 +274,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+        return  fPrivilege.tasks.includes(s); 
       },
       handleClick({column, data}) {
         if (!this.hasResourcePermission("write", data)) return

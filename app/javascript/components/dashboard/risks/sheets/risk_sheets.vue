@@ -133,7 +133,7 @@
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+      return  fPrivilege.risks.includes(s); 
     },
       deleteRisk() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)

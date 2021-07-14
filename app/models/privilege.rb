@@ -22,8 +22,16 @@ class Privilege < ApplicationRecord
   # NOTE: sequence matters, because we parameters are sending an array and 
   # we are saving it as string.
   before_save :modify_values
-  before_save :assign_default_privilege
+  # before_save :assign_default_privilege
+  validate :check_minimum_privilege
 
+  def check_minimum_privilege
+    fp = self
+    modify_values
+    if !fp.sheets_view.present? && !fp.map_view.present? && !fp.gantt_view.present? && !fp.kanban_view.present? && !fp.calendar_view.present? && !fp.members.present?
+      fp.errors.add(" ", "Please select at least one navigation view in advanced tab.")
+    end
+  end
   #NOTE: As per new privilege setting we are just checking few settings only.
   def assign_default_privilege
     if !self.sheets_view.include?("R") && !self.map_view.include?("R") && !self.gantt_view.include?("R") && !self.kanban_view.include?("R") && !self.calendar_view.include?("R") && !self.members.include?("R") 
