@@ -3,7 +3,7 @@
   <!-- Actual Portfolio name will be dynamic value of organization name   -->
 <div>
 <span> <img class="mb-2" style="width:40px" :src="require('../../../../assets/images/mpathcircles.JPG')" /> 
-<h3 class="d-inline mt-1 programName" >MicroHealth BO Portfolio</h3>
+<h3 class="d-inline mt-1 programName" >{{this.$portfolio_heading}}</h3>
 </span>
    <span class="float-right mr-4">
     <button style="cursor:pointer" @click.prevent="closeWindow">

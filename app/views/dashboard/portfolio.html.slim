@@ -1,9 +1,13 @@
 - content_for :title
-  | Portfolio Viewer
+  | #{ENV['PORTFOLIO_TITLE']}
 
 .mw_10
   #portfolio
 
-  = javascript_pack_tag "portfolio", async: true
+= javascript_tag nonce: true do
+  |var portfolio_heading = "#{ENV['PORTFOLIO_HEADING']}";
+  |var portfolio_title = "#{ENV['PORTFOLIO_TITLE']}";
+
+= javascript_pack_tag "portfolio", async: true
 - if false
   = stylesheet_pack_tag "dashboard"
