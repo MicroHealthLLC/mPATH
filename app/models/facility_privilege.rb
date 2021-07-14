@@ -1,3 +1,6 @@
+
+# NOTE: in facility_project_ids it is saving facility ids
+
 class FacilityPrivilege < ApplicationRecord
   belongs_to :user
   # belongs_to :facility_project

@@ -6,12 +6,15 @@ class FacilityPrivilegesController < AuthenticatedController
     else
       user = User.new
     end
-    
+
     facility_projects = FacilityProject.includes(:facility, :project).where(project_id: project.id)
     user_project_privileg = ProjectPrivilege.where(user_id: user.id).select{|s| s.project_ids.include?(project.id.to_s) }.first
-    facility_privilege = FacilityPrivilege.where(project_id: project.id, user_id: user.id).first
-    if facility_privilege
-      facility_project_ids = facility_privilege.facility_project_ids
+    facility_privileges = FacilityPrivilege.where(project_id: project.id, user_id: user.id)
+    if facility_privileges
+      facility_project_ids = [] 
+      facility_privileges.each{|fp| facility_project_ids << fp.facility_project_ids }
+      
+      facility_project_ids = facility_project_ids.flatten.uniq
 
       @facilities = project.facilities.where.not(id: facility_project_ids )
     else
