@@ -319,15 +319,15 @@
           <el-steps 
             class="exampleOne mt-3" 
             finish-status="success"  
-            :class="{'overSixSteps': taskStages.length >= 6 }" 
-            :active="taskStages.findIndex(stage => stage.id == selectedTaskStage.id)"
+            :class="{'overSixSteps': taskStagesSorted.length >= 6 }" 
+            :active="taskStagesSorted.findIndex(stage => stage.id == selectedTaskStage.id)"
             :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
             v-model="selectedTaskStage"
             track-by="id" 
             value-key="id"
             >    
           <el-step
-            v-for="item in taskStages"
+            v-for="item in taskStagesSorted"
             :key="item.id"                       
             :value="item"        
             style="cursor:pointer"
@@ -347,14 +347,14 @@
             <el-steps
               class="exampleOne"
               finish-status="success"
-              :class="{ overSixSteps: taskStages.length >= 6 }"
+              :class="{ overSixSteps: taskStagesSorted.length >= 6 }"
               :disabled="!_isallowed('write') || !!fixedStage"
               v-model="selectedTaskStage"
               track-by="id"
               value-key="id"
             >
               <el-step
-                v-for="item in taskStages"
+                v-for="item in taskStagesSorted"
                 :key="item.id"
                 :value="item"
                 style="cursor:pointer"
@@ -1191,7 +1191,7 @@
                 class="update-card mb-3"
               >
                 <div class="d-flex justify-content-between">
-                  <label class="font-md">Description</label>
+                  <label class="font-md">Update</label>
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
@@ -1994,6 +1994,10 @@ export default {
       "taskStages",
       "taskTypes",
     ]),
+    taskStagesSorted() {
+      var taskStagesSortedReturn = [...this.taskStages]; 
+      return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
     readyToSave() {
       return (
         this.DV_task &&

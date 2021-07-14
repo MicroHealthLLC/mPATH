@@ -47,8 +47,7 @@
               </div>
               <label class="font-sm mb-0">Project Names</label>
                   <el-select 
-                    v-model="C_facilityNameFilter"   
-                                   
+                    v-model="C_facilityNameFilter" 
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -59,7 +58,8 @@
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames"                                            
+                    v-for="item in C_activeProjectNames" 
+                                                           
                     :value="item"   
                     :key="item.id"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
@@ -835,6 +835,9 @@ export default {
         return str;
       }
     },
+    // log(e){
+    //   console.log("item in " + e)
+    // },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
     },

@@ -1,6 +1,5 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
-import PortfolioView from "./../components/views/portfolio/PortfolioView";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
@@ -131,11 +130,6 @@ export default new VueRouter({
       name: "TeamMembersView",
       path: "/programs/:programId/members",
       component: MembersView,
-    },
-     {
-      name: "PortfolioView",
-      path: "/api/v1/portfolio/programs",    
-      component: PortfolioView,
     },
     {
       name: "SheetView",

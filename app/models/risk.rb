@@ -115,8 +115,9 @@ class Risk < ApplicationRecord
       category: task_type.name,
       is_overdue: is_overdue,
       last_update: self.notes.last&.porfolio_json,
+      notes: notes.as_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
-      users: users.select(&:active?).map(&:full_name).join(",")
+      users: users.select(&:active?).map(&:full_name).join(", ")
     }
 
     self.attributes.merge!(merge_h)
@@ -268,7 +269,7 @@ class Risk < ApplicationRecord
     if progress >= 100
       progress_status = "completed"
       self.completed!
-    elsif progress < 100 && (due_date < Date.today)
+    elsif progress < 100 && (due_date.present? && due_date < Date.today)
       self.overdue!
     elsif start_date > Date.today
       self.planned!
