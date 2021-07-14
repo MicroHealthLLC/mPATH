@@ -59,6 +59,10 @@ if(!window.google){
   })
 }
 
+Vue.prototype.$portfolio_heading = window.portfolio_heading
+Vue.prototype.$portfolio_title = window.portfolio_heading
+
+
 // var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 // Format: {<program_id> : {
     // <project_id>:{
