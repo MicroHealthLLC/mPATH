@@ -6,10 +6,7 @@ const portfolioModule = {
     portfolioBriefedTasksToggle: true,
     portfolioImportantTasksToggle: true,
    
-    program_name_filter: null,
-
-    portfolioPrograms: [],
-    portfolio_programs_loaded: true,
+    programNameFilter: null,
 
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
@@ -22,6 +19,9 @@ const portfolioModule = {
 
     portfolio_lessons: [],
     portfolio_lessons_loaded: true,
+
+    portfolio_programs: [],
+    portfolio_programs_loaded: true,
   }),
   actions: {
     fetchPortfolioPrograms({commit}) {
@@ -36,7 +36,7 @@ const portfolioModule = {
         },
       })
         .then((res) => {
-          // Mutate state with response from back end
+          // Mutate state with response from back end      
           commit("SET_PORTFOLIO_PROGRAMS", res.data);
         })
         .catch((err) => {
@@ -155,14 +155,14 @@ const portfolioModule = {
     SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
-    SET_PROGRAM_NAME_FILTER: (state, filter) => state.program_name_filter = filter,
+    setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
   },
   getters: {
     getPortfolioWatchedTasksToggle: state => state.portfolioWatchedTasksToggle,
     getPortfolioImportantTasksToggle: state => state.portfolioImportantTasksToggle,
     getPortfolioBriefedTasksToggle: state => state.portfolioBriefedTasksToggle, 
     
-    getPortfolioPrograms: state => state.portfolioPrograms, 
+    portfolioPrograms: state => state.portfolio_programs, 
     portfolioProgramsLoaded: state => state.portfolio_programs_loaded,
 
     portfolioTasks: state => state.portfolio_tasks,
@@ -177,7 +177,7 @@ const portfolioModule = {
     portfolioLessons: state => state.portfolio_lessons,
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
 
-    programNameFilter: state => state.program_name_filter,
+    programNameFilter: state => state.programNameFilter,
   },
 };
 

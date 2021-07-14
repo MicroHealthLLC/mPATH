@@ -4,8 +4,8 @@ export default new VueRouter({
   routes: [
      {
       name: "PortfolioView",
-      path: "/api/v1/portfolio/programs",    
-      // path: "/portfolio",    
+      // path: "/api/v1/portfolio/programs",    
+      path: "/portfolio",    
       component: PortfolioView,
     }
   ],

@@ -1,21 +1,21 @@
 <template>
   <div>
-    <tabsbar></tabsbar>
-    <filter-sidebar v-if="contentLoaded"></filter-sidebar>
+    <!-- <tabsbar></tabsbar> -->
+    <!-- <filter-sidebar v-if="contentLoaded"></filter-sidebar> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import Tabsbar from "./../shared/tabsbar";
-import FilterSidebar from "./../shared/filter_sidebar";
+// import Tabsbar from "./../shared/tabsbar";
+// import FilterSidebar from "./../shared/filter_sidebar";
 
 export default {
   name: "Portfolio",
   components: {
-    Tabsbar,
-    FilterSidebar,
+    // Tabsbar,
+    // FilterSidebar,
   },
   mounted() {
     let id = this.$route.params.programId;
