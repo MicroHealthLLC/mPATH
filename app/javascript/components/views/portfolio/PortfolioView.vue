@@ -1625,25 +1625,20 @@ export default {
         });
     },
     tasksObj(){
-      let tasks = []
       return this.portfolioTasks.filter(task => {
         let programName = this.C_programNameFilter.map(t => t.name)
-          if (programName.length > 1) {
-            if (programName.includes(task.program_name)) {
-              return task
-            } else return true
-          } else if (programName.length == 1) {
-            return task.program_name.includes(programName)
-          } else return true
-        }).filter(task => {
-      
+        if (programName.length > 1) {
+          if (programName.includes(task.program_name)) {
+            return task
+          }
+        } else if (programName.length == 1) {
+          return task.program_name.includes(programName)
+        } else return true
+      }).filter(task => {
         // Filtering 7 Task States        
         if (this.hideDraftTasks) {
           return !task.draft
-        } else return true
-
-
-        
+        } else return true        
       }).filter(task => {
          if (this.hideOnholdTasks) {
           return !task.on_hold
@@ -1668,9 +1663,6 @@ export default {
          if (this.hideCompleteTasks) {
           return task.progress < 100
         } else return true
-
-
-
       // Filtering 3 Task Tags
       }).filter(task => {
          if (this.hideBriefedTasks && !this.hideWatchedTasks && !this.hideImportantTasks ) {
