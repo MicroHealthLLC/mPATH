@@ -1208,7 +1208,7 @@ Tab 1 Row Begins here -->
                 class="update-card mb-3"
               >
                 <div class="d-flex justify-content-between">
-                  <label class="font-md">Description</label>
+                  <label class="font-md">Update</label>
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
