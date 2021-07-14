@@ -15,8 +15,8 @@
        <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
        <td class="eight text-center">
          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-         <span v-if="risk.onHold && risk.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
-          <span v-else>
+         <span v-else-if="risk.onHold && risk.dueDate == ''" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+         <span v-else>
          {{formatDate(risk.dueDate)}}
         </span>
        </td>

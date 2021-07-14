@@ -209,7 +209,7 @@
                selectedEvent.end == '2099-01-01'" class="mr-2">
               <i class="far fa-retweet text-success mr-1"></i>
                 </span> 
-                <span v-if="selectedEvent.isOnHold == true && 
+                <span v-else-if="selectedEvent.isOnHold == true && 
                selectedEvent.end == null" class="mr-2">
               <i class="fas fa-pause-circle mr-1 text-primary"></i>
                 </span>     
