@@ -94,8 +94,20 @@ export default {
     'setIssueTypeFilter',
     'setIssueSeverityFilter',
     ]),
+
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+    },
+
     handleAddNew(stage) {
-      if (!this.viewPermit(this.currentTab, "write")) return;
+      // if (!this.viewPermit(this.currentTab, "write")) return;
+      if(!this._isallowed('write')) return;
 
       // Route to new issue form page
       this.$router.push({
