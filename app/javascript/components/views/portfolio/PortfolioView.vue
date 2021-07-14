@@ -1624,16 +1624,17 @@ export default {
           return this.end
         });
     },
-    tasksObj(){      
+    tasksObj(){
+      let tasks = []
       return this.portfolioTasks.filter(task => {
-        //  filter(task => {
-           if (this.C_programNameFilter.length > 0) {        
-          let programName = this.C_programNameFilter.map(t => t.name)
-          // let p = this.portfolioPrograms.map(t => t.name)
-          // if (p == programName)       
-          return task.program_name.includes(programName)
-        } else return true
-             // Filter by Program
+        let programName = this.C_programNameFilter.map(t => t.name)
+          if (programName.length > 1) {
+            if (programName.includes(task.program_name)) {
+              return task
+            } else return true
+          } else if (programName.length == 1) {
+            return task.program_name.includes(programName)
+          } else return true
         }).filter(task => {
       
         // Filtering 7 Task States        
