@@ -56,7 +56,7 @@
          </td>  
         <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)">        
-           {{moment(risk.notesUpdatedAt[risk.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
+           {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
            </span>
            <br> 
            <span class="truncate-line-five">

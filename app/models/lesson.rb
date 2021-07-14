@@ -64,7 +64,7 @@ class Lesson < ApplicationRecord
         full_name: user.full_name
       },
       last_update: latest_update,
-      notes: [],
+      notes: notes.as_json,
       added_by: user.full_name,
       project_name: facility.facility_name, 
       program_name: project.name, 
@@ -144,7 +144,7 @@ class Lesson < ApplicationRecord
     s_tasks = []
     s_issues = []
     s_risks = []
-    s_notes = notes.sort{|n| n.created_at }
+    s_notes = notes.sort{|n| n.created_at && n.created_by }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
     self.as_json.merge(

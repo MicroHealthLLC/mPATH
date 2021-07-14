@@ -261,16 +261,16 @@
               <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th twenty" @click="sort('notesUpdatedAt')" style="min-width:300px">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
+              <th class="sort-th twenty" @click="sort('notes_updated_at')" style="min-width:300px">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
@@ -310,7 +310,7 @@
           </td>
          <td class="text-left" v-if="(task.notes_updated_at.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.full_name)">              
-          {{moment(task.notes_updated_at[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
+          {{moment(task.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
             <span>
@@ -677,16 +677,16 @@
               <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" style="min-width:300px" @click="sortI('notesUpdatedAt')">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
+              <th class="sort-th" style="min-width:300px" @click="sortI('notes_updated_at')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
@@ -724,7 +724,7 @@
           </td>
            <td class="text-left" v-if="(issue.notes_updated_at.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.full_name)">              
-          {{moment(issue.notes_updated_at[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
+          {{moment(issue.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
             <span>
@@ -1022,16 +1022,16 @@
               <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" style="min-width:300px" @click="sort('notesUpdatedAt')">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
+              <th class="sort-th" style="min-width:300px" @click="sort('notes_updated_at')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
@@ -1073,7 +1073,7 @@
 
           <td class="text-left" v-if="(risk.notes_updated_at.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.full_name)">              
-          {{moment(risk.notes_updated_at[risk.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
+          {{moment(risk.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
             <span>
@@ -1342,7 +1342,20 @@
               </th>
               <th style="min-width:200px">
                 Flags
-              </th>              
+              </th>  
+                 <th class="sort-th" style="min-width:300px" @click="sort('notes_updated_at')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>            
             </thead>
          <tbody>
         <tr v-for="lesson, index in sortedLessons" :key="index">
@@ -1373,6 +1386,19 @@
                   No flags at this time         
               </span>              
           </td>
+             <td class="text-left" v-if="(lesson.notes_updated_at.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + lesson.notes[lesson.notes.length - 1].user.full_name)">              
+          {{moment(lesson.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
+            </span>
+            <br> 
+            <span>
+              {{lesson.notes[lesson.notes.length - 1].body}}
+            </span>
+           
+        </td>       
+        <!-- <td v-else class="twentyTwo">No Updates</td> -->
+        <td  class="text-left" v-else>No Update</td>
+     
         <!-- <td> {{ lesson.progress }} </td> -->
   
        
@@ -1624,25 +1650,16 @@ export default {
           return this.end
         });
     },
-    tasksObj(){      
-      return this.portfolioTasks.filter(task => {
-        //  filter(task => {
-           if (this.C_programNameFilter.length > 0) {        
-          let programName = this.C_programNameFilter.map(t => t.name)
-          // let p = this.portfolioPrograms.map(t => t.name)
-          // if (p == programName)       
-          return task.program_name.includes(programName)
-        } else return true
-             // Filter by Program
-        }).filter(task => {
-      
-        // Filtering 7 Task States        
+    tasksObj(){
+      return this.portfolioTasks.filter(task => { 
+         if (this.C_programNameFilter.length > 0) {
+          let programNames = this.C_programNameFilter.map((program) => program.name);
+          return programNames.includes(task.program_name);
+        } else return true;   
+         // Filtering 7 Task States        
         if (this.hideDraftTasks) {
           return !task.draft
-        } else return true
-
-
-        
+        } else return true        
       }).filter(task => {
          if (this.hideOnholdTasks) {
           return !task.on_hold
@@ -1667,9 +1684,6 @@ export default {
          if (this.hideCompleteTasks) {
           return task.progress < 100
         } else return true
-
-
-
       // Filtering 3 Task Tags
       }).filter(task => {
          if (this.hideBriefedTasks && !this.hideWatchedTasks && !this.hideImportantTasks ) {
@@ -1705,7 +1719,12 @@ export default {
       })
     }, 
     issuesObj(){     
-      return this.portfolioIssues.filter(issue => {        
+      return this.portfolioIssues.filter(issue => {    
+      if (this.C_programNameFilter.length > 0) {
+          let programNames = this.C_programNameFilter.map((program) => program.name);
+          return programNames.includes(issue.program_name);
+        } else return true;   
+     }).filter(issue => {
         if (this.hideDraftIssues) {
           return !issue.draft
         } else return true
@@ -1759,17 +1778,19 @@ export default {
          } if (this.hideImportantIssues && this.hideBriefedIssues  && this.hideWatchedIssues) {
           return issue.important + issue.reportable + issue.watched
         } else return true   
-        
-          // Filter by Program
-        }).filter(issue => {
-         if (this.C_programNameFilter.length > 0) {
-         let programName = this.C_programNameFilter.map(t => t.name)
-          return issue.program_name.includes(programName)
-        } else return true
-      })
+        })
     }, 
      risksObj(){     
-      return this.portfolioRisks.filter(risk => {        
+      return this.portfolioRisks.filter(risk => { 
+     let programName = this.C_programNameFilter.map(t => t.name)
+        if (programName.length > 1) {
+          if (programName.includes(risk.program_name)) {
+            return risk
+          }
+        } else if (programName.length == 1) {
+          return risk.program_name.includes(programName)
+        } else return true
+     }).filter(risk => {       
         if (this.hideDraftRisks) {
           return !risk.draft
         } else return true
@@ -1834,16 +1855,19 @@ export default {
           return risk.important + risk.reportable + risk.watched
         } else return true   
 
-          // Filter by Program
-        }).filter(risk => {
-         if (this.C_programNameFilter.length > 0) {
-         let programName = this.C_programNameFilter.map(t => t.name)
-          return risk.program_name.includes(programName)
-        } else return true
-      })
+       })
     }, 
     lessonsObj(){      
       return this.portfolioLessons.filter(lesson => {
+     let programName = this.C_programNameFilter.map(t => t.name)
+        if (programName.length > 1) {
+          if (programName.includes(lesson.program_name)) {
+            return lesson
+          }
+        } else if (programName.length == 1) {
+          return lesson.program_name.includes(programName)
+        } else return true
+     }).filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.hideDraftLessons) {
           return !lesson.draft
@@ -1892,13 +1916,7 @@ export default {
        } if (this.hideImportantLessons && this.hideBriefedLessons && this.hideWatchedLessons) {
           return lesson.important + lesson.reportable + lesson.watched
         } else return true          
-        
-          // Filter by Program
-        }).filter(lesson => {
-        if (this.C_programNameFilter.length > 0) {
-         let programName = this.C_programNameFilter.map(t => t.name)
-          return lesson.program_name.includes(programName)
-        } else return true
+            
       })
     }, 
     taskVariation() {
@@ -2175,6 +2193,15 @@ export default {
     C_programNames() {     
       return this.portfolioPrograms
      },
+    C_programIssuesNameFilter: {
+      get() {
+        return this.programNameFilter
+      },
+      set(value) {
+        // console.log(value)
+        this.setProgramNameFilter(value)
+      }
+    },
     C_programNameFilter: {
       get() {
         return this.programNameFilter
