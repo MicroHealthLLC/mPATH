@@ -174,7 +174,7 @@ export default {
     },
     isAllowed() {
       return (salut) =>
-        this.$currentUser.role == "superadmin" ||
+        
         this.$permissions.lessons[salut];
     },
   },

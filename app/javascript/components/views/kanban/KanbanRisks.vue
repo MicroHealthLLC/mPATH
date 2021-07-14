@@ -100,7 +100,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+      return  fPrivilege.risks.includes(s); 
     },
 
     handleAddNew(stage) {
