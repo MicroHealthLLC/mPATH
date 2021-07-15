@@ -48,21 +48,13 @@
             </span>
               
         </td>
-        <td class="twentyTwo" v-if="task.notes.length > 0">
-          <span v-if="(task.notesUpdatedAt.length) >= 2" >   
-          <span  class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)" >
-          {{moment(task.notesUpdatedAt[task.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
-           <br>
-          </span>     
-            {{task.notes[task.notes.length - 1].body}}
-          </span>
-         <span v-if="(task.notesUpdatedAt.length) === 1" >   
-          <span  class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)" >
-          {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
-               <br>
-          </span>     
-            {{task.notes[task.notes.length - 1].body}}
-          </span>
+          <td class="twentyTwo" v-if="task.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
+          {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{task.lastUpdate.body}}
+          </span>         
         </td>  
          <td class="twentyTwo" v-else >No Updates</td>     
       </tr>

@@ -204,6 +204,7 @@ class Task < ApplicationRecord
     in_progress = false
     in_progress = true if !draft && !on_hold && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today
 
+    sorted_notes = notes.sort_by(&:created_at).reverse
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -215,8 +216,9 @@ class Task < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
-      notes: notes.as_json,
-      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      notes: sorted_notes.as_json,
+      notes_updated_at: sorted_notes.map(&:created_at).uniq,
+      last_update: sorted_notes.first.as_json,
       important: important,
       reportable: reportable,
       is_overdue: is_overdue,

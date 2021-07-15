@@ -8,7 +8,7 @@
     <div class="row pt-2">
       <div class="col-6 py-0 pl-0">
         <span v-if="contentLoaded">
-          <h4 v-if="isMapView" :load="log(programLessons)" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
+          <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
          <h3 v-if="contentLoaded" class="d-inline">
@@ -1323,13 +1323,16 @@ export default {
     },
   },
   methods: {
+      ...mapActions([
+     'fetchProgramLessons'
+     ]), 
 
     showLessToggle() {
       this.showLess = "Show Less";
     },
-    log(e){
-      // console.log("this is Lessons" + e)
-    },
+    // log(e){
+    //   console.log("this is Lessons" + e)
+    // },
     handleClick(tab, event) {
         console.log(tab, event);
     },
@@ -1347,6 +1350,9 @@ export default {
         ) || 0;
       return Number(mean.toFixed(0));
     },
+  },
+  mounted() {
+    this.fetchProgramLessons()
   },
 };
 </script>

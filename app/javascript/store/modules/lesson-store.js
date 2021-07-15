@@ -5,29 +5,35 @@ const lessonModule = {
     lesson: {}, // Current lesson loaded in form
     project_lessons: [],
     program_lessons: [],
+    program_lessons_loaded: true,
     lesson_stages: [],
     lessons_loaded: true,
     lesson_status: 0,
   }),
   actions: {
-    fetchProgramLessons({ commit }, { programId }) {
+    fetchProgramLessons({ commit }) {
+      commit("TOGGLE_PROGRAM_LESSONS_LOADED", false);
       // Send GET request for all lessons contained within a program
       axios({
         method: "GET",
-        url: `/api/v1/programs/${programId}/lessons.json`,
+        url: `/api/v1/portfolio/lessons`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          console.log(res);
+          console.log("this is portfolio lessoons" + JSON.stringify(res.data));
           // Mutate state with response from back end
+          commit("SET_PROGRAM_LESSONS", res.data);
         })
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+
+          commit("TOGGLE_PROGRAM_LESSONS_LOADED", true);
+        });
     },
     fetchProjectLessons({ commit }, { programId, projectId }) {
       commit("TOGGLE_LESSONS_LOADED", false);
