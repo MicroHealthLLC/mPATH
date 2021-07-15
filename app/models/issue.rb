@@ -198,6 +198,8 @@ class Issue < ApplicationRecord
     end
 
     task_type_name = self.task_type&.name
+    sorted_notes = notes.sort_by(&:created_at).reverse
+
     self.as_json.merge(
       class_name: self.class.name,
       progress_status: progress_status,
@@ -232,8 +234,9 @@ class Issue < ApplicationRecord
       informed_user_ids: informed_user_ids,
 
       checklists: checklists.as_json,
-      notes: notes.as_json,
-      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      notes: sorted_notes.as_json,
+      notes_updated_at: sorted_notes.map(&:created_at).uniq,
+      last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
       project_id: fp.try(:project_id),

@@ -275,7 +275,9 @@ class Risk < ApplicationRecord
       self.planned!
     elsif start_date < Date.today
       self.in_progress!
-    end
+    end 
+
+    sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(
       priority_level_name: priority_level_name,
@@ -322,8 +324,9 @@ class Risk < ApplicationRecord
       # Risk Approver user ids
       risk_approver_user_ids: risk_approver_user_ids,
 
-      notes: notes.as_json,
-      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      notes: sorted_notes.as_json,
+      notes_updated_at: sorted_notes.map(&:created_at).uniq,
+      last_update: sorted_notes.first.as_json,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
