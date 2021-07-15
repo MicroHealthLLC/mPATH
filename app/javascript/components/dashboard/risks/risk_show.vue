@@ -27,6 +27,7 @@
                      risk.ongoing == false && 
                      risk.watched == false &&
                      risk.isOverdue == false &&
+                     risk.important == false && 
                      risk.reportable == false &&
                      risk.onHold == false &&  
                      risk.draft == false && 
