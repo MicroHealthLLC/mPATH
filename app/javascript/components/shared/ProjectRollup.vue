@@ -1323,12 +1323,15 @@ export default {
     },
   },
   methods: {
+      ...mapActions([
+     'fetchProgramLessons'
+     ]), 
 
     showLessToggle() {
       this.showLess = "Show Less";
     },
     log(e){
-      // console.log("this is Lessons" + e)
+      console.log("this is Lessons" + e)
     },
     handleClick(tab, event) {
         console.log(tab, event);
@@ -1347,6 +1350,9 @@ export default {
         ) || 0;
       return Number(mean.toFixed(0));
     },
+  },
+  mounted() {
+    this.fetchProgramLessons()
   },
 };
 </script>
