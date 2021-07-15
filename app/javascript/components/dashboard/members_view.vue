@@ -46,76 +46,76 @@
               <tr class="thead" style="background-color:#ededed;">
               <th class="sort-th firstCol" @click="sort('id')"># 
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'id'">    
-                <font-awesome-icon icon="sort" /></span>            
+                <i class="fas fa-sort"></i></span>            
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'id'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'id'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'id'">                
-                <font-awesome-icon icon="sort-down" /></span>  
+                <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'id'">                
-                <font-awesome-icon icon="sort-down" /></span>                
+                <i class="fas fa-sort-down"></i></span>                
              </th>
               <th class="sort-th" @click="sort('fullName')">Name 
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'fullName'">    
-                <font-awesome-icon icon="sort" /></span>            
+                <i class="fas fa-sort"></i></span>            
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'fullName'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'fullName'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'fullName'">                
-                <font-awesome-icon icon="sort-down" /></span>  
+                <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'fullName'">                
-                <font-awesome-icon icon="sort-down" /></span>                
+                <i class="fas fa-sort-down"></i></span>                
               </th>
-              <!-- <th class="sort-th" @click="sort('lastName')">Last Name<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th> -->
+              <!-- <th class="sort-th" @click="sort('lastName')">Last Name<span class="sort-icon scroll"><i class="fas fa-sort"></i></span> </th> -->
               <th class="sort-th"  @click="sort('title')">Position
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'title'"> 
-                <font-awesome-icon icon="sort" /></span>                 
+                <i class="fas fa-sort"></i></span>                 
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">                
-                <font-awesome-icon icon="sort-down" /></span>  
+                <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">                
-                <font-awesome-icon icon="sort-down" /></span>                  
+                <i class="fas fa-sort-down"></i></span>                  
               </th>
               <th class="pl-1 sort-th" @click="sort('organization')">Organization
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'organization'">  
-                <font-awesome-icon icon="sort" /></span>                
+                <i class="fas fa-sort"></i></span>                
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'organization'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'organization'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'organization'">                
-                <font-awesome-icon icon="sort-down" /></span>  
+                <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'organization'">                
-                <font-awesome-icon icon="sort-down" /></span>              
+                <i class="fas fa-sort-down"></i></span>              
                 </th>
               <th class="pl-1 sort-th" @click="sort('phoneNumber')">Phone Number
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'phoneNumber'">  
-                <font-awesome-icon icon="sort" /></span>                
+                <i class="fas fa-sort"></i></span>                
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'phoneNumber'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'phoneNumber'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'phoneNumber'">                
-                <font-awesome-icon icon="sort-down" /></span>  
+                <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'phoneNumber'">                
-                <font-awesome-icon icon="sort-down" /></span> 
+                <i class="fas fa-sort-down"></i></span> 
               </th>
               <th class="sort-th emailCol"  @click="sort('email')" >Email
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'email'">                
-                <font-awesome-icon icon="sort" /></span>  
+                <i class="fas fa-sort"></i></span>  
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'email'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'email'">                
-                <font-awesome-icon icon="sort-up" /></span>
+                <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'email'">                
-                <font-awesome-icon icon="sort-down" /></span>  
+                <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'email'">                
-                <font-awesome-icon icon="sort-down" /></span>               
+                <i class="fas fa-sort-down"></i></span>               
               </th>
             </tr>
           </thead>

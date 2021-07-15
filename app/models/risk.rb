@@ -23,8 +23,6 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
-  enum state: %i[draft ongoing on_hold overdue in_progress planned completed]
-
   amoeba do
     include_association :risk_stage
     include_association :user
@@ -137,7 +135,9 @@ class Risk < ApplicationRecord
       :impact_level,
       :impact_level_name,
       :risk_approach,
-      :status,
+      :on_hold,
+      :draft,
+      :ongoing,
       :duration,
       :duration_name,
       :status_name,
@@ -265,18 +265,12 @@ class Risk < ApplicationRecord
     sub_issues = self.sub_issues
     sub_risks = self.sub_risks
     progress_status = "active"
+ 
+    progress_status = "completed" if progress >= 100
 
-    if progress >= 100
-      progress_status = "completed"
-      self.completed!
-    elsif progress < 100 && (due_date.present? && due_date < Date.today)
-      self.overdue!
-    elsif start_date > Date.today
-      self.planned!
-    elsif start_date < Date.today
-      self.in_progress!
-    end 
-
+    is_overdue = false
+    is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
+   
     sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(
@@ -298,7 +292,9 @@ class Risk < ApplicationRecord
       risk_owners: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: p_users.map(&:full_name).compact.join(", "),
-      status: status,
+      is_overdue: is_overdue,
+      draft: draft,
+      on_hold: on_hold,
 
      # Add RACI user name
       # Last name values added for improved sorting in datatables
