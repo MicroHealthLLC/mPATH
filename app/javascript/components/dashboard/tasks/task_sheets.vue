@@ -50,7 +50,7 @@
         </td>
         <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
-          {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
+          {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> {{task.notes[task.notes.length - 1].body}}
            

@@ -413,7 +413,7 @@
           </td>
           <td v-if="(risk.notesUpdatedAt.length) > 0">
              By: {{  risk.notes[risk.notes.length - 1].user.fullName }} on
-            {{moment(risk.notesUpdatedAt[risk.notes.length - 1])}}: {{ risk.notes[risk.notes.length - 1].body }}
+            {{moment(risk.notesUpdatedAt[0])}}: {{ risk.notes[risk.notes.length - 1].body }}
           </td>
           <td v-else>No Updates</td>
         </tr>
