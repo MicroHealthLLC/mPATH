@@ -38,13 +38,26 @@
                 <!-- <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>           -->
             </span>          
          </td>
-         <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
-           {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
-           </span>
-           <br> {{issue.notes[issue.notes.length - 1].body}}
-        </td>
-        <td class="oneSeven" v-else>No Updates</td>
+         <td class="oneSeven" v-if="issue.notes.length > 0">
+          <span v-if="(issue.notesUpdatedAt.length) >= 2" >   
+          <span  class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)" >
+          {{moment(issue.notesUpdatedAt[issue.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{issue.notes[issue.notes.length - 1].body}}
+          </span>
+           <span v-if="(issue.notesUpdatedAt.length) === 1" >   
+          <span  class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)" >
+          {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{issue.notes[issue.notes.length - 1].body}}
+          </span>
+         
+        <!-- <span v-else >No Updates</span>     -->
+         
+        </td>  
+         <td class="oneSeven" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <IssueContextMenu

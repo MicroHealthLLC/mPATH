@@ -110,11 +110,26 @@
             <h5>X</h5>
           </td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">
-            By: {{ task.notes[task.notes.length - 1].user.fullName }} on
-            {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[task.notes.length - 1].body}}
-          </td>
-          <td v-else>No Updates</td>
+          <td v-if="task.notes.length > 0">
+          <span v-if="(task.notesUpdatedAt.length) >= 2" >   
+          <span  class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)" >
+          {{moment(task.notesUpdatedAt[task.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{task.notes[task.notes.length - 1].body}}
+          </span>
+           <span v-if="(task.notesUpdatedAt.length) === 1" >   
+          <span  class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)" >
+          {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{task.notes[task.notes.length - 1].body}}
+          </span>
+         
+        <!-- <span v-else >No Updates</span>     -->
+         
+        </td>  
+         <td v-else >No Updates</td> 
         </tr>
       </tbody>
     </table>
