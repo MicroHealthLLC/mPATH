@@ -96,7 +96,7 @@ class Lesson < ApplicationRecord
     s_issues = []
     s_risks = []
 
-    sorted_notes = notes.sort_by(&:updated_at).reverse
+    sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(
       class_name: self.class.name,

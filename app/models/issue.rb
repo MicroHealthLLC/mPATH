@@ -175,7 +175,7 @@ class Issue < ApplicationRecord
     end
 
     task_type_name = self.task_type&.name
-    sorted_notes = notes.sort_by(&:updated_at).reverse
+    sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -216,7 +216,7 @@ class Issue < ApplicationRecord
 
       checklists: checklists.as_json,
       notes: sorted_notes.as_json,
-      notes_updated_at: sorted_notes.map(&:updated_at).uniq,
+      notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
