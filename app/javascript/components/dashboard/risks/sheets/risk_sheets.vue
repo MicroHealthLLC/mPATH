@@ -44,6 +44,7 @@
                 <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
                 <span v-if="                   
                      risk.ongoing == false && 
+                     risk.important == false && 
                      risk.watched == false &&
                      risk.reportable == false &&
                      risk.isOverdue == false &&
@@ -54,16 +55,23 @@
                     No flags at this time           
                 </span>          
          </td>  
-        <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)">        
-           {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
-           </span>
-           <br> 
-           <span class="truncate-line-five">
-             {{risk.notes[risk.notes.length - 1].body}}
-           </span>
-        </td>
-        <td v-else class="twenty">No Updates</td>
+        <td class="twenty" v-if="risk.notes.length > 0">
+          <span v-if="(risk.notesUpdatedAt.length) >= 2" >   
+          <span  class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)" >
+          {{moment(risk.notesUpdatedAt[risk.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{risk.notes[risk.notes.length - 1].body}}
+          </span>
+           <span v-if="(risk.notesUpdatedAt.length) === 1" >   
+          <span  class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)" >
+          {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{risk.notes[risk.notes.length - 1].body}}
+          </span>
+        </td>  
+         <td class="twenty"  v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu

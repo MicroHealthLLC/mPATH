@@ -138,7 +138,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(risk, i) in filteredRisks">
+        <tr v-for="(risk, i) in filteredRisks" :key="i">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
@@ -152,11 +152,23 @@
           <td v-else></td>
           <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(risk.notes.length) > 0">
-             By: {{ risk.notes[0].user.fullName}} on
-            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
-          </td>
-          <td v-else>No Updates</td>
+             <td v-if="risk.notes.length > 0">
+          <span v-if="(risk.notesUpdatedAt.length) >= 2" >   
+          <span  class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)" >
+          {{moment(risk.notesUpdatedAt[risk.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{risk.notes[risk.notes.length - 1].body}}
+          </span>
+           <span v-if="(risk.notesUpdatedAt.length) === 1" >   
+          <span  class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)" >
+          {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <br>
+          </span>     
+            {{risk.notes[risk.notes.length - 1].body}}
+          </span>
+        </td>  
+         <td v-else >No Updates</td> 
         </tr>
       </tbody>
     </table>
