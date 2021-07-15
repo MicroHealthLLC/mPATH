@@ -393,24 +393,13 @@
             >                 
             </span>  
             </td>            
-            <td v-if="issue.notes.length > 0">
-          <span v-if="(issue.notesUpdatedAt.length) >= 2" >   
-          <span  class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)" >
-          {{moment(issue.notesUpdatedAt[issue.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
-           <br>
-          </span>     
-            {{issue.notes[issue.notes.length - 1].body}}
-          </span>
-           <span v-if="(issue.notesUpdatedAt.length) === 1" >   
-          <span  class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)" >
-          {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
-           <br>
-          </span>     
-            {{issue.notes[issue.notes.length - 1].body}}
-          </span>
-         
-        <!-- <span v-else >No Updates</span>     -->
-         
+         <td v-if="issue.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
+          {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{issue.lastUpdate.body}}
+          </span>         
         </td>  
          <td v-else >No Updates</td> 
           </tr>
@@ -462,6 +451,7 @@
     },
     mounted() {
       this.loading = false
+      // console.log(this.lastUpdate)
     },
     methods: {
       ...mapMutations([
@@ -504,9 +494,9 @@
         this.newIssue = false
         this.$emit('refresh-facility')
       },
-    //  log(e){
-    //     console.log(e)
-    //   },
+     log(e){
+        console.log(e)
+      },
       issueUpdated(issue, refresh=true) {
         let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
