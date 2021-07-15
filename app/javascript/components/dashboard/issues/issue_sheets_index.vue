@@ -395,7 +395,7 @@
             </td>            
             <td v-if="(issue.notesUpdatedAt.length) > 0">
                By: {{ issue.notes[issue.notes.length - 1].user.fullName}} on
-              {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[issue.notes.length - 1].body.replace(/[^ -~]/g,'')}}
+              {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[issue.notes.length - 1].body.replace(/[^ -~]/g,'')}}
             </td>
             <td v-else>No Updates</td>
           </tr>
