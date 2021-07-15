@@ -17,8 +17,6 @@ class Issue < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
-  enum status: %i[draft on_hold overdue in_progress planned completed]
-
   amoeba do
     include_association :issue_type
     include_association :issue_stage
@@ -87,7 +85,8 @@ class Issue < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
-      :status,
+      :on_hold,
+      :draft,
       issue_files: [],
       user_ids: [],
       sub_task_ids: [],
@@ -186,16 +185,10 @@ class Issue < ApplicationRecord
     sub_issues = self.sub_issues
     progress_status = "active"
 
-    if progress >= 100
-      progress_status = "completed"
-      self.completed!
-    elsif progress < 100 && (due_date.present? && due_date < Date.today)
-      self.overdue!
-    elsif start_date > Date.today
-      self.planned!
-    elsif start_date < Date.today
-      self.in_progress!
-    end
+    progress_status = "completed" if progress >= 100
+
+    is_overdue = false
+    is_overdue = progress < 100 && (due_date < Date.today) if !on_hold && !draft
 
     task_type_name = self.task_type&.name
     self.as_json.merge(
@@ -211,7 +204,9 @@ class Issue < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       user_ids: p_users.map(&:id).compact.uniq,
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
-      status: status,
+      is_overdue: is_overdue,
+      on_hold: on_hold,
+      draft: draft,
 
       # Add RACI user name
       # Last name values added for improved sorting in datatables
