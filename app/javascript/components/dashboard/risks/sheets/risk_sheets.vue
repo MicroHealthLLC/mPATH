@@ -54,26 +54,15 @@
                     No flags at this time           
                 </span>          
          </td>  
-        <td class="twenty" v-if="risk.notes.length > 0">
-          <span v-if="(risk.notesUpdatedAt.length) >= 2" >   
-          <span  class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)" >
-          {{moment(risk.notesUpdatedAt[risk.notesUpdatedAt.length - 1]).format('DD MMM YYYY, h:mm a')}}
-           <br>
-          </span>     
-            {{risk.notes[risk.notes.length - 1].body}}
-          </span>
-           <span v-if="(risk.notesUpdatedAt.length) === 1" >   
-          <span  class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)" >
-          {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
-           <br>
-          </span>     
-            {{risk.notes[risk.notes.length - 1].body}}
-          </span>
-         
-        <!-- <span v-else >No Updates</span>     -->
-         
+         <td class="twenty" v-if="risk.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
+          {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{risk.lastUpdate.body}}
+          </span>         
         </td>  
-         <td class="twenty"  v-else >No Updates</td> 
+         <td  class="twenty" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu
