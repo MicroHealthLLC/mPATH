@@ -403,7 +403,7 @@
                <label class="font-md"
                 ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
               ></span>
-               <span v-if="DV_task.onHold ">           
+               <span v-else-if="DV_task.onHold ">           
                 <label class="font-md">
                 Due Date <span><small class="text-danger">(Not required if Task is On Hold)</small></span>
                  </label
