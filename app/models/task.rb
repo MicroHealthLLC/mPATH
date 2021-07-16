@@ -19,8 +19,6 @@ class Task < ApplicationRecord
   after_save :update_facility_project
   after_destroy :update_facility_project
 
-  enum status: %i[draft ongoing on_hold overdue in_progress planned completed]
-
   amoeba do
     include_association :task_type
     include_association :task_stage
@@ -49,7 +47,9 @@ class Task < ApplicationRecord
       :start_date,
       :description,
       :progress,
-      :status,
+      :draft,
+      :on_hold,
+      :ongoing,
       :auto_calculate,
       :watched,
       :kanban_order,
@@ -193,17 +193,16 @@ class Task < ApplicationRecord
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
+    progress_status = "completed" if progress >= 100
 
-    if progress >= 100
-      progress_status = "completed"
-      self.completed!
-    elsif progress < 100 && (due_date.present? && due_date < Date.today)
-      self.overdue!
-    elsif start_date > Date.today
-      self.planned!
-    elsif start_date < Date.today
-      self.in_progress!
-    end
+    is_overdue = false
+    is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
+
+    planned = false
+    planned = true if !draft && start_date > Date.today
+
+    in_progress = false
+    in_progress = true if !draft && !on_hold && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today
 
     sorted_notes = notes.sort_by(&:created_at).reverse
     self.as_json.merge(
@@ -222,7 +221,11 @@ class Task < ApplicationRecord
       last_update: sorted_notes.first.as_json,
       important: important,
       reportable: reportable,
-      status: status,
+      is_overdue: is_overdue,
+      planned: planned,
+      in_progress: in_progress,
+      draft: draft,
+      on_hold: on_hold,
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
