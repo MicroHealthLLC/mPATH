@@ -126,10 +126,10 @@ class User < ApplicationRecord
 
   def allowed_redirect_url(program_id)
     if !self.project_ids.include?(program_id)
-      Rails.routes.url_helpers.root_path
+      return Rails.application.routes.url_helpers.root_path
     else
       tab = top_navigation_hash[ ( allowed_navigation_tabs.first || "sheets_view")  ]
-      "/programs/#{program_id}/#{tab}" 
+      return  "/programs/#{program_id}/#{tab}" 
     end
   end
 
