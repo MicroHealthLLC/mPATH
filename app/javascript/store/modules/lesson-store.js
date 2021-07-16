@@ -23,7 +23,7 @@ const lessonModule = {
         },
       })
         .then((res) => {
-          console.log("this is portfolio lessoons" + JSON.stringify(res.data));
+          // console.log("this is portfolio lessoons" + JSON.stringify(res.data));
           // Mutate state with response from back end
           commit("SET_PROGRAM_LESSONS", res.data);
         })
