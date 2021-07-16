@@ -56,7 +56,11 @@ ActiveAdmin.register Lesson do
       lesson.lesson_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          if file.blob.content_type == "text/plain" && !file.blob.filename.to_s.include?('.txt')
+            link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
+          else
+            link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          end
         else
           "<span>#{file.blob.filename}</span>".html_safe
         end
