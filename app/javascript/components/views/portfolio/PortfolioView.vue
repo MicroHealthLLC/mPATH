@@ -1077,7 +1077,7 @@
          <tbody>
         <tr v-for="risk, index in sortedRisks" :key="index">
         <td>{{ risk.program_name }}</td>
-        <td :load="log(JSON.stringify(risk))">{{ risk.project_name }}</td>
+        <td>{{ risk.project_name }}</td>
         <td>{{ risk.text }}</td>
         <td>{{ risk.category }}</td>
         <td>{{ risk.risk_approach.charAt(0).toUpperCase() + risk.risk_approach.slice(1) }}</td>
@@ -2432,7 +2432,7 @@ export default {
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
     log(e){
-      console.log("Risk:" + e)
+      //  console.log("" + e)
     }, 
   // Toggle for 3 Action Tags
     toggleWatched(){
