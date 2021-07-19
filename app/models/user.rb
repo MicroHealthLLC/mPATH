@@ -72,13 +72,11 @@ class User < ApplicationRecord
     project_privileges = ProjectPrivilege.where(user_id: self.id)
     project_privileges.each do |project_privilege|
       project_privilege.project_ids = project_privilege.project_ids - [program_id.to_s]
-      if project_privilege.project_ids && !project_privilege.project_ids.any?
+      if !project_privilege.project_ids.any?
         project_privilege.destroy
       else
         project_privilege.save  
       end
-      
-
     end
     facility_privileges = FacilityPrivilege.where(user_id: self.id, project_id: program_id)
     facility_privileges.destroy_all
