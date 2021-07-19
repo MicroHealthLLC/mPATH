@@ -632,6 +632,18 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+              <th class="pl-1 sort-th" @click="sortI('issue_severity')">Issue Severity
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_severity'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
@@ -697,6 +709,7 @@
         <td>{{ issue.project_name }}</td>
         <td>{{ issue.title }}</td>
         <td>{{ issue.issue_type }}</td>
+        <td>{{ issue.issue_severity }}</td>
         <td> {{ issue.start_date }} </td>   
         <td> {{ issue.due_date }} </td>   
         <td> {{ issue.users }} </td>   
@@ -975,6 +988,31 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+              <th class="sort-th" @click="sort('risk_approach')">Risk Approach
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'risk_approach'">
+               <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-up"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-down"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-down"></i></span>
+
+            </th>
+            <th class="sort-th"  @click="sort('priority_level')">Priority Level
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'priority_level'">
+               <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-up"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-down"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-down"></i></span>
+            </th>
               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
@@ -1039,9 +1077,17 @@
          <tbody>
         <tr v-for="risk, index in sortedRisks" :key="index">
         <td>{{ risk.program_name }}</td>
-        <td>{{ risk.project_name }}</td>
+        <td :load="log(JSON.stringify(risk))">{{ risk.project_name }}</td>
         <td>{{ risk.text }}</td>
         <td>{{ risk.category }}</td>
+        <td>{{ risk.risk_approach.charAt(0).toUpperCase() + risk.risk_approach.slice(1) }}</td>
+        <td>
+            <span v-if="(risk.priority_level) == 1" class="gray2">Very Low</span> 
+            <span v-else-if="(risk.priority_level) <= 3" class="green1">Low</span> 
+            <span v-else-if="(risk.priority_level) <= 6" class="yellow1">Moderate</span> 
+            <span v-else-if="(risk.priority_level) <= 14" class="orange1">High</span> 
+            <span v-else-if="(risk.priority_level) >= 15" class="red1">Extreme</span> 
+       </td>
          <td>{{ risk.start_date }}</td>
         <td> {{ risk.due_date }} </td>   
         <td> {{ risk.users }} </td>   
@@ -2386,7 +2432,7 @@ export default {
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
     log(e){
-      // console.log("C_programNameFilter" + e)
+      console.log("Risk:" + e)
     }, 
   // Toggle for 3 Action Tags
     toggleWatched(){
@@ -2789,4 +2835,35 @@ th {
     cursor: pointer;
 }
 
+.red1 {
+  background-color: #d9534f;
+}
+
+.yellow1 {
+  background-color: yellow;  
+  color:#383838;  
+  display: block;
+}
+
+.orange1 {
+  background-color: #f0ad4e;
+}
+
+.green1 {
+  background-color: rgb(92,184,92);
+}  
+
+.gray2 {
+  background-color: #ededed;
+}
+
+.green1, .orange1, .red1, .yellow1, .gray2 {
+  display: inline;   
+  border-radius: 2px; 
+  padding: 1px 1px;
+  box-shadow: 0 1px 2.5px rgba(56,56, 56,0.19), 0 1.5px 1.5px rgba(56,56,56,0.23);
+}
+.green1, .orange1, .red1 {   
+  color:#fff;   
+}
 </style>
