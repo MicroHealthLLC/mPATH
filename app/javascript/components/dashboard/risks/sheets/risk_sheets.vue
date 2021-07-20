@@ -59,7 +59,7 @@
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
+          <span class="truncate-line-five">
             {{risk.lastUpdate.body}}
           </span>         
         </td>  

@@ -47,7 +47,7 @@
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
+          <span class="truncate-line-five">
             {{issue.lastUpdate.body}}
           </span>         
          <td class="oneSeven" v-else >No Updates</td> 
