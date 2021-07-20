@@ -1,4 +1,6 @@
 ActiveAdmin.register Lesson do
+  include AdminUtility
+
   menu priority: 9
   actions :all, except: [:show]
 
@@ -56,7 +58,7 @@ ActiveAdmin.register Lesson do
       lesson.lesson_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          if file.blob.content_type == "text/plain"
+          if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename").to_s)
             link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
           else
             link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
