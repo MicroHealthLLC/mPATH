@@ -1,5 +1,4 @@
-class Api::V1::LessonsController < Api::AuthenticationController
-  before_action :authenticate_request!
+class Api::V1::LessonsController < Api::ApplicationController
 
   def index
     # authorize!(:read, Lesson.new(project_id: params[:program_id]))

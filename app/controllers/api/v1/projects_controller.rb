@@ -1,4 +1,4 @@
-class Api::V1::ProjectsController < Api::AuthenticationController
+class Api::V1::ProjectsController < Api::ApplicationController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
   before_action :authenticate_request!
 

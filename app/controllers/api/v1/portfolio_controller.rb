@@ -1,4 +1,4 @@
-class Api::V1::PortfolioController < Api::AuthenticationController
+class Api::V1::PortfolioController < Api::ApplicationController
   
   before_action :authenticate_request!
 
