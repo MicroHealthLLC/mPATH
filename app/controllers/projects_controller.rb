@@ -26,11 +26,14 @@ class ProjectsController < AuthenticatedController
       redirect_to current_user.allowed_redirect_url(params[:program_id])
       return
     end
-
-    if !current_user.allowed?(view)
-      # raise CanCan::AccessDenied
-      redirect_to current_user.allowed_redirect_url(params[:program_id])
-      return
+    if current_user.project_ids.include?(params[:program_id].to_i)
+      if !current_user.allowed?(view)
+        # raise CanCan::AccessDenied
+        redirect_to current_user.allowed_redirect_url(params[:program_id])
+        return
+      end
+    else
+      raise CanCan::AccessDenied
     end
     
     respond_to do |format|

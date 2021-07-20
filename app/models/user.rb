@@ -81,22 +81,19 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["members", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["gantt_view"]
+    nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
     self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
   end
 
   def build_navigation_tabs_for_profile
     n = []
     allowed_navigation_tabs.each do |t|
-      name = "map" if t == "map_view"
-      name = "kanban" if t == "kanban_view"
       name = "sheet" if t == "sheets_view"
-      name = "members" if t == "members"
-      
-      #NOTE: Once front end routes are working, uncomment it.
-      #name = "gantt_chart" if t == "gantt_view"      
-
+      name = "map" if t == "map_view"
+      name = "gantt_chart" if t == "gantt_view"      
+      name = "kanban" if t == "kanban_view"
       name = "calendar" if t == "calendar_view"
+      name = "members" if t == "members"
 
       n << {id: name.downcase, name: name.humanize, value: name.downcase}
     end
@@ -118,21 +115,22 @@ class User < ApplicationRecord
 
   def top_navigation_hash
      {
-      "members" => "members", 
+      "sheets_view" => "sheet",  
       "map_view" => "map",  
       "gantt_view" => "gantt_chart",  
-      "sheets_view" => "sheet",  
       "kanban_view" => "kanban",  
-      "calendar_view"  => "calendar"
+      "calendar_view"  => "calendar",
+      "members" => "members"
     }
-  end
-  def top_navigation_route_to_database_field_hash
-    top_navigation_hash.invert
   end
 
   def allowed_redirect_url(program_id)
-    tab = top_navigation_hash[ ( allowed_navigation_tabs.first || "sheets_view")  ]
-    "/programs/#{program_id}/#{tab}" 
+    if !self.project_ids.include?(program_id)
+      return Rails.application.routes.url_helpers.root_path
+    else
+      tab = top_navigation_hash[ ( allowed_navigation_tabs.first || "sheets_view")  ]
+      return  "/programs/#{program_id}/#{tab}" 
+    end
   end
 
   def preference_url
@@ -142,22 +140,25 @@ class User < ApplicationRecord
     url = "/"
     if p.program_id.present?
       url = "/programs/#{p.program_id}/sheet" # map must be
-
       if p.navigation_menu.present?
         navigtaion_present = false
-        if top_navigations.include?( top_navigation_route_to_database_field_hash[p.navigation_menu] )
+        if top_navigations.include?( top_navigation_hash.invert[p.navigation_menu] )
           url = "/programs/#{p.program_id}/#{p.navigation_menu}"
           current_top_navigation_menu = p.navigation_menu
           navigtaion_present = true
+          
+          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[p.navigation_menu])
+
         elsif top_navigations.size > 0
           url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
           current_top_navigation_menu = top_navigations.first
           navigtaion_present = true
+          return url  if ["gantt_view", "members"].include?(top_navigations.first)
         else
           url = ""
         end
         
-        if navigtaion_present && p.project_id.present?              
+        if navigtaion_present && p.project_id.present?
           if p.sub_navigation_menu.present?
             sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
             sub_navigation_allowed = sub_navigation_privileges[p.sub_navigation_menu].present?
@@ -431,7 +432,7 @@ class User < ApplicationRecord
 
   def allowed?(view)
     # privilege.send(view)&.include?("R") || superadmin? || privilege.admin.include?("R")
-    return true if (superadmin? || privilege.admin.include?("R"))
+    # return true if (superadmin? || privilege.admin.include?("R"))
     if allowed_navigation_tabs.any?
       allowed_navigation_tabs.include?(view)
     else
