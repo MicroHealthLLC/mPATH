@@ -14,6 +14,8 @@ class ProjectPrivilege < ApplicationRecord
 
   before_save :add_read_privilege
   before_save :check_for_admin_privileges
+  before_save :remove_facility_privileges_on_save
+  after_destroy :remove_facility_privileges
 
   PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
@@ -21,6 +23,21 @@ class ProjectPrivilege < ApplicationRecord
   validates :project_ids, presence: true
   validates :user_id, presence: true, on: :update
   validate :check_minimum_privilege
+
+  def remove_facility_privileges(pids = [])
+    if !pids.any?
+      pids = self.project_ids
+    end
+    facility_privileges = FacilityPrivilege.where(user_id: self.user_id, project_id: pids)
+    facility_privileges.destroy_all
+  end
+
+  def remove_facility_privileges_on_save
+    removed_project_ids = self.project_ids_was - self.project_ids
+    if removed_project_ids.any?
+      remove_facility_privileges(removed_project_ids)
+    end
+  end
 
   def check_minimum_privilege
     fp = self
