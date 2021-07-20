@@ -21,19 +21,32 @@ Rails.application.routes.draw do
       get "/portfolio/tasks", to: "portfolio#tasks"
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
+      get "/projects/:id", to: "projects#show"
+
+      # NOTE: Replace this with resource.
+      get "/programs/:program_id/lessons" => "lessons#index"
+      get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+      get "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+      post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+      patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+      delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+
       # get "/portfolio", to: "portfolio#index"
     end
     post '/login' => 'authentication#login'
-    resources :task_types, only: [:index]
-    resources :facility_groups, only: [:index]
-    resources :statuses, only: [:index]
-    resources :issue_severities, only: [:index]
-    resources :issue_types, only: [:index]
-    resources :issue_stages, only: [:index]
-    resources :task_stages, only: [:index]
-    resources :users, only: [:index]
-    get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
-    get '/projects/:id/task_issues', to: 'projects#index'
+
+    # TODO: Unused routes, Remove if no error found
+    # resources :task_types, only: [:index]
+    # resources :facility_groups, only: [:index]
+    # resources :statuses, only: [:index]
+    # resources :issue_severities, only: [:index]
+    # resources :issue_types, only: [:index]
+    # resources :issue_stages, only: [:index]
+    # resources :task_stages, only: [:index]
+    # resources :users, only: [:index]
+    # get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
+    # get '/projects/:id/task_issues', to: 'projects#index'
+    
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
     post '/sort-by', to: 'sorts#update'
@@ -71,12 +84,12 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
 
   # TODO: add in namespace instead of this. This is to make front end working
-  get "/api/v1/programs/:program_id/lessons" => "lessons#index"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
-  post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-  patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-  delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+  # get "/api/v1/programs/:program_id/lessons" => "lessons#index"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+  # post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+  # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+  # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
   get "/portfolio" => "dashboard#portfolio"
 
