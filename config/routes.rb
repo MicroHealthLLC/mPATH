@@ -30,6 +30,28 @@ Rails.application.routes.draw do
       post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
       patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
       delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+      
+      resources :projects, only: [:index, :show] do
+        resources :facilities do
+          resources :notes #, module: :facilities
+          resources :issues do
+            post :batch_update, on: :collection
+            post :create_duplicate, on: :member
+            post :create_bulk_duplicate, on: :member
+          end
+          resources :risks do
+            post :batch_update, on: :collection
+            post :create_duplicate, on: :member
+            post :create_bulk_duplicate, on: :member
+          end
+          resources :tasks do
+            post :batch_update, on: :collection
+            post :create_duplicate, on: :member
+            post :create_bulk_duplicate, on: :member
+          end
+        end
+      end
+
 
       # get "/portfolio", to: "portfolio#index"
     end
@@ -46,7 +68,7 @@ Rails.application.routes.draw do
     # resources :users, only: [:index]
     # get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
     # get '/projects/:id/task_issues', to: 'projects#index'
-    
+
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
     post '/sort-by', to: 'sorts#update'
