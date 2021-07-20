@@ -168,7 +168,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege[module].includes(s); 
+      return  fPrivilege[module].includes(s); 
     },
     // closes context menu
     close() {
@@ -182,7 +182,7 @@ export default {
     //   let fPrivilege = this.$projectPrivileges[programId][projectId]
     //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     //   let s = permissionHash[salut]
-    //   return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+    //   return  fPrivilege.tasks.includes(s); 
     // },
     open(evt) {
       // updates position of context menu

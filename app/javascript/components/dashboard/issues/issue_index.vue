@@ -138,7 +138,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(issue, i) in filteredIssues">
+        <tr v-for="(issue, i) in filteredIssues" :key="i">
           <td class="text-center">{{i+1}}</td>
           <td>{{issue.title}}</td>
           <td>{{issue.issueType}}</td>
@@ -151,11 +151,15 @@
           <td>{{issue.progress + "%"}}</td>
           <td v-if="(issue.dueDate) <= now">X</td>
           <td v-else></td>
-          <td v-if="(issue.notes.length) > 0">
-            By: {{ issue.notes[0].user.fullName}} on
-            {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}
-          </td>
-          <td v-else>No Updates</td>
+           <td v-if="issue.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
+          {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{issue.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td v-else >No Updates</td> 
         </tr>
       </tbody>
     </table>
@@ -218,7 +222,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      return  fPrivilege.issues.includes(s); 
     },
     issueCreated(issue) {
       this.facility.issues.unshift(issue)

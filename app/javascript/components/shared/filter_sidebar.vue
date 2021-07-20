@@ -47,8 +47,7 @@
               </div>
               <label class="font-sm mb-0">Project Names</label>
                   <el-select 
-                    v-model="C_facilityNameFilter"   
-                                   
+                    v-model="C_facilityNameFilter" 
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -60,7 +59,7 @@
                     >
                   <el-option 
                     v-for="item in C_activeProjectNames" 
-                      :load="log(JSON.stringify(C_activeProjectNames))"                                                    
+                                                           
                     :value="item"   
                     :key="item.id"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
@@ -530,7 +529,7 @@ export default {
       'getUnfilteredFacilities'
     ]),
     hasAdminAccess() {
-      return salut => this.$currentUser.role == "superadmin" || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
+      return salut =>  this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
     },
     C_favoriteFilterSelectModel: {
       get() {
@@ -836,9 +835,9 @@ export default {
         return str;
       }
     },
-    log(e){
-      console.log("This is the facility name filet" + e)
-    },
+    // log(e){
+    //   console.log("item in " + e)
+    // },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
     },

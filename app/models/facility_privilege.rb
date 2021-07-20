@@ -1,3 +1,6 @@
+
+# NOTE: in facility_project_ids it is saving facility ids
+
 class FacilityPrivilege < ApplicationRecord
   belongs_to :user
   # belongs_to :facility_project
@@ -25,7 +28,7 @@ class FacilityPrivilege < ApplicationRecord
 
   def check_minimum_privilege
     fp = self
-    if !fp.overview.join.present? && !fp.tasks.join.present? && !fp.issues.join.present? && !fp.risks.join.present? && !fp.notes.join.present? && !fp.lessons.join.present?
+    if !fp.admin.join.present? && !fp.overview.join.present? && !fp.tasks.join.present? && !fp.issues.join.present? && !fp.risks.join.present? && !fp.notes.join.present? && !fp.lessons.join.present?
       fp.errors.add(:base, "Project Privileges can not be blank")
     end
   end

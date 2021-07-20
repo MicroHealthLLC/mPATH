@@ -96,7 +96,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(task, i) in filteredTasks">
+        <tr v-for="(task, i) in filteredTasks" :key="i">
           <td class="text-center">{{i+1}}</td>
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
@@ -110,11 +110,15 @@
             <h5>X</h5>
           </td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">
-            By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}
-          </td>
-          <td v-else>No Updates</td>
+         <td v-if="task.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
+          {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{task.lastUpdate.body}}
+          </span>         
+           </td>  
+          <td v-else >No Updates</td>      
         </tr>
       </tbody>
     </table>
@@ -167,7 +171,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+      return  fPrivilege.tasks.includes(s); 
     },
     addNewTask() {
       this.setTaskForManager({key: 'task', value: {}})

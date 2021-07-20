@@ -393,11 +393,15 @@
             >                 
             </span>  
             </td>            
-            <td v-if="(issue.notesUpdatedAt.length) > 0">
-               By: {{ issue.notes[0].user.fullName}} on
-              {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}
-            </td>
-            <td v-else>No Updates</td>
+          <td v-if="issue.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
+          {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{issue.lastUpdate.body}}
+          </span>         
+        </td>   
+         <td v-else >No Updates</td> 
           </tr>
         </tbody>
       </table>
@@ -470,7 +474,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+        return  fPrivilege.issues.includes(s); 
       },
       sort:function(s) {
       //if s == current sort, reverse

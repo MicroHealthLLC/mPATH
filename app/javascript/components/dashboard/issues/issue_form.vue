@@ -350,8 +350,8 @@
               </div>    
             <el-steps 
               class="exampleOne mt-3" 
-              :class="{'overSixSteps': issueStages.length >= 6 }"   
-              :active="issueStages.findIndex(stage => stage.id == selectedIssueStage.id)"                
+              :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
+              :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
               finish-status="success"  
               :disabled="!_isallowed('write') || !!fixedStage"
               v-model="selectedIssueStage"
@@ -359,7 +359,7 @@
               value-key="id"
               >         
               <el-step
-              v-for="item in issueStages"
+              v-for="item in issueStagesSorted"
               :key="item.id"             
               :value="item"
               style="cursor:pointer"
@@ -379,7 +379,7 @@
             <label class="font-md">Select Stage</label>
             <el-steps
               class="exampleOne"
-              :class="{ overSixSteps: issueStages.length >= 6 }"
+              :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
               :disabled="!_isallowed('write') || !!fixedStage"
               v-model="selectedIssueStage"
@@ -387,7 +387,7 @@
               value-key="id"
             >
               <el-step
-                v-for="item in issueStages"
+                v-for="item in issueStagesSorted"
                 :key="item.id"
                 :value="item"
                 style="cursor:pointer"
@@ -1208,7 +1208,7 @@ Tab 1 Row Begins here -->
                 class="update-card mb-3"
               >
                 <div class="d-flex justify-content-between">
-                  <label class="font-md">Description</label>
+                  <label class="font-md">Update</label>
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
@@ -1404,7 +1404,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      return  fPrivilege.issues.includes(s); 
     },
     selectedStage(item) {
       if (this._isallowed("write")) {
@@ -2030,6 +2030,10 @@ export default {
       "projectUsers",
       "taskTypes",
     ]),
+    issueStagesSorted() {
+      var issueStagesSortedReturn = [...this.issueStages]; 
+      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
     readyToSave() {
       return (
         this.DV_issue &&

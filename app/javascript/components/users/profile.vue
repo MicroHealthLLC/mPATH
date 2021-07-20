@@ -331,10 +331,8 @@
               this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             }
 
-            console.log(this.navigationOptions)
- 
             // this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
-            if(program_id && program_id && allowed_sub_navigation_tabs[program_id][project_id]){
+            if(program_id && project_id && allowed_sub_navigation_tabs[program_id] && allowed_sub_navigation_tabs[program_id][project_id]){
               let subNavigationMenu = allowed_sub_navigation_tabs[program_id][project_id]
               if(subNavigationMenu){
                 this.selectedSubNavigation = subNavigationMenu.find((t) => t.id === this.preferences.subNavigationMenu );

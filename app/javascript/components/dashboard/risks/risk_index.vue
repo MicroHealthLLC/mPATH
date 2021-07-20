@@ -138,7 +138,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(risk, i) in filteredRisks">
+        <tr v-for="(risk, i) in filteredRisks" :key="i">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
@@ -152,11 +152,15 @@
           <td v-else></td>
           <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(risk.notes.length) > 0">
-             By: {{ risk.notes[0].user.fullName}} on
-            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
-          </td>
-          <td v-else>No Updates</td>
+          <td v-if="risk.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
+          {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{risk.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td v-else >No Updates</td> 
         </tr>
       </tbody>
     </table>
@@ -222,7 +226,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+        return  fPrivilege.risks.includes(s); 
       },
       riskCreated(risk) {
         this.facility.risks.unshift(risk)

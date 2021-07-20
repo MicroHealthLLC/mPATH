@@ -26,11 +26,14 @@ class ProjectsController < AuthenticatedController
       redirect_to current_user.allowed_redirect_url(params[:program_id])
       return
     end
-
-    if !current_user.allowed?(view)
-      # raise CanCan::AccessDenied
-      redirect_to current_user.allowed_redirect_url(params[:program_id])
-      return
+    if current_user.project_ids.include?(params[:program_id].to_i)
+      if !current_user.allowed?(view)
+        # raise CanCan::AccessDenied
+        redirect_to current_user.allowed_redirect_url(params[:program_id])
+        return
+      end
+    else
+      raise CanCan::AccessDenied
     end
     
     respond_to do |format|
@@ -42,60 +45,6 @@ class ProjectsController < AuthenticatedController
   def index
     respond_to do |format|
       format.json {render json: {projects: current_user.projects.includes(:project_type).active.as_json}}
-      format.html {}
-    end
-  end
-
-  def tasks
-    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
-    response_hash = project.build_json_response_for_portfolio("tasks", current_user)
-    respond_to do |format|
-      format.json {render json: response_hash }
-      format.html {}
-    end
-  end
-
-  def issues
-    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
-    response_hash = project.build_json_response_for_portfolio("issues", current_user)
-    respond_to do |format|
-      format.json {render json: response_hash }
-      format.html {}
-    end
-  end
-
-  def risks
-    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
-    response_hash = project.build_json_response_for_portfolio("risks", current_user)
-    respond_to do |format|
-      format.json {render json: response_hash }
-      format.html {}
-    end
-  end
-
-  def projects
-    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
-    response_hash = project.build_json_response_for_portfolio("projects", current_user)
-    respond_to do |format|
-      format.json {render json: response_hash }
-      format.html {}
-    end
-  end
-
-  def notes
-    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
-    response_hash = project.build_json_response_for_portfolio("notes", current_user)
-    respond_to do |format|
-      format.json {render json: response_hash }
-      format.html {}
-    end
-  end
-
-  def lessons
-    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
-    response_hash = project.build_json_response_for_portfolio("lessons", current_user)
-    respond_to do |format|
-      format.json {render json: response_hash }
       format.html {}
     end
   end

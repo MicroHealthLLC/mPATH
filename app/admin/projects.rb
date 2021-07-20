@@ -157,6 +157,12 @@ ActiveAdmin.register Project do
 
     def update(options={}, &block)
       normalize_comment_params
+      if params[:project][:user_ids]
+        removed_user_ids = resource.user_ids - params[:project][:user_ids].map(&:to_i)
+        User.where(id: removed_user_ids).each do |user|
+          user.remove_all_privileges(resource.id)
+        end if removed_user_ids.any?
+      end
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
         block.call(success, failure) if block

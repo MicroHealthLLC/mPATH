@@ -3,7 +3,7 @@
     ol
       li(class="select input required")
         label(class="label") Select Project
-        select(class="facility_project_select" id="project_section_#{index}" name="user[facility_privileges_attributes][#{index}][facility_project_ids][]" class="project_selection_input" multiple="true")
+        select(class="new_facility_privileges_project_select" id="project_section_#{index}" name="user[facility_privileges_attributes][#{index}][facility_project_ids][]" multiple="true")
           - @facilities.each do |f|
             option{value="#{f.id}" }= f.facility_name
 
@@ -19,3 +19,11 @@
 
 - else
   p No program privilege found, please create program privilege for #{project.name}
+
+javascript:
+  jQuery(function($) {
+    $(".new_facility_privileges_project_select").select2({
+      placeholder: "Search and select Program",
+      allowClear: false
+    });
+  })

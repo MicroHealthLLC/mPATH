@@ -7,7 +7,7 @@
         <td class="eight text-center">{{formatDate(task.startDate)}}</td>
         <td class="eigth text-center">
         <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-         <span v-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+        <span v-else-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
         <span v-else>
          {{formatDate(task.dueDate)}}
         </span>      
@@ -48,17 +48,15 @@
             </span>
               
         </td>
-        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
-          {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
-            </span>
-            <br> 
-            <span class="truncate-line-five">
-              {{task.notes[task.notes.length - 1].body}}
-            </span>
-           
-        </td>       
-        <td v-else class="twentyTwo">No Updates</td>
+          <td class="twentyTwo" v-if="task.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
+          {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{task.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td class="twentyTwo" v-else >No Updates</td>     
       </tr>
 
       <!-- The context-menu appears only if table row is right-clicked -->
@@ -139,7 +137,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+      return  fPrivilege.tasks.includes(s); 
     },
     openSubTask(subTask) {
       let task = this.currentTasks.find((t) => t.id == subTask.id);

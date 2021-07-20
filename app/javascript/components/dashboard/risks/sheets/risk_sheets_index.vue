@@ -403,7 +403,8 @@
             <span v-if="risk.draft == true">Draft</span>   
             <span v-if="
                   risk.watched == false &&
-                  risk.ongoing == false && 
+                  risk.ongoing == false &&
+                  risk.important == false &&  
                   risk.isOverdue == false &&
                   risk.onHold == false &&  
                   risk.draft == false && 
@@ -411,11 +412,15 @@
                   >                
             </span>  
           </td>
-          <td v-if="(risk.notesUpdatedAt.length) > 0">
-             By: {{ risk.notes[0].user.fullName}} on
-            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
-          </td>
-          <td v-else>No Updates</td>
+         <td v-if="risk.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
+          {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{risk.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td v-else >No Updates</td> 
         </tr>
       </tbody>
     </table>
@@ -483,7 +488,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+        return  fPrivilege.risks.includes(s); 
       },
       sort:function(s) {
       //if s == current sort, reverse

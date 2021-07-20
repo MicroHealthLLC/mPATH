@@ -6,12 +6,14 @@
       span.mpathLogo   
         =image_tag "mpath.svg"
     br
-     =link_to "api/v1/portfolio/programs", class: "nav-link mb-3 float-right portfolioViewerBtn", target: "_blank" do
+    -if @active_projects.size > 0
+      =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn", target: "_blank" do
         | PORTFOLIO VIEWER
     .grid-container.program-name
       -if @active_projects.size > 0
+        - preference_url = current_user.preference_url
         - @active_projects.each do |project|
-         - url = @preferences.navigation_menu.present? ? "/programs/#{project.id}/#{@preferences.navigation_menu}" : "/programs/#{project.id}/map"
+         - url = current_user.allowed_redirect_url(project.id) #@preferences.navigation_menu.present? ? "/programs/#{project.id}/#{@preferences.navigation_menu}" : "/programs/#{project.id}/map"
          =link_to(url, data: { cy: "project_list_items" }) do
           li.list-group-item.pb-0.portfolio-page
               

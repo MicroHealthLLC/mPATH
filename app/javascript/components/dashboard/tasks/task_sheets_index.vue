@@ -244,7 +244,6 @@
               v-for="task in sortedTasks"           
               class="taskHover"        
               href="#"
-              :load="log(task)"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -339,11 +338,15 @@
                   >                
             </span>  
           </td>
-          <td v-if="(task.notesUpdatedAt.length) > 0">
-             By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}
-          </td>
-          <td v-else>No Updates</td>
+         <td v-if="task.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
+          {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{task.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td v-else >No Updates</td> 
         </tr>
       </tbody>
     </table>
@@ -403,7 +406,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+        return  fPrivilege.tasks.includes(s); 
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -411,9 +414,6 @@
         this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
       }
         this.currentSort = s;
-      },
-      log(e){
-        console.log(e)
       },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;

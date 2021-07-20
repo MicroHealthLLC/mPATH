@@ -215,7 +215,7 @@
                selectedEvent.end == '2099-01-01'" class="mr-1">
                <i class="far fa-retweet text-success"></i>
                 </span>
-                <span v-if="selectedEvent.isOnHold == true && selectedEvent.end == null">
+                <span v-else-if="selectedEvent.isOnHold == true && selectedEvent.end == null">
                  <i class="fas fa-pause-circle text-primary"></i>
                 </span>              
                <span v-else> 
@@ -477,7 +477,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+        return  fPrivilege.tasks.includes(s); 
       },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 

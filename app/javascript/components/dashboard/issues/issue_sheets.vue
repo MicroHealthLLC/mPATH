@@ -43,16 +43,14 @@
                 <!-- <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>           -->
             </span>          
          </td>
-         <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
-           {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
-           </span>
-           <br>
-           <span class="truncate-line-five">
-             {{issue.notes[issue.notes.length - 1].body}}
-           </span>
-        </td>
-        <td class="oneSeven" v-else>No Updates</td>
+        <td class="oneSeven" v-if="issue.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
+          {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{issue.lastUpdate.body}}
+          </span>         
+         <td class="oneSeven" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <IssueContextMenu
@@ -138,7 +136,7 @@
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+        return  fPrivilege.issues.includes(s); 
       },
       editIssue() {
           this.DV_edit_issue = this.DV_issue

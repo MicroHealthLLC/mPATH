@@ -95,7 +95,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
+      return  fPrivilege[view].includes(s);
     },
     viewPermit: () => (view, req) => {
       var programId = this.$route.params.programId;
@@ -103,7 +103,7 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[req]
-      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
+      return  fPrivilege[view].includes(s);
 
       //if (Vue.prototype.$currentUser.role === "superadmin") return true;
       //return Vue.prototype.$permissions[view][req]
@@ -113,15 +113,18 @@ export default {
       this.columns.push({
         stage: {id: null},
         title: "No stage",
-        tasks: []
+        tasks: [],
+        percentage: -1
       })   
       for (let stage of this.stages) {      
         this.columns.push({
           stage: stage,
           title: stage.name,
-          tasks: _.filter(cards, c => c[this.stageId] == stage.id)       
+          tasks: _.filter(cards, c => c[this.stageId] == stage.id),
+          percentage: stage.percentage
         })
       }
+      this.columns.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1)
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key

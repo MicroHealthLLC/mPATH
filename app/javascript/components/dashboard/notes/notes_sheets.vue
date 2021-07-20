@@ -7,11 +7,11 @@
       <div v-if="show">
         <div class="crud-actions mx-3 float-right">
           <span v-if="permitted('write')" class="mr-2 edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">
-             <font-awesome-icon icon="ellipsis-h" /> 
+             <i class="fas fa-edit"></i> 
           </span>
-          <!-- <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
+          <span v-if="permitted('delete')" class="mr-2 delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
-          </span> -->
+          </span>
         </div>
         <div class="note_by my-2">
           <!-- <span class="badge badge-secondary">Note by</span> -->
@@ -83,7 +83,7 @@
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.notes.includes(s); 
+      return  fPrivilege.notes.includes(s); 
     },
      editNoteMode() {
         if (this.from == "manager_view") {                

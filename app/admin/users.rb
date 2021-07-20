@@ -96,7 +96,26 @@ ActiveAdmin.register User do
         end
         div id: 'user-password__tab'
       end
-      
+
+      tab 'Advanced' do
+        f.inputs 'Access' do
+          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+            p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
+            p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
+            p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
+            p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
+            p.input :calendar_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "calendar_view")
+            p.input :members, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "members")
+          end
+        end
+        f.inputs 'Portfolio Administrative Privilege' do
+          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+            p.input :admin, as: :check_boxes, :collection =>  admin_privileges_options(p.object, "admin")
+          end
+
+        end
+      end
+
       tab 'Programs' do
 
         f.inputs 'Assign Program Privileges' do
@@ -148,24 +167,7 @@ ActiveAdmin.register User do
         # end
       end
 
-      tab 'Advanced' do
-        f.inputs 'Access' do
-          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
-            p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
-            p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
-            p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
-            p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
-            p.input :calendar_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "calendar_view")
-            p.input :members, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "members")
-          end
-        end
-        f.inputs 'Portfolio Administrative Privilege' do
-          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
-            p.input :admin, as: :check_boxes, :collection =>  admin_privileges_options(p.object, "admin")
-          end
 
-        end
-      end
 
       tab 'Projects' do
         f.inputs 'Assign Project Privileges' do

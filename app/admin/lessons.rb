@@ -1,4 +1,6 @@
 ActiveAdmin.register Lesson do
+  include AdminUtility
+
   menu priority: 9
   actions :all, except: [:show]
 
@@ -36,7 +38,7 @@ ActiveAdmin.register Lesson do
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
-    column :title
+    column 'Name', :title
     column "Category", :task_type, nil, sortable: 'task_types.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.task_type.name}", "#{edit_admin_task_type_path(lesson.task_type)}" if lesson.task_type.present?
@@ -56,7 +58,7 @@ ActiveAdmin.register Lesson do
       lesson.lesson_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          if file.blob.content_type == "text/plain"
+          if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename").to_s)
             link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
           else
             link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
@@ -78,6 +80,13 @@ ActiveAdmin.register Lesson do
         link_to "#{lesson.facility.facility_name}", "#{edit_admin_facility_path(lesson.facility)}" if lesson.facility.present?
       else
         "<span>#{lesson.facility&.facility_name}</span>".html_safe
+      end
+    end
+    column "Added By", :users, sortable: 'users.first_name' do |lesson|
+      if current_user.admin_write?
+        lesson.user
+      else
+        "<span>#{lesson.user.full_name}</span>".html_safe
       end
     end
     column 'Lesson Details' do |lesson|
@@ -193,7 +202,7 @@ ActiveAdmin.register Lesson do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Lessons"
   end
 
-  filter :title
+  filter :title, label: 'Name'
   filter :lesson_details_finding, as: :string, label: 'Finding'
   filter :lesson_details_recommendation, as: :string, label: 'Recommendation'
 
@@ -202,7 +211,7 @@ ActiveAdmin.register Lesson do
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true}
+  filter :user, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true, id: 'q_user_id'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   
 end

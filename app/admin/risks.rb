@@ -1,4 +1,6 @@
 ActiveAdmin.register Risk do
+  include AdminUtility
+
   menu priority: 6
   actions :all, except: [:show]
 
@@ -82,7 +84,7 @@ ActiveAdmin.register Risk do
 
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          if file.blob.content_type == "text/plain"
+          if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
             link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
           else
             link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
@@ -238,7 +240,7 @@ ActiveAdmin.register Risk do
   filter :facility_project_facility_facility_name,  as: :select, collection: -> {Facility.pluck(:facility_name, :id)}, label: 'Project', input_html: {class: 'project_privileges_select'}
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :user, label: "Owned by", as: :select, collection: -> { User.get_users_with_fullname }, input_html: { multiple: true }
-  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
+  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 end

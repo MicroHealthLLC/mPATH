@@ -55,6 +55,13 @@ class Project < SortableRecord
     ).as_json
   end
 
+  def porfolio_json
+    { 
+      id: id, 
+      name: name,
+    }
+  end  
+
   def as_complete_json
     json = as_json.merge(
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),

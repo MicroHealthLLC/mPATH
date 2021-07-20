@@ -36,6 +36,46 @@ class Lesson < ApplicationRecord
     }
   end
 
+  def porfolio_json
+    resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
+    p_users = users.select(&:active?)
+
+
+    users_hash = {} 
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
+
+    # First name values added for improved sorting in datatables
+    users_first_name_hash = {} 
+    p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
+
+    s_notes = notes.sort{|n| n.created_at }
+    latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
+    self.as_json.merge(
+      class_name: self.class.name,
+      user_ids: p_users.map(&:id).compact.uniq,
+      user_names: p_users.map(&:full_name).compact.join(", "),
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      created_by: {
+        id: user.id,
+        full_name: user.full_name
+      },
+      last_update: latest_update,
+      notes: notes.as_json,
+      added_by: user.full_name,
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      lesson_stage_id: self.lesson_stage_id,
+      lesson_stage: lesson_stage.try(:name),
+      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      project_id: facility_project.facility_id,
+    ).as_json
+
+  end
+
   def to_json(options = {})
     attach_files = []
     tf = self.lesson_files
@@ -207,7 +247,7 @@ class Lesson < ApplicationRecord
   end
 
   def self.lesson_preload_array
-    [:task_type, :lesson_details, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, {facility_project: :facility} ]
+    [:user, :task_type, :lesson_details, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, :project, :facility, {facility_project: :facility} ]
   end
 
   def self.params_to_permit
