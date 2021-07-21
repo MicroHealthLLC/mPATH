@@ -1538,7 +1538,7 @@ export default {
 <style scoped lang="scss">
 #filterbar {
   position: absolute;
-  z-index: 1000;
+  z-index: 1100;
   transition: .4s ease;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
