@@ -745,6 +745,8 @@
             type="textarea"
             placeholder="Please enter Description here..."
             :readonly="!_isallowed('write')"
+            :load="log(JSON.stringify(lesson.notes) + '\n\n UPDATES' + JSON.stringify(updates))"
+            
           ></el-input>
         </el-card>
       </paginate>
@@ -867,10 +869,9 @@ export default {
         }
         //removes empty updates, sucesses, failures, and best practices
         this.removeEmptyUpdates()
-        this.removeEmptySFBP(this.successes, this.deleteSuccesses)
-        this.removeEmptySFBP(this.failures, this.deleteFailures)
-        this.removeEmptySFBP(this.bestPractices, this.deleteBestPractices)
-
+        this.successes = this.removeEmptySFBP(this.successes)
+        this.failures = this.removeEmptySFBP(this.failures)
+        this.bestPractices = this.removeEmptySFBP(this.bestPractices)
         let lessonData = {
           lesson: {
             title: this.lesson.title,
@@ -914,22 +915,20 @@ export default {
       });
     },
     removeEmptyUpdates(){
+      var returnUpdates = [];
       for (let i in this.updates) {
-        if(!this.updates[i].body && !this.updates[i]._destroy) {
-          this.updates[i]._destroy = true;
-          this.deleteUpdates.push(this.updates[i]);
-          this.updates.splice(i, 1);
-        }
+        if(!this.updates[i].body && !this.updates[i]._destroy) continue;
+        returnUpdates.push(this.updates[i]);
       }
+      this.updates = [...returnUpdates];
     },
-    removeEmptySFBP(sFBP, deleteSFBP){
+    removeEmptySFBP(sFBP){
+      var returnSFBP = [];
       for (let i in sFBP) {
-        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) {
-          sFBP[i]._destroy = true;
-          deleteSFBP.push(sFBP[i]);
-          sFBP.splice(i, 1);
-        }
+        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) continue;
+        returnSFBP.push(sFBP[i]);        
       }
+      return [...sFBP];
     },
     _isallowed(salut) {
         var programId = this.$route.params.programId;
@@ -1139,6 +1138,10 @@ export default {
     toggleReportable() {
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
+    log(e)
+    {
+      console.log(""+e);
+    },
   },
   computed: {
     ...mapGetters([
@@ -1273,6 +1276,10 @@ export default {
             );
           }
         }
+        this.successes = this.lesson.successes;
+        this.failures = this.lesson.failures;
+        this.bestPractices = this.lesson.best_practices;
+        this.updates = this.lesson.notes;
       },
     },
   },
