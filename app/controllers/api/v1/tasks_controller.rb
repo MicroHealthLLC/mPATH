@@ -104,9 +104,7 @@ class  Api::V1::TasksController < Api::ApplicationController
 
   def destroy
     @task.destroy!
-    render json: {}, status: 200
-  rescue
-    render json: {}, status: 500
+    render json: {task: @task.to_json}, status: 200
   end
 
   def batch_update
@@ -121,7 +119,7 @@ class  Api::V1::TasksController < Api::ApplicationController
   end
 
   def set_task
-    @task = @facility_project.tasks.find_by(id: params[:id])
+    @task = @facility_project.tasks.find(params[:id])
   end
 
   def task_params
