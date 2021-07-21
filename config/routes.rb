@@ -30,7 +30,10 @@ Rails.application.routes.draw do
       post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
       patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
       delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
-      
+
+      post '/profile', to: 'profiles#update'
+      get '/current_user', to: 'profiles#current_profile'
+
       resources :projects, only: [:index, :show] do
         resources :facilities do
           resources :notes #, module: :facilities
