@@ -745,8 +745,6 @@
             type="textarea"
             placeholder="Please enter Description here..."
             :readonly="!_isallowed('write')"
-            :load="log(JSON.stringify(lesson.notes) + '\n\n UPDATES' + JSON.stringify(updates))"
-            
           ></el-input>
         </el-card>
       </paginate>
@@ -1140,7 +1138,7 @@ export default {
     },
     log(e)
     {
-      console.log(""+e);
+      // console.log(""+e);
     },
   },
   computed: {
