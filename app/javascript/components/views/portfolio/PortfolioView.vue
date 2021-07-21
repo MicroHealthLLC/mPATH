@@ -281,8 +281,12 @@
         <td>{{ task.project_name }}</td>
         <td>{{ task.text }}</td>
         <td>{{ task.category }}</td>
-          <td>{{ task.start_date}}</td>
-            <td>{{ task.due_date }}</td>
+        <td>{{ moment(task.start_date).format('DD MMM YYYY') }}</td>
+        <td>
+          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+          <span v-else-if="task.on_hold && task.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>{{ moment(task.due_date).format('DD MMM YYYY') }}</span>
+        </td>
         <td> {{ task.users }} </td>   
         <td> {{ task.progress + '%' }} </td>
         <td class="text-center">
@@ -313,7 +317,7 @@
           {{moment(task.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{task.notes[task.notes.length - 1].body}}
             </span>
            
@@ -697,8 +701,11 @@
         <td>{{ issue.project_name }}</td>
         <td>{{ issue.title }}</td>
         <td>{{ issue.issue_type }}</td>
-        <td> {{ issue.start_date }} </td>   
-        <td> {{ issue.due_date }} </td>   
+        <td> {{ moment(issue.start_date).format('DD MMM YYYY') }} </td>   
+        <td> 
+          <span v-if="issue.on_hold && issue.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>{{ moment(issue.due_date).format('DD MMM YYYY') }} </span>
+          </td>   
         <td> {{ issue.users }} </td>   
         <td> {{ issue.progress + '%' }} </td>
         <td class="text-center">
@@ -727,7 +734,7 @@
           {{moment(issue.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{issue.notes[issue.notes.length - 1].body}}
             </span>
            
@@ -1042,10 +1049,14 @@
         <td>{{ risk.project_name }}</td>
         <td>{{ risk.text }}</td>
         <td>{{ risk.category }}</td>
-         <td>{{ risk.start_date }}</td>
-        <td> {{ risk.due_date }} </td>   
+        <td>{{ moment(risk.start_date).format('DD MMM YYYY') }}</td>
+        <td>
+          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+          <span v-else-if="risk.on_hold && risk.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>{{ moment(risk.due_date).format('DD MMM YYYY') }}</span>
+          </td>   
         <td> {{ risk.users }} </td>   
-        <td> {{ risk.progress }} </td>
+        <td> {{ risk.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
             <span v-if="risk.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
@@ -1076,7 +1087,7 @@
           {{moment(risk.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{risk.notes[risk.notes.length - 1].body}}
             </span>
            
@@ -1362,7 +1373,7 @@
         <td>{{ lesson.program_name }}</td>
         <td>{{ lesson.project_name }}</td>
         <td>{{ lesson.title }}</td>
-         <td>{{ lesson.description }}</td>      
+        <td><span class="truncate-line-five">{{ lesson.description }}</span></td>      
         <td> {{ lesson.added_by }} </td>  
          <td> {{ moment(lesson.created_at).format('DD MMM YYYY') }} </td>  
          <td class="text-center">
@@ -1391,7 +1402,7 @@
           {{moment(lesson.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{lesson.notes[lesson.notes.length - 1].body}}
             </span>
            
@@ -2789,4 +2800,16 @@ th {
     cursor: pointer;
 }
 
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+  }
+}
 </style>
