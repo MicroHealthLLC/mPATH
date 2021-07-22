@@ -5,13 +5,13 @@
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-2">
+    <div class="row pt-2" :load="log(JSON.stringify(programLessons))">
       <div class="col-6 py-0 pl-0">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
-         <h3 v-if="contentLoaded" class="d-inline">
+         <!-- <h3 v-if="contentLoaded" class="d-inline">
            <el-popover
             placement="top-start"
             title="Project #"
@@ -20,7 +20,7 @@
             content="This is the total number of projects in this program.">
           <b class="badge bg-secondary text-light badge-pill" slot="reference"> {{ C_facilityCount }}</b>
           </el-popover>
-        </h3>  
+        </h3>   -->
        
       </div>
   
@@ -99,7 +99,7 @@
                 <div class="row mt-1 text-center">
                 <div class="col-3 p-0  mb-0">
                   
-                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                  <span class="d-block" v-tooltip="`PLANNED`"><i class="fas fa-calendar-check text-info font-md"></i></span>
                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -251,7 +251,7 @@
                   <div class="row mt-1 text-center">
                 <div class="col-3 p-0  mb-0">
                   
-                  <span v-tooltip="`PLANNED`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                  <span v-tooltip="`PLANNED`" class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -445,7 +445,7 @@
                   <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
                   <div class="col-3 p-0  mb-0">                    
-                    <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                    <span v-tooltip="`PLANNED`"  class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
                         <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                   </div>
                   <div class="col-3 p-0 mb-0">
@@ -604,35 +604,83 @@
             </el-card>
       </div>
       <div class="col-2" :class="[isMapView ? 'col-6 pt-1' : '']" >
-          <el-card
-              class="box-card"
-              style="background-color:#fff"
-            
-            >
-              <div class="row">
-                <div class="col pb-0">
-                  <h6 class="d-inline">LESSONS LEARNED</h6>                 
-                  <hr />
-                </div>
+                 <el-card
+            class="box-card mb-2"
+            style="background-color:#fff"
+            data-cy="issue_summary"
+          >
+            <div class="row">
+              <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
+                <h6 class="d-inline">LESSONS LEARNED</h6>
+               
+                <hr class="mb-half"/>
               </div>
-                <div class="row mt-0 pb-0 text-center">
-                <div class="col py-0">
-                 <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']" >7</span>
-                </div>
+            </div>
+
+            <div v-if="contentLoaded">
+               <div class="row text-center">
+              <div class="col p-0">
+                <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']">{{ programLessons.total_count }}</span>
               </div>
-                <div>
+                
+              </div>
+
+        
+
+              <!-- If Issues? Place in collapsible container -->
+              <div>
                 <el-collapse>
                   <el-collapse-item title="..." name="1">
-                <div class="row mt-1 text-center">
-                LESSONS LEARNED DATA COMING SOON                  
+                 <div v-if="programLessons.total_count > 0">
+                <div class="row mt-1 text-center" >
+                <div class="col-6 p-0 mb-0">                  
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
+                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
                 </div>
-
+                 <div class="col-6 p-0 mb-0">
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary font-md"></i></span>
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">IN PROGRESS</span>           
+                </div>
+                
+                  </div>
+                <div class="row text-center mt-0">
+                <div class="col-6 pb-0 mb-0">
+                  <h4 class="">{{
+                   programLessons.completed
+                  }}</h4>         
+                </div>
+                <div class="col-6 pb-0 mb-0">
+                  <h4>{{
+                   programLessons.progress
+                  }}</h4>        
+                </div>                     
+                </div>            
+                    
+                    </div>
+              
+               <div v-else>
+                <div class="row mt-1 text-center">
+                <div class="col p-0  mb-0">
+                  
+                       NO DATA TO DISPLAY
+                </div>
+          </div>
+              
+                    
+                    </div>
                   </el-collapse-item>
                 </el-collapse>
               </div>
-
-            
-            </el-card>
+            </div>
+    
+  
+        
+      
+            <!-- <div v-if="!contentLoaded" class="my-4">
+              <loader type="code"></loader> -->
+          
+    
+          </el-card>
       </div>
 
     </div>
@@ -644,14 +692,30 @@
         <el-card class="box-card">
           <div class="row">
             <div class="col">
-              <span> <h5>PROJECT STATUS</h5></span>
+              <h5 class="d-inline">PROJECTS</h5>
+               <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">
+                     {{ C_facilityCount }}
+                    </span>
+                  </h4>
               <hr />
             </div>
           </div>
           <div v-if="contentLoaded && C_facilityCount > 0">
-            <div v-for="(status, index) in projectStatuses" :key="index">
-              <div class="row mb-2">
-                <div class="col-6 mb-2">
+            <div>
+               <div class="row">
+                   <div class="col-6 mb-0 card-title">
+                     Project Status
+                   </div>
+                    <div class="col-1 mb-0 pl-2 card-title">   
+                      #
+                    </div>      
+                     <div class="col-5 mb-0 pl-4 card-title">   
+                       Distribution
+                    </div>      
+               </div>
+              <div class="row mb-2"  v-for="(status, index) in projectStatuses" :key="index">
+                <div class="col-6 mb-1">
                   <span
                     class="badge badge-pill badge-color"
                     :class="{ 'font-sm': isMapView }"
@@ -662,7 +726,7 @@
                     {{ status.name }}</span
                   >                
                 </div>
-                <div class="col-1 pl-0 mb-2">                
+                <div class="col-1 pl-0 mb-1">                
                   <span class="badge badge-secondary badge-pill font-sm">{{
                     status.length
                   }}</span>
@@ -728,7 +792,12 @@
            <el-card class="box-card" data-cy="projet_group_summary">
           <div class="row">
             <div class="col">
-              <span> <h5>PROJECT GROUPS</h5></span>
+              <h5 class="d-inline">PROJECT GROUPS</h5>
+                  <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">{{
+                      filteredFacilityGroups.length 
+                    }}</span>
+                  </h4>
               <hr />
             </div>
           </div>
@@ -1330,9 +1399,9 @@ export default {
     showLessToggle() {
       this.showLess = "Show Less";
     },
-    // log(e){
-    //   console.log("this is Lessons" + e)
-    // },
+    log(e){
+      console.log("this is Lessons" + e)
+    },
     handleClick(tab, event) {
         console.log(tab, event);
     },
@@ -1352,7 +1421,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchProgramLessons()
+    this.fetchProgramLessons(this.$route.params)  
   },
 };
 </script>
@@ -1439,6 +1508,9 @@ ul > li {
 .smallerFont {
   font-size: 10px;
 }
+.sm {
+  font-size: 9px;
+}
 .btn-info {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
@@ -1465,5 +1537,8 @@ ul > li {
 }
 .giantMapView {
   font-size: 3.25rem;
+}
+.card-title {
+  text-decoration-line: underline;
 }
 </style>
