@@ -6,6 +6,7 @@ class FacilityProject < ApplicationRecord
   has_many :task_types, through: :tasks
   has_many :issues, dependent: :destroy
   has_many :risks, dependent: :destroy
+  has_many :lessons, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
   
