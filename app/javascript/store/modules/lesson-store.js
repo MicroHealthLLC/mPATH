@@ -23,7 +23,7 @@ const lessonModule = {
         },
       })
         .then((res) => {
-          // console.log("this is the url" + `/api/v1/programs/${programId}/lessons/count.json` );
+          console.log("this is the url" + `/api/v1/programs/${programId}/lessons/count.json` );
           // Mutate state with response from back end
           commit("SET_PROGRAM_LESSONS", res.data);
         })
@@ -48,7 +48,7 @@ const lessonModule = {
       })
         .then((res) => {
           // Mutate state with response from back end
-          console.log("this is the url" + `/api/v1/programs/${programId}/lessons/count.json` );
+          
           commit("SET_PROJECT_LESSONS", res.data.lessons);
         })
         .catch((err) => {
