@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
+
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       get "/portfolio/programs", to: "portfolio#programs"
@@ -16,18 +17,57 @@ Rails.application.routes.draw do
       get "/portfolio/tasks", to: "portfolio#tasks"
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
+      get "/projects/:id", to: "projects#show"
+
+      # NOTE: Replace this with resource.
+      get "/programs/:program_id/lessons" => "lessons#index"
+      get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+      get "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+      post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+      patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+      delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+
+      post '/profile', to: 'profiles#update'
+      get '/current_user', to: 'profiles#current_profile'
+
+      resources :projects, only: [:index, :show] do
+        resources :facilities do
+          resources :notes #, module: :facilities
+          resources :issues do
+            post :batch_update, on: :collection
+            post :create_duplicate, on: :member
+            post :create_bulk_duplicate, on: :member
+          end
+          resources :risks do
+            post :batch_update, on: :collection
+            post :create_duplicate, on: :member
+            post :create_bulk_duplicate, on: :member
+          end
+          resources :tasks do
+            post :batch_update, on: :collection
+            post :create_duplicate, on: :member
+            post :create_bulk_duplicate, on: :member
+          end
+        end
+      end
+
+
       # get "/portfolio", to: "portfolio#index"
     end
-    resources :task_types, only: [:index]
-    resources :facility_groups, only: [:index]
-    resources :statuses, only: [:index]
-    resources :issue_severities, only: [:index]
-    resources :issue_types, only: [:index]
-    resources :issue_stages, only: [:index]
-    resources :task_stages, only: [:index]
-    resources :users, only: [:index]
-    get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
-    get '/projects/:id/task_issues', to: 'projects#index'
+    post '/login' => 'authentication#login'
+
+    # TODO: Unused routes, Remove if no error found
+    # resources :task_types, only: [:index]
+    # resources :facility_groups, only: [:index]
+    # resources :statuses, only: [:index]
+    # resources :issue_severities, only: [:index]
+    # resources :issue_types, only: [:index]
+    # resources :issue_stages, only: [:index]
+    # resources :task_stages, only: [:index]
+    # resources :users, only: [:index]
+    # get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
+    # get '/projects/:id/task_issues', to: 'projects#index'
+
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
     post '/sort-by', to: 'sorts#update'
@@ -65,12 +105,12 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
 
   # TODO: add in namespace instead of this. This is to make front end working
-  get "/api/v1/programs/:program_id/lessons" => "lessons#index"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
-  post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-  patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-  delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+  # get "/api/v1/programs/:program_id/lessons" => "lessons#index"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+  # post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+  # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+  # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
   get "/portfolio" => "dashboard#portfolio"
 

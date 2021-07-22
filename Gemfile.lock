@@ -376,6 +376,7 @@ DEPENDENCIES
   geocoder
   jbuilder (~> 2.5)
   jquery-rails
+  jwt
   ledermann-rails-settings
   letter_opener
   listen (>= 3.0.5, < 3.2)
