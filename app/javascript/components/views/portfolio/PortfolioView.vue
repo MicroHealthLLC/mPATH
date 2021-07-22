@@ -283,7 +283,7 @@
         <td>{{ task.category }}</td>
         <td>{{ moment(task.start_date).format('DD MMM YYYY') }}</td>
         <td>
-          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
           <span v-else-if="task.on_hold && task.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
           <span v-else>{{ moment(task.due_date).format('DD MMM YYYY') }}</span>
         </td>
@@ -291,8 +291,8 @@
         <td> {{ task.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="task.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger mr-1"></i></span>
-            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="far fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -1097,7 +1097,7 @@
           </td>  
         <td>{{ moment(risk.start_date).format('DD MMM YYYY') }}</td>
         <td>
-          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
           <span v-else-if="risk.on_hold && risk.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
           <span v-else>{{ moment(risk.due_date).format('DD MMM YYYY') }}</span>
           </td>   
@@ -1106,7 +1106,7 @@
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
             <span v-if="risk.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
-            <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -1424,7 +1424,7 @@
          <td> {{ moment(lesson.created_at).format('DD MMM YYYY') }} </td>  
          <td class="text-center">
         
-            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="lesson.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="lesson.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="lesson.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
