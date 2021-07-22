@@ -6,7 +6,8 @@
       span.mpathLogo   
         =image_tag "mpath.svg"
     br
-     =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn", target: "_blank" do
+    -if @active_projects.size > 0
+      =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn", target: "_blank" do
         | PORTFOLIO VIEWER
     .grid-container.program-name
       -if @active_projects.size > 0
@@ -116,4 +117,4 @@
 
       -else
         li.list-group-item.text-center data-cy="not_access_projects"
-          | Currently you dont have permissions to access projects
+          | Currently you do not have permissions to access progams

@@ -1,4 +1,6 @@
-class Api::V1::PortfolioController < AuthenticatedController 
+class Api::V1::PortfolioController < Api::ApplicationController
+  
+  before_action :authenticate_request!
 
   def lessons
     if params[:pagination] && params[:pagination] == "true"

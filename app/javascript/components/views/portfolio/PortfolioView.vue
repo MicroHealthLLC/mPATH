@@ -281,14 +281,18 @@
         <td>{{ task.project_name }}</td>
         <td>{{ task.text }}</td>
         <td>{{ task.category }}</td>
-          <td>{{ task.start_date}}</td>
-            <td>{{ task.due_date }}</td>
+        <td>{{ moment(task.start_date).format('DD MMM YYYY') }}</td>
+        <td>
+          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
+          <span v-else-if="task.on_hold && task.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>{{ moment(task.due_date).format('DD MMM YYYY') }}</span>
+        </td>
         <td> {{ task.users }} </td>   
         <td> {{ task.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="task.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger mr-1"></i></span>
-            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="far fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -313,7 +317,7 @@
           {{moment(task.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{task.notes[task.notes.length - 1].body}}
             </span>
            
@@ -632,6 +636,18 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+              <th class="pl-1 sort-th" @click="sortI('issue_severity')">Issue Severity
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_severity'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_severity'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
@@ -697,8 +713,12 @@
         <td>{{ issue.project_name }}</td>
         <td>{{ issue.title }}</td>
         <td>{{ issue.issue_type }}</td>
-        <td> {{ issue.start_date }} </td>   
-        <td> {{ issue.due_date }} </td>   
+        <td>{{ issue.issue_severity }}</td> 
+        <td> {{ moment(issue.start_date).format('DD MMM YYYY') }} </td>   
+        <td> 
+          <span v-if="issue.on_hold && issue.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>{{ moment(issue.due_date).format('DD MMM YYYY') }} </span>
+          </td>   
         <td> {{ issue.users }} </td>   
         <td> {{ issue.progress + '%' }} </td>
         <td class="text-center">
@@ -727,7 +747,7 @@
           {{moment(issue.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{issue.notes[issue.notes.length - 1].body}}
             </span>
            
@@ -975,6 +995,31 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+              <th class="sort-th" @click="sort('risk_approach')">Risk Approach
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'risk_approach'">
+               <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-up"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-down"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'risk_approach'">
+              <i class="fas fa-sort-down"></i></span>
+
+            </th>
+            <th class="sort-th"  @click="sort('priority_level')">Priority Level
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'priority_level'">
+               <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-up"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-down"></i></span>
+              <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'priority_level'">
+              <i class="fas fa-sort-down"></i></span>
+            </th>
               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
@@ -1042,14 +1087,26 @@
         <td>{{ risk.project_name }}</td>
         <td>{{ risk.text }}</td>
         <td>{{ risk.category }}</td>
-         <td>{{ risk.start_date }}</td>
-        <td> {{ risk.due_date }} </td>   
+        <td>{{ risk.risk_approach.charAt(0).toUpperCase() + risk.risk_approach.slice(1) }}</td>
+        <td>
+          <span v-if="(risk.priority_level) == 1" class="gray2">Very Low</span> 
+          <span v-else-if="(risk.priority_level) <= 3" class="green1">Low</span> 
+          <span v-else-if="(risk.priority_level) <= 6" class="yellow1">Moderate</span> 
+          <span v-else-if="(risk.priority_level) <= 14" class="orange1">High</span> 
+          <span v-else-if="(risk.priority_level) >= 15" class="red1">Extreme</span> 
+          </td>  
+        <td>{{ moment(risk.start_date).format('DD MMM YYYY') }}</td>
+        <td>
+          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
+          <span v-else-if="risk.on_hold && risk.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>{{ moment(risk.due_date).format('DD MMM YYYY') }}</span>
+          </td>   
         <td> {{ risk.users }} </td>   
-        <td> {{ risk.progress }} </td>
+        <td> {{ risk.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
             <span v-if="risk.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
-            <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -1076,7 +1133,7 @@
           {{moment(risk.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{risk.notes[risk.notes.length - 1].body}}
             </span>
            
@@ -1362,12 +1419,12 @@
         <td>{{ lesson.program_name }}</td>
         <td>{{ lesson.project_name }}</td>
         <td>{{ lesson.title }}</td>
-         <td>{{ lesson.description }}</td>      
+        <td><span class="truncate-line-five">{{ lesson.description }}</span></td>      
         <td> {{ lesson.added_by }} </td>  
          <td> {{ moment(lesson.created_at).format('DD MMM YYYY') }} </td>  
          <td class="text-center">
         
-            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="lesson.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="lesson.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="lesson.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -1391,7 +1448,7 @@
           {{moment(lesson.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <span>
+            <span class="truncate-line-five">
               {{lesson.notes[lesson.notes.length - 1].body}}
             </span>
            
@@ -2386,7 +2443,7 @@ export default {
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
     log(e){
-      // console.log("C_programNameFilter" + e)
+      //  console.log("" + e)
     }, 
   // Toggle for 3 Action Tags
     toggleWatched(){
@@ -2789,4 +2846,49 @@ th {
     cursor: pointer;
 }
 
+.red1 {
+  background-color: #d9534f;
+}
+
+.yellow1 {
+  background-color: yellow;  
+  color:#383838;  
+  display: block;
+}
+
+.orange1 {
+  background-color: #f0ad4e;
+}
+
+.green1 {
+  background-color: rgb(92,184,92);
+}  
+
+.gray2 {
+  background-color: #ededed;
+}
+
+.green1, .orange1, .red1, .yellow1, .gray2 {
+  display: inline;   
+  border-radius: 2px; 
+  padding: 1px 1px;
+  box-shadow: 0 1px 2.5px rgba(56,56, 56,0.19), 0 1.5px 1.5px rgba(56,56,56,0.23);
+}
+
+.green1, .orange1, .red1 {   
+  color:#fff;   
+}
+
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+  }
+}
 </style>

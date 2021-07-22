@@ -17,7 +17,9 @@ class DashboardController < AuthenticatedController
   end
 
   def portfolio
-
+    if !current_user.projects.active.any?
+      redirect_to root_path
+    end
   end
 
 end
