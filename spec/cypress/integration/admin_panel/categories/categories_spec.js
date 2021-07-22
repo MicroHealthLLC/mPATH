@@ -58,7 +58,7 @@ describe('Admin Panel Categories', function() {
     cy.get('#q_name').type('New Test Category').should('have.value', 'New Test Category')
     cy.get('[type=submit]').first().contains('Filter').click()
 
-    cy.get('#index_table_task_types > tbody > tr').last().within(() => {
+    cy.get('#index_table_task_types > tbody > tr').first().within(() => {
       cy.get('.col-actions').contains('Delete').click()
     })
     cy.get('#q_name').clear()
