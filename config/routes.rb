@@ -20,12 +20,12 @@ Rails.application.routes.draw do
       get "/projects/:id", to: "projects#show"
 
       # NOTE: Replace this with resource.
-      get "/programs/:program_id/lessons" => "lessons#index"
-      get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-      get "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
-      post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-      patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-      delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+      # get "/programs/:program_id/lessons" => "lessons#index"
+      # get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+      # get "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+      # post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+      # patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+      # delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
@@ -104,13 +104,16 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/projects/:project_id/lessons" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
 
-  # TODO: add in namespace instead of this. This is to make front end working
-  # get "/api/v1/programs/:program_id/lessons" => "lessons#index"
-  # get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-  # get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
-  # post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-  # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-  # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+  # TODO: Comment this API and Uncomment the one in namespace once front end is working with JWT 
+  get "/api/v1/programs/:program_id/lessons" => "lessons#index"
+  get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+  get "/api/v1/programs/:program_id/projects/:project_id/lessons/count" => "lessons#count"
+  get "/api/v1/programs/:program_id/lessons/count" => "lessons#count"
+  get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+
+  post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+  patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+  delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
   get "/portfolio" => "dashboard#portfolio"
 
