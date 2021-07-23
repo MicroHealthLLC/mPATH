@@ -58,7 +58,8 @@ admin.privilege = Privilege.new(
   facility_manager_view: "R",
   sheets_view: "R",
   kanban_view: "R",
-  risks: "R"
+  risks: "R",
+  calendar_view: "R"
 )
 admin.save(validate: false)
 
@@ -88,7 +89,8 @@ client.privilege = Privilege.new(
   facility_manager_view: "R",
   sheets_view: "R",
   kanban_view: "R",
-  risks: "R"
+  risks: "R",
+  calendar_view: "R"
 )
 client.save(validate: false)
 
