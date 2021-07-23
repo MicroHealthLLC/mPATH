@@ -534,34 +534,25 @@
               </div>
          <div class="col-2">
                  <el-card
-            class="box-card mb-2"
+            class="box-card lessonsCard mb-2"
             style="background-color:#fff"
             data-cy="issue_summary"
           >
             <div class="row">
               <div class="col pb-0">
-                <h6 class="d-inline">LESSONS LEARNED</h6>
+                <h5 class="d-inline">LESSONS</h5>
+                <h5 v-if="contentLoaded" class="d-inline">
+                  <b class="float-right badge badge-secondary badge-pill">{{
+                   projectLessons.length
+                  }}</b>
+                </h5>
                
                 <hr class="mb-half"/>
               </div>
             </div>
 
             <div v-if="contentLoaded">
-               <div class="row text-center">
-              <div class="col p-0">
-                <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']">{{ projectLessons.length }}</span>
-              </div>
-                
-              </div>
-
-        
-
-              <!-- If Issues? Place in collapsible container -->
-              <div>
-                <el-collapse>
-                  <el-collapse-item title="..." name="1">
-                 <div v-if="projectLessons.length > 0">
-                <div class="row mt-1 text-center" >
+               <div class="row mt-1 text-center" >
                 <div class="col-6 p-0 mb-0">                  
                   <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
@@ -584,22 +575,24 @@
                   }}</h4>        
                 </div>                     
                 </div>            
-                    
-                    </div>
-              
-               <div v-else>
-                <div class="row mt-1 text-center">
-                <div class="col p-0  mb-0">
-                  
-                       NO DATA TO DISPLAY
+
+        
+
+              <!-- Leaving collapse div here for future data-->
+              <!-- <div>
+                <el-collapse>
+                  <el-collapse-item title="" name="1">
+                 <div v-if="projectLessons.length > 0">
+                <div class="row mt-1 text-center" >
+               
                 </div>
-          </div>
               
+                    
                     
                     </div>
                   </el-collapse-item>
                 </el-collapse>
-              </div>
+              </div> -->
             </div>
     
   
@@ -1517,6 +1510,11 @@ export default {
 }
 .giantNumber {
   font-size: 3.7rem;
+}
+.lessonsCard {
+  /deep/.el-card__body{
+    min-height: 184px;
+  }
 }
 </style>
 

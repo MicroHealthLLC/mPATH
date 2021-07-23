@@ -603,32 +603,53 @@
               </div>
             </el-card>
       </div>
-      <div class="col-2" :class="[isMapView ? 'col-6 pt-1' : '']" >
-                 <el-card
+      <div class="col-2 lessonsCard" :class="[isMapView ? 'col-6 pt-1' : '']" >
+        <el-card
             class="box-card mb-2"
+           :class="[isMapView ? 'mapHeight' : 'sheetHeight']"
             style="background-color:#fff"
             data-cy="issue_summary"
           >
             <div class="row">
               <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
-                <h6 class="d-inline">LESSONS LEARNED</h6>
+                <h6 class="d-inline">LESSONS</h6>
+                 <h5 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">{{
+                      programLessons.total_count 
+                    }}</span>
+                  </h5>
                
                 <hr class="mb-half"/>
               </div>
             </div>
 
-            <div v-if="contentLoaded">
-               <div class="row text-center">
-              <div class="col p-0">
-                <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']">{{ programLessons.total_count }}</span>
-              </div>
+      
+              <div class="row mt-3 text-center" >
+                <div class="col-6 p-0 mb-0">                  
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
+                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
+                </div>
+                 <div class="col-6 p-0 mb-0">
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">DRAFTS</span>           
+                </div>
                 
-              </div>
+                  </div>
+                <div class="row text-center mt-0">
+                <div class="col-6 pb-0 mb-0">
+                  <h4 class="">{{
+                   programLessons.completed
+                  }}</h4>         
+                </div>
+                <div class="col-6 pb-0 mb-0">
+                  <h4>{{
+                   programLessons.progress
+                  }}</h4>        
+                </div>                     
+                </div>            
 
-        
-
-              <!-- If Issues? Place in collapsible container -->
-              <div>
+              <!--  -->
+              <!-- <div>
                 <el-collapse>
                   <el-collapse-item title="..." name="1">
                  <div v-if="programLessons.total_count > 0">
@@ -671,7 +692,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </div>
-            </div>
+            </div> -->
     
   
         
@@ -1541,4 +1562,21 @@ ul > li {
 .card-title {
   text-decoration-line: underline;
 }
+
+.lessonsCard {
+.sheetHeight {
+  /deep/.el-card__body{
+    min-height: 184px;
+  }
+ }
+}
+
+.lessonsCard {
+.mapHeight {
+  /deep/.el-card__body{
+    min-height: 175px;
+  }
+ }
+}
+
 </style>
