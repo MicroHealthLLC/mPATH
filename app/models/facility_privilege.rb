@@ -59,25 +59,45 @@ class FacilityPrivilege < ApplicationRecord
 
   def add_read_privilege
     fp = self
-    if fp.admin && !fp.admin.include?("R") && ( fp.admin & ["W", "D"]).any?
+    if fp.admin && fp.admin_was.include?("R") && !fp.admin.include?("R")
+      fp.admin = []
+    elsif fp.admin && !fp.admin.include?("R") && ( fp.admin & ["W", "D"]).any?
       fp.admin = (fp.admin + ["R"]).uniq
     end
-    if fp.overview && !fp.overview.include?("R") && ( fp.overview & ["W", "D"]).any?
+
+    if fp.overview && fp.overview_was.include?("R") && !fp.overview.include?("R")
+      fp.overview = []
+    elsif fp.overview && !fp.overview.include?("R") && ( fp.overview & ["W", "D"]).any?
       fp.overview = (fp.overview + ["R"]).uniq
     end
-    if fp.tasks && !fp.tasks.include?("R") && ( fp.tasks & ["W", "D"]).any?
+    
+    if fp.tasks && fp.tasks_was.include?("R") && !fp.tasks.include?("R")
+      fp.tasks = []
+    elsif fp.tasks && !fp.tasks.include?("R") && ( fp.tasks & ["W", "D"]).any?
       fp.tasks = (fp.tasks + ["R"]).uniq
     end
-    if fp.issues && !fp.issues.include?("R") && ( fp.issues & ["W", "D"]).any?
+    
+    if fp.issues && fp.issues_was.include?("R") && !fp.issues.include?("R")
+      fp.issues = []
+    elsif fp.issues && !fp.issues.include?("R") && ( fp.issues & ["W", "D"]).any?
       fp.issues = (fp.issues + ["R"]).uniq
     end
-    if fp.risks && !fp.risks.include?("R") && ( fp.risks & ["W", "D"]).any?
+    
+    if fp.risks && fp.risks_was.include?("R") && !fp.risks.include?("R")
+      fp.risks = []
+    elsif fp.risks && !fp.risks.include?("R") && ( fp.risks & ["W", "D"]).any?
       fp.risks = (fp.risks + ["R"]).uniq
     end
-    if fp.notes && !fp.notes.include?("R") && ( fp.notes & ["W", "D"]).any?
+    
+    if fp.notes && fp.notes_was.include?("R") && !fp.notes.include?("R")
+      fp.notes = []
+    elsif fp.notes && !fp.notes.include?("R") && ( fp.notes & ["W", "D"]).any?
       fp.notes = (fp.notes + ["R"]).uniq
     end
-    if fp.lessons && !fp.lessons.include?("R") && ( fp.lessons & ["W", "D"]).any?
+    
+    if fp.lessons && fp.lessons_was.include?("R") && !fp.lessons.include?("R")
+      fp.lessons = []
+    elsif fp.lessons && !fp.lessons.include?("R") && ( fp.lessons & ["W", "D"]).any?
       fp.lessons = (fp.lessons + ["R"]).uniq
     end
   end
