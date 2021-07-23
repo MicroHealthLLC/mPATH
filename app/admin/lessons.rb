@@ -21,6 +21,7 @@ ActiveAdmin.register Lesson do
       :facility_project_id,
       :user_id, 
       :lesson_stage_id,
+      file_links: [],
       lesson_files: [],
       user_ids: [],
       sub_task_ids: [],
@@ -159,6 +160,8 @@ ActiveAdmin.register Lesson do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :lesson_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :file_links, label: 'Add Links'
         end
       end
 
@@ -179,17 +182,24 @@ ActiveAdmin.register Lesson do
     def create
       build_resource
       handle_files
+      handle_links
       super
     end
 
     def update
       handle_files
+      handle_links
       super
     end
 
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:lesson].delete(:lesson_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:lesson].delete(:file_links)
     end
 
     def scoped_collection
