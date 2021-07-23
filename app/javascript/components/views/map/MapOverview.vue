@@ -505,35 +505,83 @@
     </el-card>
     </div>
      <div class="col-md-6 pt-0 pl-0 pr-2">
-          <el-card
-              class="box-card"
-              style="background-color:#fff"
-            
-            >
-              <div class="row">
-                <div class="col pb-0">
-                  <h5 class="d-inline">LESSONS LEARNED</h5>        
-                  <hr />
-                </div>
+           <el-card
+            class="box-card mb-2"
+            style="background-color:#fff"
+            data-cy="issue_summary"
+          >
+            <div class="row">
+              <div class="col pb-0">
+                <h6 class="d-inline">LESSONS LEARNED</h6>
+               
+                <hr class="mb-half"/>
               </div>
-                <div class="row mt-0 pb-0 text-center">
-                <div class="col py-0">
-                 <span class="giantNumber">7</span>
-                </div>
+            </div>
+
+            <div v-if="contentLoaded">
+               <div class="row text-center">
+              <div class="col p-0">
+                <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']">{{ projectLessons.length }}</span>
               </div>
-                <div>
+                
+              </div>
+
+        
+
+              <!-- If Issues? Place in collapsible container -->
+              <div>
                 <el-collapse>
                   <el-collapse-item title="..." name="1">
-                <div class="row mt-1 text-center">
-                LESSONS LEARNED DATA COMING SOON                  
+                 <div v-if="projectLessons.length > 0">
+                <div class="row mt-1 text-center" >
+                <div class="col-6 p-0 mb-0">                  
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
-
+                 <div class="col-6 p-0 mb-0">
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="fas fa-pencil-alt text-warning"></i></span>
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>           
+                </div>
+                
+                  </div>
+                <div class="row text-center mt-0">
+                <div class="col-6 pb-0 mb-0">
+                  <h4 class="">{{
+                   lessonVariation.completes.length
+                  }}</h4>         
+                </div>
+                <div class="col-6 pb-0 mb-0">
+                  <h4>{{
+                  lessonVariation.drafts.length
+                  }}</h4>        
+                </div>                     
+                </div>            
+                    
+                    </div>
+              
+               <div v-else>
+                <div class="row mt-1 text-center">
+                <div class="col p-0  mb-0">
+                  
+                       NO DATA TO DISPLAY
+                </div>
+          </div>
+              
+                    
+                    </div>
                   </el-collapse-item>
                 </el-collapse>
               </div>
-
-            
-            </el-card>
+            </div>
+    
+  
+        
+      
+            <!-- <div v-if="!contentLoaded" class="my-4">
+              <loader type="code"></loader> -->
+          
+    
+          </el-card>
                </div>
    
     </div>
@@ -655,6 +703,7 @@ export default {
     };
   },
   mounted() {
+     this.fetchProjectLessons(this.$route.params);
     if (Vue.prototype.$preferences.sub_navigation_menu) {
       this.currentTab = Vue.prototype.$preferences.sub_navigation_menu;
     }
@@ -664,6 +713,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["fetchProjectLessons"]),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
     updateFacility(e) {
       if (e.target) e.target.blur();
@@ -731,6 +781,7 @@ export default {
       "taskTypes",
       "contentLoaded",
       "currentProject",
+      "projectLessons",
       "taskTypeFilter",
       "issueTypeFilter",
       "riskStageFilter",
@@ -1168,6 +1219,14 @@ export default {
         });
       }
       return taskTypes;
+    },
+    lessonVariation() {
+      let completes = this.projectLessons.filter(l => !l.draft )
+       let drafts = this.projectLessons.filter(l => l.draft)
+      return {
+        completes,
+        drafts
+      }
     },
 
   },
