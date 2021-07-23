@@ -5,7 +5,7 @@
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-2" :load="log(JSON.stringify(programLessons))">
+    <div class="row pt-2">
       <div class="col-6 py-0 pl-0">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
@@ -638,8 +638,8 @@
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
                 </div>
                  <div class="col-6 p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary font-md"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">IN PROGRESS</span>           
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">DRAFTS</span>           
                 </div>
                 
                   </div>
@@ -711,7 +711,7 @@
                       #
                     </div>      
                      <div class="col-5 mb-0 pl-4 card-title">   
-                       Distribution
+                       Project Distribution
                     </div>      
                </div>
               <div class="row mb-2"  v-for="(status, index) in projectStatuses" :key="index">
