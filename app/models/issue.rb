@@ -2,6 +2,8 @@ class Issue < ApplicationRecord
   include Normalizer
   include Tasker
 
+  serialize :links, Array
+
   belongs_to :issue_type
   belongs_to :issue_stage, optional: true
   belongs_to :task_type, optional: true
@@ -69,6 +71,7 @@ class Issue < ApplicationRecord
       :on_hold, 
       :draft, 
       issue_files: [],
+      links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -246,6 +249,15 @@ class Issue < ApplicationRecord
           link: false
         }
       end
+    end.as_json
+  end
+
+  def links_as_json
+    links.map do |link|
+      {
+        name: link,
+        uri: link,
+      }
     end.as_json
   end
 

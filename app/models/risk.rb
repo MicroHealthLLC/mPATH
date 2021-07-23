@@ -2,6 +2,8 @@ class Risk < ApplicationRecord
   include Normalizer
   include Tasker
 
+  serialize :links, Array
+
   belongs_to :user
   has_many :risk_users, dependent: :destroy
   belongs_to :risk_stage, optional: true
@@ -60,6 +62,15 @@ class Risk < ApplicationRecord
           link: false
         }
       end
+    end.as_json
+  end
+
+  def links_as_json
+    links.map do |link|
+      {
+        name: link,
+        uri: link,
+      }
     end.as_json
   end
 
@@ -137,6 +148,7 @@ class Risk < ApplicationRecord
       :ongoing,
       user_ids: [],
       risk_files: [],
+      links: [],
       sub_task_ids: [],
       sub_issue_ids: [],
       sub_risk_ids: [],

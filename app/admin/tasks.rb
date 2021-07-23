@@ -21,6 +21,7 @@ ActiveAdmin.register Task do
       :start_date,
       :auto_calculate,
       task_files: [],
+      links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -75,6 +76,11 @@ ActiveAdmin.register Task do
         else
           "<span>#{file.blob.filename}</span>".html_safe
         end
+      end
+    end
+    column "Links" do |task|
+      task.links&.map do |link|
+        link_to link, link, target: '_blank'
       end
     end
     column "Program", :project, nil, sortable: 'projects.name' do |task|
@@ -152,6 +158,8 @@ ActiveAdmin.register Task do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :task_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :links, label: 'Add Links'
         end
       end
 
@@ -212,17 +220,25 @@ ActiveAdmin.register Task do
     def create
       build_resource
       handle_files
+      handle_links
       super
     end
 
     def update
       handle_files
+      handle_links
       super
     end
 
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:task].delete(:task_files)
+    end
+
+    def handle_links
+      return unless params[:task][:links].present?
+      link_params = JSON.parse(params[:task][:links])
+      params[:task][:links] = link_params.map { |l| l["name"] }
     end
 
     def destroy

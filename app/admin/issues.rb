@@ -24,6 +24,7 @@ ActiveAdmin.register Issue do
       :facility_project_id,
       :auto_calculate,
       issue_files: [],
+      links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -115,6 +116,11 @@ ActiveAdmin.register Issue do
         end
       end
     end
+    column "Links" do |issue|
+      issue.links&.map do |link|
+        link_to link, link, target: '_blank'
+      end
+    end
     actions defaults: false do |issue|
       item "Edit", edit_admin_issue_path(issue), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_issue_path(issue), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -171,6 +177,8 @@ ActiveAdmin.register Issue do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :issue_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :links, label: 'Add Links'
         end
       end
 
@@ -233,17 +241,25 @@ ActiveAdmin.register Issue do
     def create
       build_resource
       handle_files
+      handle_links
       super
     end
 
     def update
       handle_files
+      handle_links
       super
     end
 
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:issue].delete(:issue_files)
+    end
+
+    def handle_links
+      return unless params[:issue][:links].present?
+      link_params = JSON.parse(params[:issue][:links])
+      params[:issue][:links] = link_params.map { |l| l["name"] }
     end
 
     def destroy

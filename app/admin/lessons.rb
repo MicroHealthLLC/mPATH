@@ -19,6 +19,7 @@ ActiveAdmin.register Lesson do
       :facility_project_id,
       :user_id, 
       :lesson_stage_id,
+      links: [],
       lesson_files: [],
       user_ids: [],
       sub_task_ids: [],
@@ -64,6 +65,11 @@ ActiveAdmin.register Lesson do
         else
           "<span>#{file.blob.filename}</span>".html_safe
         end
+      end
+    end
+    column "Links" do |lesson|
+      lesson.links&.map do |link|
+        link_to link, link, target: '_blank'
       end
     end
     column "Program", :project, nil, sortable: 'projects.name' do |lesson|
@@ -141,6 +147,8 @@ ActiveAdmin.register Lesson do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :lesson_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :links, label: 'Add Links'
         end
       end
 
@@ -161,17 +169,25 @@ ActiveAdmin.register Lesson do
     def create
       build_resource
       handle_files
+      handle_links
       super
     end
 
     def update
       handle_files
+      handle_links
       super
     end
 
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:lesson].delete(:lesson_files)
+    end
+
+    def handle_links
+      return unless params[:lesson][:links].present?
+      link_params = JSON.parse(params[:lesson][:links])
+      params[:lesson][:links] = link_params.map { |l| l["name"] }
     end
 
     def scoped_collection

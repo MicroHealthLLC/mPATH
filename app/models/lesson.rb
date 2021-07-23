@@ -1,4 +1,5 @@
 class Lesson < ApplicationRecord
+  serialize :links, Array
 
   belongs_to :user
   belongs_to :task_type, optional: true
@@ -218,6 +219,7 @@ class Lesson < ApplicationRecord
       sub_issue_ids: [],
       sub_risk_ids: [],
       lesson_files: [],
+      links: [],
       user_ids: [],
       destroy_file_ids: [],
       notes_attributes: [
@@ -510,6 +512,15 @@ class Lesson < ApplicationRecord
           link: false
         }
       end
+    end.as_json
+  end
+
+  def links_as_json
+    links.map do |link|
+      {
+        name: link,
+        uri: link,
+      }
     end.as_json
   end
 
