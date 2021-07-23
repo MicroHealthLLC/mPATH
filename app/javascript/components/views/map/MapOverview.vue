@@ -66,7 +66,7 @@
               <div class="row mt-1 text-center">
                 <div class="col-3 p-0  mb-0">
                 
-                <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
 
               </div>
                 <div class="col-3 p-0 mb-0">
@@ -203,7 +203,7 @@
                 <div v-if="contentLoaded">
                     <div class="row mt-1 text-center">
                   <div class="col-3 p-0  mb-0">                      
-                    <span v-tooltip="`PLANNED`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                    <span v-tooltip="`PLANNED`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
                   
                   </div>
                   <div class="col-3 p-0 mb-0">
@@ -387,7 +387,7 @@
           <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
             <div class="col-3 p-0  mb-0">                    
-              <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+              <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
               
             </div>
             <div class="col-3 p-0 mb-0">
@@ -506,30 +506,56 @@
     </div>
      <div class="col-md-6 pt-0 pl-0 pr-2">
            <el-card
-            class="box-card mb-2"
+            class="box-card lessonsCard mb-2"
             style="background-color:#fff"
             data-cy="issue_summary"
           >
             <div class="row">
               <div class="col pb-0">
-                <h6 class="d-inline">LESSONS LEARNED</h6>
-               
-                <hr class="mb-half"/>
+               <h5 class="d-inline">LESSONS</h5>
+                <h5 v-if="contentLoaded" class="d-inline">
+                  <b class="float-right badge badge-secondary badge-pill">{{
+                    projectLessons.length
+                  }}</b>
+                </h5>
+                <hr>
               </div>
             </div>
-
-            <div v-if="contentLoaded">
-               <div class="row text-center">
-              <div class="col p-0">
-                <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']">{{ projectLessons.length }}</span>
-              </div>
+     
+            
+                <div class="row mt-1 text-center" >
+                <div class="col-6 p-0 mb-0">                  
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                     
+                </div>
+                 <div class="col-6 p-0 mb-0">
+                <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning"></i></span>
+                            
+                </div>
                 
+                  </div>
+                <div class="row text-center mt-0">
+                <div class="col-6 pb-0 mb-0">
+                  <h4 class="">{{
+                   lessonVariation.completes.length
+                  }}</h4>         
+                </div>
+                <div class="col-6 pb-0 mb-0">
+                  <h4>{{
+                  lessonVariation.drafts.length
+                  }}</h4>        
+                </div>                     
+                </div>            
+                  
+              
+              
+           </el-card>
               </div>
 
         
 
               <!-- If Issues? Place in collapsible container -->
-              <div>
+              <!-- <div>
                 <el-collapse>
                   <el-collapse-item title="..." name="1">
                  <div v-if="projectLessons.length > 0">
@@ -539,7 +565,7 @@
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-6 p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="fas fa-pencil-alt text-warning"></i></span>
+                <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>           
                 </div>
                 
@@ -572,7 +598,7 @@
                   </el-collapse-item>
                 </el-collapse>
               </div>
-            </div>
+            </div> -->
     
   
         
@@ -581,7 +607,7 @@
               <loader type="code"></loader> -->
           
     
-          </el-card>
+      
                </div>
    
     </div>
@@ -1323,6 +1349,12 @@ export default {
 }
 .giantNumber {
   font-size: 2.75rem;
+}
+
+.lessonsCard {
+  /deep/.el-card__body{
+    min-height: 161px;
+  }
 }
 </style>
 
