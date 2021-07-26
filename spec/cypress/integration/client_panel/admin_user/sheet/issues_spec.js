@@ -129,16 +129,17 @@ describe('Sheets Issues View', function() {
     cy.logout()
   })
 
-  it('Sort Issue according to On Watch', function() {
-    cy.get('.mt-3 > tr > :nth-child(9)').click()
-    cy.get('[data-cy=issue_row]').first().should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(9)').click()
-    cy.get('[data-cy=issue_row]').first().contains('x').should('be.visible')
-    cy.logout()
-  })
+  // NOTE: we have removed on watched column. so excluding this test
+  // it('Sort Issue according to On Watch', function() {
+  //   cy.get('.mt-3 > tr > :nth-child(9)').click()
+  //   cy.get('[data-cy=issue_row]').first().should('be.visible')
+  //   cy.get('.mt-3 > tr > :nth-child(9)').click()
+  //   cy.get('[data-cy=issue_row]').first().contains('x').should('be.visible')
+  //   cy.logout()
+  // })
 
   it('Sort Issue according to Last Update', function() {
-    cy.get('.mt-3 > tr > :nth-child(10)').click()
+    cy.get('.mt-3 > tr > :nth-child(9)').click()
     cy.get('[data-cy=issue_row]').first().contains('No Updates').should('be.visible')
     cy.logout()
   })

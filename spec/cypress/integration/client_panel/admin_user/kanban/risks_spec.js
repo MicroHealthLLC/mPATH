@@ -2,6 +2,7 @@ describe('Kanban Risks View', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
+    cy.appScenario('provide_risk_privileges')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openKanbanRisk()
   })
@@ -25,13 +26,6 @@ describe('Kanban Risks View', function() {
     cy.get('[data-cy=risk_close_btn]').click({force: true})
     cy.logout()
   })
-
-  // it("Create new risk in kanban risk page", function() {
-  //   cy.fillRiskForm()
-  //   cy.get('[data-cy=risk_save_btn]').click({force: true})
-  //   cy.get('.el-message__content').contains('New test risk in kanban was saved successfully.').should('be.visible')
-  //   cy.logout()
-  // })
 
   it("In Risk form if title's field empty, error message display", function() {
     cy.fillRiskForm()
@@ -81,7 +75,7 @@ describe('Kanban Risks View', function() {
     cy.get('[data-cy=risk_save_btn]').click()
 
     cy.get('[data-cy=risk_start_date_error]').scrollIntoView()
-    cy.get('[data-cy=risk_start_date_error]').contains('The Identified Date field is required.').should('be.visible')
+    cy.get('.error-list').contains('The Date Identified field is required.').should('be.visible')
     cy.get('[data-cy=risk_close_btn]').click()
     cy.logout()
   })
@@ -108,53 +102,6 @@ describe('Kanban Risks View', function() {
     cy.get('[data-cy=risk_due_date_error]').scrollIntoView()
     cy.get('[data-cy=risk_due_date_error]').contains('The Risk Approach Due Date field is required.').should('be.visible')
     cy.get('[data-cy=risk_close_btn]').click()
-    cy.logout()
-  })
-
-  // it("In Risk form if Risk probability description field empty, error message display", function() {
-  //   cy.fillRiskForm()
-  //   cy.get('[data-cy=probability_description]').clear()
-  //   cy.get('[data-cy=probability_description_error]').contains('The Probability Description field is required.').should('be.visible')
-  //   cy.get('[data-cy=risk_close_btn]').click()
-  //   cy.logout()
-  // })
-
-  // it("In Risk form if Risk impact description field empty, error message display", function() {
-  //   cy.fillRiskForm()
-  //   cy.get('[data-cy=impact_description]').clear()
-  //   cy.get('[data-cy=impact_description_error]').contains('The Impact Description field is required.').should('be.visible')
-  //   cy.get('[data-cy=risk_close_btn]').click()
-  //   cy.logout()
-  // })
-
-  // it("In Risk form if Risk approach description field empty, error message display", function() {
-  //   cy.fillRiskForm()
-  //   cy.get('.col-md-12 > [data-cy=approach_description]').clear()
-  //   cy.get('.col-md-12 > [data-cy=approach_description_error]').contains('The Risk Approach Description field is required.').should('be.visible')
-  //   cy.get('[data-cy=risk_close_btn]').click()
-  //   cy.logout()
-  // })
-
-  it('Update on watch state of a risk', function() {
-    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-      cy.get('[data-cy=kanban_draggable]').within(() => {
-        cy.get('[data-cy=risks]').first().within(() => {
-          cy.get('[data-cy=on_watch_icon]').should('be.visible')
-        })
-        cy.get('[data-cy=risks]').first().click()
-      })
-    })
-    cy.get('[data-cy=risk_on_watch]').click({force: true})
-    cy.get('[data-cy=risk_save_btn]').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=risk_close_btn]').click({force: true})
-    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-      cy.get('[data-cy=kanban_draggable]').within(() => {
-        cy.get('[data-cy=risks]').first().within(() => {
-          cy.get('[data-cy=on_watch_icon]').should('not.exist')
-        })
-      })
-    })
     cy.logout()
   })
 
@@ -196,4 +143,65 @@ describe('Kanban Risks View', function() {
     })
     cy.logout()
   })
+
+
+  // NOTE: not used
+  // it("Create new risk in kanban risk page", function() {
+  //   cy.fillRiskForm()
+  //   cy.get('[data-cy=risk_save_btn]').click({force: true})
+  //   cy.get('.el-message__content').contains('New test risk in kanban was saved successfully.').should('be.visible')
+  //   cy.logout()
+  // })
+
+  // NOTE: not used
+  // it("In Risk form if Risk probability description field empty, error message display", function() {
+  //   cy.fillRiskForm()
+  //   cy.get('[data-cy=probability_description]').clear()
+  //   cy.get('[data-cy=probability_description_error]').contains('The Probability Description field is required.').should('be.visible')
+  //   cy.get('[data-cy=risk_close_btn]').click()
+  //   cy.logout()
+  // })
+
+  // NOTE: not used
+  // it("In Risk form if Risk impact description field empty, error message display", function() {
+  //   cy.fillRiskForm()
+  //   cy.get('[data-cy=impact_description]').clear()
+  //   cy.get('[data-cy=impact_description_error]').contains('The Impact Description field is required.').should('be.visible')
+  //   cy.get('[data-cy=risk_close_btn]').click()
+  //   cy.logout()
+  // })
+
+  // NOTE: not used
+  // it("In Risk form if Risk approach description field empty, error message display", function() {
+  //   cy.fillRiskForm()
+  //   cy.get('.col-md-12 > [data-cy=approach_description]').clear()
+  //   cy.get('.col-md-12 > [data-cy=approach_description_error]').contains('The Risk Approach Description field is required.').should('be.visible')
+  //   cy.get('[data-cy=risk_close_btn]').click()
+  //   cy.logout()
+  // })
+
+  // NOTE: not used
+  // it('Update on watch state of a risk', function() {
+  //   cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+  //     cy.get('[data-cy=kanban_draggable]').within(() => {
+  //       cy.get('[data-cy=risks]').first().within(() => {
+  //         cy.get('[data-cy=on_watch_icon]').should('be.visible')
+  //       })
+  //       cy.get('[data-cy=risks]').first().click()
+  //     })
+  //   })
+  //   cy.get('[data-cy=risk_on_watch]').click({force: true})
+  //   cy.get('[data-cy=risk_save_btn]').click({force: true})
+  //   cy.wait(1000)
+  //   cy.get('[data-cy=risk_close_btn]').click({force: true})
+  //   cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+  //     cy.get('[data-cy=kanban_draggable]').within(() => {
+  //       cy.get('[data-cy=risks]').first().within(() => {
+  //         cy.get('[data-cy=on_watch_icon]').should('not.exist')
+  //       })
+  //     })
+  //   })
+  //   cy.logout()
+  // })
+
 })
