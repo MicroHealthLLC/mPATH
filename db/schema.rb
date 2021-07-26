@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_23_141502) do
+ActiveRecord::Schema.define(version: 2021_07_21_202001) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -288,26 +288,26 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
   end
 
   create_table "privileges", charset: "utf8", force: :cascade do |t|
-    t.string "overview", default: "R"
-    t.string "tasks", default: "R"
-    t.string "notes", default: "R"
-    t.string "issues", default: "R"
-    t.string "admin", default: ""
+    t.string "overview"
+    t.string "tasks"
+    t.string "notes"
+    t.string "issues"
+    t.string "admin"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "map_view", default: "R"
-    t.string "gantt_view", default: "R"
-    t.string "watch_view", default: "R"
-    t.string "documents", default: "R"
-    t.string "members", default: "R"
-    t.string "facility_manager_view", default: "R"
-    t.string "sheets_view", default: "R"
-    t.string "kanban_view", default: "R"
-    t.string "risks", default: "R"
-    t.string "calendar_view", default: "R"
-    t.string "lessons", default: "R"
-    t.string "portfolio_view", default: "R"
+    t.string "map_view"
+    t.string "gantt_view"
+    t.string "watch_view"
+    t.string "documents"
+    t.string "members"
+    t.string "facility_manager_view"
+    t.string "sheets_view"
+    t.string "kanban_view"
+    t.string "risks"
+    t.string "calendar_view"
+    t.string "lessons"
+    t.string "portfolio_view"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 

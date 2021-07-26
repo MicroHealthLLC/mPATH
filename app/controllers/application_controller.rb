@@ -3,6 +3,12 @@ class ApplicationController < ActionController::Base
 
   after_action :release_memory#, if: -> {Rails.env.development?}
 
+  rescue_from NameError, Exception, with: lambda { |exception| render_error(exception.message, 500) }
+  rescue_from ActionController::RoutingError, with: lambda { |exception| render_error("Invalid request", 404) }
+  rescue_from ::AbstractController::ActionNotFound, with: lambda { |exception| render_error("Invalid request", 404) }
+
+  rescue_from ActiveRecord::RecordNotFound, with: lambda { |exception| render_error("Record not found", 404,{e: exception}) }
+
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
       format.json {render json: {error: exception.message} , status: 403}
@@ -22,26 +28,31 @@ class ApplicationController < ActionController::Base
   end
 
   def render_404(options={})
-    render_error({message: :notice_file_not_found, status: 404}.merge(options))
+    # render_error({message: :notice_file_not_found, status: 404}.merge(options))
+    render_error("Record not found",404)
   end
 
   def raise_403
     raise CanCan::AccessDenied.new("Not authorized!")
   end
 
-  def render_error(arg)
-    arg = {message: arg} unless arg.is_a?(Hash)
-
-    @message = arg[:message]
-    @message = @message if @message.is_a?(Symbol)
-    @status = arg[:status] || 500
-    arg[:status] ||= 500
-
-    respond_to do |format|
-      #format.any {head @status}
-      format.any { render(json: arg,  status: @status) }
-    end
+  def render_error(error_msg = "Error occurred!", status_code = 500, options = {})
+    render json: {error: error_msg},  status: status_code
   end
+
+  # def render_error(arg)
+  #   arg = {message: arg} unless arg.is_a?(Hash)
+
+  #   @message = arg[:message]
+  #   @message = @message if @message.is_a?(Symbol)
+  #   @status = arg[:status] || 500
+  #   arg[:status] ||= 500
+
+  #   respond_to do |format|
+  #     #format.any {head @status}
+  #     format.any { render(json: arg,  status: @status) }
+  #   end
+  # end
 
   def require_admin
     render_404 unless current_user.admin?

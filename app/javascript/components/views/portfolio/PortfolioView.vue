@@ -15,7 +15,7 @@
   <el-tab-pane label="PORTFOLIO VIEWER" class="p-3">
      <el-tabs class="mt-1" type="border-card">
        <!-- TASKS -->
-     <el-tab-pane class="px-3 pt-0" >
+     <el-tab-pane class="pt-0" >
          <template slot="label" class="text-right" v-if="tasksObj && tasksObj !== undefined">
            TASKS
            <span class="badge badge-secondary badge-pill">
@@ -24,10 +24,21 @@
                 <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
-             <div class="row pt-2">              
+          <div class="row pb-3 pt-2">
              <div class="col-3 text-center py-0">
                <div>
-                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                 <label class="font-sm pb-1 mb-0">SEARCH TASKS</label>
+                
+                <div class="w-100">
+              <el-input type="search" placeholder="Search Tasks" v-model="search_tasks" >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+              </div>
+               </div>
+              </div>
+                <div class="col-3 text-center pt-0">
+               <div>
+                 <label class="font-sm pb-1 mb-0">FILTER TASKS BY PROGRAM</label>
                  <template>
                 <el-select     
                     v-model="C_programNameFilter"                               
@@ -35,7 +46,7 @@
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter By Program"
+                    placeholder="Filter Tasks By Program"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -48,9 +59,15 @@
                   </el-select> 
                       </template>
                </div>
-              </div>           
-              
-                <div class="col-6 text-center pt-2">
+              </div>     
+            </div>
+            <div class="box-shadow p-3">
+             <div class="row pt-3 pb-1">              
+               <div class="col-6 text-center pt-2">
+
+                   <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
+                     <button class="btn btn-info btn-md">Add Task</button> 
+                     </div> -->
                 <label class="font-sm mb-0 pb-1 d-block">DISPLAY TASKS BY STATE</label>
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
                   <div class="pr-5 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
@@ -144,24 +161,26 @@
                   </div>
                </div>
              </div>
+             <div class="col-3">
+              <span class="btnRow"> <button
+              v-tooltip="`Export to PDF`"
+              @click.prevent="exportTasksToPdf"
+              class="btn btn-md mr-1 exportBtns text-light">
+              <i class="far fa-file-pdf"></i>
+            </button>
+            <button
+              v-tooltip="`Export to Excel`"
+              @click.prevent="exportTasksToExcel('table', 'Portfolio Tasks')"
+              class="btn btn-md mr-3 exportBtns text-light">
+            <i class="far fa-file-excel"></i>
+            </button>
+            <button class="btn text-light btn-md mh-orange profile-btns">RESULTS: {{ tasksObj.length}}
+            </button></span>   
+             </div>
               </div>
 
-      <div class="row text-center mt-2" v-if="tasksObj !== null && tasksObj.length > 0 ">            
-          <span class="ml-auto mt-3 btnRow"> <button
-          v-tooltip="`Export to PDF`"
-          @click.prevent="exportTasksToPdf"
-          class="btn btn-md mr-1 exportBtns text-light">
-          <i class="far fa-file-pdf"></i>
-        </button>
-        <button
-          v-tooltip="`Export to Excel`"
-          @click.prevent="exportTasksToExcel('table', 'Portfolio Tasks')"
-          class="btn btn-md mr-3 exportBtns text-light">
-        <i class="far fa-file-excel"></i>
-        </button><button class="btn text-light btn-md mh-orange profile-btns">RESULTS: {{ tasksObj.length}}</button></span>   
-                
-      
-        <div class="xTable" style="overflow-x:auto;margin-top:-30px">
+      <div class="row text-center mt-2" v-if="tasksObj !== null && tasksObj.length > 0 ">      
+        <div class="xTable px-3" style="overflow-x:auto;margin-top:-30px">
           <table class="table table-sm mt-5 stickyTableHeader table-bordered" ref="table" id="portTasks">        
           
               <thead style="background-color:#ededed;">
@@ -283,7 +302,7 @@
         <td>{{ task.category }}</td>
         <td>{{ moment(task.start_date).format('DD MMM YYYY') }}</td>
         <td>
-          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
           <span v-else-if="task.on_hold && task.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
           <span v-else>{{ moment(task.due_date).format('DD MMM YYYY') }}</span>
         </td>
@@ -291,8 +310,8 @@
         <td> {{ task.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="task.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger mr-1"></i></span>
-            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="far fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -354,120 +373,47 @@
             <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
         </div>
     
-     
-              <!-- TASKS TABLE -->
-           <!-- <el-table
-              :data="pagedTableData"  
-              class="mt-5"
-              border
-              style="width: 100%">
-            <el-table-column
-              fixed
-              prop="program_name"
-              sortable
-              :sort-change="test"
-              label="Program"
-              width="250">
-            </el-table-column>
-            <el-table-column
-              prop="project_name"
-              fixed
-              sortable
-              label="Project"
-              width="225">
-            </el-table-column>
-            <el-table-column
-              prop="text"
-              fixed
-              sortable
-              label="Task"
-              width="225">
-            </el-table-column>
-            <el-table-column
-              prop="category"
-              label="Category"
-              sortable
-              width="200">
-            </el-table-column>
-            <el-table-column
-              prop="start_date"
-              label="Start Date"
-              sortable
-              width="120">
-            </el-table-column>
-            <el-table-column
-              prop="due_date"
-              label="Due Date"
-              sortable
-              width="120">
-            </el-table-column>
-            <el-table-column
-              prop="users"
-              label="Assigned Users"
-              sortable
-              width="200">
-            </el-table-column>
-            <el-table-column
-              prop="progress"
-              sortable
-              label="Progress"
-              width="100">
-            </el-table-column>
-            <el-table-column
-              prop="flags"
-              label="Flags"
-              sortable
-              width="150">
-            </el-table-column>
-            <el-table-column
-              prop="last_update"
-              fixed="right"
-              label="Last Update"
-              sortable
-              width="250">             
-            </el-table-column>
-
-          
-
-          </el-table>
-         
-                      
-            </div>    
-             <div class="float-right mt-2">
-          <el-pagination
-            
-            @current-change="setPage"
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :total="tasksObj.length">
-          </el-pagination> -->
-    
 
       </div>
       <div v-else class="mt-5">
         NO RESULTS TO DISPLAY
       </div>
+            </div>
                
      </el-tab-pane>
-      <el-tab-pane class="px-3 pt-0"  >  
+
+
+      <el-tab-pane class="pt-0"  >  
           <template slot="label" class="text-right">
            ISSUES
            <span class="badge badge-secondary badge-pill">
            <span v-if="issuesObj">{{ portfolioIssues.length }}</span>
           </span>   
           </template>    
-           <div class="row pt-2">          
+
+           <div class="row pb-3 pt-2"> 
+          <div class="col-3 text-center py-0">
+               <div>
+                 <label class="font-sm pb-1 mb-0">SEARCH ISSUES</label>
+                
+                <div class="w-100">
+              <el-input type="search" placeholder="Search Issues" v-model="search_issues" >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+              </div>
+               </div>
+              </div>         
 
             
-             <div class="col-3 text-center py-0">
-                  <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+             <div class="col-3 text-center pt-0">
+                  <label class="font-sm pb-1 mb-0">FILTER ISSUES BY PROGRAM</label>
                 <el-select     
                     v-model="C_programNameFilter"                               
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter By Program"
+                    placeholder="Filter Issues By Program"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -480,7 +426,12 @@
                   </el-select> 
               </div>           
               
-                <div class="col-6 text-center pt-2">
+             
+              </div>
+
+            <div class="box-shadow p-3">
+            <div class="row pt-3 pb-1">
+             <div class="col-6 text-center pt-2">
                 <label class="font-sm mb-0 pb-1 d-block">DISPLAY ISSUES BY STATE</label>
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
                   <div class="pr-5 text-center icons" :class="[hideCompleteIssues == true ? 'light':'']" @click.prevent="toggleCompleteI">             
@@ -565,9 +516,8 @@
                   </div>
                </div>
              </div>
-              </div>
-      <div class="row text-center mt-2" v-if="issuesObj !== null && issuesObj.length > 0 ">            
-        <span class="ml-auto mt-3 btnRow"> 
+             <div class="col-3">
+        <span class="btnRow"> 
         <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportIssuesToPdf"
@@ -583,7 +533,12 @@
         <button class="btn text-light btn-md mh-orange profile-btns">RESULTS: {{ issuesObj.length}}</button>
         </span>                  
       
-        <div class="xTable" style="overflow-x:auto;">
+        </div>
+       </div>
+            </div>
+      <div class="row text-center mt-2" v-if="issuesObj !== null && issuesObj.length > 0 ">            
+       
+        <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="issueTable" id="portIssues">
            
             <thead style="background-color:#ededed;">
@@ -791,11 +746,12 @@
        <div v-else class="mt-5">
         NO RESULTS TO DISPLAY
       </div>
+              
       </el-tab-pane>
   
 <!-- RISKS TAB STARTS HERE -->
 
-      <el-tab-pane class="px-3 pt-0" >
+      <el-tab-pane class="pt-0" >
          <template slot="label" class="text-right" v-if="risksObj && risksObj !== undefined">
            RISKS
            <span class="badge badge-secondary badge-pill">
@@ -804,18 +760,31 @@
                 <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
-             <div class="row pt-2">          
 
-            
-             <div class="col-3 text-center py-0">
-                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+             <div class="row pb-3 pt-2">    
+
+              <div class="col-3 text-center py-0">
+               <div>
+                 <label class="font-sm pb-1 mb-0">SEARCH RISKS</label>
+                
+                <div class="w-100">
+              <el-input type="search" placeholder="Search Risks" v-model="search_risks" >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+              </div>
+               </div>
+              </div>
+             <div class="col-3 text-center pt-0">
+
+
+                 <label class="font-sm pb-1 mb-0">FILTER RISKS BY PROGRAM</label>
                 <el-select     
                     v-model="C_programNameFilter"                               
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter By Program"
+                    placeholder="Filter Risks By Program"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -826,7 +795,11 @@
                     >
                   </el-option>
                   </el-select> 
-              </div>           
+              </div>     
+             </div>
+
+           <div class="box-shadow p-3">
+             <div class="row pt-3 pb-1">    
               
                 <div class="col-6 text-center pt-2">
                 <label class="font-sm mb-0 pb-1 d-block">DISPLAY RISKS BY STATE</label>
@@ -922,10 +895,10 @@
                   </div>
                </div>
              </div>
-              </div>
+            
 
-      <div class="row text-center mt-2" v-if="risksObj !== null && risksObj.length > 0 ">            
-        <span class="ml-auto mt-3 btnRow"> 
+      <div class="col-3" v-if="risksObj !== null && risksObj.length > 0 ">            
+        <span class="btnRow"> 
         <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportRisksToPdf"
@@ -939,9 +912,11 @@
         <i class="far fa-file-excel"></i>
         </button>
         <button class="btn text-light btn-md mh-orange profile-btns">RESULTS: {{ risksObj.length}}</button>
-        </span>                   
+        </span>   
+      </div>                
                 
-      
+      </div>
+       <div class="row text-center mt-2" v-if="risksObj !== null && risksObj.length > 0 ">  
         <div class="xTable" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="riskTable" id="portRisks">
            
@@ -1097,7 +1072,7 @@
           </td>  
         <td>{{ moment(risk.start_date).format('DD MMM YYYY') }}</td>
         <td>
-          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
           <span v-else-if="risk.on_hold && risk.due_date == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
           <span v-else>{{ moment(risk.due_date).format('DD MMM YYYY') }}</span>
           </td>   
@@ -1106,7 +1081,7 @@
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
             <span v-if="risk.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
-            <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -1173,29 +1148,45 @@
         </div>
     
        </div>
+    
+  
        <div v-else class="mt-5">
         NO RESULTS TO DISPLAY
       </div>
+           </div>
      </el-tab-pane>
-        <el-tab-pane class="px-3 pt-0">  
+
+
+
+        <el-tab-pane class="pt-0">  
           <template slot="label" class="text-right">
           LESSONS LEARNED
            <span class="badge badge-secondary badge-pill">
            <span v-if="lessonsObj !== null">{{ portfolioLessons.length }}</span>
           </span>   
           </template>   
-            <div class="row pt-2">          
-
+            <div class="row pb-3 pt-2"> 
+               <div class="col-3 text-center py-0">
+               <div>
+                 <label class="font-sm pb-1 mb-0">SEARCH LESSONS</label>
+                
+                <div class="w-100">
+              <el-input type="search" placeholder="Search Lessons" v-model="search_lessons" >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+              </div>
+               </div>
+              </div>         
             
-             <div class="col-3 text-center py-0">
-                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+             <div class="col-3 text-center pt-0">
+                 <label class="font-sm pb-1 mb-0">FILTER LESSONS BY PROGRAM</label>
                  <el-select     
                     v-model="C_programNameFilter"                               
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter By Program"
+                    placeholder="Filter Lessons By Program"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -1206,7 +1197,11 @@
                     >
                   </el-option>
                   </el-select> 
-              </div>           
+              </div>         
+            </div>  
+
+           <div class="box-shadow p-3">
+            <div class="row pt-3 pb-1">
               
                 <div class="col-6 text-center pt-2">
                 <label class="font-sm mb-0 pb-1 d-block">DISPLAY LESSONS BY STATE</label>
@@ -1218,42 +1213,6 @@
                   <span class="smallerFont">COMPLETE</span>
                    <h5 class="d-block">{{ lessonVariation.completed.count }}</h5>  
                   </div>
-
-                  <div class="pr-5 text-center icons" :class="[hideInprogressLessons == true ? 'light':'']" @click.prevent="toggleInprogressL">
-                    <span class="d-block">
-                    <i class="far fa-tasks" :class="[hideInprogressLessons == true ? 'light':'text-primary']"></i>
-                    </span>                          
-                     <span class="smallerFont">IN PROGRESS</span> 
-                     <h5 class="d-block">{{ lessonVariation.inProgress.count }}</h5>  
-                  </div>
-                
-<!--                 
-                <div class="pr-5 text-center icons" :class="[hideOngoingRisks == true ? 'light':'']" @click.prevent="toggleOngoingR">
-                  <span class="d-block">
-                  <i class="fas fa-retweet" :class="[hideOngoingRisks == true ? 'light':'text-success']"></i>
-                  </span> 
-                    <span class="smallerFont">ONGOING </span>    
-                    <h5 class="d-block"> <span v-if="risksObj">{{ riskVariation.ongoing.count }}</span></h5>  
-                 </div>  -->
-
-
-                <!-- <div class="pr-5 text-center icons" :class="[hidePlannedLessons == true ? 'light':'']" @click.prevent="togglePlannedL"> 
-                  <span class="d-block">
-                  <i class="fas fa-calendar-check" :class="[hidePlannedLessons == true ? 'light':'text-info']"></i>
-                  </span>                     
-                  <span class="smallerFont">PLANNED</span>
-                    <h5 class="d-block"> <span v-if="risksObj">{{ lessonVariation.planned.count }}</span></h5>  
-                </div> -->
-             
-                <!-- <div class="pr-5 text-center icons" :class="[hideOnholdLessons == true ? 'light':'']"  @click.prevent="toggleOnholdL">
-                     <span class="d-block">
-                      <i class="fas fa-pause-circle" :class="[hideOnholdLessons == true ? 'light':'text-primary']"></i>
-                     </span> 
-                     <span class="smallerFont">ON HOLD</span> 
-                       <h5 class="d-block">{{ lessonVariation.onHoldL.count }}</h5>            
-                </div> -->
-                 
-                 
                  <div class="text-center icons" :class="[hideDraftLessons == true ? 'light':'']"  @click.prevent="toggleDraftL" >
                   <span class="d-block">
                       <i class="fas fa-pencil-alt" :class="[hideDraftLessons == true ? 'light':'text-warning']"></i>
@@ -1293,26 +1252,30 @@
                     <h5 class="d-block"> {{ lessonVariation.briefings.count }}  </h5>    
                   </div>
                </div>
-             </div>
+                </div>
+                   <div class="col-3">
+                   <span class="btnRow"> 
+                  <button
+                    v-tooltip="`Export to PDF`"
+                    @click.prevent="exportLessonsToPdf"
+                    class="btn btn-md mr-1 exportBtns text-light">
+                    <i class="far fa-file-pdf"></i>
+                  </button>
+                  <button
+                    v-tooltip="`Export to Excel`"
+                    @click.prevent="exportLessonsToExcel('table', 'Portfolio Lessons')"
+                    class="btn btn-md mr-3 exportBtns text-light">
+                  <i class="far fa-file-excel"></i>
+                  </button>
+                  <button class="btn text-light btn-md mh-orange profile-btns">RESULTS: {{ lessonsObj.length}}</button>
+                  </span>                   
+                  </div>
+
               </div>
  
     
       <div class="row text-center mt-2" v-if="lessonsObj !== null && lessonsObj.length > 0">            
-      <span class="ml-auto mt-3 btnRow"> 
-        <button
-          v-tooltip="`Export to PDF`"
-          @click.prevent="exportLessonsToPdf"
-          class="btn btn-md mr-1 exportBtns text-light">
-          <i class="far fa-file-pdf"></i>
-        </button>
-        <button
-          v-tooltip="`Export to Excel`"
-          @click.prevent="exportLessonsToExcel('table', 'Portfolio Lessons')"
-          class="btn btn-md mr-3 exportBtns text-light">
-        <i class="far fa-file-excel"></i>
-        </button>
-        <button class="btn text-light btn-md mh-orange profile-btns">RESULTS: {{ lessonsObj.length}}</button>
-        </span>                   
+     
                 
       
        <div class="xTable" style="overflow-x:auto;">
@@ -1424,7 +1387,7 @@
          <td> {{ moment(lesson.created_at).format('DD MMM YYYY') }} </td>  
          <td class="text-center">
         
-            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="lesson.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="lesson.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="lesson.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -1492,7 +1455,7 @@
        <div v-else class="mt-5">
         NO RESULTS TO DISPLAY
       </div>
-        
+           </div>
       </el-tab-pane>
   
      </el-tabs>
@@ -1541,6 +1504,10 @@ export default {
   data() {
     return {
       showLess: "Show More",
+      search_tasks: "",
+      search_issues: "",
+      search_risks: "",
+      search_lessons: "",
       currentSort:'program_name',
       currentSortDir:'asc',
       currentPage:1,
@@ -1713,7 +1680,13 @@ export default {
           let programNames = this.C_programNameFilter.map((program) => program.name);
           return programNames.includes(task.program_name);
         } else return true;   
-         // Filtering 7 Task States        
+
+      }).filter(task => {
+        if (this.search_tasks !== "") {
+          return  task.text.toLowerCase().match(this.search_tasks.toLowerCase())
+        } else return true             
+         // Filtering 7 Task States  
+      }).filter(task => {     
         if (this.hideDraftTasks) {
           return !task.draft
         } else return true        
@@ -1781,6 +1754,12 @@ export default {
           let programNames = this.C_programNameFilter.map((program) => program.name);
           return programNames.includes(issue.program_name);
         } else return true;   
+
+        
+     }).filter(issue => {
+        if (this.search_issues !== "") {
+          return  issue.title.toLowerCase().match(this.search_issues.toLowerCase())
+        } else return true        
      }).filter(issue => {
         if (this.hideDraftIssues) {
           return !issue.draft
@@ -1847,6 +1826,10 @@ export default {
         } else if (programName.length == 1) {
           return risk.program_name.includes(programName)
         } else return true
+      }).filter(risk => {
+        if (this.search_risks !== "") {
+          return  risk.text.toLowerCase().match(this.search_risks.toLowerCase())
+        } else return true        
      }).filter(risk => {       
         if (this.hideDraftRisks) {
           return !risk.draft
@@ -1924,6 +1907,12 @@ export default {
         } else if (programName.length == 1) {
           return lesson.program_name.includes(programName)
         } else return true
+
+        
+      }).filter(lesson => {
+        if (this.search_lessons !== "") {
+          return  lesson.title.toLowerCase().match(this.search_lessons.toLowerCase())
+        } else return true        
      }).filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.hideDraftLessons) {
@@ -2212,7 +2201,7 @@ export default {
       );
       let completed = _.filter(
         this.lessonsObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && !t.draft 
       );
       let inProgress = _.filter(
         this.lessonsObj,
@@ -2345,7 +2334,10 @@ export default {
       'fetchPortfolioLessons',
       'fetchPortfolioPrograms'
 
-     ]),     
+     ]),
+     log(e)    {
+       console.log(e)
+     } ,
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -2720,11 +2712,15 @@ ul {
   margin-bottom: 0.5rem;
 }
 
+.box-shadow{
+      border-top: #ededed double 0.5px;
+}
+
 /deep/.el-table {
     padding-top: 0px;    
     width: 100%;
     margin-bottom: 6px;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+
     border-top: solid #ededed 1.8px;    
   }
 /deep/.el-table {
@@ -2820,7 +2816,9 @@ th {
    width: 20%;
  }
 .btnRow {
-  position: relative;
+  position: absolute;
+  bottom: 1%;
+  right: 1%;
 }
 .sort-th {
   min-width: 225px;
@@ -2878,7 +2876,9 @@ th {
 .green1, .orange1, .red1 {   
   color:#fff;   
 }
-
+/deep/.el-input__inner {
+    height: 40px;
+}
 .truncate-line-five
 {
   display: -webkit-box;

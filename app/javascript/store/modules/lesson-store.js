@@ -4,26 +4,26 @@ const lessonModule = {
   state: () => ({
     lesson: {}, // Current lesson loaded in form
     project_lessons: [],
-    program_lessons: [],
+    programLessons: [],
     program_lessons_loaded: true,
     lesson_stages: [],
     lessons_loaded: true,
     lesson_status: 0,
   }),
   actions: {
-    fetchProgramLessons({ commit }) {
+    fetchProgramLessons({ commit }, { programId } ) {
       commit("TOGGLE_PROGRAM_LESSONS_LOADED", false);
       // Send GET request for all lessons contained within a program
       axios({
         method: "GET",
-        url: `/api/v1/portfolio/lessons`,
+        url: `/api/v1/programs/${programId}/lessons/count.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          // console.log("this is portfolio lessoons" + JSON.stringify(res.data));
+          console.log("this is the url" + `/api/v1/programs/${programId}/lessons/count.json` );
           // Mutate state with response from back end
           commit("SET_PROGRAM_LESSONS", res.data);
         })
@@ -48,6 +48,7 @@ const lessonModule = {
       })
         .then((res) => {
           // Mutate state with response from back end
+          
           commit("SET_PROJECT_LESSONS", res.data.lessons);
         })
         .catch((err) => {
@@ -150,7 +151,7 @@ const lessonModule = {
     },
   },
   mutations: {
-    SET_PROGRAM_LESSONS: (state, lessons) => (state.project_lessons = lessons),
+    SET_PROGRAM_LESSONS: (state, lessons) => (state.programLessons = lessons),
     SET_PROJECT_LESSONS: (state, lessons) => (state.project_lessons = lessons),
     SET_LESSON: (state, lesson) => (state.lesson = lesson),
     DELETE_LESSON: (state, id) => {
@@ -167,7 +168,7 @@ const lessonModule = {
   getters: {
     lesson: (state) => state.lesson,
     projectLessons: (state) => state.project_lessons,
-    programLessons: (state) => state.program_lessons,
+    programLessons: (state) => state.programLessons,
     lessonStages: (state) => state.lesson_stages,
     lessonsLoaded: (state) => state.lessons_loaded,
     lessonStatus: (state) => state.lesson_status,

@@ -1,30 +1,4 @@
-class LessonsController < AuthenticatedController
-
-  def count 
-
-    if params[:program_id] && params[:project_id]
-      facility_project = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
-      if facility_project
-        lessons_count = Lesson.where(facility_project_id: facility_project.id).count
-        progress = Lesson.where(facility_project_id: facility_project.id, draft: true).count
-        completed = lessons_count - progress
-        response_hash =  {total_count: lessons_count, progress: progress, completed: completed }
-        status_code = 200
-      else
-        raise ActiveRecord::RecordNotFound
-      end
-    elsif params[:program_id]
-      lessons_count = Lesson.joins(:facility_project).where("facility_project.project_id" => params[:program_id]).count
-      progress = Lesson.joins(:facility_project).where("facility_project.project_id" => params[:program_id], draft: true).count
-      completed = lessons_count - progress
-
-      response_hash =  {total_count: lessons_count, progress: progress, completed: completed }
-      status_code = 200
-    else
-      raise ActionController::BadRequest 
-    end
-    render json: response_hash, status: status_code
-  end
+class Api::V1::LessonsController < Api::ApplicationController
 
   def index
     # authorize!(:read, Lesson.new(project_id: params[:program_id]))
