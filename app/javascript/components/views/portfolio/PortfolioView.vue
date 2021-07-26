@@ -12,10 +12,10 @@
    </span>
   </div>
   <el-tabs class="mt-1 mr-3 " type="border-card">
-  <el-tab-pane label="PORTFOLIO VIEWER" class="p-3">
+  <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
      <el-tabs class="mt-1" type="border-card">
        <!-- TASKS -->
-     <el-tab-pane class="pt-0" >
+     <el-tab-pane class="pt-2" >
          <template slot="label" class="text-right" v-if="tasksObj && tasksObj !== undefined">
            TASKS
            <span class="badge badge-secondary badge-pill">
@@ -24,29 +24,35 @@
                 <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
-          <div class="row pb-3 pt-2">
-             <div class="col-3 text-center py-0">
-               <div>
-                 <label class="font-sm pb-1 mb-0">SEARCH TASKS</label>
-                
-                <div class="w-100">
-              <el-input type="search" placeholder="Search Tasks" v-model="search_tasks" >
+
+
+          <div class="row pb-4 px-0">
+             <div class="col-4 py-2">           
+             <div class="w-100 d-flex">
+
+
+
+
+                <div class="d font-sm mt-2 mr-2">SEARCH</div>
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_tasks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
                </div>
-              </div>
-                <div class="col-3 text-center pt-0">
-               <div>
-                 <label class="font-sm pb-1 mb-0">FILTER TASKS BY PROGRAM</label>
-                 <template>
+
+               <div  class="col-5 pl-0 py-2">   
+                <div class="d-flex">
+                  
+                  <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+                   <template>
+                   
                 <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-100" 
+                    v-model="C_programNameFilter"                   
                     track-by="name" 
+                    class="w-75"
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter Tasks By Program"
+                    placeholder="Select Programs to Filter to"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -57,99 +63,100 @@
                     >
                   </el-option>
                   </el-select> 
-                      </template>
-               </div>
-              </div>     
+                      </template>              
+                </div>         
+              </div> 
             </div>
+
             <div class="box-shadow p-3">
              <div class="row pt-3 pb-1">              
-               <div class="col-6 text-center pt-2">
+               <div class="col-10 px-1 pt-2">
 
                    <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
                      <button class="btn btn-info btn-md">Add Task</button> 
                      </div> -->
-                <label class="font-sm mb-0 pb-1 d-block">DISPLAY TASKS BY STATE</label>
-                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
-                  <div class="pr-5 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
+              
+                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
+                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+
+                  <span class="d-flex statesCol mr-3 px-3 py-2">              
+                  <div class="pr-4 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
                    <span class="d-block">
                     <i class="fas fa-clipboard-check" :class="[hideCompleteTasks == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">COMPLETE</span>
-                   <h5 class="d-block">{{ taskVariation.completed.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ taskVariation.completed.count }}</h5>  
                   </div>
 
-                  <div class="pr-5 text-center icons" :class="[hideInprogressTasks == true ? 'light':'']" @click.prevent="toggleInprogress">
+                  <div class="pr-4 text-center icons" :class="[hideInprogressTasks == true ? 'light':'']" @click.prevent="toggleInprogress">
                     <span class="d-block">
                     <i class="far fa-tasks" :class="[hideInprogressTasks == true ? 'light':'text-primary']"></i>
                     </span>                          
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h5 class="d-block">{{ taskVariation.inProgress.count }}</h5>  
+                     <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ taskVariation.inProgress.count }}</h5>  
                   </div>
                 
                 
-                 <div class="pr-5 text-center icons" :class="[hideOverdueTasks == true ? 'light':'']" @click.prevent="toggleOverdue">
+                 <div class="pr-4 text-center icons" :class="[hideOverdueTasks == true ? 'light':'']" @click.prevent="toggleOverdue">
                     <span class="d-block">
                     <i class="fas fa-calendar" :class="[hideOverdueTasks == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
-                    <h5 class="d-block"> {{ taskVariation.overdue.count }}  </h5>    
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> {{ taskVariation.overdue.count }}  </h5>    
                   </div>
 
-                <div class="pr-5 text-center icons" :class="[hideOngoingTasks == true ? 'light':'']" @click.prevent="toggleOngoing">
+                <div class="pr-4 text-center icons" :class="[hideOngoingTasks == true ? 'light':'']" @click.prevent="toggleOngoing">
                   <span class="d-block">
                   <i class="fas fa-retweet" :class="[hideOngoingTasks == true ? 'light':'text-success']"></i>
                   </span> 
                     <span class="smallerFont">ONGOING </span>    
-                    <h5 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h5>  
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h5>  
                  </div> 
 
 
-                <div class="pr-5 text-center icons" :class="[hidePlannedTasks == true ? 'light':'']" @click.prevent="togglePlanned"> 
+                <div class="pr-4 text-center icons" :class="[hidePlannedTasks == true ? 'light':'']" @click.prevent="togglePlanned"> 
                   <span class="d-block">
                   <i class="fas fa-calendar-check" :class="[hidePlannedTasks == true ? 'light':'text-info']"></i>
                   </span>                     
                   <span class="smallerFont">PLANNED</span>
-                    <h5 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h5>  
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h5>  
                 </div>
              
-                <div class="pr-5 text-center icons" :class="[hideOnholdTasks == true ? 'light':'']"  @click.prevent="toggleOnhold">
+                <div class="pr-4 text-center icons" :class="[hideOnholdTasks == true ? 'light':'']"  @click.prevent="toggleOnhold">
                      <span class="d-block">
                       <i class="fas fa-pause-circle" :class="[hideOnholdTasks == true ? 'light':'text-primary']"></i>
                      </span> 
                      <span class="smallerFont">ON HOLD</span> 
-                       <h5 class="d-block">{{ taskVariation.onHoldT.count }}</h5>            
+                       <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ taskVariation.onHoldT.count }}</h5> 
                 </div>
-                 
-                 
-                 <div class="text-center icons" :class="[hideDraftTasks == true ? 'light':'']"  @click.prevent="toggleDraft" >
+               <div class="text-center icons" :class="[hideDraftTasks == true ? 'light':'']"  @click.prevent="toggleDraft" >
                   <span class="d-block">
                       <i class="fas fa-pencil-alt" :class="[hideDraftTasks == true ? 'light':'text-warning']"></i>
                   </span>     
                   <span class="smallerFont">DRAFTS</span>   
-                        <h5 class="d-block">{{  taskVariation.taskDrafts.count }}</h5>              
+                        <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{  taskVariation.taskDrafts.count }}</h5>              
                 </div> 
-               
-               
-                </div>
-              </div>
-                 <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED TASKS BY TAG</label>
-                 <div class="pb-0 pl-2 mb-0 d-inline-flex">    
+
+                </span>
+
+                <span class=""><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label> </span>     
+                <span class="tagsCol d-flex px-3 py-2">
+                   
                   <div class="text-center icons" :class="[hideWatchedTasks == true ? '':'light']" @click.prevent="toggleWatched"   >             
                  <span class="d-block">
                       <i class="fas fa-eye " ></i>
                  </span>                  
                   <span class="smallerFont">ON WATCH</span>
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
-                   <h5 class="d-block">{{ taskVariation.watched.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ taskVariation.watched.count }}</h5>  
                   </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantTasks == true ? '':'light']" @click.prevent="toggleImportant"     >
+                  <div class="px-4 text-center icons" :class="[hideImportantTasks == true ? '':'light']" @click.prevent="toggleImportant"     >
                   <span class="d-block">
                       <i class="fas fa-star" :class="[hideImportantTasks == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
-                     <h5 class="d-block">{{ taskVariation.important.count }}</h5>  
+                     <h5 :class="[getShowCount == false  ? 'd-none' : 'd-block']" >{{ taskVariation.important.count }}</h5>  
                   </div>
                    <div class="text-center icons"  :class="[hideBriefedTasks == true ? '':'light']" @click.prevent="toggleBriefing"         >
                       <span class="d-block">
@@ -157,11 +164,17 @@
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
-                    <h5 class="d-block"> {{ taskVariation.briefings.count }}  </h5>    
+                    <h5 :class="[getShowCount == false  ? 'd-none' : 'd-block']" > {{ taskVariation.briefings.count }}  </h5>    
                   </div>
-               </div>
-             </div>
-             <div class="col-3">
+                </span>              
+               
+                </div>
+                <template>
+                 <el-checkbox v-model="C_showCountToggle">Show Counts</el-checkbox>
+              </template>
+              </div>
+             
+             <div class="col-2">
               <span class="btnRow"> <button
               v-tooltip="`Export to PDF`"
               @click.prevent="exportTasksToPdf"
@@ -180,8 +193,8 @@
               </div>
 
       <div class="row text-center mt-2" v-if="tasksObj !== null && tasksObj.length > 0 ">      
-        <div class="xTable px-3" style="overflow-x:auto;margin-top:-30px">
-          <table class="table table-sm mt-5 stickyTableHeader table-bordered" ref="table" id="portTasks">        
+        <div class="xTable" style="overflow-x:auto">
+          <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="table" id="portTasks">        
           
               <thead style="background-color:#ededed;">
               <th class="sort-th twenty" @click="sort('program_name')" >Program Name
@@ -383,7 +396,7 @@
      </el-tab-pane>
 
 
-      <el-tab-pane class="pt-0"  >  
+      <el-tab-pane class="pt-2"  >  
           <template slot="label" class="text-right">
            ISSUES
            <span class="badge badge-secondary badge-pill">
@@ -391,29 +404,30 @@
           </span>   
           </template>    
 
-           <div class="row pb-3 pt-2"> 
-          <div class="col-3 text-center py-0">
-               <div>
-                 <label class="font-sm pb-1 mb-0">SEARCH ISSUES</label>
-                
-                <div class="w-100">
-              <el-input type="search" placeholder="Search Issues" v-model="search_issues" >
+         <div class="row pb-4 px-3">
+              <div class="col-4 py-2">
+
+
+            <div class="w-100 d-flex">
+               <div class="d font-sm mt-2 mr-2">SEARCH</div>              
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_issues" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
                </div>
-              </div>         
+               
+            <div  class="col-5 pl-0 py-2">   
+            <div class="d-flex">
 
-            
-             <div class="col-3 text-center pt-0">
-                  <label class="font-sm pb-1 mb-0">FILTER ISSUES BY PROGRAM</label>
-                <el-select     
+            <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+              <template>
+               <el-select     
                     v-model="C_programNameFilter"                               
-                    class="w-100" 
+                    class="w-75" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter Issues By Program"
+                    placeholder="Select Programs to Filter to"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -424,55 +438,60 @@
                     >
                   </el-option>
                   </el-select> 
-              </div>           
-              
-             
-              </div>
+                      </template>              
+                </div>         
+              </div> 
+            </div>
 
-            <div class="box-shadow p-3">
+            <div class="box-shadow pt-3 px-3">
             <div class="row pt-3 pb-1">
-             <div class="col-6 text-center pt-2">
-                <label class="font-sm mb-0 pb-1 d-block">DISPLAY ISSUES BY STATE</label>
-                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
-                  <div class="pr-5 text-center icons" :class="[hideCompleteIssues == true ? 'light':'']" @click.prevent="toggleCompleteI">             
+               <div class="col-10 px-1 pt-2">
+
+             
+                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
+                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+
+            
+                <span class="d-flex statesCol mr-3 px-3 py-2">                         
+                  <div class="pr-4 text-center icons" :class="[hideCompleteIssues == true ? 'light':'']" @click.prevent="toggleCompleteI">             
                    <span class="d-block">
                     <i class="fas fa-clipboard-check" :class="[hideCompleteIssues == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">COMPLETE</span>
-                   <h5 class="d-block">{{ issueVariation.completed.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ issueVariation.completed.count }}</h5>  
                   </div>
 
-                  <div class="pr-5 text-center icons" :class="[hideInprogressIssues == true ? 'light':'']" @click.prevent="toggleInprogressI">
+                  <div class="pr-4 text-center icons" :class="[hideInprogressIssues == true ? 'light':'']" @click.prevent="toggleInprogressI">
                     <span class="d-block">
                     <i class="far fa-tasks" :class="[hideInprogressIssues == true ? 'light':'text-primary']"></i>
                     </span>                          
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h5 class="d-block">{{ issueVariation.inProgress.count }}</h5>  
+                     <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ issueVariation.inProgress.count }}</h5>  
                   </div>
                 
                 
-                 <div class="pr-5 text-center icons" :class="[hideOverdueIssues == true ? 'light':'']" @click.prevent="toggleOverdueI">
+                 <div class="pr-4 text-center icons" :class="[hideOverdueIssues == true ? 'light':'']" @click.prevent="toggleOverdueI">
                     <span class="d-block">
                     <i class="fas fa-calendar" :class="[hideOverdueIssues == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
-                    <h5 class="d-block"> {{ issueVariation.overdue.count }}  </h5>    
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> {{ issueVariation.overdue.count }}  </h5>    
                   </div>
 
-                 <div class="pr-5 text-center icons" :class="[hidePlannedIssues == true ? 'light':'']" @click.prevent="togglePlannedI"> 
+                 <div class="pr-4 text-center icons" :class="[hidePlannedIssues == true ? 'light':'']" @click.prevent="togglePlannedI"> 
                   <span class="d-block">
                   <i class="fas fa-calendar-check" :class="[hidePlannedIssues == true ? 'light':'text-info']"></i>
                   </span>                     
                   <span class="smallerFont">PLANNED</span>
-                    <h5 class="d-block"> <span v-if="issuesObj">{{ issueVariation.planned.count }}</span></h5>  
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> <span v-if="issuesObj">{{ issueVariation.planned.count }}</span></h5>  
                 </div>
              
-                <div class="pr-5 text-center icons" :class="[hideOnholdIssues == true ? 'light':'']"  @click.prevent="toggleOnholdI">
+                <div class="pr-4 text-center icons" :class="[hideOnholdIssues == true ? 'light':'']"  @click.prevent="toggleOnholdI">
                      <span class="d-block">
                       <i class="fas fa-pause-circle" :class="[hideOnholdIssues == true ? 'light':'text-primary']"></i>
                      </span> 
                      <span class="smallerFont">ON HOLD</span> 
-                       <h5 class="d-block">{{ issueVariation.onHoldI.count }}</h5>            
+                       <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ issueVariation.onHoldI.count }}</h5>            
                 </div>
                  
                  
@@ -481,30 +500,29 @@
                       <i class="fas fa-pencil-alt" :class="[hideDraftIssues == true ? 'light':'text-warning']"></i>
                   </span>     
                   <span class="smallerFont">DRAFTS</span>   
-                        <h5 class="d-block">{{  issueVariation.issueDrafts.count }}</h5>              
+                        <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{  issueVariation.issueDrafts.count }}</h5>              
                 </div> 
+                </span>
                
-               
-                </div>
-              </div>
-                 <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED ISSUES BY TAG</label>
-                 <div class="pb-0 pl-2 mb-0 d-inline-flex">    
+           
+                <span class=""><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label> </span>     
+                <span class="tagsCol d-flex px-3 py-2">
+         
                   <div class="text-center icons" :class="[hideWatchedIssues == true ? '':'light']" @click.prevent="toggleWatchedI"   >             
                  <span class="d-block">
                       <i class="fas fa-eye " ></i>
                  </span>                  
                   <span class="smallerFont">ON WATCH</span>
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedissues">               -->
-                   <h5 class="d-block">{{ issueVariation.watched.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ issueVariation.watched.count }}</h5>  
                   </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantIssues == true ? '':'light']" @click.prevent="toggleImportantI"     >
+                  <div class="px-4 text-center icons" :class="[hideImportantIssues == true ? '':'light']" @click.prevent="toggleImportantI"     >
                   <span class="d-block">
                       <i class="fas fa-star" :class="[hideImportantIssues == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantissues">     -->
-                     <h5 class="d-block">{{ issueVariation.important.count }}</h5>  
+                     <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ issueVariation.important.count }}</h5>  
                   </div>
                    <div class="text-center icons"  :class="[hideBriefedIssues == true ? '':'light']" @click.prevent="toggleBriefingI"         >
                       <span class="d-block">
@@ -512,11 +530,18 @@
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedissues">   -->
-                    <h5 class="d-block"> {{ issueVariation.briefings.count }}  </h5>    
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> {{ issueVariation.briefings.count }}  </h5>    
                   </div>
+
+                </span>
                </div>
-             </div>
-             <div class="col-3">
+                <template>
+                 <el-checkbox v-model="C_showCountToggle">Show Counts</el-checkbox>
+              </template>
+              </div>
+
+      
+             <div class="col-2">
         <span class="btnRow"> 
         <button
           v-tooltip="`Export to PDF`"
@@ -751,7 +776,7 @@
   
 <!-- RISKS TAB STARTS HERE -->
 
-      <el-tab-pane class="pt-0" >
+      <el-tab-pane class="pt-2" >
          <template slot="label" class="text-right" v-if="risksObj && risksObj !== undefined">
            RISKS
            <span class="badge badge-secondary badge-pill">
@@ -761,30 +786,28 @@
           </span>   
           </template>
 
-             <div class="row pb-3 pt-2">    
-
-              <div class="col-3 text-center py-0">
-               <div>
-                 <label class="font-sm pb-1 mb-0">SEARCH RISKS</label>
-                
-                <div class="w-100">
-              <el-input type="search" placeholder="Search Risks" v-model="search_risks" >
+             <div class="row pb-4 px-3">    
+              <div class="col-4 py-2">
+           
+              <div class="w-100 d-flex">
+              <div class="d font-sm mt-2 mr-2">SEARCH</div>                
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
-              </el-input>
-              </div>
+              </el-input>             
                </div>
               </div>
-             <div class="col-3 text-center pt-0">
+            <div  class="col-5 pl-0 py-2">   
+                <div class="d-flex">
 
-
-                 <label class="font-sm pb-1 mb-0">FILTER RISKS BY PROGRAM</label>
+                  <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+           <template>
                 <el-select     
                     v-model="C_programNameFilter"                               
-                    class="w-100" 
+                    class="w-75" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter Risks By Program"
+                    placeholder="Select Programs to Filter to"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -795,63 +818,68 @@
                     >
                   </el-option>
                   </el-select> 
-              </div>     
-             </div>
+                  </template>              
+                </div>         
+              </div> 
+            </div>
 
-           <div class="box-shadow p-3">
-             <div class="row pt-3 pb-1">    
+            <div class="box-shadow p-3">
+             <div class="row pt-3 pb-1">              
+               <div class="col-10 px-1 pt-2">
               
-                <div class="col-6 text-center pt-2">
-                <label class="font-sm mb-0 pb-1 d-block">DISPLAY RISKS BY STATE</label>
-                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
-                  <div class="pr-5 text-center icons" :class="[hideCompleteRisks == true ? 'light':'']" @click.prevent="toggleCompleteR">             
+                
+                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
+                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+
+              <span class="d-flex statesCol mr-3 px-3 py-2">                        
+                  <div class="pr-4 text-center icons" :class="[hideCompleteRisks == true ? 'light':'']" @click.prevent="toggleCompleteR">             
                    <span class="d-block">
                     <i class="fas fa-clipboard-check" :class="[hideCompleteRisks == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">COMPLETE</span>
-                   <h5 class="d-block">{{ riskVariation.completed.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ riskVariation.completed.count }}</h5>  
                   </div>
 
-                  <div class="pr-5 text-center icons" :class="[hideInprogressRisks == true ? 'light':'']" @click.prevent="toggleInprogressR">
+                  <div class="pr-4 text-center icons" :class="[hideInprogressRisks == true ? 'light':'']" @click.prevent="toggleInprogressR">
                     <span class="d-block">
                     <i class="far fa-tasks" :class="[hideInprogressRisks == true ? 'light':'text-primary']"></i>
                     </span>                          
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h5 class="d-block">{{ riskVariation.inProgress.count }}</h5>  
+                     <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ riskVariation.inProgress.count }}</h5>  
                   </div>
                 
                 
-                 <div class="pr-5 text-center icons" :class="[hideOverdueRisks == true ? 'light':'']" @click.prevent="toggleOverdueR">
+                 <div class="pr-4 text-center icons" :class="[hideOverdueRisks == true ? 'light':'']" @click.prevent="toggleOverdueR">
                     <span class="d-block">
                     <i class="fas fa-calendar" :class="[hideOverdueRisks == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
-                    <h5 class="d-block"> {{ riskVariation.overdue.count }}  </h5>    
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> {{ riskVariation.overdue.count }}  </h5>    
                   </div>
 
-                <div class="pr-5 text-center icons" :class="[hideOngoingRisks == true ? 'light':'']" @click.prevent="toggleOngoingR">
+                <div class="pr-4 text-center icons" :class="[hideOngoingRisks == true ? 'light':'']" @click.prevent="toggleOngoingR">
                   <span class="d-block">
                   <i class="fas fa-retweet" :class="[hideOngoingRisks == true ? 'light':'text-success']"></i>
                   </span> 
                     <span class="smallerFont">ONGOING </span>    
-                    <h5 class="d-block"> <span v-if="risksObj">{{ riskVariation.ongoing.count }}</span></h5>  
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> <span v-if="risksObj">{{ riskVariation.ongoing.count }}</span></h5>  
                  </div> 
 
 
-                <div class="pr-5 text-center icons" :class="[hidePlannedRisks == true ? 'light':'']" @click.prevent="togglePlannedR"> 
+                <div class="pr-4 text-center icons" :class="[hidePlannedRisks == true ? 'light':'']" @click.prevent="togglePlannedR"> 
                   <span class="d-block">
                   <i class="fas fa-calendar-check" :class="[hidePlannedRisks == true ? 'light':'text-info']"></i>
                   </span>                     
                   <span class="smallerFont">PLANNED</span>
-                    <h5 class="d-block"> <span v-if="risksObj">{{ riskVariation.planned.count }}</span></h5>  
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> <span v-if="risksObj">{{ riskVariation.planned.count }}</span></h5>  
                 </div>
              
-                <div class="pr-5 text-center icons" :class="[hideOnholdRisks == true ? 'light':'']"  @click.prevent="toggleOnholdR">
+                <div class="pr-4 text-center icons" :class="[hideOnholdRisks == true ? 'light':'']"  @click.prevent="toggleOnholdR">
                      <span class="d-block">
                       <i class="fas fa-pause-circle" :class="[hideOnholdRisks == true ? 'light':'text-primary']"></i>
                      </span> 
                      <span class="smallerFont">ON HOLD</span> 
-                       <h5 class="d-block">{{ riskVariation.onHoldR.count }}</h5>            
+                       <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ riskVariation.onHoldR.count }}</h5>            
                 </div>
                  
                  
@@ -860,30 +888,28 @@
                       <i class="fas fa-pencil-alt" :class="[hideDraftRisks == true ? 'light':'text-warning']"></i>
                   </span>     
                   <span class="smallerFont">DRAFTS</span>   
-                        <h5 class="d-block">{{  riskVariation.riskDrafts.count }}</h5>              
+                        <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{  riskVariation.riskDrafts.count }}</h5>              
                 </div> 
-               
-               
-                </div>
-              </div>
-                 <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED RISKS BY TAG</label>
-                 <div class="pb-0 pl-2 mb-0 d-inline-flex">    
+                </span>
+
+                <span class=""><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label> </span>     
+                <span class="tagsCol d-flex px-3 py-2">
+
                   <div class="text-center icons" :class="[hideWatchedRisks == true ? '':'light']" @click.prevent="toggleWatchedR"   >             
                  <span class="d-block">
                       <i class="fas fa-eye" ></i>
                  </span>                  
                   <span class="smallerFont">ON WATCH</span>
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
-                   <h5 class="d-block">{{ riskVariation.watched.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ riskVariation.watched.count }}</h5>  
                   </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantRisks == true ? '':'light']" @click.prevent="toggleImportantR"     >
+                  <div class="px-4 text-center icons" :class="[hideImportantRisks == true ? '':'light']" @click.prevent="toggleImportantR"     >
                   <span class="d-block">
                       <i class="fas fa-star" :class="[hideImportantRisks == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
-                     <h5 class="d-block">{{ riskVariation.important.count }}</h5>  
+                     <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ riskVariation.important.count }}</h5>  
                   </div>
                    <div class="text-center icons"  :class="[hideBriefedRisks == true ? '':'light']" @click.prevent="toggleBriefingR"         >
                       <span class="d-block">
@@ -891,13 +917,18 @@
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
-                    <h5 class="d-block"> {{ riskVariation.briefings.count }}  </h5>    
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> {{ riskVariation.briefings.count }}  </h5>    
                   </div>
-               </div>
-             </div>
+               </span>              
+               
+                </div>
+                <template>
+                 <el-checkbox v-model="C_showCountToggle">Show Counts</el-checkbox>
+              </template>
+              </div>
             
 
-      <div class="col-3" v-if="risksObj !== null && risksObj.length > 0 ">            
+      <div class="col-2" v-if="risksObj !== null && risksObj.length > 0 ">            
         <span class="btnRow"> 
         <button
           v-tooltip="`Export to PDF`"
@@ -1158,31 +1189,34 @@
 
 
 
-        <el-tab-pane class="pt-0">  
+        <el-tab-pane class="pt-2">  
           <template slot="label" class="text-right">
           LESSONS LEARNED
            <span class="badge badge-secondary badge-pill">
            <span v-if="lessonsObj !== null">{{ portfolioLessons.length }}</span>
           </span>   
-          </template>   
-            <div class="row pb-3 pt-2"> 
-               <div class="col-3 text-center py-0">
-               <div>
-                 <label class="font-sm pb-1 mb-0">SEARCH LESSONS</label>
+          </template> 
+
+           <div class="row pb-4 px-3">
+             <div class="col-4 py-2">           
+             <div class="w-100 d-flex">
+        
                 
-                <div class="w-100">
-              <el-input type="search" placeholder="Search Lessons" v-model="search_lessons" >
+              <div class="d font-sm mt-2 mr-2">SEARCH</div>
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_lessons" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
-               </div>
-              </div>         
+               </div>     
             
-             <div class="col-3 text-center pt-0">
-                 <label class="font-sm pb-1 mb-0">FILTER LESSONS BY PROGRAM</label>
+              <div  class="col-5 pl-0 py-2">   
+                <div class="d-flex">
+                  
+                  <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+                   <template>
                  <el-select     
                     v-model="C_programNameFilter"                               
-                    class="w-100" 
+                    class="w-75" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
@@ -1195,53 +1229,53 @@
                     :key="item.id"
                     :label="item.name"                                                                      
                     >
-                  </el-option>
+                     </el-option>
                   </el-select> 
-              </div>         
-            </div>  
+                      </template>              
+                </div>         
+              </div> 
+            </div>
 
-           <div class="box-shadow p-3">
-            <div class="row pt-3 pb-1">
-              
-                <div class="col-6 text-center pt-2">
-                <label class="font-sm mb-0 pb-1 d-block">DISPLAY LESSONS BY STATE</label>
-                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
-                  <div class="pr-5 text-center icons" :class="[hideCompleteLessons == true ? 'light':'']" @click.prevent="toggleCompleteL">             
+            <div class="box-shadow p-3">
+             <div class="row pt-3 pb-1">              
+               <div class="col-10 px-1 pt-2">
+        
+              <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
+                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                  <span class="d-flex statesCol mr-3 px-3 py-2">                      
+                  <div class="pr-4 text-center icons" :class="[hideCompleteLessons == true ? 'light':'']" @click.prevent="toggleCompleteL">             
                    <span class="d-block">
                     <i class="fas fa-clipboard-check" :class="[hideCompleteLessons == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">COMPLETE</span>
-                   <h5 class="d-block">{{ lessonVariation.completed.count }}</h5>  
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ lessonVariation.completed.count }}</h5>  
                   </div>
                  <div class="text-center icons" :class="[hideDraftLessons == true ? 'light':'']"  @click.prevent="toggleDraftL" >
                   <span class="d-block">
                       <i class="fas fa-pencil-alt" :class="[hideDraftLessons == true ? 'light':'text-warning']"></i>
                   </span>     
                   <span class="smallerFont">DRAFTS</span>   
-                        <h5 class="d-block">{{  lessonVariation.lessonDrafts.count }}</h5>              
+                        <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{  lessonVariation.lessonDrafts.count }}</h5>              
                 </div> 
-               
-               
-                </div>
-              </div>
-                 <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED LESSONS BY TAG</label>
-                 <div class="pb-0 pl-2 mb-0 d-inline-flex">    
-                  <div class="text-center icons" :class="[hideWatchedLessons == true ? '':'light']" @click.prevent="toggleWatchedL"   >             
+                  </span>
+
+                <span class=""><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label> </span>     
+                <span class="tagsCol d-flex px-3 py-2">
+                
+                  <!-- <div class="text-center icons" :class="[hideWatchedLessons == true ? '':'light']" @click.prevent="toggleWatchedL"   >             
                  <span class="d-block">
                       <i class="fas fa-eye" ></i>
                  </span>                  
-                  <span class="smallerFont">ON WATCH</span>
-                   <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
-                   <h5 class="d-block">{{ lessonVariation.watched.count }}</h5>  
-                  </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantLessons == true ? '':'light']" @click.prevent="toggleImportantL"     >
+                  <span class="smallerFont">ON WATCH</span>                 
+                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ lessonVariation.watched.count }}</h5>  
+                  </div> --> 
+                  <div class="pr-4 text-center icons" :class="[hideImportantLessons == true ? '':'light']" @click.prevent="toggleImportantL"     >
                   <span class="d-block">
                       <i class="fas fa-star" :class="[hideImportantLessons == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
-                     <h5 class="d-block">{{ lessonVariation.important.count }}</h5>  
+                     <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ lessonVariation.important.count }}</h5>  
                   </div>
                    <div class="text-center icons"  :class="[hideBriefedLessons == true ? '':'light']" @click.prevent="toggleBriefingL"         >
                       <span class="d-block">
@@ -1249,11 +1283,16 @@
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
-                    <h5 class="d-block"> {{ lessonVariation.briefings.count }}  </h5>    
-                  </div>
-               </div>
+                    <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']"> {{ lessonVariation.briefings.count }}  </h5>    
+                    </div>
+                </span>              
+               
                 </div>
-                   <div class="col-3">
+                <template>
+                 <el-checkbox v-model="C_showCountToggle">Show Counts</el-checkbox>
+              </template>
+              </div>
+                   <div class="col-2">
                    <span class="btnRow"> 
                   <button
                     v-tooltip="`Export to PDF`"
@@ -1610,6 +1649,7 @@ export default {
       'getIssuesPerPageFilter',  
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
+      'getShowCount',
       'programNameFilter',
       'taskTypes',
       'portfolioTasks',
@@ -2236,6 +2276,15 @@ export default {
       
       };
     },
+    C_showCountToggle: {                  
+        get() {
+         return this.getShowCount                
+        },
+        set(value) {
+          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+        }
+        
+      },
     C_programNames() {     
       return this.portfolioPrograms
      },
@@ -2325,7 +2374,8 @@ export default {
     'setLessonsPerPageFilter',
     'setPortfolioBriefedTasksToggle',
     'setPortfolioImportantTasksToggle',
-    'setProgramNameFilter'
+    'setProgramNameFilter',
+    'setShowCount'
      ]),
    ...mapActions([
       'fetchPortfolioTasks',
@@ -2337,7 +2387,31 @@ export default {
      ]),
      log(e)    {
        console.log(e)
-     } ,
+     },
+      toggleCount(){
+          console.log("this works")
+            //  this.showCount = !this.showCount    
+        // if (this.getShowAllEventsToggle == true) {
+        
+        //   this.reRenderCalendar()
+        // } else if (this.getShowAllEventsToggle == false){
+        //    this.events = [];
+         
+        //    this.reRenderCalendar()
+        // }
+        // this.setShowAllEventsToggle(!this.getShowAllEventsToggle)       
+        // if (this.getShowAllEventsToggle == true) {
+        
+        //   this.reRenderCalendar()
+        // } else if (this.getShowAllEventsToggle == false){
+        //    this.events = [];
+         
+        //    this.reRenderCalendar()
+        // }
+      },
+      showCountToggle(){
+        this.getShowCount(!this.getShowCount)      
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -2751,6 +2825,12 @@ th {
   background-color: #f8f9fa;
   border: .5px solid lightgray;
 }
+
+.statesCol {
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+
+}
 .fa-times-circle {
   font-size: 1.40rem;
   font-weight: 400;
@@ -2817,7 +2897,7 @@ th {
  }
 .btnRow {
   position: absolute;
-  bottom: 1%;
+  bottom: 45%;
   right: 1%;
 }
 .sort-th {
@@ -2873,6 +2953,9 @@ th {
   box-shadow: 0 1px 2.5px rgba(56,56, 56,0.19), 0 1.5px 1.5px rgba(56,56,56,0.23);
 }
 
+.font-sm {
+  font-weight: 600;
+}
 .green1, .orange1, .red1 {   
   color:#fff;   
 }
