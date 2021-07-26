@@ -1,6 +1,4 @@
 ActiveAdmin.register Task do
-  include AdminUtility
-
   menu priority: 4
   actions :all, except: [:show]
 

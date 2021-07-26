@@ -1,6 +1,4 @@
 ActiveAdmin.register Risk do
-  include AdminUtility
-
   menu priority: 6
   actions :all, except: [:show]
 

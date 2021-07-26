@@ -1,6 +1,4 @@
 ActiveAdmin.register Lesson do
-  include AdminUtility
-
   menu priority: 9
   actions :all, except: [:show]
 

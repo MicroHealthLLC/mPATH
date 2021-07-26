@@ -1,6 +1,4 @@
 ActiveAdmin.register Issue do
-  include AdminUtility
-
   menu priority: 5
   actions :all, except: [:show, :new]
 
