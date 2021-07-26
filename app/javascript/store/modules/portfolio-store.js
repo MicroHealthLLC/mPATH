@@ -5,6 +5,7 @@ const portfolioModule = {
     portfolioWatchedTasksToggle: true,
     portfolioBriefedTasksToggle: true,
     portfolioImportantTasksToggle: true,
+    showCount: true,
    
     programNameFilter: null,
 
@@ -22,6 +23,8 @@ const portfolioModule = {
 
     portfolio_programs: [],
     portfolio_programs_loaded: true,
+
+  
   }),
   actions: {
     fetchPortfolioPrograms({commit}) {
@@ -139,6 +142,8 @@ const portfolioModule = {
     setPortfolioWatchedTasksToggle: (state, showAll) => state.portfolioWatchedTasksToggle = showAll,
     setPortfolioImportantTasksToggle: (state, showAll) => state.portfolioImportantTasksToggle = showAll,
     setPortfolioBriefedTasksToggle: (state, showAll) => state.portfolioBriefedTasksToggle = showAll,
+    setShowCount: (state, count) => state.showCount = count,
+
     
     SET_PORTFOLIO_PROGRAMS: (state, portfolio_programs) => state.portfolio_programs = portfolio_programs,
     TOGGLE_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.portfolio_programs_loaded = loaded,
@@ -178,6 +183,10 @@ const portfolioModule = {
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
 
     programNameFilter: state => state.programNameFilter,
+
+    getShowCount: (state) => state.showCount,
+
+
   },
 };
 
