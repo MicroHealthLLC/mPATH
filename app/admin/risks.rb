@@ -197,15 +197,15 @@ ActiveAdmin.register Risk do
 
     def create
       build_resource
-      handle_files
       handle_links
+      handle_files
       resource.user = current_user
       super
     end
 
     def update
-      handle_files
       handle_links
+      handle_files
       super
     end
 

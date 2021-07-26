@@ -214,14 +214,14 @@ ActiveAdmin.register Task do
 
     def create
       build_resource
-      handle_files
       handle_links
+      handle_files
       super
     end
 
     def update
-      handle_files
       handle_links
+      handle_files
       super
     end
 
