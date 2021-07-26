@@ -47,7 +47,7 @@ class Privilege < ApplicationRecord
         att[field] = YAML.load(value).join("")
       end
     end
-    if self.admin_was.include?("R") && !self.admin.include?("R")
+    if self.admin && self.admin_was && self.admin_was.include?("R") && !self.admin.include?("R")
       att["admin"] = ""
     elsif att["admin"] && !att["admin"].chars.include?("R") && (att["admin"].chars.include?("W") || att["admin"].chars.include?("D") )
       att["admin"] = att["admin"] + "R"
