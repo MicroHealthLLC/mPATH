@@ -26,14 +26,14 @@
           </template>
 
 
-          <div class="row pb-4 px-0">
+          <div class="row pb-4">
              <div class="col-4 py-2">           
              <div class="w-100 d-flex">
 
 
 
 
-                <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>
               <el-input type="search" placeholder="Enter Search Criteria" v-model="search_tasks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
@@ -68,8 +68,8 @@
               </div> 
             </div>
 
-            <div class="box-shadow p-3">
-             <div class="row pt-3 pb-1">              
+            <div class="box-shadow py-3">
+             <div class="row pt-3 pr-2 pb-1">              
                <div class="col-10 px-1 pt-2">
 
                    <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -77,7 +77,7 @@
                      </div> -->
               
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
 
                   <span class="d-flex statesCol mr-3 px-3 py-2">              
                   <div class="pr-4 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
@@ -193,7 +193,7 @@
               </div>
 
       <div class="row text-center mt-2" v-if="tasksObj !== null && tasksObj.length > 0 ">      
-        <div class="xTable" style="overflow-x:auto">
+        <div class="xTable px-3" style="overflow-x:auto">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="table" id="portTasks">        
           
               <thead style="background-color:#ededed;">
@@ -404,12 +404,12 @@
           </span>   
           </template>    
 
-         <div class="row pb-4 px-3">
+         <div class="row pb-4">
               <div class="col-4 py-2">
 
 
             <div class="w-100 d-flex">
-               <div class="d font-sm mt-2 mr-2">SEARCH</div>              
+               <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>              
               <el-input type="search" placeholder="Enter Search Criteria" v-model="search_issues" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
@@ -419,7 +419,7 @@
             <div  class="col-5 pl-0 py-2">   
             <div class="d-flex">
 
-            <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+            <div class="font-sm mr-2 pl-2 mt-2">PROGRAM FILTER</div>           
               <template>
                <el-select     
                     v-model="C_programNameFilter"                               
@@ -443,13 +443,13 @@
               </div> 
             </div>
 
-            <div class="box-shadow pt-3 px-3">
-            <div class="row pt-3 pb-1">
+            <div class="box-shadow pt-3 pb-1">
+            <div class="row pt-3 pb-1 pr-2">
                <div class="col-10 px-1 pt-2">
 
              
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
 
             
                 <span class="d-flex statesCol mr-3 px-3 py-2">                         
@@ -561,7 +561,7 @@
         </div>
        </div>
             </div>
-      <div class="row text-center mt-2" v-if="issuesObj !== null && issuesObj.length > 0 ">            
+      <div class="row text-center mt-1" v-if="issuesObj !== null && issuesObj.length > 0 ">            
        
         <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="issueTable" id="portIssues">
@@ -786,11 +786,11 @@
           </span>   
           </template>
 
-             <div class="row pb-4 px-3">    
+             <div class="row pb-4">    
               <div class="col-4 py-2">
            
               <div class="w-100 d-flex">
-              <div class="d font-sm mt-2 mr-2">SEARCH</div>                
+              <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>                
               <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>             
@@ -823,13 +823,13 @@
               </div> 
             </div>
 
-            <div class="box-shadow p-3">
-             <div class="row pt-3 pb-1">              
+            <div class="box-shadow py-3">
+             <div class="row pt-3 pb-1 pr-2">              
                <div class="col-10 px-1 pt-2">
               
                 
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
 
               <span class="d-flex statesCol mr-3 px-3 py-2">                        
                   <div class="pr-4 text-center icons" :class="[hideCompleteRisks == true ? 'light':'']" @click.prevent="toggleCompleteR">             
@@ -948,7 +948,7 @@
                 
       </div>
        <div class="row text-center mt-2" v-if="risksObj !== null && risksObj.length > 0 ">  
-        <div class="xTable" style="overflow-x:auto;">
+        <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="riskTable" id="portRisks">
            
             <thead style="background-color:#ededed;">
@@ -1197,12 +1197,12 @@
           </span>   
           </template> 
 
-           <div class="row pb-4 px-3">
+           <div class="row pb-4">
              <div class="col-4 py-2">           
              <div class="w-100 d-flex">
         
                 
-              <div class="d font-sm mt-2 mr-2">SEARCH</div>
+              <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>
               <el-input type="search" placeholder="Enter Search Criteria" v-model="search_lessons" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
@@ -1236,12 +1236,12 @@
               </div> 
             </div>
 
-            <div class="box-shadow p-3">
-             <div class="row pt-3 pb-1">              
+            <div class="box-shadow py-3">
+             <div class="row pt-3 pb-1 pr-2">              
                <div class="col-10 px-1 pt-2">
         
               <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm pr-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
                   <span class="d-flex statesCol mr-3 px-3 py-2">                      
                   <div class="pr-4 text-center icons" :class="[hideCompleteLessons == true ? 'light':'']" @click.prevent="toggleCompleteL">             
                    <span class="d-block">
@@ -1313,11 +1313,8 @@
               </div>
  
     
-      <div class="row text-center mt-2" v-if="lessonsObj !== null && lessonsObj.length > 0">            
-     
-                
-      
-       <div class="xTable" style="overflow-x:auto;">
+      <div class="row text-center mt-2" v-if="lessonsObj !== null && lessonsObj.length > 0">        
+       <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="lessonTable" id="portLessons">
            
             <thead style="background-color:#ededed;">
