@@ -105,10 +105,13 @@ project = Project.find_or_create_by(
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
+
 active_status = Status.find_or_create_by(name: 'Active', color: '#0b8e1a')
 inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
+
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: active_status.id)
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: inactive_status.id)
+
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
 task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage', percentage: 40)
 new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage', percentage: 60)
