@@ -4,7 +4,7 @@ describe('Sheets Notes View', function() {
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
-    cy.get('#customtabs > :nth-child(5)').contains('Notes').should('be.visible').click()
+    cy.get('#customtabs > :nth-child(6)').contains('Notes').should('be.visible').click()
   })
 
   it('Open Sheets notes in a facility', function() {

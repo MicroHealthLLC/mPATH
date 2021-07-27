@@ -20,7 +20,7 @@
             aria-label="Search"            
             aria-describedby="search-addon"    
              v-model="notesQuery"  
-            data-cy="search_tasks"
+            data-cy="search_notes"
         >
           <el-button slot="prepend" icon="el-icon-search"></el-button>
         </el-input>

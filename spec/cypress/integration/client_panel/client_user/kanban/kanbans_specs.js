@@ -8,7 +8,7 @@ describe('Kanban View', function() {
   it('Open kanban view without selecting any project', function() {
     cy.openProject()
     cy.get('[data-cy=kanban_tab]').contains('Kanban').should('be.visible').click()
-    cy.get('.el-card__body').contains('Please select a project.').should('be.visible')
+    cy.get('.el-card__body').contains('Select a Project to get started!').should('be.visible')
     cy.logout()
   })
 

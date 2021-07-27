@@ -24,12 +24,12 @@ describe('Kanban Issues View', function() {
     cy.logout()
   })
 
-  // it("Create new issue in kanban issue page", function() {
-  //   cy.fillKanbanIssueForm()
-  //   cy.get('[data-cy=issue_save_btn]').click({force: true})
-  //   cy.get('.el-message__content').contains('New test issue in kanban was saved successfully.').should('be.visible')
-  //   cy.logout()
-  // })
+  it("Create new issue in kanban issue page", function() {
+    cy.fillKanbanIssueForm()
+    cy.get('[data-cy=issue_save_btn]').click({force: true})
+    cy.get('.el-message__content').contains('New test issue in kanban was saved successfully.').should('be.visible')
+    cy.logout()
+  })
 
 
   it("In Issue form if title's field empty, error message display", function() {
@@ -172,12 +172,12 @@ describe('Kanban Issues View', function() {
       })
     })
     cy.get('[data-cy=issue_on_watch]').click({force: true})
-    cy.get('[data-cy=issue_save_btn]').click({force: true})
+    //cy.get('[data-cy=issue_save_btn]').click({force: true})
     cy.wait(1000)
     cy.get('[data-cy=issue_close_btn]').click({force: true})
     cy.get('[data-cy=kanban_draggable]').within(() => {
       cy.get('[data-cy=issues]').first().within(() => {
-        cy.get('[data-cy=on_watch_icon]').should('not.exist')
+        cy.get('[data-cy=on_watch_icon]').should('not.be.visible')
       })
     })
     cy.logout()
@@ -210,7 +210,7 @@ describe('Kanban Issues View', function() {
       cy.get('[data-cy=issues]').should('not.exist')
     })
 
-    cy.get('[data-cy=search_issues]').clear({force: true}).type('Test Issue').should('have.value', 'Test Issue')
+    cy.get('[data-cy=search_issues]').clear({force: true}).type('Test Issue 1').should('have.value', 'Test Issue 1')
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=issues]').its('length').should('be.eq', 1)
     })

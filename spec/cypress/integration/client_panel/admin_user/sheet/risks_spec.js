@@ -2,6 +2,7 @@ describe('Sheets Risks View', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
+    cy.appScenario('provide_risk_privileges')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
     cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
@@ -127,16 +128,17 @@ describe('Sheets Risks View', function() {
     cy.logout()
   })
 
-  it('Sort risk according to On Watch', function() {
-    cy.get('.mt-3 > tr > :nth-child(9)').click()
-    cy.get('[data-cy=risk_row]').first().should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(9)').click()
-    cy.get('[data-cy=risk_row]').first().contains('x').should('be.visible')
-    cy.logout()
-  })
+  // NOTE: This sort is not available
+  // it('Sort risk according to On Watch', function() {
+  //   cy.get('.mt-3 > tr > :nth-child(9)').click()
+  //   cy.get('[data-cy=risk_row]').first().should('be.visible')
+  //   cy.get('.mt-3 > tr > :nth-child(9)').click()
+  //   cy.get('[data-cy=risk_row]').first().contains('x').should('be.visible')
+  //   cy.logout()
+  // })
 
   it('Sort risk according to Last Update', function() {
-    cy.get('.mt-3 > tr > :nth-child(10)').click()
+    cy.get('.mt-3 > tr > :nth-child(9)').click()
     cy.get('[data-cy=risk_row]').first().contains('No Updates').should('be.visible')
     cy.logout()
   })
