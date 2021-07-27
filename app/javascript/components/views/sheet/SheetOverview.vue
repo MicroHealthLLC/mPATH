@@ -107,10 +107,15 @@
                     <div class="col-2 pl-0">
                   #
                   </div>
+
                 <div class="col-5 pl-3">
+                     
+        
+    
                   <span class="underline" :class="{ 'font-sm': isMapView }">PROGRESS</span>
                   </div>
                 </div>
+
                 <div
                   class="row"
                   v-for="(task, index) in taskStats"
@@ -124,7 +129,7 @@
                       task.count
                     }}</span>
                   </div>
-
+                
                   <div class="col-5 mb-1">
                     <span
                       class="w-100 progress pg-content"
@@ -679,23 +684,36 @@
               <div
                 class="col-md-2 col-lg-2 col-sm-6 pl-0"
                 data-cy="date_set_filter"
+               
               >
+            
                 <el-card class="box-card" style="background-color:#fff">
+                     <!-- <el-popover
+                      placement="top-start"
+                      title="Project #"
+                      width="200"
+                      trigger="hover"
+                      content="This is the total number of programs in your portfolio."> -->
                   <div class="row">
                     <div class="col">
                      <h5 class="d-inline">PROGRESS</h5>
                       <hr />
                       <p class="text-center">
-                        <span :class="{ 'progress-0': facility.progress <= 0 }">
+                        <span :class="{ 'progress-0': projectTotalProgress <= 0 }">
                           <el-progress
                             type="circle"
-                            :percentage="facility.progress"
+                            :percentage="projectTotalProgress"
                           ></el-progress>
                         </span>
                       </p>
                     </div>
+
+                
+
                   </div>
+                   <!-- </el-popover> -->
                 </el-card>
+              
               </div>
 
               <div class="col-md-3 col-lg-3 col-sm-6" v-show="isSheetsView"  data-cy="date_set_filter">
@@ -876,6 +894,9 @@ export default {
         this.facility.progress < 100
       );
     },
+    log(e){
+      console.log("facility obj" + e)
+    },
    onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
@@ -994,6 +1015,77 @@ export default {
         return valid;
       });
     },
+    viableTasksForProgressTotal(){
+      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
+    },
+     viableIssuesForProgressTotal(){
+      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
+    },
+     viableRisksForProgressTotal(){
+      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
+    },
+   allTasksProgress() {
+      let task = new Array();
+      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
+      for (let ids in group) {
+        task.push({
+          id: ids,  
+          // text: text,      
+          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
+        });
+      }
+      let total = task.map(t => t.progress);
+      let count = task.map(t => t).length;
+
+      let sum = total.reduce((a, b) => {
+        return a + b;
+      });
+      let roundedSum = Math.round(sum)
+      return roundedSum / count
+    },
+    allRisksProgress() {
+      let risk = new Array();
+      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
+      for (let ids in group) {
+        risk.push({
+          id: ids,  
+          // text: text,      
+          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
+        });
+      }
+      let total = risk.map(r => r.progress);
+      let count = risk.map(r => r).length;
+
+      let sum = total.reduce((a, b) => {
+        return a + b;
+      });
+      let roundedSum = Math.round(sum)
+      return roundedSum / count
+    },
+    allIssuesProgress() {
+      let issue = new Array();
+      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
+      for (let ids in group) {
+        issue.push({
+          id: ids,  
+          // text: text,      
+          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
+        });
+      }
+      let total = issue.map(iss => iss.progress);
+      let count = issue.map(iss => iss).length;
+
+      let sum = total.reduce((a, b) => {
+        return a + b;
+      });
+      let roundedSum = Math.round(sum)
+      return roundedSum / count
+    },
+    projectTotalProgress(){
+      let sum = this.allTasksProgress + this.allRisksProgress + this.allIssuesProgress
+      let total = sum / 3
+      return Math.round(total)
+    },  
     taskStats() {
       let tasks = new Array();
       let group = _.groupBy(this.filteredTasks, "taskType");
