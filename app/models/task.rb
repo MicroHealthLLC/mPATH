@@ -115,16 +115,23 @@ class Task < ApplicationRecord
     end
 
     in_progress = false
+    completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold
+    end
 
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
       planned: planned,
+      on_hold: self.on_hold,
+      completed: completed,
       in_progress: in_progress,
       category: task_type.name,
       notes: notes.as_json,

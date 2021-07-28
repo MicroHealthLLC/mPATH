@@ -110,8 +110,12 @@ class Risk < ApplicationRecord
     in_progress = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold
+    end
 
     merge_h = { 
       project_name: facility.facility_name, 
@@ -119,6 +123,8 @@ class Risk < ApplicationRecord
       category: task_type.name,
       is_overdue: is_overdue,
       in_progress: in_progress,
+      on_hold: self.on_hold,
+      completed: completed,
       planned: planned,
       last_update: self.notes.last&.portfolio_json,
       notes: notes.as_json,

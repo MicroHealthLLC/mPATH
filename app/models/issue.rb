@@ -54,16 +54,23 @@ class Issue < ApplicationRecord
     end
 
     in_progress = false
+    completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today
-    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold
+    end
 
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
       planned: planned,
+      on_hold: self.on_hold,
+      completed: completed,
       in_progress: in_progress,
       issue_type: issue_type.name,
       issue_severity: issue_severity.name,
