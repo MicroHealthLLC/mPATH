@@ -1,5 +1,6 @@
 <template>
   <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index">
+     <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
          <div class="ml-2 task-search-bar w-100">
@@ -35,7 +36,7 @@
           </el-select>
         </div>
 
-        <div class="w-75">
+        <!-- <div class="w-75">
           <label class="font-sm my-0">Flags</label>   
            <el-select
            v-model="C_sheetsTaskFilter"
@@ -54,18 +55,123 @@
             >
           </el-option>
           </el-select>
-        </div>
+        </div> -->
     </div>
-    <div class="wrapper p-3">
-      <button v-if="_isallowed('write')"
-         class="btn btn-md btn-primary mr-3 addTaskBtn"
+    <div class="wrapper p-3">   
+      
+    <div class="d-inline ">
+    <span class="text-center">  
+    <span class="d-inline">  
+       <button v-if="_isallowed('write')"
+         class="btn btn-md btn-primary mr-5 float-left addTaskBtn"
         @click.prevent="addNewTask"
         data-cy="add_task"
       >
         <font-awesome-icon icon="plus-circle" />
         Add Task
-      </button>
+      </button>      
+     <span class="font-sm pr-2 hideLabels"> STATUSES TO DISPLAY </span>     
+                
+                <span class="statesCol d-inline-block p-1 mr-2">
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                   <span class="d-block">
+                    <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">COMPLETE</span>
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                  </div>
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideInprogress == true ? 'light':'']" @click.prevent="toggleInprogress">                              
+                   <span class="d-block">
+                    <i class="far fa-tasks" :class="[getHideInprogress == true ? 'light':'text-primary']"></i>
+                    </span>      
+                  <span class="smallerFont">IN PROGRESS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.inProgress.count }}</h6>
+                  </div>
+                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHidePlanned == true ? 'light':'']" @click.prevent="togglePlanned">                              
+                   <span class="d-block">
+                    <i class="fas fa-calendar-check"  :class="[getHidePlanned == true ? 'light':'text-info']"></i>
+                    </span>      
+                  <span class="smallerFont">PLANNED</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.planned.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOverdue == true ? 'light':'']" @click.prevent="toggleOverdue" >                              
+                   <span class="d-block">
+                    <i class="fas fa-calendar" :class="[getHideOverdue == true ? 'light':'text-danger']"></i>
+                    </span>      
+                  <span class="smallerFont">OVERDUE</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.overdue.count }}</h6>
+                  </div>
+                    <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOngoing == true ? 'light':'']" @click.prevent="toggleOngoing" >                              
+                   <span class="d-block">
+                    <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">ONGOING</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                  </div>
+  
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
+                   <span class="d-block">
+                    <i class="fas fa-pause-circle" :class="[getHideOnhold == true ? 'light':'text-primary']"></i>
+                    </span>      
+                  <span class="smallerFont">ON HOLD</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.onHold.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                   <span class="d-block">
+                    <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+                    </span>      
+                  <span class="smallerFont">DRAFT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                  </div>
+                </span>
+  
+            <span class="pl-4 pr-2 font-sm hideLabels">TAG FOCUS</span>
+            <span class="tagCol d-inline-block p-1">
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideWatched == true ? '':'light']" @click.prevent="toggleWatched"  >                              
+                   <span class="d-block">
+                    <i class="fas fa-eye"></i>
+                    </span>      
+                  <span class="smallerFont">ON WATCH</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.watched.count }}</h6>
+                  </div>
+  
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                   <span class="d-block">
+                    <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+                    </span>      
+                  <span class="smallerFont">IMPORTANT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                   <span class="d-block">
+                    <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+                    </span>      
+                  <span class="smallerFont">BRIEFINGS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                  </div>
+  
+            </span>
+            
+     </span>
+         
+  
+  
+  </span>
+     
+      </div>
+          <div class="d-inline-block ml-3">
+             <!-- <v-app id="app"> -->
+             <v-checkbox     
+           v-model="C_showCountToggle"     
+            class="d-inline-block"  
+            @click.prevent="showCounts"   
+            :label="`Show Counts`"
+          ></v-checkbox>
+             <!-- </v-app> -->
+
+          </div>
        <div class="float-right mb-2">
+          
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -95,8 +201,8 @@
       </button>
        </div>
       <div v-if="filteredTasks.length > 0">
-        <div  style="margin-bottom:50px" data-cy="tasks_table">
-          <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
+        <div  style="margin-bottom:50px" data-cy="tasks_table" class="mt-2">
+          <table class="table table-sm table-bordered table-striped stickyTableHeader">
             <colgroup>
               <col class="oneSix" />
               <col class="ten" />
@@ -298,7 +404,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks" :key="i">
+        <tr  v-for="(task, i) in filteredTasks" :key="i" :load="log(task)">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -350,7 +456,8 @@
         </tr>
       </tbody>
     </table>
-
+     <!-- </v-app> -->
+  
   </div>
 </template>
 
@@ -374,6 +481,7 @@
     data() {
       return {
         tasks: Object,
+        today: new Date().toISOString().slice(0, 10),
         now: new Date().toISOString(),
         tasksQuery: '',
         currentPage:1,
@@ -397,7 +505,20 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setToggleRACI',
-        'setTaskForManager'
+        'setTaskForManager',
+        'setShowCount',
+        // 7 States
+        'setHideComplete',
+        'setHideInprogress',
+        'setHidePlanned',
+        'setHideOverdue',
+        'setHideOngoing',
+        'setHideOnhold',
+         'setHideDraft',
+        // 3 Tags
+        'setHideWatched',
+        'setHideImportant',
+        'setHideBriefed',
       ]),
       //TODO: change the method name of isAllowed
       _isallowed(salut) {
@@ -415,6 +536,9 @@
       }
         this.currentSort = s;
       },
+      log(e){
+        console.log("task:  " + e)
+      },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
       },
@@ -427,6 +551,37 @@
         // console.log("First Name Sort: this is the sorted responsible user: "
         // + this.sortedResponsibleUser + " and this is the sorted accountable user: "
         // + this.sortedAccountableUser)
+      },
+      toggleWatched(){
+        this.setHideWatched(!this.getHideWatched)    
+      },
+      toggleImportant(){
+        this.setHideImportant(!this.getHideImportant)    
+      },
+      toggleBriefed(){
+         this.setHideBriefed(!this.getHideBriefed)    
+      },
+      toggleComplete(){
+        this.setHideComplete(!this.getHideComplete)    
+      },
+      toggleDraft(){
+        this.setHideDraft(!this.getHideDraft)    
+      },
+      togglePlanned(){
+         this.setHidePlanned(!this.getHidePlanned)    
+      },
+      toggleInprogress(){
+        this.setHideInprogress(!this.getHideInprogress)    
+      },
+      toggleOngoing(){
+         this.setHideOngoing(!this.getHideOngoing)    
+      },
+      toggleOnhold(){
+         this.setHideOnhold(!this.getHideOnhold)    
+      },
+      toggleOverdue(){
+      //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
+        this.setHideOverdue(!this.getHideOverdue)    
       },
       lastNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersLastName'
@@ -442,9 +597,12 @@
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
       },
-      log(e){
-        console.log(e)
+    showCounts(){
+        this.setShowCount(!this.getShowCount)       
       },
+      // log(e){
+      //   console.log(e)
+      // },
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
@@ -480,10 +638,24 @@
         'taskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
+        'getShowCount',
+       
         'taskUserFilter',
         'taskTypes',
         'viewPermit',
-        'getToggleRACI'
+        'getToggleRACI',
+        // 7 States
+        'getHideComplete',
+        'getHideInprogress',
+        'getHidePlanned',
+        'getHideOngoing',
+        'getHideOnhold',
+        'getHideDraft',
+        'getHideOverdue',
+        // 3 Tags
+        'getHideWatched',
+        'getHideImportant',
+        'getHideBriefed',
       ]),
       filteredTasks() {
 
@@ -544,17 +716,155 @@
         }), ['dueDate'])
       
   
-      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+      // if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
         
-        return tasks
+      //   return tasks
         
-       } else  {
+      //  } else 
+
+
+      return tasks.filter(t => {
+        if (this.getHideOverdue == true) {          
+         return t.isOverdue == false
+       } else return true
+
+      }).filter(t => {
+      if (this.getHideComplete == true) { 
+        return t.progressStatus == "active"
+      } else return true
+
+      }).filter(t => {
+      if (this.getHidePlanned == true) { 
+        return t.planned == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideOnhold == true) { 
+        return t.onHold == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideInprogress == true) { 
+        return t.inProgress == false
+      } else return true
+     
+      }).filter(t => {
+       if (this.getHideDraft == true){
+         return t.draft == false
+       } else return true   
+
+
+       }).filter(t => {
+       if (this.getHideOngoing == true) {
+          return t.ongoing == false
+       } else return true       
+
+
+        }).filter(t => {
+         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+          return t.reportable
+        }
+        if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+           return t.reportable + t.watched
+
+        } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+           return t.reportable + t.watched + t.important
+        } else return true
+
+      }).filter(t => {
+        // This and last 2 filters are for Filtered Tags
+         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
+           return t.watched
+        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
+           return  t.watched + t.reportable
+        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
+           return  t.watched + t.reportable + t.important
+        } else return true          
+       
+      }).filter(t => {
+         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
+          return t.important
+        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
+          return t.important + t.reportable
+       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
+          return t.important + t.reportable + t.watched
+        } else return true          
         
-        tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
-        return tasks
-      
-       }       
+         
+       })
       },
+    variation() {
+    let planned = _.filter(
+      this.filteredTasks,
+        (t) => t && t.planned == true
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
+     let drafts = _.filter(
+     this.filteredTasks,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+     this.filteredTasks,
+        (t) => t && t.important == true
+      ); 
+        let briefings = _.filter(
+       this.filteredTasks,
+        (t) => t && t.reportable == true
+      );
+      let watched = _.filter(
+     this.filteredTasks,
+        (t) => t && t.watched == true
+      );
+              
+      let completed = _.filter(
+      this.filteredTasks,
+        (t) => t && t.progressStatus == "completed"
+      );
+    let inProgress = _.filter(
+     this.filteredTasks,
+        (t) => t && t.inProgress == true
+      );
+     let onHold = _.filter(this.filteredTasks, (t) => t && t.onHold == true );
+     let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing == true );
+     let overdue = _.filter(this.filteredTasks, (t) => t.isOverdue == true);
+
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        watched: {
+          count: watched.length,          
+        },
+        onHold: {
+          count: onHold.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length - planned.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+        ongoing: {
+          count: ongoing.length
+        },     
+      };
+    },
       C_sheetsTaskFilter: {
         get() {
           return this.getAdvancedFilter
@@ -562,6 +872,24 @@
         set(value) {
           this.setAdvancedFilter(value)
         }
+      },
+     C_showCountToggle: {                  
+        get() {
+         return this.getShowCount                
+        },
+        set(value) {
+          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+        }
+        
+      },
+       C_toggleComplete: {                  
+        get() {
+         return this.getHideComplete               
+        },
+        set(value) {
+          this.setHideComplete(value) ||  this.setHideComplete(!this.getHideComplete)
+        }
+        
       },
       C_taskIssueProgressStatusFilter: {
         get() {
@@ -666,6 +994,9 @@
     background-color: rgba(211, 211, 211, 10%);
     border:none !important;
  }
+ .smallerFont {
+  font-size: 10px;
+}
   .alt-text {
     position: relative;
     margin-top: 50px;
@@ -778,10 +1109,49 @@
   float: right;
   margin-top: -85px;  
 }
+.tagCol {
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: .5px solid lightgray;
+}
+
+i, .icons {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.statesCol {
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+
+}
+
+/deep/.v-input__slot {
+  display: inline;
+  .v-label {
+   font-family: 'FuturaPTBook';
+  //  font-weight: 600;
+   color: #007bff !important;
+  }
+}
+
+.hideLabels {
+  font-weight: 600;
+}
 
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
     width: 65% !important;
   } 
+}
+
+@media screen and (max-width: 1550px) {
+  .hideLabels {
+    display: none !important;
+  }
 }
 </style>

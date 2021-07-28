@@ -22,8 +22,7 @@ const lessonModule = {
             .attributes["content"].value,
         },
       })
-        .then((res) => {
-          console.log("this is the url" + `/api/v1/programs/${programId}/lessons/count.json` );
+        .then((res) => {        
           // Mutate state with response from back end
           commit("SET_PROGRAM_LESSONS", res.data);
         })

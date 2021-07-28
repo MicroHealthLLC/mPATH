@@ -1,3 +1,4 @@
+import { faSolarPanel } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 const portfolioModule = {
@@ -23,6 +24,22 @@ const portfolioModule = {
 
     portfolio_programs: [],
     portfolio_programs_loaded: true,
+
+
+    // Flags Work throughout CLient faSolarPanel...move to new store
+// 7 States
+    hideComplete: false,
+    hideInprogress: false,
+    hideDraft: false,
+    hideOverdue: false,
+    hideOngoing: false,
+    hideOnhold: false,
+    hidePlanned: false,
+
+// 3 TAGS
+    hideBriefed: false,
+    hideImportant: false,
+    hideWatched: false,
 
   
   }),
@@ -144,6 +161,7 @@ const portfolioModule = {
     setPortfolioBriefedTasksToggle: (state, showAll) => state.portfolioBriefedTasksToggle = showAll,
     setShowCount: (state, count) => state.showCount = count,
 
+
     
     SET_PORTFOLIO_PROGRAMS: (state, portfolio_programs) => state.portfolio_programs = portfolio_programs,
     TOGGLE_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.portfolio_programs_loaded = loaded,
@@ -161,6 +179,22 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
+
+     // Flags Work throughout CLient faSolarPanel...move to new store
+     
+    //  7 States
+    setHideComplete: (state, complete) => state.hideComplete = complete,
+    setHideInprogress: (state, inprogress) => state.hideInprogress = inprogress,
+    setHideDraft: (state, draft) => state.hideDraft = draft,
+    setHidePlanned: (state, planned) => state.hidePlanned = planned,
+    setHideOverdue: (state, overdue) => state.hideOverdue = overdue,
+    setHideOngoing: (state, ongoing) => state.hideOngoing = ongoing,
+    setHideOnhold: (state, onhold) => state.hideOnhold = onhold,
+
+    // 3 Tags
+    setHideBriefed: (state, briefed) => state.hideBriefed = briefed,
+    setHideImportant: (state, important) => state.hideImportant = important,
+    setHideWatched: (state, watched) => state.hideWatched = watched,
   },
   getters: {
     getPortfolioWatchedTasksToggle: state => state.portfolioWatchedTasksToggle,
@@ -185,6 +219,25 @@ const portfolioModule = {
     programNameFilter: state => state.programNameFilter,
 
     getShowCount: (state) => state.showCount,
+
+    
+     // Flags Work throughout CLient faSolarPanel...move to new store
+
+    //  7 States
+    getHideComplete: (state) => state.hideComplete,
+    getHideInprogress: (state) => state.hideInprogress,
+    getHideOverdue: (state) => state.hideOverdue,
+    getHideOngoing: (state) => state.hideOngoing,
+    getHidePlanned: (state) => state.hidePlanned,
+    getHideDraft: (state) => state.hideDraft,
+    getHideOnhold: (state) => state.hideOnhold,
+
+    // 3 Tags
+    getHideWatched: (state) => state.hideWatched,
+    getHideBriefed: (state) => state.hideBriefed,
+    getHideImportant: (state) => state.hideImportant,
+
+
 
 
   },
