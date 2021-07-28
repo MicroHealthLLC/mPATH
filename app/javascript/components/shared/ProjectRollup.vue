@@ -612,7 +612,7 @@
           >
             <div class="row">
               <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
-                <h6 class="d-inline">LESSONS</h6>
+                <h5 class="d-inline">LESSONS</h5>
                  <h5 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">{{
                       programLessons.total_count 

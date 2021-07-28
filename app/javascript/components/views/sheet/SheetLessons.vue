@@ -6,14 +6,70 @@
       </el-input>
     </div>
     <div class="wrapper mt-3 p-3">
+
+    <div class="d-inline ">
+    <span class="text-center">  
+    <span class="d-inline">  
       <button
         v-if="_isallowed('write')"
-        class="btn btn-md btn-primary addLessonBtn mr-3"
+        class="btn btn-md btn-primary addLessonBtn mr-5 float-left"
         @click="addLesson"
       >
         <font-awesome-icon icon="plus-circle" />
         Add Lesson
       </button>
+
+       <span class="font-sm pr-2 hideLabels"> STATUSES TO DISPLAY </span>     
+                
+                <span class="statesCol d-inline-block p-1 mr-2">
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                   <span class="d-block">
+                    <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">COMPLETE</span>
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                  </div>              
+                  <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                   <span class="d-block">
+                    <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+                    </span>      
+                  <span class="smallerFont">DRAFT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                  </div>
+                </span>
+  
+            <span class="pl-4 pr-2 font-sm hideLabels">TAG FOCUS</span>
+            <span class="tagCol d-inline-block p-1">
+                 
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                   <span class="d-block">
+                    <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+                    </span>      
+                  <span class="smallerFont">IMPORTANT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                   <span class="d-block">
+                    <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+                    </span>      
+                  <span class="smallerFont">BRIEFINGS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                  </div>
+              </span>            
+     </span> 
+     </span>     
+    </div>
+    <div class="d-inline-block ml-3">
+        <!-- <v-app id="app"> -->
+      <v-checkbox     
+      v-model="C_showCountToggle"     
+      class="d-inline-block"  
+      @click.prevent="showCounts"   
+      :label="`Show Counts`"
+    ></v-checkbox>
+        <!-- </v-app> -->
+
+    </div>
       <div class="float-right">
         <button
           v-tooltip="`Export to PDF`"
@@ -37,10 +93,10 @@
         </button>
       </div>
       <!-- Lessons Learned Table -->
-      <div style="margin-bottom:50px" data-cy="lessons_table">
+      <div style="margin-bottom:50px" data-cy="lessons_table" :load="log(JSON.stringify(filteredLessons))">
         <table
           v-if="filteredLessons.length > 0"
-          class="my-3 w-100"
+          class="mb-3 w-100"
           id="lessonsPdf"
           ref="table"
         >
@@ -157,6 +213,9 @@
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
                 > <i class="fas fa-pencil-alt text-warning"></i>
               </span>
+               <span v-if="lesson.draft == false" v-tooltip="`Complete`"
+                > <i class="fas fa-clipboard-check text-success"></i>
+              </span>
               <span
                 v-if="
                   lesson.important == false &&
@@ -164,7 +223,7 @@
                     lesson.draft == false
                 "
               >
-                No flags at this time
+               
               </span>
             </td>
             <td>
@@ -274,7 +333,16 @@ export default {
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
-    ...mapMutations(["setLessonsPerPageFilter"]),
+    ...mapMutations([
+      "setLessonsPerPageFilter",
+      'setShowCount',
+      // 2 States
+      'setHideComplete',
+      'setHideDraft',
+      // 2 Tags
+      'setHideImportant',
+      'setHideBriefed',      
+      ]),
     addLesson() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
@@ -291,6 +359,9 @@ export default {
       var ctx = { worksheet: name || "Worksheet", table: table.innerHTML };
       window.location.href =
         this.uri + this.base64(this.format(this.template, ctx));
+    },
+    log(e){
+      console.log("this is Lessons obj: " + e)
     },
     openLesson(id) {
       this.$router.push({
@@ -472,6 +543,21 @@ export default {
         let s = permissionHash[salut]
         return  fPrivilege.lessons.includes(s);      
     },
+    toggleImportant(){
+      this.setHideImportant(!this.getHideImportant)    
+    },
+    toggleBriefed(){
+        this.setHideBriefed(!this.getHideBriefed)    
+    },
+    toggleComplete(){
+      this.setHideComplete(!this.getHideComplete)    
+    },
+    toggleDraft(){
+      this.setHideDraft(!this.getHideDraft)    
+    },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
     // _isallowed(privilege) {
     //   return (
     //     
@@ -486,7 +572,55 @@ export default {
       "projectLessons",
       "getLessonsPerPageFilterOptions",
       "getLessonsPerPageFilter",
+      'getShowCount',
+      // 2 States
+      'getHideComplete',       
+      'getHideDraft',   
+      // 2 Tags      
+      'getHideImportant',
+      'getHideBriefed',
     ]),
+    C_showCountToggle: {                  
+        get() {
+         return this.getShowCount                
+        },
+        set(value) {
+          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+        }        
+    },
+   variation() {
+     let drafts = _.filter(
+     this.filteredLessons,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+     this.filteredLessons,
+        (t) => t && t.important == true
+      ); 
+     let briefings = _.filter(
+       this.filteredLessons,
+        (t) => t && t.reportable == true
+      );
+     let completed = _.filter(
+      this.filteredLessons,
+        (t) => t && t.draft == false
+      );
+     return {
+       important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },        
+      };
+    },
     lessonsPerPage: {
       get() {
         return this.getLessonsPerPageFilter || { id: 5, name: "5", value: 5 };
@@ -506,7 +640,35 @@ export default {
           let end = this.currentPage * this.lessonsPerPage.value;
           if (index >= start && index < end) return true;
           return this.end;
-        });
+        })
+       .filter(lesson => {
+        // Filtering 3 Lesson States        
+        if (this.getHideDraft) {
+          return !lesson.draft
+        } else return true
+  
+      }).filter(lesson => {
+         if (this.getHideComplete) {
+          return lesson.draft
+        } else return true
+
+      // Filtering 3 Task Tags
+      }).filter(lesson => {
+         if (this.getHideBriefed && !this.getHideImportant ) {
+          return lesson.reportable
+        }
+        if (this.getHideBriefed && this.getHideImportant) {          
+           return lesson.reportable + lesson.important
+        } else return true
+         
+      }).filter(lesson => {
+         if (this.getHideImportant && !this.getHideBriefed) {
+          return lesson.important
+        } if (this.getHideImportant && this.getHideBriefed) {
+          return lesson.important + lesson.reportable
+       } else return true          
+            
+      })
     },
   },
   mounted() {
@@ -617,6 +779,46 @@ tr:hover {
 .sort-asc,
 .sort-dsc {
   color: #17a2b8;
+}
+
+.tagCol {
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: .5px solid lightgray;
+}
+  
+i, .icons {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.statesCol {
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+
+}
+.hideLabels {
+  font-weight: 600;
+}
+.smallerFont {
+  font-size: 10px;
+}
+/deep/.v-input__slot {
+  display: inline;
+  .v-label {
+   font-family: 'FuturaPTBook';
+  //  font-weight: 600;
+   color: #007bff !important;
+  }
+}
+  @media screen and (max-width: 1550px) {
+  .hideLabels {
+    display: none !important;
+  }
 }
 .date-chip {
   background-color: #6c757d !important;

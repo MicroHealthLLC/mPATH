@@ -39,7 +39,8 @@
           <span class="float-right">                 
             <span v-show="lesson.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
             <span v-show="lesson.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>          
-            <span v-show="lesson.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>                
+            <span v-show="lesson.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>  
+            <span v-if="lesson.draft == false" v-tooltip="`Complete`"> <i class="fas fa-clipboard-check text-success"></i></span>              
           </span>
         </div>
         
