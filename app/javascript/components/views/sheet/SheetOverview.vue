@@ -7,8 +7,8 @@
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             
             <div class="row filterDiv">      
-               <div class="text-center filterLabel"><label class="px-2">Filters: </label></div>        
-                <div class="col filterCol text-right" :load="log(JSON.stringify(getAllFilterNames))">
+               <div class="text-center filterLabel"><label class="px-2 bg">Filters: </label></div>        
+                <div class="col filterCol text-right">
                  
                   <div
                     v-for="(filterArray, index) in getAllFilterNames"
@@ -969,9 +969,9 @@ export default {
         this.facility.progress < 100
       );
     },
-    log(e){
-      console.log("getAllFilterNames" + e)
-    },
+    // log(e){
+    //   console.log("getAllFilterNames" + e)
+    // },
    onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
@@ -1090,18 +1090,18 @@ export default {
         return valid;
       });
     },
-    // viableTasksForProgressTotal(){
-    //   return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
-    // },
-    //  viableIssuesForProgressTotal(){
-    //   return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
-    // },
-    //  viableRisksForProgressTotal(){
-    //   return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
-    // },
+    viableTasksForProgressTotal(){
+      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
+    },
+     viableIssuesForProgressTotal(){
+      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
+    },
+     viableRisksForProgressTotal(){
+      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
+    },
    allTasksProgress() {
       let task = new Array();
-      let group = _.groupBy(this.filteredTasks, "id");
+      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
       for (let ids in group) {
         task.push({
           id: ids,  
@@ -1112,15 +1112,18 @@ export default {
       let total = task.map(t => t.progress);
       let count = task.map(t => t).length;
 
-      let sum = total.reduce((a, b) => {
-        return a + b;
-      });
-      let roundedSum = Math.round(sum)
-      return roundedSum / count
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
+
+     let roundedSum = Math.round(sum)
+     let final = roundedSum / count
+    
+       if (isNaN(final)) {
+        return 0
+      } else return final 
     },
     allRisksProgress() {
       let risk = new Array();
-      let group = _.groupBy(this.filteredRisks, "id");
+      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
       for (let ids in group) {
         risk.push({
           id: ids,  
@@ -1131,15 +1134,19 @@ export default {
       let total = risk.map(r => r.progress);
       let count = risk.map(r => r).length;
 
-      let sum = total.reduce((a, b) => {
-        return a + b;
-      });
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
       let roundedSum = Math.round(sum)
-      return roundedSum / count
+
+       let final = roundedSum / count
+    
+       if (isNaN(final)) {
+        return 0
+      } else return final 
+  
     },
     allIssuesProgress() {
       let issue = new Array();
-      let group = _.groupBy(this.filteredIssues, "id");
+      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
       for (let ids in group) {
         issue.push({
           id: ids,  
@@ -1149,12 +1156,16 @@ export default {
       }
       let total = issue.map(iss => iss.progress);
       let count = issue.map(iss => iss).length;
+      
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
 
-      let sum = total.reduce((a, b) => {
-        return a + b;
-      });
+     
+
       let roundedSum = Math.round(sum)
-      return roundedSum / count
+      let final = roundedSum / count
+      if (isNaN(final)) {
+        return 0
+      } else return final 
     },
     projectTotalProgress(){
       let sum = this.allTasksProgress + this.allRisksProgress + this.allIssuesProgress
