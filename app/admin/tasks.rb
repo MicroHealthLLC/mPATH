@@ -1,6 +1,4 @@
 ActiveAdmin.register Task do
-  include AdminUtility
-
   menu priority: 4
   actions :all, except: [:show]
 
@@ -23,6 +21,7 @@ ActiveAdmin.register Task do
       :start_date,
       :auto_calculate,
       task_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -154,6 +153,8 @@ ActiveAdmin.register Task do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :task_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :file_links, label: 'Add Links'
         end
       end
 
@@ -213,11 +214,13 @@ ActiveAdmin.register Task do
 
     def create
       build_resource
+      handle_links
       handle_files
       super
     end
 
     def update
+      handle_links
       handle_files
       super
     end
@@ -225,6 +228,11 @@ ActiveAdmin.register Task do
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:task].delete(:task_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:task].delete(:file_links)
     end
 
     def destroy

@@ -19,6 +19,8 @@ class Task < ApplicationRecord
   after_save :update_facility_project
   after_destroy :update_facility_project
 
+  attr_accessor :file_links
+
   amoeba do
     include_association :task_type
     include_association :task_stage
@@ -56,6 +58,7 @@ class Task < ApplicationRecord
       :important,
       :reportable,
       task_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -450,7 +453,7 @@ class Task < ApplicationRecord
   end
 
   def files_as_json
-    task_files.map do |file|
+    task_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
       if file.blob.content_type == "text/plain"
         {
           id: file.id,
@@ -467,6 +470,32 @@ class Task < ApplicationRecord
         }
       end
     end.as_json
+  end
+
+  def links_as_json
+    task_files.reject {|f| !valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
+        }
+      end
+    end.as_json
+  end
+
+  def manipulate_links(params)
+    return unless params[:task][:file_links].present?
+    link_params = JSON.parse(params[:task][:file_links])
+    link_params.each do |link|
+      next if !link.present? || link.nil? || !valid_url?(link["uri"])
+      if link['_destroy']
+        task_files.find_by_id(link['id'])&.purge
+      elsif link['_new']
+        self.task_files.attach(io: StringIO.new(link['uri']), filename: link['uri'], content_type: "text/plain")
+      end
+    end
   end
 
   def manipulate_files(params)

@@ -1,5 +1,4 @@
 class Lesson < ApplicationRecord
-
   belongs_to :user
   belongs_to :task_type, optional: true
 
@@ -26,6 +25,8 @@ class Lesson < ApplicationRecord
 
   validates :title, :description, :date, :facility_project_id, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
+
+  attr_accessor :file_links
 
   def lesson_json
     {
@@ -266,6 +267,7 @@ class Lesson < ApplicationRecord
       sub_issue_ids: [],
       sub_risk_ids: [],
       lesson_files: [],
+      file_links: [],
       user_ids: [],
       destroy_file_ids: [],
       notes_attributes: [
@@ -307,7 +309,6 @@ class Lesson < ApplicationRecord
   end
 
   def create_or_update_lesson(params, user)
-
     lesson_params = params.require(:lesson).permit(Lesson.params_to_permit)
 
     lesson = self
@@ -542,7 +543,7 @@ class Lesson < ApplicationRecord
   end
 
   def files_as_json
-    lesson_files.map do |file|
+    lesson_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
       if file.blob.content_type == "text/plain"
         {
           id: file.id,
@@ -559,6 +560,32 @@ class Lesson < ApplicationRecord
         }
       end
     end.as_json
+  end
+
+  def links_as_json
+    lesson_files.reject {|f| !valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
+        }
+      end
+    end.as_json
+  end
+
+  def manipulate_links(params)
+    return unless params[:lesson][:file_links].present?
+    link_params = JSON.parse(params[:lesson][:file_links])
+    link_params.each do |link|
+      next if !link.present? || link.nil? || !valid_url?(link["uri"])
+      if link['_destroy']
+        lesson_files.find_by_id(link['id'])&.purge
+      elsif link['_new']
+        self.lesson_files.attach(io: StringIO.new(link['uri']), filename: link['uri'], content_type: "text/plain")
+      end
+    end
   end
 
   def manipulate_files(params)

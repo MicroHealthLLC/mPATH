@@ -17,6 +17,8 @@ class Issue < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
+  attr_accessor :file_links
+
   amoeba do
     include_association :issue_type
     include_association :issue_stage
@@ -88,6 +90,7 @@ class Issue < ApplicationRecord
       :on_hold,
       :draft,
       issue_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -250,7 +253,7 @@ class Issue < ApplicationRecord
   end
 
   def files_as_json
-    issue_files.map do |file|
+    issue_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
       if file.blob.content_type == "text/plain"
         {
           id: file.id,
@@ -264,6 +267,19 @@ class Issue < ApplicationRecord
           name: file.blob.filename,
           uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
           link: false
+        }
+      end
+    end.as_json
+  end
+
+  def links_as_json
+    issue_files.reject {|f| !valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
         }
       end
     end.as_json
@@ -433,6 +449,19 @@ class Issue < ApplicationRecord
 
     if records_to_import.any?
       IssueUser.import(records_to_import)
+    end
+  end
+
+  def manipulate_links(params)
+    return unless params[:issue][:file_links].present?
+    link_params = JSON.parse(params[:issue][:file_links])
+    link_params.each do |link|
+      next if !link.present? || link.nil? || !valid_url?(link["uri"])
+      if link['_destroy']
+        issue_files.find_by_id(link['id'])&.purge
+      elsif link['_new']
+        self.issue_files.attach(io: StringIO.new(link['uri']), filename: link['uri'], content_type: "text/plain")
+      end
     end
   end
 

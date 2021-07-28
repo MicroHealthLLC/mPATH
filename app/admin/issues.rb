@@ -1,6 +1,4 @@
 ActiveAdmin.register Issue do
-  include AdminUtility
-
   menu priority: 5
   actions :all, except: [:show, :new]
 
@@ -26,6 +24,7 @@ ActiveAdmin.register Issue do
       :facility_project_id,
       :auto_calculate,
       issue_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -173,6 +172,8 @@ ActiveAdmin.register Issue do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :issue_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :file_links, label: 'Add Links'
         end
       end
 
@@ -234,11 +235,13 @@ ActiveAdmin.register Issue do
 
     def create
       build_resource
+      handle_links
       handle_files
       super
     end
 
     def update
+      handle_links
       handle_files
       super
     end
@@ -246,6 +249,11 @@ ActiveAdmin.register Issue do
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:issue].delete(:issue_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:issue].delete(:file_links)
     end
 
     def destroy

@@ -2109,6 +2109,56 @@ jQuery(function($) {
     });
 
     // task/issues files handling
+    if($('#uploaded-task-links').length > 0) {
+      let upload_type = $('form').attr('id').split('_').pop();
+      $(`#${upload_type}_file_links`).after("<div id='vue-uploaded-task-links'></div>");
+      $(`#${upload_type}_file_links`).hide()
+      $.Vue_uploadedTaskLinks = new Vue({
+        el: "#vue-uploaded-task-links",
+        data() {
+          return {
+            links: []
+          }
+        },
+        mounted() {
+          let links_data = $('#uploaded-task-links').data('links').length ? $('#uploaded-task-links').data('links').replace(/=>/gi, ':') : "[]";
+          $(`#${upload_type}_file_links`).val('');
+          for (let link of JSON.parse(links_data)) this.addLink(link);
+        },
+        methods: {
+          addLink(link) {
+            this.links.push(link);
+          },
+          destroyLink(link, index) {
+            Vue.set(this.links, index, {...link, _destroy: true})
+          },
+          appendLink() {
+            link_value = this.$refs.linksInput.value
+            if(link_value != '') {
+              this.links.push({name: link_value, uri: link_value, _new: true});
+              this.$refs.linksInput.value = '';
+            }
+          }
+        },
+        watch: {
+          links: {
+            handler(value) {
+              $(`#${upload_type}_file_links`).val(JSON.stringify(this.links));
+            }, deep: true
+          }
+        },
+        template: `<div>
+          <input id='vue_task_task_links' type='text' ref='linksInput'/>
+          <button class='add' @click.prevent="appendLink()" style="display:none;">Add</button>
+          <ul class='ml-20 mt-10'>
+            <li v-for="(link, i) in links" :key="link.id+'_'+i" class='p-5' v-if="!link._destroy">
+              <a :href='link.uri' target='_blank'>{{link.name}}</a>
+              <span class='close-icon' @click.prevent="destroyLink(link, i)"></span>
+            </li>
+          </ul>
+        </div>`
+      });
+    }
 
     //if ($('#uploaded-task-files').is(':visible'))
     if($('#uploaded-task-files').length > 0)

@@ -1,6 +1,4 @@
 ActiveAdmin.register Risk do
-  include AdminUtility
-
   menu priority: 6
   actions :all, except: [:show]
 
@@ -31,6 +29,7 @@ ActiveAdmin.register Risk do
       :auto_calculate,
       user_ids: [],
       risk_files: [],
+      file_links: [],
       sub_task_ids: [],
       sub_issue_ids: [],
       sub_risk_ids: [],
@@ -157,6 +156,8 @@ ActiveAdmin.register Risk do
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :risk_files, label: 'Risk Files'
+      div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+      f.input :file_links, label: 'Add Links'
       f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
       f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
       f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}
@@ -196,12 +197,14 @@ ActiveAdmin.register Risk do
 
     def create
       build_resource
+      handle_links
       handle_files
       resource.user = current_user
       super
     end
 
     def update
+      handle_links
       handle_files
       super
     end
@@ -209,6 +212,11 @@ ActiveAdmin.register Risk do
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:risk].delete(:risk_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:risk].delete(:file_links)
     end
 
     def destroy
