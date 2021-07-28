@@ -36,7 +36,7 @@ class Lesson < ApplicationRecord
     }
   end
 
-  def porfolio_json
+  def portfolio_json
     resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
     p_users = users.select(&:active?)
 
