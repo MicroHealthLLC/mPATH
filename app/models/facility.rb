@@ -23,7 +23,7 @@ class Facility < ApplicationRecord
     ).as_json
   end
   
-  def porfolio_json
+  def portfolio_json
     self.attributes.to_json
   end
 

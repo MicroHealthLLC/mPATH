@@ -612,7 +612,7 @@
           >
             <div class="row">
               <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
-                <h6 class="d-inline">LESSONS</h6>
+                <h5 class="d-inline">LESSONS</h5>
                  <h5 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">{{
                       programLessons.total_count 
@@ -1231,7 +1231,7 @@ export default {
     taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
-        (t) => t && t.draft == false && t.startDate && t.startDate > this.today 
+        (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
@@ -1248,7 +1248,7 @@ export default {
       );
       let inProgress = _.filter(
         this.filteredTasks,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+        (t) => t && t.inProgress == true
       );
      let onHoldT = _.filter(
         this.filteredTasks,
@@ -1295,7 +1295,7 @@ export default {
    issueVariation() {
      let planned = _.filter(
         this.filteredIssues,
-        (t) => t && t.draft == false && t.startDate && t.startDate > this.today     
+        (t) => t && t.planned == true    
       );     
       let issueDrafts = _.filter(
         this.filteredIssues,
@@ -1311,7 +1311,7 @@ export default {
       ); 
        let inProgress = _.filter(
         this.filteredIssues,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && t.startDate <= this.today 
+        (t) => t && t.inProgress == true 
         );
       let onHoldI = _.filter(
         this.filteredIssues,
@@ -1353,7 +1353,7 @@ export default {
     riskVariation() {
      let planned = _.filter(
         this.filteredRisks,
-        (t) => t && t.draft == false && t.startDate && t.startDate > this.today     
+        (t) => t && t.planned == true     
       );  
       let riskDrafts = _.filter(
         this.filteredRisks,
@@ -1365,7 +1365,7 @@ export default {
       );
       let inProgress = _.filter(
         this.filteredRisks,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+        (t) => t && t.inProgress == true
       );
       let onHoldR = _.filter(
         this.filteredRisks,

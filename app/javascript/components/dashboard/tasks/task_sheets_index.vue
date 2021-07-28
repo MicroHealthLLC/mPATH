@@ -404,7 +404,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks" :key="i" :load="log(task)">
+        <tr  v-for="(task, i) in filteredTasks" :key="i">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -536,9 +536,9 @@
       }
         this.currentSort = s;
       },
-      log(e){
-        console.log("task:  " + e)
-      },
+      // log(e){
+      //   console.log("task:  " + e)
+      // },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
       },
