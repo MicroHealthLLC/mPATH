@@ -6,7 +6,7 @@
   <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
     <div class="row pt-2">
-      <div class="col-6 py-0 pl-0">
+      <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
@@ -29,108 +29,98 @@
 
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
     <div class="row">
-      <div class="col px-0" :class="[isMapView ? 'col-6' : '']" >
+      <div class="col-9 py-0 px-0" :class="[isMapView ? 'col-12' : '']">
           <el-card
             class="box-card mb-2"
             style="background-color:#fff"
             data-cy="task_summary"
           >      
-            <div class="row">
-              <div class="col pl-2" :class="[isMapView ? 'pb-1 pl-3' : '']">              
-                <h5 class="d-inline">TASKS</h5>
-                <h5 v-if="contentLoaded" class="d-inline">
-                  <span class="badge bg-secondary text-light badge-pill float-right">{{
-                    filteredTasks.length 
-                  }}</span>
-                </h5>
-                <hr class="mb-half"/>
-              </div>
+            <div class="row mb-4">
+             <div class="col pb-2 relative" >
+                      <h5 class="d-inline text-light px-2 bg-secondary absolute">TASKS</h5>
+                      <h4 class="d-inline">
+                        <b
+                          class="badge badge-secondary badge-pill pill"
+                          >{{ filteredTasks.length }}</b
+                        >
+                      </h4>
+                      <!-- <hr /> -->
+                    </div>
             </div>
 
             <div v-if="contentLoaded">
-               <div class="row text-center">
-                <div class="col-3 p-0 mb-0">
-                  
+               <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
-                  <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
-                    <!-- <span class="d-block smallerFont">COMPLETE</span> -->
-
-                </div>
-                 <div class="col-3 p-0 mb-0">
+                  <span class="smallerFont d-block">COMPLETE</span>
+                 </div>
+                 <div class="col p-0 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS</span>           
+                     <span class="smallerFont d-block"> IN PROGRESS</span>           
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                 <div class="col p-0 mb-0">                  
+                  <span class="d-block" v-tooltip="`PLANNED`"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                      <span class="smallerFont d-block">PLANNED</span>
+                </div>
+                 <div class="col p-0 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
+                    <span class="smallerFont d-block">OVERDUE </span>               
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                 <div class="col p-0 mb-0">
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                     <span class="smallerFont d-block">ON HOLD  </span>           
+                </div>
+                 <div class="col p-0 mb-0">
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span class="smallerFont d-block">DRAFTS</span>               
+                </div>
+                 <div class="col p-0 mb-0">
                    <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
-                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING </span>    
-                </div>       
+                    <span class="smallerFont d-block">ONGOING </span>    
+                </div>  
+             
               </div>
 
                 <div class="row text-center mt-0" :class="[filteredTasks.length > 0 ? '' : 'pb-3']">
-                <div class="col-3 pb-0 mb-0">
+                <div class="col pb-0 mb-0">
                    <h4 class="">{{
                     taskVariation.completed.count
                   }}</h4>         
                 </div>
-                 <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
                   <h4>{{
                     taskVariation.inProgress.count
                   }}</h4>        
                 </div>
-                 <div class="col-3 pb-0 mb-0">
-                   <h4>{{ taskVariation.overdue.count }}
-                     </h4>
-                                    
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                  <h4>{{
-                    taskVariation.ongoing.length
-                  }}</h4>          
-                </div>        
-                </div>      
-
-              <div v-if="filteredTasks.length">
-                <el-collapse id="roll_up" class="taskCard">
-                  <el-collapse-item title="..." name="1">
-                <div class="row mt-1 text-center">
-                <div class="col-3 p-0  mb-0">
-                  
-                  <span class="d-block" v-tooltip="`PLANNED`"><i class="fas fa-calendar-check text-info font-md"></i></span>
-                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ON HOLD  </span>           
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
-                </div>
-                 
-              </div>
-
-                <div class="row text-center mt-0">
-                <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
                    <h4 class="">{{
                     taskVariation.planned.count
                   }}</h4>         
                 </div>
-                 <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
+                   <h4>{{ taskVariation.overdue.count }}
+                     </h4>
+                                    
+                </div>
+                 <div class="col pb-0 mb-0">
                   <h4>{{
                     taskVariation.onHoldT.count
                   }}</h4>        
                 </div>
-                 <div class="col-3 pb-0 mb-0">
+                <div class="col pb-0 mb-0">
                    <h4>{{  taskVariation.taskDrafts.count }}</h4>                      
                 </div>
-                
-                </div>
-                <hr/>
-              
+                 <div class="col pb-0 mb-0">
+                  <h4>{{
+                    taskVariation.ongoing.length
+                  }}</h4>          
+                </div>               
+               </div>      
+
+              <div v-if="filteredTasks.length">
+                <el-collapse id="roll_up" class="taskCard">
+                  <el-collapse-item title="..." name="1">
+                     
                     <div class="row my-1">
                       <div class="col-6">
                         <span class="underline" :class="{ 'font-sm': isMapView }">CATEGORIES</span>
@@ -191,98 +181,132 @@
           </el-card>
 
       </div>
-      <div class="col" :class="[isMapView ? 'col-6' : '']">
+       <div class="col-3 pl-2 pt-0" :class="[isMapView ? 'd-none' : '']" data-cy="facility_tasks">
+                <el-card class="box-card" style="background-color:#fff">
+                  <div class="row">
+                    <div class="col text-center mh-blue py-0">
+                      <h6 class="d-block mb-0 text-center text-light">TASK PROGRESS</h6>                  
+                    </div>
+                  </div>
+
+                <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">
+                  
+               <h4 class="text-center">
+                        <span :class="{ 'progress-0': allTasksProgress <= 0 }">
+                          <el-progress
+                            type="circle"
+                            class="py-3"                          
+                            :percentage="Math.round(allTasksProgress)"
+                          ></el-progress>
+                        </span>
+                      </h4>
+                </div>
+                </div>
+           
+                <div>
+              </div>
+          </el-card>
+              </div>
+
+    </div>
+
+      <div class="row">
+      <div class="col-9 py-0 px-0" :class="[isMapView ? 'col-12' : '']" >
             <el-card
             class="box-card mb-2"
             style="background-color:#fff"
             data-cy="issue_summary"
           >
-            <div class="row">
-              <div class="col" :class="[isMapView ? 'pb-1' : '']">
-                <h5 class="d-inline">ISSUES</h5>
-                <h5 v-if="contentLoaded" class="d-inline">
-                  <span class="badge bg-secondary text-light badge-pill float-right">{{
-                    filteredIssues.length 
-                  }}</span>
-                </h5>
-                <hr class="mb-half"/>
-              </div>
+           <div class="row mb-4">
+             <div class="col pb-2 relative" >
+                      <h5 class="d-inline text-light px-2 bg-secondary absolute">ISSUES</h5>
+                      <h4 class="d-inline">
+                        <b
+                          class="badge badge-secondary badge-pill pill"
+                          >{{ filteredIssues.length }}</b
+                        >
+                      </h4>
+                      <!-- <hr /> -->
+                    </div>
             </div>
 
             <div v-if="contentLoaded">
-               <div class="row text-center">
-                <div class="col-3 p-0 mb-0">                  
+               <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">                  
                   <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
-                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
+                       <span class="smallerFont d-block">COMPLETE</span>
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                 <div class="col p-0 mb-0">
                 <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">IN PROGRESS</span>           
+                     <span class="smallerFont d-block">IN PROGRESS</span>           
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                 <div class="col p-0  mb-0">                  
+                  <span v-tooltip="`PLANNED`" class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                      <span class="smallerFont d-block">PLANNED</span>
+                </div>
+                 <div class="col p-0 mb-0">
                  <span v-tooltip="`OVERDUE`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE</span>               
+                     <span class="smallerFont d-block">OVERDUE</span>               
                 </div>
+                <div class="col p-0 mb-0">
+                 <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                      <span class="smallerFont d-block">ON HOLD  </span>           
+                </div>
+                 <div class="col p-0 mb-0">
+                 <span  class="d-block" v-tooltip="`DRAFTS`" ><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                    <span class="smallerFont d-block">DRAFTS</span>               
+                </div>
+<!-- Hidden for aligment purposes -->
+                 <div class="col p-0 mb-0">
+                  <span class="d-block hide"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                  <span class="d-block smallerFont hide">DRAFTS</span>               
+                  </div>   
                 
               </div>
 
                 <div class="row text-center mt-0" :class="[filteredIssues.length > 0 ? '' : 'pb-3']">
-                <div class="col-3 pb-0 mb-0">
+                <div class="col pb-0 mb-0">
                    <h4 class="">{{
                     issueVariation.completed.count
                   }}</h4>         
                 </div>
-                 <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
                   <h4>{{
                     issueVariation.inProgress.count
                   }}</h4>        
                 </div>
-                 <div class="col-3 pb-0 mb-0">
+                <div class="col pb-0 mb-0">
+                   <h4 class="">{{
+                    issueVariation.planned.count
+                  }}</h4>         
+                </div>
+                 <div class="col pb-0 mb-0">
                    <h4>{{ issueVariation.overdue.count }}
                      </h4>                      
-                </div>      
+                </div>  
+                 <div class="col pb-0 mb-0">
+                  <h4>{{
+                    issueVariation.onHoldI.count
+                  }}</h4>        
                 </div>
+                 <div class="col pb-0 mb-0">
+                   <h4>{{ issueVariation.issueDrafts.count }}</h4>                      
+                </div> 
+                  <div class="col pb-0 mb-0">
+                    <h4 class="mb-0 hide">{{ issueVariation.issueDrafts.count }}</h4>                      
+                  </div>
+                </div>
+                <!-- Hidden for alignment purposes -->
+                
+                           
 
               <!-- If Issues? Place in collapsible container -->
               <div v-if="filteredIssues.length">
                 <el-collapse>
                   <el-collapse-item title="..." name="1">
                  <div v-if="contentLoaded">
-                  <div class="row mt-1 text-center">
-                <div class="col-3 p-0  mb-0">
-                  
-                  <span v-tooltip="`PLANNED`" class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
-                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                 <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
-                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ON HOLD  </span>           
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
-                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
-                </div>
-                 
-              </div>
-
-                <div class="row text-center mt-0">
-                <div class="col-3 pb-0 mb-0">
-                   <h4 class="">{{
-                    issueVariation.planned.count
-                  }}</h4>         
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                  <h4>{{
-                    issueVariation.onHoldI.count
-                  }}</h4>        
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                   <h4>{{ issueVariation.issueDrafts.count }}</h4>                      
-                </div>
-                
-                </div>
-                <hr/>
-                      <div class="row">
+                       <div class="row">
                         <div class="col mt-1 underline">
                           CATEGORIES
                         </div>
@@ -377,106 +401,129 @@
             </div>
           </el-card>
       </div>
-      <div class="col px-0" :class="[isMapView ? 'col-6 pt-1' : '']" >
+
+          <div class="col-3 pl-2 pt-0" :class="[isMapView ? 'd-none' : '']" data-cy="facility_tasks">
+                <el-card class="box-card" style="background-color:#fff">
+                  <div class="row">
+                    <div class="col text-center mh-green py-0">
+                      <h6 class="d-block mb-0 text-center text-light">ISSUE PROGRESS</h6>
+                     
+                   
+                    </div>
+                  </div>
+
+                <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">
+                  
+               <h4 class="text-center">
+                        <span :class="{ 'progress-0': allIssuesProgress <= 0 }">
+                          <el-progress
+                            type="circle"
+                            class="py-3"                          
+                            :percentage="Math.round(allIssuesProgress)"
+                          ></el-progress>
+                        </span>
+                      </h4>
+                </div>
+                </div>
+           
+                <div>
+              </div>
+          </el-card>
+              </div>
+      </div>
+
+      <div class="row">
+      <div class="col-9 py-0 px-0" :class="[isMapView ? 'col-12' : '']">
           <el-card
               class="box-card"
               style="background-color:#fff"
               data-cy="risk_summary"
             >
-              <div class="row">
-                <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
-                  <h5 class="d-inline">RISKS</h5>
-                  <h5 v-if="contentLoaded" class="d-inline">
-                    <span class="badge bg-secondary text-light badge-pill float-right">{{
-                      filteredRisks.length 
-                    }}</span>
-                  </h5>
-                  <hr class="mb-half" />
-                </div>
-              </div>          
-              <div class="row text-center">
-                <div class="col-3 p-0 mb-0">
+           <div class="row mb-4">
+             <div class="col pb-2 relative" >
+                      <h5 class="d-inline text-light px-2 bg-secondary absolute">RISKS</h5>
+                      <h4 class="d-inline">
+                        <b
+                          class="badge badge-secondary badge-pill pill"
+                          >{{ filteredRisks.length }}</b
+                        >
+                      </h4>
+                      <!-- <hr /> -->
+                    </div>
+            </div>
+              <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">
                   
                   <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
-                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
+                       <span class="smallerFont d-block">COMPLETE</span>
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                 <div class="col p-0 mb-0">
                  <span  v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS   </span>           
+                     <span class="smallerFont d-block"> IN PROGRESS   </span>           
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                <div class="col p-0  mb-0">                    
+                    <span v-tooltip="`PLANNED`"  class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                        <span class="smallerFont d-block">PLANNED</span>
+                  </div>
+                 <div class="col p-0 mb-0">
                  <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
+                     <span class="smallerFont d-block">OVERDUE </span>               
                 </div>
-                 <div class="col-3 p-0 mb-0">
+                <div class="col p-0 mb-0">
+                   <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                      <span class="smallerFont d-block"> ON HOLD  </span>           
+                  </div>
+                  <div class="col p-0 mb-0">
+                    <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                        <span class="smallerFont d-block">DRAFTS</span>               
+                  </div>
+                 <div class="col p-0 mb-0">
                    <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING</span>    
+                     <span class="smallerFont d-block">ONGOING</span>    
                 </div>       
               </div>
 
               <div class="row text-center mt-0" :class="[filteredRisks.length > 0 ? '' : 'pb-3']">
-                <div class="col-3 pb-0 mb-0">
+                <div class="col pb-0 mb-0">
                    <h4 class="">{{
                     riskVariation.completed.count
                   }}</h4>         
                 </div>
-                 <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
                   <h4>{{
                     riskVariation.inProgress.count
                   }}</h4>        
                 </div>
-                 <div class="col-3 pb-0 mb-0">
-                   <h4>{{ riskVariation.overdue.count }}
-                     </h4>
-              
-                       
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                  <h4>{{
-                    riskVariation.ongoing.length
-                  }}</h4>          
-                </div>
-        
-              </div>
-              
-
-              <div v-if="filteredRisks.length > 0">
-                <el-collapse>
-                  <el-collapse-item title="..." name="1">
-                <div class="row mt-1 text-center">
-                  <div class="col-3 p-0  mb-0">                    
-                    <span v-tooltip="`PLANNED`"  class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
-                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
-                  </div>
-                  <div class="col-3 p-0 mb-0">
-                   <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
-                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> ON HOLD  </span>           
-                  </div>
-                  <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
-                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
-                  </div>
-                  
-                </div>
-
-                <div class="row text-center mt-0">
-                <div class="col-3 pb-0 mb-0">
+                <div class="col pb-0 mb-0">
                   <h4 class="">{{
                     riskVariation.planned.count
                   }}</h4>         
                 </div>
-                <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
+                   <h4>{{ riskVariation.overdue.count }}
+                     </h4>
+                 </div>
+                  <div class="col pb-0 mb-0">
                   <h4>{{
                     riskVariation.onHoldR.count
                   }}</h4>        
                 </div>
-                <div class="col-3 pb-0 mb-0">
+                 <div class="col pb-0 mb-0">
                   <h4>{{  riskVariation.riskDrafts.count }}</h4>                      
                 </div>
-                
+                 <div class="col pb-0 mb-0">
+                  <h4>{{
+                    riskVariation.ongoing.length
+                  }}</h4>          
                 </div>
-                <hr/>
+                </div>
               
+
+              <div v-if="filteredRisks.length > 0">
+                <el-collapse>
+                  <el-collapse-item title="..." name="1">             
+                   
                     <div class="row">
                       <div class="col my-1 underline">
                         CATEGORIES
@@ -603,27 +650,51 @@
               </div>
             </el-card>
       </div>
-      <div class="col-2 lessonsCard" :class="[isMapView ? 'col-6 pt-1' : '']" >
-        <el-card
-            class="box-card mb-2"
-           :class="[isMapView ? 'mapHeight' : 'sheetHeight']"
-            style="background-color:#fff"
-            data-cy="issue_summary"
-          >
-            <div class="row">
-              <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
-                <h5 class="d-inline">LESSONS</h5>
-                 <h5 v-if="contentLoaded" class="d-inline">
-                    <span class="badge bg-secondary text-light badge-pill float-right">{{
-                      programLessons.total_count 
-                    }}</span>
-                  </h5>
-               
-                <hr class="mb-half"/>
-              </div>
-            </div>
+          <div class="col-3 pt-0 pl-2" :class="[isMapView ? 'd-none' : '']" data-cy="facility_tasks">
+                <el-card class="box-card" style="background-color:#fff">
+                  <div class="row">
+                    <div class="col text-center mh-orange py-0">
+                      <h6 class="d-block mb-0 text-center text-light">RISK PROGRESS</h6>                  
+                    </div>
+                  </div>
 
-      
+                <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">
+                  
+               <h4 class="text-center">
+                        <span :class="{ 'progress-0': allRisksProgress <= 0 }">
+                          <el-progress
+                            type="circle"
+                            class="py-3"                          
+                            :percentage="Math.round(allRisksProgress)"
+                          ></el-progress>
+                        </span>
+                      </h4>
+                </div>
+                </div>
+           
+                <div>
+              </div>
+          </el-card>
+              </div>
+        </div>
+
+    <div class="row mt-0">
+      <div class="col-2 pl-0">
+        <el-card
+            class="box-card mb-2"        
+            style="background-color:#fff"  
+          >
+            <div class="row mb-4">
+              <div class="col pb-0 relative">
+                <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
+                <h5 v-if="contentLoaded" class="d-inline">
+                    <b class="pill badge badge-secondary badge-pill pill mr-1">{{
+                      programLessons.total_count 
+                    }}</b>
+                  </h5>
+                </div>
+            </div>      
               <div class="row mt-3 text-center" >
                 <div class="col-6 p-0 mb-0">                  
                   <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
@@ -648,68 +719,11 @@
                 </div>                     
                 </div>            
 
-              <!--  -->
-              <!-- <div>
-                <el-collapse>
-                  <el-collapse-item title="..." name="1">
-                 <div v-if="programLessons.total_count > 0">
-                <div class="row mt-1 text-center" >
-                <div class="col-6 p-0 mb-0">                  
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
-                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
-                </div>
-                 <div class="col-6 p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">DRAFTS</span>           
-                </div>
-                
-                  </div>
-                <div class="row text-center mt-0">
-                <div class="col-6 pb-0 mb-0">
-                  <h4 class="">{{
-                   programLessons.completed
-                  }}</h4>         
-                </div>
-                <div class="col-6 pb-0 mb-0">
-                  <h4>{{
-                   programLessons.progress
-                  }}</h4>        
-                </div>                     
-                </div>            
                     
-                    </div>
-              
-               <div v-else>
-                <div class="row mt-1 text-center">
-                <div class="col p-0  mb-0">
-                  
-                       NO DATA TO DISPLAY
-                </div>
-          </div>
-              
-                    
-                    </div>
-                  </el-collapse-item>
-                </el-collapse>
-              </div>
-            </div> -->
-    
-  
-        
-      
-            <!-- <div v-if="!contentLoaded" class="my-4">
-              <loader type="code"></loader> -->
-          
     
           </el-card>
-      </div>
-
-    </div>
-
-
-
-    <div class="row row-1 mt-1">
-      <div class="col-md-6 col-lg-6 px-0 col-sm-6">
+      </div> 
+      <div class="px-0" :class="[isMapView ? 'col-9' : 'col']">
         <el-card class="box-card">
           <div class="row">
             <div class="col">
@@ -775,33 +789,8 @@
             <loader type="code"></loader>
           </div>
         </el-card>
-        <!-- <el-card
-          class="box-card my-2"
-          style="background-color:#41b883;color:#fff"
-        >
-          <div class="row">
-            <div class="col">
-              <h5 class="d-inline">Filters</h5>
-              <hr />
-            </div>
-          </div>
-
-          <div v-for="(filterArray, index) in getAllFilterNames" :key="index">
-        <span v-if="getFilterValue(filterArray[0])">
-                      <span
-                        ><b class="mr-1">{{ filterArray[1] }}:</b>
-                        {{ getFilterValue(filterArray[0]) }}
-                      </span>
-                    </span>
-          </div>
-          <span v-show="facilities.length !== getUnfilteredFacilities.length"
-            >Map Boundary Filter: Active</span
-          >
-        </el-card>
-    -->
-      </div>
-      <div
-        class="col-md-6 col-lg-6 col-sm-6 pl-2"
+     </div>
+      <div :class="[isMapView ? 'col-12 px-0' : 'col']"
         v-if="from !== 'manager_view'"
         data-cy="facility_group_summary"
       >
@@ -861,6 +850,33 @@
           </div>
         </el-card>
     </div>
+    <div class="col-3 pl-2">
+                <el-card class="box-card" style="background-color:#fff">
+                  <div class="row">
+                    <div class="col text-center bg-secondary py-0">
+                      <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
+                    </div>
+                  </div>
+
+                <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">
+                  
+               <h4 class="text-center">
+                        <span :class="{ 'progress-0': projectTotalProgress <= 0 }">
+                          <el-progress
+                            type="circle"
+                            class="pt-4 pb-3"                          
+                            :percentage="Math.round(projectTotalProgress)"
+                          ></el-progress>
+                        </span>
+                      </h4>
+                </div>
+                </div>
+           
+                <div>
+              </div>
+          </el-card>
+              </div>
     
     
     </div>
@@ -1228,6 +1244,88 @@ export default {
       }
       return taskTypes;
     },
+    viableTasksForProgressTotal(){
+      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
+    },
+     viableIssuesForProgressTotal(){
+      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
+    },
+     viableRisksForProgressTotal(){
+      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
+    },
+   allTasksProgress() {
+      let task = new Array();
+      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
+      for (let ids in group) {
+        task.push({
+          id: ids,  
+          // text: text,      
+          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
+        });
+      }
+      let total = task.map(t => t.progress);
+      let count = task.map(t => t).length;
+
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
+
+     let roundedSum = Math.round(sum)
+     let final = roundedSum / count
+    
+       if (isNaN(final)) {
+        return 0
+      } else return final 
+    },
+    allRisksProgress() {
+      let risk = new Array();
+      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
+      for (let ids in group) {
+        risk.push({
+          id: ids,  
+          // text: text,      
+          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
+        });
+      }
+      let total = risk.map(r => r.progress);
+      let count = risk.map(r => r).length;
+
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
+      let roundedSum = Math.round(sum)
+
+       let final = roundedSum / count
+    
+       if (isNaN(final)) {
+        return 0
+      } else return final 
+  
+    },
+    allIssuesProgress() {
+      let issue = new Array();
+      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
+      for (let ids in group) {
+        issue.push({
+          id: ids,  
+          // text: text,      
+          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
+        });
+      }
+      let total = issue.map(iss => iss.progress);
+      let count = issue.map(iss => iss).length;
+      
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
+
+     
+
+      let roundedSum = Math.round(sum)
+      let final = roundedSum / count
+      if (isNaN(final)) {
+        return 0
+      } else return final 
+    },
+    projectTotalProgress(){
+      let sum = this.allTasksProgress + this.allRisksProgress + this.allIssuesProgress
+      let total = sum / 3
+      return Math.round(total)
+    },  
     taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
@@ -1236,7 +1334,7 @@ export default {
       );     
      let taskDrafts = _.filter(
         this.filteredTasks,
-        (t) => t && t.draft == true && t.onHold == false && t.ongoing == false   
+        (t) => t && t.draft == true
       );      
       let completed = _.filter(
         this.filteredTasks,
@@ -1252,7 +1350,7 @@ export default {
       );
      let onHoldT = _.filter(
         this.filteredTasks,
-        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue && !t.ongoing
+        (t) => t && t.onHold == true
       );
       let inProgress_percent = this.getAverage(
         inProgress.length,
@@ -1561,6 +1659,48 @@ ul > li {
 }
 .card-title {
   text-decoration-line: underline;
+}
+/deep/.el-progress-circle {
+  height: 118px !important;
+  width: 118px !important;
+}
+.hide {
+  visibility: hidden;
+}
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+  top:7%;
+  left:0;
+}
+.progressLabel {
+  position: absolute;
+}
+.pill {
+  position: absolute;
+  top: 10%;
+  right: 1%;
+}
+
+.filterDiv {
+  position: absolute;
+  top: -8%;
+  right: 9.5%;
+  width: 40%;
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+  overflow-y: auto;
+
+}
+.filterLabel {
+  position: fixed;
+
+}
+
+.filterCol {
+  height: 70px;
 }
 
 .lessonsCard {
