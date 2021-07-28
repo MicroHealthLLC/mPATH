@@ -2063,7 +2063,7 @@ export default {
      issueVariation() {
       let planned = _.filter(
       this.issuesObj,
-        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+        (t) => t && t.planned == true 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let issueDrafts = _.filter(
@@ -2076,7 +2076,7 @@ export default {
       );
       let inProgress = _.filter(
          this.issuesObj,
-        (t) => t && t.progress < 100 && t.start_date <= this.today 
+        (t) => t && t.in_progress == true
       );
      let onHoldI = _.filter(this.issuesObj, (t) => t && t.on_hold == true );
      let overdue = _.filter(this.issuesObj, (t) => t && t.is_overdue == true);
@@ -2133,7 +2133,7 @@ export default {
     riskVariation() {
       let planned = _.filter(
          this.risksObj,
-        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+        (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let riskDrafts = _.filter(
@@ -2158,7 +2158,7 @@ export default {
       );
       let inProgress = _.filter(
        this.risksObj,
-        (t) => t && t.progress < 100 && t.start_date <= this.today 
+        (t) => t && t.in_progress == true
       );
      let onHoldR = _.filter(this.risksObj, (t) => t && t.on_hold == true );
      let ongoing = _.filter(this.risksObj, (t) => t && t.ongoing == true );
@@ -2217,8 +2217,7 @@ export default {
       let completed = _.filter(
         this.lessonsObj,
         (t) => t && t.draft == false
-      );
-   
+      );   
          return {
      
         important: {

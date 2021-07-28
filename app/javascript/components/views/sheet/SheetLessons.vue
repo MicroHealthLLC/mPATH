@@ -93,7 +93,7 @@
         </button>
       </div>
       <!-- Lessons Learned Table -->
-      <div style="margin-bottom:50px" data-cy="lessons_table" :load="log(JSON.stringify(filteredLessons))">
+      <div style="margin-bottom:50px" data-cy="lessons_table">
         <table
           v-if="filteredLessons.length > 0"
           class="mb-3 w-100"
@@ -360,9 +360,9 @@ export default {
       window.location.href =
         this.uri + this.base64(this.format(this.template, ctx));
     },
-    log(e){
-      console.log("this is Lessons obj: " + e)
-    },
+    // log(e){
+    //   console.log("this is Lessons obj: " + e)
+    // },
     openLesson(id) {
       this.$router.push({
         name: "SheetLessonForm",
