@@ -47,19 +47,27 @@ class Issue < ApplicationRecord
     }
   end
 
-  def porfolio_json
+  def portfolio_json
     is_overdue = false
     if !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
 
+    in_progress = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
+
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
+      planned: planned,
+      in_progress: in_progress,
       issue_type: issue_type.name,
       issue_severity: issue_severity.name,
-      last_update: self.notes.last&.porfolio_json,
+      last_update: self.notes.last&.portfolio_json,
       notes: notes.as_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
       users: users.select(&:active?).map(&:full_name).join(", "),

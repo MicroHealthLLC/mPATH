@@ -38,7 +38,7 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
-  def porfolio_json
+  def portfolio_json
     {
       id: id,
       full_name: full_name 
