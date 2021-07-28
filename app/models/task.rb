@@ -109,6 +109,13 @@ class Task < ApplicationRecord
   end
 
   def portfolio_json
+    if draft
+      self.on_hold = false if self.on_hold
+      self.ongoing = false if self.ongoing
+    end
+
+    self.ongoing = false if on_hold && ongoing
+
     is_overdue = false
     if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
@@ -122,7 +129,7 @@ class Task < ApplicationRecord
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
     if start_date < Date.today && progress >= 100
       completed = true unless draft
-      self.on_hold = false if self.on_hold
+      self.on_hold = false if self.on_hold && completed
     end
 
     merge_h = { 
@@ -131,6 +138,7 @@ class Task < ApplicationRecord
       is_overdue: is_overdue,
       planned: planned,
       on_hold: self.on_hold,
+      ongoing: self.ongoing,
       completed: completed,
       in_progress: in_progress,
       category: task_type.name,

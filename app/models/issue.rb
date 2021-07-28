@@ -48,6 +48,8 @@ class Issue < ApplicationRecord
   end
 
   def portfolio_json
+    self.on_hold = false if draft & on_hold
+
     is_overdue = false
     if !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
@@ -61,7 +63,7 @@ class Issue < ApplicationRecord
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today && progress == 0
     if start_date < Date.today && progress >= 100
       completed = true unless draft
-      self.on_hold = false if self.on_hold
+      self.on_hold = false if self.on_hold && completed
     end
 
     merge_h = { 
