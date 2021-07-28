@@ -1747,7 +1747,12 @@ export default {
 
       }).filter(task => {
          if (this.hideInprogressTasks) {
-          return task.progress < 100 && task.start_date <= this.today 
+          return !task.in_progress
+        } else return true
+
+      }).filter(task => {
+         if (this.hidePlannedTasks) {
+          return !task.planned
         } else return true
 
       }).filter(task => {
@@ -1757,7 +1762,7 @@ export default {
 
       }).filter(task => {
          if (this.hideCompleteTasks) {
-          return task.progress < 100
+          return !task.completed
         } else return true
       // Filtering 3 Task Tags
       }).filter(task => {
@@ -1822,12 +1827,16 @@ export default {
 
       }).filter(issue => {
          if (this.hideCompleteIssues) {
-          return issue.progress < 100
+          return !issue.completed
         } else return true
 
       }).filter(issue => {
          if (this.hideInprogressIssues) {
-          return issue.progress < 100 && issue.start_date <= this.today
+          return !issue.in_progress
+        } else return true
+      }).filter(issue => {
+        if (this.hidePlannedIssues) {
+          return !issue.planned
         } else return true
     // Filtering 3 Issues Tags
 
@@ -1887,9 +1896,12 @@ export default {
 
      }).filter(risk => {
          if (this.hideInprogressRisks) {
-          return risk.progress < 100 && risk.start_date <= this.today 
+          return !risk.in_progress
         } else return true
-
+      }).filter(risk => {
+        if (this.hidePlannedRisks) {
+          return !risk.planned
+        } else return true
       }).filter(risk => {
          if (this.hideOverdueRisks) {
           return !risk.is_overdue
@@ -1902,16 +1914,10 @@ export default {
 
       }).filter(risk => {
          if (this.hideCompleteRisks) {
-          return risk.progress < 100
+          return !risk.completed
         } else return true
 
       }).filter(risk => {
-         if (this.hideInprogressRisks) {
-          return risk.progress < 100 && risk.start_date <= this.today
-        } else return true
-
-    // Filtering 3 Risks Tags
-    }).filter(risk => {
          if (this.hideBriefedRisks && !this.hideWatchedRisks && !this.hideImportantRisks ) {
           return risk.reportable
         }
@@ -1992,7 +1998,6 @@ export default {
       let planned = _.filter(
         this.tasksObj,
         (t) => t && t.planned == true
-          // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
      this.tasksObj,
@@ -2013,7 +2018,7 @@ export default {
               
       let completed = _.filter(
       this.tasksObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
      this.tasksObj,
@@ -2021,7 +2026,7 @@ export default {
       );
      let onHoldT = _.filter(this.tasksObj, (t) => t && t.on_hold == true );
      let ongoing = _.filter(this.tasksObj, (t) => t && t.ongoing == true );
-     let overdue = _.filter(this.tasksObj, (t) => t.is_overdue == true);
+     let overdue = _.filter(this.tasksObj, (t) => t && t.is_overdue == true);
 
       return {
         planned: {
@@ -2048,7 +2053,7 @@ export default {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -2072,7 +2077,7 @@ export default {
       );      
       let completed = _.filter(
         this.issuesObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
          this.issuesObj,
@@ -2118,7 +2123,7 @@ export default {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -2154,7 +2159,7 @@ export default {
       );
       let completed = _.filter(
        this.risksObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
        this.risksObj,
@@ -2188,7 +2193,7 @@ export default {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
