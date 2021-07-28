@@ -679,8 +679,8 @@
               </div>
         </div>
 
-    <div class="row mt-0">
-      <div class="col-2 pl-0">
+    <div class="row mt-0" :class="[isMapView ? 'mt-2' : '']">
+      <div class="col-2" :class="[isMapView ? 'col-3 px-0 ' : 'pl-0']">
         <el-card
             class="box-card mb-2"        
             style="background-color:#fff"  
@@ -723,7 +723,7 @@
     
           </el-card>
       </div> 
-      <div class="px-0" :class="[isMapView ? 'col-9' : 'col']">
+      <div :class="[isMapView ? 'col-9 pr-0' : 'col px-0']">
         <el-card class="box-card">
           <div class="row">
             <div class="col">
@@ -850,7 +850,7 @@
           </div>
         </el-card>
     </div>
-    <div class="col-3 pl-2">
+    <div class="col-3 pl-2"  :class="[isMapView ? 'd-none' : '']" >
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
                     <div class="col text-center bg-secondary py-0">
