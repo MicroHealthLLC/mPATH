@@ -102,14 +102,116 @@
       </div>
     </div>
     <div class="wrapper mt-2 p-3">
+    <div class="d-inline ">
+    <span class="text-center">  
+    <span class="d-inline">  
     <button v-if="_isallowed('write')"
-        class="btn btn-md btn-primary mr-3 addRiskBtn"
+        class="btn btn-md btn-primary mr-5 float-left addRiskBtn"
       @click.prevent="addNewRisk"
       data-cy="add_risk"
     >
     <font-awesome-icon icon="plus-circle" />
       Add Risk
     </button>
+    <span class="font-sm pr-2 hideLabels"> STATUSES TO DISPLAY </span>     
+                
+                <span class="statesCol d-inline-block p-1 mr-2">
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                   <span class="d-block">
+                    <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">COMPLETE</span>
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                  </div>
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideInprogress == true ? 'light':'']" @click.prevent="toggleInprogress">                              
+                   <span class="d-block">
+                    <i class="far fa-tasks" :class="[getHideInprogress == true ? 'light':'text-primary']"></i>
+                    </span>      
+                  <span class="smallerFont">IN PROGRESS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.inProgress.count }}</h6>
+                  </div>
+                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHidePlanned == true ? 'light':'']" @click.prevent="togglePlanned">                              
+                   <span class="d-block">
+                    <i class="fas fa-calendar-check"  :class="[getHidePlanned == true ? 'light':'text-info']"></i>
+                    </span>      
+                  <span class="smallerFont">PLANNED</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.planned.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOverdue == true ? 'light':'']" @click.prevent="toggleOverdue" >                              
+                   <span class="d-block">
+                    <i class="fas fa-calendar" :class="[getHideOverdue == true ? 'light':'text-danger']"></i>
+                    </span>      
+                  <span class="smallerFont">OVERDUE</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.overdue.count }}</h6>
+                  </div>
+                    <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOngoing == true ? 'light':'']" @click.prevent="toggleOngoing" >                              
+                   <span class="d-block">
+                    <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">ONGOING</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                  </div>
+  
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
+                   <span class="d-block">
+                    <i class="fas fa-pause-circle" :class="[getHideOnhold == true ? 'light':'text-primary']"></i>
+                    </span>      
+                  <span class="smallerFont">ON HOLD</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.onHold.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                   <span class="d-block">
+                    <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+                    </span>      
+                  <span class="smallerFont">DRAFT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                  </div>
+                </span>
+  
+            <span class="pl-4 pr-2 font-sm hideLabels">TAG FOCUS</span>
+            <span class="tagCol d-inline-block p-1">
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideWatched == true ? '':'light']" @click.prevent="toggleWatchedTag"  >                              
+                   <span class="d-block">
+                    <i class="fas fa-eye"></i>
+                    </span>      
+                  <span class="smallerFont">ON WATCH</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.watched.count }}</h6>
+                  </div>
+  
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                   <span class="d-block">
+                    <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+                    </span>      
+                  <span class="smallerFont">IMPORTANT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                   <span class="d-block">
+                    <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+                    </span>      
+                  <span class="smallerFont">BRIEFINGS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                  </div>
+              </span>            
+     </span> 
+     </span>
+     
+    </div>
+    <div class="d-inline-block ml-3">
+        <!-- <v-app id="app"> -->
+        <v-checkbox     
+      v-model="C_showCountToggle"     
+      class="d-inline-block"  
+      @click.prevent="showCounts"   
+      :label="`Show Counts`"
+    ></v-checkbox>
+        <!-- </v-app> -->
+
+    </div>
+
+
+
+
     <div class="float-right">
       <button
         v-tooltip="`Export to PDF`"
@@ -478,7 +580,20 @@
         'setRiskApproachFilter',
         'setRiskForManager',
         'SET_RISK_FORM_OPEN',
-        'SET_SELECTED_RISK'
+        'SET_SELECTED_RISK',
+        'setShowCount',
+        // 7 States
+        'setHideComplete',
+        'setHideInprogress',
+        'setHidePlanned',
+        'setHideOverdue',
+        'setHideOngoing',
+        'setHideOnhold',
+         'setHideDraft',
+        // 3 Tags
+        'setHideWatched',
+        'setHideImportant',
+        'setHideBriefed',
       ]),
 
       //TODO: change the method name of isAllowed
@@ -530,6 +645,40 @@
       toggleWatched(risk) {
         this.$emit('toggle-watch-risk', risk)
       },
+      toggleWatchedTag(){
+        this.setHideWatched(!this.getHideWatched)    
+      },
+      toggleImportant(){
+        this.setHideImportant(!this.getHideImportant)    
+      },
+      toggleBriefed(){
+         this.setHideBriefed(!this.getHideBriefed)    
+      },
+      toggleComplete(){
+        this.setHideComplete(!this.getHideComplete)    
+      },
+      toggleDraft(){
+        this.setHideDraft(!this.getHideDraft)    
+      },
+      togglePlanned(){
+         this.setHidePlanned(!this.getHidePlanned)    
+      },
+      toggleInprogress(){
+        this.setHideInprogress(!this.getHideInprogress)    
+      },
+      toggleOngoing(){
+         this.setHideOngoing(!this.getHideOngoing)    
+      },
+      toggleOnhold(){
+         this.setHideOnhold(!this.getHideOnhold)    
+      },
+      toggleOverdue(){
+      //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
+        this.setHideOverdue(!this.getHideOverdue)    
+      },
+      showCounts(){
+        this.setShowCount(!this.getShowCount)       
+      },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -570,7 +719,20 @@
         'riskUserFilter',
         'taskTypes',
         'viewPermit',
-        'getToggleRACI'
+        'getToggleRACI',
+         'getShowCount',
+           // 7 States
+        'getHideComplete',
+        'getHideInprogress',
+        'getHidePlanned',
+        'getHideOngoing',
+        'getHideOnhold',
+        'getHideDraft',
+        'getHideOverdue',
+        // 3 Tags
+        'getHideWatched',
+        'getHideImportant',
+        'getHideBriefed',
       ]),
       filteredRisks() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
@@ -610,16 +772,149 @@
           valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
-     if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {           
-        return risks
+   
+      return risks.filter(t => {
+        if (this.getHideOverdue == true) {          
+         return t.isOverdue == false
+       } else return true
+
+      }).filter(t => {
+      if (this.getHideComplete == true) { 
+        return t.progressStatus == "active"
+      } else return true
+
+      }).filter(t => {
+      if (this.getHidePlanned == true) { 
+        return t.planned == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideOnhold == true) { 
+        return t.onHold == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideInprogress == true) { 
+        return t.inProgress == false
+      } else return true
+     
+      }).filter(t => {
+       if (this.getHideDraft == true){
+         return t.draft == false
+       } else return true   
+
+
+       }).filter(t => {
+       if (this.getHideOngoing == true) {
+          return t.ongoing == false
+       } else return true       
+
+
+        }).filter(t => {
+         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+          return t.reportable
+        }
+        if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+           return t.reportable + t.watched
+
+        } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+           return t.reportable + t.watched + t.important
+        } else return true
+
+      }).filter(t => {
+        // This and last 2 filters are for Filtered Tags
+         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
+           return t.watched
+        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
+           return  t.watched + t.reportable
+        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
+           return  t.watched + t.reportable + t.important
+        } else return true          
+       
+      }).filter(t => {
+         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
+          return t.important
+        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
+          return t.important + t.reportable
+       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
+          return t.important + t.reportable + t.watched
+        } else return true          
         
-       } else  {
-        
-        risks  = risks.filter(t => t.draft == false && t.onHold == false)
-        return risks
-      
-       }   
-      },
+     })
+  },
+  variation() {
+    let planned = _.filter(
+      this.filteredRisks,
+        (t) => t && t.planned == true
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
+     let drafts = _.filter(
+     this.filteredRisks,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+     this.filteredRisks,
+        (t) => t && t.important == true
+      ); 
+        let briefings = _.filter(
+       this.filteredRisks,
+        (t) => t && t.reportable == true
+      );
+      let watched = _.filter(
+     this.filteredRisks,
+        (t) => t && t.watched == true
+      );
+              
+      let completed = _.filter(
+      this.filteredRisks,
+        (t) => t && t.progressStatus == "completed"
+      );
+    let inProgress = _.filter(
+     this.filteredRisks,
+        (t) => t && t.inProgress == true
+      );
+     let onHold = _.filter(this.filteredRisks, (t) => t && t.onHold == true );
+       let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing == true );
+     let overdue = _.filter(this.filteredRisks, (t) => t.isOverdue == true);
+
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        watched: {
+          count: watched.length,          
+        },
+        onHold: {
+          count: onHold.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length - planned.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+         ongoing: {
+          count: ongoing.length
+        },     
+     
+      };
+    },
       C_riskPriorityLevelFilter: {
         get() {
           return this.getRiskPriorityLevelFilter
@@ -627,6 +922,15 @@
         set(value) {
           this.setRiskPriorityLevelFilter(value)
         }
+      },
+      C_showCountToggle: {                  
+        get() {
+         return this.getShowCount                
+        },
+        set(value) {
+          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+        }
+        
       },
       C_sheetsRiskFilter: {
         get() {
@@ -851,9 +1155,51 @@
   float: right;
   margin-top: -85px;
 }
+
+.tagCol {
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: .5px solid lightgray;
+}
+  
+i, .icons {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.statesCol {
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+
+}
+.smallerFont {
+  font-size: 10px;
+}
+/deep/.v-input__slot {
+  display: inline;
+  .v-label {
+   font-family: 'FuturaPTBook';
+  //  font-weight: 600;
+   color: #007bff !important;
+  }
+}
+
+.hideLabels {
+  font-weight: 600;
+}
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
     width: 65% !important;
   } 
+}
+
+  @media screen and (max-width: 1550px) {
+  .hideLabels {
+    display: none !important;
+  }
 }
 </style>

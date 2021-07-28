@@ -189,7 +189,7 @@
               clearable
               filterable
               placeholder="Search and select Navigation"
-              :disabled="!this.selectedProjectGroup"
+              :disabled="!this.selectedProject"
                @change="navigationSelectChange"
             >
             <el-option
@@ -214,7 +214,7 @@
               clearable
               filterable
               placeholder="Search and select Sub Navigation"
-              :disabled="!(this.selectedNavigation)"
+              :disabled="!this.selectedProject || !this.selectedNavigation"
             
             >
             <el-option
@@ -519,20 +519,35 @@
               this.selectedProject = '' 
           }else{
               this.selectedProgram = null
+              this.selectedProjectGroup = null
           }
         }, deep: true
       }, 
       selectedProjectGroup: {
         handler: function(value) {
           if (value){           
-              this.projectOptions = this.getProjects(this.selectedProgram, value)    
-              this.selectedProjectGroup = value 
-              this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId )
-               
-          }      
+            this.projectOptions = this.getProjects(this.selectedProgram, value)    
+            this.selectedProjectGroup = value 
+            this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId )
+          }else{
+            this.selectedProject = null
+          }
          }
       },
-
+      selectedProject: {
+        handler: function(value){
+          if(!value){
+            // this.selectedNavigation = null
+          }
+        }
+      },
+      selectedNavigation: {
+        handler: function(value){
+          if(!value){
+            // this.selectedSubNavigation = null
+          }
+        }
+      }
     }
   };
 </script>

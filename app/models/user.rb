@@ -97,7 +97,7 @@ class User < ApplicationRecord
 
   def allowed_navigation_tabs(right = 'R')
     nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
-    self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
+    nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
   end
 
   def build_navigation_tabs_for_profile
@@ -113,7 +113,6 @@ class User < ApplicationRecord
       n << {id: name.downcase, name: name.humanize, value: name.downcase}
     end
     n
-    #n << {id: 'member_list', name: 'Team', value: 'member_list'}
   end
 
   def allowed_sub_navigation_tabs(right = 'R')
