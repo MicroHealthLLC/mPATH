@@ -270,6 +270,13 @@ class Risk < ApplicationRecord
 
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
+
+    
+    in_progress = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today    
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
    
     sorted_notes = notes.sort_by(&:created_at).reverse
 

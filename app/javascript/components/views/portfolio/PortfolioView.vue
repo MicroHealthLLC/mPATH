@@ -34,7 +34,7 @@
 
 
                 <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_tasks" >
+              <el-input type="search" placeholder="Search Task Name" v-model="search_tasks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
@@ -234,18 +234,21 @@
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="pl-1 sort-th twenty" @click="sort('category')">Category
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
+
+               <th class="sort-th twenty" @click="sort('notes_updated_at')" style="min-width:300px">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
+
               </th>
+            
                <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
@@ -293,26 +296,38 @@
               <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th twenty" @click="sort('notes_updated_at')" style="min-width:300px">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+                <th class="pl-1 sort-th twenty" @click="sort('category')">Category
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
-
               </th>
+             
               </thead>
          <tbody>
         <tr v-for="task, index in sortedTasks" :key="index">
         <td>{{ task.program_name }}</td>
         <td>{{ task.project_name }}</td>
         <td>{{ task.text }}</td>
-        <td>{{ task.category }}</td>
+           <td class="text-left" v-if="(task.notes_updated_at.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.full_name)">              
+          {{moment(task.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
+            </span>
+            <br> 
+            <span class="truncate-line-five">
+              {{task.notes[task.notes.length - 1].body}}
+            </span>
+           
+        </td>       
+        <!-- <td v-else class="twentyTwo">No Updates</td> -->
+        <td  class="text-left" v-else>No Update</td>
+      
         <td>{{ moment(task.start_date).format('DD MMM YYYY') }}</td>
         <td>
           <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>
@@ -344,18 +359,8 @@
                   No flags at this time         
               </span>              
           </td>
-         <td class="text-left" v-if="(task.notes_updated_at.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.full_name)">              
-          {{moment(task.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
-            </span>
-            <br> 
-            <span class="truncate-line-five">
-              {{task.notes[task.notes.length - 1].body}}
-            </span>
-           
-        </td>       
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td  class="text-left" v-else>No Update</td>
+            <td>{{ task.category }}</td>
+      
      
        
         </tr>
@@ -410,7 +415,7 @@
 
             <div class="w-100 d-flex">
                <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>              
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_issues" >
+              <el-input type="search" placeholder="Search Issue Name" v-model="search_issues" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
@@ -524,7 +529,7 @@
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantissues">     -->
                      <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ issueVariation.important.count }}</h5>  
                   </div>
-                   <div class="text-center icons"  :class="[hideBriefedIssues == true ? '':'light']" @click.prevent="toggleBriefingI"         >
+                   <div class="text-center icons"  :class="[hideBriefedIssues == true ? '':'light']" @click.prevent="toggleBriefingI">
                       <span class="d-block">
                      <i class="fas fa-presentation" :class="[hideBriefedIssues == true ? 'text-primary':'']"></i>
                   </span>     
@@ -604,18 +609,21 @@
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="pl-1 sort-th" @click="sortI('issue_type')">Issue Type
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_type'">
+
+               <th class="sort-th" style="min-width:300px" @click="sortI('notes_updated_at')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_type'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_type'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_type'">
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
+
               </th>
+             
               <th class="pl-1 sort-th" @click="sortI('issue_severity')">Issue Severity
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_severity'">
                  <i class="fas fa-sort"></i></span>
@@ -673,26 +681,38 @@
               <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" style="min-width:300px" @click="sortI('notes_updated_at')">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+               <th class="pl-1 sort-th" @click="sortI('issue_type')">Issue Type
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_type'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-down"></i></span>
-
               </th>
+             
             </thead>
          <tbody>
         <tr v-for="issue, index in sortedIssues" :key="index">
         <td>{{ issue.program_name }}</td>
         <td>{{ issue.project_name }}</td>
         <td>{{ issue.title }}</td>
-        <td>{{ issue.issue_type }}</td>
+           <td class="text-left" v-if="(issue.notes_updated_at.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.full_name)">              
+          {{moment(issue.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
+            </span>
+            <br> 
+            <span class="truncate-line-five">
+              {{issue.notes[issue.notes.length - 1].body}}
+            </span>
+           
+        </td>       
+        <!-- <td v-else class="twentyTwo">No Updates</td> -->
+        <td  class="text-left" v-else>No Update</td>
+       
         <td>{{ issue.issue_severity }}</td> 
         <td> {{ moment(issue.start_date).format('DD MMM YYYY') }} </td>   
         <td> 
@@ -722,18 +742,7 @@
                   No flags at this time         
               </span>              
           </td>
-           <td class="text-left" v-if="(issue.notes_updated_at.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.full_name)">              
-          {{moment(issue.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
-            </span>
-            <br> 
-            <span class="truncate-line-five">
-              {{issue.notes[issue.notes.length - 1].body}}
-            </span>
-           
-        </td>       
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td  class="text-left" v-else>No Update</td>
+         <td>{{ issue.issue_type }}</td>
      
        
         </tr>
@@ -791,7 +800,7 @@
            
               <div class="w-100 d-flex">
               <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>                
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
+              <el-input type="search" placeholder="Search Risk Name" v-model="search_risks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>             
                </div>
@@ -989,18 +998,20 @@
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="pl-1 sort-th" @click="sort('category')">Category
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
+               <th class="sort-th" style="min-width:300px" @click="sort('notes_updated_at')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
                  <i class="fas fa-sort-down"></i></span>
+
               </th>
+            
               <th class="sort-th" @click="sort('risk_approach')">Risk Approach
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'risk_approach'">
                <i class="fas fa-sort"></i></span>
@@ -1073,26 +1084,39 @@
               <th class='non-sort-th' style="min-width:200px">Flags
                
               </th>
-              <th class="sort-th" style="min-width:300px" @click="sort('notes_updated_at')">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+                <th class="pl-1 sort-th" @click="sort('category')">Category
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
                  <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
                  <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
                  <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
                  <i class="fas fa-sort-down"></i></span>
-
               </th>
+             
             </thead>
          <tbody>
         <tr v-for="risk, index in sortedRisks" :key="index">
         <td>{{ risk.program_name }}</td>
         <td>{{ risk.project_name }}</td>
         <td>{{ risk.text }}</td>
-        <td>{{ risk.category }}</td>
+           <td class="text-left" v-if="(risk.notes_updated_at.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.full_name)">              
+          {{moment(risk.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
+            </span>
+            <br> 
+            <span class="truncate-line-five">
+              {{risk.notes[risk.notes.length - 1].body}}
+            </span>
+           
+        </td>       
+        <!-- <td v-else class="twentyTwo">No Updates</td> -->
+        <td  class="text-left" v-else>No Update</td>
+     
+       
         <td>{{ risk.risk_approach.charAt(0).toUpperCase() + risk.risk_approach.slice(1) }}</td>
         <td>
           <span v-if="(risk.priority_level) == 1" class="gray2">Very Low</span> 
@@ -1132,21 +1156,10 @@
                   No flags at this time         
               </span>              
           </td>
+           <td>{{ risk.category }}</td>
         <!-- <td v-if="risk.last_update !== null">{{risk.last_update.body}}</td> -->
 
-          <td class="text-left" v-if="(risk.notes_updated_at.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.full_name)">              
-          {{moment(risk.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
-            </span>
-            <br> 
-            <span class="truncate-line-five">
-              {{risk.notes[risk.notes.length - 1].body}}
-            </span>
-           
-        </td>       
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td  class="text-left" v-else>No Update</td>
-     
+       
        
         </tr>
         </tbody>
@@ -1203,7 +1216,7 @@
         
                 
               <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_lessons" >
+              <el-input type="search" placeholder="Search Lesson Name" v-model="search_lessons" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
@@ -1355,6 +1368,19 @@
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+                <th class="sort-th" style="min-width:300px" @click="sort('notes_updated_at')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>            
               <th class="pl-1 sort-th"  style="min-width:325px" @click="sortL('description')">Description
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'description'">
                  <i class="fas fa-sort"></i></span>
@@ -1399,25 +1425,25 @@
               <th style="min-width:200px">
                 Flags
               </th>  
-                 <th class="sort-th" style="min-width:300px" @click="sort('notes_updated_at')">Last Update
-                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
-                 <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
-                 <i class="fas fa-sort-up"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
-                 <i class="fas fa-sort-up"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
-                 <i class="fas fa-sort-down"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
-                 <i class="fas fa-sort-down"></i></span>
-
-              </th>            
+               
             </thead>
          <tbody>
         <tr v-for="lesson, index in sortedLessons" :key="index">
         <td>{{ lesson.program_name }}</td>
         <td>{{ lesson.project_name }}</td>
         <td>{{ lesson.title }}</td>
+        <td class="text-left" v-if="(lesson.notes_updated_at.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + lesson.notes[lesson.notes.length - 1].user.full_name)">              
+          {{moment(lesson.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
+            </span>
+            <br> 
+            <span class="truncate-line-five">
+              {{lesson.notes[lesson.notes.length - 1].body}}
+            </span>
+           
+        </td>       
+        <!-- <td v-else class="twentyTwo">No Updates</td> -->
+        <td  class="text-left" v-else>No Update</td>
         <td><span class="truncate-line-five">{{ lesson.description }}</span></td>      
         <td> {{ lesson.added_by }} </td>  
          <td> {{ moment(lesson.created_at).format('DD MMM YYYY') }} </td>  
@@ -1442,18 +1468,7 @@
                   No flags at this time         
               </span>              
           </td>
-             <td class="text-left" v-if="(lesson.notes_updated_at.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + lesson.notes[lesson.notes.length - 1].user.full_name)">              
-          {{moment(lesson.notes_updated_at[0]).format('DD MMM YYYY, h:mm a')}}
-            </span>
-            <br> 
-            <span class="truncate-line-five">
-              {{lesson.notes[lesson.notes.length - 1].body}}
-            </span>
-           
-        </td>       
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td  class="text-left" v-else>No Update</td>
+             
      
         <!-- <td> {{ lesson.progress }} </td> -->
   
@@ -1518,9 +1533,7 @@
    <el-tab-pane disabled  label="PORTFOLIO ANALYTICS (Coming Soon)" class="p-3">
     
    </el-tab-pane>
-    </el-tabs>
-
- <div class="mhLogo"> <img class="mb-2" style="width:125px" :src="require('../../../../assets/images/microhealthllc.png')" /></div>
+    </el-tabs> 
 </div>
 </template>
 
@@ -2005,7 +2018,7 @@ export default {
     taskVariation() {
       let planned = _.filter(
         this.tasksObj,
-        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+        (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
@@ -2031,7 +2044,7 @@ export default {
       );
       let inProgress = _.filter(
      this.tasksObj,
-        (t) => t && t.progress < 100 && t.start_date <= this.today 
+        (t) => t && t.in_progress == true
       );
      let onHoldT = _.filter(this.tasksObj, (t) => t && t.on_hold == true );
      let ongoing = _.filter(this.tasksObj, (t) => t && t.ongoing == true );

@@ -189,6 +189,12 @@ class Issue < ApplicationRecord
 
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !on_hold && !draft
+    
+    in_progress = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && progress_status == "active"  && start_date < Date.today    
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
 
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse

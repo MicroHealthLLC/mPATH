@@ -8,7 +8,7 @@
             
             <div class="row filterDiv">      
                <div class="text-center filterLabel"><label class="px-2">Filters: </label></div>        
-                <div class="col filterCol" :load="log(JSON.stringify(getAllFilterNames))">
+                <div class="col filterCol text-right" :load="log(JSON.stringify(getAllFilterNames))">
                  
                   <div
                     v-for="(filterArray, index) in getAllFilterNames"
@@ -657,7 +657,7 @@
                <div class="col pb-0 relative">
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
-                  <b class="pill badge badge-secondary badge-pill pill">{{
+                  <b class="pill badge badge-secondary badge-pill pill mr-1">{{
                    projectLessons.length
                   }}</b>
                 </h5>
@@ -767,7 +767,7 @@
           <div class="col-2 pl-2">
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col text-center bg-primary py-0">
+                    <div class="col text-center bg-secondary py-0">
                       <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
                     </div>
                   </div>
@@ -1090,18 +1090,18 @@ export default {
         return valid;
       });
     },
-    viableTasksForProgressTotal(){
-      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
-    },
-     viableIssuesForProgressTotal(){
-      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
-    },
-     viableRisksForProgressTotal(){
-      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
-    },
+    // viableTasksForProgressTotal(){
+    //   return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
+    // },
+    //  viableIssuesForProgressTotal(){
+    //   return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
+    // },
+    //  viableRisksForProgressTotal(){
+    //   return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
+    // },
    allTasksProgress() {
       let task = new Array();
-      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
+      let group = _.groupBy(this.filteredTasks, "id");
       for (let ids in group) {
         task.push({
           id: ids,  
@@ -1120,7 +1120,7 @@ export default {
     },
     allRisksProgress() {
       let risk = new Array();
-      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
+      let group = _.groupBy(this.filteredRisks, "id");
       for (let ids in group) {
         risk.push({
           id: ids,  
@@ -1139,7 +1139,7 @@ export default {
     },
     allIssuesProgress() {
       let issue = new Array();
-      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
+      let group = _.groupBy(this.filteredIssues, "id");
       for (let ids in group) {
         issue.push({
           id: ids,  
@@ -1177,7 +1177,7 @@ export default {
     taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
-        (t) => t && t.draft == false && t.startDate && t.startDate > this.today 
+        (t) => t && t.planned == true 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
@@ -1194,7 +1194,7 @@ export default {
       );
       let inProgress = _.filter(
         this.filteredTasks,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+        (t) => t && t.inProgress == true
       );
      let onHoldT = _.filter(
         this.filteredTasks,
@@ -1306,7 +1306,7 @@ export default {
   issueVariation() {
      let planned = _.filter(
         this.filteredIssues,
-        (t) => !t.draft && t.startDate && t.startDate > this.today     
+        (t) => t.planned == true  
       );     
       let issueDrafts = _.filter(
         this.filteredIssues,
@@ -1322,7 +1322,7 @@ export default {
       ); 
        let inProgress = _.filter(
         this.filteredIssues,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+        (t) => t && t.inProgress == true 
         );
       let onHoldI = _.filter(
         this.filteredIssues,
@@ -1431,7 +1431,7 @@ export default {
     riskVariation() {
      let planned = _.filter(
         this.filteredRisks,
-        (t) => t && t.draft == false && t.startDate && t.startDate > this.today     
+        (t) => t && t.planned == true     
       );  
       let riskDrafts = _.filter(
         this.filteredRisks,
@@ -1443,7 +1443,7 @@ export default {
       );
       let inProgress = _.filter(
         this.filteredRisks,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+        (t) => t && t.inProgress == true 
       );
       let onHoldR = _.filter(
         this.filteredRisks,
@@ -1710,7 +1710,7 @@ export default {
   position: absolute;
   top: -8%;
   right: 9.5%;
-  width: 35%;
+  width: 40%;
   border-radius: 4px; 
   border: .5px solid lightgray;
   overflow-y: auto;
