@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3" data-cy="task_list" :load="log(taskTypes)">
+  <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
 
        <div class="d-flex align-item-center justify-content-between w-100 mb-3">        
@@ -265,9 +265,9 @@ export default {
         `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/new`
       );
     },
-    log(e){
-      console.log("task " + e)
-    },
+    // log(e){
+    //   console.log("task " + e)
+    // },
     editTask(task) {
       this.$emit('show-hide', task)
     },
