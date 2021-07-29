@@ -221,13 +221,16 @@ class Task < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
-
     in_progress = false
+    completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today    
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
+    end
 
     sorted_notes = notes.sort_by(&:created_at).reverse
     self.as_json.merge(
@@ -242,6 +245,7 @@ class Task < ApplicationRecord
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: sorted_notes.as_json,
+      completed: completed,
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       important: important,
