@@ -148,9 +148,7 @@
          
                     <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
                   </div>
-                
-  
-         
+                        
       
                   <div class="pr-3 text-center d-inline-block icons" :class="[getHideWatched == true ? '':'light']" @click.prevent="toggleWatched"  >                              
                    <span v-tooltip="`ON WATCH`"  class="d-block">

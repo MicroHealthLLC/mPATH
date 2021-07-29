@@ -66,6 +66,7 @@ class Lesson < ApplicationRecord
       },
       last_update: latest_update,
       notes: notes.as_json,
+      category: task_type&.name,
       added_by: user.full_name,
       project_name: facility.facility_name, 
       program_name: project.name, 
