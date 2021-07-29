@@ -39,7 +39,7 @@
              <div class="col pb-2 relative" >
                       <h5 class="d-inline text-light px-2 mh-blue absolute">TASKS</h5>
                       <h4 class="d-inline">
-                        <b
+                        <b data-cy="tasks_count"
                           class="badge badge-secondary badge-pill pill"
                           >{{ filteredTasks.length }}</b
                         >
@@ -222,7 +222,7 @@
              <div class="col pb-2 relative" >
                       <h5 class="d-inline text-light px-2 mh-green absolute">ISSUES</h5>
                       <h4 class="d-inline">
-                        <b
+                        <b data-cy="issues_count"
                           class="badge badge-secondary badge-pill pill"
                           >{{ filteredIssues.length }}</b
                         >
@@ -444,7 +444,7 @@
              <div class="col pb-2 relative" >
                       <h5 class="d-inline text-light px-2 mh-orange absolute">RISKS</h5>
                       <h4 class="d-inline">
-                        <b
+                        <b data-cy="risks_count"
                           class="badge badge-secondary badge-pill pill"
                           >{{ filteredRisks.length }}</b
                         >

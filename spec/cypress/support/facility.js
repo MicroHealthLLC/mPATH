@@ -13,23 +13,21 @@ Cypress.Commands.add("facilityRollup", () => {
     // cy.get('[data-cy=task_summary]').scrollIntoView()
     cy.get('[data-cy=task_summary]').within(() => {
       cy.get('h5').should('contain', 'TASKS')
-      cy.get('.float-right').should('contain', '8')
     })
-
+    cy.get('[data-cy="tasks_count"]').should('contain', '8')
     // Display Issues summary
     // cy.get('[data-cy=issue_summary]').scrollIntoView()
     cy.get('[data-cy=issue_summary]').within(() => {
       cy.get('h5').should('contain', 'ISSUES')
-      cy.get('.float-right').should('contain', '8')
     })
-
+    cy.get('[data-cy="issues_count"]').should('contain', '8')
     // Display Risks summary
     // cy.get('[data-cy=risk_summary]').scrollIntoView()
     cy.get('[data-cy=risk_summary]').within(() => {
       cy.get('h5').should('contain', 'RISKS')
-      cy.get('.float-right').should('contain', '8')
     })
-
+    cy.get('[data-cy="risks_count"]').should('contain', '8')
+    
     // Display Facility group summary
     cy.get('[data-cy=projet_group_summary]').scrollIntoView()
     cy.get('[data-cy=projet_group_summary]').within(() => {
