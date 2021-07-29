@@ -28,7 +28,7 @@
             <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
           </div>
     
-          <div class="pr-3 text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+          <div class="pr-4 text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
             <span class="d-block">
             <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
             </span>      
