@@ -309,12 +309,17 @@ class Risk < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
-    
+
     in_progress = false
+    completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today    
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
+    end
    
     sorted_notes = notes.sort_by(&:created_at).reverse
 
@@ -326,6 +331,9 @@ class Risk < ApplicationRecord
       task_type: task_type.as_json,
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
+      completed: completed,
+      planned: planned,
+      in_progress: in_progress,
       attach_files: attach_files,
       progress_status: progress_status,
       checklists: checklists.as_json,

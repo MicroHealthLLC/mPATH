@@ -72,11 +72,8 @@
 
               <div class="row mb-2 d-flex">           
                 <div class="font-sm col-5 py-0 text-left">
-                    <font-awesome-icon
-                                  icon="exclamation-triangle"
-                                  class="mr-1"
-                                  v-tooltip="`Risk Approach`"
-                                />
+                  <i class="far fa-exclamation-triangle mr-1 text-warning" v-tooltip="`Risk Approach`"></i>
+                                   
                   <span class="upperCase">{{DV_risk.riskApproach}}</span>
                 </div>
 

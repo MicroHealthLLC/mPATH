@@ -6,7 +6,7 @@
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
           <el-input
             type="search"          
-            placeholder="Search by Issue, Category, or Assigned User"
+            placeholder="Enter Search Criteria"
             aria-label="Search"            
             aria-describedby="search-addon"    
             v-model="issuesQuery"     
@@ -43,24 +43,7 @@
     MORE ISSUE FILTERS
     </template>
     <div class="mr-1 w-100 d-unset p-2">
-      <!-- <label class="mb-0">Flags</label>
-      <el-select
-           v-model="C_sheetsIssueFilter"
-           class="w-100 mb-1"
-           track-by="name"
-           value-key="id"
-           multiple
-           placeholder="Filter by Flags"
-           >
-          <el-option
-            v-for="item in getAdvancedFilterOptions"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select> -->
-           <label class="mb-0">Issue Types</label>
+     <label class="mb-0">Issue Types</label>
       <el-select
         v-model="C_issueTypeFilter"
         class="w-100 mr-1 mb-1"
@@ -794,7 +777,7 @@
 
       }).filter(t => {
       if (this.getHideComplete == true) { 
-        return t.progressStatus == "active"
+        return !t.completed
       } else return true
 
       }).filter(t => {
@@ -883,7 +866,7 @@
               
       let completed = _.filter(
       this.filteredIssues,
-        (t) => t && t.progressStatus == "completed"
+        (t) => t && t.completed == true
       );
     let inProgress = _.filter(
      this.filteredIssues,
