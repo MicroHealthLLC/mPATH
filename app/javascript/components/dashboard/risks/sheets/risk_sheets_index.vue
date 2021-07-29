@@ -6,7 +6,7 @@
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
           type="search"          
-          placeholder="Search by Risk, Category, or Assigned User"
+          placeholder="Enter Search Criteria"
           aria-label="Search"            
           aria-describedby="search-addon"    
           v-model="risksQuery"     
@@ -43,7 +43,7 @@
           MORE RISK FILTERS
           </template>
           <div class="mr-1 w-100 d-unset p-2">
-         <label class="mb-0">Flags</label>
+         <!-- <label class="mb-0">Flags</label>
           <el-select
             v-model="C_sheetsRiskFilter"
             class="w-100 mb-1"
@@ -59,7 +59,7 @@
             :label="item.name"
             >
           </el-option>
-          </el-select>
+          </el-select> -->
            <label class="mb-0">Risk Approach</label>
             <el-select
                 v-model="C_riskApproachFilter"
@@ -780,7 +780,7 @@
 
       }).filter(t => {
       if (this.getHideComplete == true) { 
-        return t.progressStatus == "active"
+        return !t.completed
       } else return true
 
       }).filter(t => {
@@ -867,7 +867,7 @@
               
       let completed = _.filter(
       this.filteredRisks,
-        (t) => t && t.progressStatus == "completed"
+        (t) => t && t.completed == true
       );
     let inProgress = _.filter(
      this.filteredRisks,

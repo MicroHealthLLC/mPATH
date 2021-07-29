@@ -1911,8 +1911,7 @@
                     >Duration</label
                   >
                   <el-select
-                    v-model="selectedDuration"  
-                   :load="log(DV_risk.duration)"                
+                    v-model="selectedDuration"                            
                     class="w-100"
                     clearable
                     track-by="name"                  
@@ -2210,9 +2209,9 @@ export default {
         notes: [],
       };
     },
-       log(e){
-          console.log("This is the riskDispStatus item: " + e)
-      },
+      //  log(e){
+      //     console.log("This is the riskDispStatus item: " + e)
+      // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;

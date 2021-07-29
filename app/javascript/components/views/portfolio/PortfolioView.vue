@@ -20,8 +20,7 @@
            TASKS
            <span class="badge badge-secondary badge-pill">
               <span>{{ portfolioTasks.length }}</span>
-                <!-- <span v-if="getPortfolioWatchedTasksToggle">{{ tasksObj.length }}</span>
-                <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
+            
           </span>   
           </template>
 
@@ -1449,23 +1448,19 @@
          <td> {{ moment(lesson.created_at).format('DD MMM YYYY') }} </td>  
          <td class="text-center">
         
-            <span v-if="lesson.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
-            <span v-if="lesson.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
-            <span v-if="lesson.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
-            <span v-if="lesson.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
+          
+            
+            <span v-if="lesson.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>  
+            <span v-if="lesson.draft == false" v-tooltip="`Draft`">   <i class="fas fa-clipboard-check text-success"></i></span>            
             <span v-if="lesson.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="lesson.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
             
             <span v-if="
                       lesson.important == false &&
-                      lesson.reportable == false &&
-                      lesson.watched == false &&
-                      lesson.ongoing == false && 
-               
-                      lesson.onHold == false &&  
+                      lesson.reportable == false &&                   
                       lesson.draft == false "             
                     >
-                  No flags at this time         
+                  <!-- No flags at this time          -->
               </span>              
           </td>
              
@@ -1752,7 +1747,12 @@ export default {
 
       }).filter(task => {
          if (this.hideInprogressTasks) {
-          return task.progress < 100 && task.start_date <= this.today 
+          return !task.in_progress
+        } else return true
+
+      }).filter(task => {
+         if (this.hidePlannedTasks) {
+          return !task.planned
         } else return true
 
       }).filter(task => {
@@ -1762,7 +1762,7 @@ export default {
 
       }).filter(task => {
          if (this.hideCompleteTasks) {
-          return task.progress < 100
+          return !task.completed
         } else return true
       // Filtering 3 Task Tags
       }).filter(task => {
@@ -1827,12 +1827,16 @@ export default {
 
       }).filter(issue => {
          if (this.hideCompleteIssues) {
-          return issue.progress < 100
+          return !issue.completed
         } else return true
 
       }).filter(issue => {
          if (this.hideInprogressIssues) {
-          return issue.progress < 100 && issue.start_date <= this.today
+          return !issue.in_progress
+        } else return true
+      }).filter(issue => {
+        if (this.hidePlannedIssues) {
+          return !issue.planned
         } else return true
     // Filtering 3 Issues Tags
 
@@ -1892,9 +1896,12 @@ export default {
 
      }).filter(risk => {
          if (this.hideInprogressRisks) {
-          return risk.progress < 100 && risk.start_date <= this.today 
+          return !risk.in_progress
         } else return true
-
+      }).filter(risk => {
+        if (this.hidePlannedRisks) {
+          return !risk.planned
+        } else return true
       }).filter(risk => {
          if (this.hideOverdueRisks) {
           return !risk.is_overdue
@@ -1907,16 +1914,10 @@ export default {
 
       }).filter(risk => {
          if (this.hideCompleteRisks) {
-          return risk.progress < 100
+          return !risk.completed
         } else return true
 
       }).filter(risk => {
-         if (this.hideInprogressRisks) {
-          return risk.progress < 100 && risk.start_date <= this.today
-        } else return true
-
-    // Filtering 3 Risks Tags
-    }).filter(risk => {
          if (this.hideBriefedRisks && !this.hideWatchedRisks && !this.hideImportantRisks ) {
           return risk.reportable
         }
@@ -1968,50 +1969,28 @@ export default {
         if (this.hideDraftLessons) {
           return !lesson.draft
         } else return true
-
-      }).filter(lesson => {
-         if (this.hideInprogressLessons) {
-          return lesson.progress < 100 && lesson.start_date <= this.today 
-        } else return true
-
-   
+  
       }).filter(lesson => {
          if (this.hideCompleteLessons) {
-          return lesson.progress < 100
+          return lesson.draft
         } else return true
-
-
 
       // Filtering 3 Task Tags
       }).filter(lesson => {
-         if (this.hideBriefedLessons && !this.hideWatchedLessons && !this.hideImportantLessons ) {
+         if (this.hideBriefedLessons && !this.hideImportantLessons ) {
           return lesson.reportable
         }
-        if (this.hideBriefedLessons && this.hideWatchedLessons && !this.hideImportantLessons) {          
-           return lesson.reportable + lesson.watched
-
-        } if (this.hideBriefedLessons && this.hideWatchedLessons && this.hideImportantLessons) {          
+        if (this.hideBriefedLessons && this.hideWatchedLessons && this.hideImportantLessons) {          
            return lesson.reportable + lesson.watched + lesson.important
         } else return true
 
+         
       }).filter(lesson => {
-        // This and last 2 filters are for Filtered Tags
-         if (this.hideWatchedLessons  && !this.hideBriefedLessons && !this.hideImportantLessons) {
-           return lesson.watched
-        } if (this.hideWatchedLessons && this.hideBriefedLessons && !this.hideImportantLessons) {          
-           return lesson.watched +lesson.reportable
-        } if (this.hideWatchedLessons && this.hideBriefedLessons && this.hideImportantLessons) {          
-           return  lesson.watched + lesson.reportable + lesson.important
-        } else return true          
-       
-      }).filter(lesson => {
-         if (this.hideImportantLessons && !this.hideBriefedLessons && !this.hideWatchedLessons) {
+         if (this.hideImportantLessons && !this.hideBriefedLessons) {
           return lesson.important
-        } if (this.hideImportantLessons && this.hideBriefedLessons && !this.hideWatchedLessons) {
+        } if (this.hideImportantLessons && this.hideBriefedLessons ) {
           return lesson.important + lesson.reportable
-       } if (this.hideImportantLessons && this.hideBriefedLessons && this.hideWatchedLessons) {
-          return lesson.important + lesson.reportable + lesson.watched
-        } else return true          
+       } else return true          
             
       })
     }, 
@@ -2019,7 +1998,6 @@ export default {
       let planned = _.filter(
         this.tasksObj,
         (t) => t && t.planned == true
-          // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
      this.tasksObj,
@@ -2040,7 +2018,7 @@ export default {
               
       let completed = _.filter(
       this.tasksObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
      this.tasksObj,
@@ -2048,7 +2026,7 @@ export default {
       );
      let onHoldT = _.filter(this.tasksObj, (t) => t && t.on_hold == true );
      let ongoing = _.filter(this.tasksObj, (t) => t && t.ongoing == true );
-     let overdue = _.filter(this.tasksObj, (t) => t.is_overdue == true);
+     let overdue = _.filter(this.tasksObj, (t) => t && t.is_overdue == true);
 
       return {
         planned: {
@@ -2075,7 +2053,7 @@ export default {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -2090,7 +2068,7 @@ export default {
      issueVariation() {
       let planned = _.filter(
       this.issuesObj,
-        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+        (t) => t && t.planned == true 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let issueDrafts = _.filter(
@@ -2099,11 +2077,11 @@ export default {
       );      
       let completed = _.filter(
         this.issuesObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
          this.issuesObj,
-        (t) => t && t.progress < 100 && t.start_date <= this.today 
+        (t) => t && t.in_progress == true
       );
      let onHoldI = _.filter(this.issuesObj, (t) => t && t.on_hold == true );
      let overdue = _.filter(this.issuesObj, (t) => t && t.is_overdue == true);
@@ -2145,7 +2123,7 @@ export default {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -2160,7 +2138,7 @@ export default {
     riskVariation() {
       let planned = _.filter(
          this.risksObj,
-        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+        (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let riskDrafts = _.filter(
@@ -2181,11 +2159,11 @@ export default {
       );
       let completed = _.filter(
        this.risksObj,
-        (t) => t && t.progress && t.progress == 100 
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
        this.risksObj,
-        (t) => t && t.progress < 100 && t.start_date <= this.today 
+        (t) => t && t.in_progress == true
       );
      let onHoldR = _.filter(this.risksObj, (t) => t && t.on_hold == true );
      let ongoing = _.filter(this.risksObj, (t) => t && t.ongoing == true );
@@ -2215,7 +2193,7 @@ export default {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -2228,11 +2206,7 @@ export default {
       };
     },
      lessonVariation() {
-      let planned = _.filter(
-         this.lessonsObj,
-        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
-          // (t) => t && t.startDate && t.startDate > this.today 
-      );     
+ 
      let lessonDrafts = _.filter(
         this.lessonsObj,
         (t) => t && t.draft == true
@@ -2245,33 +2219,18 @@ export default {
         this.lessonsObj,
         (t) => t && t.reportable == true
       );
-      let watched = _.filter(
-        this.lessonsObj,
-        (t) => t && t.watched == true
-      );
       let completed = _.filter(
         this.lessonsObj,
-        (t) => t && !t.draft 
-      );
-      let inProgress = _.filter(
-        this.lessonsObj,
-        (t) => t && t.progress < 100 && t.start_date <= this.today 
-      );
+        (t) => t && t.draft == false
+      );   
          return {
-        planned: {
-          count: planned.length, 
-          plannedTs: planned            
-        },
+     
         important: {
           count: important.length,             
         },
         briefings: {
           count: briefings.length,          
         },
-        watched: {
-          count: watched.length,          
-        },
-     
         lessonDrafts: {
           count: lessonDrafts.length,          
         },
@@ -2279,12 +2238,7 @@ export default {
           count: completed.length,
           // percentage: Math.round(completed_percent),
         },      
-        inProgress: {
-          count: inProgress.length - planned.length,
-          // percentage: Math.round(inProgress_percent),
-        },
-      
-      };
+       };
     },
     C_showCountToggle: {                  
         get() {
@@ -2395,30 +2349,10 @@ export default {
       'fetchPortfolioPrograms'
 
      ]),
-     log(e)    {
-       console.log(e)
-     },
-      toggleCount(){
-          console.log("this works")
-            //  this.showCount = !this.showCount    
-        // if (this.getShowAllEventsToggle == true) {
-        
-        //   this.reRenderCalendar()
-        // } else if (this.getShowAllEventsToggle == false){
-        //    this.events = [];
-         
-        //    this.reRenderCalendar()
-        // }
-        // this.setShowAllEventsToggle(!this.getShowAllEventsToggle)       
-        // if (this.getShowAllEventsToggle == true) {
-        
-        //   this.reRenderCalendar()
-        // } else if (this.getShowAllEventsToggle == false){
-        //    this.events = [];
-         
-        //    this.reRenderCalendar()
-        // }
-      },
+    //  log(e)    {
+    //    console.log(e)
+    //  },
+
       showCountToggle(){
         this.getShowCount(!this.getShowCount)      
       },

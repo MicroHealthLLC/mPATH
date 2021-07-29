@@ -49,19 +49,36 @@ class Issue < ApplicationRecord
     }
   end
 
-  def porfolio_json
+  def portfolio_json
+    self.on_hold = false if draft & on_hold
+
     is_overdue = false
     if !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    in_progress = false
+    completed = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
     end
 
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
+      planned: planned,
+      on_hold: self.on_hold,
+      completed: completed,
+      in_progress: in_progress,
       issue_type: issue_type.name,
       issue_severity: issue_severity.name,
-      last_update: self.notes.last&.porfolio_json,
+      last_update: self.notes.last&.portfolio_json,
       notes: notes.as_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
       users: users.select(&:active?).map(&:full_name).join(", "),
@@ -192,12 +209,17 @@ class Issue < ApplicationRecord
 
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !on_hold && !draft
-    
+
     in_progress = false
+    completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && progress_status == "active"  && start_date < Date.today    
-    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today && progress == 0
+    if start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
+    end
 
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse
@@ -206,6 +228,9 @@ class Issue < ApplicationRecord
       class_name: self.class.name,
       progress_status: progress_status,
       attach_files: attach_files,
+      completed: completed,
+      planned: planned,
+      in_progress: in_progress,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),

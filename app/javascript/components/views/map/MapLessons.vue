@@ -6,11 +6,54 @@
       </el-input>
     </div>
     <div v-if="contentLoaded">
-      <button v-if="_isallowed('write')" class="btn btn-md addLessonBtn btn-primary mr-3" @click="addLesson">
+       <span class="d-inline">
+      <button v-if="_isallowed('write')" class="btn btn-md addLessonBtn btn-primary mr-2 float-left" @click="addLesson">
         <font-awesome-icon icon="plus-circle" />
         Add Lesson
       </button>
+          <span class="d-inline-block tagCol px-2 mr-1">
+          <div class="pr-4 text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+            <span class="d-block">
+            <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+            </span>      
+        
+            <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+          </div>
 
+          <div class="pr-4 text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+            <span class="d-block">
+            <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+            </span>      
+  
+            <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+          </div>
+    
+          <div class="pr-3 text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+            <span class="d-block">
+            <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+            </span>      
+  
+            <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+          </div>
+          <div class="pr-2 text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+            <span class="d-block">
+            <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+            </span>      
+            <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+          </div>  
+
+          <div class="d-inline-block mx-0">        
+            <v-checkbox     
+          v-model="C_showCountToggle"     
+            class="d-inline-block"  
+            @click.prevent="showCounts"   
+          v-tooltip="`Show Counts`"
+          ></v-checkbox>
+          </div>
+      </span>
+            
+   </span>
+   <div class="float-right">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -25,6 +68,7 @@
         >
           <font-awesome-icon icon="file-excel" />
         </button>
+   </div>
       
       <hr class="mb-3" />
       <el-card
@@ -39,7 +83,8 @@
           <span class="float-right">                 
             <span v-show="lesson.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
             <span v-show="lesson.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>          
-            <span v-show="lesson.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>                
+            <span v-show="lesson.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>  
+            <span v-if="lesson.draft == false" v-tooltip="`Complete`"> <i class="fas fa-clipboard-check text-success"></i></span>              
           </span>
         </div>
         
@@ -94,11 +139,9 @@
                 <i class="fas fa-star text-warning mr-1"></i
               ></span>
               <span v-if="lesson.reportable" v-tooltip="`Briefings`"
-                ><font-awesome-icon icon="flag" class="text-primary mr-1"
-              /></span>
+                ><i class="fas fa-presentation mr-1"></i></span>
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
-                ><font-awesome-icon icon="pencil-alt" class="text-warning"
-              /></span>
+                ><i class="fas fa-pencil-alt text-warning mr-1"></i></span>
               <span
                 v-if="
                   lesson.important == false &&
@@ -133,7 +176,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import LessonContextMenu from "./../../shared/LessonContextMenu";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -162,6 +205,16 @@ export default {
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
+    ...mapMutations([
+      "setLessonsPerPageFilter",
+      'setShowCount',
+      // 2 States
+      'setHideComplete',
+      'setHideDraft',
+      // 2 Tags
+      'setHideImportant',
+      'setHideBriefed',      
+      ]),
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;
@@ -175,6 +228,21 @@ export default {
       this.$router.push(
         `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/new`
       );
+    },
+    toggleImportant(){
+      this.setHideImportant(!this.getHideImportant)    
+    },
+    toggleBriefed(){
+        this.setHideBriefed(!this.getHideBriefed)    
+    },
+    toggleComplete(){
+      this.setHideComplete(!this.getHideComplete)    
+    },
+    toggleDraft(){
+      this.setHideDraft(!this.getHideDraft)    
+    },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
     },
     exportToPdf() {
       const doc = new jsPDF("l");
@@ -217,13 +285,91 @@ export default {
       "lessonsLoaded",
       "projectLessons",
       "taskTypes",
+      'getShowCount',
+      // 2 States
+      'getHideComplete',       
+      'getHideDraft',   
+      // 2 Tags      
+      'getHideImportant',
+      'getHideBriefed',
     ]),
+    C_showCountToggle: {                  
+    get() {
+      return this.getShowCount                
+    },
+    set(value) {
+      this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+    }
+        
+  },
     filteredLessons() {
       return this.projectLessons.filter((lesson) =>
         lesson.title.toLowerCase().match(this.search.toLowerCase())
+      )
+       .filter(lesson => {
+        // Filtering 3 Lesson States        
+        if (this.getHideDraft) {
+          return !lesson.draft
+        } else return true
+  
+      }).filter(lesson => {
+         if (this.getHideComplete) {
+          return lesson.draft
+        } else return true
+
+      // Filtering 3 Task Tags
+      }).filter(lesson => {
+         if (this.getHideBriefed && !this.getHideImportant ) {
+          return lesson.reportable
+        }
+        if (this.getHideBriefed && this.getHideImportant) {          
+           return lesson.reportable + lesson.important
+        } else return true
+         
+      }).filter(lesson => {
+         if (this.getHideImportant && !this.getHideBriefed) {
+          return lesson.important
+        } if (this.getHideImportant && this.getHideBriefed) {
+          return lesson.important + lesson.reportable
+       } else return true          
+            
+      })
+    },
+     variation() {
+     let drafts = _.filter(
+     this.filteredLessons,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+     this.filteredLessons,
+        (t) => t && t.important == true
+      ); 
+     let briefings = _.filter(
+       this.filteredLessons,
+        (t) => t && t.reportable == true
       );
+     let completed = _.filter(
+      this.filteredLessons,
+        (t) => t && t.draft == false
+      );
+     return {
+       important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },        
+      };
     },
   },
+
   mounted() {
     this.fetchProjectLessons(this.$route.params);
   },
@@ -251,5 +397,41 @@ export default {
 .showAll {
   transition: all 0.2s ease-in-out;
   background-color: #41b883;
+}
+
+.tagCol {
+  border-radius: 4px;
+  border: .5px solid lightgray;
+  h6 {
+  margin-bottom: 0;
+ }
+}
+
+i, .icons {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/deep/.v-input__slot {
+  display: inline;
+  .v-label {
+   font-family: 'FuturaPTBook';
+  //  font-weight: 600;
+   color: #007bff !important;
+  }
+}
+/deep/.v-input__control {
+  display: block !important;
+}
+.hideLabels {
+  font-weight: 600;
+}
+/deep/.v-input--checkbox{
+  margin-top: 0;
 }
 </style>

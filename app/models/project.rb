@@ -56,7 +56,7 @@ class Project < SortableRecord
     ).as_json
   end
 
-  def porfolio_json
+  def portfolio_json
     { 
       id: id, 
       name: name,
@@ -210,7 +210,7 @@ class Project < SortableRecord
         end
 
         tasks.each do |t| 
-          resource_objects << t.porfolio_json #t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
+          resource_objects << t.portfolio_json #t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
         end
 
       end
@@ -225,7 +225,7 @@ class Project < SortableRecord
         end
 
         issues.each do |i| 
-          resource_objects << i.porfolio_json #i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
+          resource_objects << i.portfolio_json #i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
         end
       end
 
@@ -239,7 +239,7 @@ class Project < SortableRecord
         end
 
         risks.each do |r| 
-          resource_objects << r.porfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+          resource_objects << r.portfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
         end
       end
 
@@ -251,7 +251,7 @@ class Project < SortableRecord
         end
 
         lessons.each do |r| 
-          resource_objects << r.porfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+          resource_objects << r.portfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
         end
       end
 
@@ -262,7 +262,7 @@ class Project < SortableRecord
           notes = all_notes.select{|r| r.noteable_id == fp.id}
         end
 
-        resource_objects += notes.map(&:porfolio_json)
+        resource_objects += notes.map(&:portfolio_json)
       end
 
     end

@@ -29,7 +29,7 @@
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row mb-3">
                     <div class="col pb-2 relative" >
-                      <h5 class="d-inline text-light px-2 bg-secondary absolute">TASKS</h5>
+                      <h5 class="d-inline text-light px-2 mh-blue absolute">TASKS</h5>
                       <h4 class="d-inline">
                         <b
                           class="badge badge-secondary badge-pill pill"
@@ -59,20 +59,19 @@
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
                 </div>
-                 <div class="col p-0 mb-0">
-                   <span class="d-block" v-tooltip="`ONGOING`"> <i class="fas fa-retweet text-success"></i></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING </span>    
-                </div> 
-
-              
-                 <div class="col p-0 mb-0">
+                     <div class="col p-0 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
-                </div>
+                </div>         
+            
                  <div class="col p-0 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                 </div>
+                  <div class="col p-0 mb-0">
+                   <span class="d-block" v-tooltip="`ONGOING`"> <i class="fas fa-retweet text-success"></i></span>
+                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING </span>    
+                </div> 
               </div>
 
               <div class="row text-center mt-0" :class="[taskStats.length > 0 ? '' : 'pb-3']">
@@ -86,37 +85,32 @@
                     taskVariation.inProgress.count
                   }}</h4>        
                 </div>
-
-
-
-                 <div class="col pb-0 mb-0">
-                   <h4 class="mb-0">{{ taskVariation.overdue.count }}
-                     </h4>
-                                    
-                </div>
-
-
-
-                 <div class="col pb-0 mb-0">
-                  <h4 class="mb-0">{{
-                    taskVariation.ongoing.length
-                  }}</h4>          
-                </div>    
-
-                 <div class="col pb-0 mb-0">
+                  <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{
                     taskVariation.planned.count
                   }}</h4>         
                 </div>
                  <div class="col pb-0 mb-0">
+                   <h4 class="mb-0">{{ taskVariation.overdue.count }}
+                     </h4>                                    
+                </div>
+                <div class="col pb-0 mb-0">
                   <h4 class="mb-0">{{
                     taskVariation.onHoldT.count
                   }}</h4>        
                 </div>
                  <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{  taskVariation.taskDrafts.count }}</h4>                      
-                </div>
-                </div>      
+                </div>                   
+                 <div class="col pb-0 mb-0">
+                  <h4 class="mb-0">{{
+                    taskVariation.ongoing.length
+                  }}</h4>          
+                </div>    
+              </div>  
+               
+         
+                
                 <div v-if="taskStats.length > 0" data-cy="task_categories">
                 <el-collapse class="taskCard">
                   <el-collapse-item title="..." name="1">
@@ -221,7 +215,7 @@
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row mb-3">
                     <div class="col pb-2 relative">
-                      <h5 class="text-light px-2 bg-secondary absolute">ISSUES</h5>
+                      <h5 class="text-light px-2 mh-green absolute">ISSUES</h5>
                       <h4 class="d-inline">
                         <b
                           class="badge badge-secondary badge-pill pill"
@@ -434,7 +428,7 @@
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row mb-3">
                     <div class="col pb-2 relative">
-                       <h5 class="text-light px-2 bg-secondary absolute">RISKS</h5>
+                       <h5 class="text-light px-2 mh-orange absolute">RISKS</h5>
                       <h4 class="d-inline">
                         <b
                           class="badge badge-secondary badge-pill pill"
@@ -452,25 +446,25 @@
                   <span  v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS   </span>           
                   </div>
-                  <div class="col p-0 mb-0">
-                  <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
-                  </div>
-                  <div class="col p-0 mb-0">
-                    <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING</span>    
-                  </div> 
                    <div class="col p-0  mb-0">                    
                     <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                   </div>
                   <div class="col p-0 mb-0">
+                  <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
+                  </div>
+                      <div class="col p-0 mb-0">
                    <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col p-0 mb-0">
                     <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
+                  </div> 
+                    <div class="col p-0 mb-0">
+                    <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
+                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING</span>    
                   </div> 
                </div>
 
@@ -486,30 +480,29 @@
                   }}</h4>        
                 </div>
                  <div class="col pb-0 mb-0">
+                  <h4 class="mb-0">{{
+                    riskVariation.planned.count
+                  }}</h4>         
+                </div>
+                 <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{ riskVariation.overdue.count }}
                      </h4>              
                        
                 </div>
                  <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{
-                    riskVariation.ongoing.length
-                  }}</h4>          
-                </div>
-
-               <div class="col pb-0 mb-0">
-                  <h4 class="mb-0">{{
-                    riskVariation.planned.count
-                  }}</h4>         
-                </div>
-                <div class="col pb-0 mb-0">
-                   <h4 class="mb-0">{{
                     riskVariation.onHoldR.count
                   }}</h4>        
                 </div>
-                <div class="col pb-0 mb-0">
+
+                 <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{  riskVariation.riskDrafts.count }}</h4>                      
                 </div>
-                
+                 <div class="col pb-0 mb-0">
+                   <h4 class="mb-0">{{
+                    riskVariation.ongoing.length
+                  }}</h4>          
+                </div>            
         
               </div>          
              
@@ -764,33 +757,7 @@
                 </div>
               </div>
 
-          <div class="col-2 pl-2">
-                <el-card class="box-card" style="background-color:#fff">
-                  <div class="row">
-                    <div class="col text-center bg-secondary py-0">
-                      <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
-                    </div>
-                  </div>
-
-                <div class="row mt-1 text-center">
-                <div class="col p-0 mb-0">
-                  
-               <h4 class="text-center">
-                        <span :class="{ 'progress-0': projectTotalProgress <= 0 }">
-                          <el-progress
-                            type="circle"
-                            class="pt-4 pb-3"                          
-                            :percentage="Math.round(projectTotalProgress)"
-                          ></el-progress>
-                        </span>
-                      </h4>
-                </div>
-                </div>
-           
-                <div>
-              </div>
-          </el-card>
-              </div>
+        
 
               <!-- <div class="col-md-3 col-lg-3 col-sm-6" v-show="isSheetsView"  data-cy="date_set_filter">
                 <el-card
@@ -868,6 +835,33 @@
                     </div>
                   </div>
                 </el-card>
+              </div>
+                <div class="col-2 pl-2">
+                <el-card class="box-card" style="background-color:#fff">
+                  <div class="row">
+                    <div class="col text-center bg-secondary py-0">
+                      <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
+                    </div>
+                  </div>
+
+                <div class="row mt-1 text-center">
+                <div class="col p-0 mb-0">
+                  
+               <h4 class="text-center">
+                        <span :class="{ 'progress-0': projectTotalProgress <= 0 }">
+                          <el-progress
+                            type="circle"
+                            class="pt-4 pb-3"                          
+                            :percentage="Math.round(projectTotalProgress)"
+                          ></el-progress>
+                        </span>
+                      </h4>
+                </div>
+                </div>
+           
+                <div>
+              </div>
+          </el-card>
               </div>
             </div>
             <!-- SECOND ROW WITH TASKS ISSUES & RISKS -->
@@ -1193,11 +1187,11 @@ export default {
       );     
      let taskDrafts = _.filter(
         this.filteredTasks,
-        (t) => t && t.draft == true && t.onHold == false && t.ongoing == false   
+        (t) => t && t.draft == true   
       );      
       let completed = _.filter(
         this.filteredTasks,
-        (t) => t && t.progress && t.progress == 100 && t.draft == false
+        (t) => t && t.completed == true
       );
       let completed_percent = this.getAverage(
         completed.length,
@@ -1209,13 +1203,13 @@ export default {
       );
      let onHoldT = _.filter(
         this.filteredTasks,
-        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue && !t.ongoing
+        (t) => t && t.onHold == true 
       );
       let inProgress_percent = this.getAverage(
         inProgress.length,
         this.filteredTasks.length
       );
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold && t.ongoing == false);
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredTasks.length
@@ -1325,7 +1319,7 @@ export default {
       );      
       let completed = _.filter(
         this.filteredIssues,
-        (t) => t && t.progress && t.progress == 100  && t.draft == false
+        (t) => t && t.completed == true
       );
       let completed_percent = this.getAverage(
         completed.length,
@@ -1337,13 +1331,13 @@ export default {
         );
       let onHoldI = _.filter(
         this.filteredIssues,
-        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue && !t.ongoing
+        (t) => t && t.onHold == true 
       );
       let inProgress_percent = this.getAverage(
         inProgress.length,
         this.filteredIssues.length
       );
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue && !t.onHold);
+      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredIssues.length
@@ -1446,11 +1440,11 @@ export default {
       );  
       let riskDrafts = _.filter(
         this.filteredRisks,
-        (t) => t && t.draft == true && t.onHold == false && t.ongoing == false  
+        (t) => t && t.draft == true  
       ); 
       let completed = _.filter(
         this.filteredRisks,
-        (t) => t && t.progress && t.progress == 100  && t.draft == false
+        (t) => t && t.completed == true
       );
       let inProgress = _.filter(
         this.filteredRisks,
@@ -1458,7 +1452,7 @@ export default {
       );
       let onHoldR = _.filter(
         this.filteredRisks,
-        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue && !t.ongoing
+        (t) => t && t.onHold == true 
       );  
  
       let completed_percent = this.getAverage(
@@ -1469,7 +1463,7 @@ export default {
         inProgress.length,
         this.filteredRisks.length
       );
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue && !t.onHold);
+      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredRisks.length

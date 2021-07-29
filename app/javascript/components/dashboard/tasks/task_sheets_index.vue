@@ -7,7 +7,7 @@
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
             type="search"          
-            placeholder="Search by Task, Category, or Assigned User"
+            placeholder="Enter Search Criteria"
             aria-label="Search"            
             aria-describedby="search-addon"    
             v-model="tasksQuery"     
@@ -404,7 +404,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks" :key="i" :load="log(task)">
+        <tr  v-for="(task, i) in filteredTasks" :key="i">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -536,9 +536,9 @@
       }
         this.currentSort = s;
       },
-      log(e){
-        console.log("task:  " + e)
-      },
+      // log(e){
+      //   console.log("task:  " + e)
+      // },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
       },
@@ -637,13 +637,13 @@
         'taskTypeFilter',
         'taskStageFilter',
         'myActionsFilter',
-        'onWatchFilter',
-        'getShowCount',
-       
+        'onWatchFilter',      
         'taskUserFilter',
         'taskTypes',
         'viewPermit',
         'getToggleRACI',
+
+        'getShowCount',
         // 7 States
         'getHideComplete',
         'getHideInprogress',
@@ -715,14 +715,6 @@
           return valid
         }), ['dueDate'])
       
-  
-      // if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
-        
-      //   return tasks
-        
-      //  } else 
-
-
       return tasks.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
@@ -730,7 +722,7 @@
 
       }).filter(t => {
       if (this.getHideComplete == true) { 
-        return t.progressStatus == "active"
+        return !t.completed
       } else return true
 
       }).filter(t => {
@@ -818,7 +810,7 @@
               
       let completed = _.filter(
       this.filteredTasks,
-        (t) => t && t.progressStatus == "completed"
+        (t) => t && t.completed == true
       );
     let inProgress = _.filter(
      this.filteredTasks,
