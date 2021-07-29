@@ -114,17 +114,15 @@
                   <el-collapse-item title="..." name="1">
                 
                 <div data-cy="task_categories" class="row">
-                  <div class="col-5 underline">
+                  <div class="col-5 pb-0 underline">
                     CATEGORIES
                   </div>
-                    <div class="col-2 pl-0">
+                    <div class="col-2 pb-0 pl-0">
                   #
                   </div>
 
-                <div class="col-5 pl-3">
+                <div class="col-5 pb-0 pl-3">
                      
-        
-    
                   <span class="underline" :class="{ 'font-sm': isMapView }">PROGRESS</span>
                   </div>
                 </div>
@@ -134,16 +132,16 @@
                   v-for="(task, index) in taskStats"
                   :key="index"
                 >
-                  <div class="col-5 font-sm pr-0">
+                  <div class="col-5 pb-0 font-sm pr-0">
                     <span> {{ task.name }}</span>                          
                   </div>
-                    <div class="col-2 pl-0">                          
+                    <div class="col-2 pb-0 pl-0">                          
                     <span class="badge badge-secondary  font-sm badge-pill">{{
                       task.count
                     }}</span>
                   </div>
                 
-                  <div class="col-5 mb-1">
+                  <div class="col-5 pb-0 mb-1">
                     <span
                       class="w-100 progress pg-content"
                       :class="{ 'progress-0': task.progress <= 0 }"
@@ -299,13 +297,13 @@
                       <el-collapse-item title="..." name="1">
                         <div v-if="contentLoaded">                
                           <div class="row">
-                            <div class="col-5 mt-1 underline">
+                            <div class="col-5 pb-0 mt-1 underline">
                               CATEGORIES
                             </div>
-                            <div class="col-2 pl-0">
+                            <div class="col-2 pb-0 pl-0">
                              #
                             </div>
-                        <div class="col-5 pl-3">
+                        <div class="col-5 pb-0 pl-3">
                           <span class="underline" :class="{ 'font-sm': isMapView }">PROGRESS</span>
                       </div>
                           </div>
@@ -314,15 +312,15 @@
                             v-for="(issue, index) in issueTaskCATEGORIES"
                             :key="index"
                           >
-                            <div class="col-5 pr-0">
+                            <div class="col-5 pb-0 pr-0">
                               <span> {{ issue.name }}</span>                           
                             </div>
-                             <div class="col-2 pl-0">                             
+                             <div class="col-2 pb-0 pl-0">                             
                               <span class="badge badge-secondary  font-sm badge-pill">{{
                                 issue.count
                               }}</span>
                             </div>
-                            <div class="col-5 mb-1">
+                            <div class="col-5 pb-0 mb-1">
                               <span
                                 class="w-100 progress pg-content"
                                 :class="{ 'progress-0': issue.progress <= 0 }"
@@ -339,7 +337,7 @@
                         </div>
 
                         <div data-cy="issue_types">
-                          <div class="col mt-1 underline pl-0">
+                          <div class="col mt-2 underline pl-0">
                             ISSUE TYPES
                           </div>
                         </div>
@@ -349,15 +347,15 @@
                           v-for="issue in issueStats"
                           :key="issue.id"
                         >
-                          <div class="col-5 font-sm pr-0">
+                          <div class="col-5 pb-0 font-sm pr-0">
                             <span> {{ issue.name }}</span>                          
                           </div>
-                           <div class="col-2 pl-0">                          
+                           <div class="col-2 pb-0 pl-0">                          
                             <span class="badge badge-secondary  font-sm badge-pill">{{
                               issue.count
                             }}</span>
                           </div>
-                          <div class="col-5 mb-1">
+                          <div class="col-5 pb-0 mb-1">
                             <span
                               class="w-100 progress pg-content"
                               :class="{ 'progress-0': issue.progress <= 0 }"
