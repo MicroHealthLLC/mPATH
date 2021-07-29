@@ -7,19 +7,17 @@
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             
             <div class="row filterDiv">      
-               <div class="text-center filterLabel"><label class="px-2 bg">Filters: </label></div>        
-                <div class="col filterCol text-right">
-                 
+               <div class="text-center filterLabel underline"><small class="px-2 bg">FILTERS </small></div>        
+                <div class="col filterCol text-right">                 
                   <div
+                  class="d-inline-block mr-1"
                     v-for="(filterArray, index) in getAllFilterNames"
-                    :key="index"      
-
+                    :key="index"  
                   >
-                    <span v-if="getFilterValue(filterArray[0])">
-                      <span
-                        ><b class="mr-1">{{ filterArray[1] }}:</b>
-                        {{ getFilterValue(filterArray[0]) }}
-                      </span>
+                    <span class="d-inline" v-if="getFilterValue(filterArray[0])">
+                   
+                        <span class="filter-green d-inline font-sm text-light px-2">{{ getFilterValue(filterArray[0]) }}</span>
+                  
                     </span>
                   </div>
                 </div>
@@ -228,19 +226,19 @@
 
                 <div class="row text-center mt-3">
                   <div class="col p-0 mb-0">                  
-                    <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                    <span  class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                   </div>
                   <div class="col p-0 mb-0">
-                  <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                  <span class="d-block"><i class="far fa-tasks text-primary"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">IN PROGRESS</span>           
                   </div>
                   <div class="col p-0  mb-0">                      
-                    <span v-tooltip="`PLANNED`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
+                    <span class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                   </div>
                   <div class="col p-0 mb-0">
-                  <span v-tooltip="`OVERDUE`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                  <span class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE</span>               
                   </div>
                   
@@ -947,6 +945,9 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+    log(e){
+      console.log(e)
     },
      _isallowed(salut) {
         var programId = this.$route.params.programId;
@@ -1712,12 +1713,12 @@ export default {
 }
 
 .filterDiv {
-  position: absolute;
-  top: -8%;
+  position:fixed;
+  top: 130px;
   right: 9.5%;
-  width: 40%;
+  width: 20%;
   border-radius: 4px; 
-  border: .5px solid lightgray;
+  border: .5px solid #383838;
   overflow-y: auto;
 
 }
@@ -1730,5 +1731,10 @@ export default {
   height: 70px;
 }
 
+@media screen and (min-width: 1550px) {
+  .filterDiv {
+    right: 8.5%;
+  }
+}
 </style>
 
