@@ -70,7 +70,7 @@
       </GmapMap>
     </div>
     <!-- Right panel -->
-    <div class="col-5 right-panel">
+    <div class="col-5 right-panel px-2">
       <div
         v-if="
           currentFacility !== null &&

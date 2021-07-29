@@ -1311,9 +1311,7 @@ export default {
       let total = issue.map(iss => iss.progress);
       let count = issue.map(iss => iss).length;
       
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-
-     
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
 
       let roundedSum = Math.round(sum)
       let final = roundedSum / count
