@@ -201,8 +201,8 @@
       </button>
        </div>
       <div v-if="filteredTasks.length > 0">
-        <div  style="margin-bottom:50px" data-cy="tasks_table" class="mt-2">
-          <table class="table table-sm table-bordered table-striped stickyTableHeader">
+        <div  style="margin-bottom:50px" class="mt-2">
+          <table data-cy="tasks_table"  class="table table-sm table-bordered table-striped stickyTableHeader">
             <colgroup>
               <col class="oneSix" />
               <col class="ten" />
