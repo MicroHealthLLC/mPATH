@@ -308,23 +308,23 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Search Task contains Facility', function() {
-    cy.get('#q_facility_project_facility_facility_name').select('Test Facility 1')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 1')
     // cy.get('#q_facility_project_facility_facility_name').type('Test Facility 1').should('have.value', 'Test Facility 1')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
     // cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 2').should('have.value', 'Test Facility 2')
-    cy.get('#q_facility_project_facility_facility_name').select('Test Facility 2')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 2')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
     // cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 3').should('have.value', 'Test Facility 3')
-    cy.get('#q_facility_project_facility_facility_name').select('Test Facility 3')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 3')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
     // cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 4').should('have.value', 'Test Facility 4')
-    cy.get('#q_facility_project_facility_facility_name').select('Test Facility 4')
+    cy.get('#q_facility_project_facility_id').select('Test Facility 4')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
