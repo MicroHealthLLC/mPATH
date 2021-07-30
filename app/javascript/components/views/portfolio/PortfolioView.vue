@@ -28,21 +28,17 @@
           <div class="row pb-4">
              <div class="col-4 py-2">           
              <div class="w-100 d-flex">
-
-
-
-
-                <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>
+                <div class="d font-sm mt-2 mr-2">SEARCH</div>
               <el-input type="search" placeholder="Search Task Name" v-model="search_tasks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
                </div>
 
-               <div  class="col-5 pl-0 py-2">   
-                <div class="d-flex">
+               <div  class="col-4 py-2">   
+                <div class="d-flex w-100">
                   
-                  <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
                    <template>
                    
                 <el-select     
@@ -62,6 +58,30 @@
                     >
                   </el-option>
                   </el-select> 
+                      </template>              
+                </div>         
+              </div>
+                <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
+                  >
+                  <el-option 
+                    v-for="item in C_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
+             
                       </template>              
                 </div>         
               </div> 
@@ -410,20 +430,17 @@
 
          <div class="row pb-4">
               <div class="col-4 py-2">
-
-
             <div class="w-100 d-flex">
-               <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>              
+               <div class="d font-sm mt-2 mr-2">SEARCH</div>              
               <el-input type="search" placeholder="Search Issue Name" v-model="search_issues" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
                </div>
                
-            <div  class="col-5 pl-0 py-2">   
-            <div class="d-flex">
-
-            <div class="font-sm mr-2 pl-2 mt-2">PROGRAM FILTER</div>           
+            <div  class="col-4 pl-0 py-2">   
+            <div class="d-flex w-100">
+            <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
               <template>
                <el-select     
                     v-model="C_programNameFilter"                               
@@ -442,6 +459,30 @@
                     >
                   </el-option>
                   </el-select> 
+                      </template>              
+                </div>         
+              </div> 
+                  <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
+                  >
+                  <el-option 
+                    v-for="item in C_i_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
+             
                       </template>              
                 </div>         
               </div> 
@@ -692,6 +733,19 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
+               
+                <th class="pl-1 sort-th" @click="sort('category')">Category
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
              
             </thead>
          <tbody>
@@ -742,6 +796,10 @@
               </span>              
           </td>
          <td>{{ issue.issue_type }}</td>
+          <td>            
+            <span v-if='issue.category'>{{ issue.category }}</span>
+            <span v-else> --- </span>
+          </td>
      
        
         </tr>
@@ -798,16 +856,16 @@
               <div class="col-4 py-2">
            
               <div class="w-100 d-flex">
-              <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>                
+              <div class="d font-sm mt-2 mr-2">SEARCH</div>                
               <el-input type="search" placeholder="Search Risk Name" v-model="search_risks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>             
                </div>
               </div>
-            <div  class="col-5 pl-0 py-2">   
-                <div class="d-flex">
+            <div  class="col-4 py-2">   
+            <div class="d-flex w-100">
 
-                  <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+          <div class="font-sm  px-0 mr-2 mt-2">PROGRAM FILTER</div>           
            <template>
                 <el-select     
                     v-model="C_programNameFilter"                               
@@ -827,6 +885,30 @@
                   </el-option>
                   </el-select> 
                   </template>              
+                </div>         
+              </div> 
+                  <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
+                  >
+                  <el-option 
+                    v-for="item in C_r_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
+             
+                      </template>              
                 </div>         
               </div> 
             </div>
@@ -1214,17 +1296,17 @@
              <div class="w-100 d-flex">
         
                 
-              <div class="d font-sm mt-2 pl-2 mr-2">SEARCH</div>
+              <div class="d font-sm mt-2 mr-2">SEARCH</div>
               <el-input type="search" placeholder="Search Lesson Name" v-model="search_lessons" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
                </div>     
             
-              <div  class="col-5 pl-0 py-2">   
-                <div class="d-flex">
+              <div  class="col-4 py-2">   
+                <div class="d-flex w-100">
                   
-                  <div class="font-sm mr-2 mt-2">PROGRAM FILTER</div>           
+                  <div class="font-sm px-0 mr-2 mt-2">PROGRAM FILTER</div>           
                    <template>
                  <el-select     
                     v-model="C_programNameFilter"                               
@@ -1232,7 +1314,7 @@
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                                                   
-                    placeholder="Filter Lessons By Program"
+                    placeholder="Select Programs to Filter to"
                   >
                   <el-option                   
                     v-for="item in C_programNames"                                                               
@@ -1243,6 +1325,30 @@
                     >
                      </el-option>
                   </el-select> 
+                      </template>              
+                </div>         
+              </div> 
+                       <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                             
+                    placeholder="Select Category"
+                  >
+                  <el-option 
+                    v-for="item in C_l_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
+             
                       </template>              
                 </div>         
               </div> 
@@ -1424,6 +1530,18 @@
               <th style="min-width:200px">
                 Flags
               </th>  
+              <th class="pl-1 sort-th" @click="sort('category')">Category
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
                
             </thead>
          <tbody>
@@ -1463,7 +1581,10 @@
                   <!-- No flags at this time          -->
               </span>              
           </td>
-             
+           <td>
+            <span v-if='lesson.category'>{{ lesson.category }}</span>
+            <span v-else> -- </span>
+          </td>
      
         <!-- <td> {{ lesson.progress }} </td> -->
   
@@ -1657,6 +1778,7 @@ export default {
       'getShowCount',
       'programNameFilter',
       'taskTypes',
+      'portfolioCategoriesFilter',
       'portfolioTasks',
       'portfolioIssues',
       'portfolioRisks', 
@@ -1725,7 +1847,12 @@ export default {
           let programNames = this.C_programNameFilter.map((program) => program.name);
           return programNames.includes(task.program_name);
         } else return true;   
-
+     }).filter(task => {
+         if (this.C_categoryNameFilter.length > 0) {
+          let category = this.C_categoryNameFilter.map((t) => t);
+          return category.includes(task.category);
+        } else return true; 
+        
       }).filter(task => {
         if (this.search_tasks !== "") {
           return  task.text.toLowerCase().match(this.search_tasks.toLowerCase())
@@ -1804,7 +1931,11 @@ export default {
           let programNames = this.C_programNameFilter.map((program) => program.name);
           return programNames.includes(issue.program_name);
         } else return true;   
-
+     }).filter(issue => {
+         if (this.C_categoryNameFilter.length > 0) {
+          let category = this.C_categoryNameFilter.map((t) => t);
+          return category.includes(issue.category);
+        } else return true; 
         
      }).filter(issue => {
         if (this.search_issues !== "") {
@@ -1880,6 +2011,12 @@ export default {
         } else if (programName.length == 1) {
           return risk.program_name.includes(programName)
         } else return true
+
+      }).filter(risk => {
+         if (this.C_categoryNameFilter.length > 0) {
+          let category = this.C_categoryNameFilter.map((t) => t);
+          return category.includes(risk.category);
+        } else return true; 
       }).filter(risk => {
         if (this.search_risks !== "") {
           return  risk.text.toLowerCase().match(this.search_risks.toLowerCase())
@@ -1958,7 +2095,11 @@ export default {
         } else if (programName.length == 1) {
           return lesson.program_name.includes(programName)
         } else return true
-
+        }).filter(lesson => {
+         if (this.C_categoryNameFilter.length > 0) {
+          let category = this.C_categoryNameFilter.map((t) => t);
+          return category.includes(lesson.category);
+        } else return true; 
         
       }).filter(lesson => {
         if (this.search_lessons !== "") {
@@ -2252,6 +2393,22 @@ export default {
     C_programNames() {     
       return this.portfolioPrograms
      },
+    C_categories() {     
+      let category = this.portfolioTasks
+      return [...new Set(category.map(item => item.category))]; 
+     },
+    C_i_categories() {     
+      let category = this.portfolioIssues
+      return [...new Set(category.map(item => item.category))]; 
+     },
+     C_r_categories() {     
+      let category = this.portfolioRisks
+      return [...new Set(category.map(item => item.category))]; 
+     },
+     C_l_categories() {     
+      let category = this.portfolioLessons
+      return [...new Set(category.map(item => item.category))]; 
+     },
     C_programIssuesNameFilter: {
       get() {
         return this.programNameFilter
@@ -2268,6 +2425,15 @@ export default {
       set(value) {
         // console.log(value)
         this.setProgramNameFilter(value)
+      }
+    },
+     C_categoryNameFilter: {
+      get() {
+        return this.portfolioCategoriesFilter
+      },
+      set(value) {
+        // console.log(value)
+        this.setPortfolioCategoriesFilter(value)
       }
     },
      C_hideWatchedTasks: {                  
@@ -2338,7 +2504,9 @@ export default {
     'setLessonsPerPageFilter',
     'setPortfolioBriefedTasksToggle',
     'setPortfolioImportantTasksToggle',
+    'setPortfolioCategoriesFilter',
     'setProgramNameFilter',
+    'setTaskTypeFilter',
     'setShowCount'
      ]),
    ...mapActions([
@@ -2350,9 +2518,8 @@ export default {
 
      ]),
     //  log(e)    {
-    //    console.log(e)
+    //    console.log("portfolio tasks" + e)
     //  },
-
       showCountToggle(){
         this.getShowCount(!this.getShowCount)      
       },

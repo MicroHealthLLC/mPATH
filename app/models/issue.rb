@@ -75,6 +75,7 @@ class Issue < ApplicationRecord
       planned: planned,
       on_hold: self.on_hold,
       completed: completed,
+      category: task_type&.name,
       in_progress: in_progress,
       issue_type: issue_type.name,
       issue_severity: issue_severity.name,

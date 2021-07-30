@@ -1,4 +1,3 @@
-import { faSolarPanel } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 const portfolioModule = {
@@ -6,9 +5,10 @@ const portfolioModule = {
     portfolioWatchedTasksToggle: true,
     portfolioBriefedTasksToggle: true,
     portfolioImportantTasksToggle: true,
-    showCount: true,
+    showCount: true,  
    
     programNameFilter: null,
+    portfolioCategoriesFilter: null,
 
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
@@ -161,8 +161,7 @@ const portfolioModule = {
     setPortfolioBriefedTasksToggle: (state, showAll) => state.portfolioBriefedTasksToggle = showAll,
     setShowCount: (state, count) => state.showCount = count,
 
-
-    
+   
     SET_PORTFOLIO_PROGRAMS: (state, portfolio_programs) => state.portfolio_programs = portfolio_programs,
     TOGGLE_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.portfolio_programs_loaded = loaded,
 
@@ -179,6 +178,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
+    setPortfolioCategoriesFilter: (state, filter) => state.portfolioCategoriesFilter = filter,
 
      // Flags Work throughout CLient faSolarPanel...move to new store
      
@@ -217,10 +217,11 @@ const portfolioModule = {
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
 
     programNameFilter: state => state.programNameFilter,
+    portfolioCategoriesFilter: state => state.portfolioCategoriesFilter,
 
     getShowCount: (state) => state.showCount,
 
-    
+  
      // Flags Work throughout CLient faSolarPanel...move to new store
 
     //  7 States

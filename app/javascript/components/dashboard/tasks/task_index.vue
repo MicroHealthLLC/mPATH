@@ -17,7 +17,7 @@
         </div>
         <div class="ml-1 font-sm w-100">
           <el-select 
-           v-model="C_taskTypeFilter"                    
+           v-model="C_taskTypeFilter"                        
            class="w-100" 
            track-by="name" 
            value-key="id"
