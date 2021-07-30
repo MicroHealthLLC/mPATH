@@ -183,11 +183,11 @@
                 <div class="col p-0 mb-0">
                   
                <h4 class="text-center">
-                        <span :class="{ 'progress-0': allTasksProgress <= 0 }">
+                        <span :class="{ 'progress-0': allTasksProgress.final <= 0 }">
                           <el-progress
                             type="circle"
                             class="py-3"                          
-                            :percentage="Math.round(allTasksProgress)"
+                            :percentage="Math.round(allTasksProgress.final)"
                           ></el-progress>
                         </span>
                       </h4>
@@ -399,11 +399,11 @@
                 <div class="col p-0 mb-0">
                   
                <h4 class="text-center">
-                        <span :class="{ 'progress-0': allIssuesProgress <= 0 }">
+                        <span :class="{ 'progress-0': allIssuesProgress.final <= 0 }">
                           <el-progress
                             type="circle"
                             class="py-3"                          
-                            :percentage="Math.round(allIssuesProgress)"
+                            :percentage="Math.round(allIssuesProgress.final)"
                           ></el-progress>
                         </span>
                       </h4>
@@ -616,11 +616,11 @@
                 <div class="col p-0 mb-0">
                   
                <h4 class="text-center">
-                        <span :class="{ 'progress-0': allRisksProgress <= 0 }">
+                        <span :class="{ 'progress-0': allRisksProgress.final <= 0 }">
                           <el-progress
                             type="circle"
                             class="py-3"                          
-                            :percentage="Math.round(allRisksProgress)"
+                            :percentage="Math.round(allRisksProgress.final)"
                           ></el-progress>
                         </span>
                       </h4>
@@ -1092,7 +1092,8 @@ export default {
      viableRisksForProgressTotal(){
       return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
     },
-   allTasksProgress() {
+
+     allTasksProgress() {
       let task = new Array();
       let group = _.groupBy(this.viableTasksForProgressTotal, "id");
       for (let ids in group) {
@@ -1109,10 +1110,22 @@ export default {
 
      let roundedSum = Math.round(sum)
      let final = roundedSum / count
+
+     if (isNaN(final)){
+       final = 0;
+     }
+    //  let allCounts = this.allRisksProgress.count + this.allIssuesProgress.count + count
+    //  let weightedVal = count / allCounts
+     let weighted = count * final 
     
        if (isNaN(final)) {
         return 0
-      } else return final 
+       } else return {
+          final, 
+          count, 
+          weighted, 
+          roundedSum  
+      }
     },
     allRisksProgress() {
       let risk = new Array();
@@ -1131,11 +1144,20 @@ export default {
       let roundedSum = Math.round(sum)
 
        let final = roundedSum / count
+
+       
+     if (isNaN(final)){
+       final = 0;
+     }
+          let weighted = count * final
     
-       if (isNaN(final)) {
+        if (isNaN(final)) {
         return 0
-      } else return final 
-  
+       } else return {
+          final, 
+          count, 
+          weighted    
+      }
     },
     allIssuesProgress() {
       let issue = new Array();
@@ -1150,21 +1172,38 @@ export default {
       let total = issue.map(iss => iss.progress);
       let count = issue.map(iss => iss).length;
       
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-
-     
+      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
 
       let roundedSum = Math.round(sum)
       let final = roundedSum / count
-      if (isNaN(final)) {
+      
+     if (isNaN(final)){
+       final = 0;
+     }
+      let weighted = count * final
+
+       if (isNaN(final)) {
         return 0
-      } else return final 
+       } else return {
+          final, 
+          count, 
+          weighted    
+      }
     },
     projectTotalProgress(){
-      let sum = this.allTasksProgress + this.allRisksProgress + this.allIssuesProgress
-      let total = sum / 3
-      return Math.round(total)
-    },  
+     let sum = this.allTasksProgress.weighted + this.allRisksProgress.weighted + this.allIssuesProgress.weighted
+      let denominator = this.allTasksProgress.count + this.allRisksProgress.count + this.allIssuesProgress.count
+        if (isNaN(sum || denominator )) {
+          sum = 0;
+          denominator = 0;
+        }
+ 
+      let total = sum / denominator
+      if (isNaN(total)) {
+        return 0
+      } else return Math.round(total)
+    }, 
+
     taskStats() {
       let tasks = new Array();
       let group = _.groupBy(this.filteredTasks, "taskType");

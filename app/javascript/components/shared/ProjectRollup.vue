@@ -11,16 +11,7 @@
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
-         <!-- <h3 v-if="contentLoaded" class="d-inline">
-           <el-popover
-            placement="top-start"
-            title="Project #"
-            width="200"
-            trigger="hover"
-            content="This is the total number of projects in this program.">
-          <b class="badge bg-secondary text-light badge-pill" slot="reference"> {{ C_facilityCount }}</b>
-          </el-popover>
-        </h3>   -->
+        
        
       </div>
   
@@ -193,11 +184,11 @@
                 <div class="col p-0 mb-0">
                   
                <h4 class="text-center">
-                        <span :class="{ 'progress-0': allTasksProgress <= 0 }">
+                        <span :class="{ 'progress-0': allTasksProgress.final <= 0 }">
                           <el-progress
                             type="circle"
                             class="py-3"                          
-                            :percentage="Math.round(allTasksProgress)"
+                            :percentage="Math.round(allTasksProgress.final)"
                           ></el-progress>
                         </span>
                       </h4>
@@ -416,11 +407,11 @@
                 <div class="col p-0 mb-0">
                   
                <h4 class="text-center">
-                        <span :class="{ 'progress-0': allIssuesProgress <= 0 }">
+                        <span :class="{ 'progress-0': allIssuesProgress.final <= 0 }">
                           <el-progress
                             type="circle"
                             class="py-3"                          
-                            :percentage="Math.round(allIssuesProgress)"
+                            :percentage="Math.round(allIssuesProgress.final)"
                           ></el-progress>
                         </span>
                       </h4>
@@ -662,11 +653,11 @@
                 <div class="col p-0 mb-0">
                   
                <h4 class="text-center">
-                        <span :class="{ 'progress-0': allRisksProgress <= 0 }">
+                        <span :class="{ 'progress-0': allRisksProgress.final <= 0 }">
                           <el-progress
                             type="circle"
                             class="py-3"                          
-                            :percentage="Math.round(allRisksProgress)"
+                            :percentage="Math.round(allRisksProgress.final)"
                           ></el-progress>
                         </span>
                       </h4>
@@ -850,13 +841,24 @@
           </div>
         </el-card>
     </div>
-    <div class="col-3 pl-2"  :class="[isMapView ? 'd-none' : '']" >
+       <div class="col-3 pl-2"  :class="[isMapView ? 'd-none' : '']" >
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
                     <div class="col text-center bg-secondary py-0">
                       <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
                     </div>
                   </div>
+
+                   <!-- <h3 v-if="contentLoaded" class="d-inline">
+           <el-popover
+            placement="top-start"
+            title="Project #"
+            width="200"
+            trigger="hover"
+            content="This is the total number of projects in this program.">
+          <b class="badge bg-secondary text-light badge-pill" slot="reference"> {{ C_facilityCount }}</b>
+          </el-popover>
+        </h3>   -->
 
                 <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">
@@ -877,7 +879,7 @@
               </div>
           </el-card>
               </div>
-    
+      
     
     </div>
 
@@ -1270,10 +1272,22 @@ export default {
 
      let roundedSum = Math.round(sum)
      let final = roundedSum / count
+
+     if (isNaN(final)){
+       final = 0;
+     }
+    //  let allCounts = this.allRisksProgress.count + this.allIssuesProgress.count + count
+    //  let weightedVal = count / allCounts
+     let weighted = count * final 
     
        if (isNaN(final)) {
         return 0
-      } else return final 
+       } else return {
+          final, 
+          count, 
+          weighted, 
+          roundedSum  
+      }
     },
     allRisksProgress() {
       let risk = new Array();
@@ -1292,11 +1306,20 @@ export default {
       let roundedSum = Math.round(sum)
 
        let final = roundedSum / count
+
+       
+     if (isNaN(final)){
+       final = 0;
+     }
+          let weighted = count * final
     
-       if (isNaN(final)) {
+        if (isNaN(final)) {
         return 0
-      } else return final 
-  
+       } else return {
+          final, 
+          count, 
+          weighted    
+      }
     },
     allIssuesProgress() {
       let issue = new Array();
@@ -1315,15 +1338,36 @@ export default {
 
       let roundedSum = Math.round(sum)
       let final = roundedSum / count
-      if (isNaN(final)) {
+      
+     if (isNaN(final)){
+       final = 0;
+     }
+      let weighted = count * final
+
+       if (isNaN(final)) {
         return 0
-      } else return final 
+       } else return {
+          final, 
+          count, 
+          weighted    
+      }
     },
     projectTotalProgress(){
-      let sum = this.allTasksProgress + this.allRisksProgress + this.allIssuesProgress
-      let total = sum / 3
-      return Math.round(total)
+     let sum = this.allTasksProgress.weighted + this.allRisksProgress.weighted + this.allIssuesProgress.weighted
+      let denominator = this.allTasksProgress.count + this.allRisksProgress.count + this.allIssuesProgress.count
+        if (isNaN(sum || denominator )) {
+          sum = 0;
+          denominator = 0;
+        }
+ 
+      let total = sum / denominator
+      if (isNaN(total)) {
+        return 0
+      } else return Math.round(total)
     },  
+
+
+    // Find sum of all valid Tasks, Issues, and Risks (75)
     taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
