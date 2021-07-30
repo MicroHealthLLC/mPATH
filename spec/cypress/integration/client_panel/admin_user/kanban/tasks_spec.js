@@ -26,6 +26,7 @@ describe('Kanban Tasks View', function() {
     cy.logout()
   })
 
+
   // it("Create new task in kanban task page", function() {
   //   cy.fillKanbanTaskForm()
   //   cy.get('[data-cy=task_save_btn]').click({force: true})
@@ -140,7 +141,7 @@ describe('Kanban Tasks View', function() {
     cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=tasks]').first().within(() => {
-          cy.get('[data-cy=on_watch_icon]').should('not.exist')
+          cy.get('[data-cy=on_watch_icon]').should('not.be.visible')
         })
       })
     })
