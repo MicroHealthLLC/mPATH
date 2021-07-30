@@ -280,21 +280,12 @@ class Issue < ApplicationRecord
 
   def files_as_json
     issue_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
-      if file.blob.content_type == "text/plain"
-        {
-          id: file.id,
-          name: file.blob.filename.instance_variable_get("@filename"),
-          uri: file.blob.filename.instance_variable_get("@filename"),
-          link: true
-        }
-      else
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-          link: false
-        }
-      end
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+        link: false
+      }
     end.as_json
   end
 
