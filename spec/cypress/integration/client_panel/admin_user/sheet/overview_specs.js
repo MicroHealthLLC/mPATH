@@ -7,11 +7,14 @@ describe('Sheet Overview Page', function() {
   })
 
   it('Open Sheet overview to display the summary of a facility', function() {
-    cy.get('[data-cy=facility_sheets]').within(() => {
+    // cy.get('[data-cy=facility_sheets]').within(() => {
+
+    // })
       // cy.get('[data-cy=facility_tabs]').first().contains('Overview').should('be.visible')
+      cy.scrollTo('bottom')
       cy.contains('PROJECT GROUP:').should('be.visible')
-      cy.get('.mt-2').scrollIntoView()
       cy.contains('COMPLETION DATE:').should('be.visible')
+      cy.get('[data-cy=facility_sheets]').scrollIntoView()
       cy.contains('STATUS:').should('be.visible')
 
       // In overview display task summary
@@ -34,7 +37,6 @@ describe('Sheet Overview Page', function() {
         cy.contains('RISKS').should('be.visible')
         cy.contains('2').should('be.visible')
       })
-    })
     cy.logout()
   })
 })
