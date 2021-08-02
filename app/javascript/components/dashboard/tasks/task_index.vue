@@ -142,9 +142,9 @@
         </button>
      </div>
       </div>
-      <div v-if="filteredTasks.length > 0">
+      <div v-if="filteredTasks.filtered.tasks.length > 0">
         <hr />
-        <task-show v-for="(task, i) in filteredTasks" id="taskHover" :class="{'b_border': !!filteredTasks[i+1]}" :key="task.id" :task="task" :from-view="from" @edit-task="editTask"></task-show>
+        <task-show v-for="(task, i) in filteredTasks.filtered.tasks" id="taskHover" :class="{'b_border': !!filteredTasks.filtered.tasks.length[i+1]}" :key="task.id" :task="task" :from-view="from" @edit-task="editTask"></task-show>
       </div>
       <div v-else>
         <br />
@@ -168,7 +168,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(task, i) in filteredTasks" :key="i">
+        <tr v-for="(task, i) in filteredTasks.filtered.tasks" :key="i">
           <td class="text-center">{{i+1}}</td>
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
@@ -416,15 +416,19 @@ computed: {
 
       return valid
     }), ['dueDate'])
-
-  
-      return tasks.filter(t => {
+ 
+      return {
+       unfiltered: {
+            tasks
+            },
+       filtered: {
+         tasks:  tasks.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
 
       }).filter(t => {
-      if (this.getHideComplete) { 
+      if (this.getHideComplete == true) { 
         return !t.completed
       } else return true
 
@@ -442,29 +446,28 @@ computed: {
       if (this.getHideInprogress == true) { 
         return t.inProgress == false
       } else return true
-     
+
       }).filter(t => {
        if (this.getHideDraft == true){
          return t.draft == false
        } else return true   
 
 
-       }).filter(t => {
-       if (this.getHideOngoing == true) {
-          return t.ongoing == false
-       } else return true       
+      }).filter(t => {
+      if (this.getHideOngoing == true) {
+        return t.ongoing == false
+      } else return true       
 
+      }).filter(t => {
+        if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+        return t.reportable
+      }
+      if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+          return t.reportable + t.watched
 
-        }).filter(t => {
-         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
-          return t.reportable
-        }
-        if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
-           return t.reportable + t.watched
-
-        } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
-           return t.reportable + t.watched + t.important
-        } else return true
+      } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+          return t.reportable + t.watched + t.important
+      } else return true
 
       }).filter(t => {
         // This and last 2 filters are for Filtered Tags
@@ -483,44 +486,45 @@ computed: {
           return t.important + t.reportable
        } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
           return t.important + t.reportable + t.watched
-        } else return true          
-                 
-       })
+        } else return true           
+       }),  
+        }
+       }     
    },
     variation() {
     let planned = _.filter(
-      this.filteredTasks,
+      this.filteredTasks.unfiltered.tasks,
         (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
-     this.filteredTasks,
+     this.filteredTasks.unfiltered.tasks,
         (t) => t && t.draft == true
       );  
       let important = _.filter(
-     this.filteredTasks,
+      this.filteredTasks.unfiltered.tasks,
         (t) => t && t.important == true
       ); 
         let briefings = _.filter(
-       this.filteredTasks,
+       this.filteredTasks.unfiltered.tasks,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-     this.filteredTasks,
+     this.filteredTasks.unfiltered.tasks,
         (t) => t && t.watched == true
       );
               
       let completed = _.filter(
-      this.filteredTasks,
+      this.filteredTasks.unfiltered.tasks,
         (t) => t && t.completed == true
       );
     let inProgress = _.filter(
-     this.filteredTasks,
+      this.filteredTasks.unfiltered.tasks,
         (t) => t && t.inProgress == true
       );
-     let onHold = _.filter(this.filteredTasks, (t) => t && t.onHold == true );
-     let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing == true );
-     let overdue = _.filter(this.filteredTasks, (t) => t.isOverdue == true);
+     let onHold = _.filter( this.filteredTasks.unfiltered.tasks, (t) => t && t.onHold == true );
+     let ongoing = _.filter( this.filteredTasks.unfiltered.tasks, (t) => t && t.ongoing == true );
+     let overdue = _.filter( this.filteredTasks.unfiltered.tasks,(t) => t.isOverdue == true);
 
       return {
         planned: {
