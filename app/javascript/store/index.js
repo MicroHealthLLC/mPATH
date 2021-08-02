@@ -34,10 +34,6 @@ export default new Vuex.Store({
     portfolioModule
   },
   state: {
-<<<<<<< HEAD
-=======
-    // advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
->>>>>>> acc1c30de26b086f60cf4ee9a8d37d7b6e82d580
     advancedFilter: [],
     contentLoaded: false,
     toggleRACI: true,

@@ -597,15 +597,12 @@
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
       },
-<<<<<<< HEAD
     showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
       // log(e){
       //   console.log(e)
       // },
-=======
->>>>>>> acc1c30de26b086f60cf4ee9a8d37d7b6e82d580
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
