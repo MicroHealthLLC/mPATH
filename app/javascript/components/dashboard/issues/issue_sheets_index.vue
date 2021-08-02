@@ -845,33 +845,33 @@
     variation() {
     let planned = _.filter(
       this.filteredIssues,
-        (t) => t && t.planned == true
+        (t) => t && t.planned 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
      this.filteredIssues,
-        (t) => t && t.draft == true
+        (t) => t && t.draft
       );  
       let important = _.filter(
      this.filteredIssues,
-        (t) => t && t.important == true
+        (t) => t && t.important 
       ); 
         let briefings = _.filter(
        this.filteredIssues,
-        (t) => t && t.reportable == true
+        (t) => t && t.reportable 
       );
       let watched = _.filter(
      this.filteredIssues,
-        (t) => t && t.watched == true
+        (t) => t && t.watched 
       );
               
       let completed = _.filter(
       this.filteredIssues,
-        (t) => t && t.completed == true
+        (t) => t && t.completed 
       );
     let inProgress = _.filter(
      this.filteredIssues,
-        (t) => t && t.inProgress == true
+        (t) => t && t.inProgress 
       );
      let onHold = _.filter(this.filteredIssues, (t) => t && t.onHold == true );
      let overdue = _.filter(this.filteredIssues, (t) => t.isOverdue == true);
@@ -901,7 +901,7 @@
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {

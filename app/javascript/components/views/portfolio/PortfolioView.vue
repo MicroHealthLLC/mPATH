@@ -2161,7 +2161,7 @@ export default {
       );
       let inProgress = _.filter(
      this.tasksObj,
-        (t) => t && t.in_progress == true
+        (t) => t && t.in_progress
       );
      let onHoldT = _.filter(this.tasksObj, (t) => t && t.on_hold == true );
      let ongoing = _.filter(this.tasksObj, (t) => t && t.ongoing == true );
