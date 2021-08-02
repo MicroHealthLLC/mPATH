@@ -850,28 +850,28 @@
       );     
      let drafts = _.filter(
      this.filteredRisks,
-        (t) => t && t.draft == true
+        (t) => t && t.draft 
       );  
       let important = _.filter(
      this.filteredRisks,
-        (t) => t && t.important == true
+        (t) => t && t.important
       ); 
         let briefings = _.filter(
        this.filteredRisks,
-        (t) => t && t.reportable == true
+        (t) => t && t.reportable 
       );
       let watched = _.filter(
      this.filteredRisks,
-        (t) => t && t.watched == true
+        (t) => t && t.watched 
       );
               
       let completed = _.filter(
       this.filteredRisks,
-        (t) => t && t.completed == true
+        (t) => t && t.completed
       );
     let inProgress = _.filter(
      this.filteredRisks,
-        (t) => t && t.inProgress == true
+        (t) => t && t.inProgress 
       );
      let onHold = _.filter(this.filteredRisks, (t) => t && t.onHold == true );
        let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing == true );
@@ -902,7 +902,7 @@
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
