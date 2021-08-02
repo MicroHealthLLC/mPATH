@@ -34,15 +34,17 @@
         <span v-else>{{risk.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
-                <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
                 <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="risk.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
-                <span v-if="risk.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-                <span v-if="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+                <span v-if="risk.isOverdue" v-tooltip="`Overdue`"> <i class="fas fa-calendar text-danger mr-1"></i></span>
+                <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
                 <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
                 <span v-if="risk.onHold == true" v-tooltip="`On Hold`">   <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
                 <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
-                <span v-if="                   
+                <span v-if="risk.planned" v-tooltip="`Planned`"> <i class="fas fa-calendar-check text-info mr-1"></i></span>
+                <span v-if="risk.inProgress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span>
+                <!-- <span v-if="                   
                      risk.ongoing == false && 
                      risk.important == false && 
                      risk.watched == false &&
@@ -54,19 +56,8 @@
                      risk.progress < 100 "             
                      class="text-secondary">
                     No flags at this time           
-                </span>          
+                </span>           -->
          </td>  
-<<<<<<< HEAD
-        <td class="twenty" v-if="risk.notes.length > 0">       
-          <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
-          {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
-          </span> 
-          <span class="truncate-line-five">
-            {{risk.lastUpdate.body}}
-          </span>         
-        </td>  
-         <td class="twenty"  v-else >No Updates</td> 
-=======
          <td class="twenty" v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -76,7 +67,6 @@
           </span>         
         </td>  
          <td  class="twenty" v-else >No Updates</td> 
->>>>>>> acc1c30de26b086f60cf4ee9a8d37d7b6e82d580
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu

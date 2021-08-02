@@ -26,15 +26,18 @@
         <span v-else>{{task.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
-            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
-            <span v-if="task.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-            <span v-if="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+            <span v-if="task.isOverdue" v-tooltip="`Overdue`"><i class="fas fa-calendar text-danger mr-1"></i></span>
+            <span v-if="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
             <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
             <span v-if="task.onHold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
-            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
-            <span v-if="
+            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>  
+            <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
+            <span v-if="task.inProgress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
+ 
+            <!-- <span v-if="
                       task.important == false &&
                       task.reportable == false &&
                       task.watched == false &&
@@ -45,7 +48,7 @@
                       task.progress < 100 "             
                     >
                   No flags at this time         
-            </span>              
+            </span>               -->
         </td>
         <td class="twentyTwo" v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
