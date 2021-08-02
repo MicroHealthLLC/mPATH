@@ -468,14 +468,14 @@
             >                 
             </span>  
             </td>            
-          <td v-if="issue.notes.length > 0">       
+         <td v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
           <span>
             {{issue.lastUpdate.body}}
           </span>         
-        </td>   
+        </td>  
          <td v-else >No Updates</td> 
           </tr>
         </tbody>
@@ -526,6 +526,7 @@
     },
     mounted() {
       this.loading = false
+      // console.log(this.lastUpdate)
     },
     methods: {
       ...mapMutations([
@@ -623,9 +624,9 @@
         this.newIssue = false
         this.$emit('refresh-facility')
       },
-    //  log(e){
-    //     console.log(e)
-    //   },
+     log(e){
+        console.log(e)
+      },
       issueUpdated(issue, refresh=true) {
         let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)

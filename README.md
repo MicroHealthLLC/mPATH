@@ -4,18 +4,26 @@ Agile portfolio management for large programs and projects including those geogr
 
 # update centos
 
-        yum clean all &&  yum update -y
+      
 
         yum-config-manager --enable epel
+        
+        yum install epel-release
+        
+        yum install deltarpm
+        
+        yum clean all &&  yum update -y
+        
+        Reboot as there are likely kernel updates
 
 
 # install ruby
 
-        gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+        curl -sSL https://rvm.io/pkuczynski.asc | sudo gpg2 --import -
         
         curl -sSL https://get.rvm.io | sudo bash -s stable
-
-        usermod -a -G rvm `username'
+        
+        usermod -a -G rvm `whoami`
 
         export PATH="$PATH:$HOME/.rvm/bin"
 
@@ -27,45 +35,10 @@ Agile portfolio management for large programs and projects including those geogr
 
         bash -l -c "rvm use 2.6.6 --default"
 
-# Install Mysql
-        yum install mariadb-server mariadb
-
-        yum install mysql-devel
-
-        systemctl start mariadb
-
-        systemctl enable mariadb
-
-        mysql_secure_installation
-
-        mysql -u root -p
-
-        create database mpath_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
-      
-        GRANT ALL PRIVILEGES ON mpath_dev.* TO 'user'@'localhost';
-
-        exit
 
 # be sure git is installed
         yum install git
-
-#create /var/www and from there 
-        mkdir /var/www
         
-        cd /var/www/
-
-        git clone https://github.com/MicroHealthLLC/mPATH
-
-        vi /var/www/mPATH/config/database.yml
-
---enter the password for mysql where it says password then save and exit
-
-# generate your secrets for config/secrets.yml
-
-        rake secret
-
-put that output in config/secrets.yml
-
 # install passenger phusion
 
         yum install -y pygpgme curl
@@ -73,23 +46,34 @@ put that output in config/secrets.yml
         curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
 
         yum install -y  passenger || sudo yum-config-manager --enable cr && sudo yum install -y  passenger
+        
+        yum install passenger-devel-6.0.9
+        
+        yum install libcurl-devel
+        
+        gem install rack
 
 # install nginx
+        
+        groupadd nginx
+        
+        useradd -g nginx nginx
+       
         passenger-install-nginx-module
+        
 choose one.  install it into the directory of your choice.  but for the conf below, chose /etc/nginx/
 
 # edit nginx.conf
 
         nano /etc/nginx/conf/nginx.conf
 
-Below "http {" section, add these
+Below "http {" section, add these if not already present
 
         passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
         passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
         passenger_instance_registry_dir /var/run/passenger-instreg;
 
-Below "server {" section
-add these
+Below "server {" section add these
 
         passenger_enabled on;
         rails_env production;
@@ -120,25 +104,68 @@ you will have to create an nginx service now
 ----end---
 
         enable the service
+        
+        systemctl daemon-reload 
 
         systemctl enable nginx
 
         then start the service 
+        
+        make sure PassengerAgent is executable
+        
+        chmod +x /usr/lib64/passenger/support-binaries/*
+        
+        Be sure the logs are sent to /var/logs/nginx in nginx.conf or your conf file
+        
+        Be sure you have the log directory there
+        
+        mkdir /var/log/nginx
+        
+        chown -R nginx:nginx /var/log/nginx
 
         service nginx start
+        
+        If you still have permission problems be sure to check selinux
+        
+# Install Mysql
+        yum install mariadb-server mariadb
+
+        yum install mysql-devel
+
+        systemctl start mariadb
+
+        systemctl enable mariadb
+
+        mysql_secure_installation
+
+
+#create /var/www and from there 
+        mkdir /var/www
+        
+        cd /var/www/
+
+        git clone https://github.com/MicroHealthLLC/mPATH
+
+        nano /var/www/mPATH/config/database.yml
+
+--enter the password for mysql where it says password then save and exit
 
 # go to the cloned directory 
         cd /var/www/mPATH
 
         gem install rails
 
-        gem install bundler
+        gem install bundler -v 2.1.4
 
-        yum install nodejs
-
-        yarn install
-
+        yum install nodejs - https://linuxize.com/post/how-to-install-yarn-on-centos-7/
+        
         bundle install
+
+        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/       
+        
+        rake secret  THEN put that output in config/secrets.yml
+        
+        rails db:create RAILS_ENV=production
         
         rake db:migrate RAILS_ENV=production
         
@@ -151,10 +178,12 @@ you will have to create an nginx service now
         Service nginx restart
 
 
+
+
 # Setup
 go to https://your-url/admin
 
-login with temp account admin@example.com with password password
+login with temp account admin@example.com with password adminPa$$w0rd
 
 Change, configure and customize your instance.  callback uri for socialmedia setup below.
 

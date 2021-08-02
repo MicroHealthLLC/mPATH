@@ -444,7 +444,7 @@
                   >                
             </span>  
           </td>
-         <td v-if="task.notes.length > 0">       
+        <td v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
           {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -452,7 +452,7 @@
             {{task.lastUpdate.body}}
           </span>         
         </td>  
-         <td v-else >No Updates</td> 
+         <td v-else >No Updates</td>      
         </tr>
       </tbody>
     </table>
@@ -597,12 +597,15 @@
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
       },
+<<<<<<< HEAD
     showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
       // log(e){
       //   console.log(e)
       // },
+=======
+>>>>>>> acc1c30de26b086f60cf4ee9a8d37d7b6e82d580
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },

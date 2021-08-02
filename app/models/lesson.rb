@@ -149,6 +149,8 @@ class Lesson < ApplicationRecord
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
+    sorted_notes = notes.sort_by(&:created_at).reverse
+
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -162,9 +164,9 @@ class Lesson < ApplicationRecord
       lesson_details: self.lesson_details.map(&:to_json),
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
-      last_update: latest_update,
-      notes: s_notes.as_json,
-      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      last_update: sorted_notes.first.as_json,
+      notes: sorted_notes.as_json,
+      notes_updated_at: sorted_notes.map(&:updated_at).uniq,
       project_id: facility_project.facility_id,
 
       # Add RACI user names

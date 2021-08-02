@@ -43,13 +43,14 @@
                 <!-- <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>           -->
             </span>          
          </td>
-        <td class="oneSeven" v-if="issue.notes.length > 0">       
+       <td class="oneSeven" v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span class="truncate-line-five">
+          <span>
             {{issue.lastUpdate.body}}
           </span>         
+        </td>  
          <td class="oneSeven" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->

@@ -234,7 +234,7 @@ class Task < ApplicationRecord
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
-
+    
     sorted_notes = notes.sort_by(&:created_at).reverse
     self.as_json.merge(
       class_name: self.class.name,

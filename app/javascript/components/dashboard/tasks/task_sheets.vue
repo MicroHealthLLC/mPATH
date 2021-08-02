@@ -45,18 +45,17 @@
                       task.progress < 100 "             
                     >
                   No flags at this time         
-            </span>
-              
+            </span>              
         </td>
-          <td class="twentyTwo" v-if="task.notes.length > 0">       
+        <td class="twentyTwo" v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
           {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span class="truncate-line-five">
+          <span>
             {{task.lastUpdate.body}}
           </span>         
         </td>  
-         <td class="twentyTwo" v-else >No Updates</td>     
+         <td class="twentyTwo" v-else >No Updates</td>      
       </tr>
 
       <!-- The context-menu appears only if table row is right-clicked -->

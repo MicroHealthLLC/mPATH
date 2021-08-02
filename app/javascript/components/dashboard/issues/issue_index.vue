@@ -219,7 +219,7 @@
           <td>{{issue.progress + "%"}}</td>
           <td v-if="(issue.dueDate) <= now">X</td>
           <td v-else></td>
-           <td v-if="issue.notes.length > 0">       
+         <td v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 

@@ -47,6 +47,7 @@
                      risk.important == false && 
                      risk.watched == false &&
                      risk.reportable == false &&
+                     risk.important == false &&
                      risk.isOverdue == false &&
                      risk.onHold == false &&  
                      risk.draft == false && 
@@ -55,6 +56,7 @@
                     No flags at this time           
                 </span>          
          </td>  
+<<<<<<< HEAD
         <td class="twenty" v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -64,6 +66,17 @@
           </span>         
         </td>  
          <td class="twenty"  v-else >No Updates</td> 
+=======
+         <td class="twenty" v-if="risk.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
+          {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{risk.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td  class="twenty" v-else >No Updates</td> 
+>>>>>>> acc1c30de26b086f60cf4ee9a8d37d7b6e82d580
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu

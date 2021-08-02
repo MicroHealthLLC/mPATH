@@ -34,6 +34,10 @@ export default new Vuex.Store({
     portfolioModule
   },
   state: {
+<<<<<<< HEAD
+=======
+    // advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
+>>>>>>> acc1c30de26b086f60cf4ee9a8d37d7b6e82d580
     advancedFilter: [],
     contentLoaded: false,
     toggleRACI: true,
@@ -1041,6 +1045,8 @@ export default new Vuex.Store({
     },
 
     filteredFacilities: (state, getters) => (_status='active') => {
+      // return getters.facilities;
+
       return _.filter(getters.facilities, (facility) => {
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
@@ -1786,7 +1792,7 @@ export default new Vuex.Store({
     },
 
     async fetchDashboardData({dispatch, commit}, {id, cb}) {
-      await dispatch('fetchProjects')
+      // await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
       commit('setContentLoaded', true)
       // commit('setToggleRACI', false)
