@@ -298,16 +298,20 @@ describe('Admin Panel Risk', function() {
 
   it('Search Risk by Project', function() {
     cy.get('#index_table_risks').should('be.visible')
-    cy.get('#q_facility_project_project_id').select('Test Project')
+    cy.get("#select2-q_facility_project_project_id-container").click().type("Test Facility 1")
+    cy.get("#select2-q_facility_project_project_id-results > li").first().click()
+    // cy.get('#q_facility_project_project_id').select('Test Project')
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#q_facility_project_project_id').select('Any')
-    cy.get('[type=submit]').first().contains('Filter').click()
+
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
     cy.get('#logout').click()
   })
 
   it('Search Task contains Facility', function() {
+
+    cy.get("#select2-q_facility_project_facility_id-container").click().type("Test Project")
+    cy.get("#select2-q_facility_project_project_id-results > li").first().click()
+
     cy.get('#q_facility_project_facility_id').select('Test Facility 1')
     // cy.get('#q_facility_project_facility_facility_name').type('Test Facility 1').should('have.value', 'Test Facility 1')
     cy.get('[type=submit]').first().contains('Filter').click()
@@ -333,16 +337,29 @@ describe('Admin Panel Risk', function() {
 
   it('Search Risk by Owned by', function() {
     cy.get('#index_table_risks').should('be.visible')
-    cy.get('#q_user_id').select('Test1 Admin')
+
+    // cy.get('#q_user_id').select('Test1 Admin')
+    cy.get("[placeholder='Select owned by user']").click().type('Test1 Admin')
+    cy.get("#select2-q_user_id-results > li").first().click()
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 4)
 
-    cy.get('#q_user_id').select('Test2 Client')
-    cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 4)
+    // cy.get(".clear_filters_btn").click()
+    // cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
+    cy.get('#logout').click()
+  })
 
-    cy.get(".clear_filters_btn").click()
+  it('Search Risk by checklist user', function() {
+    cy.get('#index_table_risks').should('be.visible')
+
+    // cy.get('#q_user_id').select('Test2 Client')
+    cy.get("[placeholder='Select Checklist user']").click().type('Test2 Client')
+    cy.get("#select2-q_checklists_user_id-results > li").first().click()
+    cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
+
+    // cy.get(".clear_filters_btn").click()
+    // cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
     cy.get('#logout').click()
   })
 

@@ -241,6 +241,8 @@ test_risk_1 = Risk.find_or_create_by(
   watched: true,
   progress: 10
 )
+test_risk_1.checklists.create(text: "Risk Checklist1", user_id: admin.id)
+test_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_1.id, user_id: admin.id)
 
@@ -259,6 +261,8 @@ new_risk_1 = Risk.find_or_create_by(
   watched: false,
   progress: 70
 )
+new_risk_1.checklists.create(text: "Risk Checklist1", user_id: admin.id)
+new_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_1.id, user_id: client.id)
 
@@ -365,6 +369,8 @@ test_risk_2 = Risk.find_or_create_by(
   watched: true,
   progress: 40
 )
+test_risk_2.checklists.create(text: "Risk Checklist1", user_id: client.id)
+test_risk_2.checklists.create(text: "Risk Checklist1", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_2.id, user_id: admin.id)
 
@@ -383,6 +389,8 @@ new_risk_2 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
+new_risk_2.checklists.create(text: "Risk Checklist2", user_id: client.id)
+new_risk_2.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
 
@@ -494,6 +502,8 @@ test_risk_3 = Risk.find_or_create_by(
   watched: true,
   progress: 70
 )
+test_risk_3.checklists.create(text: "Risk Checklist2", user_id: client.id)
+test_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_3.id, user_id: admin.id)
 
@@ -512,6 +522,8 @@ new_risk_3 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
+new_risk_3.checklists.create(text: "Risk Checklist2", user_id: client.id)
+new_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_3.id, user_id: client.id)
 
@@ -614,6 +626,8 @@ test_risk_4 = Risk.find_or_create_by(
   risk_stage_id: risk_stage.id,
   progress: 100
 )
+test_risk_4.checklists.create(text: "Risk Checklist4", user_id: admin.id)
+test_risk_4.checklists.create(text: "Risk Checklist4", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_4.id, user_id: admin.id)
 
@@ -632,5 +646,7 @@ new_risk_4 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
+new_risk_4.checklists.create(text: "Risk Checklist5", user_id: admin.id)
+new_risk_4.checklists.create(text: "Risk Checklist5", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_4.id, user_id: client.id)
