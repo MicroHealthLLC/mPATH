@@ -182,7 +182,7 @@
             <h5>X</h5>
           </td>
           <td v-else></td>
-         <td v-if="task.notes.length > 0">       
+          <td v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
           {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 

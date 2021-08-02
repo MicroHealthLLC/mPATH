@@ -444,7 +444,7 @@
                   >                
             </span>  
           </td>
-         <td v-if="task.notes.length > 0">       
+        <td v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
           {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -452,7 +452,7 @@
             {{task.lastUpdate.body}}
           </span>         
         </td>  
-         <td v-else >No Updates</td> 
+         <td v-else >No Updates</td>      
         </tr>
       </tbody>
     </table>

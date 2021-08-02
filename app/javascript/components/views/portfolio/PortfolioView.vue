@@ -357,15 +357,19 @@
         <td> {{ task.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="task.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger mr-1"></i></span>
-            <span v-if="task.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-if="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
             <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+            <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
+            <span v-if="task.in_progress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
+
+              
            
-            <span v-if="
+            <!-- <span v-if="
                       task.important == false &&
                       task.reportable == false &&
                       task.watched == false &&
@@ -375,8 +379,8 @@
                       task.draft == false && 
                       task.progress < 100 "             
                     >
-                  No flags at this time         
-              </span>              
+                       
+              </span>               -->
           </td>
             <td>{{ task.category }}</td>
       
@@ -777,23 +781,15 @@
         <td class="text-center">
             
             <span v-if="issue.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger"></i> </span>
-            <span v-if="issue.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span> 
+            <span v-if="issue.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span> 
             <span v-if="issue.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="issue.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
-            <span v-if="
-                      issue.important == false &&
-                      issue.reportable == false &&
-                      issue.watched == false &&
-                      issue.isOverdue == false &&
-                      issue.onHold == false &&  
-                      issue.draft == false && 
-                      issue.progress < 100 "             
-                    >
-                  No flags at this time         
-              </span>              
+            <span v-if="issue.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
+            <span v-if="issue.in_progress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span>
+           
           </td>
          <td>{{ issue.issue_type }}</td>
           <td>            
@@ -1216,15 +1212,17 @@
         <td> {{ risk.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
-            <span v-if="risk.progress == 100" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
+            <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
             <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="risk.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+            <span v-if="risk.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
+            <span v-if="risk.in_progress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
             
-            <span v-if="
+            <!-- <span v-if="
                       risk.important == false &&
                       risk.reportable == false &&
                       risk.watched == false &&
@@ -1235,7 +1233,7 @@
                       risk.progress < 100 "             
                     >
                   No flags at this time         
-              </span>              
+              </span>               -->
           </td>
            <td>{{ risk.category }}</td>
         <!-- <td v-if="risk.last_update !== null">{{risk.last_update.body}}</td> -->
@@ -2138,7 +2136,7 @@ export default {
     taskVariation() {
       let planned = _.filter(
         this.tasksObj,
-        (t) => t && t.planned == true
+        (t) => t && t.planned
       );     
      let taskDrafts = _.filter(
      this.tasksObj,
@@ -2159,7 +2157,7 @@ export default {
               
       let completed = _.filter(
       this.tasksObj,
-        (t) => t && t.completed == true
+        (t) => t && t.completed
       );
       let inProgress = _.filter(
      this.tasksObj,
@@ -2218,7 +2216,7 @@ export default {
       );      
       let completed = _.filter(
         this.issuesObj,
-        (t) => t && t.completed == true
+        (t) => t && t.completed
       );
       let inProgress = _.filter(
          this.issuesObj,

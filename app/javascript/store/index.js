@@ -1041,6 +1041,8 @@ export default new Vuex.Store({
     },
 
     filteredFacilities: (state, getters) => (_status='active') => {
+      // return getters.facilities;
+
       return _.filter(getters.facilities, (facility) => {
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
@@ -1786,7 +1788,7 @@ export default new Vuex.Store({
     },
 
     async fetchDashboardData({dispatch, commit}, {id, cb}) {
-      await dispatch('fetchProjects')
+      // await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
       commit('setContentLoaded', true)
       // commit('setToggleRACI', false)

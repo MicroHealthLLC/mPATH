@@ -245,7 +245,7 @@
           <td v-else></td>
           <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="risk.notes.length > 0">       
+           <td v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
