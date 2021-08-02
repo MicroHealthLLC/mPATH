@@ -15,6 +15,7 @@ class Issue < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
+  before_update :validate_other_states_on_draft, if: Proc.new {|issue| issue.draft_changed? && issue.draft == true }
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
   attr_accessor :file_links
@@ -512,5 +513,12 @@ class Issue < ApplicationRecord
 
   def init_kanban_order
     self.kanban_order = facility_project.issues.where(issue_stage_id: issue_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.issue_stage_id.present?
+  end
+
+  private
+
+  def validate_other_states_on_draft
+    return unless self.on_hold
+    self.on_hold = false
   end
 end
