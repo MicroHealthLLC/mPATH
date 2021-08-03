@@ -1918,6 +1918,8 @@ export default {
         // This and last 2 filters are for Filtered Tags
          if (this.hideWatchedTasks  && !this.hideBriefedTasks && !this.hideImportantTasks) {
            return task.watched
+        } if (this.hideWatchedTasks && !this.hideBriefedTasks && this.hideImportantTasks) {
+           return task.watched + task.important 
         } if (this.hideWatchedTasks && this.hideBriefedTasks && !this.hideImportantTasks) {          
            return  task.watched + task.reportable
         } if (this.hideWatchedTasks && this.hideBriefedTasks && this.hideImportantTasks) {          
@@ -2004,9 +2006,11 @@ export default {
       }).filter(issue => {
          if (this.hideWatchedIssues && !this.hideBriefedIssues && !this.hideImportantIssues) {
            return issue.watched
+        } if (this.hideWatchedIssues && !this.hideBriefedIssues && this.hideImportantIssues) {
+           return issue.watched + issue.important 
         } if (this.hideWatchedIssues && this.hideImportantIssues && !this.hideBriefedIssues ) {          
            return issue.important + issue.watched
-       } if (this.hideWatchedIssues && this.hideImportantIssues && this.hideBriefedIssues ) {          
+        } if (this.hideWatchedIssues && this.hideImportantIssues && this.hideBriefedIssues ) {          
            return issue.important + issue.watched + issue.reportable
         } else return true    
        
@@ -2092,9 +2096,11 @@ export default {
       }).filter(risk => {
          if (this.hideWatchedRisks && !this.hideBriefedRisks && !this.hideImportantRisks) {
            return risk.watched
+        } if (this.hideWatchedRisks && !this.hideBriefedRisks && this.hideImportantRisks) {
+          return risk.watched + risk.important        
         } if (this.hideWatchedRisks && this.hideImportantRisks && !this.hideBriefedRisks ) {          
            return risk.important + risk.watched
-       } if (this.hideWatchedRisks && this.hideImportantRisks && this.hideBriefedRisks ) {          
+        } if (this.hideWatchedRisks && this.hideImportantRisks && this.hideBriefedRisks ) {          
            return risk.important + risk.watched + risk.reportable
         } else return true    
        
