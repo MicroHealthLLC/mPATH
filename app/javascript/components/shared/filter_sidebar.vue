@@ -455,7 +455,7 @@ export default {
       isLoading: false,
       activeName: 'first',
       exporting: false,
-      showFilters: false,
+      // showFilters: false,
       datePicker: false,
       favoriteFilterData: {id: null, name: null, shared: false},
       favoriteFilterOptions: [],
@@ -481,6 +481,7 @@ export default {
       'getTaskIssueProgressStatusFilter',
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
+      'getShowAdvancedFilter',
       'projectStatusFilter',
 
       'taskTypes',
@@ -516,6 +517,7 @@ export default {
       'activeProjectUsers',
       'statuses',
       'getTaskIssueOverdueOptions',
+      'getShowAdvancedFilter',
       'taskIssueOverdueFilter',
       'activeFacilityGroups',
       'unFilterFacilities',
@@ -770,7 +772,7 @@ export default {
     },
 
     filterBarStyle() {
-      if (this.showFilters) return {}
+      if (this.getShowAdvancedFilter) return {}
       return {
         transform: 'translateX(-685px)'
       }
@@ -792,6 +794,7 @@ export default {
       'setTaskIssueProgressFilter',
       'setAdvancedFilter',
       'updateMapFilters',
+      'setShowAdvancedFilter',
       'setTaskIssueOverdueFilter',
       'setProjectStatusFilter',
       'setTaskTypeFilter',
@@ -815,6 +818,7 @@ export default {
       'setRiskStageFilter',
       'setRiskApproachFilter',
       'setRiskPriorityLevelFilter',
+      'setShowAdvancedFilter',
       'setTasksPerPageFilter',
       'setRisksPerPageFilter',
       'setIssuesPerPageFilter',
@@ -839,10 +843,10 @@ export default {
     //   console.log("item in " + e)
     // },
     handleOutsideClick() {
-      if (this.showFilters && !this.datePicker) this.showFilters = false
+      if (this.getShowAdvancedFilter && !this.datePicker) this.getShowAdvancedFilter = false
     },
     toggleFilters() {
-      this.showFilters = !this.showFilters
+      this.setShowAdvancedFilter(!this.getShowAdvancedFilter)
     },
     updateProjectQuery(selected, index) {
       window.location.pathname = "/projects/" + selected.id

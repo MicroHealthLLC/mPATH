@@ -3,7 +3,7 @@
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
-         <div class="ml-2 task-search-bar w-100">
+         <div class="ml-3 task-search-bar w-75">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
             type="search"          
@@ -14,9 +14,18 @@
             data-cy="search_tasks"
         >
           <el-button slot="prepend" icon="el-icon-search"></el-button>
-        </el-input>
-        </div>
-        <div class="mx-1 w-75">
+        </el-input>      
+        </div>      
+       <div class="ml-2">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h p-2"></i>      
+        </span>    
+         </div>
+        
+       
+        <div class="mx-1 w-75">     
+      
           <label class="font-sm my-0">Category</label>
           <el-select
            v-model="C_taskTypeFilter"
@@ -485,6 +494,8 @@
         now: new Date().toISOString(),
         tasksQuery: '',
         currentPage:1,
+        showFilters: false,
+        datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
@@ -505,6 +516,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setToggleRACI',
+        'setShowAdvancedFilter',
         'setTaskForManager',
         'setShowCount',
         // 7 States
@@ -583,6 +595,9 @@
       //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
         this.setHideOverdue(!this.getHideOverdue)    
       },
+      toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
+      },
       lastNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersLastName'
         this.sortedAccountableUser = 'accountableUsersLastName'
@@ -606,7 +621,7 @@
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
-      exportToPdf() {
+         exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#taskSheetsList1"})
@@ -642,6 +657,7 @@
         'taskTypes',
         'viewPermit',
         'getToggleRACI',
+        'getShowAdvancedFilter',
 
         'getShowCount',
         // 7 States
@@ -879,7 +895,7 @@
         }
         
       },
-       C_toggleComplete: {                  
+        C_toggleComplete: {                  
         get() {
          return this.getHideComplete               
         },
@@ -999,7 +1015,7 @@
     margin-top: 50px;
     margin-left: 2px;
   }
-  #printBtn, .addBtns {
+  #printBtn, .addBtns, .filterToggle {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #total {

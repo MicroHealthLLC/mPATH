@@ -38,6 +38,7 @@ export default new Vuex.Store({
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
+    showAdvancedFilter: false, 
     currentProject: null,
     lastCalendarFocus: '',
     mapLoading: true,
@@ -332,6 +333,9 @@ export default new Vuex.Store({
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
+
+    
+    setShowAdvancedFilter: (state, show) => state.showAdvancedFilter = show, 
 
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
     setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
@@ -801,6 +805,7 @@ export default new Vuex.Store({
     contentLoaded: state => state.contentLoaded,
     getToggleRACI: state => state.toggleRACI,
     getShowAllEventsToggle: state => state.showAllEventsToggle,
+    getShowAdvancedFilter: (state) => state.showAdvancedFilter,
     getLastFocusFilter: state => state.lastCalendarFocus,
 
     mapLoading: state => state.mapLoading,

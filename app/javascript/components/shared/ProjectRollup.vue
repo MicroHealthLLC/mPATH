@@ -41,32 +41,100 @@
 
             <div v-if="contentLoaded">
                <div class="row mt-1 text-center">
-                <div class="col p-0 mb-0">                  
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+               
+                <div class="col p-0 mb-0">  
+                                       
+                  <span class="d-block">
+                    <el-popover
+                    placement="top-start"
+                    title="Complete"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks that have achieved 100% progress."> 
+                   <i class="fas fa-clipboard-check text-success" slot="reference">  </i>                        
+                     </el-popover> 
                   <span class="smallerFont d-block">COMPLETE</span>
+                 </span>
+                
                  </div>
+                  
                  <div class="col p-0 mb-0">
-                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+                  <span class="d-block">
+                    <el-popover
+                    placement="top-start"
+                    title="In Progress"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks with a start date of today (or prior to today) that are not ongoing, on hold, nor overdue (auto-assigned)."> 
+                    <i class="far fa-tasks text-primary" slot="reference"></i>                    
+                    </el-popover>
+                    </span>
                      <span class="smallerFont d-block"> IN PROGRESS</span>           
                 </div>
                  <div class="col p-0 mb-0">                  
-                  <span class="d-block" v-tooltip="`PLANNED`"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                  <span class="d-block">
+                    <el-popover
+                    placement="top-start"
+                    title="Planned"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks that have a future start date and are not drafts (auto-assigned)."> 
+                    <i class="fas fa-calendar-check text-info font-md" slot="reference"></i>
+                    </el-popover>
+                    </span>
                       <span class="smallerFont d-block">PLANNED</span>
                 </div>
-                 <div class="col p-0 mb-0">
-                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                 <div class="col p-0 mb-0">            
+                  <span class="d-block">
+                    <el-popover
+                    placement="top-start"
+                    title="Complete"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks that have gone beyond their due dates (auto-assigned)."> 
+                     <i class="fas fa-calendar text-danger" slot="reference"></i>
+                    </el-popover>
+                     </span>
                     <span class="smallerFont d-block">OVERDUE </span>               
                 </div>
                  <div class="col p-0 mb-0">
-                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                 <span class="d-block">
+                    <el-popover
+                    placement="top-start"
+                    title="Complete"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks that have been temporarily halted until further notice.">                    
+                   <i class="fas fa-pause-circle text-primary font-md" slot="reference"></i>
+                    </el-popover>
+                   </span>
                      <span class="smallerFont d-block">ON HOLD  </span>           
                 </div>
                  <div class="col p-0 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span  class="d-block">
+                     <el-popover
+                    placement="top-start"
+                    title="Draft"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks that are in draft state are unofficial and do not hold any other statuses."> 
+                  <i class="fas fa-pencil-alt text-warning font-md" slot="reference"></i>
+                     </el-popover>
+                  </span>
                      <span class="smallerFont d-block">DRAFTS</span>               
                 </div>
                  <div class="col p-0 mb-0">
-                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
+                   <span class="d-block">
+                    <el-popover
+                    placement="top-start"
+                    title="Ongoing"
+                    width="130"
+                    trigger="hover"
+                    content="Tasks that are longterm or continous in nature and are not tracked by a progress %."> 
+                     
+                     <i class="fas fa-retweet text-success" slot="reference"></i>
+                    </el-popover>
+                     </span>
                     <span class="smallerFont d-block">ONGOING </span>    
                 </div>  
              

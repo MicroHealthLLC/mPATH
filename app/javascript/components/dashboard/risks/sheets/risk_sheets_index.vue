@@ -2,7 +2,7 @@
   <div id="risks-index" class="my-4 ml-1" data-cy="risk_sheet_index">
   <div v-if="_isallowed('read')">
     <div class="d-flex align-item-center  w-70 float-right filters-wrapper">
-      <div class="ml-2 risk-search-bar w-100">
+      <div class="ml-3 risk-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
           type="search"          
@@ -15,6 +15,12 @@
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>
         </div>
+        <div class="ml-2">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h p-2"></i>      
+        </span>    
+         </div>
       <div class="mx-1 w-75">
         <label class="font-sm my-0">Category</label>
         <el-select
@@ -574,6 +580,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setRiskApproachFilter',
+        'setShowAdvancedFilter',
         'setRiskForManager',
         'SET_RISK_FORM_OPEN',
         'SET_SELECTED_RISK',
@@ -675,6 +682,9 @@
       showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
+      toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
+      },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -691,6 +701,7 @@
     computed: {
       ...mapGetters([
         'getRiskPriorityLevelFilter',
+        'getShowAdvancedFilter',
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',

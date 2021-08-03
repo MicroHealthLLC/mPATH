@@ -40,7 +40,6 @@ const portfolioModule = {
     hideBriefed: false,
     hideImportant: false,
     hideWatched: false,
-
   
   }),
   actions: {
@@ -237,10 +236,6 @@ const portfolioModule = {
     getHideWatched: (state) => state.hideWatched,
     getHideBriefed: (state) => state.hideBriefed,
     getHideImportant: (state) => state.hideImportant,
-
-
-
-
   },
 };
 
