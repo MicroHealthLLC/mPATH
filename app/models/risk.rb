@@ -20,7 +20,7 @@ class Risk < ApplicationRecord
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
-  before_update :validate_other_states_on_draft, if: Proc.new {|risk| risk.draft_changed? && risk.draft == true }
+  before_update :validate_states
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
@@ -653,8 +653,11 @@ class Risk < ApplicationRecord
     self.priority_level = self.probability * self.impact_level
   end
 
-  def validate_other_states_on_draft
-    return if self.on_hold == false && self.ongoing == false
-    self.on_hold = self.ongoing = false
+  def validate_states
+    if self.draft?
+      self.ongoing = self.on_hold = false
+    elsif self.on_hold?
+      self.ongoing = false
+    end
   end
 end
