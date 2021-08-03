@@ -15,7 +15,7 @@ class Issue < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
-  before_update :validate_other_states_on_draft, if: Proc.new {|issue| issue.draft_changed? && issue.draft == true }
+  before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
   attr_accessor :file_links
@@ -517,8 +517,7 @@ class Issue < ApplicationRecord
 
   private
 
-  def validate_other_states_on_draft
-    return unless self.on_hold
-    self.on_hold = false
+  def validate_states
+    self.on_hold = false if self.draft?
   end
 end
