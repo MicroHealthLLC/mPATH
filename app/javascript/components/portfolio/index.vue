@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div
+    v-loading="!portfolioTasksLoaded"
+    element-loading-text="Fetching Portfolio Viewer data. Please wait..."
+    :class="[!portfolioTasksLoaded ? 'vh100': '']"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">   
     <!-- <tabsbar></tabsbar> -->
     <!-- <filter-sidebar v-if="contentLoaded"></filter-sidebar> -->
     <router-view></router-view>
@@ -32,7 +37,7 @@ export default {
     ...mapMutations(["setUnfilteredFacilities"]),
   },
   computed: {
-    ...mapGetters(["contentLoaded", "facilities", "getUnfilteredFacilities"]),
+    ...mapGetters(["facilities", "portfolioTasksLoaded","getUnfilteredFacilities"]),
   },
   updated() {
     if (this.contentLoaded && this.getUnfilteredFacilities.length === 0) {
@@ -41,3 +46,10 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.vh100{
+  height: 100vh;
+  width: 100vw;
+}
+</style>
