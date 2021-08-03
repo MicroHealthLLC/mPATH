@@ -14,6 +14,7 @@ class Task < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
+  before_update :validate_other_states_on_draft, if: Proc.new {|task| task.draft_changed? && task.draft == true }
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
   after_save :update_facility_project
@@ -546,5 +547,12 @@ class Task < ApplicationRecord
 
   def init_kanban_order
     self.kanban_order = facility_project.tasks.where(task_stage_id: task_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.task_stage_id.present?
+  end
+
+  private
+
+  def validate_other_states_on_draft
+    return if self.on_hold == false && self.ongoing == false
+    self.on_hold = self.ongoing = false
   end
 end
