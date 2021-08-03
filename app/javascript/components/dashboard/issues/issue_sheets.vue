@@ -32,19 +32,7 @@
             <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>  
             <span v-if="issue.planned" v-tooltip="`Planned`"> <i class="fas fa-calendar-check text-info mr-1"></i></span>
             <span v-if="issue.inProgress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span> 
-            <!-- <span v-if="   
-                  issue.watched == false &&        
-                  issue.important == false &&  
-                  issue.reportable == false &&        
-                  issue.isOverdue == false &&
-                  issue.onHold == false &&  
-                  issue.draft == false && 
-                  issue.progress < 100 "             
-                >
-                No flags at this time
-   
-            </span>           -->
-         </td>
+          </td>
        <td class="oneSeven" v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         

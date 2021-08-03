@@ -89,13 +89,13 @@
           class="ml-2 btn btn-md btn-info total-table-btns"
           data-cy="lessons_total"
         >
-          Total: {{ projectLessons.length }}
+          Total: {{ variation.count.val }}
         </button>
       </div>
       <!-- Lessons Learned Table -->
       <div style="margin-bottom:50px" data-cy="lessons_table">
         <table
-          v-if="filteredLessons.length > 0"
+          v-if="variation.count.val > 0"
           class="mb-3 w-100"
           id="lessonsPdf"
           ref="table"
@@ -304,6 +304,7 @@ import LessonContextMenu from "./../../shared/LessonContextMenu";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import moment from "moment";
+import { counter } from '@fortawesome/fontawesome-svg-core';
 Vue.prototype.moment = moment;
 
 export default {
@@ -618,7 +619,12 @@ export default {
         completed: {
           count: completed.length,
           // percentage: Math.round(completed_percent),
-        },        
+        },  
+        count: {
+         val: completed.length + drafts.length
+          
+        }
+
       };
     },
     lessonsPerPage: {
