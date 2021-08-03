@@ -805,13 +805,6 @@
          return t.draft == false
        } else return true   
 
-
-       }).filter(t => {
-       if (this.getHideOngoing == true) {
-          return t.ongoing == false
-       } else return true       
-
-
         }).filter(t => {
          if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
           return t.reportable
