@@ -37,7 +37,7 @@
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
+          <span class="truncate-line-five">
             {{issue.lastUpdate.body}}
           </span>         
         </td>  
@@ -297,7 +297,7 @@
   .truncate-line-five
   {
     display: -webkit-box;
-    -webkit-line-clamp: 5;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;  
     overflow: hidden;
     &:hover
