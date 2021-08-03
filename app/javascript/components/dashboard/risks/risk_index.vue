@@ -172,7 +172,7 @@
                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
                   </div>  
 
-                   <div class="d-inline-block mx-0">
+          <div class="d-inline-block mx-0">
              <!-- <v-app id="app"> -->
              <v-checkbox     
            v-model="C_showCountToggle"     
@@ -196,12 +196,12 @@
         </button>
      </div>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredRisks.length > 0">
+          <div v-if="filteredRisks.filtered.risks.length  > 0">
             <hr/>
             <risk-show
-              v-for="(risk, i) in filteredRisks"         
+              v-for="(risk, i) in filteredRisks.filtered.risks"         
               class="riskHover"        
-              :class="{'b_border': !!filteredRisks[i+1]}"
+              :class="{'b_border': !!filteredRisks.filtered.risks[i+1]}"
               :key="risk.id"
               :risk="risk"
               :from-view="from"
@@ -231,7 +231,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(risk, i) in filteredRisks" :key="i">
+        <tr v-for="(risk, i) in filteredRisks.filtered.risks" :key="i">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
@@ -245,7 +245,7 @@
           <td v-else></td>
           <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="risk.notes.length > 0">       
+           <td v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -501,8 +501,12 @@
           return valid;
         })), ['dueDate'])
 
-   
-      return risks.filter(t => {
+     return {
+       unfiltered: {
+            risks
+            },
+       filtered: {
+           risks: risks.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
@@ -568,43 +572,44 @@
        } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
           return t.important + t.reportable + t.watched
         } else return true         
-         
-       })  
-      },
-         variation() {
-    let planned = _.filter(
-      this.filteredRisks,
+       }),
+      }
+     }  
+    },
+    variation() {
+     let planned = _.filter(
+      this.filteredRisks.unfiltered.risks,
         (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
-      this.filteredRisks,
+      this.filteredRisks.unfiltered.risks,
         (t) => t && t.draft == true
       );  
-      let important = _.filter(
-     this.filteredRisks,
+       let important = _.filter(
+       this.filteredRisks.unfiltered.risks,
         (t) => t && t.important == true
       ); 
-        let briefings = _.filter(
-      this.filteredRisks,
+      let briefings = _.filter(
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-     this.filteredRisks,
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.watched == true
       );
               
-      let completed = _.filter(
-     this.filteredRisks,
+    let completed = _.filter(
+      this.filteredRisks.unfiltered.risks,
         (t) => t && t.completed == true
       );
     let inProgress = _.filter(
-    this.filteredRisks,
+     this.filteredRisks.unfiltered.risks,
         (t) => t && t.inProgress == true
       );
-     let onHold = _.filter(this.filteredRisks, (t) => t && t.onHold == true );
-     let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing == true );
-     let overdue = _.filter(this.filteredRisks, (t) => t.isOverdue == true);
+     let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
+     let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
+     let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
 
       return {
         planned: {

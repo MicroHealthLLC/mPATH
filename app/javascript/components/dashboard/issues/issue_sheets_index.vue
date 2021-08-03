@@ -209,11 +209,11 @@
            </span>
          </button>
          <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="issue_total">
-          Total: {{filteredIssues.length}}
+          Total: {{filteredIssues.filtered.issues.length}}
          </button>
       </div>
 
-          <div v-if="filteredIssues.length > 0">
+          <div v-if="filteredIssues.filtered.issues.length > 0">
             <div style="margin-bottom:50px" data-cy="issues_table">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
                 <colgroup>
@@ -399,7 +399,7 @@
                 </div>
                 <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
                   <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-                  <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / this.C_issuesPerPage.value) }} </button>
+                  <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.filtered.issues.length / this.C_issuesPerPage.value) }} </button>
                   <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
 
             </div>
@@ -435,7 +435,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(issue, i) in filteredIssues" :key="i">
+          <tr v-for="(issue, i) in filteredIssues.filtered.issues" :key="i">
             <td>{{issue.title}}</td>
             <td>{{issue.issueType}}</td>
             <td>{{issue.facilityName}}</td>
@@ -468,14 +468,14 @@
             >                 
             </span>  
             </td>            
-          <td v-if="issue.notes.length > 0">       
+         <td v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
           <span>
             {{issue.lastUpdate.body}}
           </span>         
-        </td>   
+        </td>  
          <td v-else >No Updates</td> 
           </tr>
         </tbody>
@@ -526,6 +526,7 @@
     },
     mounted() {
       this.loading = false
+      // console.log(this.lastUpdate)
     },
     methods: {
       ...mapMutations([
@@ -572,7 +573,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.C_issuesPerPage.value) < this.filteredIssues.length) this.currentPage++;
+        if((this.currentPage*this.C_issuesPerPage.value) < this.filteredIssues.filtered.issues.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -623,9 +624,9 @@
         this.newIssue = false
         this.$emit('refresh-facility')
       },
-    //  log(e){
-    //     console.log(e)
-    //   },
+     log(e){
+        console.log(e)
+      },
       issueUpdated(issue, refresh=true) {
         let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
@@ -769,8 +770,12 @@
           return valid;
         })), ['dueDate'])
     
-      
-      return issues.filter(t => {
+       return {
+       unfiltered: {
+          issues
+            },
+       filtered: {
+         issues:  issues.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
@@ -799,13 +804,6 @@
        if (this.getHideDraft == true){
          return t.draft == false
        } else return true   
-
-
-       }).filter(t => {
-       if (this.getHideOngoing == true) {
-          return t.ongoing == false
-       } else return true       
-
 
         }).filter(t => {
          if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
@@ -836,44 +834,43 @@
        } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
           return t.important + t.reportable + t.watched
         } else return true          
-        
-         
-       })
-       
+       }),
+       }
+       }       
       },
     variation() {
     let planned = _.filter(
-      this.filteredIssues,
-        (t) => t && t.planned == true
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.planned 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
-     this.filteredIssues,
-        (t) => t && t.draft == true
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.draft
       );  
       let important = _.filter(
-     this.filteredIssues,
-        (t) => t && t.important == true
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.important 
       ); 
         let briefings = _.filter(
-       this.filteredIssues,
-        (t) => t && t.reportable == true
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.reportable 
       );
       let watched = _.filter(
-     this.filteredIssues,
-        (t) => t && t.watched == true
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.watched 
       );
               
       let completed = _.filter(
-      this.filteredIssues,
-        (t) => t && t.completed == true
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.completed 
       );
-    let inProgress = _.filter(
-     this.filteredIssues,
-        (t) => t && t.inProgress == true
+      let inProgress = _.filter(
+      this.filteredIssues.unfiltered.issues,
+        (t) => t && t.inProgress 
       );
-     let onHold = _.filter(this.filteredIssues, (t) => t && t.onHold == true );
-     let overdue = _.filter(this.filteredIssues, (t) => t.isOverdue == true);
+     let onHold = _.filter(this.filteredIssues.unfiltered.issues, (t) => t && t.onHold == true );
+     let overdue = _.filter(this.filteredIssues.unfiltered.issues, (t) => t.isOverdue == true);
 
       return {
         planned: {
@@ -900,7 +897,7 @@
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -989,7 +986,7 @@
         }
      },
       sortedIssues:function() {
-          return this.filteredIssues.sort((a,b) => {
+          return this.filteredIssues.filtered.issues.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;

@@ -208,10 +208,6 @@
         <!-- </v-app> -->
 
     </div>
-
-
-
-
     <div class="float-right">
       <button
         v-tooltip="`Export to PDF`"
@@ -237,10 +233,10 @@
           </span>
         </button>
       <button class="ml-2 btn btn-md btn-info total-table-btns" data-cy="risk_total">
-        Total: {{filteredRisks.length}}
+        Total: {{filteredRisks.filtered.risks.length}}
       </button>
     </div>
-    <div v-if="filteredRisks.length > 0">
+    <div v-if="filteredRisks.filtered.risks.length > 0">
       <div style="margin-bottom:50px" data-cy="risks_table">
         <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
           <colgroup>
@@ -428,7 +424,7 @@
             </div>
             <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
               <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-              <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / this.C_risksPerPage.value) }} </button>
+              <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.filtered.risks.length / this.C_risksPerPage.value) }} </button>
               <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
           </div>
       </div>
@@ -460,7 +456,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(risk, index) in filteredRisks" :key="index">
+        <tr  v-for="(risk, index) in filteredRisks.filtered.risks" :key="index">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
@@ -616,7 +612,7 @@
       //   console.log(e)
       // },
       nextPage:function() {
-        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
+        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.filtered.risks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -772,8 +768,13 @@
           valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
-   
-      return risks.filter(t => {
+
+      return {
+       unfiltered: {
+            risks
+            },
+       filtered: {
+           risks: risks.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
@@ -838,44 +839,45 @@
           return t.important + t.reportable
        } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
           return t.important + t.reportable + t.watched
-        } else return true          
-        
-     })
+        } else return true         
+     }),
+      }
+    }  
   },
   variation() {
     let planned = _.filter(
-      this.filteredRisks,
+      this.filteredRisks.unfiltered.risks,
         (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
-     this.filteredRisks,
-        (t) => t && t.draft == true
+        this.filteredRisks.unfiltered.risks,
+        (t) => t && t.draft 
       );  
       let important = _.filter(
-     this.filteredRisks,
-        (t) => t && t.important == true
+       this.filteredRisks.unfiltered.risks,
+        (t) => t && t.important
       ); 
-        let briefings = _.filter(
-       this.filteredRisks,
-        (t) => t && t.reportable == true
+      let briefings = _.filter(
+         this.filteredRisks.unfiltered.risks,
+        (t) => t && t.reportable 
       );
       let watched = _.filter(
-     this.filteredRisks,
-        (t) => t && t.watched == true
+       this.filteredRisks.unfiltered.risks,
+        (t) => t && t.watched 
       );
               
       let completed = _.filter(
-      this.filteredRisks,
-        (t) => t && t.completed == true
+        this.filteredRisks.unfiltered.risks,
+        (t) => t && t.completed
       );
     let inProgress = _.filter(
-     this.filteredRisks,
-        (t) => t && t.inProgress == true
+        this.filteredRisks.unfiltered.risks,
+        (t) => t && t.inProgress 
       );
-     let onHold = _.filter(this.filteredRisks, (t) => t && t.onHold == true );
-       let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing == true );
-     let overdue = _.filter(this.filteredRisks, (t) => t.isOverdue == true);
+     let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
+     let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
+     let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
 
       return {
         planned: {
@@ -902,7 +904,7 @@
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -993,7 +995,7 @@
         }
      },
       sortedRisks:function() {
-          return this.filteredRisks.sort((a,b) => {
+          return this.filteredRisks.filtered.risks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;

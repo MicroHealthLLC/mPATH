@@ -197,12 +197,12 @@
          </button>
 
       <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="task_total">
-        Total: {{filteredTasks.length}}
+        Total: {{filteredTasks.filtered.tasks.length}}
       </button>
        </div>
-      <div v-if="filteredTasks.length > 0">
-        <div  style="margin-bottom:50px" class="mt-2">
-          <table data-cy="tasks_table"  class="table table-sm table-bordered table-striped stickyTableHeader">
+      <div v-if="filteredTasks.filtered.tasks.length > 0">
+        <div  style="margin-bottom:50px" data-cy="tasks_table" class="mt-2">
+          <table data-cy="tasks_table" class="table table-sm table-bordered table-striped stickyTableHeader">
             <colgroup>
               <col class="oneSix" />
               <col class="ten" />
@@ -374,7 +374,7 @@
            </div>
           <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
             <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / this.C_tasksPerPage.value) }} </button>
+            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.filtered.tasks.length / this.C_tasksPerPage.value) }} </button>
             <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
         </div>
         </div>
@@ -404,7 +404,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks" :key="i">
+        <tr  v-for="(task, i) in filteredTasks.filtered.tasks" :key="i">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -444,7 +444,7 @@
                   >                
             </span>  
           </td>
-         <td v-if="task.notes.length > 0">       
+        <td v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
           {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -452,7 +452,7 @@
             {{task.lastUpdate.body}}
           </span>         
         </td>  
-         <td v-else >No Updates</td> 
+         <td v-else >No Updates</td>      
         </tr>
       </tbody>
     </table>
@@ -540,7 +540,7 @@
       //   console.log("task:  " + e)
       // },
       nextPage:function() {
-        if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
+        if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -658,7 +658,6 @@
         'getHideBriefed',
       ]),
       filteredTasks() {
-
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
@@ -714,8 +713,13 @@
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
           return valid
         }), ['dueDate'])
-      
-      return tasks.filter(t => {
+
+    return {
+       unfiltered: {
+            tasks
+            },
+       filtered: {
+         tasks:  tasks.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
@@ -739,29 +743,28 @@
       if (this.getHideInprogress == true) { 
         return t.inProgress == false
       } else return true
-     
+
       }).filter(t => {
        if (this.getHideDraft == true){
          return t.draft == false
        } else return true   
 
 
-       }).filter(t => {
-       if (this.getHideOngoing == true) {
-          return t.ongoing == false
-       } else return true       
+      }).filter(t => {
+      if (this.getHideOngoing == true) {
+        return t.ongoing == false
+      } else return true       
 
+      }).filter(t => {
+        if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+        return t.reportable
+      }
+      if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+          return t.reportable + t.watched
 
-        }).filter(t => {
-         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
-          return t.reportable
-        }
-        if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
-           return t.reportable + t.watched
-
-        } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
-           return t.reportable + t.watched + t.important
-        } else return true
+      } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+          return t.reportable + t.watched + t.important
+      } else return true
 
       }).filter(t => {
         // This and last 2 filters are for Filtered Tags
@@ -780,45 +783,45 @@
           return t.important + t.reportable
        } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
           return t.important + t.reportable + t.watched
-        } else return true          
-        
-         
-       })
+        } else return true           
+       }),  
+        }
+       }     
       },
     variation() {
     let planned = _.filter(
-      this.filteredTasks,
-        (t) => t && t.planned == true
+      this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.planned
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
-     this.filteredTasks,
-        (t) => t && t.draft == true
+     this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.draft 
       );  
       let important = _.filter(
-     this.filteredTasks,
-        (t) => t && t.important == true
+      this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.important
       ); 
         let briefings = _.filter(
-       this.filteredTasks,
-        (t) => t && t.reportable == true
+       this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.reportable
       );
       let watched = _.filter(
-     this.filteredTasks,
-        (t) => t && t.watched == true
+      this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.watched 
       );
               
       let completed = _.filter(
-      this.filteredTasks,
-        (t) => t && t.completed == true
+      this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.completed
       );
     let inProgress = _.filter(
-     this.filteredTasks,
-        (t) => t && t.inProgress == true
+     this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.inProgress
       );
-     let onHold = _.filter(this.filteredTasks, (t) => t && t.onHold == true );
-     let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing == true );
-     let overdue = _.filter(this.filteredTasks, (t) => t.isOverdue == true);
+     let onHold = _.filter( this.filteredTasks.unfiltered.tasks, (t) => t && t.onHold == true );
+     let ongoing = _.filter(  this.filteredTasks.unfiltered.tasks, (t) => t && t.ongoing == true );
+     let overdue = _.filter(  this.filteredTasks.unfiltered.tasks, (t) => t.isOverdue == true);
 
       return {
         planned: {
@@ -845,7 +848,7 @@
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {
@@ -928,7 +931,7 @@
         }
       },
       sortedTasks:function() {
-          return this.filteredTasks.sort((a,b) => {
+          return this.filteredTasks.filtered.tasks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;

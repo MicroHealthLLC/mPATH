@@ -14,6 +14,7 @@ class Task < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
+  before_update :validate_other_states_on_draft, if: Proc.new {|task| task.draft_changed? && task.draft == true }
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
   after_save :update_facility_project
@@ -129,7 +130,7 @@ class Task < ApplicationRecord
     planned = false
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today 
     if start_date < Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
@@ -229,12 +230,12 @@ class Task < ApplicationRecord
     planned = false
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
     if start_date < Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
-
+    
     sorted_notes = notes.sort_by(&:created_at).reverse
     self.as_json.merge(
       class_name: self.class.name,
@@ -481,21 +482,12 @@ class Task < ApplicationRecord
 
   def files_as_json
     task_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
-      if file.blob.content_type == "text/plain"
-        {
-          id: file.id,
-          name: file.blob.filename.instance_variable_get("@filename"),
-          uri: file.blob.filename.instance_variable_get("@filename"),
-          link: true
-        }
-      else
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-          link: false
-        }
-      end
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+        link: false
+      }
     end.as_json
   end
 
@@ -555,5 +547,12 @@ class Task < ApplicationRecord
 
   def init_kanban_order
     self.kanban_order = facility_project.tasks.where(task_stage_id: task_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.task_stage_id.present?
+  end
+
+  private
+
+  def validate_other_states_on_draft
+    return if self.on_hold == false && self.ongoing == false
+    self.on_hold = self.ongoing = false
   end
 end

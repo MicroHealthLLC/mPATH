@@ -176,10 +176,10 @@
         </button>
           </div>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredIssues.length > 0">
+          <div v-if="filteredIssues.filtered.issues.length > 0">
           
             <hr />
-            <issue-show v-for="(issue, i) in filteredIssues" id="issueHover" :class="{'b_border': !!filteredIssues[i+1]}" :key="issue.id" :issue="issue" :from-view="from" @issue-edited="issueEdited" />
+            <issue-show v-for="(issue, i) in filteredIssues.filtered.issues" id="issueHover" :class="{'b_border': !!filteredIssues.filtered.issues[i+1]}" :key="issue.id" :issue="issue" :from-view="from" @issue-edited="issueEdited" />
           </div>
           <div v-else>
             <br />
@@ -206,7 +206,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(issue, i) in filteredIssues" :key="i">
+        <tr v-for="(issue, i) in filteredIssues.filtered.issues" :key="i">
           <td class="text-center">{{i+1}}</td>
           <td>{{issue.title}}</td>
           <td>{{issue.issueType}}</td>
@@ -219,7 +219,7 @@
           <td>{{issue.progress + "%"}}</td>
           <td v-if="(issue.dueDate) <= now">X</td>
           <td v-else></td>
-           <td v-if="issue.notes.length > 0">       
+         <td v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -493,8 +493,12 @@ computed: {
       return valid;
     })), ['dueDate'])
 
-   
-      return issues.filter(t => {
+     return {
+       unfiltered: {
+          issues
+            },
+       filtered: {
+         issues:  issues.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
@@ -525,6 +529,11 @@ computed: {
        } else return true   
 
 
+       }).filter(t => {
+       if (this.getHideOngoing == true) {
+          return t.ongoing == false
+       } else return true       
+
 
         }).filter(t => {
          if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
@@ -554,43 +563,44 @@ computed: {
           return t.important + t.reportable
        } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
           return t.important + t.reportable + t.watched
-        } else return true         
-         
-       })  
+        } else return true          
+       }),
+       }
+      }       
     },
     variation() {
     let planned = _.filter(
-      this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let drafts = _.filter(
-    this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.draft == true
       );  
       let important = _.filter(
-    this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.important == true
       ); 
         let briefings = _.filter(
-    this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-   this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.watched == true
       );
               
       let completed = _.filter(
-    this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.completed == true
       );
     let inProgress = _.filter(
-    this.filteredIssues,
+      this.filteredIssues.unfiltered.issues,
         (t) => t && t.inProgress == true
       );
-     let onHold = _.filter(this.filteredIssues, (t) => t && t.onHold == true );
-     let overdue = _.filter(this.filteredIssues, (t) => t.isOverdue == true);
+     let onHold = _.filter(this.filteredIssues.unfiltered.issues, (t) => t && t.onHold == true );
+     let overdue = _.filter(this.filteredIssues.unfiltered.issues, (t) => t.isOverdue == true);
 
       return {
         planned: {

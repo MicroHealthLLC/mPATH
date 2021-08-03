@@ -20,6 +20,7 @@ class Risk < ApplicationRecord
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
+  before_update :validate_other_states_on_draft, if: Proc.new {|risk| risk.draft_changed? && risk.draft == true }
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
@@ -47,21 +48,12 @@ class Risk < ApplicationRecord
 
   def files_as_json
     risk_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
-      if file.blob.content_type == "text/plain"
-        {
-          id: file.id,
-          name: file.blob.filename.instance_variable_get("@filename"),
-          uri: file.blob.filename.instance_variable_get("@filename"),
-          link: true
-        }
-      else
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-          link: false
-        }
-      end
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+        link: false
+      }
     end.as_json
   end
 
@@ -133,7 +125,7 @@ class Risk < ApplicationRecord
     planned = false
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
     if start_date < Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
@@ -315,7 +307,7 @@ class Risk < ApplicationRecord
     planned = false
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
-    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today && progress == 0
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
     if start_date < Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
@@ -659,5 +651,10 @@ class Risk < ApplicationRecord
     self.impact_level = self.impact_level.to_i
     self.duration = self.duration.to_i
     self.priority_level = self.probability * self.impact_level
+  end
+
+  def validate_other_states_on_draft
+    return if self.on_hold == false && self.ongoing == false
+    self.on_hold = self.ongoing = false
   end
 end

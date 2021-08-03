@@ -15,6 +15,7 @@ class Issue < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
+  before_update :validate_other_states_on_draft, if: Proc.new {|issue| issue.draft_changed? && issue.draft == true }
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
   attr_accessor :file_links
@@ -62,7 +63,7 @@ class Issue < ApplicationRecord
     planned = false
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
-    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today && progress == 0
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today 
     if start_date < Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
@@ -216,7 +217,7 @@ class Issue < ApplicationRecord
     planned = false
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
-    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today && progress == 0
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
     if start_date < Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
@@ -280,21 +281,12 @@ class Issue < ApplicationRecord
 
   def files_as_json
     issue_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
-      if file.blob.content_type == "text/plain"
-        {
-          id: file.id,
-          name: file.blob.filename.instance_variable_get("@filename"),
-          uri: file.blob.filename.instance_variable_get("@filename"),
-          link: true
-        }
-      else
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-          link: false
-        }
-      end
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+        link: false
+      }
     end.as_json
   end
 
@@ -521,5 +513,12 @@ class Issue < ApplicationRecord
 
   def init_kanban_order
     self.kanban_order = facility_project.issues.where(issue_stage_id: issue_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.issue_stage_id.present?
+  end
+
+  private
+
+  def validate_other_states_on_draft
+    return unless self.on_hold
+    self.on_hold = false
   end
 end
