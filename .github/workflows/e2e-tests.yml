@@ -1,8 +1,9 @@
 name: e2e-tests
 on: [push]
 jobs:
-  mysql_db:
-    name: "Mysql 8"
+  cypress-run:
+    name: "Cypress run"
+    runs-on: ubuntu-latest
     services:
       db:
         env:
@@ -11,10 +12,6 @@ jobs:
         ports:
           - 3306
 
-  cypress-run-1:
-    name: "Cypress run 1"
-    needs: mysql_db
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,12 +40,19 @@ jobs:
           bundle exec rails db:seed RAILS_ENV=test
           bundle exec rails assets:precompile RAILS_ENV=test
           bundle exec rails server -e test -p 5017 -d
-          yarn cypress run --record --parallel --project ./spec --spec "spec/cypress/integration/admin_panel/admin_user/**/*.js"
+          yarn cypress run --record --parallel --project ./spec --spec "spec/cypress/integration/admin_panel/**/*.js"
 
   cypress-run-2:
     name: "Cypress run 2"
-    needs: mysql_db
     runs-on: ubuntu-latest
+    services:
+      db:
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        image: mysql:8.0
+        ports:
+          - 3306
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -78,71 +82,3 @@ jobs:
           bundle exec rails assets:precompile RAILS_ENV=test
           bundle exec rails server -e test -p 5017 -d
           yarn cypress run --record --parallel --project ./spec --spec "spec/cypress/integration/client_panel/admin_user/**/*.js"
-
-  cypress-run-3:
-    name: "Cypress run 3"
-    needs: mysql_db
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6.6' # Specify your version
-
-      - name: Start rails server and run e2e test
-        env:
-          RAILS_ENV: test
-          MGIS_DATABASE_USERNAME: root
-          MGIS_DATABASE_PASSWORD: root
-          MGIS_DATABASE_HOST: 127.0.0.1
-          CYPRESS_RECORD_KEY: 948b6361-589e-4521-8248-ee4b9655595b
-
-        run: |
-          sudo apt-get -yqq install libpq-dev
-          sudo service mysql start
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-          yarn add cypress
-          bundle exec rails db:create
-          bundle exec rails db:migrate RAILS_ENV=test
-          bundle exec rails db:seed RAILS_ENV=test
-          bundle exec rails assets:precompile RAILS_ENV=test
-          bundle exec rails server -e test -p 5017 -d
-          yarn cypress run --record --parallel --project ./spec --spec "spec/cypress/integration/client_panel/client_user/**/*.js"
-
-  cypress-run-4:
-    name: "Cypress run 4"
-    needs: mysql_db
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6.6' # Specify your version
-
-      - name: Start rails server and run e2e test
-        env:
-          RAILS_ENV: test
-          MGIS_DATABASE_USERNAME: root
-          MGIS_DATABASE_PASSWORD: root
-          MGIS_DATABASE_HOST: 127.0.0.1
-          CYPRESS_RECORD_KEY: 948b6361-589e-4521-8248-ee4b9655595b
-
-        run: |
-          sudo apt-get -yqq install libpq-dev
-          sudo service mysql start
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-          yarn add cypress
-          bundle exec rails db:create
-          bundle exec rails db:migrate RAILS_ENV=test
-          bundle exec rails db:seed RAILS_ENV=test
-          bundle exec rails assets:precompile RAILS_ENV=test
-          bundle exec rails server -e test -p 5017 -d
-          yarn cypress run --record --parallel --project ./spec --spec "spec/cypress/integration/client_panel/users/*.js"
