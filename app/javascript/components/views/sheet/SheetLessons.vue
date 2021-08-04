@@ -89,13 +89,13 @@
           class="ml-2 btn btn-md btn-info total-table-btns"
           data-cy="lessons_total"
         >
-          Total: {{ variation.count.val }}
+          Total: {{ filteredLessons.filtered.lessons.length }}
         </button>
       </div>
       <!-- Lessons Learned Table -->
       <div style="margin-bottom:50px" data-cy="lessons_table">
         <table
-          v-if="variation.count.val > 0"
+          v-if="filteredLessons.filtered.lessons.length > 0"
           class="mb-3 w-100"
           id="lessonsPdf"
           ref="table"
@@ -193,7 +193,7 @@
             </th>
           </tr>
           <tr
-            v-for="lesson in filteredLessons"
+            v-for="lesson in filteredLessons.filtered.lessons"
             :key="lesson.id"
             @click="openLesson(lesson.id)"
             @mouseup.right="openContextMenu($event, lesson)"
@@ -251,7 +251,7 @@
 
         <!-- Lessons Per Page Toggle -->
         <div
-          v-if="filteredLessons.length > 0"
+          v-if="filteredLessons.filtered.lessons.length > 0"
           class="float-right mb-4 mt-2 font-sm"
         >
           <div class="simple-select d-inline-block text-right font-sm">
@@ -591,19 +591,19 @@ export default {
     },
    variation() {
      let drafts = _.filter(
-     this.filteredLessons,
+     this.filteredLessons.unfiltered.lessons,
         (t) => t && t.draft == true
       );  
       let important = _.filter(
-     this.filteredLessons,
+      this.filteredLessons.unfiltered.lessons,
         (t) => t && t.important == true
       ); 
      let briefings = _.filter(
-       this.filteredLessons,
+       this.filteredLessons.unfiltered.lessons,
         (t) => t && t.reportable == true
       );
      let completed = _.filter(
-      this.filteredLessons,
+        this.filteredLessons.unfiltered.lessons,
         (t) => t && t.draft == false
       );
      return {
@@ -637,7 +637,9 @@ export default {
     },
     filteredLessons() {
       // Returns filtered lessons based on search value from input
-      return this.projectLessons
+      return {
+      unfiltered: {
+       lessons:  this.projectLessons
         .filter((lesson) =>
           lesson.title.toLowerCase().match(this.search.toLowerCase())
         )
@@ -646,8 +648,10 @@ export default {
           let end = this.currentPage * this.lessonsPerPage.value;
           if (index >= start && index < end) return true;
           return this.end;
-        })
-       .filter(lesson => {
+        }) 
+          },
+        filtered : {
+          lessons: this.projectLessons.filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.getHideDraft) {
           return !lesson.draft
@@ -672,10 +676,11 @@ export default {
           return lesson.important
         } if (this.getHideImportant && this.getHideBriefed) {
           return lesson.important + lesson.reportable
-       } else return true          
-            
-      })
-    },
+       } else return true              
+        })
+      } 
+    }
+   },
   },
   mounted() {
     // GET request action to retrieve all lessons for project

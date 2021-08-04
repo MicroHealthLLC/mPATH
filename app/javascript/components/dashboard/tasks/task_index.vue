@@ -553,7 +553,7 @@ computed: {
           // percentage: Math.round(completed_percent),
         },      
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           // percentage: Math.round(inProgress_percent),
         },
         overdue: {

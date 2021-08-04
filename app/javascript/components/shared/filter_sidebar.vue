@@ -162,7 +162,7 @@
               </div>
               </div>
               <div class="col-md-4" style="border-right:solid lightgray .8px">
-                <div>
+                <div >
                 <label class="font-sm mb-0">Flags</label>
                  <el-select 
                   v-model="C_advancedFilter"                   
@@ -174,13 +174,19 @@
                   multiple                                                                                                                                                         
                   placeholder="Filter by Flags"
                   >
+                  <el-option-group
+                    v-for="group in getAdvancedFilterOptions"
+                    :key="group.label"
+                    :label="group.label">
                 <el-option 
-                  v-for="item in getAdvancedFilterOptions"                                                     
+                  v-for="item in group.options"                                                     
                   :value="item"   
                   :key="item.id"
-                  :label="item.name"                                                  
+                  :label="item.name"  
+                  :load="log(JSON.stringify(group.label))"                                                            
                   >
                 </el-option>
+                  </el-option-group>
               </el-select> 
               </div>
               <div>
@@ -839,11 +845,14 @@ export default {
         return str;
       }
     },
-    // log(e){
-    //   console.log("item in " + e)
-    // },
+    log(e){
+      console.log("getAdvancedFilterOptions " + e)
+    },
     handleOutsideClick() {
-      if (this.getShowAdvancedFilter && !this.datePicker) this.getShowAdvancedFilter = false
+      if (this.getShowAdvancedFilter && !this.datePicker) {
+         this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
+      }
+     
     },
     toggleFilters() {
       this.setShowAdvancedFilter(!this.getShowAdvancedFilter)

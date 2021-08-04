@@ -24,9 +24,20 @@
          </div>
         
        
-        <div class="mx-1 w-75">     
+        <div class="mx-1 w-75 filterDiv">     
       
           <label class="font-sm my-0">Category</label>
+          <!-- <label class="font-sm my-0">Filters</label>
+          <div class="filterBox w-100">                           
+           <ul style=height:30px>
+             <span  v-for="(filterArray, index) in getAllFilterNames"
+            :key="index" >
+                <span v-if="getFilterValue(filterArray[0]) && getFilterValue(filterArray[0]) !== null" >                   
+                <li class="filter-green mx-1 px-1 d-inline font-sm text-light filterLi">{{ getFilterValue(filterArray[0]) }}</li>                  
+                </span>  
+             </span>    
+           </ul>
+          </div> -->
           <el-select
            v-model="C_taskTypeFilter"
            class="w-100"
@@ -549,7 +560,7 @@
         this.currentSort = s;
       },
       // log(e){
-      //   console.log("task:  " + e)
+      //   console.log("advancedFilter:  " + e)
       // },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
@@ -641,6 +652,8 @@
         'getTasksPerPageFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
+        "getFilterValue",
+        "getAllFilterNames",
         'getTaskIssueTabFilterOptions',
         'getTaskIssueProgressStatusOptions',
         'getTaskIssueProgressStatusFilter',
@@ -1162,6 +1175,26 @@ i, .icons {
   } 
 }
 
+.fiterLi {
+  white-space: nowrap; 
+}
+.filterBox {
+    background-color: #FFF;
+    background-image: none;
+    border-radius: 4px;
+    overflow-y: auto;
+    border: 1px solid #DCDFE6;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #606266;
+    display: inline-block;
+    font-size: inherit;
+    line-height: 30px;
+    outline: 0;
+    padding: 0 15px;
+    height: 32px;
+}
+   
 @media screen and (max-width: 1550px) {
   .hideLabels {
     display: none !important;
