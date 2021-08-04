@@ -172,6 +172,8 @@ you will have to create an nginx service now
         rake db:seed RAILS_ENV=production
 
         rake assets:precompile RAILS_ENV=production
+        
+        go into your nginx.conf and configer server_name to your server and configure root to serve /var/www/mPATH/public or where ever you installed the website
 
         chown -R nginx:nginx *
         
