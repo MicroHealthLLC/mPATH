@@ -2,7 +2,19 @@ name: e2e-tests
 on: [push]
 jobs:
   cypress-run:
+    name: "Cypress run"
     runs-on: ubuntu-latest
+    strategy:
+      # when one test fails, DO NOT cancel the other
+      # containers, because this will kill Cypress processes
+      # leaving the Dashboard hanging ...
+      # https://github.com/cypress-io/github-action/issues/48
+      fail-fast: false
+      matrix:
+        # run 4 copies of the current job in parallel
+        # the actual items in the array do not matter
+        # we just need to "force" GitHub CI to create 4 jobs
+        machines: [1, 2, 3, 4]
     services:
       db:
         env:
