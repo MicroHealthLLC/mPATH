@@ -178,6 +178,7 @@ class Risk < ApplicationRecord
       :progress,
       :start_date,
       :due_date,
+      :closed_date,
       :auto_calculate,
       :text,
       :watched,
@@ -301,6 +302,8 @@ class Risk < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
+    closed = false
+    closed = true if closed_date.present? && ongoing && !draft && !on_hold
 
     in_progress = false
     completed = false
@@ -325,6 +328,7 @@ class Risk < ApplicationRecord
       class_name: self.class.name,
       completed: completed,
       planned: planned,
+      closed: closed,
       in_progress: in_progress,
       attach_files: attach_files,
       progress_status: progress_status,

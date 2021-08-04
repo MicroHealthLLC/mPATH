@@ -48,6 +48,7 @@ class Task < ApplicationRecord
       :facility_project_id,
       :due_date,
       :start_date,
+      :closed_date,
       :description,
       :progress,
       :draft,
@@ -225,6 +226,9 @@ class Task < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
+    closed = false
+    closed = true if closed_date.present? && ongoing && !draft && !on_hold
+
     in_progress = false
     completed = false
     planned = false
@@ -256,6 +260,7 @@ class Task < ApplicationRecord
       reportable: reportable,
       is_overdue: is_overdue,
       planned: planned,
+      closed: closed,
       in_progress: in_progress,
       draft: draft,
       on_hold: on_hold,
