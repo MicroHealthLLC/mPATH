@@ -128,10 +128,10 @@ you will have to create an nginx service now
         If you still have permission problems be sure to check selinux
         
 # Install Mysql
-        yum install mariadb-server mariadb
+        yum install mariadb-server mariadb  OR follow instructions here https://linuxize.com/post/install-mariadb-on-centos-7/#install-mariadb-103-on-centos-7 for client only install for remote databse connections. You will also need to run this "yum install mariadb-shared" after you follow the instructions in the link above 
 
         yum install mysql-devel
-
+        
         systemctl start mariadb
 
         systemctl enable mariadb
