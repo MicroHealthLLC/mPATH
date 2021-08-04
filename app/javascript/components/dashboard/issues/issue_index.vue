@@ -550,6 +550,8 @@ computed: {
         // This and last 2 filters are for Filtered Tags
          if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
            return t.watched
+        } if (this.getHideWatched && !this.getHideBriefed && this.getHideImportant) {
+          return t.watched + t.important
         } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
            return  t.watched + t.reportable
         } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          

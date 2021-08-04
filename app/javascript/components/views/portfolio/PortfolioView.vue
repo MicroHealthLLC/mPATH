@@ -1,4 +1,12 @@
 <template>
+<!-- <div
+   v-loading="!portfolioTasksLoaded"
+    element-loading-text="Fetching Portfolio Viewer data. Please wait..."
+    style="width: 100%; height:100%"
+    class="loaderRow"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+> -->
 <div class="container-fluid mt-3 mx-3">
   <!-- Actual Portfolio name will be dynamic value of organization name   -->
 <div>
@@ -29,7 +37,7 @@
              <div class="col-4 py-2">           
              <div class="w-100 d-flex">
                 <div class="d font-sm mt-2 mr-2">SEARCH</div>
-              <el-input type="search" placeholder="Search Task Name" v-model="search_tasks" >
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_tasks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
@@ -436,7 +444,7 @@
               <div class="col-4 py-2">
             <div class="w-100 d-flex">
                <div class="d font-sm mt-2 mr-2">SEARCH</div>              
-              <el-input type="search" placeholder="Search Issue Name" v-model="search_issues" >
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_issues" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
@@ -667,6 +675,18 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
+                 <th class="pl-1 sort-th" @click="sortI('issue_type')">Issue Type
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_type'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
              
               <th class="pl-1 sort-th" @click="sortI('issue_severity')">Issue Severity
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_severity'">
@@ -724,20 +744,7 @@
               </th>
               <th class='non-sort-th' style="min-width:200px">Flags
                
-              </th>
-               <th class="pl-1 sort-th" @click="sortI('issue_type')">Issue Type
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issue_type'">
-                 <i class="fas fa-sort"></i></span>
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issue_type'">
-                 <i class="fas fa-sort-up"></i></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issue_type'">
-                 <i class="fas fa-sort-up"></i></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issue_type'">
-                 <i class="fas fa-sort-down"></i></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_type'">
-                 <i class="fas fa-sort-down"></i></span>
-              </th>
-               
+              </th>              
                 <th class="pl-1 sort-th" @click="sort('category')">Category
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
                  <i class="fas fa-sort"></i></span>
@@ -769,7 +776,7 @@
         </td>       
         <!-- <td v-else class="twentyTwo">No Updates</td> -->
         <td  class="text-left" v-else>No Update</td>
-       
+         <td>{{ issue.issue_type }}</td>       
         <td>{{ issue.issue_severity }}</td> 
         <td> {{ moment(issue.start_date).format('DD MMM YYYY') }} </td>   
         <td> 
@@ -791,7 +798,7 @@
             <span v-if="issue.in_progress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span>
            
           </td>
-         <td>{{ issue.issue_type }}</td>
+        
           <td>            
             <span v-if='issue.category'>{{ issue.category }}</span>
             <span v-else> --- </span>
@@ -853,7 +860,7 @@
            
               <div class="w-100 d-flex">
               <div class="d font-sm mt-2 mr-2">SEARCH</div>                
-              <el-input type="search" placeholder="Search Risk Name" v-model="search_risks" >
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>             
                </div>
@@ -1011,10 +1018,9 @@
                 <template>
                  <el-checkbox v-model="C_showCountToggle">Show Counts</el-checkbox>
               </template>
-              </div>
-            
+              </div>           
 
-      <div class="col-2" v-if="risksObj !== null && risksObj.length > 0 ">            
+      <div class="col-2">            
         <span class="btnRow"> 
         <button
           v-tooltip="`Export to PDF`"
@@ -1295,7 +1301,7 @@
         
                 
               <div class="d font-sm mt-2 mr-2">SEARCH</div>
-              <el-input type="search" placeholder="Search Lesson Name" v-model="search_lessons" >
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_lessons" >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
               </div>
@@ -1581,7 +1587,7 @@
           </td>
            <td>
             <span v-if='lesson.category'>{{ lesson.category }}</span>
-            <span v-else> -- </span>
+            <span v-else> --- </span>
           </td>
      
         <!-- <td> {{ lesson.progress }} </td> -->
@@ -1649,6 +1655,7 @@
    </el-tab-pane>
     </el-tabs> 
 </div>
+<!-- </div> -->
 </template>
 
 <script>
@@ -1775,6 +1782,7 @@ export default {
       'getLessonsPerPageFilter', 
       'getShowCount',
       'programNameFilter',
+      'portfolioTasksLoaded',
       'taskTypes',
       'portfolioCategoriesFilter',
       'portfolioTasks',
@@ -1853,7 +1861,12 @@ export default {
         
       }).filter(task => {
         if (this.search_tasks !== "") {
-          return  task.text.toLowerCase().match(this.search_tasks.toLowerCase())
+        return  task.text.toLowerCase().match(this.search_tasks.toLowerCase()) || 
+                task.category.toLowerCase().match(this.search_tasks.toLowerCase()) ||
+                task.program_name.toLowerCase().match(this.search_tasks.toLowerCase()) ||
+                task.project_name.toLowerCase().match(this.search_tasks.toLowerCase()) ||
+                task.users.toLowerCase().match(this.search_tasks.toLowerCase())            
+       
         } else return true             
          // Filtering 7 Task States  
       }).filter(task => {     
@@ -1905,6 +1918,8 @@ export default {
         // This and last 2 filters are for Filtered Tags
          if (this.hideWatchedTasks  && !this.hideBriefedTasks && !this.hideImportantTasks) {
            return task.watched
+        } if (this.hideWatchedTasks && !this.hideBriefedTasks && this.hideImportantTasks) {
+           return task.watched + task.important 
         } if (this.hideWatchedTasks && this.hideBriefedTasks && !this.hideImportantTasks) {          
            return  task.watched + task.reportable
         } if (this.hideWatchedTasks && this.hideBriefedTasks && this.hideImportantTasks) {          
@@ -1937,8 +1952,16 @@ export default {
         
      }).filter(issue => {
         if (this.search_issues !== "") {
-          return  issue.title.toLowerCase().match(this.search_issues.toLowerCase())
-        } else return true        
+          return  issue.title.toLowerCase().match(this.search_issues.toLowerCase()) ||
+                  issue.issue_severity.toLowerCase().match(this.search_issues.toLowerCase()) ||
+                  issue.issue_type.toLowerCase().match(this.search_issues.toLowerCase()) ||
+                  // Category not included as it is not a requirement for Issues and null values will break search filter
+                  // issue.category.toLowerCase().match(this.search_issues.toLowerCase()) ||
+                  issue.program_name.toLowerCase().match(this.search_issues.toLowerCase()) ||
+                  issue.project_name.toLowerCase().match(this.search_issues.toLowerCase()) ||
+                  issue.users.toLowerCase().match(this.search_issues.toLowerCase())         
+        } else return true       
+
      }).filter(issue => {
         if (this.hideDraftIssues) {
           return !issue.draft
@@ -1983,9 +2006,11 @@ export default {
       }).filter(issue => {
          if (this.hideWatchedIssues && !this.hideBriefedIssues && !this.hideImportantIssues) {
            return issue.watched
+        } if (this.hideWatchedIssues && !this.hideBriefedIssues && this.hideImportantIssues) {
+           return issue.watched + issue.important 
         } if (this.hideWatchedIssues && this.hideImportantIssues && !this.hideBriefedIssues ) {          
            return issue.important + issue.watched
-       } if (this.hideWatchedIssues && this.hideImportantIssues && this.hideBriefedIssues ) {          
+        } if (this.hideWatchedIssues && this.hideImportantIssues && this.hideBriefedIssues ) {          
            return issue.important + issue.watched + issue.reportable
         } else return true    
        
@@ -2017,7 +2042,12 @@ export default {
         } else return true; 
       }).filter(risk => {
         if (this.search_risks !== "") {
-          return  risk.text.toLowerCase().match(this.search_risks.toLowerCase())
+          return  risk.text.toLowerCase().match(this.search_risks.toLowerCase()) ||
+                  risk.category.toLowerCase().match(this.search_risks.toLowerCase()) ||
+                  risk.risk_approach.toLowerCase().match(this.search_risks.toLowerCase()) ||
+                  risk.program_name.toLowerCase().match(this.search_risks.toLowerCase()) ||
+                  risk.project_name.toLowerCase().match(this.search_risks.toLowerCase()) ||
+                  risk.users.toLowerCase().match(this.search_risks.toLowerCase())        
         } else return true        
      }).filter(risk => {       
         if (this.hideDraftRisks) {
@@ -2066,9 +2096,11 @@ export default {
       }).filter(risk => {
          if (this.hideWatchedRisks && !this.hideBriefedRisks && !this.hideImportantRisks) {
            return risk.watched
+        } if (this.hideWatchedRisks && !this.hideBriefedRisks && this.hideImportantRisks) {
+          return risk.watched + risk.important        
         } if (this.hideWatchedRisks && this.hideImportantRisks && !this.hideBriefedRisks ) {          
            return risk.important + risk.watched
-       } if (this.hideWatchedRisks && this.hideImportantRisks && this.hideBriefedRisks ) {          
+        } if (this.hideWatchedRisks && this.hideImportantRisks && this.hideBriefedRisks ) {          
            return risk.important + risk.watched + risk.reportable
         } else return true    
        
@@ -2100,8 +2132,12 @@ export default {
         } else return true; 
         
       }).filter(lesson => {
-        if (this.search_lessons !== "") {
-          return  lesson.title.toLowerCase().match(this.search_lessons.toLowerCase())
+        // if (this.search_lessons !== "" && lesson.category && lesson.category !== null) {
+        if (this.search_lessons !== "") {         
+          return  lesson.title.toLowerCase().match(this.search_lessons.toLowerCase()) ||
+                  lesson.program_name.toLowerCase().match(this.search_lessons.toLowerCase()) ||
+                  lesson.project_name.toLowerCase().match(this.search_lessons.toLowerCase()) ||
+                  lesson.added_by.toLowerCase().match(this.search_lessons.toLowerCase())                  
         } else return true        
      }).filter(lesson => {
         // Filtering 3 Lesson States        
@@ -2995,6 +3031,9 @@ th {
  .ten {
    width: 10%;
  }
+//  .loaderRow {
+
+//  }
 
  .fifteen {
    width: 15%;
@@ -3060,6 +3099,12 @@ th {
   padding: 1px 1px;
   box-shadow: 0 1px 2.5px rgba(56,56, 56,0.19), 0 1.5px 1.5px rgba(56,56,56,0.23);
 }
+
+// /deep/.el-loading-mask {
+//   width: 100vw !important;
+//   height: 100vh !important;
+//   // display: block !important;
+// }
 
 .font-sm {
   font-weight: 600;
