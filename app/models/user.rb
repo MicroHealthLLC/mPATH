@@ -228,8 +228,8 @@ class User < ApplicationRecord
   def password_complexity
     pass_settings = JSON.parse(Setting['PASSWORDS_KEY'])
     error_message = []
-    if pass_settings['range'].to_i != password&.size
-      error_message.push "Length should be #{pass_settings['range']} characters"
+    if pass_settings['range'].to_i < password&.size
+      error_message.push "Length should be at least #{pass_settings['range']} characters"
     elsif pass_settings['uppercase']
       error_message.push "Should include 1 uppercase letter! " unless password =~ /^(?=.*?[A-Z]).{1,}$/
     elsif pass_settings['lowercase']
