@@ -35,6 +35,7 @@ export default new Vuex.Store({
   },
   state: {
     advancedFilter: [],
+    myAssignmentsFilter:[],
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
@@ -146,6 +147,7 @@ export default new Vuex.Store({
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
+    setMyAssignmentsFilter: (state, filter) => state.myAssignmentsFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
       state.advancedFilter = selectedOptions
       // var _taskIssueOverdueFilter = []
@@ -476,68 +478,55 @@ export default new Vuex.Store({
     getTaskIssueProgressStatusFilter: (state) => {
       return state.taskIssueProgressStatusFilter
     },
-    // getAdvancedFilter: (state, getter) => () =>{
-    //   return state.advancedFilter
-    // },
-    getAdvancedFilter: state => state.advancedFilter,
-    getAdvancedFilterOptions: (state, getters) => {
+    getMyAssignmentsFilter: state => state.myAssignmentsFilter,
+    getMyAssignmentsFilterOptions: (state, getters) => {
 
-      var options = [{
-        label: 'State To Display',
-        options: [{
-          id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
-        }, {
-          id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress'
-        }, {
-          id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned'
-        },{
-          id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue',
-        },{
-          id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'
-        },{
-          id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'
-        },{
-          id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'
-        }]
-      }, {
-        label: 'Tag Focus',
-        options: [{
-        id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'
-      },{
-        id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'
-      },{
-        id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
-      }]
-      }, {
-        label: 'Assignments',
-        options: [{
-        id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
-       },{
-        id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
-       }]
-        // {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status', label:'States'},
-        // FLAG STATES
-        // {id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status', label:'States'},
-        // {id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress', label:'States'},
-        // {id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned', label:'States'},
-        // {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue', label:'States'},   
-              // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},   
-        // {id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing', label:'States'},
-        // {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold', label:'States'},        
-        // {id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts', label:'States'},
-     // FLAG TAGS
-        // {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch', label:'Tags'},     
-        // {id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings', label:'Tags'},
-        // {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important', label:'Tags'},
-
-  // OTHER FILTER CATEGORIES
-        // {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"},
-        // {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"},
-  
-
-    }]
+      var options = [       
+        {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
+        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
+      ]
       return options;
     },
+// DO NOT ERASE:  HELPFUL IF WE WANT TO ADD DROPDOWN WITH DIFFERENT CATEGORY LABELS
+    // getAdvancedFilter: state => state.advancedFilter,
+    // getAdvancedFilterOptions: (state, getters) => {
+
+    //   var options = [{
+    //     label: 'State To Display',
+    //     options: [{
+    //       id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
+    //     }, {
+    //       id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress'
+    //     }, {
+    //       id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned'
+    //     },{
+    //       id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue',
+    //     },{
+    //       id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'
+    //     },{
+    //       id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'
+    //     },{
+    //       id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'
+    //     }]
+    //   }, {
+    //     label: 'Tag Focus',
+    //     options: [{
+    //     id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'
+    //   },{
+    //     id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'
+    //   },{
+    //     id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
+    //   }]
+    //   }, {
+    //     label: 'Assignments',
+    //     options: [{
+    //     id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
+    //    },{
+    //     id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+    //    }]
+    // }]
+    //   return options;
+    // },
 
     getRiskApproachFilter: state => state.riskApproachFilter,
     getRiskApproachFilterOptions: (state, getters) => {
@@ -607,7 +596,7 @@ export default new Vuex.Store({
       return [
 
         ['facilityGroupFilter', 'Project Groups'],
-        ['facilityNameFilter', 'Project Names'],
+        ['facilityNameFilter', 'Project Names'],        
         ['projectStatusFilter', 'Project Statuses'],
         ['facilityProgressFilter', 'Project Progress Range'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
@@ -637,6 +626,7 @@ export default new Vuex.Store({
         // The first index value is filterCategoryId in advanced filter
         ['overDueFilter','Action Overdue'],
         ['myActionsFilter', 'My Assignments'],
+        ['myAssignmentsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['importantFilter', 'Important'],
         ['briefingsFilter', 'Briefings'],
@@ -667,6 +657,21 @@ export default new Vuex.Store({
 
         return user_names
 
+      }else if(_filterValue =='myActionsFilter'){
+      var user_names = null
+        if(getter.myActionsFilter && getter.myActionsFilter[0]){
+          user_names = _.map(getter.myActionsFilter, 'myActionsFilter').join(", ")
+        }
+        return user_names
+
+
+      // }else if(_filterValue =='myAssignmentsFilter'){
+      //   var user_names = null
+      //     if(getter.myAssignmentsFilter && getter.myAssignmentsFilter[0]){
+      //       user_names = _.map(getter.myAssignmentsFilter, 'myAssignmentsFilter').join(", ")
+      //     }
+      //     return user_names
+  
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
         var user_names = null
@@ -906,6 +911,8 @@ export default new Vuex.Store({
 
       var aFilter = getters.getAdvancedFilter
 
+      var myFilter = getters.getMyAssignmentsFilter
+
       let taksIssueNotOnWatch = _.map(aFilter, 'id').includes("notOnWatch")
       let taskIssueOnWatch =  _.map(aFilter, 'id').includes("onWatch")
 
@@ -918,8 +925,8 @@ export default new Vuex.Store({
       let taksIssueNotOnGoing = _.map(aFilter, 'id').includes("notOnGoing")
       let taskIssueOnGoing =  _.map(aFilter, 'id').includes("onGoing")
 
-      let taskIssueMyAction = _.map(aFilter, 'id').includes("myAction")
-      let taksIssueNotMyAction = _.map(aFilter, 'id').includes("notMyAction")
+      let taskIssueMyAction = _.map(myFilter, 'id').includes("myAction")
+      let taksIssueNotMyAction = _.map(myFilter, 'id').includes("notMyAction")
 
       let taskIssueOverdue = _.map(aFilter, 'id').includes("overdue")
       let taskIssueNotOverdue = _.map(aFilter, 'id').includes("notOverdue")
@@ -2034,6 +2041,7 @@ export default new Vuex.Store({
         'riskDispositionDuration',
 
         'taskIssueProgressFilter',
+        'myAssignmentsFilter',
         'myActionsFilter',
         'onWatchFilter',
         'progressFilter',

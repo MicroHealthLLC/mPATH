@@ -104,7 +104,7 @@
                      </div> -->
               
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATES TO DISPLAY</label> </span>    
 
                   <span class="d-flex statesCol mr-3 px-3 py-2">              
                   <div class="pr-4 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
@@ -506,7 +506,7 @@
 
              
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATES TO DISPLAY</label> </span>    
 
             
                 <span class="d-flex statesCol mr-3 px-3 py-2">                         
@@ -922,7 +922,7 @@
               
                 
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATES TO DISPLAY</label> </span>    
 
               <span class="d-flex statesCol mr-3 px-3 py-2">                        
                   <div class="pr-4 text-center icons" :class="[hideCompleteRisks == true ? 'light':'']" @click.prevent="toggleCompleteR">             
@@ -1363,7 +1363,7 @@
                <div class="col-10 px-1 pt-2">
         
               <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">    
-                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATUSES TO DISPLAY</label> </span>    
+                    <span class=""><label class="font-sm px-2 mt-4 d-block">STATES TO DISPLAY</label> </span>    
                   <span class="d-flex statesCol mr-3 px-3 py-2">                      
                   <div class="pr-4 text-center icons" :class="[hideCompleteLessons == true ? 'light':'']" @click.prevent="toggleCompleteL">             
                    <span class="d-block">

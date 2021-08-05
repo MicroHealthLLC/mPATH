@@ -119,7 +119,7 @@
     <font-awesome-icon icon="plus-circle" />
       Add Risk
     </button>
-    <span class="font-sm pr-2 hideLabels"> STATUSES TO DISPLAY </span>     
+    <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>     
                 
                 <span class="statesCol d-inline-block p-1 mr-2">
                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
@@ -705,7 +705,7 @@
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',
-        'getAdvancedFilterOptions',
+        // 'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',

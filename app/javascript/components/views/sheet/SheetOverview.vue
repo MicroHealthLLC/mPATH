@@ -1220,7 +1220,7 @@ export default {
     taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
-        (t) => t && t.planned == true 
+        (t) => t && t.planned 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
@@ -1237,7 +1237,7 @@ export default {
       );
       let inProgress = _.filter(
         this.filteredTasks,
-        (t) => t && t.inProgress == true
+        (t) => t && t.inProgress
       );
      let onHoldT = _.filter(
         this.filteredTasks,
@@ -1270,7 +1270,7 @@ export default {
         },
       
         inProgress: {
-          count: inProgress.length - planned.length,
+          count: inProgress.length,
           percentage: Math.round(inProgress_percent),
         },
         overdue: {

@@ -410,7 +410,7 @@
     },
     computed: {
       ...mapGetters([
-        'getAdvancedFilterOptions',
+        // 'getAdvancedFilterOptions',
         'getRiskApproachFilterOptions',
         'getRiskApproachFilter',
         'getRiskPriorityLevelFilter',

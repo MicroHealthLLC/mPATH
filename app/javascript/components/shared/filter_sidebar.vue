@@ -163,6 +163,28 @@
               </div>
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div >
+
+                 <label class="font-sm mb-0">Assignments</label>
+                 <el-select 
+                  v-model="C_myAssignmentsFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id" 
+                  filterable                 
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  placeholder="Select Option"
+                  >
+                <el-option 
+                  v-for="item in getMyAssignmentsFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+
+                  <!-- Reference for Dropdown with multiple category labels (Do not delete)
                 <label class="font-sm mb-0">Flags</label>
                  <el-select 
                   v-model="C_advancedFilter"                   
@@ -183,11 +205,11 @@
                   :value="item"   
                   :key="item.id"
                   :label="item.name"  
-                  :load="log(JSON.stringify(group.label))"                                                            
+                                                                        
                   >
                 </el-option>
                   </el-option-group>
-              </el-select> 
+              </el-select>  -->
               </div>
               <div>
                 <label class="font-sm mb-0">Action % Progress Range</label>
@@ -485,8 +507,10 @@ export default {
     ...mapGetters([
       'getTaskIssueUserFilter',
       'getTaskIssueProgressStatusFilter',
-      'getAdvancedFilterOptions',
-      'getAdvancedFilter',
+      'getMyAssignmentsFilter',
+      'getMyAssignmentsFilterOptions',
+      // 'getAdvancedFilterOptions',
+      // 'getAdvancedFilter',
       'getShowAdvancedFilter',
       'projectStatusFilter',
 
@@ -602,7 +626,7 @@ export default {
         return this.progressFilter.taskIssue
       },
     },
-    C_advancedFilter: {
+    C_myAssignmentsFilter: {
       get() {
         // Note: This code will be useful if want active as default select and never want advanced filter blank
         // if (this.getAdvancedFilter.length == 0) {
@@ -612,13 +636,13 @@ export default {
         // }else{
         //   return this.getAdvancedFilter
         // }
-        return this.getAdvancedFilter
+        return this.getMyAssignmentsFilter
       },
       set(value) {
         if (!value) {
-          this.setAdvancedFilter([])
+          this.setMyAssignmentsFilter([])
         } else {
-          this.setAdvancedFilter(value)
+          this.setMyAssignmentsFilter(value)
         }
       }
     },
@@ -815,6 +839,7 @@ export default {
       'setMyActionsFilter',
       'setOnWatchFilter',
       'setMapFilters',
+      'setMyAssignmentsFilter',
       'setTaskUserFilter',
       'setIssueUserFilter',
       'setProgressFilters',
@@ -845,9 +870,9 @@ export default {
         return str;
       }
     },
-    log(e){
-      console.log("getAdvancedFilterOptions " + e)
-    },
+    // log(e){
+    //   console.log("getAdvancedFilterOptions " + e)
+    // },
     handleOutsideClick() {
       if (this.getShowAdvancedFilter && !this.datePicker) {
          this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
@@ -1225,11 +1250,11 @@ export default {
     resetFilters(){
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      if(this.favoriteFilterData.id){
-        this.setAdvancedFilter([])
-      }else{
-        this.setAdvancedFilter([])        
-      }
+      // if(this.favoriteFilterData.id){
+      //   this.setAdvancedFilter([])
+      // }else{
+      //   this.setAdvancedFilter([])        
+      // }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1265,7 +1290,8 @@ export default {
       }
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      this.setAdvancedFilter([])
+      // this.setAdvancedFilter([])
+      this.setMyAssignmentsFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
