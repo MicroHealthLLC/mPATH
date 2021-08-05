@@ -3,7 +3,7 @@
      <div class="filters-wrapper">
     <div class="d-flex align-item-center justify-content-between mb-2 ml-3 w-100">
       <div class="ninety mr-1">
-       <label class="font-sm mb-0">Search</label>
+        <label class="font-sm mb-0" style="visibility:hidden">Search</label>
         <el-input
           type="search"
           placeholder="Enter Search Criteria"
