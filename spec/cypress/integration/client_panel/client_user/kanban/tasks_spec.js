@@ -1,9 +1,17 @@
 describe('Kanban Tasks View', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openKanbanTask()
+  })
+
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+  
+  after(() => {
+    cy.clearCookies()
   })
 
   it('Open kanban tasks in a facility', function() {
@@ -12,7 +20,7 @@ describe('Kanban Tasks View', function() {
         cy.get('[data-cy=kanban_col_title]').contains('Test Task Stage').should('be.visible')
       })
     })
-    cy.logout()
+    // cy.logout()
   })
 
   it('Cannot open new Task form and edit/delete existing task', function() {
@@ -26,7 +34,7 @@ describe('Kanban Tasks View', function() {
     cy.get('[data-cy=task_save_btn]').should('not.exist')
     cy.get('[data-cy=task_delete_btn]').should('not.exist')
     cy.get('[data-cy=task_close_btn]').click({force: true})
-    cy.logout()
+    // cy.logout()
   })
 
   it('Search task by typing title', function() {
@@ -44,6 +52,6 @@ describe('Kanban Tasks View', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     })
-    cy.logout()
+    // cy.logout()
   })
 })
