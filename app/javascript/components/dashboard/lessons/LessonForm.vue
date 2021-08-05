@@ -92,7 +92,7 @@
           >Lesson Name <span style="color: #dc3545">*</span></label
         >
         <div
-          class="toggleWrapper float-right"
+          class="toggleWrapper float-right tagsCol"
           :class="{ 'font-sm': isMapView }"
         >
           <span
@@ -1361,6 +1361,11 @@ a:hover {
     line-height: 23px !important;
     margin: 5px !important;
   }
+}
+.tagsCol {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: .5px solid lightgray;
 }
 .btn-shadow {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),

@@ -106,30 +106,31 @@
               >Task Name <span style="color: #dc3545">*</span></label
             >
             <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
+
+              <span class="statesCol p-1 mr-1">           
             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
-               v-tooltip="`On Watch`" 
-              @click.prevent.stop="toggleWatched"
-              data-cy="task_on_watch"
+              @click.prevent.stop="toggleOngoing"
+              data-cy="task_ongoing"
+              v-tooltip="`Ongoing`" 
             >
-              <span                
-                v-show="DV_task.watched" 
-                ><i class="fas fa-eye mr-1"></i
-              ></span>
-              <span 
-                v-show="!DV_task.watched" 
-                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-              ></span>           
+              <span              
+                v-show="DV_task.ongoing">
+              <i class="fas fa-retweet text-success"></i>
+              </span>
+              <span              
+                v-show="!DV_task.ongoing">
+              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+              </span>             
               <small 
-                style="vertical-align:text-top" 
                 :class="{'d-none': isMapView }"
-              > 
-                On Watch
+                style="vertical-align:text-top"> 
+                Ongoing
               </small>
             </span>
-            
-             <span
+
+              <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
@@ -153,72 +154,7 @@
               </small>
             </span>
            
-
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
-              v-tooltip="`Important`" 
-            >
-              <span 
-                v-show="DV_task.important">
-               <i class="fas fa-star text-warning"></i>
-              </span>
-              <span 
-                v-show="!DV_task.important">
-               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-               :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Important
-              </small>
-            </span>
-
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleOngoing"
-              data-cy="task_ongoing"
-              v-tooltip="`Ongoing`" 
-            >
-              <span              
-                v-show="DV_task.ongoing">
-              <i class="fas fa-retweet text-success"></i>
-              </span>
-              <span              
-                v-show="!DV_task.ongoing">
-              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Ongoing
-              </small>
-            </span>
-              <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleReportable"
-              data-cy="task_reportable"
-              v-tooltip="`Briefings`" 
-            >
-              <span               
-                 v-show="DV_task.reportable">
-               <i class="fas fa-presentation text-primary"></i>
-              </span>
-              <span 
-               v-show="!DV_task.reportable">
-               <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-               Briefings
-              </small>
-            </span>
+          
               <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
@@ -242,6 +178,83 @@
               </small>
             </span>
 
+
+
+              </span>
+
+
+              <span class="tagsCol p-1">
+
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                v-tooltip="`On Watch`" 
+                @click.prevent.stop="toggleWatched"
+                data-cy="task_on_watch"
+              >
+                <span                
+                  v-show="DV_task.watched" 
+                  ><i class="fas fa-eye mr-1"></i
+                ></span>
+                <span 
+                  v-show="!DV_task.watched" 
+                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+                ></span>           
+                <small 
+                  style="vertical-align:text-top" 
+                  :class="{'d-none': isMapView }"
+                > 
+                  On Watch
+                </small>
+              </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleImportant"
+              data-cy="task_important"
+              v-tooltip="`Important`" 
+            >
+              <span 
+                v-show="DV_task.important">
+               <i class="fas fa-star text-warning"></i>
+              </span>
+              <span 
+                v-show="!DV_task.important">
+               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+              </span>             
+              <small 
+               :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Important
+              </small>
+              </span>
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleReportable"
+                data-cy="task_reportable"
+                v-tooltip="`Briefings`" 
+              >
+                <span               
+                  v-show="DV_task.reportable">
+                <i class="fas fa-presentation text-primary"></i>
+                </span>
+                <span 
+                v-show="!DV_task.reportable">
+                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small 
+                  :class="{'d-none': isMapView }"
+                  style="vertical-align:text-top"> 
+                Briefings
+                </small>
+              </span>                
+              </span>
+
+
+          
+     
 
             </div>
 
@@ -2450,5 +2463,24 @@ a:hover {
   background-color: #ededed;
   border-color: lightgray;
   border-left: 10px solid #5aaaff;
+}
+
+.tagsCol, .statesCol {  
+  border: .5px solid lightgray;
+}
+.statesCol {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tagsCol {
+  background-color: #f8f9fa;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
 }
 </style>

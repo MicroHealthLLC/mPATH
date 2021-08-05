@@ -106,26 +106,8 @@
             >
 
           <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleWatched"
-              data-cy="issue_on_watch"
-              v-tooltip="`On Watch`" 
-            >
-              <span               
-                v-show="DV_issue.watched" 
-                ><i class="fas fa-eye mr-1"></i
-              ></span>
-              <span 
-                 v-show="!DV_issue.watched" 
-                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-              ></span>
-           
-              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
-                On Watch
-              </small>
-            </span>
+           <span class="statesCol p-1 mr-1">
+
              <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
@@ -147,6 +129,52 @@
                 :class="{'d-none': isMapView }"
                 style="vertical-align:text-top"> On Hold</small>
             </span>
+
+             <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleDraft"
+              data-cy="issue_important"
+              v-tooltip="`Draft`" 
+            >
+              <span              
+                v-show="DV_issue.draft">
+               <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
+              <span 
+               v-show="!DV_issue.draft">
+               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Draft</small>
+            </span>
+
+           </span>
+
+           <span class="tagsCol p-1">
+                 <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleWatched"
+              data-cy="issue_on_watch"
+              v-tooltip="`On Watch`" 
+            >
+              <span               
+                v-show="DV_issue.watched" 
+                ><i class="fas fa-eye mr-1"></i
+              ></span>
+              <span 
+                 v-show="!DV_issue.watched" 
+                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+              ></span>
+           
+              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
+                On Watch
+              </small>
+            </span>
+      
            
 
             <span
@@ -192,26 +220,9 @@
                Briefings
                 </small>
                 </span>
-             <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              data-cy="issue_important"
-              v-tooltip="`Draft`" 
-            >
-              <span              
-                v-show="DV_issue.draft">
-               <i class="fas fa-pencil-alt text-warning"></i>
-              </span>
-              <span 
-               v-show="!DV_issue.draft">
-               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> Draft</small>
-            </span>
+           </span>
+        
+        
           </div>
 
             <el-input
@@ -2474,5 +2485,25 @@ a:hover {
   background-color: #ededed;
   border-color: lightgray;
   border-left: 10px solid #5aaaff;
+}
+
+.tagsCol, .statesCol {  
+  border: .5px solid lightgray;
+}
+
+.statesCol {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tagsCol {
+  background-color: #f8f9fa;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
 }
 </style>
