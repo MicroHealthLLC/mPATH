@@ -1874,7 +1874,7 @@
                   v-if="!null"
                   rows="3"
                   :readonly="!_isallowed('write')"
-                  data-cy="risk_description"
+                  data-cy="risk_explanation"
                  
                 />
               
@@ -1891,7 +1891,7 @@
                     track-by="name" 
                     clearable               
                     :disabled="!_isallowed('write')"
-                    data-cy="task_type"                  
+                    data-cy="risk_status"                  
                     placeholder="Risk Disposition Status"
                   >
                     <el-option

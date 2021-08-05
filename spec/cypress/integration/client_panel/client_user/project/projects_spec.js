@@ -48,7 +48,7 @@ describe('No Project for client', function() {
   it('Display no projects', function() {
     cy.get('[data-cy=project_list_items]').should('not.exist')
     cy.get('[data-cy=not_access_projects]')
-      .contains('Currently you dont have permissions to access projects')
+      .contains('Currently you do not have permissions to access progams')
       .should('be.visible')
     cy.logout()
   })

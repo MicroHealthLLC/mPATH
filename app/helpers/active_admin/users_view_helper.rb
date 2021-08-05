@@ -28,7 +28,7 @@ module ActiveAdmin::UsersViewHelper
 
 
   def top_navigation_privileges_options(user_privileges, m_name)
-    rchecked = user_privileges.send(m_name).include?("R")
+    rchecked = user_privileges.send(m_name)&.include?("R")
     [ 
       ["Read", "R", {checked: rchecked, "data-module-name" => m_name }]
     ]

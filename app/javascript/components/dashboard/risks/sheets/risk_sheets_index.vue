@@ -10,7 +10,7 @@
           aria-label="Search"            
           aria-describedby="search-addon"    
           v-model="risksQuery"     
-          data-cy="search_issues"
+          data-cy="search_risks"
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>
