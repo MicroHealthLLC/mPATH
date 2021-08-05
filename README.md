@@ -192,3 +192,5 @@ Change, configure and customize your instance.  callback uri for socialmedia set
 https://YourliveSiteDomain/users/auth/google_oauth2/callback
 
 https://YourliveSiteDomain/users/auth/office365/callback
+
+After you have it configured in google or office 365 and you have the proper values entered in the system, restart nginx
