@@ -17,25 +17,13 @@
             <span v-show="task.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
             <span v-show="task.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
-            <span v-show="is_overdue" v-tooltip="`Overdue`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-show="is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar text-danger"></i></span>   
             <span v-show="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
             <span v-show="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
             <span v-show="task.onHold" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-show="task.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
             <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
-            <span v-if="task.in_progress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
-
-             <!-- <span v-if="                                      
-                      task.ongoing == false && 
-                      task.isOverdue == false &&
-                      task.reportable == false &&
-                      task.watched == false &&
-                      task.onHold == false &&  
-                      task.draft == false && 
-                      task.progress < 100 "             
-                    >                        
-            </span>
-                -->
+            <span v-if="task.inProgress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
           </div>
          
         </div>

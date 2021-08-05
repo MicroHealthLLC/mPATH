@@ -3,7 +3,7 @@
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
-         <div class="ml-2 task-search-bar w-100">
+         <div class="ml-3 task-search-bar w-75">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
             type="search"          
@@ -14,10 +14,29 @@
             data-cy="search_tasks"
         >
           <el-button slot="prepend" icon="el-icon-search"></el-button>
-        </el-input>
-        </div>
-        <div class="mx-1 w-75">
+        </el-input>      
+        </div>      
+       <div class="ml-2">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h p-2"></i>      
+        </span>    
+         </div>
+        
+       
+        <div class="mx-1 w-75 filterDiv">       
           <label class="font-sm my-0">Category</label>
+          <!-- <label class="font-sm my-0">Filters</label>
+          <div class="filterBox w-100">                           
+           <ul style=height:30px>
+             <span  v-for="(filterArray, index) in getAllFilterNames"
+            :key="index" >
+                <span v-if="getFilterValue(filterArray[0]) && getFilterValue(filterArray[0]) !== null" >                   
+                <li class="filter-green mx-1 px-1 d-inline font-sm text-light filterLi">{{ getFilterValue(filterArray[0]) }}</li>                  
+                </span>  
+             </span>    
+           </ul>
+          </div> -->
           <el-select
            v-model="C_taskTypeFilter"
            class="w-100"
@@ -70,7 +89,7 @@
         <font-awesome-icon icon="plus-circle" />
         Add Task
       </button>      
-     <span class="font-sm pr-2 hideLabels"> STATUSES TO DISPLAY </span>     
+     <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>     
                 
                 <span class="statesCol d-inline-block p-1 mr-2">
                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
@@ -485,6 +504,8 @@
         now: new Date().toISOString(),
         tasksQuery: '',
         currentPage:1,
+        showFilters: false,
+        datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
@@ -505,6 +526,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setToggleRACI',
+        'setShowAdvancedFilter',
         'setTaskForManager',
         'setShowCount',
         // 7 States
@@ -537,7 +559,7 @@
         this.currentSort = s;
       },
       // log(e){
-      //   console.log("task:  " + e)
+      //   console.log("advancedFilter:  " + e)
       // },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
@@ -583,6 +605,9 @@
       //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
         this.setHideOverdue(!this.getHideOverdue)    
       },
+      toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
+      },
       lastNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersLastName'
         this.sortedAccountableUser = 'accountableUsersLastName'
@@ -606,7 +631,7 @@
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
-      exportToPdf() {
+         exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#taskSheetsList1"})
@@ -620,12 +645,14 @@
     },
     computed: {
       ...mapGetters([
-        'getAdvancedFilterOptions',
+        // 'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTasksPerPageFilterOptions',
         'getTasksPerPageFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
+        "getFilterValue",
+        "getAllFilterNames",
         'getTaskIssueTabFilterOptions',
         'getTaskIssueProgressStatusOptions',
         'getTaskIssueProgressStatusFilter',
@@ -642,6 +669,7 @@
         'taskTypes',
         'viewPermit',
         'getToggleRACI',
+        'getShowAdvancedFilter',
 
         'getShowCount',
         // 7 States
@@ -879,7 +907,7 @@
         }
         
       },
-       C_toggleComplete: {                  
+        C_toggleComplete: {                  
         get() {
          return this.getHideComplete               
         },
@@ -999,7 +1027,7 @@
     margin-top: 50px;
     margin-left: 2px;
   }
-  #printBtn, .addBtns {
+  #printBtn, .addBtns, .filterToggle {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #total {
@@ -1146,6 +1174,26 @@ i, .icons {
   } 
 }
 
+.fiterLi {
+  white-space: nowrap; 
+}
+.filterBox {
+    background-color: #FFF;
+    background-image: none;
+    border-radius: 4px;
+    overflow-y: auto;
+    border: 1px solid #DCDFE6;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #606266;
+    display: inline-block;
+    font-size: inherit;
+    line-height: 30px;
+    outline: 0;
+    padding: 0 15px;
+    height: 32px;
+}
+   
 @media screen and (max-width: 1550px) {
   .hideLabels {
     display: none !important;

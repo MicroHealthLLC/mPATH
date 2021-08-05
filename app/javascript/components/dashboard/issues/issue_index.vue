@@ -383,7 +383,7 @@ export default {
   },
 computed: {
   ...mapGetters([
-    'getAdvancedFilterOptions',
+    // 'getAdvancedFilterOptions',
     'filterDataForAdvancedFilter',
     'getTaskIssueUserFilter',
     'getAdvancedFilter',

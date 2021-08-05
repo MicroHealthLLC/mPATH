@@ -950,6 +950,12 @@ th {
   color: #ccc;
   margin: 0.6em;
 }
+
+.filterToggleWrapper {
+  border-radius: 0.25rem; 
+  border: .5px solid lightgray;
+  height: 32px;
+}
 .el-icon-loading {
   font-size: 50px;
   color: #17a2b8;

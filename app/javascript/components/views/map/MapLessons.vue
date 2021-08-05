@@ -72,7 +72,7 @@
       
       <hr class="mb-3" />
       <el-card
-        v-for="(lesson, index) in filteredLessons"
+        v-for="(lesson, index) in filteredLessons.filtered.lessons"
         :key="index"
         class="lesson-card my-1"
         @click.native="openLesson(lesson.id)"
@@ -98,7 +98,7 @@
           >{{ category(lesson.task_type_id) }}
         </div>
       </el-card>
-      <div v-show="filteredLessons.length < 1" class="text-danger font-lg mt-4">
+      <div v-show="filteredLessons.filtered.lessons.length < 1" class="text-danger font-lg mt-4">
         No Lessons found...
       </div>
     </div>
@@ -124,7 +124,7 @@
       </thead>
       <tbody>
          <tr
-            v-for="lesson in filteredLessons"
+            v-for="lesson in filteredLessons.filtered.lessons"
             :key="lesson.id"
             @click="openLesson(lesson.id)"
             @mouseup.right="openContextMenu($event, lesson)"
@@ -224,6 +224,9 @@ export default {
       let s = permissionHash[salut]
       return  fPrivilege.lessons.includes(s); 
     },
+    log(e) {
+    console.log(e)
+    },
     addLesson() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/new`
@@ -302,11 +305,51 @@ export default {
     }
         
   },
+    variation() {
+     let drafts = _.filter(
+     this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+     this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.important == true
+      ); 
+     let briefings = _.filter(
+      this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.reportable == true
+      );
+     let completed = _.filter(
+       this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.draft == false
+      );
+     return {
+       important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },        
+      };
+    },
     filteredLessons() {
-      return this.projectLessons.filter((lesson) =>
-        lesson.title.toLowerCase().match(this.search.toLowerCase())
-      )
-       .filter(lesson => {
+         // Returns filtered lessons based on search value from input
+      return {
+
+      unfiltered: {
+            lessons:  this.projectLessons
+        .filter((lesson) =>
+          lesson.title.toLowerCase().match(this.search.toLowerCase())
+        )
+      },     
+      filtered : {
+          lessons: this.projectLessons.filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.getHideDraft) {
           return !lesson.draft
@@ -331,46 +374,14 @@ export default {
           return lesson.important
         } if (this.getHideImportant && this.getHideBriefed) {
           return lesson.important + lesson.reportable
-       } else return true          
-            
-      })
-    },
-     variation() {
-     let drafts = _.filter(
-     this.filteredLessons,
-        (t) => t && t.draft == true
-      );  
-      let important = _.filter(
-     this.filteredLessons,
-        (t) => t && t.important == true
-      ); 
-     let briefings = _.filter(
-       this.filteredLessons,
-        (t) => t && t.reportable == true
-      );
-     let completed = _.filter(
-      this.filteredLessons,
-        (t) => t && t.draft == false
-      );
-     return {
-       important: {
-          count: important.length,             
-        },
-        briefings: {
-          count: briefings.length,          
-        },
-        drafts: {
-          count: drafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          // percentage: Math.round(completed_percent),
-        },        
-      };
-    },
-  },
-
+       } else return true              
+        })
+      } 
+    }
+  }
+   },
   mounted() {
+    console.log(this.filteredLessons.filtered.lessons)
     this.fetchProjectLessons(this.$route.params);
   },
 };

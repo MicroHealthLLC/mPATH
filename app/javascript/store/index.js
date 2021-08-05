@@ -35,9 +35,11 @@ export default new Vuex.Store({
   },
   state: {
     advancedFilter: [],
+    myAssignmentsFilter:[],
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
+    showAdvancedFilter: false, 
     currentProject: null,
     lastCalendarFocus: '',
     mapLoading: true,
@@ -145,6 +147,7 @@ export default new Vuex.Store({
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
+    setMyAssignmentsFilter: (state, filter) => state.myAssignmentsFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
       state.advancedFilter = selectedOptions
       // var _taskIssueOverdueFilter = []
@@ -333,6 +336,9 @@ export default new Vuex.Store({
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
 
+    
+    setShowAdvancedFilter: (state, show) => state.showAdvancedFilter = show, 
+
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
     setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
     clearProgressFilters: (state) => {
@@ -472,45 +478,55 @@ export default new Vuex.Store({
     getTaskIssueProgressStatusFilter: (state) => {
       return state.taskIssueProgressStatusFilter
     },
-    // getAdvancedFilter: (state, getter) => () =>{
-    //   return state.advancedFilter
-    // },
-    getAdvancedFilter: state => state.advancedFilter,
-    getAdvancedFilterOptions: (state, getters) => {
+    getMyAssignmentsFilter: state => state.myAssignmentsFilter,
+    getMyAssignmentsFilterOptions: (state, getters) => {
 
-      var options = [
-        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
-        {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
-        {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
-        // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+      var options = [       
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
-        {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},      
-        {id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'},
-        {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
-        {id: 'notImportant', name: 'Not Marked Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
-        {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
-        // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
-        {id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'},
-        // {id: 'notDraft', name: 'Not Draft', value: 'notDraft', filterCategoryId: 'notDraftFilter', filterCategoryName: 'Not Draft'},
-        {id: 'onGoing', name: 'Marked Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'},
-        {id: 'notOnGoing', name: 'Not Marked Ongoing', value: 'notOnGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'},
-
-        // Priority Level is specific to Risk
-        // {id: 'low', name: 'Low', value: 'low', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
-        // {id: 'moderate', name: 'Moderate', value: 'moderate', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
-        // {id: 'high', name: 'High', value: 'high', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level' },
-        // {id: 'extreme', name: 'Extreme', value: 'extreme', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
-
-        // Risk Approach is specific to Risk
-        // {id: 'accept', name: 'Accept', value: 'accept', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
-        // {id: 'avoid', name: 'Avoid', value: 'avoid', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
-        // {id: 'mitigate', name: 'Mitigate', value: "mitigate", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
-        // {id: 'transfer', name: 'Transfer', value: "transfer", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'}
       ]
       return options;
     },
+// DO NOT ERASE:  HELPFUL IF WE WANT TO ADD DROPDOWN WITH DIFFERENT CATEGORY LABELS
+    // getAdvancedFilter: state => state.advancedFilter,
+    // getAdvancedFilterOptions: (state, getters) => {
+
+    //   var options = [{
+    //     label: 'State To Display',
+    //     options: [{
+    //       id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
+    //     }, {
+    //       id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress'
+    //     }, {
+    //       id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned'
+    //     },{
+    //       id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue',
+    //     },{
+    //       id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'
+    //     },{
+    //       id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'
+    //     },{
+    //       id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'
+    //     }]
+    //   }, {
+    //     label: 'Tag Focus',
+    //     options: [{
+    //     id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'
+    //   },{
+    //     id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'
+    //   },{
+    //     id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
+    //   }]
+    //   }, {
+    //     label: 'Assignments',
+    //     options: [{
+    //     id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
+    //    },{
+    //     id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+    //    }]
+    // }]
+    //   return options;
+    // },
 
     getRiskApproachFilter: state => state.riskApproachFilter,
     getRiskApproachFilterOptions: (state, getters) => {
@@ -580,7 +596,7 @@ export default new Vuex.Store({
       return [
 
         ['facilityGroupFilter', 'Project Groups'],
-        ['facilityNameFilter', 'Project Names'],
+        ['facilityNameFilter', 'Project Names'],        
         ['projectStatusFilter', 'Project Statuses'],
         ['facilityProgressFilter', 'Project Progress Range'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
@@ -610,10 +626,13 @@ export default new Vuex.Store({
         // The first index value is filterCategoryId in advanced filter
         ['overDueFilter','Action Overdue'],
         ['myActionsFilter', 'My Assignments'],
+        ['myAssignmentsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['importantFilter', 'Important'],
         ['briefingsFilter', 'Briefings'],
         ['onGoingFilter', 'Ongoing'],
+        ['inProgressFilter','In Progress'],
+        ['plannedFilter','Planned'],
         ['onHoldFilter', 'On Hold'],
         ['draftFilter', 'Drafts'],
         ['progressStatusFilter', 'Action Status']
@@ -631,13 +650,28 @@ export default new Vuex.Store({
         }
         return user_names
       // Advanced filters
-      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter', 'briefingsFilter'].includes(_filterValue) ){
+      }else if( ['plannedFilter', 'inProgressFilter', 'overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter', 'briefingsFilter'].includes(_filterValue) ){
 
         var aFilter = getter.getAdvancedFilter
         var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
 
         return user_names
 
+      }else if(_filterValue =='myActionsFilter'){
+      var user_names = null
+        if(getter.myActionsFilter && getter.myActionsFilter[0]){
+          user_names = _.map(getter.myActionsFilter, 'myActionsFilter').join(", ")
+        }
+        return user_names
+
+
+      // }else if(_filterValue =='myAssignmentsFilter'){
+      //   var user_names = null
+      //     if(getter.myAssignmentsFilter && getter.myAssignmentsFilter[0]){
+      //       user_names = _.map(getter.myAssignmentsFilter, 'myAssignmentsFilter').join(", ")
+      //     }
+      //     return user_names
+  
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
         var user_names = null
@@ -801,6 +835,7 @@ export default new Vuex.Store({
     contentLoaded: state => state.contentLoaded,
     getToggleRACI: state => state.toggleRACI,
     getShowAllEventsToggle: state => state.showAllEventsToggle,
+    getShowAdvancedFilter: (state) => state.showAdvancedFilter,
     getLastFocusFilter: state => state.lastCalendarFocus,
 
     mapLoading: state => state.mapLoading,
@@ -876,6 +911,8 @@ export default new Vuex.Store({
 
       var aFilter = getters.getAdvancedFilter
 
+      var myFilter = getters.getMyAssignmentsFilter
+
       let taksIssueNotOnWatch = _.map(aFilter, 'id').includes("notOnWatch")
       let taskIssueOnWatch =  _.map(aFilter, 'id').includes("onWatch")
 
@@ -888,8 +925,8 @@ export default new Vuex.Store({
       let taksIssueNotOnGoing = _.map(aFilter, 'id').includes("notOnGoing")
       let taskIssueOnGoing =  _.map(aFilter, 'id').includes("onGoing")
 
-      let taskIssueMyAction = _.map(aFilter, 'id').includes("myAction")
-      let taksIssueNotMyAction = _.map(aFilter, 'id').includes("notMyAction")
+      let taskIssueMyAction = _.map(myFilter, 'id').includes("myAction")
+      let taksIssueNotMyAction = _.map(myFilter, 'id').includes("notMyAction")
 
       let taskIssueOverdue = _.map(aFilter, 'id').includes("overdue")
       let taskIssueNotOverdue = _.map(aFilter, 'id').includes("notOverdue")
@@ -902,6 +939,12 @@ export default new Vuex.Store({
 
       let taskIssueRiskOnHold = _.map(aFilter, 'id').includes("onHold")
       let taskIssueRiskNotOnHold = _.map(aFilter, 'id').includes("notOnHold")
+
+      let taskIssueRiskPlanned = _.map(aFilter, 'id').includes("planned")
+      let taskIssueRiskNotPlanned = _.map(aFilter, 'id').includes("notPlanned")
+
+      let taskIssueRiskInprogress = _.map(aFilter, 'id').includes("inProgress")
+      let taskIssueRiskNotInprogress = _.map(aFilter, 'id').includes("notInprogress")
 
       // let riskPriorityLevel = _.map(aFilter, 'filterCategoryId').includes("riskPriorityLevelFilter")
       // let riskPriorityLevelNames = _.map(aFilter, 'id')
@@ -918,6 +961,8 @@ export default new Vuex.Store({
         (taskIssueImporant == true && taksIssueNotImportant == true) ||
         (taskIssueReportable == true && taksIssueNotReportable == true) ||
         (taskIssueOnGoing == true && taksIssueNotOnGoing == true) ||
+        (taskIssueRiskPlanned == true && taskIssueRiskNotPlanned == true) ||
+        (taskIssueRiskInprogress == true && taskIssueRiskNotInprogress == true) ||
         (taskIssueOverdue == true && taskIssueNotOverdue == true) ||
         // (taskIssueRiskNotDraft == true && taskIssueRiskDraft == true) ||  
         (taskIssueRiskNotOnHold == true && taskIssueRiskOnHold == true) 
@@ -931,7 +976,12 @@ export default new Vuex.Store({
 
       let _isDrafts = []
       _isDrafts = _.map(resources, 'draft')
-      
+
+      let isPlanned = []
+          isPlanned = resources.map(p => p.planned)
+
+      let isInprogress = []
+          isInprogress = resources.map(p => p.inProgress)      
    
       let _isOnHolds = []
       _isOnHolds = _.map(resources, 'onHold')
@@ -949,6 +999,22 @@ export default new Vuex.Store({
       if(taskIssueRiskOnHold == true && taskIssueRiskNotOnHold == false){
         valid = valid && _isOnHolds.includes(true)
       } 
+
+      if(taskIssueRiskPlanned == false && taskIssueRiskNotPlanned == true){
+        valid = valid && isPlanned.includes(false)
+      }
+
+      if(taskIssueRiskPlanned == true && taskIssueRiskNotPlanned == false){
+        valid = valid && isPlanned.includes(true)
+      }
+      
+      if(taskIssueRiskInprogress == false && taskIssueRiskNotInprogress == true){
+        valid = valid && isInprogress.includes(false)
+      }
+
+      if(taskIssueRiskInprogress == true && taskIssueRiskNotInprogress == false){
+        valid = valid && isInprogress.includes(true)
+      }
 
       if(taskIssueOverdue == true && taskIssueNotOverdue == false){
         valid = valid && _isOverdues.includes(true)
@@ -1975,6 +2041,7 @@ export default new Vuex.Store({
         'riskDispositionDuration',
 
         'taskIssueProgressFilter',
+        'myAssignmentsFilter',
         'myActionsFilter',
         'onWatchFilter',
         'progressFilter',

@@ -2,7 +2,7 @@
   <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center w-70 float-right filters-wrapper">
-        <div class="ml-2 task-search-bar w-100">
+        <div class="ml-3 task-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
           <el-input
             type="search"          
@@ -15,6 +15,12 @@
           <el-button slot="prepend" icon="el-icon-search"></el-button>
         </el-input>
         </div>
+         <div class="ml-2">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h p-2"></i>      
+        </span>    
+         </div>
         <div class="mx-1 w-75">
           <label class="font-sm my-0">Category</label>
           <el-select
@@ -96,7 +102,7 @@
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
-          <span class="font-sm pr-2 hideLabels"> STATUSES TO DISPLAY </span>     
+          <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>     
                 
                 <span class="statesCol d-inline-block p-1 mr-2">
                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
@@ -532,6 +538,7 @@
       ...mapMutations([
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
+        'setShowAdvancedFilter',
         'setIssuesPerPageFilter',
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
@@ -624,9 +631,12 @@
         this.newIssue = false
         this.$emit('refresh-facility')
       },
-     log(e){
-        console.log(e)
+      toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
       },
+    //  log(e){
+    //     console.log(e)
+    //   },
       issueUpdated(issue, refresh=true) {
         let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
@@ -669,9 +679,10 @@
    },
     computed: {
       ...mapGetters([
-        'getAdvancedFilterOptions',
+        // 'getAdvancedFilterOptions',
         'getIssuesPerPageFilterOptions',
         'getIssuesPerPageFilter',
+        'getShowAdvancedFilter',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
