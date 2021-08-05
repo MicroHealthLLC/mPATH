@@ -58,8 +58,7 @@ admin.privilege = Privilege.new(
   facility_manager_view: "R",
   sheets_view: "R",
   kanban_view: "R",
-  risks: "R",
-  calendar_view: "R"
+  risks: "R"
 )
 admin.save(validate: false)
 
@@ -89,8 +88,7 @@ client.privilege = Privilege.new(
   facility_manager_view: "R",
   sheets_view: "R",
   kanban_view: "R",
-  risks: "R",
-  calendar_view: "R"
+  risks: "R"
 )
 client.save(validate: false)
 
@@ -105,13 +103,10 @@ project = Project.find_or_create_by(
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
-
 active_status = Status.find_or_create_by(name: 'Active', color: '#0b8e1a')
 inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
-
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: active_status.id)
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: inactive_status.id)
-
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
 task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage', percentage: 40)
 new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage', percentage: 60)
@@ -241,8 +236,6 @@ test_risk_1 = Risk.find_or_create_by(
   watched: true,
   progress: 10
 )
-test_risk_1.checklists.create(text: "Risk Checklist1", user_id: admin.id)
-test_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_1.id, user_id: admin.id)
 
@@ -261,8 +254,6 @@ new_risk_1 = Risk.find_or_create_by(
   watched: false,
   progress: 70
 )
-new_risk_1.checklists.create(text: "Risk Checklist1", user_id: admin.id)
-new_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_1.id, user_id: client.id)
 
@@ -369,8 +360,6 @@ test_risk_2 = Risk.find_or_create_by(
   watched: true,
   progress: 40
 )
-test_risk_2.checklists.create(text: "Risk Checklist1", user_id: client.id)
-test_risk_2.checklists.create(text: "Risk Checklist1", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_2.id, user_id: admin.id)
 
@@ -389,8 +378,6 @@ new_risk_2 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
-new_risk_2.checklists.create(text: "Risk Checklist2", user_id: client.id)
-new_risk_2.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
 
@@ -502,8 +489,6 @@ test_risk_3 = Risk.find_or_create_by(
   watched: true,
   progress: 70
 )
-test_risk_3.checklists.create(text: "Risk Checklist2", user_id: client.id)
-test_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_3.id, user_id: admin.id)
 
@@ -522,8 +507,6 @@ new_risk_3 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
-new_risk_3.checklists.create(text: "Risk Checklist2", user_id: client.id)
-new_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_3.id, user_id: client.id)
 
@@ -626,8 +609,6 @@ test_risk_4 = Risk.find_or_create_by(
   risk_stage_id: risk_stage.id,
   progress: 100
 )
-test_risk_4.checklists.create(text: "Risk Checklist4", user_id: admin.id)
-test_risk_4.checklists.create(text: "Risk Checklist4", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_4.id, user_id: admin.id)
 
@@ -646,7 +627,5 @@ new_risk_4 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
-new_risk_4.checklists.create(text: "Risk Checklist5", user_id: admin.id)
-new_risk_4.checklists.create(text: "Risk Checklist5", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_4.id, user_id: client.id)

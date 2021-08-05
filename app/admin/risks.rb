@@ -245,10 +245,10 @@ ActiveAdmin.register Risk do
   filter :start_date, label: "Identified Date"
   filter :due_date, label: "Risk Approach Due Date"
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program', input_html: {class: 'program_select'}
-  filter :facility_project_facility_id,  as: :select , collection: -> {Facility.pluck(:facility_name, :id)}, label: 'Project', input_html: {class: 'project_privileges_select'}
+  filter :facility_project_facility_facility_name,  as: :select, collection: -> {Facility.pluck(:facility_name, :id)}, label: 'Project', input_html: {class: 'project_privileges_select'}
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :user, label: "Owned by", as: :select, collection: -> { User.get_users_with_fullname }, input_html: { multiple: true, "data-placeholder" => "Select owned by user" }
-  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, "data-placeholder" => "Select Checklist user" }
+  filter :user, label: "Owned by", as: :select, collection: -> { User.get_users_with_fullname }, input_html: { multiple: true }
+  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 end

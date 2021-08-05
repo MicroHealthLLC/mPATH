@@ -375,7 +375,7 @@ class User < ApplicationRecord
     if remaining_project_ids.any?
       user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
       user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
-      user_privilege_attributes = user_privilege_attributes.reject{|k,v| v.nil? }.transform_values{|v| v.delete(""); v.chars}
+      user_privilege_attributes = user_privilege_attributes.transform_values{|v| v.delete(""); v.chars}
 
       remaining_project_ids.each do |pid|
         ph[pid.to_s] = user_privilege_attributes

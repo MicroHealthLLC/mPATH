@@ -2,7 +2,7 @@ describe('Sheet Overview Page', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
+    cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
   })
 

@@ -32,6 +32,19 @@ describe('Sheets Risks View', function() {
     cy.logout()
   })
 
+  it('Update risk from sheet risk table', function() {
+    cy.get('[data-cy=risks_table]').within(() => {
+      cy.get('[data-cy=risk_row]').first().should('be.exist').click({force: true})
+    })
+    cy.get('[data-cy=risk_name]').clear({force: true}).type('Updated new test risk', {force: true}).should('have.value', 'Updated new test risk')
+    cy.get('[data-cy=risk_save_btn]').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy=risk_close_btn]').click({force: true})
+    cy.get('[data-cy=risks_table]').within(() => {
+      cy.get('[data-cy=risk_row]').contains('Updated new test risk').should('be.exist')
+    })
+  })
+
   it('Search risk by typing title', function() {
     cy.get('[data-cy=risks_table]').within(() => {
       cy.get('[data-cy=risk_row]').its('length').should('be.eq', 2)

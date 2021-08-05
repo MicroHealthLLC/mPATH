@@ -33,7 +33,7 @@ describe('Kanban Issues View', function() {
       cy.get('[data-cy=issues]').should('not.exist')
     })
 
-    cy.get('[data-cy=search_issues]').clear({force: true}).type('Test Issue 1').should('have.value', 'Test Issue 1')
+    cy.get('[data-cy=search_issues]').clear({force: true}).type('Test Issue').should('have.value', 'Test Issue')
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=issues]').its('length').should('be.eq', 1)
     })
