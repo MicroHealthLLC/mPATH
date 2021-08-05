@@ -2428,19 +2428,19 @@ export default {
      },
     C_categories() {     
       let category = this.portfolioTasks
-      return [...new Set(category.map(item => item.category))]; 
+      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
      },
     C_i_categories() {     
       let category = this.portfolioIssues
-      return [...new Set(category.map(item => item.category))]; 
+      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
      },
      C_r_categories() {     
       let category = this.portfolioRisks
-      return [...new Set(category.map(item => item.category))]; 
+      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
      },
      C_l_categories() {     
       let category = this.portfolioLessons
-      return [...new Set(category.map(item => item.category))]; 
+      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
      },
     C_programIssuesNameFilter: {
       get() {
