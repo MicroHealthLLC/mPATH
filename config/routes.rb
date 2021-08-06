@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+      # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
       get "/portfolio/lessons", to: "portfolio#lessons"
       get "/portfolio/tasks", to: "portfolio#tasks"
@@ -19,6 +20,9 @@ Rails.application.routes.draw do
       get "/portfolio/issues", to: "portfolio#issues"
       get "/projects/:id", to: "projects#show"
 
+      # Filter data
+      get "/filter_data/programs", to: "filter_data#programs"
+      
       # NOTE: Replace this with resource.
       # get "/programs/:program_id/lessons" => "lessons#index"
       # get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
