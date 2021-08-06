@@ -5,7 +5,7 @@
       <div
         class="ninety mr-1"
       >
-       <label class="font-sm mb-0">Search</label>
+       <label class="font-sm mb-0" style="visibility:hidden">Search</label>
         <el-input
           type="search"
           placeholder="Enter Search Criteria"

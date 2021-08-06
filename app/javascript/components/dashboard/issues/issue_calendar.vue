@@ -4,7 +4,7 @@
    <span class="filters-wrapper">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
         <div class="task-search-bar w-100">
-         <label class="font-sm mb-0">Search</label>
+        <label class="font-sm mb-0" style="visibility:hidden">Search</label>
            <el-input
             type="search"          
             placeholder="Enter Search Criteria"
@@ -312,7 +312,7 @@
             @click.prevent="detailsBtn"
             color="primary"
           >
-          <i class="far fa-edit"></i>
+          <i class="far fa-edit mr-1"></i>
             Details
           </v-btn>
             
