@@ -1795,6 +1795,8 @@ export default {
           return this.tasksObj.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
+          if (a.category === null && this.currentSort === 'category') return 1;
+          if (b.category === null && this.currentSort === 'category') return -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
@@ -1809,6 +1811,8 @@ export default {
           return this.issuesObj.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
+          if (a.category === null && this.currentSort === 'category') return 1;
+          if (b.category === null && this.currentSort === 'category') return -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
@@ -1823,6 +1827,8 @@ export default {
           return this.risksObj.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
+          if (a.category === null && this.currentSort === 'category') return 1;
+          if (b.category === null && this.currentSort === 'category') return -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
@@ -1837,6 +1843,8 @@ export default {
           return this.lessonsObj.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
+          if (a.category === null && this.currentSort === 'category') return 1;
+          if (b.category === null && this.currentSort === 'category') return -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
