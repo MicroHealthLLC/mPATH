@@ -25,6 +25,11 @@ Rails.application.routes.draw do
       get "/filter_data/users", to: "filter_data#users"
       get "/filter_data/statuses", to: "filter_data#statuses"
       get "/filter_data/categories", to: "filter_data#categories"
+      get "/filter_data/stages", to: "filter_data#stages"
+      get "/filter_data/issue_types", to: "filter_data#issue_types"
+      get "/filter_data/issue_severities", to: "filter_data#issue_severities"
+      get "/filter_data/risk_approaches", to: "filter_data#risk_approaches"
+      get "/filter_data/risk_priority_level", to: "filter_data#risk_priority_level"
 
       # NOTE: Replace this with resource.
       # get "/programs/:program_id/lessons" => "lessons#index"
