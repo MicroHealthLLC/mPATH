@@ -16,16 +16,17 @@ class Api::V1::FilterDataController < AuthenticatedController
 
         projects_group_by_facility_group = p.facilities.group_by do |f|
           f.facility_group_id
-        end.transform_values{|v| v.map{|vv| {id: vv.id, label: vv.facility_name } } }
+        end.transform_values{|v| v.map{|vv| {id: SecureRandom.hex(2), project_id: vv.id, label: vv.facility_name } } }
         project_children = []
         
         projects_group_by_facility_group.each do |fg_id, facilities|
           fg = facility_groups.detect{|g| g.id == fg_id} 
-          project_children << {id: fg.id, label: fg.name, children: facilities }
+          project_children << {id: SecureRandom.hex(2), project_group_id: fg.id, label: fg.name, children: facilities }
         end
 
         h = {
-          id: p.id,
+          id: SecureRandom.hex(2),
+          program_id: p.id,
           label: p.name,
           children: project_children
         }
