@@ -46,4 +46,24 @@ class Api::V1::FilterDataController < AuthenticatedController
     render json: {users: users.map{|u| {id: u.id, name: u.first_name } } }
   end
 
+  def statuses
+    response_json = []
+    if params[:program_id]
+      statues = Status.joins(:project_statuses).where(project_statuses: {project_id: params[:program_id] }).distinct.select(:id, :name)
+    else
+      statues = Status.joins(:project_statuses).where(project_statuses: {project_id: current_user.projects.active.distinct.ids }).distinct.select(:id, :name)
+    end
+    render json: {statuses: statues.map{|u| {id: u.id, name: u.name } } }
+  end
+
+  def categories
+    response_json = []
+    if params[:program_id]
+      task_types = TaskType.joins(:project_task_types).where(project_task_types: {project_id: params[:program_id] }).distinct.select(:id, :name)
+    else
+      task_types = TaskType.joins(:project_task_types).where(project_task_types: {project_id: current_user.projects.active.distinct.ids }).distinct.select(:id, :name)
+    end
+    render json: {categories: task_types.map{|u| {id: u.id, name: u.name } } }
+  end
+
 end
