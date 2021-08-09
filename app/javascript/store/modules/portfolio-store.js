@@ -8,6 +8,8 @@ const portfolioModule = {
     showCount: true,  
    
     programNameFilter: null,
+
+    portfolioNameFilter: null,
     portfolioCategoriesFilter: null,
 
     portfolio_tasks: [],
@@ -24,6 +26,9 @@ const portfolioModule = {
 
     portfolio_programs: [],
     portfolio_programs_loaded: true,
+
+    portfolio_programs_filter: [],
+    portfolio_loaded: true,
 
 
     // Flags Work throughout CLient faSolarPanel...move to new store
@@ -43,20 +48,44 @@ const portfolioModule = {
   
   }),
   actions: {
+    // fetchPortfolioProgramsFilter({commit}) {
+    //   commit("TOGGLE_PORTFOLIO_LOADED", false);
+    //   // Send GET request for all lessons contained within a project
+    //   axios({
+    //     method: "GET",
+    //     url: `/api/v1/filter_data/programs`,
+    //     headers: {
+    //       "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+    //         .attributes["content"].value,
+    //     },
+    //   })
+    //     .then((res) => {
+    //       // Mutate state with response from back end  
+    //     console.log("portfoi" + res)
+    //       commit("SET_PORTFOLIO_PROGRAMS_FILTER", res.data);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     })
+    //     .finally(() => {
+    //       commit("TOGGLE_PORTFOLIO_LOADED", true);
+    //     });
+    // }, 
     fetchPortfolioPrograms({commit}) {
       commit("TOGGLE_PORTFOLIO_PROGRAMS_LOADED", false);
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
-        url: `/api/v1/portfolio/programs`,
+        url: `/api/v1/filter_data/programs`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
+          console.log("portfoi" + JSON.stringify(res.data))
           // Mutate state with response from back end      
-          commit("SET_PORTFOLIO_PROGRAMS", res.data);
+          commit("SET_PORTFOLIO_PROGRAMS", res.data.portfolio_filters);
         })
         .catch((err) => {
           console.log(err);
@@ -64,7 +93,8 @@ const portfolioModule = {
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_PROGRAMS_LOADED", true);
         });
-    },  
+    },
+
     fetchPortfolioTasks({commit}) {
         commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
         // Send GET request for all lessons contained within a project
@@ -164,6 +194,9 @@ const portfolioModule = {
     SET_PORTFOLIO_PROGRAMS: (state, portfolio_programs) => state.portfolio_programs = portfolio_programs,
     TOGGLE_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.portfolio_programs_loaded = loaded,
 
+    SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
+    TOGGLE_PORTFOLIO_PROGRAMS_FILTER_LOADED: (state, loaded ) => state.portfolio_programs_filter_loaded = loaded,
+
     SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks,
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
@@ -177,6 +210,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
+    setPortfolioNameFilter: (state, filter) => state.portfolioNameFilter = filter,
     setPortfolioCategoriesFilter: (state, filter) => state.portfolioCategoriesFilter = filter,
 
      // Flags Work throughout CLient faSolarPanel...move to new store
@@ -203,6 +237,9 @@ const portfolioModule = {
     portfolioPrograms: state => state.portfolio_programs, 
     portfolioProgramsLoaded: state => state.portfolio_programs_loaded,
 
+    portfolioProgramsFilter: state => state.portfolio_programs_filter, 
+    portfolioProgramsFilterLoaded: state => state.portfolio_programs_filter_loaded,
+
     portfolioTasks: state => state.portfolio_tasks,
     portfolioTasksLoaded: state => state.portfolio_tasks_loaded,
 
@@ -216,6 +253,7 @@ const portfolioModule = {
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
 
     programNameFilter: state => state.programNameFilter,
+    portfolioNameFilter: state => state.portfolioNameFilter,
     portfolioCategoriesFilter: state => state.portfolioCategoriesFilter,
 
     getShowCount: (state) => state.showCount,
