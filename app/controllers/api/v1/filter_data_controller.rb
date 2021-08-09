@@ -38,9 +38,9 @@ class Api::V1::FilterDataController < AuthenticatedController
     response_json = []
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
 
-    users = User.joins(:project_users).where(project_users: {project_id: program_ids}).distinct.select(:id, :first_name)
+    users = User.joins(:project_users).where(project_users: {project_id: program_ids}).distinct.select(:id, :first_name, :last_name)
 
-    render json: {users: users.map{|u| {id: u.id, name: u.first_name } } }
+    render json: {users: users.map{|u| {id: u.id, name: u.full_name } } }
   end
 
   def statuses
