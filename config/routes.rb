@@ -22,7 +22,8 @@ Rails.application.routes.draw do
 
       # Filter data
       get "/filter_data/programs", to: "filter_data#programs"
-      
+      get "/filter_data/users", to: "filter_data#users"
+
       # NOTE: Replace this with resource.
       # get "/programs/:program_id/lessons" => "lessons#index"
       # get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"

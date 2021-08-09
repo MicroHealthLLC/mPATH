@@ -36,4 +36,14 @@ class Api::V1::FilterDataController < AuthenticatedController
     render json: {portfolio_filters: response_json }
   end
 
+  def users
+    response_json = []
+    if params[:program_id]
+      users = User.joins(:project_users).where(project_users: {project_id: params[:program_id] }).distinct.select(:id, :first_name)
+    else
+      users = User.joins(:project_users).where(project_users: {project_id: current_user.projects.active.distinct.ids }).distinct.select(:id, :first_name)
+    end
+    render json: {users: users.map{|u| {id: u.id, name: u.first_name } } }
+  end
+
 end
