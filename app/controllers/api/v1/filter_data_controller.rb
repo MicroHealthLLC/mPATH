@@ -2,17 +2,32 @@ class Api::V1::FilterDataController < AuthenticatedController
   
   def programs
     response_json = []
+    if params[:program_id]
+      programs = current_user.projects.active.distinct.includes(:facilities).select(:id, :name).where("projects.id": params[:program_id])
+    else
+      programs = current_user.projects.active.distinct.includes(:facilities).select(:id, :name)
+    end
 
-    programs = current_user.projects.active.includes(:facility_groups, :facilities, :facility_projects).select(:id, :name)
+    facility_group_ids = Facility.joins(:facility_projects).where("facility_projects.project_id" => programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
+    facility_groups = FacilityGroup.select(:id, :name).where(id: facility_group_ids)
+
     programs.in_batches(of: 1000) do |pp|
       pp.find_each do |p|
-        g = p.facility_groups
-        projects_group_by_facility_group = p.facilities.group_by{|f| f.facility_group_id }.transform_values{|v| v.map{|vv| {id: vv.id, label: vv.facility_name } } }
+
+        projects_group_by_facility_group = p.facilities.group_by do |f|
+          f.facility_group_id
+        end.transform_values{|v| v.map{|vv| {id: vv.id, label: vv.facility_name } } }
+        project_children = []
+        
+        projects_group_by_facility_group.each do |fg_id, facilities|
+          fg = facility_groups.detect{|g| g.id == fg_id} 
+          project_children << {id: fg.id, label: fg.name, children: facilities }
+        end
 
         h = {
           id: p.id,
           label: p.name,
-          children: g.map{|gg| {id: gg.id, label: gg.name, children: projects_group_by_facility_group[gg.id] } }
+          children: project_children
         }
         response_json << h
       end
