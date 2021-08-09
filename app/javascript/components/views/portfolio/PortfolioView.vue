@@ -211,7 +211,7 @@
              </div>
               </div>
 
-      <div class="row text-center mt-2" v-if="tasksObj !== null && tasksObj.length > 0 ">      
+      <div class="row text-center mt-2 pr-3" v-if="tasksObj !== null && tasksObj.length > 0 ">      
         <div class="xTable px-3" style="overflow-x:auto">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="table" id="portTasks">        
           
@@ -268,7 +268,7 @@
 
               </th>
             
-               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+               <th class="sort-th" style="min-width:140px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
@@ -281,7 +281,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-               <th class="sort-th" style="min-width:175px" @click="sort('due_date')">Due Date
+               <th class="sort-th" style="min-width:140px" @click="sort('due_date')">Due Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
@@ -299,7 +299,7 @@
 
 
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('progress')">Progress
+              <th class="sort-th" style="min-width:115px" @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -312,7 +312,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th' style="min-width:200px">Flags
+              <th class='non-sort-th' style="min-width:145px">Flags
                
               </th>
                 <th class="pl-1 sort-th twenty" @click="sort('category')">Category
@@ -358,9 +358,9 @@
         <td class="text-center">
             <span v-if="task.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger mr-1"></i></span>
             <span v-if="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet mr-1 text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
-            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt mr-1 text-warning"></i></span>   
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
@@ -610,7 +610,7 @@
         </div>
        </div>
             </div>
-      <div class="row text-center mt-1" v-if="issuesObj !== null && issuesObj.length > 0 ">            
+      <div class="row text-center mt-1 pr-3" v-if="issuesObj !== null && issuesObj.length > 0 ">            
        
         <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="issueTable" id="portIssues">
@@ -692,7 +692,7 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_severity'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+              <th class="sort-th" style="min-width:140px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
@@ -705,7 +705,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-               <th class="sort-th" style="min-width:175px" @click="sort('due_date')">Due Date
+               <th class="sort-th" style="min-width:140px" @click="sort('due_date')">Due Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
@@ -721,7 +721,7 @@
               <th class="sort-th p-1">
                  <span class="py-2 d-inline-block">Assigned Users</span>
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sortI('progress')">Progress
+              <th class="sort-th" style="min-width:115px" @click="sortI('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -734,7 +734,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th' style="min-width:200px">Flags
+              <th class='non-sort-th' style="min-width:145px">Flags
                
               </th>              
                 <th class="pl-1 sort-th" @click="sort('category')">Category
@@ -779,7 +779,7 @@
         <td> {{ issue.progress + '%' }} </td>
         <td class="text-center">
             
-            <span v-if="issue.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger"></i> </span>
+            <span v-if="issue.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar mr-1 text-danger"></i> </span>
             <span v-if="issue.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span> 
             <span v-if="issue.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
@@ -1031,7 +1031,7 @@
       </div>                
                 
       </div>
-       <div class="row text-center mt-2" v-if="risksObj !== null && risksObj.length > 0 ">  
+       <div class="row text-center mt-2 pr-3" v-if="risksObj !== null && risksObj.length > 0 ">  
         <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="riskTable" id="portRisks">
            
@@ -1112,7 +1112,7 @@
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'priority_level'">
               <i class="fas fa-sort-down"></i></span>
             </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+              <th class="sort-th" style="min-width:140px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
@@ -1125,7 +1125,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-               <th class="sort-th" @click="sort('due_date')">Risk Approach Due Date
+               <th class="sort-th" @click="sort('due_date')" style="min-width:145px" >Risk Approach Due Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
@@ -1143,7 +1143,7 @@
 
 
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('progress')">Progress
+              <th class="sort-th" style="min-width:115px"  @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -1156,7 +1156,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th' style="min-width:200px">Flags
+              <th class='non-sort-th' style="min-width:145px">Flags
                
               </th>
                 <th class="pl-1 sort-th" @click="sort('category')">Category
@@ -1210,7 +1210,7 @@
         <td> {{ risk.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
-            <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
+            <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check mr-1 text-success"></i></span>   
             <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
@@ -1415,7 +1415,7 @@
               </div>
  
     
-      <div class="row text-center mt-2" v-if="lessonsObj !== null && lessonsObj.length > 0">        
+      <div class="row text-center mt-2 pr-3" v-if="lessonsObj !== null && lessonsObj.length > 0">        
        <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="lessonTable" id="portLessons">
            
@@ -1498,7 +1498,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class="sort-th" @click="sortL('created_at')">Date Added
+              <th class="sort-th" @click="sortL('created_at')" style="min-width:140px">Date Added
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'created_at'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'created_at'">
@@ -1511,7 +1511,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th style="min-width:200px">
+              <th style="min-width:145px">
                 Flags
               </th>  
               <th class="pl-1 sort-th" @click="sort('category')">Category
@@ -2916,7 +2916,7 @@ th {
   right: 1%;
 }
 .sort-th {
-  min-width: 225px;
+  min-width: 190px;
 }
 .profile-btns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 

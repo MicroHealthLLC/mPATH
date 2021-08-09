@@ -33,7 +33,7 @@
         <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>{{risk.progress + "%"}}</span>
         </td>
-        <td class="fort text-center">
+        <td class="ten text-center">
                 <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
                 <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="risk.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
@@ -58,7 +58,7 @@
                     No flags at this time           
                 </span>           -->
          </td>  
-         <td class="twenty" v-if="risk.notes.length > 0">       
+         <td class="twentyFour" v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -66,7 +66,7 @@
             {{risk.lastUpdate.body}}
           </span>         
         </td>  
-         <td  class="twenty" v-else >No Updates</td> 
+         <td  class="twentyFour" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu
@@ -278,6 +278,9 @@
   }
   .twenty{
     width: 20%;
+  }
+  .twentyFour{
+    width: 24%;
   }
   .pg-content {
     width: 100%;
