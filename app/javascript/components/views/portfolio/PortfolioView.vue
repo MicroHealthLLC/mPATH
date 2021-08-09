@@ -2378,7 +2378,7 @@ export default {
          return this.getShowCount                
         },
         set(value) {
-          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+          this.setShowCount(value)
         }
         
       },
