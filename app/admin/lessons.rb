@@ -91,13 +91,13 @@ ActiveAdmin.register Lesson do
     column 'Lesson Details' do |lesson|
       links = []
       if lesson.lesson_details.select{|ld| ld.detail_type == 'success'}.any?
-        links << link_to("Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'success'} ), class: "member_link edit_link")
+        links << link_to("Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_eq: 'success'} ), class: "member_link edit_link")
       end
       if lesson.lesson_details.select{|ld| ld.detail_type == 'failure'}.any?
-        links << link_to("Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'failure'} ), class: "member_link edit_link")
+        links << link_to("Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_eq: 'failure'} ), class: "member_link edit_link")
       end
       if lesson.lesson_details.select{|ld| ld.detail_type == 'best_practices'}.any?
-        links << link_to("Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'best_practices'} ), class: "member_link edit_link")
+        links << link_to("Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_eq: 'best_practices'} ), class: "member_link edit_link")
       end
       links.join(" ").html_safe  
     end
