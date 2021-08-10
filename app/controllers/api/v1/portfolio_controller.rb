@@ -27,14 +27,14 @@ class Api::V1::PortfolioController < AuthenticatedController
   def programs
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = current_user.projects.active.paginate(per_page: 15, page: params[:page])
+      all_resources = current_user.projects.active.includes(:tasks, :issues, :risks).paginate(per_page: 15, page: params[:page])
       json_response = []
       all_resources.each do |resources|
         json_response << resource.portfolio_json
       end
       render json: json_response
     else
-      all_resources = current_user.projects.active
+      all_resources = current_user.projects.active.includes(:tasks, :issues, :risks)
       json_response = []
       all_resources.in_batches(of: 1000) do |resources|
         resources.find_each do |resource|

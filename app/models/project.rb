@@ -56,10 +56,28 @@ class Project < SortableRecord
     ).as_json
   end
 
+  def total_progress
+    project = self
+    task_count = project.tasks.size
+    task_sum = project.tasks.sum("tasks.progress")
+    task_weight = ( task_count * (task_sum / task_count) ) rescue 0
+    
+    issue_count = project.issues.size
+    issue_sum = project.issues.sum("issues.progress")
+    issue_weight = issue_count * (issue_sum / issue_count) rescue 0
+
+    risk_count = project.risks.size
+    risk_sum = project.risks.sum("risks.progress")
+    risk_weight = risk_count * (risk_sum / risk_count).to_f rescue 0
+
+    ( (task_weight.to_f + issue_weight.to_f + risk_weight.to_f) / (task_count.to_f + issue_count.to_f + risk_count.to_f) ).round rescue 0
+  end
+
   def portfolio_json
     { 
       id: id, 
       name: name,
+      progress: total_progress
     }
   end  
 
