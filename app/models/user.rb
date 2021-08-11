@@ -226,6 +226,7 @@ class User < ApplicationRecord
   end
 
   def password_complexity
+    return unless self.changes.has_key?("password")
     pass_settings = JSON.parse(Setting['PASSWORDS_KEY'])
     error_message = []
     if password&.size < pass_settings['range'].to_i
