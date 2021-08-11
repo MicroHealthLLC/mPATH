@@ -68,7 +68,7 @@ class Issue < ApplicationRecord
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
-
+    
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
@@ -84,6 +84,7 @@ class Issue < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
       users: users.select(&:active?).map(&:full_name).join(", "),
+      issue_users: users.map{|u| {id: u.id, name: u.full_name } } 
     }
 
     self.attributes.merge!(merge_h)

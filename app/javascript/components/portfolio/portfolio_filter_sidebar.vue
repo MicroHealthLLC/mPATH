@@ -29,7 +29,7 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioPrograms" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> 
+                   <treeselect  placeholder="Search and select" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter" /> 
                        <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
                        
                     </div>
@@ -64,6 +64,21 @@
                 </div>
                 <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
                 </div>
+                <div class="">
+                 <label class="font-sm mb-0">Project % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col pt-0 mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                  </div>
+                  <div class="form-group col pt-0 mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                  </div>
+                </div>
+                <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+
+            </div>
+               
+                
               <!-- <label class="font-sm mb-0">Project Names</label>
                   <el-select 
                     v-model="C_facilityNameFilter" 
@@ -88,13 +103,11 @@
 
          
               </div>
-              <div class="">
-
-            </div>
+             
             <div class="col-md-6">
               <label class="font-sm mb-0">Project Statuses</label>
                 <el-select 
-                    v-model="C_projectStatusFilter"                    
+                    v-model="C_portfolioStatusesFilter"                    
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -103,7 +116,7 @@
                     placeholder="Select Project Status"
                     >
                   <el-option 
-                    v-for="item in statuses"                                                     
+                    v-for="item in portfolioStatuses"                                                     
                     :value="item"   
                     :key="item.id"
                     :label="item.name"                                                  
@@ -129,23 +142,22 @@
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div>
                 <label class="font-sm mb-1">Categories</label>
-                <el-select 
-                  v-model="C_taskTypeFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="task_category"       
-                  multiple                                                                                                                                                         
-                  placeholder="Select Category"
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
                   >
-                <el-option 
-                  v-for="item in taskTypes"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-                </el-select>                
+                  <el-option 
+                    v-for="item in C_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
                </div>              
                <div>
                 <label class="font-sm mb-0">Action Users</label>
@@ -160,11 +172,10 @@
                   placeholder="Search and select names"
                   >
                  <el-option 
-                  v-for="item in activeProjectUsers"                                                     
-                  :value="item"   
-                  
+                  v-for="item in portfolioUsers"                                                     
+                  :value="item"                    
                   :key="item.id"
-                  :label="item.fullName"                                                  
+                  :label="item.name"                                                  
                   >
                 </el-option>
               </el-select> 
@@ -253,22 +264,22 @@
       <el-tab-pane label="Tasks, Issues, Risks">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
-        <div class="row">
+        <div class="row" >
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
               <label class="font-sm mb-0">Task Stages</label>
                <el-select 
-                  v-model="C_taskStageFilter"                    
+                  v-model="C_portfolioTaskStageFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
-                  data-cy="task_stage"             
+                  data-cy="task_stage"                     
                   multiple                                                                                                                                                         
                   placeholder="Select Task Stage"
                   >
                 <el-option 
-                  v-for="item in taskStages"                                                     
+                  v-for="item in portfolioTaskStages"                                                               
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -282,7 +293,7 @@
             <div>
               <label class="font-sm mb-0">Issue Stages</label>
               <el-select 
-                  v-model="C_issueStageFilter"                    
+                  v-model="C_portfolioIssueStageFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
@@ -291,7 +302,7 @@
                   placeholder="Select Issue Stage"
                   >
                 <el-option 
-                  v-for="item in issueStages"                                                     
+                  v-for="item in portfolioIssueStages"                                                                       
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -347,17 +358,17 @@
             <h5 class="mb-0 pt-1">Risks</h5>
             <div>
               <label class="font-sm mb-0">Risk Stages</label>
-               <el-select 
-                  v-model="C_riskStageFilter"                   
+                <el-select 
+                  v-model="C_portfolioRiskStageFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
-                  data-cy="risk_stage"           
+                  data-cy="issue_stage"            
                   multiple                                                                                                                                                         
-                  placeholder="Select Risk Stage"
+                  placeholder="Select Issue Stage"
                   >
-                <el-option 
-                  v-for="item in riskStages"                                                     
+                 <el-option 
+                  v-for="item in portfolioRiskStages"                                                                       
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -490,7 +501,7 @@ export default {
     return {
       hasFilterAccess: true,
        value: [],
-        // define options
+      // define options
         portfolioFilterObj: [ {
           id: '1',
           label: 'Technology Program',
@@ -573,6 +584,11 @@ export default {
   mounted() {
     this.resetFilters()
     this.fetchPortfolioPrograms()
+    this.fetchPortfolioUsers()
+    this.fetchPortfolioStatuses()
+    this.fetchPortfolioTaskStages()
+    this.fetchPortfolioRiskStages()
+    this.fetchPortfolioIssueStages()
     // this.fetchFilters()
   },
   computed: {
@@ -582,26 +598,18 @@ export default {
       'getTaskIssueProgressStatusFilter',
       'getMyAssignmentsFilter',
       'getMyAssignmentsFilterOptions',
-      // 'getAdvancedFilterOptions',
-      // 'getAdvancedFilter',
       'getShowAdvancedFilter',
-      'projectStatusFilter',
-
       'taskTypes',
       'taskStages',
       'taskTypeFilter',
       'taskStageFilter',
       'taskUserFilter',
- 
-
       'riskStages',
       'riskStageFilter',
       'getRiskApproachFilterOptions',
       'getRiskApproachFilter',
       'getRiskPriorityLevelFilter',
       'getRiskPriorityLevelFilterOptions',
-      'getPortfolioUsersFilter',
-
       'issueSeverities',
       'issueTypes',
       'issueStages',
@@ -638,8 +646,18 @@ export default {
       'getUnfilteredFacilities',
       // START PORTFOLIO VIEWER FILTERS HERE.  DELETE ALL GETTERS ABOVE IF NOT USED
       'portfolioPrograms', 
-      // 'portfolioProgramsFilter', 
-      'portfolioNameFilter'
+      'portfolioUsers', 
+      'portfolioStatuses',
+      'portfolioTaskStages',
+      'portfolioIssueStages',
+      'portfolioRiskStages',
+      'portfolioTaskStagesFilter',
+      'portfolioIssueStagesFilter',
+      'portfolioRiskStagesFilter',
+      'portfolioNameFilter',
+      'portfolioUsersFilter',
+      'portfolioCategoriesFilter',
+      'portfolioStatusesFilter',
     ]),
     // hasAdminAccess() {
     //   return salut =>  this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
@@ -684,23 +702,6 @@ export default {
         this.favoriteFilterData.name = value
       }
     },
-    portfolioUsers(){
-    // return this.activePortfolioUsers.map(t => t.users)
-       let unfiltered = [...new Set(this.activePortfolioUsers.map(item => item.users))]; 
-       let l = [];
-     unfiltered.forEach((c) => {
-    if (!l.includes(c)) {
-        l.push(c);
-    }
-});
-return l
-    },
-
-        C_i_categories() {     
-      let category = this.portfolioIssues
-      return [...new Set(category.map(item => item.category))]; 
-     },
-
     C_riskPriorityLevelFilter: {
       get() {
         return this.getRiskPriorityLevelFilter
@@ -779,7 +780,19 @@ return l
         this.setRiskStageFilter(value)
       }
     },
-
+     C_categories() {     
+      let category = this.portfolioTasks
+      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
+     },
+     C_categoryNameFilter: {
+      get() {
+        return this.portfolioCategoriesFilter
+      },
+      set(value) {
+        // console.log(value)
+        this.setPortfolioCategoriesFilter(value)
+      }
+    },
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter
@@ -788,12 +801,28 @@ return l
         this.setTaskTypeFilter(value)
       }
     },
-    C_taskStageFilter: {
+    C_portfolioTaskStageFilter: {
       get() {
-        return this.taskStageFilter
+        return this.portfolioTaskStagesFilter
       },
       set(value) {
-        this.setTaskStageFilter(value)
+        this.setPortfolioTaskStagesFilter(value)
+      }
+    },
+    C_portfolioIssueStageFilter: {
+      get() {
+        return this.portfolioIssueStagesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueStagesFilter(value)
+      }
+    },
+    C_portfolioRiskStageFilter: {
+      get() {
+        return this.portfolioRiskStagesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskStagesFilter(value)
       }
     },
 
@@ -811,6 +840,22 @@ return l
       },
       set(value) {
         this.setPortfolioNameFilter(value)
+      }
+    },
+     C_portfolioUsersFilter: {
+      get() {
+        return this.portfolioUsersFilter
+      },
+      set(value) {
+        this.setPortfolioUsersFilter(value)
+      }
+    },
+     C_portfolioStatusesFilter: {
+      get() {
+        return this.portfolioStatusesFilter
+      },
+      set(value) {
+        this.setPortfolioStatusesFilter(value)
       }
     },
     C_facilityDueDateFilter: {
@@ -873,15 +918,6 @@ return l
         this.setTaskIssueUserFilter(value)
       }
     },
-    C_portfolioUsersFilter: {
-      get() {
-        return this.getPortfolioUsersFilter
-      },
-      set(value) {
-        this.setPortfolioUsersFilter(value)
-      }
-    },
-
     C_myActionsFilter: {
       get() {
         return this.myActionsFilter
@@ -924,11 +960,15 @@ return l
   },
   methods: {
     ...mapActions([
-     'fetchPortfolioPrograms'
+     'fetchPortfolioPrograms',
+     'fetchPortfolioUsers',
+     'fetchPortfolioStatuses',
+     'fetchPortfolioTaskStages',
+     'fetchPortfolioIssueStages',
+     'fetchPortfolioRiskStages'
     ]),
     ...mapMutations([
-      'setTaskIssueUserFilter',
-      'setPortfolioUsersFilter',
+      'setTaskIssueUserFilter',     
       'setTaskIssueProgressStatusFilter',
       'setTaskIssueProgressFilter',
       'setAdvancedFilter',
@@ -948,6 +988,7 @@ return l
       'setMyActionsFilter',
       'setOnWatchFilter',
       'setMapFilters',
+      'setPortfolioCategoriesFilter',
       'setMyAssignmentsFilter',
       'setTaskUserFilter',
       'setIssueUserFilter',
@@ -965,9 +1006,18 @@ return l
       'setMembersPerPageFilter',
       'setFacilities',
       'setMapZoomFilter',
-
       // BEGIN PORTFOLIO VIEWER FILTERS. DELETE ALL SETTERS ABOVE IF NOT NEEDED
-      'setPortfolioNameFilter'
+      'setPortfolioNameFilter',
+      'setPortfolioUsers',
+      'setPortfolioUsersFilter',
+      'setPortfolioStatusesFilter',
+      'setPortfolioTaskStages',
+      'setPortfolioTaskStagesFilter',
+      'setPortfolioIssueStages',
+      'setPortfolioIssueStagesFilter',
+      'setPortfolioRiskStages',
+      'setPortfolioRiskStagesFilter'
+ 
     ]),
    projectNameShortener(str, length, ending) {
       if (length == null) {
@@ -983,7 +1033,7 @@ return l
       }
     },
     log(e){
-      console.log("Users " + e)
+      console.log(" Issues Stages " + e)
     },
     handleOutsideClick() {
       if (this.getShowAdvancedFilter && !this.datePicker) {
@@ -1000,18 +1050,6 @@ return l
     handleClick(tab, event) {
         console.log(tab, event);
     },
-    // findFacility(query) {
-    //   this.isLoading = true
-    //   if (query) {
-    //     const resp = new RegExp(_.escapeRegExp(query.toLowerCase()), 'i')
-    //     const isMatch = (result) => resp.test(result.facilityName)
-    //     this.facilities = _.filter(this.unFilterFacilities, isMatch)
-    //     this.isLoading = false
-    //   } else {
-    //     this.facilities = this.unFilterFacilities
-    //     this.isLoading = false
-    //   }
-    // },
     loadFavoriteFilter(fav_filter){
 
       this.resetFilters()

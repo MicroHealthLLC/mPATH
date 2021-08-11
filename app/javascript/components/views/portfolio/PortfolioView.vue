@@ -1,5 +1,5 @@
 <template>
-<div class="container-fluid mt-3 mx-3" :load="log(JSON.stringify(activeProjectUsers))">
+<div class="container-fluid mt-3 mx-3" :load="log(validStages)">
   <!-- Actual Portfolio name will be dynamic value of organization name   -->
 <div>
 <span> <img class="mb-2" style="width:40px" :src="require('../../../../assets/images/mpathcircles.JPG')" /> 
@@ -1703,6 +1703,8 @@ export default {
         this.fetchPortfolioIssues()
         this.fetchPortfolioRisks()
         this.fetchPortfolioLessons()
+        this.fetchPortfolioUsers()
+        this.fetchPortfolioStatuses()
    },
   computed: {
     ...mapGetters([
@@ -1717,7 +1719,6 @@ export default {
       'getIssuesPerPageFilter',  
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
-      'getPortfolioUsersFilter',
       'getShowCount',
       'activeProjectUsers',
       'programNameFilter',
@@ -1728,7 +1729,17 @@ export default {
       'portfolioIssues',
       'portfolioRisks', 
       'portfolioLessons',
-      'portfolioPrograms',    
+      'portfolioPrograms', 
+      'portfolioUsers',
+      'portfolioUsersFilter',
+      'portfolioStatuses',
+       'portfolioStatusesFilter',
+      'portfolioTaskStages',
+      'portfolioIssueStages',
+      'portfolioRiskStages',
+      'portfolioTaskStagesFilter',
+      'portfolioIssueStagesFilter',
+      'portfolioRiskStagesFilter',
     ]),
    sortedTasks:function() {
           return this.tasksObj.sort((a,b) => {
@@ -1786,35 +1797,51 @@ export default {
           return this.end
         });
     },
+   validStages(){
+   return this.portfolioTasks.filter(t => {
+      return t.task_stage !== null && t.task_stage !== ''
+    }) 
+
+    },
     tasksObj(){
       return this.portfolioTasks.filter(task => { 
          if (this.C_programNameFilter.length > 0) {
           let programNames = this.C_programNameFilter.map((program) => program.name);
           return programNames.includes(task.program_name);
-        } else return true;   
+        } else return true;          
+   
+    }).filter(task => {
+        if (this.C_portfolioUsersFilter.length > 0) {       
+        let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+        let taskObjUsers = task.task_users.map(t => t.name)
+        // console.log(taskObjUsers)  
+        return users.some(element => taskObjUsers.includes(element));        
+      } else return true; 
+
+
+      }).filter(task => {   
+
+        // return task.task_stage !== null && task.task_stage !== ''
+        if (this.C_portfolioTaskStageFilter.length > 0 ) {       
+          let stages = this.C_portfolioTaskStageFilter.map((t) => t.name)
+  
+         let taskObjStages = this.validStages.map(t => t.task_stage)
+           console.log(taskObjStages)  
+          return stages.some(element => taskObjStages.includes(element));   
+      } else return true; 
 
       // }).filter(task => {
-      // //  let taskIssueProgress = this.taskIssueProgressFilter
-      //   let taskIssueUsers = this.getTaskIssueUserFilter
-      //   // var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-      //    _.sortBy(_.filter(task, (resource) => {
-      //     let valid = Boolean(resource && resource.hasOwnProperty('progress'))
-      //     let userIds = [..._.map(resource.checklists, 'user_id'), ...resource.userIds]
-      //     if (taskIssueUsers.length > 0) {
-      //       if(taskIssueUsers.length > 0){
-      //         valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-      //       }
-      //    }
-      //    }))
-      }).filter(task => {
-         if (this.C_categoryNameFilter.length > 0) {
-          let category = this.C_categoryNameFilter.map((t) => t);
-          return category.includes(task.category);
-        } else return true; 
+      //   if (this.C_portfolioStatusesFilter.length > 0) {       
+      //   let statuses = this.C_portfolioStatusesFilter.map((t) => t.name);  
+      //   let taskObjStatuses = task.project_status.map(t => t.name)
+      //   console.log(statuses)  
+      //   return statuses.some(element => taskObjStatuses.includes(element));        
+      // } else return true; 
+
      }).filter(task => {
          if (this.C_categoryNameFilter.length > 0) {
-          let category = this.C_categoryNameFilter.map((t) => t);
-          return category.includes(task.category);
+          let category = this.C_categoryNameFilter.map((t) => t);  
+                   return category.includes(task.category);
         } else return true; 
         
       }).filter(task => {
@@ -1908,6 +1935,15 @@ export default {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(issue.category);
         } else return true; 
+
+      }).filter(issue => {
+         if (this.C_portfolioUsersFilter.length > 0) {       
+          let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+          let issueObjUsers = issue.issue_users.map(t => t.name)
+          // console.log(users.some(element => taskObjUsers.includes(element)))  
+          return users.some(element => issueObjUsers.includes(element));        
+        } else return true; 
+
         
      }).filter(issue => {
         if (this.search_issues !== "") {
@@ -1999,6 +2035,15 @@ export default {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(risk.category);
         } else return true; 
+        
+      }).filter(risk => {
+         if (this.C_portfolioUsersFilter.length > 0) {       
+          let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+          let riskObjUsers = risk.risk_users.map(t => t.name)
+          // console.log(users.some(element => taskObjUsers.includes(element)))  
+          return users.some(element => riskObjUsers.includes(element));        
+        } else return true; 
+
       }).filter(risk => {
         if (this.search_risks !== "") {
           return  risk.text.toLowerCase().match(this.search_risks.toLowerCase()) ||
@@ -2084,6 +2129,14 @@ export default {
         } else if (programName.length == 1) {
           return lesson.program_name.includes(programName)
         } else return true
+
+        }).filter(lesson => {
+        if (this.C_portfolioUsersFilter.length > 0) {       
+        let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+        let lessonObjUsers = lesson.added_by
+        // console.log(users.some(element => taskObjUsers.includes(element)))  
+        return users.some(element => lessonObjUsers.includes(element));        
+      } else return true; 
         }).filter(lesson => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);
@@ -2373,6 +2426,7 @@ export default {
         },      
        };
     },
+
     C_showCountToggle: {                  
         get() {
          return this.getShowCount                
@@ -2382,6 +2436,22 @@ export default {
         }
         
       },
+     C_portfolioUsersFilter: {
+      get() {
+        return this.portfolioUsersFilter
+      },
+      set(value) {
+        this.setPortfolioUsersFilter(value)
+      }
+    },
+    C_portfolioStatusesFilter: {
+      get() {
+        return this.portfolioStatusesFilter
+      },
+      set(value) {
+        this.setPortfolioStatusesFilter(value)
+      }
+    },
     C_programNames() {     
       return this.portfolioPrograms
      },
@@ -2419,6 +2489,33 @@ export default {
         this.setProgramNameFilter(value)
       }
     },
+        C_portfolioTaskStageFilter: {
+      get() {
+        return this.portfolioTaskStagesFilter
+      },
+      set(value) {
+        this.setPortfolioTaskStagesFilter(value)
+      }
+    },
+    C_portfolioIssueStageFilter: {
+      get() {
+        return this.portfolioIssueStagesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueStagesFilter(value)
+      }
+    },
+    C_portfolioRiskStageFilter: {
+      get() {
+        return this.portfolioRiskStagesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskStagesFilter(value)
+      }
+    },
+
+
+
      C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter
@@ -2499,6 +2596,16 @@ export default {
     'setPortfolioBriefedTasksToggle',
     'setPortfolioImportantTasksToggle',
     'setPortfolioCategoriesFilter',
+    'setPortfolioStatuses',
+    'setPortfolioStatusesFilter',
+    'setPortfolioUsers',
+    'setPortfolioTaskStages',
+    'setPortfolioTaskStagesFilter',
+    'setPortfolioIssueStages',
+    'setPortfolioIssueStagesFilter',
+    'setPortfolioRiskStages',
+    'setPortfolioRiskStagesFilter',
+    'setPortfolioUsersFilter',
     'setProgramNameFilter',
     'setTaskTypeFilter',
     'setShowCount'
@@ -2508,12 +2615,14 @@ export default {
       'fetchPortfolioIssues',
       'fetchPortfolioRisks',
       'fetchPortfolioLessons',
-      'fetchPortfolioPrograms'
+      'fetchPortfolioPrograms',
+      'fetchPortfolioUsers',
+      'fetchPortfolioStatuses'
 
      ]),
-    //  log(e)    {
-    //    console.log("portfolio tasks" + e)
-    //  },
+     log(e)    {
+       console.log("this" + e)
+     },
       showCountToggle(){
         this.getShowCount(!this.getShowCount)      
       },
@@ -2614,7 +2723,7 @@ export default {
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
     log(e){
-       console.log("" + e)
+      //  console.log("Users" + e)
     }, 
   // Toggle for 3 Action Tags
     toggleWatched(){
