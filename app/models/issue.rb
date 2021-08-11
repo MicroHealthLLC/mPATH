@@ -73,6 +73,8 @@ class Issue < ApplicationRecord
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
+      program_progress:  self.project.progress,
+      project_status: self.facility_project.status.name,
       planned: planned,
       on_hold: self.on_hold,
       completed: completed,

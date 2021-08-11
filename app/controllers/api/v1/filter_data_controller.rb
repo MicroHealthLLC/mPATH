@@ -86,7 +86,7 @@ class Api::V1::FilterDataController < AuthenticatedController
     response_json = []
     stages = []
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
-    issue_severities = IssueSeverities.joins(:project_issue_severities).where(project_issue_severities: {project_id: program_ids }).distinct.select(:id, :name)
+    issue_severities = IssueSeverity.joins(:project_issue_severities).where(project_issue_severities: {project_id: program_ids }).distinct.select(:id, :name)
 
     render json: {issue_severities: issue_severities}
   end
