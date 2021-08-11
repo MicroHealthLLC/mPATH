@@ -134,6 +134,7 @@ class Risk < ApplicationRecord
      merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
+      risk_stage: risk_stage.try(:name),
       category: task_type.name,
       is_overdue: is_overdue,
       program_progress:  self.project.progress,
@@ -143,7 +144,7 @@ class Risk < ApplicationRecord
       ongoing: self.ongoing,
       risk_approach: risk_approach.humanize,
       risk_stage: risk_stage.try(:name),
-      priority_level_name: priority_level_name,
+      priority_level: priority_level_name,
       completed: completed,
       planned: planned,
       last_update: self.notes.last&.portfolio_json,

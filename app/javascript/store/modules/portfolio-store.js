@@ -13,15 +13,40 @@ const portfolioModule = {
 
     portfolioCategoriesFilter: null,
 
+    // PORTFOLIO TASKS
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
+
+
+    // PORTFOLIO ISSUES
+    portfolio_issue_types: [],
+    portfolio_issue_types_loaded: true,
+    portfolioIssueTypesFilter: null,
+
+    portfolio_issue_severities: [],
+    portfolio_issue_severities_loaded: true,
+    portfolioIssueSeveritiesFilter: null,
 
     portfolio_issues: [],
     portfolio_issues_loaded: true,
 
+
+   // PORTFOLIO RISKS
     portfolio_risks: [],
     portfolio_risks_loaded: true,
 
+    // Risk Approaches
+    portfolio_risk_approaches: [],
+    portfolio_risk_approaches_loaded: true,
+    portfolioRiskApproachesFilter: null,
+
+    // Risk Priority Levels
+    portfolio_risk_priorities: [],
+    portfolio_risk_priorities_loaded: true,
+    portfolioRiskPrioritiesFilter: null,
+    
+
+    // PORTFOLIO LESSONS
     portfolio_lessons: [],
     portfolio_lessons_loaded: true,
 
@@ -52,6 +77,7 @@ const portfolioModule = {
     portfolio_risk_stages: [],
     portfolio_risk_stages_loaded: true,
     portfolioRiskStagesFilter: null,
+
 
     // Flags Work throughout CLient faSolarPanel...move to new store
 // 7 States
@@ -205,6 +231,50 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_ISSUE_STAGES_LOADED", true);
         });
     },
+    fetchPortfolioIssueSeverities({commit}) {
+      commit("TOGGLE_PORTFOLIO_ISSUE_SEVERITIES_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/filter_data/issue_severities.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end    
+        commit("SET_PORTFOLIO_ISSUE_SEVERITIES", res.data.issue_severities);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_ISSUE_SEVERITIES_LOADED", true);
+        });
+    },
+    fetchPortfolioIssueTypes({commit}) {
+      commit("TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/filter_data/issue_types.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end    
+        commit("SET_PORTFOLIO_ISSUE_TYPES", res.data.issue_types);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED", true);
+        });
+    },
     fetchPortfolioRiskStages({commit}) {
       commit("TOGGLE_PORTFOLIO_RISK_STAGES_LOADED", false);
       // Send GET request for all lessons contained within a project
@@ -225,6 +295,51 @@ const portfolioModule = {
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_RISK_STAGES_LOADED", true);
+        });
+    },
+    fetchPortfolioRiskApproaches({commit}) {
+      commit("TOGGLE_PORTFOLIO_RISK_APPROACHES_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/filter_data/risk_approaches.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+        // Mutate state with response from back end    
+          commit("SET_PORTFOLIO_RISK_APPROACHES", res.data.risk_approaches);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_RISK_APPROACHES_LOADED", true);
+        });
+    },
+    fetchPortfolioRiskPriorities({commit}) {
+      commit("TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/filter_data/risk_priority_level.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+        // Mutate state with response from back end    
+        // console.log( res.data.risk_approaches)
+          commit("SET_PORTFOLIO_RISK_PRIORITIES", res.data.risk_priorities);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED", true);
         });
     },
     fetchPortfolioTasks({commit}) {
@@ -349,6 +464,17 @@ const portfolioModule = {
     setPortfolioIssueStagesFilter: (state, portfolioIssueStagesFilter) => state.portfolioIssueStagesFilter = portfolioIssueStagesFilter,
 
 
+ 
+
+    //PORTFOLIO RISKS
+    SET_PORTFOLIO_RISK_APPROACHES: (state, portfolio_risk_approaches) => state.portfolio_risk_approaches = portfolio_risk_approaches,
+    TOGGLE_PORTFOLIO_RISK_APPROACHES_LOADED: (state, loaded ) => state.portfolio_risk_approaches_loaded = loaded,   
+    setPortfolioRiskApproachesFilter: (state, portfolioRiskApproachesFilter) => state.portfolioRiskApproachesFilter = portfolioRiskApproachesFilter,
+
+    SET_PORTFOLIO_RISK_PRIORITIES: (state, portfolio_risk_priorities) => state.portfolio_risk_priorities = portfolio_risk_priorities,
+    TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED: (state, loaded ) => state.portfolio_risk_priorities_loaded = loaded,   
+    setPortfolioRiskPrioritiesFilter: (state, portfolioRiskPrioritiesFilter) => state.portfolioRiskPrioritiesFilter = portfolioRiskPrioritiesFilter,
+
     SET_PORTFOLIO_RISK_STAGES: (state, portfolio_risk_stages) => state.portfolio_risk_stages = portfolio_risk_stages,
     TOGGLE_PORTFOLIO_RISK_STAGES_LOADED: (state, loaded ) => state.portfolio_risk_stages_loaded = loaded,   
     setPortfolioRiskStagesFilter: (state, portfolioRiskStagesFilter) => state.portfolioRiskStagesFilter = portfolioRiskStagesFilter,
@@ -361,6 +487,15 @@ const portfolioModule = {
     // PORTFOLIO ISSUES
     SET_PORTFOLIO_ISSUES: (state, portfolio_issues) => state.portfolio_issues = portfolio_issues,
     TOGGLE_PORTFOLIO_ISSUES_LOADED: (state, loaded ) => state.portfolio_issues_loaded = loaded,
+
+    SET_PORTFOLIO_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
+    TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED: (state, loaded ) => state.portfolio_issue_types_loaded = loaded,   
+    setPortfolioIssueTypesFilter: (state, portfolioIssueTypesFilter) => state.portfolioIssueTypesFilter = portfolioIssueTypesFilter,
+
+    
+    SET_PORTFOLIO_ISSUE_SEVERITIES: (state, portfolio_issue_severities) => state.portfolio_issue_severities = portfolio_issue_severities,
+    TOGGLE_PORTFOLIO_ISSUE_SEVERITIES_LOADED: (state, loaded ) => state.portfolio_issue_severities_loaded = loaded,   
+    setPortfolioIssueSeveritiesFilter: (state, portfolioIssueSeveritiesFilter) => state.portfolioIssueSeveritiesFilter = portfolioIssueSeveritiesFilter,
 
     
     // PORTFOLIO RISKS
@@ -413,10 +548,27 @@ const portfolioModule = {
     portfolioIssueStagesLoaded: state => state.portfolio_issue_stages_loaded,
     portfolioIssueStagesFilter: state => state.portfolioIssueStagesFilter,
 
+    portfolioIssueTypes: state => state.portfolio_issue_types, 
+    portfolioIssueTypesLoaded: state => state.portfolio_issue_types_loaded,
+    portfolioIssueTypesFilter: state => state.portfolioIssueTypesFilter,
 
+    portfolioIssueSeverities: state => state.portfolio_issue_severities, 
+    portfolioIssueSeveritiesLoaded: state => state.portfolio_issue_severities_loaded,
+    portfolioIssueSeveritiesFilter: state => state.portfolioIssueSeveritiesFilter,
+
+
+    // GETTER FOR PORTFOLIO RISKS
     portfolioRiskStages: state => state.portfolio_risk_stages, 
     portfolioRiskStagesLoaded: state => state.portfolio_risk_stages_loaded,
     portfolioRiskStagesFilter: state => state.portfolioRiskStagesFilter,
+
+    portfolioRiskApproaches: state => state.portfolio_risk_approaches, 
+    portfolioRiskApproachesLoaded: state => state.portfolio_risk_approaches_loaded,
+    portfolioRiskApproachesFilter: state => state.portfolioRiskApproachesFilter,
+
+    portfolioRiskPriorities: state => state.portfolio_risk_priorities, 
+    portfolioRiskPrioritiesLoaded: state => state.portfolio_risk_priorities_loaded,
+    portfolioRiskPrioritiesFilter: state => state.portfolioRiskPrioritiesFilter,
 
 
     // GETTER FOR PORTFOLIO STATUSES

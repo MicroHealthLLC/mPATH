@@ -56,25 +56,25 @@
                 <label class="font-sm mb-0">Program % Progress Range</label>
                 <div class="form-row">
                   <div class="form-group col pt-0 mb-0">
-                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'program', type: 'min'})" :value="C_programProgress.min">
                   </div>
                   <div class="form-group col pt-0 mb-0">
-                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'program', type: 'max'})" :value="C_programProgress.max">
                   </div>
                 </div>
-                <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+                <span class="font-sm text-danger ml-1" v-if="C_programProgress.error">{{C_programProgress.error}}</span>
                 </div>
                 <div class="">
                  <label class="font-sm mb-0">Project % Progress Range</label>
                 <div class="form-row">
                   <div class="form-group col pt-0 mb-0">
-                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_projectProgress.min">
                   </div>
                   <div class="form-group col pt-0 mb-0">
-                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_projectProgress.max">
                   </div>
                 </div>
-                <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+                <span class="font-sm text-danger ml-1" v-if="C_projectProgress.error">{{C_projectProgress.error}}</span>
 
             </div>
                
@@ -231,13 +231,13 @@
                   </el-option-group>
               </el-select>  -->
               </div>
-              <div>
+              <div style="margin-top:0.5rem">
                 <label class="font-sm mb-0">Action % Progress Range</label>
                 <div class="form-row">
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
                   </div>
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
                   </div>
                 </div>
@@ -314,7 +314,7 @@
             <div>
               <label class="font-sm mb-0">Issue Types</label>
               <el-select 
-                  v-model="C_issueTypeFilter"                    
+                  v-model=" C_portfolioIssueTypesFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
@@ -323,7 +323,7 @@
                   placeholder="Select Issue Type"
                   >
                 <el-option 
-                  v-for="item in issueTypes"                                                     
+                  v-for="item in portfolioIssueTypes"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -335,7 +335,7 @@
             <div>
               <label class="font-sm mb-0">Issue Severities</label>
               <el-select 
-                  v-model="C_issueSeverityFilter"                    
+                  v-model="C_portfolioIssueSeverityFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
@@ -344,7 +344,7 @@
                   placeholder="Select Issue Severity"
                   >
                 <el-option 
-                  v-for="item in issueSeverities"                                                     
+                  v-for="item in portfolioIssueSeverities"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -386,7 +386,7 @@
                   placeholder="Select Risk Approach"
                   >
                 <el-option 
-                  v-for="item in getRiskApproachFilterOptions"                                                     
+                  v-for="item in portfolioRiskApproaches"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -404,7 +404,8 @@
                   placeholder="Select Risk Priority Level"
                   >
                 <el-option 
-                  v-for="item in getRiskPriorityLevelFilterOptions"                                                     
+                  v-for="item in portfolioRiskPriorities"  
+                                                            
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -589,6 +590,10 @@ export default {
     this.fetchPortfolioTaskStages()
     this.fetchPortfolioRiskStages()
     this.fetchPortfolioIssueStages()
+    this.fetchPortfolioIssueTypes()
+    this.fetchPortfolioIssueSeverities()
+    this.fetchPortfolioRiskApproaches()
+    this.fetchPortfolioRiskPriorities()
     // this.fetchFilters()
   },
   computed: {
@@ -621,6 +626,7 @@ export default {
       'facilityGroupFilter',
       'facilityNameFilter',
       'facilityProgressFilter',
+      'programProgressFilter',
       'facilityDueDateFilter',
       'noteDateFilter',
       'taskIssueDueDateFilter',
@@ -647,6 +653,8 @@ export default {
       // START PORTFOLIO VIEWER FILTERS HERE.  DELETE ALL GETTERS ABOVE IF NOT USED
       'portfolioPrograms', 
       'portfolioUsers', 
+      'portfolioIssueTypes',
+      'portfolioIssueTypesFilter',
       'portfolioStatuses',
       'portfolioTaskStages',
       'portfolioIssueStages',
@@ -654,10 +662,16 @@ export default {
       'portfolioTaskStagesFilter',
       'portfolioIssueStagesFilter',
       'portfolioRiskStagesFilter',
+      'portfolioIssueSeverities',
+      'portfolioIssueSeveritiesFilter',
       'portfolioNameFilter',
       'portfolioUsersFilter',
       'portfolioCategoriesFilter',
       'portfolioStatusesFilter',
+      'portfolioRiskApproachesFilter',
+      'portfolioRiskApproaches',
+      'portfolioRiskPrioritiesFilter',
+      'portfolioRiskPriorities',
     ]),
     // hasAdminAccess() {
     //   return salut =>  this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
@@ -704,22 +718,22 @@ export default {
     },
     C_riskPriorityLevelFilter: {
       get() {
-        return this.getRiskPriorityLevelFilter
+        return this.portfolioRiskPrioritiesFilter
       },
       set(value) {
-        this.setRiskPriorityLevelFilter(value)
+        this.setPortfolioRiskPrioritiesFilter(value)
       }
     },
 
     C_riskApproachFilter: {
       get() {
-        return this.getRiskApproachFilter
+        return this.portfolioRiskApproachesFilter
       },
       set(value) {
-        this.setRiskApproachFilter(value)
+        this.setPortfolioRiskApproachesFilter(value)
       }
     }, 
-    C_taskIssueProgress: {
+   C_taskIssueProgress: {
       get() {
         return this.progressFilter.taskIssue
       },
@@ -817,12 +831,28 @@ export default {
         this.setPortfolioIssueStagesFilter(value)
       }
     },
+     C_portfolioIssueSeverityFilter: {
+      get() {
+        return this.portfolioIssueSeveritiesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueSeveritiesFilter(value)
+      }
+    },
     C_portfolioRiskStageFilter: {
       get() {
         return this.portfolioRiskStagesFilter
       },
       set(value) {
         this.setPortfolioRiskStagesFilter(value)
+      }
+    },
+    C_portfolioIssueTypesFilter: {
+      get() {
+        return this.portfolioIssueTypesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueTypesFilter(value)
       }
     },
 
@@ -936,12 +966,16 @@ export default {
         this.setOnWatchFilter(value)
       }
     },
-    C_facilityProgress: {
+    C_projectProgress: {
       get() {
         return this.progressFilter.facility
       }
     },
-
+    C_programProgress: {
+      get() {
+        return this.progressFilter.program
+      }
+    },
     filterBarStyle() {
       if (this.getShowAdvancedFilter) return {}
       return {
@@ -965,7 +999,11 @@ export default {
      'fetchPortfolioStatuses',
      'fetchPortfolioTaskStages',
      'fetchPortfolioIssueStages',
-     'fetchPortfolioRiskStages'
+     'fetchPortfolioRiskStages',
+     'fetchPortfolioIssueTypes',
+     'fetchPortfolioIssueSeverities',
+     'fetchPortfolioRiskPriorities',
+     'fetchPortfolioRiskApproaches'
     ]),
     ...mapMutations([
       'setTaskIssueUserFilter',     
@@ -980,6 +1018,7 @@ export default {
       'setFacilityGroupFilter',
       'setFacilityNameFilter',
       'setFacilityProgressFilter',
+      'setProgramProgressFilter',
       'setFacilityDueDateFilter',
       'setNoteDateFilter',
       'setTaskIssueDueDateFilter',
@@ -1016,8 +1055,15 @@ export default {
       'setPortfolioIssueStages',
       'setPortfolioIssueStagesFilter',
       'setPortfolioRiskStages',
-      'setPortfolioRiskStagesFilter'
- 
+      'setPortfolioRiskStagesFilter',
+      'setPortfolioIssueTypes',
+      'setPortfolioIssueTypesFilter',
+      'setPortfolioIssueSeveritiesFilter',
+      'setPortfolioIssueSeverities',
+      'setPortfolioRiskApproachesFilter',
+      'setPortfolioRiskApproaches',
+      'setPortfolioRiskPrioritiesFilter',
+      'setPortfolioRiskPriorities',
     ]),
    projectNameShortener(str, length, ending) {
       if (length == null) {
@@ -1032,9 +1078,9 @@ export default {
         return str;
       }
     },
-    log(e){
-      console.log(" Issues Stages " + e)
-    },
+    // log(e){
+    //   console.log(" risk priorities " + e)
+    // },
     handleOutsideClick() {
       if (this.getShowAdvancedFilter && !this.datePicker) {
          this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
@@ -1048,7 +1094,7 @@ export default {
       window.location.pathname = "/projects/" + selected.id
     },
     handleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
     },
     loadFavoriteFilter(fav_filter){
 
@@ -1664,6 +1710,10 @@ export default {
     facilityProgressFilter(value) {
       this.updateMapFilters({ key: 'progress', filter: value, _k: 'value' })
     },
+
+    programProgressFilter(value) {
+      this.updateMapFilters({ key: 'progress', filter: value, _k: 'value' })
+    },
     taskTypeFilter(value) {
       this.updateMapFilters({ key: 'taskTypeIds', filter: value })
     },
@@ -1693,6 +1743,17 @@ export default {
     },
     onWatchFilter(value) {
       this.updateMapFilters({ key: 'onWatch', filter: value, _k: 'value' })
+    },
+    "progressFilter.program": {
+      handler(value) {
+       if (value.error == "" && value.min !== "" && value.max !== ""  && value.min <= value.max) {
+          value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
+          this.setProgramProgressFilter([value])
+        } else if (value.min == "" && value.max == "") {
+          this.setProgramProgressFilter([])
+        }
+      },
+      deep: true
     },
     "progressFilter.facility": {
       handler(value) {

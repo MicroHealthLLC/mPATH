@@ -103,13 +103,13 @@ class Api::V1::FilterDataController < AuthenticatedController
 
   def risk_priority_level
     risk_priority_levels = [
-      {id: 1, value: 1, name: "1 - Negligible"},
-      {id: 2, value: 2, name: "2 - Minor"},
-      {id: 3, value: 3, name: "3 - Moderate"},
-      {id: 4, value: 4, name: "4 - Major"},
-      {id: 5, value: 5, name: "5 - Catastrophic"}
+      {id: 1, value: 1, name: "Very Low"},
+      {id: 2, value: 2, name: "Low"},
+      {id: 3, value: 3, name: "Moderate"},
+      {id: 4, value: 4, name: "High"},
+      {id: 5, value: 5, name: "Extreme"}
     ]
-    render json: {risk_approaches: risk_priority_levels}
+    render json: {risk_priorities: risk_priority_levels}
   end
 
 end

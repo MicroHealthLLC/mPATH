@@ -143,6 +143,7 @@ class Task < ApplicationRecord
       is_overdue: is_overdue,
       program_progress:  self.project.progress,
       project_status: self.facility_project.status.name,
+      project_progress: self.facility_project.progress,
       planned: planned,
       on_hold: self.on_hold,
       ongoing: self.ongoing,

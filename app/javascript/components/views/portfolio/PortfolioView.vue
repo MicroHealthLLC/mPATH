@@ -1,5 +1,5 @@
 <template>
-<div class="container-fluid mt-3 mx-3" :load="log(validStages)">
+<div class="container-fluid mt-3 mx-3">
   <!-- Actual Portfolio name will be dynamic value of organization name   -->
 <div>
 <span> <img class="mb-2" style="width:40px" :src="require('../../../../assets/images/mpathcircles.JPG')" /> 
@@ -1194,11 +1194,11 @@
        
         <td>{{ risk.risk_approach.charAt(0).toUpperCase() + risk.risk_approach.slice(1) }}</td>
         <td>
-          <span v-if="(risk.priority_level) == 1" class="gray2">Very Low</span> 
-          <span v-else-if="(risk.priority_level) <= 3" class="green1">Low</span> 
-          <span v-else-if="(risk.priority_level) <= 6" class="yellow1">Moderate</span> 
-          <span v-else-if="(risk.priority_level) <= 14" class="orange1">High</span> 
-          <span v-else-if="(risk.priority_level) >= 15" class="red1">Extreme</span> 
+          <span v-if="(risk.priority_level) == 'Very Low'" class="gray2">Very Low</span> 
+          <span v-else-if="(risk.priority_level) == 'Low'" class="green1">Low</span> 
+          <span v-else-if="(risk.priority_level) == 'Moderate'" class="yellow1">Moderate</span> 
+          <span v-else-if="(risk.priority_level) == 'High'" class="orange1">High</span> 
+          <span v-else-if="(risk.priority_level) == 'Extreme'" class="red1">Extreme</span> 
           </td>  
         <td>{{ moment(risk.start_date).format('DD MMM YYYY') }}</td>
         <td>
@@ -1705,6 +1705,10 @@ export default {
         this.fetchPortfolioLessons()
         this.fetchPortfolioUsers()
         this.fetchPortfolioStatuses()
+        this.fetchPortfolioIssueTypes()
+        this.fetchPortfolioIssueSeverities()
+        this.fetchPortfolioRiskPriorities()
+        this.fetchPortfolioRiskApproaches()
    },
   computed: {
     ...mapGetters([
@@ -1730,16 +1734,27 @@ export default {
       'portfolioRisks', 
       'portfolioLessons',
       'portfolioPrograms', 
+      'facilityProgressFilter',
+      'programProgressFilter',
       'portfolioUsers',
       'portfolioUsersFilter',
       'portfolioStatuses',
-       'portfolioStatusesFilter',
+      'portfolioStatusesFilter',
       'portfolioTaskStages',
       'portfolioIssueStages',
       'portfolioRiskStages',
       'portfolioTaskStagesFilter',
       'portfolioIssueStagesFilter',
       'portfolioRiskStagesFilter',
+      'portfolioIssueTypes',
+      'portfolioIssueTypesFilter',
+      'portfolioIssueSeverities',
+      'portfolioIssueSeveritiesFilter',
+      'portfolioRiskPriorities',
+      'portfolioRiskPrioritiesFilter',
+      'portfolioRiskApproaches',
+      'portfolioRiskApproachesFilter',
+      'taskIssueProgressFilter'
     ]),
    sortedTasks:function() {
           return this.tasksObj.sort((a,b) => {
@@ -1818,30 +1833,47 @@ export default {
         return users.some(element => taskObjUsers.includes(element));        
       } else return true; 
 
+      }).filter(task => {
+      let taskIssueProgress = this.taskIssueProgressFilter
+      // let valid = Boolean(task && task.hasOwnProperty('progress'))
+         if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]       
+        return  task.progress >= min && task.progress <= max
+          } else return true; 
 
+        }).filter(task => {
+         let projectProgress = this.facilityProgressFilter
+      // let valid = Boolean(task && task.hasOwnProperty('progress'))
+         if (projectProgress && projectProgress[0]) {
+            var min = projectProgress[0].value.split("-")[0]
+            var max = projectProgress[0].value.split("-")[1]       
+        return  task.project_progress >= min && task.project_progress <= max
+          } else return true; 
+      }).filter(task => {
+        let programProgress = this.programProgressFilter     
+         if (programProgress && programProgress[0]) {
+            var min = programProgress[0].value.split("-")[0]
+            var max = programProgress[0].value.split("-")[1]       
+        return  task.program_progress >= min && task.program_progress <= max
+          } else return true; 
       }).filter(task => {   
-
         // return task.task_stage !== null && task.task_stage !== ''
         if (this.C_portfolioTaskStageFilter.length > 0 ) {       
           let stages = this.C_portfolioTaskStageFilter.map((t) => t.name)
-  
-         let taskObjStages = this.validStages.map(t => t.task_stage)
-           console.log(taskObjStages)  
-          return stages.some(element => taskObjStages.includes(element));   
-      } else return true; 
+           return stages.includes(task.task_stage);
+        } else return true;    
 
-      // }).filter(task => {
-      //   if (this.C_portfolioStatusesFilter.length > 0) {       
-      //   let statuses = this.C_portfolioStatusesFilter.map((t) => t.name);  
-      //   let taskObjStatuses = task.project_status.map(t => t.name)
-      //   console.log(statuses)  
-      //   return statuses.some(element => taskObjStatuses.includes(element));        
-      // } else return true; 
+      }).filter(task => {
+        if (this.C_portfolioStatusesFilter.length > 0) {       
+         let status = this.C_portfolioStatusesFilter.map((t) => t.name);  
+          return status.includes(task.project_status);
+        } else return true; 
 
      }).filter(task => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);  
-                   return category.includes(task.category);
+          return category.includes(task.category);
         } else return true; 
         
       }).filter(task => {
@@ -1936,6 +1968,36 @@ export default {
           return category.includes(issue.category);
         } else return true; 
 
+     }).filter(issue => {
+      let taskIssueProgress = this.taskIssueProgressFilter
+      // let valid = Boolean(task && task.hasOwnProperty('progress'))
+         if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]       
+        return  issue.progress >= min && issue.progress <= max
+          } else return true; 
+
+      }).filter(issue => {
+        if (this.C_portfolioStatusesFilter.length > 0) {       
+         let status = this.C_portfolioStatusesFilter.map((t) => t.name);  
+          return status.includes(issue.project_status);
+        } else return true; 
+
+      }).filter(issue => {   
+        // return task.task_stage !== null && task.task_stage !== ''
+        if (this.C_portfolioIssueStageFilter.length > 0 ) {       
+          let stages = this.C_portfolioIssueStageFilter.map((t) => t.name)
+           return stages.includes(issue.issue_stage);
+        } else return true;  
+        
+     }).filter(issue => {   
+          
+        // return task.task_stage !== null && task.task_stage !== ''
+        if (this.C_portfolioIssueSeverityFilter.length > 0 ) {       
+          let stages = this.C_portfolioIssueSeverityFilter.map((t) => t.name)
+           return stages.includes(issue.issue_severity);
+        } else return true;    
+
       }).filter(issue => {
          if (this.C_portfolioUsersFilter.length > 0) {       
           let users = this.C_portfolioUsersFilter.map((t) => t.name);  
@@ -1943,6 +2005,12 @@ export default {
           // console.log(users.some(element => taskObjUsers.includes(element)))  
           return users.some(element => issueObjUsers.includes(element));        
         } else return true; 
+
+      }).filter(issue => {
+         if (this. C_portfolioIssueTypesFilter.length > 0) {       
+          let types = this. C_portfolioIssueTypesFilter.map((t) => t.name);  
+          return types.includes(issue.issue_type);
+        } else return true;   
 
         
      }).filter(issue => {
@@ -2031,18 +2099,51 @@ export default {
         } else return true
 
       }).filter(risk => {
+      let taskIssueProgress = this.taskIssueProgressFilter
+      // let valid = Boolean(task && task.hasOwnProperty('progress'))
+         if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]       
+        return  risk.progress >= min && risk.progress <= max
+          } else return true; 
+      }).filter(risk => {
+        if (this.C_portfolioStatusesFilter.length > 0) {       
+         let status = this.C_portfolioStatusesFilter.map((t) => t.name);  
+          return status.includes(risk.project_status);
+        } else return true; 
+
+      }).filter(risk => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(risk.category);
         } else return true; 
         
       }).filter(risk => {
-         if (this.C_portfolioUsersFilter.length > 0) {       
-          let users = this.C_portfolioUsersFilter.map((t) => t.name);  
-          let riskObjUsers = risk.risk_users.map(t => t.name)
-          // console.log(users.some(element => taskObjUsers.includes(element)))  
-          return users.some(element => riskObjUsers.includes(element));        
-        } else return true; 
+        if (this.C_portfolioUsersFilter.length > 0) {       
+        let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+        let riskObjUsers = risk.risk_users.map(t => t.name)
+        return users.some(element => riskObjUsers.includes(element));        
+      } else return true; 
+
+      }).filter(risk => {   
+        if (this.C_portfolioRiskStageFilter.length > 0 ) {       
+        let stages = this.C_portfolioRiskStageFilter.map((t) => t.name)
+        return stages.includes(risk.risk_stage);
+      } else return true;  
+        
+      }).filter(risk => {   
+ 
+        if (this.C_riskPriorityLevelFilter.length > 0 ) {       
+        let priority = this.C_riskPriorityLevelFilter.map((t) => t.name)
+        return priority.includes(risk.priority_level);
+      } else return true;    
+
+      }).filter(risk => {   
+      if (this.C_riskApproachFilter.length > 0 ) {       
+        let approach = this.C_riskApproachFilter.map((t) => t.name)
+        return approach.includes(risk.risk_approach);
+      } else return true;    
+
 
       }).filter(risk => {
         if (this.search_risks !== "") {
@@ -2444,6 +2545,14 @@ export default {
         this.setPortfolioUsersFilter(value)
       }
     },
+    C_portfolioIssueTypesFilter: {
+      get() {
+        return this.portfolioIssueTypesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueTypesFilter(value)
+      }
+    },
     C_portfolioStatusesFilter: {
       get() {
         return this.portfolioStatusesFilter
@@ -2452,6 +2561,23 @@ export default {
         this.setPortfolioStatusesFilter(value)
       }
     },
+   C_riskPriorityLevelFilter: {
+      get() {
+        return this.portfolioRiskPrioritiesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskPrioritiesFilter(value)
+      }
+    },
+
+    C_riskApproachFilter: {
+      get() {
+        return this.portfolioRiskApproachesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskApproachesFilter(value)
+      }
+    }, 
     C_programNames() {     
       return this.portfolioPrograms
      },
@@ -2503,6 +2629,14 @@ export default {
       },
       set(value) {
         this.setPortfolioIssueStagesFilter(value)
+      }
+    },
+    C_portfolioIssueSeverityFilter: {
+      get() {
+        return this.portfolioIssueSeveritiesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueSeveritiesFilter(value)
       }
     },
     C_portfolioRiskStageFilter: {
@@ -2590,6 +2724,7 @@ export default {
     'setTaskIssueUserFilter',
     'setPortfolioUsersFilter',
     'setTasksPerPageFilter',
+    'setTaskIssueProgressFilter',
     'setIssuesPerPageFilter',
     'setRisksPerPageFilter',
     'setLessonsPerPageFilter',
@@ -2603,25 +2738,38 @@ export default {
     'setPortfolioTaskStagesFilter',
     'setPortfolioIssueStages',
     'setPortfolioIssueStagesFilter',
+    'setPortfolioIssueSeverities',
+    'setPortfolioIssueSeveritiesFilter',
     'setPortfolioRiskStages',
     'setPortfolioRiskStagesFilter',
     'setPortfolioUsersFilter',
     'setProgramNameFilter',
+    'setPortfolioIssueTypes',
+    'setPortfolioIssueTypesFilter',
     'setTaskTypeFilter',
-    'setShowCount'
+    'setShowCount',
+    'setPortfolioRiskPriorities',
+    'setPortfolioRiskPrioritiesFilter',
+    'setPortfolioRiskApproaches',
+    'setPortfolioRiskApproachesFilter',
+    'setProgramProgressFilter',
+    'setFacilityProgressFilter',
      ]),
    ...mapActions([
       'fetchPortfolioTasks',
       'fetchPortfolioIssues',
+      'fetchPortfolioRiskPriorities',
       'fetchPortfolioRisks',
+      'fetchPortfolioRiskApproaches',
       'fetchPortfolioLessons',
       'fetchPortfolioPrograms',
       'fetchPortfolioUsers',
-      'fetchPortfolioStatuses'
-
+      'fetchPortfolioStatuses',
+      'fetchPortfolioIssueSeverities',
+      'fetchPortfolioIssueTypes' 
      ]),
      log(e)    {
-       console.log("this" + e)
+      //  console.log("this" + e)
      },
       showCountToggle(){
         this.getShowCount(!this.getShowCount)      

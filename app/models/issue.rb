@@ -73,6 +73,7 @@ class Issue < ApplicationRecord
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
+      issue_stage: issue_stage.try(:name),
       program_progress:  self.project.progress,
       project_status: self.facility_project.status.name,
       planned: planned,

@@ -97,6 +97,7 @@ export default new Vuex.Store({
     facilityGroupFilter: null,
     facilityNameFilter: null,
     facilityProgressFilter: null,
+    programProgressFilter: null, 
     facilityDueDateFilter: null,
     noteDateFilter: null,
     taskIssueDueDateFilter: null,
@@ -106,6 +107,11 @@ export default new Vuex.Store({
     taskIssueProgressStatusFilter: new Array,
     progressFilter: {
       facility: {
+        min: '',
+        max: '',
+        error: ''
+      },
+      program: {
         min: '',
         max: '',
         error: ''
@@ -332,6 +338,7 @@ export default new Vuex.Store({
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
+    setProgramProgressFilter: (state, filter) => state.programProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
@@ -895,6 +902,7 @@ export default new Vuex.Store({
     facilityGroupFilter: state => state.facilityGroupFilter,
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,
+    programProgressFilter: state => state.programProgressFilter,
     facilityDueDateFilter: state => state.facilityDueDateFilter,
     noteDateFilter: state => state.noteDateFilter,
     taskIssueDueDateFilter: state => state.taskIssueDueDateFilter,
