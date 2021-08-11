@@ -1,26 +1,21 @@
 describe('Admin Panel Issue', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openIssueAP()
   })
-
+  beforeEach(() => {
+    cy.get('#tabs').within(() => {
+      cy.get('#issues').contains('Issues').click()
+    })
+    cy.preserveAllCookiesOnce()
+  })
   it('Click on Issues on tabs open Issue information page', function() {
     cy.get('#page_title').contains('Issues').should('be.visible')
     cy.get('#index_table_issues').should('be.visible')
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
-  })
-
-  it('Delete Issue', function() {
-    cy.get('#index_table_issues').should('be.visible')
-    cy.get('#index_table_issues > tbody > tr').first().within(() => {
-      cy.get('.col-actions').contains('Delete').click()
-    })
-    cy.get('.flashes').contains('Issue was successfully destroyed.').should('be.visible')
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 7)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Title', function() {
@@ -30,19 +25,19 @@ describe('Admin Panel Issue', function() {
     cy.get('#index_table_issues > tbody > tr').first().contains('New Issue 1').should('be.visible')
     cy.get('.sortable').contains('Title').click()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue 4').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Issue Type', function() {
     cy.get('.sortable').contains('Issue Type').click()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Type').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Issue Severity', function() {
     cy.get('.sortable').contains('Issue Severity').click()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Severity').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Issue Stage', function() {
@@ -52,7 +47,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#index_table_issues > tbody > tr').first().contains('New Issue Stage').should('be.visible')
     cy.get('.sortable').contains('Issue Stage').click()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Stage').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Progress', function() {
@@ -62,7 +57,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#index_table_issues > tbody > tr').first().contains(10).should('be.visible')
     cy.get('.sortable').contains('Progress').click()
     cy.get('#index_table_issues > tbody > tr').first().contains(100).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue start date', function() {
@@ -75,7 +70,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#index_table_issues > tbody > tr').first().contains(start_date_from).should('be.visible')
     cy.get('.sortable').contains('Start Date').click()
     cy.get('#index_table_issues > tbody > tr').first().contains(start_date_to).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue Estimated Completion Date', function() {
@@ -88,14 +83,14 @@ describe('Admin Panel Issue', function() {
     cy.get('#index_table_issues > tbody > tr').first().contains(due_date_from).should('be.visible')
     cy.get('.sortable').contains('Estimated Completion Date').click()
     cy.get('#index_table_issues > tbody > tr').first().contains(due_date_to).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Program', function() {
     cy.get('.sortable').contains('Program').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Project').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Issue according to Project', function() {
@@ -108,7 +103,7 @@ describe('Admin Panel Issue', function() {
     cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 4').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue contains name', function() {
@@ -121,7 +116,7 @@ describe('Admin Panel Issue', function() {
     cy.get('.current_filter').contains('Title contains Test Issue 1').should('be.visible')
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue by Issue Type', function() {
@@ -132,7 +127,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_issue_type_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue by Issue Severity', function() {
@@ -143,7 +138,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_issue_severity_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue by Issue Stage', function() {
@@ -157,7 +152,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_issue_stage_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue contains Progress', function() {
@@ -185,7 +180,7 @@ describe('Admin Panel Issue', function() {
     cy.get('.current_filter').contains('Progress equals 70').should('be.visible')
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue start date from', function() {
@@ -194,7 +189,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 6)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue start date to', function() {
@@ -203,7 +198,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue Estimated Completion Date from', function() {
@@ -212,7 +207,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_due_date_gteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 6)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue Estimated Completion Date to', function() {
@@ -221,7 +216,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_due_date_lteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue by Project', function() {
@@ -232,7 +227,7 @@ describe('Admin Panel Issue', function() {
     cy.get('#q_facility_project_project_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Issue contains Facility', function() {
@@ -252,6 +247,18 @@ describe('Admin Panel Issue', function() {
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
+
+
+  it('Delete Issue', function() {
+    cy.get('#index_table_issues').should('be.visible')
+    cy.get('#index_table_issues > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Issue was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 7)
+    // cy.get('#logout').click()
+  })
+
 })

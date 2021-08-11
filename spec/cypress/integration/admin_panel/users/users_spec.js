@@ -1,38 +1,31 @@
 describe('Admin Panel Users', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openUserAP()
   })
-
+  beforeEach(() => {
+    cy.get('#tabs').within(() => {
+      cy.get('#users').contains('Users').click()
+    })
+    cy.preserveAllCookiesOnce()
+  })
   it('Click on Users on tabs open users information page', function() {
     cy.get('#page_title').contains('Users').should('be.visible')
     cy.get('#index_table_users').should('be.visible')
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
     cy.get('.pagination_information').contains('Displaying all 2 Users')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Open and close new User form', function() {
     cy.get('.action_item > a').contains('New User').click()
     cy.get('#page_title').contains('New User').should('be.visible')
     cy.get('.cancel > a').contains('Cancel').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
-
-  // it('Create new user', function() {
-  //   cy.get('.action_item > a').contains('New User').click()
-  //   cy.get('#page_title').contains('New User').should('be.visible')
-  //   cy.get('#user_first_name').type('New test').should('have.value', 'New test')
-  //   cy.get('#user_last_name').type('user').should('have.value', 'user')
-  //   cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
-  //   cy.get('#user_submit_action').contains('Create User').click()
-  //   cy.get('.flashes').contains('User was successfully created.')
-  //   cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 3)
-  //   cy.get('#logout').click()
-  // })
-
+  
   it('Could not create user if first name is blank', function() {
     cy.get('.action_item > a').contains('New User').click()
     cy.get('#page_title').contains('New User').should('be.visible')
@@ -42,7 +35,7 @@ describe('Admin Panel Users', function() {
     cy.get('.errors').contains("First name can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New User').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Could not create user if last name is blank', function() {
@@ -54,7 +47,7 @@ describe('Admin Panel Users', function() {
     cy.get('.errors').contains("Last name can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New User').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Could not create user if email is blank', function() {
@@ -66,7 +59,7 @@ describe('Admin Panel Users', function() {
     cy.get('.errors').contains("Email can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New User').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Could not create user if password is blank', function() {
@@ -80,32 +73,8 @@ describe('Admin Panel Users', function() {
     cy.get('#user_submit_action').contains('Create User').click()
     cy.get('.errors').contains("Password can't be blank")
     cy.get('#page_title').contains('New User').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
-
-  it('Could not Delete User of foreign constraint', function() {
-    cy.get('#index_table_users').should('be.visible')
-    cy.get('#index_table_users > tbody > tr').first().within(() => {
-      cy.get('.col-actions').contains('Delete').click()
-    })
-    cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
-    cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
-  })
-
-  // it('Delete User', function() {
-  //   cy.get('.action_item > a').contains('New User').click()
-  //   cy.get('#user_first_name').type('New test').should('have.value', 'New test')
-  //   cy.get('#user_last_name').type('user').should('have.value', 'user')
-  //   cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
-  //   cy.get('#user_submit_action').contains('Create User').click()
-  //   cy.get('#index_table_users > tbody > tr').first().within(() => {
-  //     cy.get('.col-actions').contains('Delete').click()
-  //   })
-  //   cy.get('.flashes').contains('User was successfully destroyed.').should('be.visible')
-  //   cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
-  //   cy.get('#logout').click()
-  // })
 
   it('Sort User according to Position', function() {
     cy.get('.sortable').contains('Position').click()
@@ -114,7 +83,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').first().contains('Manager').should('be.visible')
     cy.get('.sortable').contains('Position').click()
     cy.get('#index_table_users > tbody > tr').first().contains('Mr.').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Sort User according to First Name', function() {
@@ -124,7 +93,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').first().contains('Test1').should('be.visible')
     cy.get('.sortable').contains('First Name').click()
     cy.get('#index_table_users > tbody > tr').first().contains('Test2').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Sort User according to Last Name', function() {
@@ -134,7 +103,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').first().contains('Admin').should('be.visible')
     cy.get('.sortable').contains('Last Name').click()
     cy.get('#index_table_users > tbody > tr').first().contains('Client').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Sort User according to Email', function() {
@@ -144,13 +113,13 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').first().contains('admin@test.com').should('be.visible')
     cy.get('.sortable').contains('Email').click()
     cy.get('#index_table_users > tbody > tr').first().contains('client@test.com').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Sort User according to Organization', function() {
     cy.get('.sortable').contains('Organization').click()
     cy.get('#index_table_users > tbody > tr').first().contains('Test Organization').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Sort User according to Phone Number', function() {
@@ -160,7 +129,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').first().contains('+447400123440').should('be.visible')
     cy.get('.sortable').contains('Phone Number').click()
     cy.get('#index_table_users > tbody > tr').first().contains('+447400123450').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Sort User according to Address', function() {
@@ -170,7 +139,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').first().contains('38 Wiltshire Rd, Leicester LE4 0JT, UK').should('be.visible')
     cy.get('.sortable').contains('Address').click()
     cy.get('#index_table_users > tbody > tr').first().contains('56 Second Ave, Pensnett Trading Estate, Kingswinford DY6 7XN, UK').should('be.visible')
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User contains email', function() {
@@ -182,7 +151,7 @@ describe('Admin Panel Users', function() {
     cy.get('.current_filter').contains('Email contains client@test.com').should('be.visible')
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User by projects', function() {
@@ -193,7 +162,7 @@ describe('Admin Panel Users', function() {
     cy.get('#q_project_ids').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User contains Position', function() {
@@ -205,7 +174,7 @@ describe('Admin Panel Users', function() {
     cy.get('.current_filter').contains('Position contains Manager').should('be.visible')
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User by organization', function() {
@@ -216,7 +185,7 @@ describe('Admin Panel Users', function() {
     cy.get('#q_organization_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User contains First name', function() {
@@ -228,7 +197,7 @@ describe('Admin Panel Users', function() {
     cy.get('.current_filter').contains('First name contains Test1').should('be.visible')
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User contains Last name', function() {
@@ -240,7 +209,7 @@ describe('Admin Panel Users', function() {
     cy.get('.current_filter').contains('Last name contains Admin').should('be.visible')
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User contains Phone number', function() {
@@ -261,7 +230,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 1)
 
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User contains Address', function() {
@@ -282,7 +251,7 @@ describe('Admin Panel Users', function() {
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 1)
 
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
 
   it('Search User by state', function() {
@@ -296,6 +265,48 @@ describe('Admin Panel Users', function() {
     cy.get('#q_status').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+   // cy.get('#logout').click()
   })
+
+  it('Could not Delete User of foreign constraint', function() {
+    cy.get('#index_table_users').should('be.visible')
+    cy.get('#index_table_users > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
+   // cy.get('#logout').click()
+  })
+
+  it('Delete User', function() {
+    cy.get('.action_item > a').contains('New User').click()
+    cy.get('#user_first_name').type('New test').should('have.value', 'New test')
+    cy.get('#user_last_name').type('user').should('have.value', 'user')
+    cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
+    cy.get('a[href="#advanced"]').click()
+    cy.get("#user_privilege_attributes_sheets_view_r").click()
+    cy.get('#user_submit_action').contains('Create User').click()
+    cy.get('#index_table_users > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('User was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
+   // cy.get('#logout').click()
+  })
+
+  it('Create new user', function() {
+    cy.get('.action_item > a').contains('New User').click()
+    cy.get('#page_title').contains('New User').should('be.visible')
+    cy.get('#user_first_name').type('New test').should('have.value', 'New test')
+    cy.get('#user_last_name').type('user').should('have.value', 'user')
+    cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
+
+    cy.get('a[href="#advanced"]').click()
+    cy.get("#user_privilege_attributes_sheets_view_r").click()
+    cy.get('#user_submit_action').contains('Create User').click()
+    cy.get('.flashes').contains('User was successfully created.')
+    cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 3)
+   // cy.get('#logout').click()
+  })
+
 })

@@ -7,6 +7,9 @@ describe('Admin Panel Issue Severities', function() {
   })
   
   beforeEach(() => {
+    cy.get('#tabs').within(() => {
+      cy.get('#issue_severities').contains('Issue Severities').click({force: true})
+    })
     cy.preserveAllCookiesOnce()
   })
 
@@ -25,9 +28,6 @@ describe('Admin Panel Issue Severities', function() {
   })
 
   it('Could not Delete Issue severity of foreign constraint', function() {
-    cy.get('#tabs').within(() => {
-      cy.get('#issue_severities').contains('Issue Severities').click({force: true})
-    })
     cy.get('#index_table_issue_severities').should('be.visible')
     cy.get('#index_table_issue_severities > tbody > tr').first().within(() => {
       cy.get('.col-actions').contains('Delete').click()
@@ -48,9 +48,6 @@ describe('Admin Panel Issue Severities', function() {
   })
 
   it('Create new Issue Severity', function() {
-    cy.get('#tabs').within(() => {
-      cy.get('#issue_severities').contains('Issue Severities').click({force: true})
-    })
     cy.get('.action_item > a').contains('New Issue Severity').click()
     cy.get('#page_title').contains('New Issue Severity').should('be.visible')
     cy.get('#issue_severity_name').type('1 New Test Issue Severity').should('have.value', '1 New Test Issue Severity')
@@ -61,9 +58,6 @@ describe('Admin Panel Issue Severities', function() {
   })
 
   it('Delete Issue Severity', function() {
-    cy.get('#tabs').within(() => {
-      cy.get('#issue_severities').contains('Issue Severities').click({force: true})
-    })
     // cy.get('.action_item > a').contains('New Issue Severity').click()
     //cy.get('#issue_severity_name').type('2 New Test Issue Severity').should('have.value', '2 New Test Issue Severity')
     //cy.get('#issue_severity_submit_action').contains('Create Issue severity').click()
