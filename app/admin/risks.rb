@@ -59,10 +59,10 @@ ActiveAdmin.register Risk do
     column "Identified Date", :start_date
     column "Risk Approach Due Date", :due_date
     column :progress
-    tag_column :probability
-    tag_column :impact_level
-    tag_column :priority_level
-    tag_column :risk_approach
+    column :probability
+    column :impact_level
+    column :priority_level
+    column :risk_approach
     column :risk_approach_description, sortable: false
     column "Category", :task_types, nil, sortable: 'task_types.name' do |risk|
       if current_user.admin_write?
