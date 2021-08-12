@@ -47,39 +47,19 @@
               </div>
 
               <div class="col-4 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm px-0 mt-2 mr-2">
-                    PROGRAM<span class="invi">i</span>FILTER
-                  </div>
-                  <template>
-                    <treeselect
-                      placeholder="Search and select"
-                      :multiple="true"
-                      track-by="name"
-                      :options="portfolioPrograms"
-                      valueFormat="object"
-                      v-model="C_portfolioNamesFilter"
-                    />
-                    <!-- <treeselect-value :value="C_portfolioNamesFilter" /> -->
-                    <!-- <el-select     
-                    v-model="C_programNameFilter"                   
-                    track-by="name" 
-                    class="w-75"
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select>  -->
-                  </template>
-                </div>
+                <div class="d-flex w-100">          
+                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>         
               </div>
               <div class="col-4 pl-0 py-2">
                 <div class="d-flex w-100">
@@ -948,53 +928,46 @@
 
             <div class="row pb-4">
               <div class="col-4 py-2">
-                <div class="w-100 d-flex">
-                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
-                  <el-input
-                    type="search"
-                    placeholder="Enter Search Criteria"
-                    v-model="search_issues"
+            <div class="w-100 d-flex">
+               <div class="d font-sm mt-2 mr-2">SEARCH</div>              
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_issues" >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+              </div>
+               </div>
+               
+            <div  class="col-4 pl-0 py-2" >   
+            <div class="d-flex w-100">
+            <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>      
+              </div> 
+                  <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
                   >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                </div>
-              </div>
-
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>
-                  <template>
-                    <el-select
-                      v-model="C_programNameFilter"
-                      class="w-75"
-                      track-by="name"
-                      value-key="id"
-                      multiple
-                      placeholder="Select Programs to Filter to"
-                    >
-                      <el-option
-                        v-for="item in C_programNames"
-                        :value="item"
-                        class="text-truncate"
-                        :key="item.id"
-                        :label="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>
-                  <template>
-                    <el-select
-                      v-model="C_categoryNameFilter"
-                      class="w-75"
-                      track-by="name"
-                      value-key="id"
-                      multiple
-                      placeholder="Select Category"
+                  <el-option 
+                    v-for="item in C_i_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
                     >
                       <el-option
                         v-for="item in C_i_categories"
@@ -1894,52 +1867,46 @@
 
             <div class="row pb-4">
               <div class="col-4 py-2">
-                <div class="w-100 d-flex">
-                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
-                  <el-input
-                    type="search"
-                    placeholder="Enter Search Criteria"
-                    v-model="search_risks"
+             <div class="w-100 d-flex">
+              <div class="d font-sm mt-2 mr-2">SEARCH</div>                
+              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>             
+               </div>
+              </div>
+            <div  class="col-4 py-2">   
+            <div class="d-flex w-100">
+
+               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>      
+              </div> 
+                  <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
                   >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                </div>
-              </div>
-              <div class="col-4 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm px-0 mr-2 mt-2">PROGRAM FILTER</div>
-                  <template>
-                    <el-select
-                      v-model="C_programNameFilter"
-                      class="w-75"
-                      track-by="name"
-                      value-key="id"
-                      multiple
-                      placeholder="Select Programs to Filter to"
-                    >
-                      <el-option
-                        v-for="item in C_programNames"
-                        :value="item"
-                        class="text-truncate"
-                        :key="item.id"
-                        :label="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>
-                  <template>
-                    <el-select
-                      v-model="C_categoryNameFilter"
-                      class="w-75"
-                      track-by="name"
-                      value-key="id"
-                      multiple
-                      placeholder="Select Category"
+                  <el-option 
+                    v-for="item in C_r_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
                     >
                       <el-option
                         v-for="item in C_r_categories"
@@ -2918,40 +2885,37 @@
               </div>
 
               <div class="col-4 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm px-0 mr-2 mt-2">PROGRAM FILTER</div>
-                  <template>
-                    <el-select
-                      v-model="C_programNameFilter"
-                      class="w-75"
-                      track-by="name"
-                      value-key="id"
-                      multiple
-                      placeholder="Select Programs to Filter to"
-                    >
-                      <el-option
-                        v-for="item in C_programNames"
-                        :value="item"
-                        class="text-truncate"
-                        :key="item.id"
-                        :label="item.name"
-                      >
-                      </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>
-                  <template>
-                    <el-select
-                      v-model="C_categoryNameFilter"
-                      class="w-75"
-                      track-by="name"
-                      value-key="id"
-                      multiple
-                      placeholder="Select Category"
+                <div class="d-flex w-100">   
+               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>              
+              </div> 
+                       <div  class="col-4 pl-0 py-2">   
+                <div class="d-flex w-100">                  
+                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
+                   <template>
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-75" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                             
+                    placeholder="Select Category"
+                  >
+                  <el-option 
+                    v-for="item in C_l_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
                     >
                       <el-option
                         v-for="item in C_l_categories"
@@ -3666,6 +3630,7 @@ export default {
     return {
       showLess: "Show More",
       search_tasks: "",
+      // project_ids: [],
       search_issues: "",
       search_risks: "",
       search_lessons: "",
@@ -3731,57 +3696,59 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getPortfolioWatchedTasksToggle",
-      "getPortfolioBriefedTasksToggle",
-      "getTasksPerPageFilterOptions",
-      "getIssuesPerPageFilterOptions",
-      "getRisksPerPageFilterOptions",
-      "getLessonsPerPageFilterOptions",
-      "getPortfolioImportantTasksToggle",
-      "getTasksPerPageFilter",
-      "getIssuesPerPageFilter",
-      "getRisksPerPageFilter",
-      "getLessonsPerPageFilter",
-      "getShowCount",
-      "portfolioNameFilter",
-      "facilityDueDateFilter",
-      "noteDateFilter",
-      "taskIssueDueDateFilter",
-      "activeProjectUsers",
-      "programNameFilter",
-      "portfolioTasksLoaded",
-      "taskTypes",
-      "portfolioCategoriesFilter",
-      "portfolioTasks",
-      "portfolioIssues",
-      "portfolioRisks",
-      "portfolioLessons",
-      "portfolioPrograms",
-      "facilityProgressFilter",
-      "programProgressFilter",
-      "portfolioUsers",
-      "portfolioUsersFilter",
-      "portfolioStatuses",
-      "portfolioStatusesFilter",
-      "portfolioTaskStages",
-      "portfolioIssueStages",
-      "portfolioRiskStages",
-      "portfolioTaskStagesFilter",
-      "portfolioIssueStagesFilter",
-      "portfolioRiskStagesFilter",
-      "portfolioIssueTypes",
-      "portfolioIssueTypesFilter",
-      "portfolioIssueSeverities",
-      "portfolioIssueSeveritiesFilter",
-      "portfolioRiskPriorities",
-      "portfolioRiskPrioritiesFilter",
-      "portfolioRiskApproaches",
-      "portfolioRiskApproachesFilter",
-      "taskIssueProgressFilter",
+      'getPortfolioWatchedTasksToggle', 
+      'getPortfolioBriefedTasksToggle',
+       'getMyAssignmentsFilter',
+      'getTasksPerPageFilterOptions',
+      'getIssuesPerPageFilterOptions',
+      'getRisksPerPageFilterOptions',
+      'getLessonsPerPageFilterOptions',
+      'getPortfolioImportantTasksToggle', 
+      'getTasksPerPageFilter',    
+      'getIssuesPerPageFilter',  
+      'getRisksPerPageFilter', 
+      'getLessonsPerPageFilter', 
+      'getShowCount',
+      'portfolioNameFilter',
+      'facilityDueDateFilter',
+      'noteDateFilter',
+      'taskIssueDueDateFilter',
+      'activeProjectUsers',
+      'programNameFilter',
+      'portfolioTasksLoaded',
+      'taskTypes',
+      'portfolioCategoriesFilter',
+      'portfolioTasks',
+      'portfolioIssues',
+      'portfolioRisks', 
+      'portfolioLessons',
+      'portfolioPrograms', 
+      'facilityProgressFilter',
+      'programProgressFilter',
+      'portfolioUsers',
+      'portfolioUsersFilter',
+      'portfolioStatuses',
+      'portfolioStatusesFilter',
+      'portfolioTaskStages',
+      'portfolioIssueStages',
+      'portfolioRiskStages',
+      'portfolioTaskStagesFilter',
+      'portfolioIssueStagesFilter',
+      'portfolioRiskStagesFilter',
+      'portfolioIssueTypes',
+      'portfolioIssueTypesFilter',
+      'portfolioIssueSeverities',
+      'portfolioIssueSeveritiesFilter',
+      'portfolioRiskPriorities',
+      'portfolioRiskPrioritiesFilter',
+      'portfolioRiskApproaches',
+      'portfolioRiskApproachesFilter',
+      'taskIssueProgressFilter'
     ]),
-    sortedTasks: function () {
-      return this.tasksObj
-        .sort((a, b) => {
+
+   sortedTasks:function() {
+          return this.tasksObj.sort((a,b) => {
+
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
@@ -4434,6 +4401,7 @@ export default {
           } else return true;
         });
     },
+
     lessonsObj() {
       return this.portfolioLessons
         .filter((lesson) => {
@@ -5084,7 +5052,7 @@ export default {
       this.getShowCount(!this.getShowCount);
     },
     sort: function (s) {
-      //if s == current sort, reverse
+     //if s == current sort, reverse
       if (s === this.currentSort) {
         this.currentSortDir = this.currentSortDir === "asc" ? "desc" : "asc";
       }

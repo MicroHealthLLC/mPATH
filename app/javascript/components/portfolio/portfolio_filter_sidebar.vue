@@ -14,16 +14,10 @@
          </div>
       </div>
    <el-tabs type="border-card" @tab-click="handleClick">
-      <el-tab-pane label="Programs">
-      <div class="filter-border filter-sections px-3 pb-1 pt-0">
-          <div class="row">
-            <div class="col-md-12">
-              <h5 class="mb-0">Programs</h5>
-            </div>
-          </div>
-
-          <!-- Next row for two columns that will contain Facilities-related menus -->
-          <div class="row justify-content-between pb-2">
+      <el-tab-pane label="Portfolio">
+      <div class="filter-border filter-sections px-3 pt-0">
+         <!-- Next row for two columns that will contain Facilities-related menus -->
+          <div class="row justify-content-between pb-2 mt-1">
             <div class="col-md-6">
               <div>
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
@@ -264,7 +258,7 @@
       <el-tab-pane label="Tasks, Issues, Risks">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
-        <div class="row" >
+        <div class="row pt-3 pb-2" >
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
@@ -1413,6 +1407,7 @@ export default {
     },
     resetFilters(){
       this.setPortfolioUsersFilter([]) 
+      this.setPortfolioNameFilter([])
       this.setPortfolioCategoriesFilter([])     
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
@@ -1471,6 +1466,7 @@ export default {
       this.setPortfolioIssueTypesFilter([])
       this.setPortfolioRiskApproachesFilter([])
        this.setPortfolioRiskPrioritiesFilter([])
+       this.setPortfolioNameFilter([])
 
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])

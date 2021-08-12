@@ -244,7 +244,7 @@
       <el-tab-pane label="Tasks, Issues, Risks">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
-        <div class="row">
+        <div class="row pt-3 pb-2">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
