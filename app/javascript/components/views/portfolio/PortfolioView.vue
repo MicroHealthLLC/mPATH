@@ -38,7 +38,7 @@
                <div  class="col-4 py-2">   
                 <div class="d-flex w-100">
                   
-                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
+                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
 
                   <treeselect  
@@ -1833,11 +1833,19 @@ export default {
     },
     tasksObj(){
       return this.portfolioTasks.filter(task => { 
-         if (this.C_portfolioNamesFilter !== null) {          
-          let programNames = this.C_portfolioNamesFilter.map((program) => program.label);
-           console.log(programNames)
-          return programNames.includes(task.program_name);
-        } else return true;          
+         if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.project_id);
+           console.log(projectNames)
+          return projectNames.includes(task.facility_project_id);
+                
+        } else return true;      
+     
+      //  }).filter(task => {
+      //      if (this.C_portfolioNamesFilter !== null) {          
+      //     let programNames = this.C_portfolioNamesFilter.map((program) => program);
+      //      console.log("program Name" + programNames.label)
+      //     return programNames.label.includes(task.program_name);
+      //   } else return true;      
    
       }).filter(task => {
           if (this.C_portfolioUsersFilter.length > 0) {       
@@ -3404,5 +3412,8 @@ th {
     display: -webkit-box;
     -webkit-line-clamp: unset;
   }
+}
+.invi{
+  color: #fff;
 }
 </style>

@@ -9,7 +9,9 @@ const portfolioModule = {
    
     programNameFilter: null,
 
-    portfolioNameFilter: null,
+    portfolioNameFilter: [],
+    portfolio_programs: [],
+    portfolio_programs_loaded: true,
 
     portfolioCategoriesFilter: null,
 
@@ -50,10 +52,7 @@ const portfolioModule = {
     portfolio_lessons: [],
     portfolio_lessons_loaded: true,
 
-    portfolio_programs: [],
-    portfolio_programs_loaded: true,
-
-    portfolio_users: [],
+     portfolio_users: [],
     portfolio_users_loaded: true,
     portfolioUsersFilter: null,
 
