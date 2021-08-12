@@ -4,7 +4,7 @@
       <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue" data-cy="issue_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="oneFive">{{issue.title}}</td>
         <td class="ten col-issue_type">{{issue.issueType}}</td>
-        <td class="nine col-issue_severity">{{issue.issueSeverity}}</td>
+        <td class="ten col-issue_severity">{{issue.issueSeverity}}</td>
         <td class="eight text-center">{{formatDate(issue.startDate)}}</td>
         <td class="eight text-center">              
          <span v-if="issue.onHold && issue.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
@@ -22,7 +22,7 @@
          </span>        
         </td>
         <td class="eight text-center">{{issue.progress + "%"}}</td>     
-        <td class="fort text-center" >
+        <td class="ten text-center" >
             <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="issue.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
@@ -33,7 +33,7 @@
             <span v-if="issue.planned" v-tooltip="`Planned`"> <i class="fas fa-calendar-check text-info mr-1"></i></span>
             <span v-if="issue.inProgress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span> 
           </td>
-       <td class="oneSeven" v-if="issue.notes.length > 0">       
+       <td class="twenty" v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
@@ -41,7 +41,7 @@
             {{issue.lastUpdate.body}}
           </span>         
         </td>  
-         <td class="oneSeven" v-else >No Updates</td> 
+         <td class="twenty" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <IssueContextMenu
@@ -240,8 +240,8 @@
   .oneFive {
     width: 15%;
   }
-  .oneSeven {
-    width: 17%;
+  .twenty {
+    width: 20%;
   }
   .t_actions {
     display: flex;

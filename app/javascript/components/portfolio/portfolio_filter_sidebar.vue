@@ -8,26 +8,26 @@
       <!-- First row: Filter View Title/Header -->
       <div class="row my-2">
         <div class="col-md-12">
-           <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
+           <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>PORTFOLIO FILTERS</h5>
              <button class="btn btn-sm float-right d-inline-block font-sm btn-secondary py-0 ml-1 mb-1" @click.prevent="resetFilters();resetMapFilter()" data-cy="clear_filter"><i class="far fa-redo text-light clickable mr-1"></i>Reset</button>
             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
    <el-tabs type="border-card" @tab-click="handleClick">
-      <el-tab-pane label="Projects">
-      <div class="filter-border filter-sections px-3 pb-1 pt-0">
-          <div class="row">
-            <div class="col-md-12">
-              <h5 class="mb-0">Projects</h5>
-            </div>
-          </div>
-
-          <!-- Next row for two columns that will contain Facilities-related menus -->
-          <div class="row justify-content-between pb-2">
+      <el-tab-pane label="Portfolio">
+      <div class="filter-border filter-sections px-3 pt-0">
+         <!-- Next row for two columns that will contain Facilities-related menus -->
+          <div class="row justify-content-between pb-2 mt-1">
             <div class="col-md-6">
               <div>
-                <label class="font-sm mb-0">Project Groups</label>
-                <el-select 
+                <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
+
+                    <div id="app">
+                   <treeselect  placeholder="Search and select" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
+                       <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
+                       
+                    </div>
+                <!-- <el-select 
                     v-model="C_facilityGroupFilter"                    
                     class="w-100" 
                     track-by="name" 
@@ -43,9 +43,37 @@
                     :label="item.name"                                                  
                     >
                   </el-option>
-                  </el-select> 
+                  </el-select>  -->
               </div>
-              <label class="font-sm mb-0">Project Names</label>
+
+                <div class="mt-2">
+                <label class="font-sm mb-0">Program % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col pt-0 mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'program', type: 'min'})" :value="C_programProgress.min">
+                  </div>
+                  <div class="form-group col pt-0 mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'program', type: 'max'})" :value="C_programProgress.max">
+                  </div>
+                </div>
+                <span class="font-sm text-danger ml-1" v-if="C_programProgress.error">{{C_programProgress.error}}</span>
+                </div>
+                <div class="">
+                 <label class="font-sm mb-0">Project % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col pt-0 mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_projectProgress.min">
+                  </div>
+                  <div class="form-group col pt-0 mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_projectProgress.max">
+                  </div>
+                </div>
+                <span class="font-sm text-danger ml-1" v-if="C_projectProgress.error">{{C_projectProgress.error}}</span>
+
+            </div>
+               
+                
+              <!-- <label class="font-sm mb-0">Project Names</label>
                   <el-select 
                     v-model="C_facilityNameFilter" 
                     class="w-100" 
@@ -65,28 +93,15 @@
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
                     >
                   </el-option>
-                </el-select> 
+                </el-select>  -->
 
-              <div>
-                <label class="font-sm mb-0">Project % Progress Range</label>
-                <div class="form-row">
-                  <div class="form-group col mb-0">
-                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
-                  </div>
-                  <div class="form-group col mb-0">
-                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
-                  </div>
-                </div>
-                <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+         
               </div>
-              </div>
-              <div class="">
-
-            </div>
+             
             <div class="col-md-6">
               <label class="font-sm mb-0">Project Statuses</label>
                 <el-select 
-                    v-model="C_projectStatusFilter"                    
+                    v-model="C_portfolioStatusesFilter"                    
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -95,7 +110,7 @@
                     placeholder="Select Project Status"
                     >
                   <el-option 
-                    v-for="item in statuses"                                                     
+                    v-for="item in portfolioStatuses"                                                     
                     :value="item"   
                     :key="item.id"
                     :label="item.name"                                                  
@@ -111,38 +126,37 @@
                 <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
               </div>
               <!-- To Do: Convert to multiselect to match other filter toggles -->
-              <div class="mt-1 d-flex flex-column">
+              <!-- <div class="mt-1 d-flex flex-column">
                 <label class="font-sm mb-0">Map Boundary Filter</label>
                 <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied" class="text-primary">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
-              </div>
+              </div> -->
             </div>
           </div>         
           <div class="row mt-3 pb-2">
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div>
                 <label class="font-sm mb-1">Categories</label>
-                <el-select 
-                  v-model="C_taskTypeFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="task_category"       
-                  multiple                                                                                                                                                         
-                  placeholder="Select Category"
+                  <el-select 
+                    v-model="C_categoryNameFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Select Category"
                   >
-                <el-option 
-                  v-for="item in taskTypes"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-                </el-select>                
+                  <el-option 
+                    v-for="item in C_categories"                                                     
+                    :value="item"   
+                    :key="item"
+                    :label="item"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
                </div>              
                <div>
                 <label class="font-sm mb-0">Action Users</label>
                 <el-select 
-                  v-model="C_taskIssueUserFilter"                    
+                  v-model="C_portfolioUsersFilter"                    
                   class="w-100" 
                   track-by="id" 
                   value-key="id" 
@@ -151,11 +165,11 @@
                   multiple                                                                                                                                                         
                   placeholder="Search and select names"
                   >
-                <el-option 
-                  v-for="item in activeProjectUsers"                                                     
-                  :value="item"   
+                 <el-option 
+                  v-for="item in portfolioUsers"                                                     
+                  :value="item"                    
                   :key="item.id"
-                  :label="item.fullName"                                                  
+                  :label="item.name"                                                  
                   >
                 </el-option>
               </el-select> 
@@ -211,13 +225,13 @@
                   </el-option-group>
               </el-select>  -->
               </div>
-              <div>
+              <div style="margin-top:0.5rem">
                 <label class="font-sm mb-0">Action % Progress Range</label>
                 <div class="form-row">
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
                   </div>
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
                   </div>
                 </div>
@@ -244,22 +258,22 @@
       <el-tab-pane label="Tasks, Issues, Risks">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
-        <div class="row pt-3 pb-2">
+        <div class="row pt-3 pb-2" >
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
               <label class="font-sm mb-0">Task Stages</label>
                <el-select 
-                  v-model="C_taskStageFilter"                    
+                  v-model="C_portfolioTaskStageFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
-                  data-cy="task_stage"             
+                  data-cy="task_stage"                     
                   multiple                                                                                                                                                         
                   placeholder="Select Task Stage"
                   >
                 <el-option 
-                  v-for="item in taskStages"                                                     
+                  v-for="item in portfolioTaskStages"                                                               
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -273,7 +287,7 @@
             <div>
               <label class="font-sm mb-0">Issue Stages</label>
               <el-select 
-                  v-model="C_issueStageFilter"                    
+                  v-model="C_portfolioIssueStageFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
@@ -282,7 +296,7 @@
                   placeholder="Select Issue Stage"
                   >
                 <el-option 
-                  v-for="item in issueStages"                                                     
+                  v-for="item in portfolioIssueStages"                                                                       
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -294,7 +308,7 @@
             <div>
               <label class="font-sm mb-0">Issue Types</label>
               <el-select 
-                  v-model="C_issueTypeFilter"                    
+                  v-model=" C_portfolioIssueTypesFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
@@ -303,7 +317,7 @@
                   placeholder="Select Issue Type"
                   >
                 <el-option 
-                  v-for="item in issueTypes"                                                     
+                  v-for="item in portfolioIssueTypes"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -315,7 +329,7 @@
             <div>
               <label class="font-sm mb-0">Issue Severities</label>
               <el-select 
-                  v-model="C_issueSeverityFilter"                    
+                  v-model="C_portfolioIssueSeverityFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
@@ -324,7 +338,7 @@
                   placeholder="Select Issue Severity"
                   >
                 <el-option 
-                  v-for="item in issueSeverities"                                                     
+                  v-for="item in portfolioIssueSeverities"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -338,17 +352,17 @@
             <h5 class="mb-0 pt-1">Risks</h5>
             <div>
               <label class="font-sm mb-0">Risk Stages</label>
-               <el-select 
-                  v-model="C_riskStageFilter"                   
+                <el-select 
+                  v-model="C_portfolioRiskStageFilter"                    
                   class="w-100" 
                   track-by="name" 
                   value-key="id"                  
-                  data-cy="risk_stage"           
+                  data-cy="issue_stage"            
                   multiple                                                                                                                                                         
                   placeholder="Select Risk Stage"
                   >
-                <el-option 
-                  v-for="item in riskStages"                                                     
+                 <el-option 
+                  v-for="item in portfolioRiskStages"                                                                       
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -366,7 +380,7 @@
                   placeholder="Select Risk Approach"
                   >
                 <el-option 
-                  v-for="item in getRiskApproachFilterOptions"                                                     
+                  v-for="item in portfolioRiskApproaches"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -384,7 +398,8 @@
                   placeholder="Select Risk Priority Level"
                   >
                 <el-option 
-                  v-for="item in getRiskPriorityLevelFilterOptions"                                                     
+                  v-for="item in portfolioRiskPriorities"  
+                                                            
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -398,7 +413,7 @@
 
       </el-tab-pane>   
 
-      <el-tab-pane label="Favorites">
+      <el-tab-pane label="Favorites (Coming Soon)" disabled>
           <div class="fav-filter px-3 pb-1 pt-0 mt-3">
         <div class="row mb-1">
           <div class="col-md-12">
@@ -430,31 +445,30 @@
             </div>
             <div class="mt-2">
               <label class="font-sm mb-0">Favorites Filter Name</label>
-              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name" :readonly="!hasAdminAccess('write')">             
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">             
               <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button> -->
             </div>
           </div>
             <div class="col-md-7">              
              <div class="btn-group-sm text-center">  
               <button
-                v-if="hasAdminAccess('write')"
+            
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
                <i class="fas fa-save text-light clickable mr-1"></i>
                 Save to Favorites
               </button>            
-              <button 
-                v-if="C_favoriteFilter.id ? hasAdminAccess('delete') : false "
+              <button
                 class="btn btn-sm font-sm btn-danger text-light" 
                 @click.prevent="onClearFilter" data-cy="clear_filter">
-                <font-awesome-icon icon="trash" class="text-light clickable mr-1" />
+                <i class="far fa-trash-alt text-light mr-1"></i>
                 Remove
               </button>   
                <button 
                 class="btn btn-sm font-sm btn-light" >
                 Shared
-                <input type="checkbox" style="" v-model="C_favoriteFilter.shared" :disabled="!hasAdminAccess('write')">              
+                <input type="checkbox" style="" v-model="C_favoriteFilter.shared">              
               </button>                      
              </div>
           </div>
@@ -466,20 +480,83 @@
    
     </div>
     <div class="knocker" @click.prevent="toggleFilters" data-cy="advanced_filter">
-        <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>ADVANCED  FILTERS</small></button>
+        <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>PORTFOLIO  FILTERS</small></button>
     </div>
   </div>
 </template>
 <script>
 import axios from 'axios'
 import humps from 'humps'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
+ Vue.component('treeselect', VueTreeselect.Treeselect)
 export default {
-  name: 'FilterSidebar',
+  name: 'PortfolioFilterSidebar',
   data() {
     return {
       hasFilterAccess: true,
+       value: [],
+      // define options
+        portfolioFilterObj: [ {
+          id: '1',
+          label: 'Technology Program',
+          children: [ {
+            id: '211123',
+            label: 'Project Group Windows',
+              children: [{
+                id: '1277',
+                label: 'Project 1',
+              }, {
+                id: '1773',
+                label: 'Project 2',
+              } , {
+                id: '17664',
+                label: 'Project 3',
+            }],
+            id: '223456',
+            label: 'Project Group Microsoft',
+              children: [{
+                id: '12',
+                label: 'Project 156789',
+              }, {
+                id: '13',
+                label: 'Project 28758934',
+              } , {
+                id: '14',
+                label: 'Project 3342553454',
+            }],
+          }],
+        },{
+           id: '2',
+          label: 'Wellness Program',
+          children: [ {
+            id: '23',
+            label: 'Project Group Blue',
+              children: [{
+                id: '177543342',
+                label: 'Project 931',
+              }, {
+                id: '15567773',
+                label: 'Project 352',
+              } , {
+                id: '13333334',
+                label: 'Project f3',
+            }],
+            id: '6783',
+            label: 'Project Group Red',
+              children: [{
+                id: '123542',
+                label: 'Project tw',
+              }, {
+                id: '13454',
+                label: 'Project 23425',
+              } , {
+                id: '67890',
+                label: 'Project 3qwrqw',
+            }],
+          }] 
+        }],
+
       isLoading: false,
       activeName: 'first',
       exporting: false,
@@ -501,32 +578,37 @@ export default {
   },
   mounted() {
     this.resetFilters()
-    this.fetchFilters()
+    this.fetchPortfolioPrograms()
+    this.fetchPortfolioUsers()
+    this.fetchPortfolioStatuses()
+    this.fetchPortfolioTaskStages()
+    this.fetchPortfolioRiskStages()
+    this.fetchPortfolioIssueStages()
+    this.fetchPortfolioIssueTypes()
+    this.fetchPortfolioIssueSeverities()
+    this.fetchPortfolioRiskApproaches()
+    this.fetchPortfolioRiskPriorities()
+    // this.fetchFilters()
   },
   computed: {
     ...mapGetters([
+      
       'getTaskIssueUserFilter',
       'getTaskIssueProgressStatusFilter',
       'getMyAssignmentsFilter',
       'getMyAssignmentsFilterOptions',
-      // 'getAdvancedFilterOptions',
-      // 'getAdvancedFilter',
       'getShowAdvancedFilter',
-      'projectStatusFilter',
-
       'taskTypes',
       'taskStages',
       'taskTypeFilter',
       'taskStageFilter',
       'taskUserFilter',
-
       'riskStages',
       'riskStageFilter',
       'getRiskApproachFilterOptions',
       'getRiskApproachFilter',
       'getRiskPriorityLevelFilter',
       'getRiskPriorityLevelFilterOptions',
-
       'issueSeverities',
       'issueTypes',
       'issueStages',
@@ -538,6 +620,7 @@ export default {
       'facilityGroupFilter',
       'facilityNameFilter',
       'facilityProgressFilter',
+      'programProgressFilter',
       'facilityDueDateFilter',
       'noteDateFilter',
       'taskIssueDueDateFilter',
@@ -545,6 +628,8 @@ export default {
       'projects',
       'currentProject',
       'activeProjectUsers',
+      'activePortfolioUsers',
+      'portfolioTasks',
       'statuses',
       'getTaskIssueOverdueOptions',
       'getShowAdvancedFilter',
@@ -558,11 +643,33 @@ export default {
       'progressFilter',
       'viewPermit',
       'getMapZoomFilter',
-      'getUnfilteredFacilities'
+      'getUnfilteredFacilities',
+      // START PORTFOLIO VIEWER FILTERS HERE.  DELETE ALL GETTERS ABOVE IF NOT USED
+      'portfolioPrograms', 
+      'portfolioUsers', 
+      'portfolioIssueTypes',
+      'portfolioIssueTypesFilter',
+      'portfolioStatuses',
+      'portfolioTaskStages',
+      'portfolioIssueStages',
+      'portfolioRiskStages',
+      'portfolioTaskStagesFilter',
+      'portfolioIssueStagesFilter',
+      'portfolioRiskStagesFilter',
+      'portfolioIssueSeverities',
+      'portfolioIssueSeveritiesFilter',
+      'portfolioNameFilter',
+      'portfolioUsersFilter',
+      'portfolioCategoriesFilter',
+      'portfolioStatusesFilter',
+      'portfolioRiskApproachesFilter',
+      'portfolioRiskApproaches',
+      'portfolioRiskPrioritiesFilter',
+      'portfolioRiskPriorities',
     ]),
-    hasAdminAccess() {
-      return salut =>  this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
-    },
+    // hasAdminAccess() {
+    //   return salut =>  this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
+    // },
     C_favoriteFilterSelectModel: {
       get() {
         return this.favoriteFilterData
@@ -603,25 +710,24 @@ export default {
         this.favoriteFilterData.name = value
       }
     },
-
     C_riskPriorityLevelFilter: {
       get() {
-        return this.getRiskPriorityLevelFilter
+        return this.portfolioRiskPrioritiesFilter
       },
       set(value) {
-        this.setRiskPriorityLevelFilter(value)
+        this.setPortfolioRiskPrioritiesFilter(value)
       }
     },
 
     C_riskApproachFilter: {
       get() {
-        return this.getRiskApproachFilter
+        return this.portfolioRiskApproachesFilter
       },
       set(value) {
-        this.setRiskApproachFilter(value)
+        this.setPortfolioRiskApproachesFilter(value)
       }
     }, 
-    C_taskIssueProgress: {
+   C_taskIssueProgress: {
       get() {
         return this.progressFilter.taskIssue
       },
@@ -682,7 +788,19 @@ export default {
         this.setRiskStageFilter(value)
       }
     },
-
+     C_categories() {     
+      let category = this.portfolioTasks
+      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
+     },
+     C_categoryNameFilter: {
+      get() {
+        return this.portfolioCategoriesFilter
+      },
+      set(value) {
+        // console.log(value)
+        this.setPortfolioCategoriesFilter(value)
+      }
+    },
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter
@@ -691,12 +809,44 @@ export default {
         this.setTaskTypeFilter(value)
       }
     },
-    C_taskStageFilter: {
+    C_portfolioTaskStageFilter: {
       get() {
-        return this.taskStageFilter
+        return this.portfolioTaskStagesFilter
       },
       set(value) {
-        this.setTaskStageFilter(value)
+        this.setPortfolioTaskStagesFilter(value)
+      }
+    },
+    C_portfolioIssueStageFilter: {
+      get() {
+        return this.portfolioIssueStagesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueStagesFilter(value)
+      }
+    },
+     C_portfolioIssueSeverityFilter: {
+      get() {
+        return this.portfolioIssueSeveritiesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueSeveritiesFilter(value)
+      }
+    },
+    C_portfolioRiskStageFilter: {
+      get() {
+        return this.portfolioRiskStagesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskStagesFilter(value)
+      }
+    },
+    C_portfolioIssueTypesFilter: {
+      get() {
+        return this.portfolioIssueTypesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueTypesFilter(value)
       }
     },
 
@@ -708,12 +858,28 @@ export default {
         this.setFacilityGroupFilter(value)
       }
     },
-    C_facilityNameFilter: {
+    C_portfolioNamesFilter: {
       get() {
-        return this.facilityNameFilter
+        return this.portfolioNameFilter
       },
       set(value) {
-        this.setFacilityNameFilter(value)
+        this.setPortfolioNameFilter(value)
+      }
+    },
+     C_portfolioUsersFilter: {
+      get() {
+        return this.portfolioUsersFilter
+      },
+      set(value) {
+        this.setPortfolioUsersFilter(value)
+      }
+    },
+     C_portfolioStatusesFilter: {
+      get() {
+        return this.portfolioStatusesFilter
+      },
+      set(value) {
+        this.setPortfolioStatusesFilter(value)
       }
     },
     C_facilityDueDateFilter: {
@@ -742,41 +908,8 @@ export default {
       set(value) {
         this.setTaskIssueDueDateFilter(value)
       }
-    },
-    C_issueTypeFilter: {
-      get() {
-        return this.issueTypeFilter
-      },
-      set(value) {
-        this.setIssueTypeFilter(value)
-      }
-    },
-    C_issueSeverityFilter: {
-      get() {
-        return this.issueSeverityFilter
-      },
-      set(value) {
-        this.setIssueSeverityFilter(value)
-      }
-    },
-    C_issueStageFilter: {
-      get() {
-        return this.issueStageFilter
-      },
-      set(value) {
-        this.setIssueStageFilter(value)
-      }
-    },
-
-    C_taskIssueUserFilter: {
-      get() {
-        return this.getTaskIssueUserFilter
-      },
-      set(value) {
-        this.setTaskIssueUserFilter(value)
-      }
-    },
-
+    }, 
+  
     C_myActionsFilter: {
       get() {
         return this.myActionsFilter
@@ -795,12 +928,16 @@ export default {
         this.setOnWatchFilter(value)
       }
     },
-    C_facilityProgress: {
+    C_projectProgress: {
       get() {
         return this.progressFilter.facility
       }
     },
-
+    C_programProgress: {
+      get() {
+        return this.progressFilter.program
+      }
+    },
     filterBarStyle() {
       if (this.getShowAdvancedFilter) return {}
       return {
@@ -818,8 +955,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+     'fetchPortfolioPrograms',
+     'fetchPortfolioUsers',
+     'fetchPortfolioStatuses',
+     'fetchPortfolioTaskStages',
+     'fetchPortfolioIssueStages',
+     'fetchPortfolioRiskStages',
+     'fetchPortfolioIssueTypes',
+     'fetchPortfolioIssueSeverities',
+     'fetchPortfolioRiskPriorities',
+     'fetchPortfolioRiskApproaches'
+    ]),
     ...mapMutations([
-      'setTaskIssueUserFilter',
+      'setTaskIssueUserFilter',     
       'setTaskIssueProgressStatusFilter',
       'setTaskIssueProgressFilter',
       'setAdvancedFilter',
@@ -831,6 +980,7 @@ export default {
       'setFacilityGroupFilter',
       'setFacilityNameFilter',
       'setFacilityProgressFilter',
+      'setProgramProgressFilter',
       'setFacilityDueDateFilter',
       'setNoteDateFilter',
       'setTaskIssueDueDateFilter',
@@ -839,6 +989,7 @@ export default {
       'setMyActionsFilter',
       'setOnWatchFilter',
       'setMapFilters',
+      'setPortfolioCategoriesFilter',
       'setMyAssignmentsFilter',
       'setTaskUserFilter',
       'setIssueUserFilter',
@@ -855,7 +1006,26 @@ export default {
       'setIssuesPerPageFilter',
       'setMembersPerPageFilter',
       'setFacilities',
-      'setMapZoomFilter'
+      'setMapZoomFilter',
+      // BEGIN PORTFOLIO VIEWER FILTERS. DELETE ALL SETTERS ABOVE IF NOT NEEDED
+      'setPortfolioNameFilter',
+      'setPortfolioUsers',
+      'setPortfolioUsersFilter',
+      'setPortfolioStatusesFilter',
+      'setPortfolioTaskStages',
+      'setPortfolioTaskStagesFilter',
+      'setPortfolioIssueStages',
+      'setPortfolioIssueStagesFilter',
+      'setPortfolioRiskStages',
+      'setPortfolioRiskStagesFilter',
+      'setPortfolioIssueTypes',
+      'setPortfolioIssueTypesFilter',
+      'setPortfolioIssueSeveritiesFilter',
+      'setPortfolioIssueSeverities',
+      'setPortfolioRiskApproachesFilter',
+      'setPortfolioRiskApproaches',
+      'setPortfolioRiskPrioritiesFilter',
+      'setPortfolioRiskPriorities',
     ]),
    projectNameShortener(str, length, ending) {
       if (length == null) {
@@ -871,7 +1041,7 @@ export default {
       }
     },
     // log(e){
-    //   console.log("getAdvancedFilterOptions " + e)
+    //   console.log(" risk priorities " + e)
     // },
     handleOutsideClick() {
       if (this.getShowAdvancedFilter && !this.datePicker) {
@@ -886,20 +1056,8 @@ export default {
       window.location.pathname = "/projects/" + selected.id
     },
     handleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
     },
-    // findFacility(query) {
-    //   this.isLoading = true
-    //   if (query) {
-    //     const resp = new RegExp(_.escapeRegExp(query.toLowerCase()), 'i')
-    //     const isMatch = (result) => resp.test(result.facilityName)
-    //     this.facilities = _.filter(this.unFilterFacilities, isMatch)
-    //     this.isLoading = false
-    //   } else {
-    //     this.facilities = this.unFilterFacilities
-    //     this.isLoading = false
-    //   }
-    // },
     loadFavoriteFilter(fav_filter){
 
       this.resetFilters()
@@ -1248,13 +1406,20 @@ export default {
 
     },
     resetFilters(){
+      this.setPortfolioUsersFilter([]) 
+      this.setPortfolioNameFilter([])
+      this.setPortfolioCategoriesFilter([])     
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      // if(this.favoriteFilterData.id){
-      //   this.setAdvancedFilter([])
-      // }else{
-      //   this.setAdvancedFilter([])        
-      // }
+      this.setPortfolioStatusesFilter([])
+      this.setPortfolioTaskStagesFilter([])
+      this.setPortfolioIssueStagesFilter([])
+      this.setPortfolioRiskStagesFilter([])
+      this.setPortfolioIssueSeveritiesFilter([])
+      this.setPortfolioIssueTypesFilter([])
+      this.setPortfolioRiskApproachesFilter([])
+       this.setPortfolioRiskPrioritiesFilter([])
+
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1288,6 +1453,21 @@ export default {
       if(!decision){
         return
       }
+
+      this.setPortfolioUsersFilter([]) 
+      this.setPortfolioCategoriesFilter([])     
+      this.setTaskIssueUserFilter([])
+      this.setTaskIssueProgressStatusFilter([])
+      this.setPortfolioStatusesFilter([])
+      this.setPortfolioTaskStagesFilter([])
+      this.setPortfolioIssueStagesFilter([])
+      this.setPortfolioRiskStagesFilter([])
+      this.setPortfolioIssueSeveritiesFilter([])
+      this.setPortfolioIssueTypesFilter([])
+      this.setPortfolioRiskApproachesFilter([])
+       this.setPortfolioRiskPrioritiesFilter([])
+       this.setPortfolioNameFilter([])
+
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       // this.setAdvancedFilter([])
@@ -1514,6 +1694,10 @@ export default {
     facilityProgressFilter(value) {
       this.updateMapFilters({ key: 'progress', filter: value, _k: 'value' })
     },
+
+    programProgressFilter(value) {
+      this.updateMapFilters({ key: 'progress', filter: value, _k: 'value' })
+    },
     taskTypeFilter(value) {
       this.updateMapFilters({ key: 'taskTypeIds', filter: value })
     },
@@ -1543,6 +1727,17 @@ export default {
     },
     onWatchFilter(value) {
       this.updateMapFilters({ key: 'onWatch', filter: value, _k: 'value' })
+    },
+    "progressFilter.program": {
+      handler(value) {
+       if (value.error == "" && value.min !== "" && value.max !== ""  && value.min <= value.max) {
+          value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
+          this.setProgramProgressFilter([value])
+        } else if (value.min == "" && value.max == "") {
+          this.setProgramProgressFilter([])
+        }
+      },
+      deep: true
     },
     "progressFilter.facility": {
       handler(value) {

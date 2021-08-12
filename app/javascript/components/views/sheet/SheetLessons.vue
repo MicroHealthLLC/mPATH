@@ -764,7 +764,7 @@ tr:hover {
 }
 .added-by-col,
 .flags-col {
-  width: 12.5%;
+  width: 10%;
 }
 .lesson-col {
   width: 20%;
@@ -773,7 +773,7 @@ tr:hover {
   width: 20%;
 }
 .last-update-col {
-  width: 25%;
+  width: 27.5%;
 }
 .sort-icon-arrow {
   color: #c0c4cc;

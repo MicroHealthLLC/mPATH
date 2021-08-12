@@ -68,11 +68,16 @@ class Issue < ApplicationRecord
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
-
+    
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
+      issue_stage: issue_stage.try(:name),
+      program_progress:  self.project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
+      project_status: self.facility_project.status.name,
       planned: planned,
       on_hold: self.on_hold,
       completed: completed,
@@ -84,6 +89,7 @@ class Issue < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
       users: users.select(&:active?).map(&:full_name).join(", "),
+      issue_users: users.map{|u| {id: u.id, name: u.full_name } } 
     }
 
     self.attributes.merge!(merge_h)

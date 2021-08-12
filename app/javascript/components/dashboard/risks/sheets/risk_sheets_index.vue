@@ -253,8 +253,8 @@
             <col class="eight" />
             <col class="twelve" />
             <col class="eight" />
-            <col class="fort" />         
-            <col class="twenty" />
+            <col class="ten" />         
+            <col class="twentyFour" />
           </colgroup>
           <tr class="thead" style="background-color:#ededed;">
             <th class="sort-th" @click="sort('text')">Risk
@@ -1120,6 +1120,9 @@
   }
   .twenty {
     width: 20%;
+  }
+  .twentyFour{
+    width: 24%;
   }
   .floatRight {
     text-align: right;

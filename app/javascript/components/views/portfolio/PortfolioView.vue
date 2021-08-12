@@ -1,5 +1,5 @@
 <template>
-<div class="container-fluid mt-3 mx-3" :load="log(JSON.stringify(activeProjectUsers))">
+<div class="container-fluid mt-3 mx-3">
   <!-- Actual Portfolio name will be dynamic value of organization name   -->
 <div>
 <span> <img class="mb-2" style="width:40px" :src="require('../../../../assets/images/mpathcircles.JPG')" /> 
@@ -38,27 +38,17 @@
                <div  class="col-4 py-2">   
                 <div class="d-flex w-100">
                   
-                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
+                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
-                   
-                <el-select     
-                    v-model="C_programNameFilter"                   
-                    track-by="name" 
-                    class="w-75"
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select> 
-                      </template>              
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
                 </div>         
               </div>
                 <div  class="col-4 pl-0 py-2">   
@@ -211,7 +201,7 @@
              </div>
               </div>
 
-      <div class="row text-center mt-2" v-if="tasksObj !== null && tasksObj.length > 0 ">      
+      <div class="row text-center mt-2 pr-3" v-if="tasksObj !== null && tasksObj.length > 0 ">      
         <div class="xTable px-3" style="overflow-x:auto">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="table" id="portTasks">        
           
@@ -268,7 +258,7 @@
 
               </th>
             
-               <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+               <th class="sort-th" style="min-width:140px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
@@ -281,7 +271,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-               <th class="sort-th" style="min-width:175px" @click="sort('due_date')">Due Date
+               <th class="sort-th" style="min-width:140px" @click="sort('due_date')">Due Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
@@ -299,7 +289,7 @@
 
 
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('progress')">Progress
+              <th class="sort-th" style="min-width:115px" @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -312,7 +302,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th' style="min-width:200px">Flags
+              <th class='non-sort-th' style="min-width:145px">Flags
                
               </th>
                 <th class="pl-1 sort-th twenty" @click="sort('category')">Category
@@ -358,9 +348,9 @@
         <td class="text-center">
             <span v-if="task.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger mr-1"></i></span>
             <span v-if="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet mr-1 text-success"></i></span>   
             <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
-            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt mr-1 text-warning"></i></span>   
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
@@ -444,27 +434,18 @@
                
             <div  class="col-4 pl-0 py-2" >   
             <div class="d-flex w-100">
-            <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
-              <template>
-               <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select> 
-                      </template>              
-                </div>         
+            <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>      
               </div> 
                   <div  class="col-4 pl-0 py-2">   
                 <div class="d-flex w-100">                  
@@ -610,7 +591,7 @@
         </div>
        </div>
             </div>
-      <div class="row text-center mt-1" v-if="issuesObj !== null && issuesObj.length > 0 ">            
+      <div class="row text-center mt-1 pr-3" v-if="issuesObj !== null && issuesObj.length > 0 ">            
        
         <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="issueTable" id="portIssues">
@@ -692,7 +673,7 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issue_severity'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+              <th class="sort-th" style="min-width:140px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
@@ -705,7 +686,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-               <th class="sort-th" style="min-width:175px" @click="sort('due_date')">Due Date
+               <th class="sort-th" style="min-width:140px" @click="sort('due_date')">Due Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
@@ -721,7 +702,7 @@
               <th class="sort-th p-1">
                  <span class="py-2 d-inline-block">Assigned Users</span>
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sortI('progress')">Progress
+              <th class="sort-th" style="min-width:115px" @click="sortI('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -734,7 +715,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th' style="min-width:200px">Flags
+              <th class='non-sort-th' style="min-width:145px">Flags
                
               </th>              
                 <th class="pl-1 sort-th" @click="sort('category')">Category
@@ -779,7 +760,7 @@
         <td> {{ issue.progress + '%' }} </td>
         <td class="text-center">
             
-            <span v-if="issue.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar text-danger"></i> </span>
+            <span v-if="issue.is_overdue" v-tooltip="`Overdue`">  <i class="fas fa-calendar mr-1 text-danger"></i> </span>
             <span v-if="issue.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span> 
             <span v-if="issue.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
@@ -860,27 +841,18 @@
             <div  class="col-4 py-2">   
             <div class="d-flex w-100">
 
-          <div class="font-sm  px-0 mr-2 mt-2">PROGRAM FILTER</div>           
-           <template>
-                <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select> 
-                  </template>              
-                </div>         
+               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>      
               </div> 
                   <div  class="col-4 pl-0 py-2">   
                 <div class="d-flex w-100">                  
@@ -1031,7 +1003,7 @@
       </div>                
                 
       </div>
-       <div class="row text-center mt-2" v-if="risksObj !== null && risksObj.length > 0 ">  
+       <div class="row text-center mt-2 pr-3" v-if="risksObj !== null && risksObj.length > 0 ">  
         <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="riskTable" id="portRisks">
            
@@ -1112,7 +1084,7 @@
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'priority_level'">
               <i class="fas fa-sort-down"></i></span>
             </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('start_date')">Start Date
+              <th class="sort-th" style="min-width:140px" @click="sort('start_date')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'start_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'start_date'">
@@ -1125,7 +1097,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-               <th class="sort-th" @click="sort('due_date')">Risk Approach Due Date
+               <th class="sort-th" @click="sort('due_date')" style="min-width:145px" >Risk Approach Due Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'due_date'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'due_date'">
@@ -1143,7 +1115,7 @@
 
 
               </th>
-              <th class="sort-th" style="min-width:175px" @click="sort('progress')">Progress
+              <th class="sort-th" style="min-width:115px"  @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
@@ -1156,7 +1128,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class='non-sort-th' style="min-width:200px">Flags
+              <th class='non-sort-th' style="min-width:145px">Flags
                
               </th>
                 <th class="pl-1 sort-th" @click="sort('category')">Category
@@ -1194,11 +1166,11 @@
        
         <td>{{ risk.risk_approach.charAt(0).toUpperCase() + risk.risk_approach.slice(1) }}</td>
         <td>
-          <span v-if="(risk.priority_level) == 1" class="gray2">Very Low</span> 
-          <span v-else-if="(risk.priority_level) <= 3" class="green1">Low</span> 
-          <span v-else-if="(risk.priority_level) <= 6" class="yellow1">Moderate</span> 
-          <span v-else-if="(risk.priority_level) <= 14" class="orange1">High</span> 
-          <span v-else-if="(risk.priority_level) >= 15" class="red1">Extreme</span> 
+          <span v-if="(risk.priority_level) == 'Very Low'" class="gray2">Very Low</span> 
+          <span v-else-if="(risk.priority_level) == 'Low'" class="green1">Low</span> 
+          <span v-else-if="(risk.priority_level) == 'Moderate'" class="yellow1">Moderate</span> 
+          <span v-else-if="(risk.priority_level) == 'High'" class="orange1">High</span> 
+          <span v-else-if="(risk.priority_level) == 'Extreme'" class="red1">Extreme</span> 
           </td>  
         <td>{{ moment(risk.start_date).format('DD MMM YYYY') }}</td>
         <td>
@@ -1210,7 +1182,7 @@
         <td> {{ risk.progress + '%' }} </td>
         <td class="text-center">
             <span v-if="risk.is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar mr-1 text-danger"></i></span>
-            <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success"></i></span>   
+            <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check mr-1 text-success"></i></span>   
             <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="fas fa-retweet text-success"></i></span>   
             <span v-if="risk.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
@@ -1290,27 +1262,18 @@
               <div  class="col-4 py-2">   
                 <div class="d-flex w-100">
                   
-                  <div class="font-sm px-0 mr-2 mt-2">PROGRAM FILTER</div>           
+               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
-                 <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                     </el-option>
-                  </el-select> 
-                      </template>              
-                </div>         
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>              
               </div> 
                        <div  class="col-4 pl-0 py-2">   
                 <div class="d-flex w-100">                  
@@ -1415,7 +1378,7 @@
               </div>
  
     
-      <div class="row text-center mt-2" v-if="lessonsObj !== null && lessonsObj.length > 0">        
+      <div class="row text-center mt-2 pr-3" v-if="lessonsObj !== null && lessonsObj.length > 0">        
        <div class="xTable px-3" style="overflow-x:auto;">
           <table class="table table-sm mt-3 stickyTableHeader table-bordered" ref="lessonTable" id="portLessons">
            
@@ -1498,7 +1461,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th class="sort-th" @click="sortL('created_at')">Date Added
+              <th class="sort-th" @click="sortL('created_at')" style="min-width:140px">Date Added
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'created_at'">
                  <i class="fas fa-sort"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'created_at'">
@@ -1511,7 +1474,7 @@
                  <i class="fas fa-sort-down"></i></span>
 
               </th>
-              <th style="min-width:200px">
+              <th style="min-width:145px">
                 Flags
               </th>  
               <th class="pl-1 sort-th" @click="sort('category')">Category
@@ -1655,6 +1618,7 @@ export default {
     return {
       showLess: "Show More",
       search_tasks: "",
+      // project_ids: [],
       search_issues: "",
       search_risks: "",
       search_lessons: "",
@@ -1703,11 +1667,18 @@ export default {
         this.fetchPortfolioIssues()
         this.fetchPortfolioRisks()
         this.fetchPortfolioLessons()
+        this.fetchPortfolioUsers()
+        this.fetchPortfolioStatuses()
+        this.fetchPortfolioIssueTypes()
+        this.fetchPortfolioIssueSeverities()
+        this.fetchPortfolioRiskPriorities()
+        this.fetchPortfolioRiskApproaches()
    },
   computed: {
     ...mapGetters([
       'getPortfolioWatchedTasksToggle', 
       'getPortfolioBriefedTasksToggle',
+       'getMyAssignmentsFilter',
       'getTasksPerPageFilterOptions',
       'getIssuesPerPageFilterOptions',
       'getRisksPerPageFilterOptions',
@@ -1717,8 +1688,11 @@ export default {
       'getIssuesPerPageFilter',  
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
-      'getPortfolioUsersFilter',
       'getShowCount',
+      'portfolioNameFilter',
+      'facilityDueDateFilter',
+      'noteDateFilter',
+      'taskIssueDueDateFilter',
       'activeProjectUsers',
       'programNameFilter',
       'portfolioTasksLoaded',
@@ -1728,8 +1702,31 @@ export default {
       'portfolioIssues',
       'portfolioRisks', 
       'portfolioLessons',
-      'portfolioPrograms',    
+      'portfolioPrograms', 
+      'facilityProgressFilter',
+      'programProgressFilter',
+      'portfolioUsers',
+      'portfolioUsersFilter',
+      'portfolioStatuses',
+      'portfolioStatusesFilter',
+      'portfolioTaskStages',
+      'portfolioIssueStages',
+      'portfolioRiskStages',
+      'portfolioTaskStagesFilter',
+      'portfolioIssueStagesFilter',
+      'portfolioRiskStagesFilter',
+      'portfolioIssueTypes',
+      'portfolioIssueTypesFilter',
+      'portfolioIssueSeverities',
+      'portfolioIssueSeveritiesFilter',
+      'portfolioRiskPriorities',
+      'portfolioRiskPrioritiesFilter',
+      'portfolioRiskApproaches',
+      'portfolioRiskApproachesFilter',
+      'taskIssueProgressFilter'
     ]),
+
+
    sortedTasks:function() {
           return this.tasksObj.sort((a,b) => {
           let modifier = 1;
@@ -1794,34 +1791,108 @@ export default {
           return this.end
         });
     },
-    tasksObj(){
-      return this.portfolioTasks.filter(task => { 
-         if (this.C_programNameFilter.length > 0) {
-          let programNames = this.C_programNameFilter.map((program) => program.name);
-          return programNames.includes(task.program_name);
-        } else return true;   
+   validStages(){
+   return this.portfolioTasks.filter(t => {
+      return t.task_stage !== null && t.task_stage !== ''
+    }) 
 
-      // }).filter(task => {
-      // //  let taskIssueProgress = this.taskIssueProgressFilter
-      //   let taskIssueUsers = this.getTaskIssueUserFilter
-      //   // var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-      //    _.sortBy(_.filter(task, (resource) => {
-      //     let valid = Boolean(resource && resource.hasOwnProperty('progress'))
-      //     let userIds = [..._.map(resource.checklists, 'user_id'), ...resource.userIds]
-      //     if (taskIssueUsers.length > 0) {
-      //       if(taskIssueUsers.length > 0){
-      //         valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-      //       }
-      //    }
-      //    }))
+    },
+    tasksObj(){
+      // this.searchChildren(this.C_portfolioNamesFilter, this.project_ids)
+      
+      return this.portfolioTasks.filter(task => { 
+
+   //Currently, the C_portfolioNamesFilter filter is only filtering Projects by project ids.  User needs the ability to filter Program names 
+   // such that selecting Program name in filter will automatically include all Projects within the program
+         if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);
+          //  console.log(ps)
+          return projectNames.includes(task.project_group_name) || projectNames.includes(task.project_name) || projectNames.includes(task.program_name)   ;
+                
+        } else return true;      
+     
       }).filter(task => {
-         if (this.C_categoryNameFilter.length > 0) {
-          let category = this.C_categoryNameFilter.map((t) => t);
-          return category.includes(task.category);
+          if (this.C_portfolioUsersFilter.length > 0) {       
+          let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+          let taskObjUsers = task.task_users.map(t => t.name)
+        return users.some(element => taskObjUsers.includes(element));        
         } else return true; 
+
+      }).filter(task => {
+         let taskIssueProgress = this.taskIssueProgressFilter
+         if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]       
+            return  task.progress >= min && task.progress <= max
+          } else return true; 
+
+        }).filter(task => {
+          let taskIssueDueDates = this.taskIssueDueDateFilter
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(task.due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+     }).filter(task => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(task.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+      }).filter(task => {
+       let noteDates = this.noteDateFilter
+        if (noteDates && noteDates[0] && noteDates[1]) {
+        let startDate = moment(noteDates[0], "YYYY-MM-DD")
+        let endDate = moment(noteDates[1], "YYYY-MM-DD")
+        let  _notesCreatedAt = _.map(task.notes, 'created_at')
+        let  valid = task.notes.length > 0
+        for (let createdAt of _notesCreatedAt) {
+          let nDate = moment(createdAt, "YYYY-MM-DD")
+           valid = nDate.isBetween(startDate, endDate, 'days', true)         
+          return valid
+         }         
+       }  else return true; 
+        }).filter(task => {
+         let projectProgress = this.facilityProgressFilter
+      // let valid = Boolean(task && task.hasOwnProperty('progress'))
+         if (projectProgress && projectProgress[0]) {
+            var min = projectProgress[0].value.split("-")[0]
+            var max = projectProgress[0].value.split("-")[1]       
+        return  task.project_progress >= min && task.project_progress <= max
+          } else return true; 
+      }).filter(task => {
+        let programProgress = this.programProgressFilter     
+         if (programProgress && programProgress[0]) {
+            var min = programProgress[0].value.split("-")[0]
+            var max = programProgress[0].value.split("-")[1]       
+        return  task.program_progress >= min && task.program_progress <= max
+          } else return true; 
+      }).filter(task => {   
+        // return task.task_stage !== null && task.task_stage !== ''
+        if (this.C_portfolioTaskStageFilter.length > 0 ) {       
+          let stages = this.C_portfolioTaskStageFilter.map((t) => t.name)
+           return stages.includes(task.task_stage);
+        } else return true;    
+
+      }).filter(task => {
+        if (this.C_portfolioStatusesFilter.length > 0) {       
+         let status = this.C_portfolioStatusesFilter.map((t) => t.name);  
+          return status.includes(task.project_status);
+        } else return true; 
+
      }).filter(task => {
          if (this.C_categoryNameFilter.length > 0) {
-          let category = this.C_categoryNameFilter.map((t) => t);
+          let category = this.C_categoryNameFilter.map((t) => t);  
           return category.includes(task.category);
         } else return true; 
         
@@ -1906,16 +1977,114 @@ export default {
 
     }, 
     issuesObj(){     
-      return this.portfolioIssues.filter(issue => {    
-      if (this.C_programNameFilter.length > 0) {
-          let programNames = this.C_programNameFilter.map((program) => program.name);
-          return programNames.includes(issue.program_name);
-        } else return true;   
+      return this.portfolioIssues.filter(issue => {        
+      if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);    
+          return projectNames.includes(issue.project_group_name) || projectNames.includes(issue.project_name) || projectNames.includes(issue.program_name)   ;
+                
+        } else return true;      
      }).filter(issue => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(issue.category);
         } else return true; 
+
+  
+     }).filter(issue => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(issue.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+      }).filter(issue => {
+          let taskIssueDueDates = this.taskIssueDueDateFilter
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(issue.due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+            return valid      
+          } else return true; 
+
+      }).filter(issue => {
+       let noteDates = this.noteDateFilter
+        if (noteDates && noteDates[0] && noteDates[1]) {
+        let startDate = moment(noteDates[0], "YYYY-MM-DD")
+        let endDate = moment(noteDates[1], "YYYY-MM-DD")
+        let  _notesCreatedAt = _.map(issue.notes, 'created_at')
+        let  valid = issue.notes.length > 0
+        for (let createdAt of _notesCreatedAt) {
+          let nDate = moment(createdAt, "YYYY-MM-DD")
+           valid = nDate.isBetween(startDate, endDate, 'days', true)         
+          return valid
+         }         
+       }  else return true; 
+
+     }).filter(issue => {
+      let taskIssueProgress = this.taskIssueProgressFilter
+            if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]       
+        return  issue.progress >= min && issue.progress <= max
+          } else return true; 
+
+       }).filter(issue => {
+         let projectProgress = this.facilityProgressFilter
+           if (projectProgress && projectProgress[0]) {
+            var min = projectProgress[0].value.split("-")[0]
+            var max = projectProgress[0].value.split("-")[1]       
+        return  issue.project_progress >= min && issue.project_progress <= max
+          } else return true; 
+      }).filter(issue => {
+        let programProgress = this.programProgressFilter     
+         if (programProgress && programProgress[0]) {
+            var min = programProgress[0].value.split("-")[0]
+            var max = programProgress[0].value.split("-")[1]       
+        return  issue.program_progress >= min && issue.program_progress <= max
+          } else return true; 
+
+      }).filter(issue => {
+        if (this.C_portfolioStatusesFilter.length > 0) {       
+         let status = this.C_portfolioStatusesFilter.map((t) => t.name);  
+          return status.includes(issue.project_status);
+        } else return true; 
+
+      }).filter(issue => {   
+        // return task.task_stage !== null && task.task_stage !== ''
+        if (this.C_portfolioIssueStageFilter.length > 0 ) {       
+          let stages = this.C_portfolioIssueStageFilter.map((t) => t.name)
+           return stages.includes(issue.issue_stage);
+        } else return true;  
+        
+     }).filter(issue => {   
+          
+        // return task.task_stage !== null && task.task_stage !== ''
+        if (this.C_portfolioIssueSeverityFilter.length > 0 ) {       
+          let stages = this.C_portfolioIssueSeverityFilter.map((t) => t.name)
+           return stages.includes(issue.issue_severity);
+        } else return true;    
+
+      }).filter(issue => {
+         if (this.C_portfolioUsersFilter.length > 0) {       
+          let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+          let issueObjUsers = issue.issue_users.map(t => t.name)
+          // console.log(users.some(element => taskObjUsers.includes(element)))  
+          return users.some(element => issueObjUsers.includes(element));        
+        } else return true; 
+
+      }).filter(issue => {
+         if (this. C_portfolioIssueTypesFilter.length > 0) {       
+          let types = this. C_portfolioIssueTypesFilter.map((t) => t.name);  
+          return types.includes(issue.issue_type);
+        } else return true;   
+
         
      }).filter(issue => {
         if (this.search_issues !== "") {
@@ -1993,20 +2162,110 @@ export default {
     }, 
      risksObj(){     
       return this.portfolioRisks.filter(risk => { 
-     let programName = this.C_programNameFilter.map(t => t.name)
-        if (programName.length > 1) {
-          if (programName.includes(risk.program_name)) {
-            return risk
-          }
-        } else if (programName.length == 1) {
-          return risk.program_name.includes(programName)
-        } else return true
+      if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);
+         return projectNames.includes(risk.project_group_name) || projectNames.includes(risk.project_name) || projectNames.includes(risk.program_name)   ;
+                
+        } else return true;      
+
+        }).filter(risk => {
+        let projectProgress = this.facilityProgressFilter
+         if (projectProgress && projectProgress[0]) {
+            var min = projectProgress[0].value.split("-")[0]
+            var max = projectProgress[0].value.split("-")[1]       
+        return  risk.project_progress >= min && risk.project_progress <= max
+      } else return true; 
+
+     }).filter(risk => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(risk.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+
+      }).filter(risk => {
+      let noteDates = this.noteDateFilter
+      if (noteDates && noteDates[0] && noteDates[1]) {
+      let startDate = moment(noteDates[0], "YYYY-MM-DD")
+      let endDate = moment(noteDates[1], "YYYY-MM-DD")
+      let  _notesCreatedAt = _.map(risk.notes, 'created_at')
+      let  valid = risk.notes.length > 0
+      for (let createdAt of _notesCreatedAt) {
+        let nDate = moment(createdAt, "YYYY-MM-DD")
+          valid = nDate.isBetween(startDate, endDate, 'days', true)         
+        return valid
+        }         
+      }  else return true; 
+      }).filter(risk => {
+      let taskIssueDueDates = this.taskIssueDueDateFilter
+      if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+        let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+        let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+        let valid = true
+        let nDate = moment(risk.due_date, "YYYY-MM-DD")
+        valid = nDate.isBetween(startDate, endDate, 'days', true)
+        return valid      
+      } else return true; 
+      }).filter(risk => {
+        let programProgress = this.programProgressFilter     
+         if (programProgress && programProgress[0]) {
+            var min = programProgress[0].value.split("-")[0]
+            var max = programProgress[0].value.split("-")[1]       
+        return  risk.program_progress >= min && risk.program_progress <= max
+          } else return true; 
+
+      }).filter(risk => {
+      let taskIssueProgress = this.taskIssueProgressFilter
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]       
+        return  risk.progress >= min && risk.progress <= max
+          } else return true; 
+      }).filter(risk => {
+        if (this.C_portfolioStatusesFilter.length > 0) {       
+         let status = this.C_portfolioStatusesFilter.map((t) => t.name);  
+          return status.includes(risk.project_status);
+        } else return true; 
 
       }).filter(risk => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(risk.category);
         } else return true; 
+        
+      }).filter(risk => {
+        if (this.C_portfolioUsersFilter.length > 0) {       
+        let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+        let riskObjUsers = risk.risk_users.map(t => t.name)
+        return users.some(element => riskObjUsers.includes(element));        
+      } else return true; 
+
+      }).filter(risk => {   
+        if (this.C_portfolioRiskStageFilter.length > 0 ) {       
+        let stages = this.C_portfolioRiskStageFilter.map((t) => t.name)
+        return stages.includes(risk.risk_stage);
+      } else return true;  
+        
+      }).filter(risk => {   
+ 
+        if (this.C_riskPriorityLevelFilter.length > 0 ) {       
+        let priority = this.C_riskPriorityLevelFilter.map((t) => t.name)
+        return priority.includes(risk.priority_level);
+      } else return true;    
+
+      }).filter(risk => {   
+      if (this.C_riskApproachFilter.length > 0 ) {       
+        let approach = this.C_riskApproachFilter.map((t) => t.name)
+        return approach.includes(risk.risk_approach);
+      } else return true;    
+
+
       }).filter(risk => {
         if (this.search_risks !== "") {
           return  risk.text.toLowerCase().match(this.search_risks.toLowerCase()) ||
@@ -2084,19 +2343,60 @@ export default {
     }, 
     lessonsObj(){      
       return this.portfolioLessons.filter(lesson => {
-     let programName = this.C_programNameFilter.map(t => t.name)
-        if (programName.length > 1) {
-          if (programName.includes(lesson.program_name)) {
-            return lesson
-          }
-        } else if (programName.length == 1) {
-          return lesson.program_name.includes(programName)
-        } else return true
+         if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);
+           console.log(ps)
+          return projectNames.includes(lesson.project_group_name) || projectNames.includes(lesson.project_name) || projectNames.includes(lesson.program_name)   ;
+                
+        } else return true;      
+    //  let programName = this.C_programNameFilter.map(t => t.name)
+    //     if (programName.length > 1) {
+    //       if (programName.includes(lesson.program_name)) {
+    //         return lesson
+    //       }
+    //     } else if (programName.length == 1) {
+    //       return lesson.program_name.includes(programName)
+    //     } else return true
+
+
+       }).filter(lesson => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(lesson.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+        }).filter(lesson => {
+        if (this.C_portfolioUsersFilter.length > 0) {       
+        let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+        let lessonObjUsers = lesson.added_by
+        // console.log(users.some(element => taskObjUsers.includes(element)))  
+        return users.some(element => lessonObjUsers.includes(element));        
+      } else return true; 
         }).filter(lesson => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(lesson.category);
         } else return true; 
+
+       }).filter(lesson => {
+       let noteDates = this.noteDateFilter
+        if (noteDates && noteDates[0] && noteDates[1]) {
+        let startDate = moment(noteDates[0], "YYYY-MM-DD")
+        let endDate = moment(noteDates[1], "YYYY-MM-DD")
+        let  _notesCreatedAt = _.map(lesson.notes, 'created_at')
+        let  valid = lesson.notes.length > 0
+        for (let createdAt of _notesCreatedAt) {
+          let nDate = moment(createdAt, "YYYY-MM-DD")
+           valid = nDate.isBetween(startDate, endDate, 'days', true)         
+          return valid
+         }         
+       }  else return true; 
         
       }).filter(lesson => {
         // if (this.search_lessons !== "" && lesson.category && lesson.category !== null) {
@@ -2381,6 +2681,7 @@ export default {
         },      
        };
     },
+
     C_showCountToggle: {                  
         get() {
          return this.getShowCount                
@@ -2390,6 +2691,55 @@ export default {
         }
         
       },
+     C_portfolioUsersFilter: {
+      get() {
+        return this.portfolioUsersFilter
+      },
+      set(value) {
+        this.setPortfolioUsersFilter(value)
+      }
+    },
+   C_portfolioNamesFilter: {
+      get() {
+        return this.portfolioNameFilter
+      },
+      set(value) {
+        this.setPortfolioNameFilter(value)
+      }
+    },
+    C_portfolioIssueTypesFilter: {
+      get() {
+        return this.portfolioIssueTypesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueTypesFilter(value)
+      }
+    },
+    C_portfolioStatusesFilter: {
+      get() {
+        return this.portfolioStatusesFilter
+      },
+      set(value) {
+        this.setPortfolioStatusesFilter(value)
+      }
+    },
+   C_riskPriorityLevelFilter: {
+      get() {
+        return this.portfolioRiskPrioritiesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskPrioritiesFilter(value)
+      }
+    },
+
+    C_riskApproachFilter: {
+      get() {
+        return this.portfolioRiskApproachesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskApproachesFilter(value)
+      }
+    }, 
     C_programNames() {     
       return this.portfolioPrograms
      },
@@ -2427,6 +2777,41 @@ export default {
         this.setProgramNameFilter(value)
       }
     },
+        C_portfolioTaskStageFilter: {
+      get() {
+        return this.portfolioTaskStagesFilter
+      },
+      set(value) {
+        this.setPortfolioTaskStagesFilter(value)
+      }
+    },
+    C_portfolioIssueStageFilter: {
+      get() {
+        return this.portfolioIssueStagesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueStagesFilter(value)
+      }
+    },
+    C_portfolioIssueSeverityFilter: {
+      get() {
+        return this.portfolioIssueSeveritiesFilter
+      },
+      set(value) {
+        this.setPortfolioIssueSeveritiesFilter(value)
+      }
+    },
+    C_portfolioRiskStageFilter: {
+      get() {
+        return this.portfolioRiskStagesFilter
+      },
+      set(value) {
+        this.setPortfolioRiskStagesFilter(value)
+      }
+    },
+
+
+
      C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter
@@ -2498,33 +2883,71 @@ export default {
   methods: {  
    ...mapMutations([
     'setPortfolioWatchedTasksToggle',
+    'setPortfolioNameFilter',
     'setTaskIssueUserFilter',
+    'setMyAssignmentsFilter',
     'setPortfolioUsersFilter',
     'setTasksPerPageFilter',
+    'setTaskIssueProgressFilter',
     'setIssuesPerPageFilter',
     'setRisksPerPageFilter',
     'setLessonsPerPageFilter',
     'setPortfolioBriefedTasksToggle',
     'setPortfolioImportantTasksToggle',
     'setPortfolioCategoriesFilter',
+    'setPortfolioStatuses',
+    'setPortfolioStatusesFilter',
+    'setPortfolioUsers',
+    'setPortfolioTaskStages',
+    'setPortfolioTaskStagesFilter',
+    'setPortfolioIssueStages',
+    'setPortfolioIssueStagesFilter',
+    'setPortfolioIssueSeverities',
+    'setPortfolioIssueSeveritiesFilter',
+    'setPortfolioRiskStages',
+    'setPortfolioRiskStagesFilter',
+    'setPortfolioUsersFilter',
     'setProgramNameFilter',
+    'setPortfolioIssueTypes',
+    'setPortfolioIssueTypesFilter',
     'setTaskTypeFilter',
-    'setShowCount'
+    'setShowCount',
+    'setPortfolioRiskPriorities',
+    'setPortfolioRiskPrioritiesFilter',
+    'setPortfolioRiskApproaches',
+    'setPortfolioRiskApproachesFilter',
+    'setProgramProgressFilter',
+    'setFacilityProgressFilter',
+    'setNoteDateFilter',
+    'setTaskIssueDueDateFilter',
+    'setFacilityDueDateFilter',
      ]),
    ...mapActions([
       'fetchPortfolioTasks',
       'fetchPortfolioIssues',
+      'fetchPortfolioRiskPriorities',
       'fetchPortfolioRisks',
+      'fetchPortfolioRiskApproaches',
       'fetchPortfolioLessons',
-      'fetchPortfolioPrograms'
-
+      'fetchPortfolioPrograms',
+      'fetchPortfolioUsers',
+      'fetchPortfolioStatuses',
+      'fetchPortfolioIssueSeverities',
+      'fetchPortfolioIssueTypes' 
      ]),
-    //  log(e)    {
-    //    console.log("portfolio tasks" + e)
-    //  },
+     log(e)    {
+      //  console.log("this" + e)
+     },
       showCountToggle(){
         this.getShowCount(!this.getShowCount)      
       },
+      // searchChildren:function(parent, project_ids){
+      //   if(parent.children){
+      //   searchChildren(parent.children);
+      //   }else{
+      //   project_ids.push(parent.project_id)
+      //   }
+      // },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -2622,7 +3045,7 @@ export default {
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
     log(e){
-       console.log("" + e)
+      //  console.log("Users" + e)
     }, 
   // Toggle for 3 Action Tags
     toggleWatched(){
@@ -2924,7 +3347,7 @@ th {
   right: 1%;
 }
 .sort-th {
-  min-width: 225px;
+  min-width: 190px;
 }
 .profile-btns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
@@ -3002,5 +3425,8 @@ th {
     display: -webkit-box;
     -webkit-line-clamp: unset;
   }
+}
+.invi{
+  color: #fff;
 }
 </style>

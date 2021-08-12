@@ -225,13 +225,13 @@
                 <colgroup>
                   <col class="oneFive" />
                   <col class="ten" />
-                  <col class="nine" />
+                  <col class="ten" />
                   <col class="eight" />
                   <col class="eight" />
                   <col class="oneThree" />
                   <col class="eight" />
-                  <col class="fort" />                
-                  <col class="oneSeven" />
+                  <col class="ten" />                
+                  <col class="twenty" />
                 </colgroup>
                 <tr class="thead" style="background-color:#ededed">
                   <th class="sort-th" @click="sort('title')">Issue
@@ -1058,8 +1058,8 @@
   .oneFive {
     width: 15%;
   }
-  .oneSeven {
-    width: 17%;
+  .twenty {
+    width: 20%;
   }
  
   .floatRight {

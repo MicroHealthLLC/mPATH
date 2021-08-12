@@ -25,7 +25,7 @@
         <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>{{task.progress + "%"}}</span>
         </td>
-        <td class="fort text-center">
+        <td class="ten text-center">
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
@@ -269,7 +269,7 @@ table {
   width: 20%;
 }
 .twentyTwo {
-  width: 22%;
+  width: 26%;
 }
 .pg-content {
   width: 100%;
