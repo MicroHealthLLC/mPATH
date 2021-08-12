@@ -4,7 +4,7 @@ class Api::V1::FilterDataController < AuthenticatedController
     response_json = []
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
 
-    programs = current_user.projects.active.distinct.includes(:facilities).select(:id, :name).where("projects.id": program_ids )
+    programs = current_user.projects.active.distinct.includes({facility_projects: :facility}).select(:id, :name).where("projects.id": program_ids )
 
     facility_group_ids = Facility.joins(:facility_projects).where("facility_projects.project_id" => programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
     facility_groups = FacilityGroup.select(:id, :name).where(id: facility_group_ids)
@@ -12,9 +12,9 @@ class Api::V1::FilterDataController < AuthenticatedController
     programs.in_batches(of: 1000) do |pp|
       pp.find_each do |p|
 
-        projects_group_by_facility_group = p.facilities.group_by do |f|
-          f.facility_group_id
-        end.transform_values{|v| v.map{|vv| {id: SecureRandom.hex(2), project_id: vv.id, label: vv.facility_name } } }
+        projects_group_by_facility_group = p.facility_projects.group_by do |f|
+          f.facility.facility_group_id
+        end.transform_values{|v| v.map{|vv| {id: SecureRandom.hex(2), project_id: vv.facility.id, label: vv.facility.facility_name, facility_project_id: vv.id } } }
         project_children = []
         
         projects_group_by_facility_group.each do |fg_id, facilities|
