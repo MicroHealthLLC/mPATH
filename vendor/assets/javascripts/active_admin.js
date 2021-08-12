@@ -2254,6 +2254,7 @@ jQuery(function($) {
     }
 
     // user filters
+    // NOTE: this code is unused. Remove if no error found
     if ($("#__users_filters").is(":visible"))
     {
       let select = $("#__users_filters");
@@ -2338,6 +2339,7 @@ jQuery(function($) {
     }
 
     // checklists_user filters
+    // NOTE: this code is unused. Remove if no error found
     if ($("#__checklist_users_filters").is(":visible"))
     {
       let select = $("#__checklist_users_filters");
