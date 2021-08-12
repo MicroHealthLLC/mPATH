@@ -40,8 +40,17 @@
                   
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
                    <template>
-                   
-                <el-select     
+
+                  <treeselect  
+                  placeholder="Search and select" 
+                  :multiple="true"  
+                  track-by="name"                            
+                  :options="portfolioPrograms" 
+                  valueFormat="object"
+                  v-model="C_portfolioNamesFilter"
+                  /> 
+                   <!-- <treeselect-value :value="C_portfolioNamesFilter" /> -->
+                <!-- <el-select     
                     v-model="C_programNameFilter"                   
                     track-by="name" 
                     class="w-75"
@@ -57,7 +66,7 @@
                     :label="item.name"                                                                      
                     >
                   </el-option>
-                  </el-select> 
+                  </el-select>  -->
                       </template>              
                 </div>         
               </div>
@@ -1724,6 +1733,10 @@ export default {
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
       'getShowCount',
+      'portfolioNameFilter',
+      'facilityDueDateFilter',
+      'noteDateFilter',
+      'taskIssueDueDateFilter',
       'activeProjectUsers',
       'programNameFilter',
       'portfolioTasksLoaded',
@@ -1820,28 +1833,63 @@ export default {
     },
     tasksObj(){
       return this.portfolioTasks.filter(task => { 
-         if (this.C_programNameFilter.length > 0) {
-          let programNames = this.C_programNameFilter.map((program) => program.name);
+         if (this.C_portfolioNamesFilter !== null) {          
+          let programNames = this.C_portfolioNamesFilter.map((program) => program.label);
+           console.log(programNames)
           return programNames.includes(task.program_name);
         } else return true;          
    
-    }).filter(task => {
-        if (this.C_portfolioUsersFilter.length > 0) {       
-        let users = this.C_portfolioUsersFilter.map((t) => t.name);  
-        let taskObjUsers = task.task_users.map(t => t.name)
-        // console.log(taskObjUsers)  
+      }).filter(task => {
+          if (this.C_portfolioUsersFilter.length > 0) {       
+          let users = this.C_portfolioUsersFilter.map((t) => t.name);  
+          let taskObjUsers = task.task_users.map(t => t.name)
         return users.some(element => taskObjUsers.includes(element));        
-      } else return true; 
+        } else return true; 
 
       }).filter(task => {
-      let taskIssueProgress = this.taskIssueProgressFilter
-      // let valid = Boolean(task && task.hasOwnProperty('progress'))
+         let taskIssueProgress = this.taskIssueProgressFilter
          if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
             var max = taskIssueProgress[0].value.split("-")[1]       
-        return  task.progress >= min && task.progress <= max
+            return  task.progress >= min && task.progress <= max
           } else return true; 
 
+        }).filter(task => {
+          let taskIssueDueDates = this.taskIssueDueDateFilter
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(task.due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+
+     }).filter(task => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment([1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(task.due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
+      }).filter(task => {
+       let noteDates = this.noteDateFilter
+        if (noteDates && noteDates[0] && noteDates[1]) {
+        let startDate = moment(noteDates[0], "YYYY-MM-DD")
+        let endDate = moment(noteDates[1], "YYYY-MM-DD")
+        let  _notesCreatedAt = _.map(task.notes, 'created_at')
+        let  valid = task.notes.length > 0
+        for (let createdAt of _notesCreatedAt) {
+          let nDate = moment(createdAt, "YYYY-MM-DD")
+           valid = nDate.isBetween(startDate, endDate, 'days', true)         
+          return valid
+         }         
+       }  else return true; 
         }).filter(task => {
          let projectProgress = this.facilityProgressFilter
       // let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -1957,7 +2005,8 @@ export default {
 
     }, 
     issuesObj(){     
-      return this.portfolioIssues.filter(issue => {    
+      return this.portfolioIssues.filter(issue => {        
+     
       if (this.C_programNameFilter.length > 0) {
           let programNames = this.C_programNameFilter.map((program) => program.name);
           return programNames.includes(issue.program_name);
@@ -1968,13 +2017,52 @@ export default {
           return category.includes(issue.category);
         } else return true; 
 
+      }).filter(issue => {
+          let taskIssueDueDates = this.taskIssueDueDateFilter
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(issue.due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+            return valid      
+          } else return true; 
+
+      }).filter(issue => {
+       let noteDates = this.noteDateFilter
+        if (noteDates && noteDates[0] && noteDates[1]) {
+        let startDate = moment(noteDates[0], "YYYY-MM-DD")
+        let endDate = moment(noteDates[1], "YYYY-MM-DD")
+        let  _notesCreatedAt = _.map(issue.notes, 'created_at')
+        let  valid = issue.notes.length > 0
+        for (let createdAt of _notesCreatedAt) {
+          let nDate = moment(createdAt, "YYYY-MM-DD")
+           valid = nDate.isBetween(startDate, endDate, 'days', true)         
+          return valid
+         }         
+       }  else return true; 
+
      }).filter(issue => {
       let taskIssueProgress = this.taskIssueProgressFilter
-      // let valid = Boolean(task && task.hasOwnProperty('progress'))
-         if (taskIssueProgress && taskIssueProgress[0]) {
+            if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
             var max = taskIssueProgress[0].value.split("-")[1]       
         return  issue.progress >= min && issue.progress <= max
+          } else return true; 
+
+       }).filter(issue => {
+         let projectProgress = this.facilityProgressFilter
+           if (projectProgress && projectProgress[0]) {
+            var min = projectProgress[0].value.split("-")[0]
+            var max = projectProgress[0].value.split("-")[1]       
+        return  issue.project_progress >= min && issue.project_progress <= max
+          } else return true; 
+      }).filter(issue => {
+        let programProgress = this.programProgressFilter     
+         if (programProgress && programProgress[0]) {
+            var min = programProgress[0].value.split("-")[0]
+            var max = programProgress[0].value.split("-")[1]       
+        return  issue.program_progress >= min && issue.program_progress <= max
           } else return true; 
 
       }).filter(issue => {
@@ -2089,7 +2177,7 @@ export default {
     }, 
      risksObj(){     
       return this.portfolioRisks.filter(risk => { 
-     let programName = this.C_programNameFilter.map(t => t.name)
+      let programName = this.C_programNameFilter.map(t => t.name)
         if (programName.length > 1) {
           if (programName.includes(risk.program_name)) {
             return risk
@@ -2098,10 +2186,48 @@ export default {
           return risk.program_name.includes(programName)
         } else return true
 
+        }).filter(risk => {
+        let projectProgress = this.facilityProgressFilter
+         if (projectProgress && projectProgress[0]) {
+            var min = projectProgress[0].value.split("-")[0]
+            var max = projectProgress[0].value.split("-")[1]       
+        return  risk.project_progress >= min && risk.project_progress <= max
+      } else return true; 
+
+      }).filter(risk => {
+      let noteDates = this.noteDateFilter
+      if (noteDates && noteDates[0] && noteDates[1]) {
+      let startDate = moment(noteDates[0], "YYYY-MM-DD")
+      let endDate = moment(noteDates[1], "YYYY-MM-DD")
+      let  _notesCreatedAt = _.map(risk.notes, 'created_at')
+      let  valid = risk.notes.length > 0
+      for (let createdAt of _notesCreatedAt) {
+        let nDate = moment(createdAt, "YYYY-MM-DD")
+          valid = nDate.isBetween(startDate, endDate, 'days', true)         
+        return valid
+        }         
+      }  else return true; 
+      }).filter(risk => {
+      let taskIssueDueDates = this.taskIssueDueDateFilter
+      if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+        let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+        let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+        let valid = true
+        let nDate = moment(risk.due_date, "YYYY-MM-DD")
+        valid = nDate.isBetween(startDate, endDate, 'days', true)
+        return valid      
+      } else return true; 
+      }).filter(risk => {
+        let programProgress = this.programProgressFilter     
+         if (programProgress && programProgress[0]) {
+            var min = programProgress[0].value.split("-")[0]
+            var max = programProgress[0].value.split("-")[1]       
+        return  risk.program_progress >= min && risk.program_progress <= max
+          } else return true; 
+
       }).filter(risk => {
       let taskIssueProgress = this.taskIssueProgressFilter
-      // let valid = Boolean(task && task.hasOwnProperty('progress'))
-         if (taskIssueProgress && taskIssueProgress[0]) {
+          if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
             var max = taskIssueProgress[0].value.split("-")[1]       
         return  risk.progress >= min && risk.progress <= max
@@ -2222,6 +2348,7 @@ export default {
     }, 
     lessonsObj(){      
       return this.portfolioLessons.filter(lesson => {
+
      let programName = this.C_programNameFilter.map(t => t.name)
         if (programName.length > 1) {
           if (programName.includes(lesson.program_name)) {
@@ -2243,6 +2370,20 @@ export default {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(lesson.category);
         } else return true; 
+
+       }).filter(lesson => {
+       let noteDates = this.noteDateFilter
+        if (noteDates && noteDates[0] && noteDates[1]) {
+        let startDate = moment(noteDates[0], "YYYY-MM-DD")
+        let endDate = moment(noteDates[1], "YYYY-MM-DD")
+        let  _notesCreatedAt = _.map(lesson.notes, 'created_at')
+        let  valid = lesson.notes.length > 0
+        for (let createdAt of _notesCreatedAt) {
+          let nDate = moment(createdAt, "YYYY-MM-DD")
+           valid = nDate.isBetween(startDate, endDate, 'days', true)         
+          return valid
+         }         
+       }  else return true; 
         
       }).filter(lesson => {
         // if (this.search_lessons !== "" && lesson.category && lesson.category !== null) {
@@ -2545,6 +2686,14 @@ export default {
         this.setPortfolioUsersFilter(value)
       }
     },
+   C_portfolioNamesFilter: {
+      get() {
+        return this.portfolioNameFilter
+      },
+      set(value) {
+        this.setPortfolioNameFilter(value)
+      }
+    },
     C_portfolioIssueTypesFilter: {
       get() {
         return this.portfolioIssueTypesFilter
@@ -2721,6 +2870,7 @@ export default {
   methods: {  
    ...mapMutations([
     'setPortfolioWatchedTasksToggle',
+    'setPortfolioNameFilter',
     'setTaskIssueUserFilter',
     'setPortfolioUsersFilter',
     'setTasksPerPageFilter',
@@ -2754,6 +2904,9 @@ export default {
     'setPortfolioRiskApproachesFilter',
     'setProgramProgressFilter',
     'setFacilityProgressFilter',
+    'setNoteDateFilter',
+    'setTaskIssueDueDateFilter',
+    'setFacilityDueDateFilter',
      ]),
    ...mapActions([
       'fetchPortfolioTasks',

@@ -29,7 +29,7 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter" /> 
+                   <treeselect  placeholder="Search and select" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
                        <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
                        
                     </div>
@@ -162,7 +162,7 @@
                <div>
                 <label class="font-sm mb-0">Action Users</label>
                 <el-select 
-                  v-model=" C_portfolioUsersFilter"                    
+                  v-model="C_portfolioUsersFilter"                    
                   class="w-100" 
                   track-by="id" 
                   value-key="id" 
@@ -365,7 +365,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
-                  placeholder="Select Issue Stage"
+                  placeholder="Select Risk Stage"
                   >
                  <el-option 
                   v-for="item in portfolioRiskStages"                                                                       
@@ -419,7 +419,7 @@
 
       </el-tab-pane>   
 
-      <el-tab-pane label="Favorites">
+      <el-tab-pane label="Favorites (Coming Soon)" disabled>
           <div class="fav-filter px-3 pb-1 pt-0 mt-3">
         <div class="row mb-1">
           <div class="col-md-12">
@@ -914,40 +914,8 @@ export default {
       set(value) {
         this.setTaskIssueDueDateFilter(value)
       }
-    },
-    C_issueTypeFilter: {
-      get() {
-        return this.issueTypeFilter
-      },
-      set(value) {
-        this.setIssueTypeFilter(value)
-      }
-    },
-    C_issueSeverityFilter: {
-      get() {
-        return this.issueSeverityFilter
-      },
-      set(value) {
-        this.setIssueSeverityFilter(value)
-      }
-    },
-    C_issueStageFilter: {
-      get() {
-        return this.issueStageFilter
-      },
-      set(value) {
-        this.setIssueStageFilter(value)
-      }
-    },
-
-    C_taskIssueUserFilter: {
-      get() {
-        return this.getTaskIssueUserFilter
-      },
-      set(value) {
-        this.setTaskIssueUserFilter(value)
-      }
-    },
+    }, 
+  
     C_myActionsFilter: {
       get() {
         return this.myActionsFilter
@@ -1444,13 +1412,19 @@ export default {
 
     },
     resetFilters(){
+      this.setPortfolioUsersFilter([]) 
+      this.setPortfolioCategoriesFilter([])     
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      // if(this.favoriteFilterData.id){
-      //   this.setAdvancedFilter([])
-      // }else{
-      //   this.setAdvancedFilter([])        
-      // }
+      this.setPortfolioStatusesFilter([])
+      this.setPortfolioTaskStagesFilter([])
+      this.setPortfolioIssueStagesFilter([])
+      this.setPortfolioRiskStagesFilter([])
+      this.setPortfolioIssueSeveritiesFilter([])
+      this.setPortfolioIssueTypesFilter([])
+      this.setPortfolioRiskApproachesFilter([])
+       this.setPortfolioRiskPrioritiesFilter([])
+
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1484,6 +1458,20 @@ export default {
       if(!decision){
         return
       }
+
+      this.setPortfolioUsersFilter([]) 
+      this.setPortfolioCategoriesFilter([])     
+      this.setTaskIssueUserFilter([])
+      this.setTaskIssueProgressStatusFilter([])
+      this.setPortfolioStatusesFilter([])
+      this.setPortfolioTaskStagesFilter([])
+      this.setPortfolioIssueStagesFilter([])
+      this.setPortfolioRiskStagesFilter([])
+      this.setPortfolioIssueSeveritiesFilter([])
+      this.setPortfolioIssueTypesFilter([])
+      this.setPortfolioRiskApproachesFilter([])
+       this.setPortfolioRiskPrioritiesFilter([])
+
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       // this.setAdvancedFilter([])
