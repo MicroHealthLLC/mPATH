@@ -112,7 +112,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def portfolio_json
+  def portfolio_json(facility_groups: [])
     if draft
       self.on_hold = false if self.on_hold
       self.ongoing = false if self.ongoing
@@ -144,6 +144,8 @@ class Task < ApplicationRecord
       program_progress:  self.project.progress,
       project_status: self.facility_project.status.name,
       project_progress: self.facility_project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
       planned: planned,
       on_hold: self.on_hold,
       ongoing: self.ongoing,

@@ -138,6 +138,8 @@ class Risk < ApplicationRecord
       category: task_type.name,
       is_overdue: is_overdue,
       program_progress:  self.project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
       project_status: self.facility_project.status.name,
       in_progress: in_progress,
       on_hold: self.on_hold,

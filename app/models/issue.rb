@@ -75,6 +75,8 @@ class Issue < ApplicationRecord
       is_overdue: is_overdue,
       issue_stage: issue_stage.try(:name),
       program_progress:  self.project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
       project_status: self.facility_project.status.name,
       planned: planned,
       on_hold: self.on_hold,
