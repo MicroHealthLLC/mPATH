@@ -1832,7 +1832,12 @@ export default {
 
     },
     tasksObj(){
+
+   
       return this.portfolioTasks.filter(task => { 
+
+   //Currently, the C_portfolioNamesFilter filter is only filtering Porjects by project ids.  User needs the ability to filter Program names 
+   // such that selecting Program name in filter will automatically include all Projects within the program
          if (this.C_portfolioNamesFilter.length > 0) {          
           let projectNames = this.C_portfolioNamesFilter.map((program) => program.project_id);
            console.log(projectNames)
@@ -1840,13 +1845,6 @@ export default {
                 
         } else return true;      
      
-      //  }).filter(task => {
-      //      if (this.C_portfolioNamesFilter !== null) {          
-      //     let programNames = this.C_portfolioNamesFilter.map((program) => program);
-      //      console.log("program Name" + programNames.label)
-      //     return programNames.label.includes(task.program_name);
-      //   } else return true;      
-   
       }).filter(task => {
           if (this.C_portfolioUsersFilter.length > 0) {       
           let users = this.C_portfolioUsersFilter.map((t) => t.name);  
