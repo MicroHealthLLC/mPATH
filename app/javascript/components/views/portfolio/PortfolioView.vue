@@ -40,34 +40,15 @@
                   
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
-
-                  <treeselect  
-                  placeholder="Search and select" 
-                  :multiple="true"  
-                  track-by="name"                            
-                  :options="portfolioPrograms" 
-                  valueFormat="object"
-                  v-model="C_portfolioNamesFilter"
-                  /> 
-                   <!-- <treeselect-value :value="C_portfolioNamesFilter" /> -->
-                <!-- <el-select     
-                    v-model="C_programNameFilter"                   
-                    track-by="name" 
-                    class="w-75"
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select>  -->
-                      </template>              
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
                 </div>         
               </div>
                 <div  class="col-4 pl-0 py-2">   
@@ -453,27 +434,18 @@
                
             <div  class="col-4 pl-0 py-2" >   
             <div class="d-flex w-100">
-            <div class="font-sm px-0 mt-2 mr-2">PROGRAM FILTER</div>           
-              <template>
-               <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select> 
-                      </template>              
-                </div>         
+            <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>      
               </div> 
                   <div  class="col-4 pl-0 py-2">   
                 <div class="d-flex w-100">                  
@@ -869,27 +841,18 @@
             <div  class="col-4 py-2">   
             <div class="d-flex w-100">
 
-          <div class="font-sm  px-0 mr-2 mt-2">PROGRAM FILTER</div>           
-           <template>
-                <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                  </el-option>
-                  </el-select> 
-                  </template>              
-                </div>         
+               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>      
               </div> 
                   <div  class="col-4 pl-0 py-2">   
                 <div class="d-flex w-100">                  
@@ -1299,27 +1262,18 @@
               <div  class="col-4 py-2">   
                 <div class="d-flex w-100">
                   
-                  <div class="font-sm px-0 mr-2 mt-2">PROGRAM FILTER</div>           
+               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
-                 <el-select     
-                    v-model="C_programNameFilter"                               
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                                                   
-                    placeholder="Select Programs to Filter to"
-                  >
-                  <el-option                   
-                    v-for="item in C_programNames"                                                               
-                    :value="item"   
-                    class="text-truncate"
-                    :key="item.id"
-                    :label="item.name"                                                                      
-                    >
-                     </el-option>
-                  </el-select> 
-                      </template>              
-                </div>         
+                    <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"                            
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+                    />         
+                 </template>              
+                </div>              
               </div> 
                        <div  class="col-4 pl-0 py-2">   
                 <div class="d-flex w-100">                  
@@ -1664,6 +1618,7 @@ export default {
     return {
       showLess: "Show More",
       search_tasks: "",
+      // project_ids: [],
       search_issues: "",
       search_risks: "",
       search_lessons: "",
@@ -1723,6 +1678,7 @@ export default {
     ...mapGetters([
       'getPortfolioWatchedTasksToggle', 
       'getPortfolioBriefedTasksToggle',
+       'getMyAssignmentsFilter',
       'getTasksPerPageFilterOptions',
       'getIssuesPerPageFilterOptions',
       'getRisksPerPageFilterOptions',
@@ -1769,6 +1725,8 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
+
+
    sortedTasks:function() {
           return this.tasksObj.sort((a,b) => {
           let modifier = 1;
@@ -1832,16 +1790,17 @@ export default {
 
     },
     tasksObj(){
-
-   
+      // this.searchChildren(this.C_portfolioNamesFilter, this.project_ids)
+      
       return this.portfolioTasks.filter(task => { 
 
-   //Currently, the C_portfolioNamesFilter filter is only filtering Porjects by project ids.  User needs the ability to filter Program names 
+   //Currently, the C_portfolioNamesFilter filter is only filtering Projects by project ids.  User needs the ability to filter Program names 
    // such that selecting Program name in filter will automatically include all Projects within the program
          if (this.C_portfolioNamesFilter.length > 0) {          
-          let projectNames = this.C_portfolioNamesFilter.map((program) => program.project_id);
-           console.log(projectNames)
-          return projectNames.includes(task.facility_project_id);
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);
+          //  console.log(ps)
+          return projectNames.includes(task.project_group_name) || projectNames.includes(task.project_name) || projectNames.includes(task.program_name)   ;
                 
         } else return true;      
      
@@ -1871,14 +1830,13 @@ export default {
            return valid      
           } else return true; 
 
-
      }).filter(task => {
           let projectGroupDueDates = this.facilityDueDateFilter
           if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
             let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
-            let endDate = moment([1], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
             let valid = true
-            let nDate = moment(task.due_date, "YYYY-MM-DD")
+            let nDate = moment(task.project_due_date, "YYYY-MM-DD")
             valid = nDate.isBetween(startDate, endDate, 'days', true)
            return valid      
           } else return true; 
@@ -2012,16 +1970,29 @@ export default {
     }, 
     issuesObj(){     
       return this.portfolioIssues.filter(issue => {        
-     
-      if (this.C_programNameFilter.length > 0) {
-          let programNames = this.C_programNameFilter.map((program) => program.name);
-          return programNames.includes(issue.program_name);
-        } else return true;   
+      if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);    
+          return projectNames.includes(issue.project_group_name) || projectNames.includes(issue.project_name) || projectNames.includes(issue.program_name)   ;
+                
+        } else return true;      
      }).filter(issue => {
          if (this.C_categoryNameFilter.length > 0) {
           let category = this.C_categoryNameFilter.map((t) => t);
           return category.includes(issue.category);
         } else return true; 
+
+  
+     }).filter(issue => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(issue.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
 
       }).filter(issue => {
           let taskIssueDueDates = this.taskIssueDueDateFilter
@@ -2183,14 +2154,12 @@ export default {
     }, 
      risksObj(){     
       return this.portfolioRisks.filter(risk => { 
-      let programName = this.C_programNameFilter.map(t => t.name)
-        if (programName.length > 1) {
-          if (programName.includes(risk.program_name)) {
-            return risk
-          }
-        } else if (programName.length == 1) {
-          return risk.program_name.includes(programName)
-        } else return true
+      if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);
+         return projectNames.includes(risk.project_group_name) || projectNames.includes(risk.project_name) || projectNames.includes(risk.program_name)   ;
+                
+        } else return true;      
 
         }).filter(risk => {
         let projectProgress = this.facilityProgressFilter
@@ -2199,6 +2168,18 @@ export default {
             var max = projectProgress[0].value.split("-")[1]       
         return  risk.project_progress >= min && risk.project_progress <= max
       } else return true; 
+
+     }).filter(risk => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(risk.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
+
 
       }).filter(risk => {
       let noteDates = this.noteDateFilter
@@ -2354,15 +2335,33 @@ export default {
     }, 
     lessonsObj(){      
       return this.portfolioLessons.filter(lesson => {
+         if (this.C_portfolioNamesFilter.length > 0) {          
+          let projectNames = this.C_portfolioNamesFilter.map((program) => program.label);
+          let ps = this.C_portfolioNamesFilter.map((program) => program.label);
+           console.log(ps)
+          return projectNames.includes(lesson.project_group_name) || projectNames.includes(lesson.project_name) || projectNames.includes(lesson.program_name)   ;
+                
+        } else return true;      
+    //  let programName = this.C_programNameFilter.map(t => t.name)
+    //     if (programName.length > 1) {
+    //       if (programName.includes(lesson.program_name)) {
+    //         return lesson
+    //       }
+    //     } else if (programName.length == 1) {
+    //       return lesson.program_name.includes(programName)
+    //     } else return true
 
-     let programName = this.C_programNameFilter.map(t => t.name)
-        if (programName.length > 1) {
-          if (programName.includes(lesson.program_name)) {
-            return lesson
-          }
-        } else if (programName.length == 1) {
-          return lesson.program_name.includes(programName)
-        } else return true
+
+       }).filter(lesson => {
+          let projectGroupDueDates = this.facilityDueDateFilter
+          if (projectGroupDueDates && projectGroupDueDates[0] && projectGroupDueDates[1]) {
+            let startDate = moment(projectGroupDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(projectGroupDueDates[1], "YYYY-MM-DD")
+            let valid = true
+            let nDate = moment(lesson.project_due_date, "YYYY-MM-DD")
+            valid = nDate.isBetween(startDate, endDate, 'days', true)
+           return valid      
+          } else return true; 
 
         }).filter(lesson => {
         if (this.C_portfolioUsersFilter.length > 0) {       
@@ -2878,6 +2877,7 @@ export default {
     'setPortfolioWatchedTasksToggle',
     'setPortfolioNameFilter',
     'setTaskIssueUserFilter',
+    'setMyAssignmentsFilter',
     'setPortfolioUsersFilter',
     'setTasksPerPageFilter',
     'setTaskIssueProgressFilter',
@@ -2933,6 +2933,13 @@ export default {
       showCountToggle(){
         this.getShowCount(!this.getShowCount)      
       },
+      // searchChildren:function(parent, project_ids){
+      //   if(parent.children){
+      //   searchChildren(parent.children);
+      //   }else{
+      //   project_ids.push(parent.project_id)
+      //   }
+      // },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
