@@ -41,33 +41,33 @@
                 <div class="row text-center mt-3">
                 <div class="col p-0 mb-0">
                   
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span class="d-block" v-tooltip="`100% Progress achieved`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span   :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                 </div>
                  <div class="col p-0 mb-0">
-                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS</span>           
+                  <span class="d-block" v-tooltip="`Start date on or before current date`"><i class="far fa-tasks text-primary"></i></span>
+                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">IN PROGRESS</span>           
                 </div>
 
                  <div class="col p-0 mb-0">                 
-                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
+                  <span class="d-block" v-tooltip="`Start date beyond current date (not a Draft)`"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                 </div>
                  <div class="col p-0 mb-0">
-                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                   <span class="d-block" v-tooltip="`Due Date has passed`" > <i class="fas fa-calendar text-danger"> </i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
                 </div>
                      <div class="col p-0 mb-0">
-                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
+                 <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">ON HOLD  </span>           
                 </div>         
             
                  <div class="col p-0 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span  v-tooltip="`Unofficial action`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                 </div>
                   <div class="col p-0 mb-0">
-                   <span class="d-block" v-tooltip="`ONGOING`"> <i class="fas fa-retweet text-success"></i></span>
+                   <span class="d-block" v-tooltip="`Recurring action without Due Date`" > <i class="fas fa-retweet text-success"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING </span>    
                 </div> 
               </div>
@@ -103,7 +103,11 @@
                  <div class="col pb-0 mb-0">
                   <h4 class="mb-0">{{
                     taskVariation.ongoing.length
-                  }}</h4>          
+                  }}<span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="taskVariation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{taskVariation.ongoingClosed.count}})</span></h4>          
                 </div>    
               </div>  
                
@@ -224,28 +228,28 @@
 
                 <div class="row text-center mt-3">
                   <div class="col p-0 mb-0">                  
-                    <span  class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                    <span  class="d-block"  v-tooltip="`100% Progress achieved`"><i class="fas fa-clipboard-check text-success"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                   </div>
                   <div class="col p-0 mb-0">
-                  <span class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                  <span class="d-block" v-tooltip="`Start date on or before current date`"><i class="far fa-tasks text-primary"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">IN PROGRESS</span>           
                   </div>
                   <div class="col p-0  mb-0">                      
-                    <span class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
+                    <span class="d-block" v-tooltip="`Start date beyond current date (not a Draft)`"><i class="fas fa-calendar-check text-info font-md"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                   </div>
                   <div class="col p-0 mb-0">
-                  <span class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                  <span class="d-block" v-tooltip="`Due Date has passed`"><i class="fas fa-calendar text-danger"> </i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE</span>               
                   </div>
                   
                   <div class="col p-0 mb-0">
-                  <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                  <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col p-0 mb-0">
-                  <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                  <span  v-tooltip="`Unofficial action`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                   </div>     
                    <div class="col p-0 mb-0">
@@ -435,31 +439,31 @@
                   </div>                  
                 <div class="row text-center mt-3">
                   <div class="col p-0 mb-0">                    
-                    <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                    <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                   </div>
                   <div class="col p-0 mb-0">
-                  <span  v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                  <span  v-tooltip="`Start date on or before current date`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS   </span>           
                   </div>
                    <div class="col p-0  mb-0">                    
-                    <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
+                    <span v-tooltip="`Start date beyond current date (not a Draft)`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-info font-md"  /></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                   </div>
                   <div class="col p-0 mb-0">
-                  <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                  <span  v-tooltip="`Due Date has passed`" class="d-block"><i class="fas fa-calendar text-danger"> </i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
                   </div>
                       <div class="col p-0 mb-0">
-                   <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                   <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                    <span v-tooltip="`Unofficial action`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                   </div> 
                     <div class="col p-0 mb-0">
-                    <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
+                    <span v-tooltip="`Recurring action without Due Date`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING</span>    
                   </div> 
                </div>
@@ -497,7 +501,11 @@
                  <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{
                     riskVariation.ongoing.length
-                  }}</h4>          
+                  }}<span 
+                      v-tooltip="`Ongoing: Closed`"
+                      v-if="riskVariation.ongoingClosed.count > 0"
+                      style="color:lightgray"                      
+                      >({{riskVariation.ongoingClosed.count}})</span></h4>          
                 </div>            
         
               </div>          
@@ -658,11 +666,11 @@
             <div v-if="contentLoaded">
                <div class="row mt-4 text-center" >
                 <div class="col-6 p-0 mb-0">                  
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-6 p-0 mb-0">
-                <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning"></i></span>
+                <span class="d-block"><i class="fas fa-pencil-alt text-warning"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>           
                 </div>
                 
@@ -1253,6 +1261,7 @@ export default {
         this.filteredTasks.length
       );
       let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
+      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.closed );
       return {
         planned: {
           count: planned.length, 
@@ -1267,11 +1276,13 @@ export default {
         completed: {
           count: completed.length,
           percentage: Math.round(completed_percent),
-        },
-      
+        },      
         inProgress: {
           count: inProgress.length,
           percentage: Math.round(inProgress_percent),
+        },             
+        ongoingClosed: {
+          count:  ongoingClosed.length,         
         },
         overdue: {
           count: overdue.length,
@@ -1506,6 +1517,7 @@ export default {
         overdue.length,
         this.filteredRisks.length
       );
+      let ongoingClosed = _.filter(this.filteredRisks, (t) => t && t.closed);
       let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
       return {
         planned: {
@@ -1528,6 +1540,9 @@ export default {
         overdue: {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count:  ongoingClosed.length,         
         },
         ongoing
       };

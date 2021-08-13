@@ -312,7 +312,14 @@ class Risk < ApplicationRecord
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
     closed = false
-    closed = true if closed_date.present? && ongoing && !draft && !on_hold
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
 
     in_progress = false
     completed = false
@@ -325,8 +332,11 @@ class Risk < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
 
-    closed_date = due_date if ongoing && due_date.present? && !draft && !on_hold && !is_overdue && !in_progress && !planned
-   
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
+
     sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(

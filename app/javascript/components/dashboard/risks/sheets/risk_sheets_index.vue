@@ -155,7 +155,14 @@
                     <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">ONGOING</span>
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}
+                   <span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="variation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{variation.ongoingClosed.count}})
+                    </span>
+                    </h6>
                   </div>
   
                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
@@ -863,6 +870,7 @@
         (t) => t && t.planned == true
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
+      
      let drafts = _.filter(
         this.filteredRisks.unfiltered.risks,
         (t) => t && t.draft 
@@ -890,6 +898,7 @@
       );
      let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
      let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
+     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.closed == true );
      let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
 
       return {
@@ -926,8 +935,10 @@
         },
          ongoing: {
           count: ongoing.length
-        },     
-     
+        },   
+         ongoingClosed: {
+          count: ongoingClosed.length
+        },    
       };
     },
       C_riskPriorityLevelFilter: {

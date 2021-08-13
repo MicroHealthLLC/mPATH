@@ -184,7 +184,7 @@
                 </el-option>
               </el-select> 
 
-                  <!-- Reference for Dropdown with multiple category labels (Do not delete)
+                  <!-- Reference for Dropdown with multiple category labels (Do not delete) -->
                 <label class="font-sm mb-0">Flags</label>
                  <el-select 
                   v-model="C_advancedFilter"                   
@@ -204,32 +204,32 @@
                   v-for="item in group.options"                                                     
                   :value="item"   
                   :key="item.id"
-                  :label="item.name"  
-                                                                        
+                  :label="item.name"                                                                        
                   >
                 </el-option>
                   </el-option-group>
-              </el-select>  -->
+              </el-select> 
               </div>
+         
+             </div>
+              <div class="col-md-4">
               <div>
                 <label class="font-sm mb-0">Action % Progress Range</label>
                 <div class="form-row">
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
                   </div>
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
                   </div>
                 </div>
                   <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
               </div> 
-             </div>
-              <div class="col-md-4">
                 <div>
               <label class="font-sm mb-0">Action Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
-            <div>
+            <div class="mt-1">
               <label class="font-sm mb-0">Updates Date Range</label>
               <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
@@ -509,8 +509,8 @@ export default {
       'getTaskIssueProgressStatusFilter',
       'getMyAssignmentsFilter',
       'getMyAssignmentsFilterOptions',
-      // 'getAdvancedFilterOptions',
-      // 'getAdvancedFilter',
+      'getAdvancedFilterOptions',
+      'getAdvancedFilter',
       'getShowAdvancedFilter',
       'projectStatusFilter',
 
@@ -798,6 +798,26 @@ export default {
     C_facilityProgress: {
       get() {
         return this.progressFilter.facility
+      }
+    },
+   C_advancedFilter: {
+      get() {
+        // Note: This code will be useful if want active as default select and never want advanced filter blank
+        // if (this.getAdvancedFilter.length == 0) {
+        //   // return [{ id: 'active', name: 'Active' }]
+        //   this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        //   return this.getAdvancedFilter
+        // }else{
+        //   return this.getAdvancedFilter
+        // }
+        return this.getAdvancedFilter
+      },
+      set(value) {
+        if (!value) {
+          this.setAdvancedFilter([])
+        } else {
+          this.setAdvancedFilter(value)
+        }
       }
     },
 
@@ -1250,11 +1270,12 @@ export default {
     resetFilters(){
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      // if(this.favoriteFilterData.id){
-      //   this.setAdvancedFilter([])
-      // }else{
-      //   this.setAdvancedFilter([])        
-      // }
+      if(this.favoriteFilterData.id){
+        this.setAdvancedFilter([])
+      }else{
+        this.setAdvancedFilter([])        
+      }
+      this.setMyAssignmentsFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1290,7 +1311,7 @@ export default {
       }
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      // this.setAdvancedFilter([])
+      this.setAdvancedFilter([])
       this.setMyAssignmentsFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])

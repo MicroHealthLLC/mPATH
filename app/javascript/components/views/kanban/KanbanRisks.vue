@@ -72,7 +72,14 @@
                     <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
                     </span>      
               
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}
+                      <span 
+                        v-tooltip="`Ongoing: Closed`"
+                        v-if="variation.ongoingClosed.count > 0"
+                        style="color:lightgray"                      
+                        >({{variation.ongoingClosed.count}})
+                      </span>
+                      </h6>
                   </div>
   
                   <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
@@ -465,6 +472,7 @@ export default {
       );
      let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
      let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
+     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoingClosed == true );
      let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
 
       return {
@@ -498,6 +506,9 @@ export default {
         overdue: {
           count: overdue.length,
           // percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length,
         },
          ongoing: {
           count: ongoing.length

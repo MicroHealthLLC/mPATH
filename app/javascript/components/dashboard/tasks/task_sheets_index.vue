@@ -125,7 +125,14 @@
                     <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">ONGOING</span>
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}
+                    <span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="variation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{variation.ongoingClosed.count}})
+                    </span>
+                    </h6>
                   </div>
   
                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
@@ -369,6 +376,7 @@
               v-for="task in sortedTasks"           
               class="taskHover"        
               href="#"
+              :load="log(JSON.stringify(task))"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -558,9 +566,9 @@
       }
         this.currentSort = s;
       },
-      // log(e){
-      //   console.log("advancedFilter:  " + e)
-      // },
+      log(e){
+        console.log("Task:  " + e)
+      },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
       },
@@ -832,6 +840,10 @@
       this.filteredTasks.unfiltered.tasks,
         (t) => t && t.important
       ); 
+      let ongoingClosed = _.filter(
+      this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.closed
+      ); 
         let briefings = _.filter(
        this.filteredTasks.unfiltered.tasks,
         (t) => t && t.reportable
@@ -887,6 +899,9 @@
         },
         ongoing: {
           count: ongoing.length
+        },     
+        ongoingClosed: {
+          count: ongoingClosed.length
         },     
       };
     },
