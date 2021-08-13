@@ -324,6 +324,8 @@ class Risk < ApplicationRecord
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
+
+    closed_date = due_date if ongoing && due_date.present? && !draft && !on_hold && !is_overdue && !in_progress && !planned
    
     sorted_notes = notes.sort_by(&:created_at).reverse
 
@@ -353,6 +355,7 @@ class Risk < ApplicationRecord
       is_overdue: is_overdue,
       draft: draft,
       on_hold: on_hold,
+      closed_date: closed_date,
 
      # Add RACI user name
       # Last name values added for improved sorting in datatables
