@@ -53,10 +53,11 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                    track-by="name"   
+                    track-by="name"                       
                     :normalizer="normalizer"                         
                     :options="portfolioPrograms" 
                     valueFormat="object"
+                    :match-keys= "['facility_project_id']"
                     v-model="C_portfolioNamesFilter"
                     />         
                  </template>              
@@ -945,6 +946,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                     track-by="name"    
+                     :match-keys= "['facility_project_id']"
                     :normalizer="normalizer"                            
                     :options="portfolioPrograms" 
                     valueFormat="object"
@@ -1878,7 +1880,8 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                    track-by="name"      
+                    track-by="name"  
+                     :match-keys= "['facility_project_id']"    
                     :normalizer="normalizer"                          
                     :options="portfolioPrograms" 
                     valueFormat="object"
@@ -2883,6 +2886,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                     track-by="name"  
+                     :match-keys= "['facility_project_id']"
                     :normalizer="normalizer"                              
                     :options="portfolioPrograms" 
                     valueFormat="object"
