@@ -23,9 +23,8 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select"  :normalizer="normalizer" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
-                       <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
-                       
+                   <treeselect  placeholder="Search and select"  :match-keys= "['facility_project_id']" :normalizer="normalizer" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
+                          
                     </div>
                 <!-- <el-select 
                     v-model="C_facilityGroupFilter"                    
