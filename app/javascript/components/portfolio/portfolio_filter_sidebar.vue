@@ -23,7 +23,7 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
+                   <treeselect  placeholder="Search and select"  :normalizer="normalizer" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
                        <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
                        
                     </div>
@@ -495,68 +495,13 @@ export default {
   data() {
     return {
       hasFilterAccess: true,
-       value: [],
-      // define options
-        portfolioFilterObj: [ {
-          id: '1',
-          label: 'Technology Program',
-          children: [ {
-            id: '211123',
-            label: 'Project Group Windows',
-              children: [{
-                id: '1277',
-                label: 'Project 1',
-              }, {
-                id: '1773',
-                label: 'Project 2',
-              } , {
-                id: '17664',
-                label: 'Project 3',
-            }],
-            id: '223456',
-            label: 'Project Group Microsoft',
-              children: [{
-                id: '12',
-                label: 'Project 156789',
-              }, {
-                id: '13',
-                label: 'Project 28758934',
-              } , {
-                id: '14',
-                label: 'Project 3342553454',
-            }],
-          }],
-        },{
-           id: '2',
-          label: 'Wellness Program',
-          children: [ {
-            id: '23',
-            label: 'Project Group Blue',
-              children: [{
-                id: '177543342',
-                label: 'Project 931',
-              }, {
-                id: '15567773',
-                label: 'Project 352',
-              } , {
-                id: '13333334',
-                label: 'Project f3',
-            }],
-            id: '6783',
-            label: 'Project Group Red',
-              children: [{
-                id: '123542',
-                label: 'Project tw',
-              }, {
-                id: '13454',
-                label: 'Project 23425',
-              } , {
-                id: '67890',
-                label: 'Project 3qwrqw',
-            }],
-          }] 
-        }],
-
+      normalizer(node) {
+      return {
+        id: node.id,
+        label: node.label,
+        children: node.children,
+       }
+      },
       isLoading: false,
       activeName: 'first',
       exporting: false,
