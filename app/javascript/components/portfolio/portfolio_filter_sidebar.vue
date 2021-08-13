@@ -23,7 +23,7 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select"  :match-keys= "['facility_project_id']" :normalizer="normalizer" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
+                   <treeselect  placeholder="Search and select"  :match-keys= "['facility_project_id', 'id', 'label']" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
                           
                     </div>
                 <!-- <el-select 
@@ -494,13 +494,6 @@ export default {
   data() {
     return {
       hasFilterAccess: true,
-      normalizer(node) {
-      return {
-        id: node.id,
-        label: node.label,
-        children: node.children,
-       }
-      },
       isLoading: false,
       activeName: 'first',
       exporting: false,

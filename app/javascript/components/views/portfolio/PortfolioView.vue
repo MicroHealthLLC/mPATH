@@ -51,14 +51,13 @@
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
                     <treeselect  
-                    placeholder="Search and select" 
-                    :multiple="true" 
-                    track-by="name"                       
-                    :normalizer="normalizer"                         
-                    :options="portfolioPrograms" 
-                    valueFormat="object"
-                    :match-keys= "['facility_project_id']"
-                    v-model="C_portfolioNamesFilter"
+                      placeholder="Search and select" 
+                      :multiple="true" 
+                      track-by="name"       
+                      :options="portfolioPrograms" 
+                      valueFormat="object"
+                      :match-keys= "['facility_project_id', 'id', 'label']"
+                      v-model="C_portfolioNamesFilter"
                     />         
                  </template>              
                 </div>         
@@ -946,8 +945,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                     track-by="name"    
-                     :match-keys= "['facility_project_id']"
-                    :normalizer="normalizer"                            
+                    :match-keys= "['facility_project_id', 'id', 'label']"             
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -1881,8 +1879,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                     track-by="name"  
-                     :match-keys= "['facility_project_id']"    
-                    :normalizer="normalizer"                          
+                     :match-keys= "['facility_project_id', 'id', 'label']"             
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -2886,8 +2883,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                     track-by="name"  
-                     :match-keys= "['facility_project_id']"
-                    :normalizer="normalizer"                              
+                     :match-keys= "['facility_project_id', 'id', 'label']"                          
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -3620,13 +3616,6 @@ export default {
     return {
       showLess: "Show More",
       search_tasks: "",
-      normalizer(node) {
-      return {
-        id: node.id,
-        label: node.label,
-        children: node.children,
-      }
-     },
       search_issues: "",
       search_risks: "",
       search_lessons: "",
