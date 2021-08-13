@@ -12,12 +12,24 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+      # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
       get "/portfolio/lessons", to: "portfolio#lessons"
       get "/portfolio/tasks", to: "portfolio#tasks"
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
       get "/projects/:id", to: "projects#show"
+
+      # Filter data
+      get "/filter_data/programs", to: "filter_data#programs"
+      get "/filter_data/users", to: "filter_data#users"
+      get "/filter_data/statuses", to: "filter_data#statuses"
+      get "/filter_data/categories", to: "filter_data#categories"
+      get "/filter_data/stages", to: "filter_data#stages"
+      get "/filter_data/issue_types", to: "filter_data#issue_types"
+      get "/filter_data/issue_severities", to: "filter_data#issue_severities"
+      get "/filter_data/risk_approaches", to: "filter_data#risk_approaches"
+      get "/filter_data/risk_priority_level", to: "filter_data#risk_priority_level"
 
       # NOTE: Replace this with resource.
       # get "/programs/:program_id/lessons" => "lessons#index"

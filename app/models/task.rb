@@ -112,7 +112,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def portfolio_json
+  def portfolio_json(facility_groups: [])
     if draft
       self.on_hold = false if self.on_hold
       self.ongoing = false if self.ongoing
@@ -136,20 +136,29 @@ class Task < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
 
+
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       is_overdue: is_overdue,
+      program_progress:  self.project.progress,
+      project_status: self.facility_project.status.name,
+      project_progress: self.facility_project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
       planned: planned,
       on_hold: self.on_hold,
       ongoing: self.ongoing,
+      task_stage: task_stage.try(:name),
       completed: completed,
+      checklists: checklists.as_json,
       in_progress: in_progress,
       category: task_type.name,
       notes: notes.as_json,
       last_update: self.notes.last&.portfolio_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
-      users: users.select(&:active?).map(&:full_name).join(", ")
+      users: users.select(&:active?).map(&:full_name).join(", "),
+      task_users: users.map{|u| {id: u.id, name: u.full_name } } 
     }
 
     self.attributes.merge!(merge_h)

@@ -38,6 +38,17 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def full_name
+    n = ''
+    if self.first_name
+      n += self.first_name
+    end
+    if self.last_name
+      n += " #{self.last_name}"
+    end
+    n
+  end
+
   def portfolio_json
     {
       id: id,

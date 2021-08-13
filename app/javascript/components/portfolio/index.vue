@@ -6,7 +6,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)">   
     <!-- <tabsbar></tabsbar> -->
-    <!-- <filter-sidebar v-if="contentLoaded"></filter-sidebar> -->
+    <portfolio-filter-sidebar v-if="portfolioTasksLoaded"></portfolio-filter-sidebar>
     <router-view></router-view>
   </div>
 </template>
@@ -14,13 +14,13 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 // import Tabsbar from "./../shared/tabsbar";
-// import FilterSidebar from "./../shared/filter_sidebar";
+import PortfolioFilterSidebar from "./portfolio_filter_sidebar.vue"
 
 export default {
   name: "Portfolio",
   components: {
     // Tabsbar,
-    // FilterSidebar,
+    PortfolioFilterSidebar,
   },
   mounted() {
     let id = this.$route.params.programId;

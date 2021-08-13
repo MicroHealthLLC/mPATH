@@ -20,7 +20,7 @@ ActiveAdmin.register TaskStage do
     selectable_column if current_user.admin_delete?
     column :id
     column :name
-    tag_column :percentage
+    column :percentage
     actions defaults: false do |task_stage|
       item "Edit", edit_admin_task_stage_path(task_stage), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_task_stage_path(task_stage), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?

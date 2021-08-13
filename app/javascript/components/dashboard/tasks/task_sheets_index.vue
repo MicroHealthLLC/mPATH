@@ -229,7 +229,7 @@
               <col class="eight" />
               <col class="fort" />
               <col class="eight" />
-              <col class="fort" />             
+              <col class="ten" />             
               <col class="twentyTwo" />
             </colgroup>
             <tr class="thead" style="background-color:#ededed;">
@@ -1081,7 +1081,7 @@
     width: 20%;
   }
   .twentyTwo {
-    width: 22%;
+    width: 26%;
   }
   .floatRight {
     text-align: right;

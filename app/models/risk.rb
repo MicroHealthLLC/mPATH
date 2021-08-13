@@ -131,20 +131,29 @@ class Risk < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
 
-    merge_h = { 
+     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
+      risk_stage: risk_stage.try(:name),
       category: task_type.name,
       is_overdue: is_overdue,
+      program_progress:  self.project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
+      project_status: self.facility_project.status.name,
       in_progress: in_progress,
       on_hold: self.on_hold,
       ongoing: self.ongoing,
+      risk_approach: risk_approach.humanize,
+      risk_stage: risk_stage.try(:name),
+      priority_level: priority_level_name,
       completed: completed,
       planned: planned,
       last_update: self.notes.last&.portfolio_json,
       notes: notes.as_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
-      users: users.select(&:active?).map(&:full_name).join(", ")
+      users: users.select(&:active?).map(&:full_name).join(", "),
+      risk_users: users.map{|u| {id: u.id, name: u.full_name } } 
     }
 
     self.attributes.merge!(merge_h)
