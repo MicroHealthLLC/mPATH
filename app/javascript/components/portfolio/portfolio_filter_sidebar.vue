@@ -2063,4 +2063,12 @@ input[type=number] {
    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
    text-decoration-line: none !important;
 }
+
+/deep/.vue-treeselect__multi-value-item {
+  background-color: #41b883;
+  color: white;
+}
+/deep/.vue-treeselect__value-remove {
+  color: rgba(56, 56, 56, 0.5);
+}
 </style>
