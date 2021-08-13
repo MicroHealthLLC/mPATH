@@ -14,6 +14,7 @@ describe('Admin Panel Statuses', function() {
 
   it('Sort Status according to Name', function() {
     cy.visit('http://localhost:5017/admin/statuses?order=name_asc')
+    cy.wait(2000)
     cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
     cy.get('.sortable').contains('Name').click()
     cy.get('#index_table_statuses > tbody > tr').first().contains('Not Started').should('be.visible')

@@ -70,18 +70,19 @@ describe('Admin Panel Program Types', function() {
   })
 
   it('Sort Project type according to Name', function() {
+    cy.visit("http://localhost:5017/admin/project_types?order=name_asc")
     cy.get('.sortable').contains('Name').click()
     cy.get('#index_table_project_types > tbody > tr').first().contains('Test Project Type').should('be.visible')
     // cy.get('#logout').click()
   })
 
   it('Search Program type contains name', function() {
-    cy.get('#q_name').type('Test Project Type').should('have.value', 'Test Project Type')
+    cy.get('#q_name').type('New Test Project Type').should('have.value', 'New Test Project Type')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#search_status_sidebar_section').should('be.visible')
     cy.get('#search_status_sidebar_section > h3').contains('Search status:').should('be.visible')
     cy.get('h4').contains('Current filters:').should('be.visible')
-    cy.get('.current_filter').contains('Name contains Test Project Type').should('be.visible')
+    cy.get('.current_filter').contains('Name contains New Test Project Type').should('be.visible')
     cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
     // cy.get('#logout').click()
