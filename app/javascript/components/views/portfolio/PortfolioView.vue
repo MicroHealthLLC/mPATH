@@ -4468,36 +4468,36 @@ export default {
         });
     },
     taskVariation() {
-      let planned = _.filter(this.portfolioTasks, (t) => t && t.planned);
+      let planned = _.filter(this.tasksObj, (t) => t && t.planned);
       let taskDrafts = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.draft == true
       );
       let important = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.watched == true
       );
 
-      let completed = _.filter(this.portfolioTasks, (t) => t && t.completed);
-      let inProgress = _.filter(this.portfolioTasks, (t) => t && t.in_progress);
+      let completed = _.filter(this.tasksObj, (t) => t && t.completed);
+      let inProgress = _.filter(this.tasksObj, (t) => t && t.in_progress);
       let onHoldT = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.on_hold == true
       );
       let ongoing = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.ongoing == true
       );
       let overdue = _.filter(
-        this.portfolioTasks,
+        this.tasksObj,
         (t) => t && t.is_overdue == true
       );
 
@@ -4540,37 +4540,37 @@ export default {
     },
     issueVariation() {
       let planned = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.planned == true
         // (t) => t && t.startDate && t.startDate > this.today
       );
       let issueDrafts = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.draft == true
       );
-      let completed = _.filter(this.portfolioIssues, (t) => t && t.completed);
+      let completed = _.filter(this.issuesObj, (t) => t && t.completed);
       let inProgress = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.in_progress == true
       );
       let onHoldI = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.on_hold == true
       );
       let overdue = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.is_overdue == true
       );
       let important = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.portfolioIssues,
+        this.issuesObj,
         (t) => t && t.watched == true
       );
 
@@ -4613,44 +4613,44 @@ export default {
     },
     riskVariation() {
       let planned = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.planned == true
         // (t) => t && t.startDate && t.startDate > this.today
       );
       let riskDrafts = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.draft == true
       );
       let important = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.watched == true
       );
       let completed = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.completed == true
       );
       let inProgress = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.in_progress == true
       );
       let onHoldR = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.on_hold == true
       );
       let ongoing = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.ongoing == true
       );
       let overdue = _.filter(
-        this.portfolioRisks,
+        this.risksObj,
         (t) => t && t.is_overdue == true
       );
       return {
@@ -4692,7 +4692,7 @@ export default {
     },
     lessonVariation() {
       let lessonDrafts = _.filter(
-        this.portfolioLessons,
+        this.lessonsObj,
         (t) => t && t.draft == true
       );
       let important = _.filter(
@@ -4704,7 +4704,7 @@ export default {
         (t) => t && t.reportable == true
       );
       let completed = _.filter(
-        this.portfolioLessons,
+        this.lessonsObj,
         (t) => t && t.draft == false
       );
       return {
