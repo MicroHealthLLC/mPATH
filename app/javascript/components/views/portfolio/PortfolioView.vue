@@ -968,13 +968,7 @@
                     :value="item"   
                     :key="item"
                     :label="item"                                                  
-                    >
-                      <el-option
-                        v-for="item in C_i_categories"
-                        :value="item"
-                        :key="item"
-                        :label="item"
-                      >
+                    >                   
                       </el-option>
                     </el-select>
                   </template>
@@ -1908,13 +1902,7 @@
                     :key="item"
                     :label="item"                                                  
                     >
-                      <el-option
-                        v-for="item in C_r_categories"
-                        :value="item"
-                        :key="item"
-                        :label="item"
-                      >
-                      </el-option>
+                   </el-option>
                     </el-select>
                   </template>
                 </div>
@@ -2917,13 +2905,7 @@
                     :key="item"
                     :label="item"                                                  
                     >
-                      <el-option
-                        v-for="item in C_l_categories"
-                        :value="item"
-                        :key="item"
-                        :label="item"
-                      >
-                      </el-option>
+                   </el-option>
                     </el-select>
                   </template>
                 </div>
@@ -3748,19 +3730,10 @@ export default {
 
    sortedTasks:function() {
           return this.tasksObj.sort((a,b) => {
-
           let modifier = 1;
-<<<<<<< HEAD
-          if(this.currentSortDir === 'desc') modifier = -1;
-          if (a.category === null && this.currentSort === 'category') return 1;
-          if (b.category === null && this.currentSort === 'category') return -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-=======
           if (this.currentSortDir === "desc") modifier = -1;
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
->>>>>>> c8caa5b0964c786aa6e967cb5cd9ea53c454186c
           return 0;
         })
         .filter((row, index) => {
@@ -3774,17 +3747,9 @@ export default {
       return this.issuesObj
         .sort((a, b) => {
           let modifier = 1;
-<<<<<<< HEAD
-          if(this.currentSortDir === 'desc') modifier = -1;
-          if (a.category === null && this.currentSort === 'category') return 1;
-          if (b.category === null && this.currentSort === 'category') return -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-=======
           if (this.currentSortDir === "desc") modifier = -1;
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
->>>>>>> c8caa5b0964c786aa6e967cb5cd9ea53c454186c
           return 0;
         })
         .filter((row, index) => {
@@ -3798,17 +3763,9 @@ export default {
       return this.risksObj
         .sort((a, b) => {
           let modifier = 1;
-<<<<<<< HEAD
-          if(this.currentSortDir === 'desc') modifier = -1;
-          if (a.category === null && this.currentSort === 'category') return 1;
-          if (b.category === null && this.currentSort === 'category') return -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-=======
           if (this.currentSortDir === "desc") modifier = -1;
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
->>>>>>> c8caa5b0964c786aa6e967cb5cd9ea53c454186c
           return 0;
         })
         .filter((row, index) => {
@@ -4035,12 +3992,7 @@ export default {
     issuesObj() {
       return this.portfolioIssues
         .filter((issue) => {
-          if (this.C_programNameFilter.length > 0) {
-            let programNames = this.C_programNameFilter.map(
-              (program) => program.name
-            );
-            return programNames.includes(issue.program_name);
-          } else return true;
+           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(issue.facility_project_id)
         })
         .filter((issue) => {
           if (this.C_categoryNameFilter.length > 0) {
@@ -4233,15 +4185,8 @@ export default {
     },
     risksObj() {
       return this.portfolioRisks
-        .filter((risk) => {
-          let programName = this.C_programNameFilter.map((t) => t.name);
-          if (programName.length > 1) {
-            if (programName.includes(risk.program_name)) {
-              return risk;
-            }
-          } else if (programName.length == 1) {
-            return risk.program_name.includes(programName);
-          } else return true;
+        .filter((risk) => {       
+          return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(risk.facility_project_id)
         })
         .filter((risk) => {
           let projectProgress = this.facilityProgressFilter;
@@ -4425,34 +4370,11 @@ export default {
           } else return true;
         });
     },
-<<<<<<< HEAD
-     sortedLessons:function() {
-          return this.lessonsObj.sort((a,b) => {
-          let modifier = 1;
-          if(this.currentSortDir === 'desc') modifier = -1;
-          if (a.category === null && this.currentSort === 'category') return 1;
-          if (b.category === null && this.currentSort === 'category') return -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          return 0;
-           }).filter((row, index) => {
-          let start = (this.currentLessonsPage-1)*this.C_lessonsPerPage.value;
-          let end = this.currentLessonsPage*this.C_lessonsPerPage.value;
-          if(index >= start && index < end) return true;
-          return this.end
-=======
 
     lessonsObj() {
       return this.portfolioLessons
         .filter((lesson) => {
-          let programName = this.C_programNameFilter.map((t) => t.name);
-          if (programName.length > 1) {
-            if (programName.includes(lesson.program_name)) {
-              return lesson;
-            }
-          } else if (programName.length == 1) {
-            return lesson.program_name.includes(programName);
-          } else return true;
+           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(lesson.facility_project_id)
         })
         .filter((lesson) => {
           if (this.C_portfolioUsersFilter.length > 0) {
@@ -4529,7 +4451,6 @@ export default {
           if (this.hideImportant && this.hideBriefed) {
             return lesson.important + lesson.reportable;
           } else return true;
->>>>>>> c8caa5b0964c786aa6e967cb5cd9ea53c454186c
         });
     },
     taskVariation() {
@@ -4788,24 +4709,12 @@ export default {
         },
       };
     },
-
-<<<<<<< HEAD
-    C_showCountToggle: {                  
-        get() {
-         return this.getShowCount                
-        },
-        set(value) {
-          this.setShowCount(value)
-        }
-        
-=======
     C_showCountToggle: {
       get() {
         return this.getShowCount;
       },
       set(value) {
         this.setShowCount(value) || this.setShowCount(!this.getShowCount);
->>>>>>> c8caa5b0964c786aa6e967cb5cd9ea53c454186c
       },
     },
     C_portfolioUsersFilter: {
@@ -5611,5 +5520,13 @@ table {
 }
 .invi {
   color: #fff;
+}
+
+/deep/.vue-treeselect__multi-value-item {
+  background-color: #41b883;
+  color: white;
+}
+/deep/.vue-treeselect__value-remove {
+  color: rgba(56, 56, 56, 0.5);
 }
 </style>
