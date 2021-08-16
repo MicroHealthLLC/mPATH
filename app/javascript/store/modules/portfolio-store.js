@@ -9,7 +9,7 @@ const portfolioModule = {
    
     programNameFilter: null,
 
-    portfolioNameFilter: [],
+    portfolioNameFilter: null,
     portfolio_programs: [],
     portfolio_programs_loaded: true,
 
@@ -435,6 +435,8 @@ const portfolioModule = {
     setPortfolioImportantTasksToggle: (state, showAll) => state.portfolioImportantTasksToggle = showAll,
     setPortfolioBriefedTasksToggle: (state, showAll) => state.portfolioBriefedTasksToggle = showAll,
     setShowCount: (state, count) => state.showCount = count,
+
+    updateProgramFilterValue: (state, value) =>  state.programNameFilter = value,
 
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
     TOGGLE_PORTFOLIO_PROGRAMS_FILTER_LOADED: (state, loaded ) => state.portfolio_programs_filter_loaded = loaded,

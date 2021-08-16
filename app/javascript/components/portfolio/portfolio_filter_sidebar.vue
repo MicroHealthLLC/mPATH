@@ -25,7 +25,10 @@
                     <div id="app">
                    <treeselect  
                     placeholder="Search and select" 
+                     @input="updateProgramFilterValue"
+                    :value="C_portfolioNamesFilter"
                     :limit="3"
+                    :maxHeight="200"
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"      
                     :multiple="true" 
@@ -452,7 +455,6 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 import humps from 'humps'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
@@ -931,6 +933,7 @@ export default {
       'setPortfolioRiskApproaches',
       'setPortfolioRiskPrioritiesFilter',
       'setPortfolioRiskPriorities',
+      'updateProgramFilterValue'
     ]),
    projectNameShortener(str, length, ending) {
       if (length == null) {

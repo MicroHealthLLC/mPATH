@@ -53,15 +53,19 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
+                     @input="updateProgramFilterValue"
+                    :value="C_portfolioNamesFilter"
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     track-by="name"      
-                    :limit="3"
+                    :limit="3"              
+                    :maxHeight="200"
                     :limitText="count => `...`"     
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
 
-                    />         
+                    />      
+                     <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
                  </template>              
                 </div>         
               </div>
@@ -959,7 +963,6 @@
                     :limit="3"
                     :limitText="count => `...`"     
                     track-by="name"                            
-                    :match-keys= "['facility_project_id', 'id', 'label']"       
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -1896,7 +1899,6 @@
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"            
                     track-by="name"  
-                    :match-keys= "['facility_project_id', 'id', 'label']"             
                    :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -2909,8 +2911,7 @@
                     :limitText="count => `...`"     
                     :multiple="true" 
                     track-by="name"  
-                     :match-keys= "['facility_project_id', 'id', 'label']"                          
-                    :options="portfolioPrograms" 
+                   :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
                     />         
@@ -3626,6 +3627,8 @@
 </template>
 
 <script>
+
+import axios from 'axios'
 import Loader from "../../shared/loader.vue";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -5018,6 +5021,7 @@ export default {
       "setNoteDateFilter",
       "setTaskIssueDueDateFilter",
       "setFacilityDueDateFilter",
+      'updateProgramFilterValue'
     ]),
     ...mapActions([
       "fetchPortfolioTasks",
