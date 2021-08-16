@@ -44,19 +44,7 @@
                 <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
                 <span v-if="risk.planned" v-tooltip="`Planned`"> <i class="fas fa-calendar-check text-info mr-1"></i></span>
                 <span v-if="risk.inProgress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span>
-                <!-- <span v-if="                   
-                     risk.ongoing == false && 
-                     risk.important == false && 
-                     risk.watched == false &&
-                     risk.reportable == false &&
-                     risk.important == false &&
-                     risk.isOverdue == false &&
-                     risk.onHold == false &&  
-                     risk.draft == false && 
-                     risk.progress < 100 "             
-                     class="text-secondary">
-                    No flags at this time           
-                </span>           -->
+               
          </td>  
          <td class="twentyFour" v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 

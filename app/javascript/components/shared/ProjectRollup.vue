@@ -40,102 +40,37 @@
             </div>
 
             <div v-if="contentLoaded">
-               <div class="row mt-1 text-center">
-               
-                <div class="col p-0 mb-0">  
-                                       
-                  <span class="d-block">
-                    <el-popover
-                    placement="top-start"
-                    title="Complete"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks that have achieved 100% progress."> 
-                   <i class="fas fa-clipboard-check text-success" slot="reference">  </i>                        
-                     </el-popover> 
-                  <span class="smallerFont d-block">COMPLETE</span>
-                 </span>
-                
+               <div class="row mt-1 text-center">               
+                <div class="col p-0 mb-0">                                       
+                <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>           
+                  <span class="smallerFont d-block">COMPLETE</span>               
                  </div>
                   
-                 <div class="col p-0 mb-0">
-                  <span class="d-block">
-                    <el-popover
-                    placement="top-start"
-                    title="In Progress"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks with a start date of today (or prior to today) that are not ongoing, on hold, nor overdue (auto-assigned)."> 
-                    <i class="far fa-tasks text-primary" slot="reference"></i>                    
-                    </el-popover>
-                    </span>
-                     <span class="smallerFont d-block"> IN PROGRESS</span>           
+               <div class="col p-0 mb-0">
+                <span v-tooltip="`Start date on or before current date`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                     <span class="smallerFont d-block">IN PROGRESS</span>           
                 </div>
-                 <div class="col p-0 mb-0">                  
-                  <span class="d-block">
-                    <el-popover
-                    placement="top-start"
-                    title="Planned"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks that have a future start date and are not drafts (auto-assigned)."> 
-                    <i class="fas fa-calendar-check text-info font-md" slot="reference"></i>
-                    </el-popover>
-                    </span>
+
+                  <div class="col p-0  mb-0">                  
+                  <span v-tooltip="`Start date beyond current date (not a Draft)`"  class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
                       <span class="smallerFont d-block">PLANNED</span>
                 </div>
-                 <div class="col p-0 mb-0">            
-                  <span class="d-block">
-                    <el-popover
-                    placement="top-start"
-                    title="Complete"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks that have gone beyond their due dates (auto-assigned)."> 
-                     <i class="fas fa-calendar text-danger" slot="reference"></i>
-                    </el-popover>
-                     </span>
-                    <span class="smallerFont d-block">OVERDUE </span>               
+                <div class="col p-0 mb-0">
+                 <span v-tooltip="`Due Date has passed`" class="d-block"><i class="fas fa-calendar text-danger"> </i></span>
+                     <span class="smallerFont d-block">OVERDUE</span>               
                 </div>
                  <div class="col p-0 mb-0">
-                 <span class="d-block">
-                    <el-popover
-                    placement="top-start"
-                    title="Complete"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks that have been temporarily halted until further notice.">                    
-                   <i class="fas fa-pause-circle text-primary font-md" slot="reference"></i>
-                    </el-popover>
-                   </span>
-                     <span class="smallerFont d-block">ON HOLD  </span>           
+                 <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                      <span class="smallerFont d-block">ON HOLD  </span>           
+                </div>
+                  <div class="col p-0 mb-0">
+                 <span  class="d-block" v-tooltip="`Unofficial action`"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                    <span class="smallerFont d-block">DRAFTS</span>               
                 </div>
                  <div class="col p-0 mb-0">
-                <span  class="d-block">
-                     <el-popover
-                    placement="top-start"
-                    title="Draft"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks that are in draft state are unofficial and do not hold any other statuses."> 
-                  <i class="fas fa-pencil-alt text-warning font-md" slot="reference"></i>
-                     </el-popover>
-                  </span>
-                     <span class="smallerFont d-block">DRAFTS</span>               
-                </div>
-                 <div class="col p-0 mb-0">
-                   <span class="d-block">
-                    <el-popover
-                    placement="top-start"
-                    title="Ongoing"
-                    width="130"
-                    trigger="hover"
-                    content="Tasks that are longterm or continous in nature and are not tracked by a progress %."> 
-                     
-                     <i class="fas fa-retweet text-success" slot="reference"></i>
-                    </el-popover>
-                     </span>
-                    <span class="smallerFont d-block">ONGOING </span>    
+                   
+               <span  class="d-block" v-tooltip="`Recurring action without Due Date`"><i class="fas fa-retweet text-success"></i></span>
+                 <span class="smallerFont d-block">ONGOING </span>    
                 </div>  
              
               </div>
@@ -172,7 +107,13 @@
                  <div class="col pb-0 mb-0">
                   <h4>{{
                     taskVariation.ongoing.length
-                  }}</h4>          
+                  }}<span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="taskVariation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{taskVariation.ongoingClosed.count}})
+                    </span>
+                  </h4>          
                 </div>               
                </div>      
 
@@ -293,27 +234,27 @@
             <div v-if="contentLoaded">
                <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">                  
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                        <span class="smallerFont d-block">COMPLETE</span>
                 </div>
                  <div class="col p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                <span v-tooltip="`Start date on or before current date`"  class="d-block"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont d-block">IN PROGRESS</span>           
                 </div>
                  <div class="col p-0  mb-0">                  
-                  <span v-tooltip="`PLANNED`" class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                  <span v-tooltip="`Start date beyond current date (not a Draft)`" class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
                       <span class="smallerFont d-block">PLANNED</span>
                 </div>
                  <div class="col p-0 mb-0">
-                 <span v-tooltip="`OVERDUE`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                 <span v-tooltip="`Due Date has passed`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                      <span class="smallerFont d-block">OVERDUE</span>               
                 </div>
                 <div class="col p-0 mb-0">
-                 <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                 <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                       <span class="smallerFont d-block">ON HOLD  </span>           
                 </div>
                  <div class="col p-0 mb-0">
-                 <span  class="d-block" v-tooltip="`DRAFTS`" ><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                 <span  class="d-block" v-tooltip="`Unofficial action`" ><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                     <span class="smallerFont d-block">DRAFTS</span>               
                 </div>
 <!-- Hidden for aligment purposes -->
@@ -514,31 +455,31 @@
               <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">
                   
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                        <span class="smallerFont d-block">COMPLETE</span>
                 </div>
                  <div class="col p-0 mb-0">
-                 <span  v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                 <span  v-tooltip="`Start date on or before current date`"  class="d-block"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont d-block"> IN PROGRESS   </span>           
                 </div>
                 <div class="col p-0  mb-0">                    
-                    <span v-tooltip="`PLANNED`"  class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                    <span v-tooltip="`Start date beyond current date (not a Draft)`"   class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
                         <span class="smallerFont d-block">PLANNED</span>
                   </div>
                  <div class="col p-0 mb-0">
-                 <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                 <span  v-tooltip="`Due Date has passed`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                      <span class="smallerFont d-block">OVERDUE </span>               
                 </div>
                 <div class="col p-0 mb-0">
-                   <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                   <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                       <span class="smallerFont d-block"> ON HOLD  </span>           
                   </div>
                   <div class="col p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                    <span v-tooltip="`Unofficial action`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                         <span class="smallerFont d-block">DRAFTS</span>               
                   </div>
                  <div class="col p-0 mb-0">
-                   <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
+                   <span v-tooltip="`Recurring action without Due Date`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
                      <span class="smallerFont d-block">ONGOING</span>    
                 </div>       
               </div>
@@ -574,7 +515,12 @@
                  <div class="col pb-0 mb-0">
                   <h4>{{
                     riskVariation.ongoing.length
-                  }}</h4>          
+                  }}<span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="riskVariation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{riskVariation.ongoingClosed.count}})</span>       
+                  </h4>       
                 </div>
                 </div>
               
@@ -756,11 +702,11 @@
             </div>      
               <div class="row mt-3 text-center" >
                 <div class="col-6 p-0 mb-0">                  
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
+                  <span  class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
                 </div>
                  <div class="col-6 p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">DRAFTS</span>           
                 </div>
                 
@@ -1472,6 +1418,7 @@ export default {
         this.filteredTasks.length
       );
       let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
+      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.closed );
       return {
         planned: {
           count: planned.length, 
@@ -1495,6 +1442,9 @@ export default {
         overdue: {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length      
         },
         ongoing,       
     
@@ -1594,6 +1544,7 @@ export default {
         this.filteredRisks.length
       );
       let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
+      let ongoingClosed = _.filter(this.filteredRisks, (t) => t && t.closed);
       return {
         planned: {
           count: planned.length,          
@@ -1615,6 +1566,9 @@ export default {
         overdue: {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length,        
         },
         ongoing
       };
@@ -1828,5 +1782,4 @@ ul > li {
   }
  }
 }
-
 </style>

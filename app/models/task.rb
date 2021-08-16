@@ -48,6 +48,7 @@ class Task < ApplicationRecord
       :facility_project_id,
       :due_date,
       :start_date,
+      :closed_date,
       :description,
       :progress,
       :draft,
@@ -234,6 +235,16 @@ class Task < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
+    closed = false
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
+
     in_progress = false
     completed = false
     planned = false
@@ -244,6 +255,12 @@ class Task < ApplicationRecord
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
+
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
+
     
     sorted_notes = notes.sort_by(&:created_at).reverse
     self.as_json.merge(
@@ -265,9 +282,11 @@ class Task < ApplicationRecord
       reportable: reportable,
       is_overdue: is_overdue,
       planned: planned,
+      closed: closed,
       in_progress: in_progress,
       draft: draft,
       on_hold: on_hold,
+      closed_date: closed_date,
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

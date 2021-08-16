@@ -495,45 +495,44 @@ export default new Vuex.Store({
       return options;
     },
 // DO NOT ERASE:  HELPFUL IF WE WANT TO ADD DROPDOWN WITH DIFFERENT CATEGORY LABELS
-    // getAdvancedFilter: state => state.advancedFilter,
-    // getAdvancedFilterOptions: (state, getters) => {
-
-    //   var options = [{
-    //     label: 'State To Display',
-    //     options: [{
-    //       id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
-    //     }, {
-    //       id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress'
-    //     }, {
-    //       id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned'
-    //     },{
-    //       id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue',
-    //     },{
-    //       id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'
-    //     },{
-    //       id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'
-    //     },{
-    //       id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'
-    //     }]
-    //   }, {
-    //     label: 'Tag Focus',
-    //     options: [{
-    //     id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'
-    //   },{
-    //     id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'
-    //   },{
-    //     id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
-    //   }]
-    //   }, {
-    //     label: 'Assignments',
-    //     options: [{
-    //     id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
-    //    },{
-    //     id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
-    //    }]
-    // }]
-    //   return options;
-    // },
+    getAdvancedFilter: state => state.advancedFilter,
+    getAdvancedFilterOptions: (state, getters) => {
+      var options = [{
+        label: 'State To Display',
+        options: [{
+          id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
+        }, {
+          id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress'
+        }, {
+          id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned'
+        },{
+          id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue',
+        },{
+          id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'
+        },{
+          id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'
+        },{
+          id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'
+        }]
+      }, {
+        label: 'Tag Focus',
+        options: [{
+        id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'
+      },{
+        id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'
+      },{
+        id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
+      }]
+      }, {
+        label: 'Assignments',
+        options: [{
+        id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
+       },{
+        id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+       }]
+    }]
+      return options;
+    },
 
     getRiskApproachFilter: state => state.riskApproachFilter,
     getRiskApproachFilterOptions: (state, getters) => {
