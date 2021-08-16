@@ -26,30 +26,14 @@
                    <treeselect  
                     placeholder="Search and select" 
                     :limit="3"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"      
                     :multiple="true" 
                     :options="portfolioPrograms" 
                     v-model="C_portfolioNamesFilter"  
-                    valueFormat="object" /> 
+                    valueFormat="object" />   
+                 </div>
 
-                    </div>
-                <!-- <el-select 
-                    v-model="C_facilityGroupFilter"                    
-                    class="w-100" 
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Search and select Project Group"
-                  >
-                  <el-option 
-                    v-for="item in C_activeFacilityGroups"                                                     
-                    :value="item"   
-                    :key="item.id"
-                    :label="item.name"                                                  
-                    >
-                  </el-option>
-                  </el-select>  -->
               </div>
 
                 <div class="mt-2">
@@ -78,30 +62,7 @@
 
             </div>
                
-                
-              <!-- <label class="font-sm mb-0">Project Names</label>
-                  <el-select 
-                    v-model="C_facilityNameFilter" 
-                    class="w-100" 
-                    track-by="name" 
-                    value-key="id"
-                    data-cy="facility_name" 
-                    :loading="isLoading"
-                    multiple   
-                    filterable                                                                                                                                                        
-                    placeholder="Search and select Project Name"
-                    >
-                  <el-option 
-                    v-for="item in C_activeProjectNames" 
-                                                           
-                    :value="item"   
-                    :key="item.id"
-                    :label="projectNameShortener(item.facilityName, 35)"                                                     
-                    >
-                  </el-option>
-                </el-select>  -->
-
-         
+       
               </div>
              
             <div class="col-md-6">

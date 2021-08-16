@@ -53,6 +53,7 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
+                    :match-keys= "['facility_project_id', 'id', 'label']"
                     track-by="name"      
                     :limit="3"
                     :limitText="count => `...`"     
@@ -954,6 +955,7 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
+                    :match-keys= "['facility_project_id', 'id', 'label']"
                     :limit="3"
                     :limitText="count => `...`"     
                     track-by="name"                            
@@ -1891,6 +1893,7 @@
                     placeholder="Search and select" 
                     :multiple="true"     
                     :limit="3"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"            
                     track-by="name"  
                     :match-keys= "['facility_project_id', 'id', 'label']"             
@@ -2902,6 +2905,7 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :limit="3"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"     
                     :multiple="true" 
                     track-by="name"  
