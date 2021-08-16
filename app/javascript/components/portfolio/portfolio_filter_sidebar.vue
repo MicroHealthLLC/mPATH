@@ -26,31 +26,14 @@
                    <treeselect  
                     placeholder="Search and select" 
                     :limit="3"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"      
                     :multiple="true" 
                     :options="portfolioPrograms" 
                     v-model="C_portfolioNamesFilter"  
-                    valueFormat="object" /> 
-                       <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
-                       
-                    </div>
-                <!-- <el-select 
-                    v-model="C_facilityGroupFilter"                    
-                    class="w-100" 
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Search and select Project Group"
-                  >
-                  <el-option 
-                    v-for="item in C_activeFacilityGroups"                                                     
-                    :value="item"   
-                    :key="item.id"
-                    :label="item.name"                                                  
-                    >
-                  </el-option>
-                  </el-select>  -->
+                    valueFormat="object" />   
+                 </div>
+
               </div>
 
                 <div class="mt-2">
