@@ -19,13 +19,15 @@ class Api::V1::FilterDataController < AuthenticatedController
         
         projects_group_by_facility_group.each do |fg_id, facilities|
           fg = facility_groups.detect{|g| g.id == fg_id} 
-          project_children << {id: SecureRandom.hex(2), project_group_id: fg.id, label: fg.name, children: facilities }
+          fp_ids = facilities.map{|h| h[:facility_project_id]}.compact.uniq
+          project_children << {id: SecureRandom.hex(2), project_group_id: fg.id, label: fg.name, all_facility_project_ids: fp_ids, children: facilities }
         end
 
         h = {
           id: SecureRandom.hex(2),
           program_id: p.id,
           label: p.name,
+          all_facility_project_ids: project_children.map{|h| h[:all_facility_project_ids]}.flatten.compact.uniq,
           children: project_children
         }
         response_json << h

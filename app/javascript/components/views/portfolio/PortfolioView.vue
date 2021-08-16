@@ -54,7 +54,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                      @input="updateProgramFilterValue"
-                    :value="C_portfolioNamesFilter"
+                    :value="C_portfolioTaskNamesFilter"
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     track-by="name"      
                     :limit="3"              
@@ -62,7 +62,7 @@
                     :limitText="count => `...`"     
                     :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioTaskNamesFilter"
 
                     />      
                      <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
@@ -965,7 +965,7 @@
                     track-by="name"                            
                     :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioIssueNamesFilter"
                     />         
                  </template>              
                 </div>      
@@ -1901,7 +1901,7 @@
                     track-by="name"  
                    :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioRiskNamesFilter"
                     />         
                  </template>              
                 </div>      
@@ -2913,7 +2913,7 @@
                     track-by="name"  
                    :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioLessonNamesFilter"
                     />         
                  </template>              
                 </div>              
@@ -4779,13 +4779,13 @@ export default {
         this.setPortfolioUsersFilter(value);
       },
     },
-    C_portfolioNamesFilter: {
+    C_portfolioTaskNamesFilter: {
       get() {
         return this.portfolioNameFilter;
       },
       set(value) {
         this.facility_project_ids = [];
-
+        console.log(value)
         for(let k = 0; k < value.length; k++){
           this.searchChildren(value[k]);
         }
@@ -4794,6 +4794,52 @@ export default {
         this.setPortfolioNameFilter(value);
       },
     },
+    // C_portfolioIssueNamesFilter: {
+    //   get() {
+    //     return this.portfolioNameFilter;
+    //   },
+    //   set(value) {
+    //     this.facility_project_ids = [];
+    //     console.log(value)
+    //     for(let k = 0; k < value.length; k++){
+    //       this.searchChildren(value[k]);
+    //     }
+    //     // console.log("------")
+    //     // console.log(this.facility_project_ids)
+    //     this.setPortfolioNameFilter(value);
+    //   },
+    // },
+    // C_portfolioRiskNamesFilter: {
+    //   get() {
+    //     return this.portfolioNameFilter;
+    //   },
+    //   set(value) {
+    //     this.facility_project_ids = [];
+    //     console.log(value)
+    //     for(let k = 0; k < value.length; k++){
+    //       this.searchChildren(value[k]);
+    //     }
+    //     // console.log("------")
+    //     // console.log(this.facility_project_ids)
+    //     this.setPortfolioNameFilter(value);
+    //   },
+    // },
+    // C_portfolioLessonNamesFilter: {
+    //   get() {
+    //     return this.portfolioNameFilter;
+    //   },
+    //   set(value) {
+    //     this.facility_project_ids = [];
+    //     console.log(value)
+    //     for(let k = 0; k < value.length; k++){
+    //       this.searchChildren(value[k]);
+    //     }
+    //     // console.log("------")
+    //     // console.log(this.facility_project_ids)
+    //     this.setPortfolioNameFilter(value);
+    //   },
+    // },
+
     C_portfolioIssueTypesFilter: {
       get() {
         return this.portfolioIssueTypesFilter;
@@ -5048,6 +5094,7 @@ export default {
       //  console.log("this" + e)
     },
     searchChildren: function (node) {
+      console.log("start", new Date() )
       if (node.children && node.children.length > 0) {
 
         for(let k = 0; k < node.children.length; k++){
@@ -5057,6 +5104,7 @@ export default {
       } else {
         this.facility_project_ids.push(node.facility_project_id);
       }
+      console.log("end",new Date() )
     },
     showCountToggle() {
       this.getShowCount(!this.getShowCount);
