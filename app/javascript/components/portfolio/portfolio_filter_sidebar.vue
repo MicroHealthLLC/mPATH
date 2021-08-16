@@ -23,7 +23,14 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
+                   <treeselect  
+                    placeholder="Search and select" 
+                    :limit="3"
+                    :limitText="count => `...`"      
+                    :multiple="true" 
+                    :options="portfolioPrograms" 
+                    v-model="C_portfolioNamesFilter"  
+                    valueFormat="object" /> 
                        <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
                        
                     </div>
