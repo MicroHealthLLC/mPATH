@@ -60,6 +60,7 @@
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
+
                     />         
                  </template>              
                 </div>         
@@ -958,6 +959,7 @@
                     :limit="3"
                     :limitText="count => `...`"     
                     track-by="name"                            
+                    :match-keys= "['facility_project_id', 'id', 'label']"       
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -1893,8 +1895,9 @@
                     :limit="3"
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"            
-                    track-by="name"                            
-                    :options="portfolioPrograms" 
+                    track-by="name"  
+                    :match-keys= "['facility_project_id', 'id', 'label']"             
+                   :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
                     />         
@@ -2905,7 +2908,8 @@
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"     
                     :multiple="true" 
-                    track-by="name"                            
+                    track-by="name"  
+                     :match-keys= "['facility_project_id', 'id', 'label']"                          
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -3638,7 +3642,6 @@ export default {
     return {
       showLess: "Show More",
       search_tasks: "",
-      // project_ids: [],
       search_issues: "",
       search_risks: "",
       search_lessons: "",
@@ -5200,7 +5203,7 @@ export default {
     },
     getProgramId(id) {
       this.programId = id;
-      console.log(id);
+      // console.log(id);
     },
     closeWindow() {
       window.close();
