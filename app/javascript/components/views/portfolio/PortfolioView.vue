@@ -18,13 +18,13 @@
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
-        <el-tabs class="mt-1" type="border-card">
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
           <!-- TASKS -->
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2" name="tasks">
             <template
               slot="label"
-              class="text-right"
-              v-if="tasksObj && tasksObj !== undefined"
+              class="text-right"              
+              v-if="true"
             >
               TASKS
               <span class="badge badge-secondary badge-pill">
@@ -934,7 +934,7 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2"  name="issues">
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
@@ -1864,7 +1864,7 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2" name="risks">
             <template
               slot="label"
               class="text-right"
@@ -2876,7 +2876,7 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2"  name="lessons">
             <template slot="label" class="text-right">
               LESSONS LEARNED
               <span class="badge badge-secondary badge-pill">
@@ -3650,6 +3650,7 @@ export default {
       search_lessons: "",
       currentSort: "program_name",
       currentSortDir: "asc",
+      currentTab: 'tasks',
       currentPage: 1,
       // selectedProgram: this.C_programNameFilter,
       currentIssuesPage: 1,
@@ -3697,10 +3698,16 @@ export default {
   },
   mounted() {
     this.fetchPortfolioPrograms();
-    this.fetchPortfolioTasks();
-    this.fetchPortfolioIssues();
-    this.fetchPortfolioRisks();
-    this.fetchPortfolioLessons();
+    this.$nextTick(function () {
+      // Code that will run only after the
+      // entire view has been rendered
+      $("#tab-tasks").trigger('click');
+    })
+    
+    // this.fetchPortfolioTasks();
+    // this.fetchPortfolioIssues();
+    // this.fetchPortfolioRisks();
+    // this.fetchPortfolioLessons();
   },
   computed: {
     ...mapGetters([
@@ -3824,6 +3831,8 @@ export default {
       });
     },
     tasksObj() {
+      if(this.currentTab != 'tasks')
+        return []
       return this.portfolioTasks
         .filter((task) => {
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(task.facility_project_id)
@@ -4016,6 +4025,8 @@ export default {
         });
     },
     issuesObj() {
+      if(this.currentTab != 'issues')
+        return []
       return this.portfolioIssues
         .filter((issue) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(issue.facility_project_id)
@@ -4210,6 +4221,8 @@ export default {
         });
     },
     risksObj() {
+      if(this.currentTab != 'risks')
+        return []
       return this.portfolioRisks
         .filter((risk) => {       
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(risk.facility_project_id)
@@ -4396,8 +4409,9 @@ export default {
           } else return true;
         });
     },
-
     lessonsObj() {
+      if(this.currentTab != 'lessons')
+        return []
       return this.portfolioLessons
         .filter((lesson) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(lesson.facility_project_id)
@@ -5212,10 +5226,32 @@ export default {
     closeWindow() {
       window.close();
     },
-    // handleClick(tab, event) {
-
-    //     // console.log(tab._uid , event);
-    // },
+    handleClick(tab, event) {
+      let tab_id = $(event.target).attr("id")
+      if(tab_id == "tab-tasks"){
+        this.currentTab = 'tasks'
+        if(this.tasksObj && this.tasksObj.length < 1){
+          this.fetchPortfolioTasks();
+        }
+        
+      }else if(tab_id == "tab-issues"){
+        this.currentTab = 'issues'
+        if(this.issuesObj && this.issuesObj.length < 1){
+          this.fetchPortfolioIssues();
+        }
+      }else if(tab_id == "tab-risks"){
+        this.currentTab = 'risks'
+        if(this.risksObj && this.risksObj.length < 1){
+          this.fetchPortfolioRisks();
+        }
+        
+      }else if(tab_id == "tab-lessons"){
+        this.currentTab = 'lessons'
+        if(this.lessonsObj && this.lessonsObj.length < 1){
+          this.fetchPortfolioLessons();
+        }
+      } 
+    },
   },
   watch: {
     $route(to, from) {
