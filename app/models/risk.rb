@@ -115,6 +115,17 @@ class Risk < ApplicationRecord
     end
 
     self.ongoing = false if on_hold && ongoing
+    
+    closed = false
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
+
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
@@ -131,6 +142,11 @@ class Risk < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
 
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
+
      merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
@@ -142,6 +158,7 @@ class Risk < ApplicationRecord
       project_due_date: self.facility_project.due_date,
       project_status: self.facility_project.status.name,
       in_progress: in_progress,
+      closed: closed,
       on_hold: self.on_hold,
       ongoing: self.ongoing,
       risk_approach: risk_approach.humanize,

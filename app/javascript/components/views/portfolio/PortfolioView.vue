@@ -51,13 +51,15 @@
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
                     <treeselect  
-                      placeholder="Search and select" 
-                      :multiple="true" 
-                      track-by="name"       
-                      :options="portfolioPrograms" 
-                      valueFormat="object"
-                      :match-keys= "['facility_project_id', 'id', 'label']"
-                      v-model="C_portfolioNamesFilter"
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    track-by="name"      
+                    :limit="3"
+                    :limitText="count => `...`"     
+                    :options="portfolioPrograms" 
+                    valueFormat="object"
+                    v-model="C_portfolioNamesFilter"
+
                     />         
                  </template>              
                 </div>         
@@ -192,7 +194,15 @@
                         >
                           <span v-if="tasksObj">{{
                             taskVariation.ongoing.count
-                          }}</span>
+                          }}<span
+                            v-tooltip="`Ongoing: Closed`"
+                            v-if="taskVariation.ongoingClosed.count > 0"
+                            style="color:lightgray"
+                            >({{
+                              taskVariation.ongoingClosed.count
+                              }})
+                           </span>
+                        </span>
                         </h5>
                       </div>
 
@@ -944,8 +954,10 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                    track-by="name"    
-                    :match-keys= "['facility_project_id', 'id', 'label']"             
+                    :limit="3"
+                    :limitText="count => `...`"     
+                    track-by="name"                            
+                    :match-keys= "['facility_project_id', 'id', 'label']"       
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -1877,10 +1889,12 @@
                    <template>
                     <treeselect  
                     placeholder="Search and select" 
-                    :multiple="true" 
+                    :multiple="true"     
+                    :limit="3"
+                    :limitText="count => `...`"            
                     track-by="name"  
-                     :match-keys= "['facility_project_id', 'id', 'label']"             
-                    :options="portfolioPrograms" 
+                    :match-keys= "['facility_project_id', 'id', 'label']"             
+                   :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
                     />         
@@ -2013,7 +2027,13 @@
                         >
                           <span v-if="risksObj">{{
                             riskVariation.ongoing.count
-                          }}</span>
+                          }}<span
+                            v-tooltip="`Ongoing: Closed`"
+                            v-if="riskVariation.ongoingClosed.count > 0"
+                            style="color:lightgray"
+                            >({{riskVariation.ongoingClosed.count}})
+                           </span>                         
+                          </span>
                         </h5>
                       </div>
 
@@ -2881,6 +2901,8 @@
                    <template>
                     <treeselect  
                     placeholder="Search and select" 
+                    :limit="3"
+                    :limitText="count => `...`"     
                     :multiple="true" 
                     track-by="name"  
                      :match-keys= "['facility_project_id', 'id', 'label']"                          
@@ -3672,12 +3694,6 @@ export default {
     this.fetchPortfolioIssues();
     this.fetchPortfolioRisks();
     this.fetchPortfolioLessons();
-    this.fetchPortfolioUsers();
-    this.fetchPortfolioStatuses();
-    this.fetchPortfolioIssueTypes();
-    this.fetchPortfolioIssueSeverities();
-    this.fetchPortfolioRiskPriorities();
-    this.fetchPortfolioRiskApproaches();
   },
   computed: {
     ...mapGetters([
@@ -4485,6 +4501,10 @@ export default {
         this.portfolioTasks,
         (t) => t && t.ongoing == true
       );
+      let ongoingClosed = _.filter(
+        this.portfolioTasks,
+        (t) => t && t.closed == true
+      );
       let overdue = _.filter(
         this.portfolioTasks,
         (t) => t && t.is_overdue == true
@@ -4521,6 +4541,9 @@ export default {
         overdue: {
           count: overdue.length,
           // percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length,
         },
         ongoing: {
           count: ongoing.length,
@@ -4638,6 +4661,10 @@ export default {
         this.portfolioRisks,
         (t) => t && t.ongoing == true
       );
+      let ongoingClosed = _.filter(
+        this.portfolioRisks,
+        (t) => t && t.closed == true
+      );
       let overdue = _.filter(
         this.portfolioRisks,
         (t) => t && t.is_overdue == true
@@ -4673,6 +4700,9 @@ export default {
         overdue: {
           count: overdue.length,
           // percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length,
         },
         ongoing: {
           count: ongoing.length,
@@ -4988,16 +5018,10 @@ export default {
     ...mapActions([
       "fetchPortfolioTasks",
       "fetchPortfolioIssues",
-      "fetchPortfolioRiskPriorities",
       "fetchPortfolioRisks",
-      "fetchPortfolioRiskApproaches",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
-      "fetchPortfolioUsers",
-      "fetchPortfolioStatuses",
-      "fetchPortfolioIssueSeverities",
-      "fetchPortfolioIssueTypes",
-    ]),
+      ]),
     log(e) {
       //  console.log("this" + e)
     },

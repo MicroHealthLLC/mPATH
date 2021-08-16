@@ -23,8 +23,15 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select"  :match-keys= "['facility_project_id', 'id', 'label']" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
-                          
+                   <treeselect  
+                    placeholder="Search and select" 
+                    :limit="3"
+                    :limitText="count => `...`"      
+                    :multiple="true" 
+                    :options="portfolioPrograms" 
+                    v-model="C_portfolioNamesFilter"  
+                    valueFormat="object" /> 
+
                     </div>
                 <!-- <el-select 
                     v-model="C_facilityGroupFilter"                    

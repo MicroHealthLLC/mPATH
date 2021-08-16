@@ -121,6 +121,16 @@ class Task < ApplicationRecord
 
     self.ongoing = false if on_hold && ongoing
 
+    closed = false
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
+
     is_overdue = false
     if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
@@ -137,6 +147,10 @@ class Task < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
 
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
 
     merge_h = { 
       project_name: facility.facility_name, 
@@ -149,6 +163,7 @@ class Task < ApplicationRecord
       project_due_date: self.facility_project.due_date,
       planned: planned,
       on_hold: self.on_hold,
+      closed: closed,
       ongoing: self.ongoing,
       task_stage: task_stage.try(:name),
       completed: completed,
