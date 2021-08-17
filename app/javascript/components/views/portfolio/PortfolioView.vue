@@ -18,31 +18,48 @@
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
-          <!-- TASKS -->
-          <el-tab-pane class="pt-2" name="tasks">
-            <template
-              slot="label"
-              class="text-right"              
-              v-if="true"
-            >
-              TASKS
-              <span class="badge badge-secondary badge-pill">
-                <span>{{ portfolioTasks.length }}</span>
-              </span>
-            </template>
-
-            <div class="row pb-4">
+           <div class="row pb-4">
               <div class="col-4 py-2">
                 <div class="w-100 d-flex">
                   <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                  <div class="w-100" v-if="currentTab == 'tasks'">
                   <el-input
                     type="search"
-                    placeholder="Enter Search Criteria"
+                    placeholder="Enter Tasks Search Criteria"
                     v-model="search_tasks"
                   >
                     <el-button slot="prepend" icon="el-icon-search"></el-button>
                   </el-input>
+                  </div>
+                   <div class="w-100" v-if="currentTab == 'issues'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Issues Search Criteria"
+                    v-model="search_issues"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                <div class="w-100" v-if="currentTab == 'risks'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Risks Search Criteria"
+                    v-model="search_risks"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                   <div class="w-100" v-if="currentTab == 'lessons'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Lessons Search Criteria"
+                    v-model="search_lessons"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+
+
                 </div>
               </div>
 
@@ -54,7 +71,7 @@
                     placeholder="Search and select" 
                     :multiple="true" 
                      @input="updateProgramFilterValue"
-                    :value="C_portfolioTaskNamesFilter"
+                    :value="C_portfolioNamesFilter"
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     track-by="name"      
                     :limit="3"              
@@ -62,7 +79,7 @@
                     :limitText="count => `...`"     
                     :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioTaskNamesFilter"
+                    v-model="C_portfolioNamesFilter"
 
                     />      
                      <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
@@ -94,6 +111,22 @@
               </div>
             </div>
 
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
+          
+          <!-- TASKS -->
+          <el-tab-pane class="pt-2" name="tasks">
+            <template
+              slot="label"
+              class="text-right"              
+              v-if="true"
+            >
+              TASKS
+              <span class="badge badge-secondary badge-pill">
+                <span>{{ portfolioTasks.length }}</span>
+              </span>
+            </template>
+
+         
             <div class="box-shadow py-3">
               <div class="row pt-3 pr-2 pb-1">
                 <div class="col-10 px-1 pt-2">
@@ -942,7 +975,7 @@
               </span>
             </template>
 
-            <div class="row pb-4">
+            <!-- <div class="row pb-4">
               <div class="col-4 py-2">
             <div class="w-100 d-flex">
                <div class="d font-sm mt-2 mr-2">SEARCH</div>              
@@ -993,7 +1026,7 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="box-shadow pt-3 pb-1">
               <div class="row pt-3 pb-1 pr-2">
@@ -1878,7 +1911,7 @@
               </span>
             </template>
 
-            <div class="row pb-4">
+            <!-- <div class="row pb-4">
               <div class="col-4 py-2">
              <div class="w-100 d-flex">
               <div class="d font-sm mt-2 mr-2">SEARCH</div>                
@@ -1929,7 +1962,7 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="box-shadow py-3">
               <div class="row pt-3 pb-1 pr-2">
@@ -2886,7 +2919,7 @@
               </span>
             </template>
 
-            <div class="row pb-4">
+            <!-- <div class="row pb-4">
               <div class="col-4 py-2">
                 <div class="w-100 d-flex">
                   <div class="d font-sm mt-2 mr-2">SEARCH</div>
@@ -2941,7 +2974,7 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="box-shadow py-3">
               <div class="row pt-3 pb-1 pr-2">
@@ -3725,6 +3758,7 @@ export default {
       'getLessonsPerPageFilter', 
       'getShowCount',
       'portfolioNameFilter',
+      'portfolioRiskNameFilter',
       'facilityDueDateFilter',
       'noteDateFilter',
       'taskIssueDueDateFilter',
@@ -4779,7 +4813,7 @@ export default {
         this.setPortfolioUsersFilter(value);
       },
     },
-    C_portfolioTaskNamesFilter: {
+    C_portfolioNamesFilter: {
       get() {
         return this.portfolioNameFilter;
       },
@@ -4811,7 +4845,7 @@ export default {
     // },
     // C_portfolioRiskNamesFilter: {
     //   get() {
-    //     return this.portfolioNameFilter;
+    //     return this.portfolioRiskNameFilter;
     //   },
     //   set(value) {
     //     this.facility_project_ids = [];
@@ -4821,7 +4855,7 @@ export default {
     //     }
     //     // console.log("------")
     //     // console.log(this.facility_project_ids)
-    //     this.setPortfolioNameFilter(value);
+    //     this.setPortfolioRiskNameFilter(value);
     //   },
     // },
     // C_portfolioLessonNamesFilter: {
@@ -4916,15 +4950,15 @@ export default {
         ),
       ];
     },
-    C_programIssuesNameFilter: {
-      get() {
-        return this.programNameFilter;
-      },
-      set(value) {
-        // console.log(value)
-        this.setProgramNameFilter(value);
-      },
-    },
+    // C_programIssuesNameFilter: {
+    //   get() {
+    //     return this.programNameFilter;
+    //   },
+    //   set(value) {
+    //     // console.log(value)
+    //     this.setProgramNameFilter(value);
+    //   },
+    // },
     C_programNameFilter: {
       get() {
         return this.programNameFilter;
@@ -5045,6 +5079,7 @@ export default {
     ...mapMutations([
       "setPortfolioWatchedTasksToggle",
       "setPortfolioNameFilter",
+      "setPortfolioRiskNameFilter",
       "setTaskIssueUserFilter",
       "setPortfolioUsersFilter",
       "setTasksPerPageFilter",
