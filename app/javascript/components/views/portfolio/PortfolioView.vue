@@ -18,10 +18,11 @@
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
-        <el-tabs class="mt-1" type="border-card">
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick" v-model="activeName">
           <!-- TASKS -->
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2" id="tab-0" name="tasks">
             <template
+       
               slot="label"
               class="text-right"
               v-if="tasksObj && tasksObj !== undefined"
@@ -63,7 +64,6 @@
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
-
                     />      
                      <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
                  </template>              
@@ -361,6 +361,13 @@
 
                 <div class="col-2">
                   <span class="btnRow">
+                     <button
+                      v-tooltip="`Presentation Mode`"
+                      @click.prevent="openTpresentation"
+                      class="btn btn-md mr-1 bg-secondary mh-blue presentBtn text-light"
+                    >
+                      <i class="fas fa-presentation"></i>
+                    </button>
                     <button
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
@@ -779,7 +786,99 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(task, index) in sortedTasks" :key="index">
+                      <tr v-for="(task, index) in sortedTasks" :key="index" class="taskHover" :load="log(currentTaskSlide)">
+                         <el-dialog :visible.sync="dialogVisible" append-to-body center>
+                        <template slot="title">
+                        <div v-if="tasksObj.length > 0" class="container">
+                           <div v-for="number in [currentTaskSlide]" :key="number" >
+                           <div class="row">
+                             <div class="col text-center px-3 py-0">
+                             <h5 class="py-0 my-0 d-inline-block mh-blue px-3 text-light">TASK</h5>
+                               <h2 class="mt-1"> {{ tasksObj[currentTaskSlide].text }} </h2>  
+                                 <span v-show="tasksObj[currentTaskSlide].is_overdue" v-tooltip="`Overdue`">
+                            <i class="fas fa-calendar text-danger mr-1" style="font-size:2rem"></i
+                          ></span>
+                          <span v-show="tasksObj[currentTaskSlide].completed" v-tooltip="`Completed`"
+                            ><i
+                              class="fas fa-clipboard-check text-success mr-1" style="font-size:2rem"
+                            ></i
+                          ></span>
+                          <span
+                            v-show="tasksObj[currentTaskSlide].ongoing == true"
+                            v-tooltip="`Ongoing`"
+                            ><i class="fas fa-retweet mr-1 text-success" style="font-size:2rem"></i
+                          ></span>
+                          <span
+                            v-show="tasksObj[currentTaskSlide].on_hold == true"
+                            v-tooltip="`On Hold`"
+                          >
+                            <i class="fas fa-pause-circle mr-1 text-primary" style="font-size:2rem"></i
+                          ></span>
+                          <span v-show="tasksObj[currentTaskSlide].draft == true" v-tooltip="`Draft`">
+                            <i class="fas fa-pencil-alt mr-1 text-warning" style="font-size:2rem"></i
+                          ></span>
+                          <!-- <span
+                            v-if="task.watched == true"
+                            v-tooltip="`On Watch`"
+                            ><i class="fas fa-eye mr-1"></i
+                          ></span> -->
+                          <!-- <span
+                            v-if="task.important == true"
+                            v-tooltip="`Important`"
+                          >
+                            <i class="fas fa-star text-warning mr-1"></i
+                          ></span> -->
+                          <!-- <span v-if="task.reportable" v-tooltip="`Briefings`">
+                            <i class="fas fa-presentation mr-1 text-primary"></i
+                          ></span> -->
+                          <span v-show="tasksObj[currentTaskSlide].planned" v-tooltip="`Planned`">
+                            <i class="fas fa-calendar-check text-info mr-1" style="font-size:2rem"></i
+                          ></span>
+                          <span
+                            v-show="tasksObj[currentTaskSlide].in_progress"
+                            v-tooltip="`In Progress`"
+                          >
+                            <i class="far fa-tasks text-primary mr-1" style="font-size:2rem"></i
+                          ></span>
+                             </div>
+                             </div>
+                                         
+                           
+                           </div>
+                          <!-- <h3> {{ taskRow.text }} </h3> -->
+
+                          <!-- <span
+                          class="text-center mt-5"
+                          v-if="taskRow.notes_updated_at.length > 0"
+                        >
+                        <h4 class="bg-dark text-light p-2">Last Update</h4>
+                          <span
+                            class="toolTip"
+                            v-tooltip="
+                              'By: ' +
+                              taskRow.notes[taskRow.notes.length - 1].user.full_name
+                            "
+                          >
+                            {{
+                              moment(taskRow.notes_updated_at[0]).format(
+                                "DD MMM YYYY, h:mm a"
+                              )
+                            }}
+                          </span>
+                          <br />
+                          <span class="truncate-line-five">
+                            <h4>{{ taskRow.notes[taskRow.notes.length - 1].body }}</h4>
+                          </span>
+                        </span> -->
+
+                        </div>
+
+                        <div slot="footer" class="dialog-footer">
+                        <el-button class="mh-orange elBtn text-light" @click.prevent="previousTask">PREVIOUS TASK</el-button>
+                        <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask">NEXT TASK</el-button>
+                        </div>
+                        </template>
+                        </el-dialog>
                         <td>{{ task.program_name }}</td>
                         <td>{{ task.project_name }}</td>
                         <td>{{ task.text }}</td>
@@ -934,7 +1033,7 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2"  id="tab-1" name="issues">
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
@@ -3639,11 +3738,18 @@ export default {
   name: "PortfolioView",
   props: ["from"],
   components: {
-    Loader,
+    Loader
   },
   data() {
     return {
       showLess: "Show More",
+      activeName: 'tasks',
+      dialogVisible: false,
+      taskRow: {}, 
+      n:0,
+      currentTaskSlide : 0,
+      isSlidingToPrevious : false,
+      taskIndex: null, 
       search_tasks: "",
       search_issues: "",
       search_risks: "",
@@ -3655,7 +3761,7 @@ export default {
       currentIssuesPage: 1,
       currentRisksPage: 1,
       currentLessonsPage: 1,
-
+      // tSlide: this.tasksObj[this.currentTaskSlide],
       loadIssues: false,
       loadRisks: false,
       loadLessons: false,
@@ -5031,7 +5137,14 @@ export default {
       "fetchPortfolioPrograms",
       ]),
     log(e) {
-      //  console.log("this" + e)
+       console.log("number" + e)
+    },
+    handleClick(tab, event) {
+        console.log(tab._uid, tab, event, tab.paneName, tab.$el);
+    },
+    beforeClose(done) {
+    	this.dialogVisible = false;
+      done();
     },
     searchChildren: function (node) {
       if (node.children && node.children.length > 0) {
@@ -5043,6 +5156,42 @@ export default {
       } else {
         this.facility_project_ids.push(node.facility_project_id);
       }
+    },
+    openTpresentation(){
+      this.dialogVisible = true; 
+    },
+    // openTask(task, index) {    
+    //   this.dialogVisible = true; 
+    //   this.taskRow = task
+    //   this.taskIndex = index
+    //   console.log(task)
+
+    // },
+    // nextTask(){      
+    //   console.log( "this works");  
+    // },
+    nextTask(){
+
+    //  for (let i = 0; i < this.sortedTasks.length; i++) {
+    //       ;
+    //   } 
+      // this.taskIndex++
+      // this.currentTaskSlide = this.taskIndex;
+      // console.log(this.currentTaskSlide + "    taskIndex: " +  this.taskIndex);  
+      this.isSlidingToPrevious = false
+      if(this.currentTaskSlide == this.tasksObj.length-1){
+          this.currentTaskSlide = 0;
+      }else{
+          this.currentTaskSlide += 1;
+      }
+    },
+    previousTask(){ 
+        this.isSlidingToPrevious = true
+        if(this.currentTaskSlide == 0){
+            this.currentTaskSlide=this.tasksObj.length-1;
+        }else{
+            this.currentTaskSlide-=1;
+        }
     },
     showCountToggle() {
       this.getShowCount(!this.getShowCount);
@@ -5212,10 +5361,7 @@ export default {
     closeWindow() {
       window.close();
     },
-    // handleClick(tab, event) {
 
-    //     // console.log(tab._uid , event);
-    // },
   },
   watch: {
     $route(to, from) {
@@ -5349,6 +5495,8 @@ i,
 ul {
   margin-bottom: 0.5rem;
 }
+
+
 
 .box-shadow {
   border-top: #ededed double 0.5px;
@@ -5525,12 +5673,10 @@ table {
   box-shadow: 0 1px 2.5px rgba(56, 56, 56, 0.19),
     0 1.5px 1.5px rgba(56, 56, 56, 0.23);
 }
-
-// /deep/.el-loading-mask {
-//   width: 100vw !important;
-//   height: 100vh !important;
-//   // display: block !important;
-// }
+  .taskHover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3);
+  }
 
 .font-sm {
   font-weight: 600;
@@ -5563,5 +5709,28 @@ table {
 }
 /deep/.vue-treeselect__value-remove {
   color: rgba(56, 56, 56, 0.5);
+}
+
+/deep/.el-dialog {
+  height: 80vh;
+  width: 80vw;
+  border-top: solid 35px #1D336F;
+  border-bottom: solid 35px #1D336F;
+}
+.dialog-footer {
+  text-align: center;
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+}
+
+.elBtn {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+  0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
+.presentBtn {
+ box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+  0 3px 3px rgba(56, 56, 56, 0.23);
 }
 </style>
