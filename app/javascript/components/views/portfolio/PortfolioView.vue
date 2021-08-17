@@ -850,24 +850,24 @@
                              
                                    <div class="col py-2">  
                                     
-                                    <h5 class="leftColLabel p-1">PROGRAM</h5>
-                                    <h3>{{  sortedTasks[currentTaskSlide].program_name}}</h3>
+                                    <h6 class="leftColLabel p-1">PROGRAM</h6>
+                                    <h4 v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].program_name">{{  sortedTasks[currentTaskSlide].program_name}}</h4>
                                   </div>    
                               
                                   <div class="col truncate-line-two">    
-                                       <h5 class="leftColLabel p-1">PROJECT GROUP</h5>
-                                   <h3> {{  sortedTasks[currentTaskSlide].project_group_name}}  </h3>
+                                       <h6 class="leftColLabel p-1">PROJECT GROUP</h6>
+                                   <h4 v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].project_group_name"> {{  sortedTasks[currentTaskSlide].project_group_name}}  </h4>
                                                                  
                                   </div>  
                           
                                    <div class="col py-2 truncate-line-two">    
-                                       <h5 class="leftColLabel p-1">PROJECT</h5>
-                                    <h3 >{{  sortedTasks[currentTaskSlide].project_name}}  </h3>                                                                 
+                                       <h6 class="leftColLabel p-1">PROJECT</h6>
+                                    <h4  v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].project_name">{{  sortedTasks[currentTaskSlide].project_name}}  </h4>                                                                 
                                   </div>  
 
                                      <div class="col truncate-line-two">    
-                                       <h5 class="leftColLabel p-1">CATEGORY</h5>
-                                    <h3 >{{  sortedTasks[currentTaskSlide].category}}  </h3>                                                                 
+                                       <h6 class="leftColLabel p-1">CATEGORY</h6>
+                                    <h4 v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].category" >{{  sortedTasks[currentTaskSlide].category}}  </h4>                                                                 
                                   </div>  
 
                                 </div>    
@@ -907,7 +907,11 @@
                              
                                    <div class="col pt-2">  
                                      <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.5rem"></i>
-                                    <span v-if="sortedTasks[currentTaskSlide].start_date"> {{ moment(sortedTasks[currentTaskSlide].start_date).format( "DD MMM YYYY") }} -  {{ moment(sortedTasks[currentTaskSlide].due_date).format("DD MMM YYYY") }}</span>
+                                    <span v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].start_date"> {{ moment(sortedTasks[currentTaskSlide].start_date).format( "DD MMM YYYY") }}</span> 
+                                    <span v-else> -- </span>
+                                    - 
+                                     <span v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].due_date">  {{ moment(sortedTasks[currentTaskSlide].due_date).format("DD MMM YYYY") }}</span>
+                                     <span v-else>  </span>
                                     
                                   </div>    
                               
