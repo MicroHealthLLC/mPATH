@@ -115,6 +115,17 @@ class Risk < ApplicationRecord
     end
 
     self.ongoing = false if on_hold && ongoing
+    
+    closed = false
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
+
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
@@ -131,6 +142,11 @@ class Risk < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
 
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
+
      merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
@@ -142,6 +158,7 @@ class Risk < ApplicationRecord
       project_due_date: self.facility_project.due_date,
       project_status: self.facility_project.status.name,
       in_progress: in_progress,
+      closed: closed,
       on_hold: self.on_hold,
       ongoing: self.ongoing,
       risk_approach: risk_approach.humanize,
@@ -187,6 +204,7 @@ class Risk < ApplicationRecord
       :progress,
       :start_date,
       :due_date,
+      :closed_date,
       :auto_calculate,
       :text,
       :watched,
@@ -310,6 +328,15 @@ class Risk < ApplicationRecord
     is_overdue = false
     is_overdue = progress < 100 && (due_date < Date.today) if !ongoing && !on_hold && !draft
 
+    closed = false
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
 
     in_progress = false
     completed = false
@@ -321,7 +348,12 @@ class Risk < ApplicationRecord
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
-   
+
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
+
     sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(
@@ -334,6 +366,7 @@ class Risk < ApplicationRecord
       class_name: self.class.name,
       completed: completed,
       planned: planned,
+      closed: closed,
       in_progress: in_progress,
       attach_files: attach_files,
       progress_status: progress_status,
@@ -349,6 +382,7 @@ class Risk < ApplicationRecord
       is_overdue: is_overdue,
       draft: draft,
       on_hold: on_hold,
+      closed_date: closed_date,
 
      # Add RACI user name
       # Last name values added for improved sorting in datatables

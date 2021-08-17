@@ -53,12 +53,19 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                    track-by="name"   
-                    :normalizer="normalizer"                         
+                     @input="updateProgramFilterValue"
+                    :value="C_portfolioNamesFilter"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    track-by="name"      
+                    :limit="3"              
+                    :maxHeight="200"
+                    :limitText="count => `...`"     
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
-                    />         
+
+                    />      
+                     <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
                  </template>              
                 </div>         
               </div>
@@ -192,7 +199,15 @@
                         >
                           <span v-if="tasksObj">{{
                             taskVariation.ongoing.count
-                          }}</span>
+                          }}<span
+                            v-tooltip="`Ongoing: Closed`"
+                            v-if="taskVariation.ongoingClosed.count > 0"
+                            style="color:lightgray"
+                            >({{
+                              taskVariation.ongoingClosed.count
+                              }})
+                           </span>
+                        </span>
                         </h5>
                       </div>
 
@@ -944,8 +959,10 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                    track-by="name"    
-                    :normalizer="normalizer"                            
+                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    :limit="3"
+                    :limitText="count => `...`"     
+                    track-by="name"                            
                     :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
@@ -1877,10 +1894,12 @@
                    <template>
                     <treeselect  
                     placeholder="Search and select" 
-                    :multiple="true" 
-                    track-by="name"      
-                    :normalizer="normalizer"                          
-                    :options="portfolioPrograms" 
+                    :multiple="true"     
+                    :limit="3"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    :limitText="count => `...`"            
+                    track-by="name"  
+                   :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
                     />         
@@ -2013,7 +2032,13 @@
                         >
                           <span v-if="risksObj">{{
                             riskVariation.ongoing.count
-                          }}</span>
+                          }}<span
+                            v-tooltip="`Ongoing: Closed`"
+                            v-if="riskVariation.ongoingClosed.count > 0"
+                            style="color:lightgray"
+                            >({{riskVariation.ongoingClosed.count}})
+                           </span>                         
+                          </span>
                         </h5>
                       </div>
 
@@ -2881,10 +2906,12 @@
                    <template>
                     <treeselect  
                     placeholder="Search and select" 
+                    :limit="3"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    :limitText="count => `...`"     
                     :multiple="true" 
                     track-by="name"  
-                    :normalizer="normalizer"                              
-                    :options="portfolioPrograms" 
+                   :options="portfolioPrograms" 
                     valueFormat="object"
                     v-model="C_portfolioNamesFilter"
                     />         
@@ -3600,6 +3627,8 @@
 </template>
 
 <script>
+
+import axios from 'axios'
 import Loader from "../../shared/loader.vue";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -3616,13 +3645,6 @@ export default {
     return {
       showLess: "Show More",
       search_tasks: "",
-      normalizer(node) {
-      return {
-        id: node.id,
-        label: node.label,
-        children: node.children,
-      }
-     },
       search_issues: "",
       search_risks: "",
       search_lessons: "",
@@ -3679,12 +3701,6 @@ export default {
     this.fetchPortfolioIssues();
     this.fetchPortfolioRisks();
     this.fetchPortfolioLessons();
-    this.fetchPortfolioUsers();
-    this.fetchPortfolioStatuses();
-    this.fetchPortfolioIssueTypes();
-    this.fetchPortfolioIssueSeverities();
-    this.fetchPortfolioRiskPriorities();
-    this.fetchPortfolioRiskApproaches();
   },
   computed: {
     ...mapGetters([
@@ -4492,6 +4508,10 @@ export default {
         this.portfolioTasks,
         (t) => t && t.ongoing == true
       );
+      let ongoingClosed = _.filter(
+        this.portfolioTasks,
+        (t) => t && t.closed == true
+      );
       let overdue = _.filter(
         this.portfolioTasks,
         (t) => t && t.is_overdue == true
@@ -4528,6 +4548,9 @@ export default {
         overdue: {
           count: overdue.length,
           // percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length,
         },
         ongoing: {
           count: ongoing.length,
@@ -4645,6 +4668,10 @@ export default {
         this.portfolioRisks,
         (t) => t && t.ongoing == true
       );
+      let ongoingClosed = _.filter(
+        this.portfolioRisks,
+        (t) => t && t.closed == true
+      );
       let overdue = _.filter(
         this.portfolioRisks,
         (t) => t && t.is_overdue == true
@@ -4680,6 +4707,9 @@ export default {
         overdue: {
           count: overdue.length,
           // percentage: Math.round(overdue_percent),
+        },
+        ongoingClosed: {
+          count: ongoingClosed.length,
         },
         ongoing: {
           count: ongoing.length,
@@ -4991,20 +5021,15 @@ export default {
       "setNoteDateFilter",
       "setTaskIssueDueDateFilter",
       "setFacilityDueDateFilter",
+      'updateProgramFilterValue'
     ]),
     ...mapActions([
       "fetchPortfolioTasks",
       "fetchPortfolioIssues",
-      "fetchPortfolioRiskPriorities",
       "fetchPortfolioRisks",
-      "fetchPortfolioRiskApproaches",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
-      "fetchPortfolioUsers",
-      "fetchPortfolioStatuses",
-      "fetchPortfolioIssueSeverities",
-      "fetchPortfolioIssueTypes",
-    ]),
+      ]),
     log(e) {
       //  console.log("this" + e)
     },

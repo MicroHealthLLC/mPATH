@@ -75,7 +75,13 @@
                     <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
                     </span>      
               
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}
+                       <span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="variation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{variation.ongoingClosed.count}})
+                    </span></h6>
                   </div>
   
                   <div class="pr-3 text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
@@ -503,6 +509,10 @@ computed: {
      this.filteredTasks.unfiltered.tasks,
         (t) => t && t.draft == true
       );  
+      let ongoingClosed = _.filter(
+      this.filteredTasks.unfiltered.tasks,
+        (t) => t && t.closed
+      ); 
       let important = _.filter(
       this.filteredTasks.unfiltered.tasks,
         (t) => t && t.important == true
@@ -562,7 +572,10 @@ computed: {
         },
         ongoing: {
           count: ongoing.length
-        },     
+        },    
+        ongoingClosed: {
+          count: ongoingClosed.length
+        },      
       };
     },
   C_facilityManagerTaskFilter: {

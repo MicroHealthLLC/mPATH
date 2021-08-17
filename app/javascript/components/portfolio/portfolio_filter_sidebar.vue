@@ -23,27 +23,20 @@
                 <label class="font-sm mb-0">Programs, Project Groups & Projects</label>
 
                     <div id="app">
-                   <treeselect  placeholder="Search and select"  :normalizer="normalizer" :multiple="true" :options="portfolioPrograms" v-model="C_portfolioNamesFilter"  valueFormat="object" /> 
-                       <!-- <treeselect  placeholder="Search and select" :multiple="true" :options=" portfolioFilterObj" v-model="C_portfolioNamesFilter" :load="log(JSON.stringify(portfolioPrograms))" /> -->
-                       
-                    </div>
-                <!-- <el-select 
-                    v-model="C_facilityGroupFilter"                    
-                    class="w-100" 
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Search and select Project Group"
-                  >
-                  <el-option 
-                    v-for="item in C_activeFacilityGroups"                                                     
-                    :value="item"   
-                    :key="item.id"
-                    :label="item.name"                                                  
-                    >
-                  </el-option>
-                  </el-select>  -->
+                   <treeselect  
+                    placeholder="Search and select" 
+                     @input="updateProgramFilterValue"
+                    :value="C_portfolioNamesFilter"
+                    :limit="3"
+                    :maxHeight="200"
+                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    :limitText="count => `...`"      
+                    :multiple="true" 
+                    :options="portfolioPrograms" 
+                    v-model="C_portfolioNamesFilter"  
+                    valueFormat="object" />   
+                 </div>
+
               </div>
 
                 <div class="mt-2">
@@ -72,30 +65,7 @@
 
             </div>
                
-                
-              <!-- <label class="font-sm mb-0">Project Names</label>
-                  <el-select 
-                    v-model="C_facilityNameFilter" 
-                    class="w-100" 
-                    track-by="name" 
-                    value-key="id"
-                    data-cy="facility_name" 
-                    :loading="isLoading"
-                    multiple   
-                    filterable                                                                                                                                                        
-                    placeholder="Search and select Project Name"
-                    >
-                  <el-option 
-                    v-for="item in C_activeProjectNames" 
-                                                           
-                    :value="item"   
-                    :key="item.id"
-                    :label="projectNameShortener(item.facilityName, 35)"                                                     
-                    >
-                  </el-option>
-                </el-select>  -->
-
-         
+       
               </div>
              
             <div class="col-md-6">
@@ -485,7 +455,6 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 import humps from 'humps'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
@@ -495,13 +464,6 @@ export default {
   data() {
     return {
       hasFilterAccess: true,
-      normalizer(node) {
-      return {
-        id: node.id,
-        label: node.label,
-        children: node.children,
-       }
-      },
       isLoading: false,
       activeName: 'first',
       exporting: false,
@@ -971,6 +933,7 @@ export default {
       'setPortfolioRiskApproaches',
       'setPortfolioRiskPrioritiesFilter',
       'setPortfolioRiskPriorities',
+      'updateProgramFilterValue'
     ]),
    projectNameShortener(str, length, ending) {
       if (length == null) {
