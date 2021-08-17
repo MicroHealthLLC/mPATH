@@ -70,16 +70,14 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                     @input="updateProgramFilterValue"
-                    :value="C_portfolioNamesFilter"
+                    :load-options="programAjaxFilterOptions"
+                    @input="updateProgramFilterValue"
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     track-by="name"      
                     :limit="3"              
                     :maxHeight="200"
                     :limitText="count => `...`"     
-                    :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
 
                     />      
                      <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
@@ -5132,6 +5130,41 @@ export default {
       ]),
     log(e) {
       //  console.log("this" + e)
+    },
+    // NOTE: WIP
+    programAjaxFilterOptions({ action, parentNode, callback }) {
+      // Typically, do the AJAX stuff here.
+      // Once the server has responded,
+      // assign children options to the parent node & call the callback.
+
+      if (action === LOAD_CHILDREN_OPTIONS) {
+        switch (parentNode.id) {
+        case 'success': {
+          simulateAsyncOperation(() => {
+            parentNode.children = [ {
+              id: 'child',
+              label: 'Child option',
+            } ]
+            callback()
+          })
+          break
+        }
+        case 'no-children': {
+          simulateAsyncOperation(() => {
+            parentNode.children = []
+            callback()
+          })
+          break
+        }
+        case 'failure': {
+          simulateAsyncOperation(() => {
+            callback(new Error('Failed to load options: network error.'))
+          })
+          break
+        }
+        default: /* empty */
+        }
+      }
     },
     searchChildren: function (node) {
       console.log("start", new Date() )
