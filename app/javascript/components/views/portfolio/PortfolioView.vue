@@ -359,7 +359,7 @@
                   </template>
                 </div>
 
-                <div class="col-2">
+                <div class="col-2 px-0">
                   <span class="btnRow">
                      <button
                       v-tooltip="`Presentation Mode`"
@@ -380,12 +380,12 @@
                       @click.prevent="
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
-                      class="btn btn-md mr-3 exportBtns text-light"
+                      class="btn btn-md exportBtns text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md mh-orange profile-btns"
+                      class="btn text-light btn-md mh-orange px-1 profile-btns"
                     >
                       RESULTS: {{ tasksObj.length }}
                     </button></span
@@ -785,101 +785,101 @@
                         ></span>
                       </th>
                     </thead>
-                    <tbody :load="log([currentTaskSlide])">
+                    <tbody>
                       <tr v-for="(task, index) in sortedTasks" :key="index" class="taskHover">
                          <el-dialog :visible.sync="dialogVisible" append-to-body center>
                         <template slot="title">
-                        <div v-if="sortedTasks.length >= 0" class="container-fluid">
+                        <div v-if="sortedTasks.length > 0" class="container-fluid">
                            <div v-for="number in [currentTaskSlide]" :key="number" >
-                           <div class="row">
-                             <div class="col text-center px-3 py-2">
-                             <h5 class="py-0 my-1 d-inline-block mh-blue px-3 text-light">TASK</h5>
-                               <h2 class="mt-2"> 
-                          <span v-show="sortedTasks[currentTaskSlide].is_overdue" v-tooltip="`Overdue`">
+                           <div class="row justify-content-center">
+                             <div class="col-3 pb-0">
+                                 <img
+                                    class="mb-0"
+                                    style="width: 125px"
+                                    :src="require('../../../../assets/images/mpath.png')"
+                                  />
+                             </div>
+                             <div class="col-5 text-center px-3 py-2"  v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].text">
+                             <h5 class="py-0 my-1 d-inline-block mh-blue px-3 text-light" style="cursor:pointer">TASK</h5>
+                               <h2 class="mt-2 text-truncate" v-tooltip="sortedTasks[currentTaskSlide].text"> 
+                          <span v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].is_overdue" v-tooltip="`Overdue`">
                             <i class="fas fa-calendar text-danger mr-1" style="font-size:2rem"></i
                           ></span>
-                          <span v-show="sortedTasks[currentTaskSlide].completed" v-tooltip="`Completed`"
+                          <span  v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].completed" v-tooltip="`Completed`"
                             ><i
                               class="fas fa-clipboard-check text-success mr-1" style="font-size:2rem"
                             ></i
                           ></span>
                           <span
-                            v-show="sortedTasks[currentTaskSlide].ongoing == true"
+                             v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].ongoing == true"
                             v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet mr-1 text-success" style="font-size:2rem"></i
                           ></span>
                           <span
-                            v-show="sortedTasks[currentTaskSlide].on_hold == true"
+                             v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].on_hold == true"
                             v-tooltip="`On Hold`"
                           >
                             <i class="fas fa-pause-circle mr-1 text-primary" style="font-size:2rem"></i
                           ></span>
-                          <span v-show="sortedTasks[currentTaskSlide].draft == true" v-tooltip="`Draft`">
+                          <span  v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].draft == true" v-tooltip="`Draft`">
                             <i class="fas fa-pencil-alt mr-1 text-warning" style="font-size:2rem"></i
                           ></span>
-                          <!-- <span
-                            v-if="task.watched == true"
-                            v-tooltip="`On Watch`"
-                            ><i class="fas fa-eye mr-1"></i
-                          ></span> -->
-                          <!-- <span
-                            v-if="task.important == true"
-                            v-tooltip="`Important`"
-                          >
-                            <i class="fas fa-star text-warning mr-1"></i
-                          ></span> -->
-                          <!-- <span v-if="task.reportable" v-tooltip="`Briefings`">
-                            <i class="fas fa-presentation mr-1 text-primary"></i
-                          ></span> -->
-                          <span v-show="sortedTasks[currentTaskSlide].planned" v-tooltip="`Planned`">
+                         <span  v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].planned" v-tooltip="`Planned`">
                             <i class="fas fa-calendar-check text-info mr-1" style="font-size:2rem"></i
                           ></span>
                           <span
-                            v-show="sortedTasks[currentTaskSlide].in_progress"
+                             v-if="sortedTasks[currentTaskSlide] && sortedTasks[currentTaskSlide].in_progress"
                             v-tooltip="`In Progress`"
                           >
                             <i class="far fa-tasks text-primary mr-1" style="font-size:2rem"></i
                           ></span>
                           {{ sortedTasks[currentTaskSlide].text }} </h2>  
                              </div>
+                                 <div class="col-3 mt-3">
+                                 <img
+                                     style="width: 145px"
+                                    :src="require('../../../../assets/images/microhealthllc.png')"
+                                  />
+                             </div>
                           </div>
+
                                <div class="row pt-3 justify-content-center">
 
                                   <div class="col-3 mh-orange text-center text-light slideCol">                                          
                                   
                              
-                                   <div class="col pt-2">  
+                                   <div class="col py-2">  
                                     
-                                    <h5 class="underline">PROGRAM</h5>
+                                    <h5 class="leftColLabel p-1">PROGRAM</h5>
                                     <h3>{{  sortedTasks[currentTaskSlide].program_name}}</h3>
                                   </div>    
                               
-                                  <div class="col mt-4 truncate-line-two">    
-                                       <h5 class="underline">PROJECT GROUP</h5>
+                                  <div class="col truncate-line-two">    
+                                       <h5 class="leftColLabel p-1">PROJECT GROUP</h5>
                                    <h3> {{  sortedTasks[currentTaskSlide].project_group_name}}  </h3>
                                                                  
                                   </div>  
                           
-                                   <div class="col mt-4 truncate-line-two">    
-                                       <h5 class="underline">PROJECT</h5>
-                                    <h3 >{{  sortedTasks[currentTaskSlide].project_name}}  </h3>
-                                                                 
+                                   <div class="col py-2 truncate-line-two">    
+                                       <h5 class="leftColLabel p-1">PROJECT</h5>
+                                    <h3 >{{  sortedTasks[currentTaskSlide].project_name}}  </h3>                                                                 
                                   </div>  
 
-                                 
-                                   
-                              
-                   
-                               
-                                      </div>    
+                                     <div class="col truncate-line-two">    
+                                       <h5 class="leftColLabel p-1">CATEGORY</h5>
+                                    <h3 >{{  sortedTasks[currentTaskSlide].category}}  </h3>                                                                 
+                                  </div>  
+
+                                </div>    
                                
                                                        
-                                <div class="col-5 text-center lastUpdateCol mx-4" >
-                                 <h3>LAST UPDATE</h3>
+                                <div class="col-5 text-center lastUpdateCol mx-4 pt-0 px-0">
+                                 <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
+                                 <div style="height:350px; overflow-y:auto">
                                  <span  v-if="sortedTasks[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
-                                   <h4> <em>{{ sortedTasks[currentTaskSlide].notes[sortedTasks[currentTaskSlide].notes.length - 1].body }}</em></h4>
+                                   <h4 class="px-3"> <em>{{ sortedTasks[currentTaskSlide].notes[sortedTasks[currentTaskSlide].notes.length - 1].body }}</em></h4>
                                   </span>
                                    <span
                                     class="toolTip timeStamp px-2"                                                                 
@@ -895,9 +895,13 @@
                                    </span>
                                    <span v-else>
                                      <br>
-                                      <h4 style="color:lightgray"><em>NO UPDATES</em></h4>
+                                      <h4 class="px-3" style="color:lightgray"><em>NO UPDATES</em></h4>
                                    </span>
                                </div>   
+
+                                </div>
+
+
                                     <div class="col-3 mh-blue text-center text-light slideCol">                                          
                                   
                              
@@ -944,11 +948,11 @@
                         
                         </div>
                         <div slot="footer" class="dialog-footer-left">                       
-                            <el-button class="mh-blue elBtn text-light mr-2" > <h5 class="d-inline px-2">TAGS: </h5></el-button>
-                          <span
+                            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">TAGS: </h5>
+                             <span
                             v-if="sortedTasks[currentTaskSlide].watched == true"
                             v-tooltip="`On Watch`"
-                            ><i class="fas fa-eye mr-1" style="font-size:1.5rem"></i
+                            ><i class="fas fa-eye mr-1 text-dark" style="font-size:1.5rem"></i
                           ></span> 
                           <span
                             v-if="sortedTasks[currentTaskSlide].important == true"
@@ -958,13 +962,17 @@
                           ></span> 
                           <span v-if="sortedTasks[currentTaskSlide].reportable" v-tooltip="`Briefings`">
                             <i class="fas fa-presentation mr-1 text-primary" style="font-size:1.5rem"></i
-                          ></span>
+                          ></span>                
+                            
+                            
+                            </el-button>
+                         
                         </div>
 
                         <div slot="footer" class="dialog-footer">
-                        <el-button class="mh-orange elBtn text-light" @click.prevent="previousTask"><i class="far fa-chevron-square-left" style="font-size:1.25rem"></i></el-button>
-                        <el-button class="bg-secondary elBtn text-light" ><span style="font-size:1.25rem">Task {{ currentTaskSlide + 1 }} of {{ sortedTasks.length}}</span></el-button>                      
-                        <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask"><i class="far fa-chevron-square-right" style="font-size:1.25rem"></i></el-button>
+                        <el-button class="mh-orange elBtn text-light" @click.prevent="previousTask"><i class="far fa-chevron-left" style="font-size:1.35rem"></i></el-button>
+                        <el-button class="bg-secondary elBtn text-light" ><span style="font-size:1.35rem">Task {{ currentTaskSlide + 1 }} of {{ sortedTasks.length}}</span></el-button>                      
+                        <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask"><i class="far fa-chevron-right" style="font-size:1.35rem"></i></el-button>
                         </div>
                         </template>
                         </el-dialog>
@@ -5684,8 +5692,7 @@ table {
 }
 .btnRow {
   position: absolute;
-  bottom: 45%;
-  right: 1%;
+  bottom: 45%; 
 }
 .sort-th {
   min-width: 190px;
@@ -5827,6 +5834,8 @@ table {
   // position:absolute;
   // right: 60px;
   // width: 60%;
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+  0 3px 3px rgba(56, 56, 56, 0.23);
   border: solid #9EC64C 2px;
   border-radius: 0.25rem; 
   }
@@ -5843,7 +5852,10 @@ table {
     -webkit-line-clamp: unset;
   }
 }
-
+.tagsBtn {
+  border-radius: 0.25rem;
+  border: solid 1.5px #1D336F;
+}
 .timeStamp {
   position: absolute;
   bottom: 0.5rem;
@@ -5854,10 +5866,15 @@ table {
   width: 110px;
 }
 
+.leftColLabel {
+  border: solid #f8f9fa 1.9px;
+  border-radius: 0.25rem;
+}
 /deep/.el-progress__text {
   color:  #f8f9fa;
 }
 /deep/.el-dialog__headerbtn {
   margin-right: 1.5rem;
 }
+
 </style>
