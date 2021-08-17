@@ -364,14 +364,14 @@
                      <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
-                      class="btn btn-md mr-1 bg-secondary mh-blue presentBtn text-light"
+                      class="btn btn-md bg-secondary mh-blue presentBtn text-light"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
                     <button
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportTasksToPdf"
-                      class="btn btn-md mr-1 exportBtns text-light"
+                      class="btn btn-md exportBtns text-light"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
