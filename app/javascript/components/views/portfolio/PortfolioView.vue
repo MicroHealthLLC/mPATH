@@ -1413,19 +1413,19 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2">
                   <span class="btnRow">
-                      <button
+                      <!-- <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
                       class="btn btn-md bg-secondary mh-blue presentBtn text-light"
                     >
                       <i class="fas fa-presentation"></i>
-                    </button>
+                    </button> -->
                     <button
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportIssuesToPdf"
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md exportBtns mr-1 text-light"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -1434,12 +1434,12 @@
                       @click.prevent="
                         exportIssuesToExcel('table', 'Portfolio Issues')
                       "
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md exportBtns mr-3 text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md px-1 mh-orange profile-btns"
+                      class="btn text-light btn-md mh-orange profile-btns"
                     >
                       RESULTS: {{ issuesObj.length }}
                     </button>
@@ -5419,10 +5419,10 @@ export default {
       "fetchPortfolioPrograms",
       ]),
     log(e) {
-       console.log("number" + e)
+      //  console.log("number" + e)
     },
     handleClick(tab, event) {
-        console.log(tab._uid, tab, event, tab.paneName, tab.$el);
+        // console.log(tab._uid, tab, event, tab.paneName, tab.$el);
     },
     beforeClose(done) {
     	this.dialogVisible = false;
@@ -5441,6 +5441,7 @@ export default {
     },
     openTpresentation(){
       this.dialogVisible = true; 
+      this.currentTaskSlide = 0      
     },
     nextTask(){
       this.isSlidingToPrevious = false
