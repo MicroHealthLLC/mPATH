@@ -4837,7 +4837,7 @@ export default {
             this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
             break
           }else if(value[k].project_group_id){
-            
+            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
           } 
         }
         console.log("------")
