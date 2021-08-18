@@ -70,9 +70,10 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                    :load-options="programAjaxFilterOptions"
                     @input="updateProgramFilterValue"
-                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    :value="C_portfolioNamesFilter"
+                    :options="portfolioPrograms" 
+                    v-model="C_portfolioNamesFilter"
                     track-by="name"      
                     :limit="3"              
                     :maxHeight="200"
@@ -3666,6 +3667,13 @@ import "jspdf-autotable";
 import moment from "moment";
 Vue.prototype.moment = moment;
 import { mapGetters, mapActions, mapMutations } from "vuex";
+
+// We just use `setTimeout()` here to simulate an async operation
+// instead of requesting a real API server for demo purpose.
+const simulateAsyncOperation = fn => {
+  setTimeout(fn, 2000)
+}
+
 export default {
   name: "PortfolioView",
   props: ["from"],
@@ -4818,16 +4826,22 @@ export default {
       set(value) {
         this.facility_project_ids = [];
         console.log(value)
-        // for(let k = 0; k < value.length; k++){
-        //   //this.searchChildren(value[k]);
-        //   if(value[k].children && value[k].children.length > 0){
-        //     if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
-        //       this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-        //     }
-        //   }          
-        // }
-        // console.log("------")
-        // console.log(this.facility_project_ids)
+        for(let k = 0; k < value.length; k++){
+          //this.searchChildren(value[k]);
+          // if(value[k].children && value[k].children.length > 0){
+          //   if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
+          //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+          //   }
+          // }    
+          if(value[k].program_id){
+            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+            break
+          }else if(value[k].project_group_id){
+            
+          } 
+        }
+        console.log("------")
+        console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
       },
     },
@@ -5136,7 +5150,7 @@ export default {
       // Typically, do the AJAX stuff here.
       // Once the server has responded,
       // assign children options to the parent node & call the callback.
-
+      
       if (action === LOAD_CHILDREN_OPTIONS) {
         switch (parentNode.id) {
         case 'success': {
