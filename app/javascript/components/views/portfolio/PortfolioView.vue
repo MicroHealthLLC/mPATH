@@ -18,32 +18,48 @@
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick" v-model="activeName">
-          <!-- TASKS -->
-          <el-tab-pane class="pt-2" id="tab-0" name="tasks">
-            <template
-       
-              slot="label"
-              class="text-right"
-              v-if="tasksObj && tasksObj !== undefined"
-            >
-              TASKS
-              <span class="badge badge-secondary badge-pill">
-                <span>{{ portfolioTasks.length }}</span>
-              </span>
-            </template>
-
-            <div class="row pb-4">
+           <div class="row pb-4">
               <div class="col-4 py-2">
                 <div class="w-100 d-flex">
                   <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                  <div class="w-100" v-if="currentTab == 'tasks'">
                   <el-input
                     type="search"
-                    placeholder="Enter Search Criteria"
+                    placeholder="Enter Tasks Search Criteria"
                     v-model="search_tasks"
                   >
                     <el-button slot="prepend" icon="el-icon-search"></el-button>
                   </el-input>
+                  </div>
+                   <div class="w-100" v-if="currentTab == 'issues'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Issues Search Criteria"
+                    v-model="search_issues"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                <div class="w-100" v-if="currentTab == 'risks'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Risks Search Criteria"
+                    v-model="search_risks"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                   <div class="w-100" v-if="currentTab == 'lessons'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Lessons Search Criteria"
+                    v-model="search_lessons"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+
+
                 </div>
               </div>
 
@@ -54,16 +70,15 @@
                     <treeselect  
                     placeholder="Search and select" 
                     :multiple="true" 
-                     @input="updateProgramFilterValue"
+                    @input="updateProgramFilterValue"
                     :value="C_portfolioNamesFilter"
-                    :match-keys= "['facility_project_id', 'id', 'label']"
+                    :options="portfolioPrograms" 
+                    v-model="C_portfolioNamesFilter"
                     track-by="name"      
                     :limit="3"              
                     :maxHeight="200"
                     :limitText="count => `...`"     
-                    :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
                     />      
                      <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
                  </template>              
@@ -94,6 +109,22 @@
               </div>
             </div>
 
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
+          
+          <!-- TASKS -->
+          <el-tab-pane class="pt-2" name="tasks">
+            <template
+              slot="label"
+              class="text-right"              
+              v-if="true"
+            >
+              TASKS
+              <span class="badge badge-secondary badge-pill">
+                <span>{{ portfolioTasks.length }}</span>
+              </span>
+            </template>
+
+         
             <div class="box-shadow py-3">
               <div class="row pt-3 pr-2 pb-1">
                 <div class="col-10 px-1 pt-2">
@@ -1124,8 +1155,7 @@
               <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
             </div>
           </el-tab-pane>
-
-          <el-tab-pane class="pt-2"  id="tab-1" name="issues">
+          <el-tab-pane class="pt-2"  name="issues">
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
@@ -1133,7 +1163,7 @@
               </span>
             </template>
 
-            <div class="row pb-4">
+            <!-- <div class="row pb-4">
               <div class="col-4 py-2">
             <div class="w-100 d-flex">
                <div class="d font-sm mt-2 mr-2">SEARCH</div>              
@@ -1156,7 +1186,7 @@
                     track-by="name"                            
                     :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioIssueNamesFilter"
                     />         
                  </template>              
                 </div>      
@@ -1184,7 +1214,7 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="box-shadow pt-3 pb-1">
               <div class="row pt-3 pb-1 pr-2">
@@ -1413,19 +1443,19 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2">
                   <span class="btnRow">
-                      <button
+                      <!-- <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
                       class="btn btn-md bg-secondary mh-blue presentBtn text-light"
                     >
                       <i class="fas fa-presentation"></i>
-                    </button>
+                    </button> -->
                     <button
                       v-tooltip="`Export to PDF`"
                       @click.prevent="exportIssuesToPdf"
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md exportBtns mr-1 text-light"
                     >
                       <i class="far fa-file-pdf"></i>
                     </button>
@@ -1434,12 +1464,12 @@
                       @click.prevent="
                         exportIssuesToExcel('table', 'Portfolio Issues')
                       "
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md exportBtns mr-3 text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md px-1 mh-orange profile-btns"
+                      class="btn text-light btn-md mh-orange profile-btns"
                     >
                       RESULTS: {{ issuesObj.length }}
                     </button>
@@ -2245,7 +2275,7 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2" name="risks">
             <template
               slot="label"
               class="text-right"
@@ -2259,7 +2289,7 @@
               </span>
             </template>
 
-            <div class="row pb-4">
+            <!-- <div class="row pb-4">
               <div class="col-4 py-2">
              <div class="w-100 d-flex">
               <div class="d font-sm mt-2 mr-2">SEARCH</div>                
@@ -2282,7 +2312,7 @@
                     track-by="name"  
                    :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioRiskNamesFilter"
                     />         
                  </template>              
                 </div>      
@@ -2310,7 +2340,7 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="box-shadow py-3">
               <div class="row pt-3 pb-1 pr-2">
@@ -3257,7 +3287,7 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2">
+          <el-tab-pane class="pt-2"  name="lessons">
             <template slot="label" class="text-right">
               LESSONS LEARNED
               <span class="badge badge-secondary badge-pill">
@@ -3267,7 +3297,7 @@
               </span>
             </template>
 
-            <div class="row pb-4">
+            <!-- <div class="row pb-4">
               <div class="col-4 py-2">
                 <div class="w-100 d-flex">
                   <div class="d font-sm mt-2 mr-2">SEARCH</div>
@@ -3294,7 +3324,7 @@
                     track-by="name"  
                    :options="portfolioPrograms" 
                     valueFormat="object"
-                    v-model="C_portfolioNamesFilter"
+                    v-model="C_portfolioLessonNamesFilter"
                     />         
                  </template>              
                 </div>              
@@ -3322,7 +3352,7 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="box-shadow py-3">
               <div class="row pt-3 pb-1 pr-2">
@@ -4016,6 +4046,13 @@ import "jspdf-autotable";
 import moment from "moment";
 Vue.prototype.moment = moment;
 import { mapGetters, mapActions, mapMutations } from "vuex";
+
+// We just use `setTimeout()` here to simulate an async operation
+// instead of requesting a real API server for demo purpose.
+const simulateAsyncOperation = fn => {
+  setTimeout(fn, 2000)
+}
+
 export default {
   name: "PortfolioView",
   props: ["from"],
@@ -4038,6 +4075,7 @@ export default {
       search_lessons: "",
       currentSort: "program_name",
       currentSortDir: "asc",
+      currentTab: 'tasks',
       currentPage: 1,
       // selectedProgram: this.C_programNameFilter,
       currentIssuesPage: 1,
@@ -4085,10 +4123,16 @@ export default {
   },
   mounted() {
     this.fetchPortfolioPrograms();
-    this.fetchPortfolioTasks();
-    this.fetchPortfolioIssues();
-    this.fetchPortfolioRisks();
-    this.fetchPortfolioLessons();
+    this.$nextTick(function () {
+      // Code that will run only after the
+      // entire view has been rendered
+      $("#tab-tasks").trigger('click');
+    })
+    
+    // this.fetchPortfolioTasks();
+    // this.fetchPortfolioIssues();
+    // this.fetchPortfolioRisks();
+    // this.fetchPortfolioLessons();
   },
   computed: {
     ...mapGetters([
@@ -4106,6 +4150,7 @@ export default {
       'getLessonsPerPageFilter', 
       'getShowCount',
       'portfolioNameFilter',
+      'portfolioRiskNameFilter',
       'facilityDueDateFilter',
       'noteDateFilter',
       'taskIssueDueDateFilter',
@@ -4212,6 +4257,8 @@ export default {
       });
     },
     tasksObj() {
+      if(this.currentTab != 'tasks')
+        return []
       return this.portfolioTasks
         .filter((task) => {
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(task.facility_project_id)
@@ -4404,6 +4451,8 @@ export default {
         });
     },
     issuesObj() {
+      if(this.currentTab != 'issues')
+        return []
       return this.portfolioIssues
         .filter((issue) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(issue.facility_project_id)
@@ -4598,6 +4647,8 @@ export default {
         });
     },
     risksObj() {
+      if(this.currentTab != 'risks')
+        return []
       return this.portfolioRisks
         .filter((risk) => {       
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(risk.facility_project_id)
@@ -4784,8 +4835,9 @@ export default {
           } else return true;
         });
     },
-
     lessonsObj() {
+      if(this.currentTab != 'lessons')
+        return []
       return this.portfolioLessons
         .filter((lesson) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(lesson.facility_project_id)
@@ -5159,15 +5211,75 @@ export default {
       },
       set(value) {
         this.facility_project_ids = [];
-
+        console.log(value)
         for(let k = 0; k < value.length; k++){
-          this.searchChildren(value[k]);
+          // this.searchChildren(value[k]);
+          // if(value[k].children && value[k].children.length > 0){
+          //   if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
+          //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+          //   }
+          // }
+          if(value[k].program_id){
+            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+            break
+          }else if(value[k].project_group_id){
+            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+          }else if(value[k].project_id){
+            this.facility_project_ids.push(value[k].facility_project_id)
+          }
         }
-        // console.log("------")
-        // console.log(this.facility_project_ids)
+        this.facility_project_ids = _.uniq(this.facility_project_ids)
+        console.log("------")
+        console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
       },
     },
+    // C_portfolioIssueNamesFilter: {
+    //   get() {
+    //     return this.portfolioNameFilter;
+    //   },
+    //   set(value) {
+    //     this.facility_project_ids = [];
+    //     console.log(value)
+    //     for(let k = 0; k < value.length; k++){
+    //       this.searchChildren(value[k]);
+    //     }
+    //     // console.log("------")
+    //     // console.log(this.facility_project_ids)
+    //     this.setPortfolioNameFilter(value);
+    //   },
+    // },
+    // C_portfolioRiskNamesFilter: {
+    //   get() {
+    //     return this.portfolioRiskNameFilter;
+    //   },
+    //   set(value) {
+    //     this.facility_project_ids = [];
+    //     console.log(value)
+    //     for(let k = 0; k < value.length; k++){
+    //       this.searchChildren(value[k]);
+    //     }
+    //     // console.log("------")
+    //     // console.log(this.facility_project_ids)
+    //     this.setPortfolioRiskNameFilter(value);
+    //   },
+    // },
+    // C_portfolioLessonNamesFilter: {
+    //   get() {
+    //     return this.portfolioNameFilter;
+    //   },
+    //   set(value) {
+    //     this.facility_project_ids = [];
+    //     console.log(value)
+    //     for(let k = 0; k < value.length; k++){
+    //       this.searchChildren(value[k]);
+    //     }
+    //     // console.log("------")
+    //     // console.log(this.facility_project_ids)
+    //     this.setPortfolioNameFilter(value);
+    //   },
+    // },
+
     C_portfolioIssueTypesFilter: {
       get() {
         return this.portfolioIssueTypesFilter;
@@ -5244,15 +5356,15 @@ export default {
         ),
       ];
     },
-    C_programIssuesNameFilter: {
-      get() {
-        return this.programNameFilter;
-      },
-      set(value) {
-        // console.log(value)
-        this.setProgramNameFilter(value);
-      },
-    },
+    // C_programIssuesNameFilter: {
+    //   get() {
+    //     return this.programNameFilter;
+    //   },
+    //   set(value) {
+    //     // console.log(value)
+    //     this.setProgramNameFilter(value);
+    //   },
+    // },
     C_programNameFilter: {
       get() {
         return this.programNameFilter;
@@ -5373,6 +5485,7 @@ export default {
     ...mapMutations([
       "setPortfolioWatchedTasksToggle",
       "setPortfolioNameFilter",
+      "setPortfolioRiskNameFilter",
       "setTaskIssueUserFilter",
       "setPortfolioUsersFilter",
       "setTasksPerPageFilter",
@@ -5419,16 +5532,52 @@ export default {
       "fetchPortfolioPrograms",
       ]),
     log(e) {
-       console.log("number" + e)
+      //  console.log("number" + e)
     },
     handleClick(tab, event) {
-        console.log(tab._uid, tab, event, tab.paneName, tab.$el);
+        // console.log(tab._uid, tab, event, tab.paneName, tab.$el);
     },
     beforeClose(done) {
     	this.dialogVisible = false;
       done();
     },
+    // NOTE: WIP
+    programAjaxFilterOptions({ action, parentNode, callback }) {
+      // Typically, do the AJAX stuff here.
+      // Once the server has responded,
+      // assign children options to the parent node & call the callback.
+      
+      if (action === LOAD_CHILDREN_OPTIONS) {
+        switch (parentNode.id) {
+        case 'success': {
+          simulateAsyncOperation(() => {
+            parentNode.children = [ {
+              id: 'child',
+              label: 'Child option',
+            } ]
+            callback()
+          })
+          break
+        }
+        case 'no-children': {
+          simulateAsyncOperation(() => {
+            parentNode.children = []
+            callback()
+          })
+          break
+        }
+        case 'failure': {
+          simulateAsyncOperation(() => {
+            callback(new Error('Failed to load options: network error.'))
+          })
+          break
+        }
+        default: /* empty */
+        }
+      }
+    },
     searchChildren: function (node) {
+      console.log("start", new Date() )
       if (node.children && node.children.length > 0) {
 
         for(let k = 0; k < node.children.length; k++){
@@ -5438,9 +5587,11 @@ export default {
       } else {
         this.facility_project_ids.push(node.facility_project_id);
       }
+      console.log("end",new Date() )
     },
     openTpresentation(){
       this.dialogVisible = true; 
+      this.currentTaskSlide = 0      
     },
     nextTask(){
       this.isSlidingToPrevious = false
@@ -5626,7 +5777,32 @@ export default {
     closeWindow() {
       window.close();
     },
-
+    handleClick(tab, event) {
+      let tab_id = $(event.target).attr("id")
+      if(tab_id == "tab-tasks"){
+        this.currentTab = 'tasks'
+        if(this.tasksObj && this.tasksObj.length < 1){
+          this.fetchPortfolioTasks();
+        }
+        
+      }else if(tab_id == "tab-issues"){
+        this.currentTab = 'issues'
+        if(this.issuesObj && this.issuesObj.length < 1){
+          this.fetchPortfolioIssues();
+        }
+      }else if(tab_id == "tab-risks"){
+        this.currentTab = 'risks'
+        if(this.risksObj && this.risksObj.length < 1){
+          this.fetchPortfolioRisks();
+        }
+        
+      }else if(tab_id == "tab-lessons"){
+        this.currentTab = 'lessons'
+        if(this.lessonsObj && this.lessonsObj.length < 1){
+          this.fetchPortfolioLessons();
+        }
+      } 
+    },
   },
   watch: {
     $route(to, from) {
