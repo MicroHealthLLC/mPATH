@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       get "/portfolio/tasks", to: "portfolio#tasks"
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
+      get "/portfolio/tab_counts", to: "portfolio#tab_counts"
       get "/projects/:id", to: "projects#show"
 
       # Filter data
