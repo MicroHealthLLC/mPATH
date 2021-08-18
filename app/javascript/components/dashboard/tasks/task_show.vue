@@ -50,7 +50,7 @@
           <div class="row d-flex my-1">
             <div class="font-sm col-md-12 py-1">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-              <span v-tooltip="`Category`">{{task.taskType}}</span>
+              <span v-tooltip="`Process Area`">{{task.taskType}}</span>
             </div>
           </div>
 

@@ -49,7 +49,7 @@ ActiveAdmin.register Issue do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :title
-    column "Category", :task_type, nil, sortable: 'task_types.name' do |issue|
+    column "Process Area", :task_type, nil, sortable: 'task_types.name' do |issue|
       if current_user.admin_write?
         link_to "#{issue.task_type.name}", "#{edit_admin_task_type_path(issue.task_type)}" if issue.task_type.present?
       else
@@ -131,7 +131,7 @@ ActiveAdmin.register Issue do
         f.inputs 'Basic Details' do
           f.input :id, input_html: { value: f.object.id }, as: :hidden
           f.input :title
-          f.input :task_type, label: 'Category', include_blank: true
+          f.input :task_type, label: 'Process Area', include_blank: true
           f.input :description
           div id: 'facility_projects' do
             f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
@@ -207,7 +207,7 @@ ActiveAdmin.register Issue do
   end
 
   filter :title
-  filter :task_type, label: 'Category'
+  filter :task_type, label: 'Process Area'
   filter :issue_type
   filter :issue_severity
   filter :issue_stage

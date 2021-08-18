@@ -259,7 +259,7 @@
           <!-- Row begins -->
           <div class="d-flex mb-0 mx-4 form-group">
             <div class="simple-select w-100 form-group">
-              <label class="font-md">Category</label>
+              <label class="font-md">Process Area</label>
               <el-select
                 v-model="selectedTaskType"
                 class="w-100"
@@ -268,8 +268,8 @@
                 value-key="id"
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
-                name="Category"
-                placeholder="Select Category"
+                name="Process Area"
+                placeholder="Select Process Area"
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -1327,7 +1327,7 @@ export default {
           form_fields: [
             "Issue Name",
             "Description",
-            "Category",
+            "Process Area",
             "Issue Type",
             "Issue Severity",
             "Stage",

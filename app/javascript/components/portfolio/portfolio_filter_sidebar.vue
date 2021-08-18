@@ -105,14 +105,14 @@
           <div class="row mt-3 pb-2">
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div>
-                <label class="font-sm mb-1">Categories</label>
+                <label class="font-sm mb-1">Process Areas</label>
                   <el-select 
                     v-model="C_categoryNameFilter"                    
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
                     multiple                                                                                                                                               
-                    placeholder="Select Category"
+                    placeholder="Select Process Areas"
                   >
                   <el-option 
                     v-for="item in C_categories"                                                     

@@ -292,7 +292,7 @@
           <div class="d-flex mb-1 form-group">
             <div class="simple-select form-group w-33 ml-4">
               <label class="font-md"
-                >Category <span style="color: #dc3545">*</span></label
+                >Process Area <span style="color: #dc3545">*</span></label
               >
               <el-select
                 v-model="selectedTaskType"
@@ -302,9 +302,9 @@
                 value-key="id"
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
-                name="Category"
-                :class="{ 'error': errors.has('Category') }"
-                placeholder="Select Category"
+                name="Process Area"
+                :class="{ 'error': errors.has('Process Area') }"
+                placeholder="Select Process Area"
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -315,11 +315,11 @@
                 </el-option>
               </el-select>
               <div
-                v-show="errors.has('Category')"
+                v-show="errors.has('Process Area')"
                 class="text-danger"
                 data-cy="task_category_error"
               >
-                {{ errors.first("Category") }}
+                {{ errors.first("Process Area") }}
               </div>
             </div>
           </div>
@@ -1318,7 +1318,7 @@ export default {
             "Task Name",
             "Description",
             "Start Date",
-            "Category",
+            "Process Area",
             "Stage",
             "Start Date",
             "Date Closed",

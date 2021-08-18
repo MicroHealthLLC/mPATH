@@ -22,7 +22,7 @@
            track-by="name" 
            value-key="id"
            multiple                                                                                                                                               
-           placeholder="Select Category"
+           placeholder="Select Process Area"
            >
           <el-option 
             v-for="item in taskTypes"                                                     
@@ -163,7 +163,7 @@
         <tr>
           <th></th>
           <th>Task</th>
-          <th>Task Category</th>
+          <th>Process Area</th>
           <th>Project</th>
           <th>Start Date</th>
           <th>Due Date</th>

@@ -16,14 +16,14 @@
       </div>
 
       <div class="ninety mr-1">
-        <label class="font-sm mb-0">Category</label>
+        <label class="font-sm mb-0">Process Area</label>
         <el-select
           v-model="C_taskTypeFilter"
           class="w-100"
           track-by="name"
           value-key="id"
           multiple
-          placeholder="Select Category"
+          placeholder="Select Process Area"
           collapse-tags
         >
           <el-option

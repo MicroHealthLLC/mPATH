@@ -46,7 +46,7 @@ ActiveAdmin.register Task do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column "Name", :text
-    column "Category", :task_type, nil, sortable: 'task_types.name' do |task|
+    column "Process Area", :task_type, nil, sortable: 'task_types.name' do |task|
       if current_user.admin_write?
         link_to "#{task.task_type.name}", "#{edit_admin_task_type_path(task.task_type)}" if task.task_type.present?
       else
@@ -121,7 +121,7 @@ ActiveAdmin.register Task do
                 fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
             end
           end
-          f.input :task_type, label: 'Category', include_blank: false
+          f.input :task_type, label: 'Process Area', include_blank: false
           f.input :task_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
           f.input :start_date, as: :datepicker
           f.input :due_date, as: :datepicker
@@ -188,7 +188,7 @@ ActiveAdmin.register Task do
   end
 
   filter :text, label: 'Name'
-  filter :task_type, label: 'Category'
+  filter :task_type, label: 'Process Area'
   filter :task_stage, label: 'Stage'
   filter :start_date
   filter :due_date
