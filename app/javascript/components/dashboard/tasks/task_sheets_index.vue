@@ -25,7 +25,7 @@
         
        
         <div class="mx-1 w-75 filterDiv">       
-          <label class="font-sm my-0">Category</label>
+          <label class="font-sm my-0">Process Area</label>
           <!-- <label class="font-sm my-0">Filters</label>
           <div class="filterBox w-100">                           
            <ul style=height:30px>
@@ -43,7 +43,7 @@
            track-by="name"
            value-key="id"
            multiple
-           placeholder="Select Category"
+           placeholder="Select Process Area"
            >
           <el-option
             v-for="item in taskTypes"
@@ -252,7 +252,7 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
                  <i class="fas fa-sort-down"></i></span>
               </th>
-              <th class="sort-th" @click="sort('taskType')">Category
+              <th class="sort-th" @click="sort('taskType')">Process Area
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'taskType'">
                  <i class="fas fa-sort"></i></span>
                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'taskType'">
@@ -420,7 +420,7 @@
       <thead>
         <tr style="background-color:#ededed">
           <th>Task</th>
-          <th>Category</th>
+          <th>Process Area</th>
           <th>Project</th>
           <th>Start Date</th>
           <th>Due Date</th>

@@ -22,14 +22,14 @@
         </span>    
          </div>
         <div class="mx-1 w-75">
-          <label class="font-sm my-0">Category</label>
+          <label class="font-sm my-0">Process Area</label>
           <el-select
            v-model="C_taskTypeFilter"
            class="w-100"
            track-by="name"
            value-key="id"
            multiple
-           placeholder="Select Category"
+           placeholder="Select Process Area"
            >
           <el-option
             v-for="item in taskTypes"

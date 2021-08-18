@@ -123,7 +123,7 @@
                      
                     <div class="row my-1">
                       <div class="col-6">
-                        <span class="underline" :class="{ 'font-sm': isMapView }">CATEGORIES</span>
+                        <span class="underline" :class="{ 'font-sm': isMapView }">PROCESS AREAS</span>
                       </div>
                       <div class="col-1 pl-0">
                         #
@@ -308,7 +308,7 @@
                  <div v-if="contentLoaded">
                        <div class="row">
                         <div class="col mt-1 underline">
-                          CATEGORIES
+                            PROCESS AREAS
                         </div>
                          <div class="col-1 pl-0">
                         #
@@ -531,7 +531,7 @@
                    
                     <div class="row">
                       <div class="col my-1 underline">
-                        CATEGORIES
+                      PROCESS AREAS
                       </div>
                        <div class="col-1 pl-0">
                         #

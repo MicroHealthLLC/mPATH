@@ -195,13 +195,13 @@
       </div>
 
       <div class="col-6 pl-0">
-        <label class="font-md w-100">Category</label>
+        <label class="font-md w-100">Process Area</label>
         <el-select
           v-model="lesson.task_type_id"
           class="w-100"
           value-key="id"
-          name="Category"
-          placeholder="Select Category"
+          name="Process Area"
+          placeholder="Select Process Area"
           :disabled="!_isallowed('write')"
         >
           <!--TODO: Change taskTypes to categoryTypes -->
@@ -794,7 +794,7 @@ export default {
             "Description",
             "Submitted By",
             "Date",
-            "Category",
+            "Process Area",
             "Stage",
           ],
         },

@@ -120,7 +120,7 @@
           <div class="row mt-3 pb-2">
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div>
-                <label class="font-sm mb-1">Categories</label>
+                <label class="font-sm mb-1">Process Areas</label>
                 <el-select 
                   v-model="C_taskTypeFilter"                    
                   class="w-100" 
@@ -128,7 +128,7 @@
                   value-key="id"                  
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
-                  placeholder="Select Category"
+                  placeholder="Select Process Areas"
                   >
                 <el-option 
                   v-for="item in taskTypes"                                                     

@@ -16,7 +16,7 @@
         </el-input>
         </div>
         <div class="mx-1 ninety">
-         <label class="font-sm mb-0">Category</label>
+         <label class="font-sm mb-0">Process Area</label>
 
           <el-select
            v-model="C_taskTypeFilter"
@@ -25,7 +25,7 @@
            track-by="name"
            value-key="id"
            multiple
-           placeholder="Select Category"
+           placeholder="Select Process Area"
            collapse-tags
            >
           <el-option
@@ -263,7 +263,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>            
-              <span class="d-inline mr-1"><small><b>Category:</b></small></span>
+              <span class="d-inline mr-1"><small><b>Process Area:</b></small></span>
               {{ selectedEvent.category }}            
             </v-list-item-title>
           </v-list-item>

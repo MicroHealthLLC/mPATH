@@ -15,6 +15,10 @@ const portfolioModule = {
 
     portfolioCategoriesFilter: null,
 
+    // PORTFOLIO COUNTS
+    portfolio_counts: {},
+    portfolio_counts_loaded: true,
+
     // PORTFOLIO TASKS
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
@@ -118,6 +122,30 @@ const portfolioModule = {
     //       commit("TOGGLE_PORTFOLIO_LOADED", true);
     //     });
     // }, 
+
+    fetchPortfolioCounts({commit}) {
+      commit("TOGGLE_PORTFOLIO_COUNTS_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/portfolio/tab_counts`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end
+          console.log("port counts" + res.data.tasks_count)
+           commit("SET_PORTFOLIO_COUNTS", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_COUNTS_LOADED", true);
+        });
+    }, 
     fetchPortfolioPrograms({commit}) {
       commit("TOGGLE_PORTFOLIO_PROGRAMS_LOADED", false);
       // Send GET request for all lessons contained within a project
@@ -481,6 +509,10 @@ const portfolioModule = {
     setPortfolioRiskStagesFilter: (state, portfolioRiskStagesFilter) => state.portfolioRiskStagesFilter = portfolioRiskStagesFilter,
 
 
+    // PORTFOLIO COUNTS
+    SET_PORTFOLIO_COUNTS: (state, portfolio_counts) => state.portfolio_counts = portfolio_counts,
+    TOGGLE_PORTFOLIO_COUNTS_LOADED: (state, loaded ) => state.portfolio_counts_loaded = loaded,
+
     // PORTFOLIO TASKS
     SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks,
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
@@ -577,6 +609,10 @@ const portfolioModule = {
     portfolioStatuses: state => state.portfolio_statuses, 
     portfolioStatusesLoaded: state => state.portfolio_statuses_loaded,
     portfolioStatusesFilter: state => state.portfolioStatusesFilter,
+
+    portfolioCounts: state => state.portfolio_counts,
+    portfolioCountsLoaded: state => state.portfolio_counts_loaded,
+
     
     portfolioProgramsFilter: state => state.portfolio_programs_filter, 
     portfolioProgramsFilterLoaded: state => state.portfolio_programs_filter_loaded,

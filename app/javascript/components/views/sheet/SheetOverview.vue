@@ -119,7 +119,7 @@
                 
                 <div data-cy="task_categories" class="row">
                   <div class="col-5 pb-0 underline">
-                    CATEGORIES
+                    PROCRESS AREAS
                   </div>
                     <div class="col-2 pb-0 pl-0">
                   #
@@ -302,7 +302,7 @@
                         <div v-if="contentLoaded">                
                           <div class="row">
                             <div class="col-5 pb-0 mt-1 underline">
-                              CATEGORIES
+                              PROCESS AREAS
                             </div>
                             <div class="col-2 pb-0 pl-0">
                              #
@@ -517,7 +517,7 @@
                       <el-collapse-item title="..." name="1">
                         <div class="row">
                           <div class="col-5 mt-1 underline">
-                            CATEGORIES
+                            PROCESS AREAS
                           </div>
                           <div class="col-2 pl-0">
                           #

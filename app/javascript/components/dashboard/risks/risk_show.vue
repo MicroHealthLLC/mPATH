@@ -54,7 +54,7 @@
               <div class="row mb-1 d-flex">
                 <div class="font-sm col py-0" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-                 <span v-tooltip="`Category`">
+                 <span v-tooltip="`Process Area`">
                   {{DV_risk.taskType.name}}
                  </span>
                 </div>               
