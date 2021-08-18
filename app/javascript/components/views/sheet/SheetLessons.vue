@@ -1,9 +1,31 @@
 <template>
   <div v-if="contentLoaded">
-    <div class="pl-3 w-70">
-      <el-input type="search" placeholder="Search Lessons" v-model="search">
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>
+    <div class="d-flex align-item-center w-70 float-right filters-wrapper">
+      <div class="ml-3 risk-search-bar w-100">
+        <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
+        <el-input type="search" placeholder="Search Lessons" v-model="search">
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
+      </div>
+      <div class="mx-1 w-75">
+        <label class="font-sm my-0">Category</label>
+        <el-select
+          v-model="C_taskTypeFilter"
+          class="w-100"
+          track-by="name"
+          value-key="id"
+          multiple
+          placeholder="Select Category"
+          >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+        </el-select>
+      </div>
     </div>
     <div class="wrapper mt-3 p-3">
 
@@ -337,6 +359,7 @@ export default {
     ...mapMutations([
       "setLessonsPerPageFilter",
       'setShowCount',
+      'setTaskTypeFilter',
       // 2 States
       'setHideComplete',
       'setHideDraft',
@@ -574,6 +597,8 @@ export default {
       "getLessonsPerPageFilterOptions",
       "getLessonsPerPageFilter",
       'getShowCount',
+      'taskTypeFilter',
+      'taskTypes',
       // 2 States
       'getHideComplete',       
       'getHideDraft',   
@@ -581,6 +606,14 @@ export default {
       'getHideImportant',
       'getHideBriefed',
     ]),
+    C_taskTypeFilter: {
+      get() {
+        return this.taskTypeFilter
+      },
+      set(value) {
+        this.setTaskTypeFilter(value)
+      }
+    },
     C_showCountToggle: {                  
         get() {
          return this.getShowCount                
@@ -637,6 +670,7 @@ export default {
     },
     filteredLessons() {
       // Returns filtered lessons based on search value from input
+      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
       return {
       unfiltered: {
        lessons:  this.projectLessons
@@ -661,7 +695,10 @@ export default {
          if (this.getHideComplete) {
           return lesson.draft
         } else return true
-
+      }).filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
       // Filtering 3 Task Tags
       }).filter(lesson => {
          if (this.getHideBriefed && !this.getHideImportant ) {
@@ -852,4 +889,14 @@ i, .icons {
     overflow: hidden;
   }
 }
+.filters-wrapper {
+    float: right;
+    margin-top: -85px;
+}
+@media screen and (max-width: 1500px) {
+  .filters-wrapper {
+      width: 65% !important;
+  }
+}
+
 </style>
