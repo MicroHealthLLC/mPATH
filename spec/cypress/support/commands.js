@@ -223,6 +223,6 @@ Cypress.Commands.add("openSettingAP", () => {
 Cypress.Commands.add("openCategoryAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#task_types').contains('Categories').click({force: true})
+    cy.get('#task_types').contains('Process Area').click({force: true})
   })
 })
