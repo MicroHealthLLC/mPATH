@@ -1,5 +1,13 @@
 import '@4tw/cypress-drag-drop'
 
+// commands.js
+Cypress.Commands.add('preserveAllCookiesOnce', () => {
+  cy.getCookies().then(cookies => {
+    const namesOfCookies = cookies.map(c => c.name)
+    Cypress.Cookies.preserveOnce(...namesOfCookies)
+  })
+})
+
 // Login command
 Cypress.Commands.add("login", (email, password) => {
   cy.visit('/')
@@ -17,6 +25,7 @@ Cypress.Commands.add("logout", () => {
 
 // Open first Project
 Cypress.Commands.add("openProject", () => {
+  cy.visit('/')
   cy.get('[data-cy=project_list_items]').first().click()
   cy.get('[data-cy=main_tab]', { timeout: 60000 }).should('be.visible')
 })

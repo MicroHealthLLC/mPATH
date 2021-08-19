@@ -1,11 +1,17 @@
 describe('Sheet Overview Page', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
   })
-
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+  
+  after(() => {
+    cy.clearCookies()
+  })
   it('Open Sheet overview to display the summary of a facility', function() {
     // cy.get('[data-cy=facility_sheets]').within(() => {
     // })
@@ -37,6 +43,6 @@ describe('Sheet Overview Page', function() {
       cy.contains('2').should('be.visible')
     })
 
-    cy.logout()
+    // cy.logout()
   })
 })

@@ -1,6 +1,7 @@
 {
   "baseUrl": "http://localhost:5017",
   "defaultCommandTimeout": 10000,
+  "pageLoadTimeout": 90000,
   "projectId": "jrbzy4",
   "viewportWidth": 1366,
   "viewportHeight": 768,

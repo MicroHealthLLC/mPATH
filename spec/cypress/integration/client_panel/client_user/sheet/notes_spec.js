@@ -1,5 +1,5 @@
 describe('Sheets Notes View', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
@@ -7,10 +7,18 @@ describe('Sheets Notes View', function() {
     cy.get('#customtabs > :nth-child(6)').contains('Notes').should('be.visible').click()
   })
 
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+  
+  after(() => {
+    cy.clearCookies()
+  })
+
   it('Open Sheets notes in a facility', function() {
     cy.get('[data-cy=search_notes]').should('be.visible')
     cy.get('[data-cy=notes]').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Search note by typing title', function() {
@@ -24,6 +32,6 @@ describe('Sheets Notes View', function() {
     cy.get('[data-cy=search_notes]').clear()
 
     cy.get('[data-cy=notes]').its('length').should('be.eq', 1)
-    cy.logout()
+    // cy.logout()
   })
 })
