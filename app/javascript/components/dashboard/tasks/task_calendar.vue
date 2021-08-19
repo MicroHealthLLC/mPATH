@@ -315,7 +315,8 @@
                  <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+                <span v-if="selectedEvent.isOngoing == true && !selectedEvent.isClosed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+               <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`">  <i class="fas fa-pause-circle text-primary"></i></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
                 <span v-if="
@@ -509,7 +510,7 @@
      },
       setToday (resource) {
        this.focus = '' || this.setLastFocusFilter('')  
-       console.log("Resource: " + resource)
+      //  console.log("Resource: " + resource)
       },
       prev () {
         this.$refs.calendar.prev()
@@ -525,7 +526,6 @@
         );
       },
       editTask(event) {  
-        console.log("This is the edit task event: " + event)
         let eventObj = event     
         this.selectedEventId = eventObj.event.taskId;
         this.calendarTask = eventObj.event.task 
@@ -613,6 +613,7 @@
         this.overdue = this.filteredCalendar.filtered.tasks.map(task => task.isOverdue) 
         this.star = this.filteredCalendar.filtered.tasks.map(task => task.important)
         this.ongoing = this.filteredCalendar.filtered.tasks.map(task => task.ongoing)
+        this.closed = this.filteredCalendar.filtered.tasks.map(task => task.closed)
         this.percentage = this.filteredCalendar.filtered.tasks.map(task => task.progress)
         this.onhold = this.filteredCalendar.filtered.tasks.map(task => task.onHold)
         this.draft = this.filteredCalendar.filtered.tasks.map(task => task.draft)
@@ -624,7 +625,7 @@
         // For loop to determine length of Calendar Tasks 
         for (let i = 0; i < this.filteredCalendar.filtered.tasks.length; i++) {
 
-            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
+            if(this.taskData[i].ongoing && !this.taskData[i].closed && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
             this.taskEndDates[i] = '2099-01-01'
             }
             if(this.taskData[i].ongoing) {
@@ -646,6 +647,7 @@
             // color: this.colors.defaultColor,  
             hasStar: this.star[i], 
             isOngoing: this.ongoing[i], 
+            isClosed: this.closed[i], 
             isDraft: this.draft[i],
             isOnHold: this.onhold[i]           
           })

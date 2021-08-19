@@ -46,9 +46,14 @@
                             ></i
                           ></span>
                           <span
-                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].ongoing == true"
+                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].ongoing == true && dynamicObj[currentTaskSlide].closed == false"
                             v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet mr-1 text-success" style="font-size:1.8rem"></i
+                          ></span>
+                          <span
+                             v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].closed"
+                            v-tooltip="`Ongoing: Closed`"
+                            ><i class="fas fa-retweet mr-1 text-secondary" style="font-size:1.8rem"></i
                           ></span>
                           <span
                              v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].on_hold == true"
@@ -175,7 +180,7 @@
                                           <span v-else> <h4>No Assignments</h4></span>                                        
                                   </div>  
              
-                                   <div class="col" v-if="dynamicObj !== lessonsObj" >                               
+                                   <div class="col" v-if="dynamicObj !== lessonsObj && !dynamicObj[currentTaskSlide].ongoing" >                               
                                                                
                                          <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
                                           <el-progress
@@ -599,7 +604,7 @@
                      <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
-                      class="btn btn-md bg-secondary mh-blue presentBtn text-light"
+                      class="btn btn-md presentBtn mr-1 text-primary"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -1055,7 +1060,7 @@
                           {{ moment(task.start_date).format("DD MMM YYYY") }}
                         </td>
                         <td>
-                          <span v-if="task.ongoing" v-tooltip="`Ongoing`"
+                          <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
                           <span
@@ -1068,7 +1073,18 @@
                           }}</span>
                         </td>
                         <td>{{ task.users }}</td>
-                        <td>{{ task.progress + "%" }}</td>
+                        <td>                          
+                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+                            ><i class="fas fa-retweet text-success"></i
+                          ></span>
+                          <span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
+                            ><i class="fas fa-retweet text-secondary"></i
+                          ></span>
+                          
+                           <span v-else>
+                          {{ task.progress + "%" }}
+                           </span>
+                        </td>
                         <td class="text-center">
                           <span v-if="task.is_overdue" v-tooltip="`Overdue`">
                             <i class="fas fa-calendar text-danger mr-1"></i
@@ -1079,9 +1095,14 @@
                             ></i
                           ></span>
                           <span
-                            v-if="task.ongoing == true"
+                            v-if="task.ongoing == true && !task.closed"
                             v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet mr-1 text-success"></i
+                          ></span>
+                          <span
+                            v-if="task.closed"
+                            v-tooltip="`Ongoing: Closed`"
+                            ><i class="fas fa-retweet mr-1 text-secondary"></i
                           ></span>
                           <span
                             v-if="task.on_hold == true"
@@ -1469,7 +1490,7 @@
                       <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
-                      class="btn btn-md bg-secondary mh-blue presentBtn text-light"
+                      class="btn btn-md presentBtn mr-1 text-primary"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -2446,7 +2467,7 @@
                      <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openRpresentation"
-                      class="btn btn-md bg-secondary mh-blue presentBtn text-light"
+                      class="btn btn-md mr-1 text-primary presentBtn"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -3022,7 +3043,7 @@
                           {{ moment(risk.start_date).format("DD MMM YYYY") }}
                         </td>
                         <td>
-                          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"
+                          <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
                           <span
@@ -3035,7 +3056,19 @@
                           }}</span>
                         </td>
                         <td>{{ risk.users }}</td>
-                        <td>{{ risk.progress + "%" }}</td>
+                        <td>
+                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
+                            ><i class="fas fa-retweet text-success"></i
+                          ></span>
+                           <span v-else-if="risk.closed" v-tooltip="`Ongoing: Closed`"
+                            ><i class="fas fa-retweet text-secondary"></i
+                          ></span>
+                          <span v-else>
+                          {{ risk.progress + "%" }}
+                          </span>
+                          
+                          
+                          </td>
                         <td class="text-center">
                           <span v-if="risk.is_overdue" v-tooltip="`Overdue`"
                             ><i class="fas fa-calendar mr-1 text-danger"></i
@@ -3046,9 +3079,14 @@
                             ></i
                           ></span>
                           <span
-                            v-if="risk.ongoing == true"
+                            v-if="risk.ongoing == true && !risk.closed"
                             v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
+                          ></span>
+                          <span
+                            v-if="risk.closed == true"
+                            v-tooltip="`Ongoing: Closed`"
+                            ><i class="fas fa-retweet text-secondary"></i
                           ></span>
                           <span
                             v-if="risk.on_hold == true"
@@ -3324,9 +3362,9 @@
                    <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openLpresentation"
-                      class="btn btn-md bg-secondary mh-blue presentBtn text-light"
+                      class="btn btn-md presentBtn mr-1 text-primary"
                     >
-                      <i class="fas fa-presentation"></i>
+                      <i class="fas fa-presentation text-primary"></i>
                     </button>
                     <button
                       v-tooltip="`Export to PDF`"
@@ -6008,10 +6046,10 @@ table {
   0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
-.presentBtn {
- box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-  0 3px 3px rgba(56, 56, 56, 0.23);
-}
+// .presentBtn {
+//  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+//   0 3px 3px rgba(56, 56, 56, 0.23);
+// }
 .lastUpdateCol {
   // position:absolute;
   // right: 60px;

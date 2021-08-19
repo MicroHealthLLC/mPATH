@@ -19,7 +19,8 @@
             <span v-if="task.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-show="is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar text-danger"></i></span>   
             <span v-show="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-show="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+            <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+            <span v-if="task.ongoing == true && task.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
             <span v-show="task.onHold" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-show="task.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
             <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
@@ -36,14 +37,14 @@
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(task.startDate)}}
                </span>              
-                <span  v-if="task.ongoing == false && task.dueDate !== null">
+                <span  v-if="task.dueDate !== null">
                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>                  
                     {{formatDate(DV_task.dueDate)}}
                   </span>
                   <span  v-if="task.onHold == true && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`">                              
                   <i class="fas fa-pause-circle text-primary"></i>
                   </span>
-                  <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
+                  <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
              </div>
           </div>     
          

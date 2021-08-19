@@ -6,7 +6,7 @@
         <td class="ten">{{task.taskType}}</td>
         <td class="eight text-center">{{formatDate(task.startDate)}}</td>
         <td class="eigth text-center">
-        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
         <span v-else>
          {{formatDate(task.dueDate)}}
@@ -22,8 +22,11 @@
          </span>        
         </td>
         <td class="eight text-center">
-        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-        <span v-else>{{task.progress + "%"}}</span>
+         <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+           
+         <span v-else-if="task.ongoing == true && task.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
+          <span v-else>{{task.progress + "%"}}</span>
+     
         </td>
         <td class="ten text-center">
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
@@ -31,7 +34,8 @@
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-if="task.isOverdue" v-tooltip="`Overdue`"><i class="fas fa-calendar text-danger mr-1"></i></span>
             <span v-if="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+            <span v-if="task.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
             <span v-if="task.onHold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>  
             <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
