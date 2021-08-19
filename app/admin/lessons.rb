@@ -38,7 +38,7 @@ ActiveAdmin.register Lesson do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column 'Name', :title
-    column "Process Area", :task_type, nil, sortable: 'task_types.name' do |lesson|
+    column :task_type, nil, sortable: 'task_types.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.task_type.name}", "#{edit_admin_task_type_path(lesson.task_type)}" if lesson.task_type.present?
       else
@@ -139,7 +139,7 @@ ActiveAdmin.register Lesson do
           #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
           #   end
           # end
-          f.input :task_type, label: 'Process Area',  input_html: {class: "select2"}, include_blank: true
+          f.input :task_type,  input_html: {class: "select2"}, include_blank: true
           f.input :lesson_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
           f.input :user_id, label: 'User', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: "select2"}
 
@@ -214,7 +214,7 @@ ActiveAdmin.register Lesson do
   filter :lesson_details_finding, as: :string, label: 'Finding'
   filter :lesson_details_recommendation, as: :string, label: 'Recommendation'
 
-  filter :task_type, label: 'Process Area'
+  filter :task_type
   filter :task_stage, label: 'Stage'
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'

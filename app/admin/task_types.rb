@@ -1,5 +1,5 @@
 ActiveAdmin.register TaskType do
-  menu priority: 7, label: "Process Areas"
+  menu priority: 7
   actions :all, except: [:show]
 
   permit_params do
@@ -8,14 +8,14 @@ ActiveAdmin.register TaskType do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Process Areas', admin_task_types_path)]
+    links = [link_to('Admin', admin_root_path), link_to(TaskType.model_name.human(count: 2), admin_task_types_path)]
     if %(show edit).include?(params['action'])
       links << link_to(task_type.name, edit_admin_task_type_path)
     end
     links
   end
 
-  index title: 'Process Areas' do
+  index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column :id
@@ -68,9 +68,9 @@ ActiveAdmin.register TaskType do
     end
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Process Areas?" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these  #{TaskType.model_name.human(count: 2)}?" do |ids|
     deleted = TaskType.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Process Areas"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} #{TaskType.model_name.human}"
   end
 
   filter :name
