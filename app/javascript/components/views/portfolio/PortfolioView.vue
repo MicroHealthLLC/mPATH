@@ -5065,7 +5065,7 @@ export default {
       },
       set(value) {
         this.facility_project_ids = [];
-        console.log(value)
+        // console.log(value)
         for(let k = 0; k < value.length; k++){
           // this.searchChildren(value[k]);
           // if(value[k].children && value[k].children.length > 0){
@@ -5083,57 +5083,11 @@ export default {
           }
         }
         this.facility_project_ids = _.uniq(this.facility_project_ids)
-        console.log("------")
-        console.log(this.facility_project_ids)
+        // console.log("------")
+        // console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
       },
     },
-    // C_portfolioIssueNamesFilter: {
-    //   get() {
-    //     return this.portfolioNameFilter;
-    //   },
-    //   set(value) {
-    //     this.facility_project_ids = [];
-    //     console.log(value)
-    //     for(let k = 0; k < value.length; k++){
-    //       this.searchChildren(value[k]);
-    //     }
-    //     // console.log("------")
-    //     // console.log(this.facility_project_ids)
-    //     this.setPortfolioNameFilter(value);
-    //   },
-    // },
-    // C_portfolioRiskNamesFilter: {
-    //   get() {
-    //     return this.portfolioRiskNameFilter;
-    //   },
-    //   set(value) {
-    //     this.facility_project_ids = [];
-    //     console.log(value)
-    //     for(let k = 0; k < value.length; k++){
-    //       this.searchChildren(value[k]);
-    //     }
-    //     // console.log("------")
-    //     // console.log(this.facility_project_ids)
-    //     this.setPortfolioRiskNameFilter(value);
-    //   },
-    // },
-    // C_portfolioLessonNamesFilter: {
-    //   get() {
-    //     return this.portfolioNameFilter;
-    //   },
-    //   set(value) {
-    //     this.facility_project_ids = [];
-    //     console.log(value)
-    //     for(let k = 0; k < value.length; k++){
-    //       this.searchChildren(value[k]);
-    //     }
-    //     // console.log("------")
-    //     // console.log(this.facility_project_ids)
-    //     this.setPortfolioNameFilter(value);
-    //   },
-    // },
-
     C_portfolioIssueTypesFilter: {
       get() {
         return this.portfolioIssueTypesFilter;
@@ -5210,15 +5164,6 @@ export default {
         ),
       ];
     },
-    // C_programIssuesNameFilter: {
-    //   get() {
-    //     return this.programNameFilter;
-    //   },
-    //   set(value) {
-    //     // console.log(value)
-    //     this.setProgramNameFilter(value);
-    //   },
-    // },
     C_programNameFilter: {
       get() {
         return this.programNameFilter;
@@ -5389,9 +5334,6 @@ export default {
     log(e) {
       //  console.log("number" + e)
     },
-    handleClick(tab, event) {
-        // console.log(tab._uid, tab, event, tab.paneName, tab.$el);
-    },
     beforeClose(done) {
     	this.dialogVisible = false;
       done();
@@ -5432,7 +5374,7 @@ export default {
       }
     },
     searchChildren: function (node) {
-      console.log("start", new Date() )
+      // console.log("start", new Date() )
       if (node.children && node.children.length > 0) {
 
         for(let k = 0; k < node.children.length; k++){
@@ -5442,7 +5384,7 @@ export default {
       } else {
         this.facility_project_ids.push(node.facility_project_id);
       }
-      console.log("end",new Date() )
+      // console.log("end",new Date() )
     },
     openTpresentation(){
       this.dialogVisible = true; 
@@ -5653,25 +5595,26 @@ export default {
       window.close();
     },
     handleClick(tab, event) {
+            // console.log(tab);
       let tab_id = $(event.target).attr("id")
-      if(tab_id == "tab-tasks"){
+      if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
         if(this.tasksObj && this.tasksObj.length < 1){
           this.fetchPortfolioTasks();
         }
         
-      }else if(tab_id == "tab-issues"){
+      }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
         if(this.issuesObj && this.issuesObj.length < 1){
           this.fetchPortfolioIssues();
         }
-      }else if(tab_id == "tab-risks"){
+      }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'
         if(this.risksObj && this.risksObj.length < 1){
           this.fetchPortfolioRisks();
         }
         
-      }else if(tab_id == "tab-lessons"){
+      }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
         this.currentTab = 'lessons'
         if(this.lessonsObj && this.lessonsObj.length < 1){
           this.fetchPortfolioLessons();

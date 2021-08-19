@@ -523,13 +523,20 @@ export default new Vuex.Store({
       },{
         id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
       }]
-      }, {
-        label: 'Assignments',
-        options: [{
-        id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
-       },{
-        id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
-       }]
+      // }, {
+      //   label: 'Assignments',
+      //   options: [{
+      //   id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
+      //  },{
+      //   id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+      //  }]
+    // }, {
+    //     label: 'Default Settings',
+    //     options: [{
+    //       id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
+    //    },{
+    //     id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+    //    }]
     }]
       return options;
     },

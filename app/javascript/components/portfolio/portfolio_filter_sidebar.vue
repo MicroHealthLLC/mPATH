@@ -13,7 +13,7 @@
             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
-   <el-tabs type="border-card" @tab-click="handleClick">
+   <el-tabs type="border-card">
       <el-tab-pane label="Portfolio">
       <div class="filter-border filter-sections px-3 pt-0">
          <!-- Next row for two columns that will contain Facilities-related menus -->
@@ -962,9 +962,6 @@ export default {
     },
     updateProjectQuery(selected, index) {
       window.location.pathname = "/projects/" + selected.id
-    },
-    handleClick(tab, event) {
-        // console.log(tab, event);
     },
     loadFavoriteFilter(fav_filter){
 
