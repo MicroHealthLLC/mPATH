@@ -3362,9 +3362,9 @@
                    <button
                       v-tooltip="`Briefing Mode`"
                       @click.prevent="openLpresentation"
-                      class="btn btn-md presentBtn mr-1 text-light mh-blue"
+                      class="btn btn-md presentBtn mr-1 mh-blue"
                     >
-                      <i class="fas fa-presentation text-primary"></i>
+                      <i class="fas fa-presentation text-light"></i>
                     </button>
                     <button
                       v-tooltip="`Export to PDF`"
