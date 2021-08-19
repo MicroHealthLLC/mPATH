@@ -99,30 +99,6 @@ const portfolioModule = {
   
   }),
   actions: {
-    // fetchPortfolioProgramsFilter({commit}) {
-    //   commit("TOGGLE_PORTFOLIO_LOADED", false);
-    //   // Send GET request for all lessons contained within a project
-    //   axios({
-    //     method: "GET",
-    //     url: `/api/v1/filter_data/programs`,
-    //     headers: {
-    //       "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-    //         .attributes["content"].value,
-    //     },
-    //   })
-    //     .then((res) => {
-    //       // Mutate state with response from back end  
-    //     console.log("portfoi" + res)
-    //       commit("SET_PORTFOLIO_PROGRAMS_FILTER", res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     })
-    //     .finally(() => {
-    //       commit("TOGGLE_PORTFOLIO_LOADED", true);
-    //     });
-    // }, 
-
     fetchPortfolioCounts({commit}) {
       commit("TOGGLE_PORTFOLIO_COUNTS_LOADED", false);
       // Send GET request for all lessons contained within a project
@@ -136,7 +112,7 @@ const portfolioModule = {
       })
         .then((res) => {
           // Mutate state with response from back end
-          console.log("port counts" + res.data.tasks_count)
+          // console.log("port counts" + res.data.tasks_count)
            commit("SET_PORTFOLIO_COUNTS", res.data);
         })
         .catch((err) => {
