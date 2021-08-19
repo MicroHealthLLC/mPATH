@@ -312,7 +312,8 @@
               <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
               <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-              <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+              <span v-if="selectedEvent.isOngoing == true && !selectedEvent.isClosed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+              <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
               <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>  
               <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
                 <span v-if="
@@ -607,6 +608,7 @@
       this.star = this.filteredCalendar.filtered.risks.map(risk => risk.important)
       this.riskApproach = this.filteredCalendar.filtered.risks.map(risk => risk.riskApproach)  
       this.ongoing = this.filteredCalendar.filtered.risks.map(risk => risk.ongoing)    
+      this.closed = this.filteredCalendar.filtered.risks.map(risk => risk.closed)    
       this.onhold = this.filteredCalendar.filtered.risks.map(risk => risk.onHold)   
       this.draft = this.filteredCalendar.filtered.risks.map(risk => risk.draft)       
 
@@ -620,7 +622,7 @@
       if(this.riskData[i].ongoing){
        this.riskNames[i] = this.riskNames[i] + " (Ongoing)"     
       }
-      if(this.riskData[i].ongoing && (this.riskEndDates[i] == null || this.riskEndDates[i] == undefined)){    
+      if(this.riskData[i].ongoing && !this.riskData[i].closed && (this.riskEndDates[i] == null || this.riskEndDates[i] == undefined)){    
        this.riskEndDates[i] = '2099-01-01'
       }
       if(this.riskData[i].onHold) {
@@ -644,6 +646,7 @@
           // color: this.colors.defaultColor,   
           hasStar: this.star[i], 
           isOngoing: this.ongoing[i],
+          isClosed: this.closed[i], 
           isDraft: this.draft[i],
           isOnHold: this.onhold[i], 
                              
