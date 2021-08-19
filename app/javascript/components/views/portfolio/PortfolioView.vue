@@ -602,9 +602,9 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                      <button
-                      v-tooltip="`Presentation Mode`"
+                      v-tooltip="`Briefing Mode`"
                       @click.prevent="openTpresentation"
-                      class="btn btn-md presentBtn mr-1 text-primary"
+                      class="btn btn-md presentBtn mr-1 mh-blue text-light"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -1488,9 +1488,9 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                       <button
-                      v-tooltip="`Presentation Mode`"
+                      v-tooltip="`Briefing Mode`"
                       @click.prevent="openIpresentation"
-                      class="btn btn-md presentBtn mr-1 text-primary"
+                      class="btn btn-md presentBtn mr-1 text-light mh-blue"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -2465,9 +2465,9 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                      <button
-                      v-tooltip="`Presentation Mode`"
+                      v-tooltip="`Briefing Mode`"
                       @click.prevent="openRpresentation"
-                      class="btn btn-md mr-1 text-primary presentBtn"
+                      class="btn btn-md mr-1 text-light mh-blue presentBtn"
                     >
                       <i class="fas fa-presentation"></i>
                     </button>
@@ -3360,9 +3360,9 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                    <button
-                      v-tooltip="`Presentation Mode`"
+                      v-tooltip="`Briefing Mode`"
                       @click.prevent="openLpresentation"
-                      class="btn btn-md presentBtn mr-1 text-primary"
+                      class="btn btn-md presentBtn mr-1 text-light mh-blue"
                     >
                       <i class="fas fa-presentation text-primary"></i>
                     </button>
