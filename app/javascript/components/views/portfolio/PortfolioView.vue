@@ -152,7 +152,7 @@
                                     <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentTaskSlide] !== undefined">                                          
                                   
                              
-                                   <div class="col pt-2" v-if="dynamicObj !== lessonsObj" >  
+                                   <div class="col pt-2" v-if="dynamicObj !== lessonsObj.filtered.lessons" >  
                                      <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
                                     <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].start_date" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentTaskSlide].start_date).format( "DD MMM YYYY") }}</h5></span> 
                                     <span v-else> -- </span>
@@ -161,26 +161,26 @@
                                      <span v-else>  </span>
                                     
                                   </div>    
-                                  <div class="col pt-2" v-if="dynamicObj == lessonsObj" >  
+                                  <div class="col pt-2" v-if="dynamicObj == lessonsObj.filtered.lessons" >  
                                      <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
                                     <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].date" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentTaskSlide].date).format( "DD MMM YYYY") }}</h5></span>
   
                                   </div>    
                               
                               
-                                    <div class="col mt-4 truncate-line-two" v-if="dynamicObj == lessonsObj" >      
+                                    <div class="col mt-4 truncate-line-two" v-if="dynamicObj == lessonsObj.filtered.lessons" >      
                                    <i class="fas fa-user d-block text-light" style="font-size:2.8rem"></i>
                                           <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].added_by"><h4>Added By:  {{ dynamicObj[currentTaskSlide].added_by }}</h4></span>
                                                                             
                                   </div>  
                           
-                                   <div class="col mt-4 truncate-line-two" v-if="dynamicObj !== lessonsObj">
+                                   <div class="col mt-4 truncate-line-two" v-if="dynamicObj !== lessonsObj.filtered.lessons">
                                    <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
                                           <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].users.length > 0"><h4> {{ dynamicObj[currentTaskSlide].users }}</h4></span>
                                           <span v-else> <h4>No Assignments</h4></span>                                        
                                   </div>  
              
-                                   <div class="col" v-if="dynamicObj !== lessonsObj && !dynamicObj[currentTaskSlide].ongoing && dynamicObj !== risksObj " >                               
+                                   <div class="col" v-if="dynamicObj !== lessonsObj.filtered.lessons && !dynamicObj[currentTaskSlide].ongoing && dynamicObj !== risksObj.filtered.risks" >                               
                                                                
                                     <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
                                     <el-progress
@@ -192,7 +192,7 @@
                                     <h4>{{action }} PROGRESS</h4>
                                   </div>     
 
-                                   <div class="col mt-4" v-if="dynamicObj == risksObj " >  
+                                   <div class="col mt-4" v-if="dynamicObj == risksObj.filtered.risks" >  
 
                                         <h6>RISK APPROACH</h6> 
                                         
@@ -476,7 +476,7 @@
                             getShowCount == false ? 'd-none' : 'd-block',
                           ]"
                         >
-                          <span v-if="tasksObj">{{
+                          <span v-if="tasksObj.filtered.tasks">{{
                             taskVariation.ongoing.count
                           }}<span
                             v-tooltip="`Ongoing: Closed`"
@@ -509,7 +509,7 @@
                             getShowCount == false ? 'd-none' : 'd-block',
                           ]"
                         >
-                          <span v-if="tasksObj">{{
+                          <span v-if="tasksObj.filtered.tasks">{{
                             taskVariation.planned.count
                           }}</span>
                         </h5>
@@ -666,7 +666,7 @@
                     <button
                       class="btn text-light btn-md mh-orange px-1 profile-btns"
                     >
-                      RESULTS: {{ tasksObj.length }}
+                      RESULTS: {{ tasksObj.filtered.tasks.length }}
                     </button></span
                   >
                 </div>
@@ -674,7 +674,7 @@
 
               <div
                 class="row text-center mt-2 pr-3"
-                v-if="tasksObj !== null && tasksObj.length > 0"
+                v-if="tasksObj.filtered.tasks !== null && tasksObj.filtered.tasks.length > 0"
               >
                 <div class="xTable px-3" style="overflow-x: auto">
                   <table
@@ -1224,7 +1224,7 @@
                     {{ currentPage }} of
                     {{
                       Math.ceil(
-                        this.tasksObj.length / this.C_tasksPerPage.value
+                      tasksObj.filtered.tasks.length / this.C_tasksPerPage.value
                       )
                     }}
                   </button>
@@ -1396,7 +1396,7 @@
                             getShowCount == false ? 'd-none' : 'd-block',
                           ]"
                         >
-                          <span v-if="issuesObj">{{
+                          <span v-if="issuesObj.filtered.issues">{{
                             issueVariation.planned.count
                           }}</span>
                         </h5>
@@ -1552,7 +1552,7 @@
                     <button
                       class="btn text-light btn-md mh-orange px-1 profile-btns"
                     >
-                      RESULTS: {{ issuesObj.length }}
+                      RESULTS: {{ issuesObj.filtered.issues.length }}
                     </button>
                   </span>
                 </div>
@@ -1561,7 +1561,7 @@
            
             <div
               class="row text-center mt-1 pr-3"
-              v-if="issuesObj !== null && issuesObj.length > 0"
+              v-if="issuesObj.filtered.issues !== null && issuesObj.filtered.issues.length > 0"
             >
               <div class="xTable px-3" style="overflow-x: auto">
                 <table
@@ -2160,7 +2160,7 @@
                   {{ currentIssuesPage }} of
                   {{
                     Math.ceil(
-                      this.issuesObj.length / this.C_issuesPerPage.value
+                      this.issuesObj.filtered.issues.length / this.C_issuesPerPage.value
                     )
                   }}
                 </button>
@@ -2178,7 +2178,7 @@
             <template
               slot="label"
               class="text-right"
-              v-if="risksObj && risksObj !== undefined"
+              v-if="risksObj.filtered.risks && risksObj.filtered.risks !== undefined"
             >
               RISKS
               <span class="badge badge-secondary badge-pill">
@@ -2340,7 +2340,7 @@
                             getShowCount == false ? 'd-none' : 'd-block',
                           ]"
                         >
-                          <span v-if="risksObj">{{
+                          <span v-if="risksObj.filtered.risks">{{
                             riskVariation.ongoing.count
                           }}<span
                             v-tooltip="`Ongoing: Closed`"
@@ -2371,7 +2371,7 @@
                             getShowCount == false ? 'd-none' : 'd-block',
                           ]"
                         >
-                          <span v-if="risksObj">{{
+                          <span v-if="risksObj.filtered.risks">{{
                             riskVariation.planned.count
                           }}</span>
                         </h5>
@@ -2529,14 +2529,14 @@
                     <button
                       class="btn text-light btn-md mh-orange px-1 profile-btns"
                     >
-                      RESULTS: {{ risksObj.length }}
+                      RESULTS: {{ risksObj.filtered.risks.length }}
                     </button>
                   </span>
                 </div>
               </div>
               <div
                 class="row text-center mt-2 pr-3"
-                v-if="risksObj !== null && risksObj.length > 0"
+                v-if="risksObj.filtered.risks !== null && risksObj.filtered.risks.length > 0"
               >
                 <div class="xTable px-3" style="overflow-x: auto">
                   <table
@@ -3196,7 +3196,7 @@
                     {{ currentRisksPage }} of
                     {{
                       Math.ceil(
-                        this.risksObj.length / this.C_risksPerPage.value
+                        this.risksObj.filtered.risks.length / this.C_risksPerPage.value
                       )
                     }}
                   </button>
@@ -3424,7 +3424,7 @@
                     <button
                       class="btn text-light btn-md mh-orange px-1 profile-btns"
                     >
-                      RESULTS: {{ lessonsObj.length }}
+                      RESULTS: {{ lessonsObj.filtered.lessons.length }}
                     </button>
                   </span>
                 </div>
@@ -3432,7 +3432,7 @@
 
               <div
                 class="row text-center mt-2 pr-3"
-                v-if="lessonsObj !== null && lessonsObj.length > 0"
+                v-if="lessonsObj.filtered.lessons !== null && lessonsObj.filtered.lessons.length > 0"
               >
                 <div class="xTable px-3" style="overflow-x: auto">
                   <table
@@ -3928,7 +3928,7 @@
                     {{ currentLessonsPage }} of
                     {{
                       Math.ceil(
-                        this.lessonsObj.length / this.C_lessonsPerPage.value
+                        this.lessonsObj.filtered.lessons.length / this.C_lessonsPerPage.value
                       )
                     }}
                   </button>
@@ -4119,7 +4119,7 @@ export default {
     ]),
 
    sortedTasks:function() {
-          return this.tasksObj.sort((a,b) => {
+          return this.tasksObj.filtered.tasks.sort((a,b) => {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
@@ -4134,7 +4134,7 @@ export default {
         });
     },
     sortedIssues: function () {
-      return this.issuesObj
+      return this.issuesObj.filtered.issues
         .sort((a, b) => {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
@@ -4150,7 +4150,7 @@ export default {
         });
     },
     sortedRisks: function () {
-      return this.risksObj
+      return this.risksObj.filtered.risks
         .sort((a, b) => {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
@@ -4166,7 +4166,7 @@ export default {
         });
     },
     sortedLessons: function () {
-      return this.lessonsObj
+      return this.lessonsObj.filtered.lessons
         .sort((a, b) => {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
@@ -4188,9 +4188,9 @@ export default {
       });
     },
     tasksObj() {
-      if(this.currentTab != 'tasks')
-        return []
-      return this.portfolioTasks
+      // if(this.currentTab != 'tasks')
+      //   return []
+    let tasks = this.portfolioTasks
         .filter((task) => {
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(task.facility_project_id)
         })
@@ -4307,7 +4307,13 @@ export default {
           } else return true;
           // Filtering 7 Task States
         })
-        .filter((task) => {
+
+        return {
+         unfiltered: {
+            tasks
+            },
+        filtered: {
+         tasks:  tasks.filter(task => {
           if (this.hideDraft) {
             return !task.draft;
           } else return true;
@@ -4379,12 +4385,14 @@ export default {
           if (this.hideImportant && this.hideBriefed && this.hideWatched) {
             return task.important + task.reportable + task.watched;
           } else return true;
-        });
+        })
+        }
+      }
     },
     issuesObj() {
-      if(this.currentTab != 'issues')
-        return []
-      return this.portfolioIssues
+      // if(this.currentTab != 'issues')
+      //   return []
+    let issues =  this.portfolioIssues
         .filter((issue) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(issue.facility_project_id)
         })
@@ -4509,7 +4517,12 @@ export default {
             );
           } else return true;
         })
-        .filter((issue) => {
+      return {
+         unfiltered: {
+            issues
+            },
+        filtered: {
+         issues:  issues.filter(issue => {
           if (this.hideDraft) {
             return !issue.draft;
           } else return true;
@@ -4575,12 +4588,14 @@ export default {
           if (this.hideImportant && this.hideBriefed && this.hideWatched) {
             return issue.important + issue.reportable + issue.watched;
           } else return true;
-        });
+        })
+        }
+      }
     },
     risksObj() {
-      if(this.currentTab != 'risks')
-        return []
-      return this.portfolioRisks
+      // if(this.currentTab != 'risks')
+      //   return []
+    let risks = this.portfolioRisks
         .filter((risk) => {       
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(risk.facility_project_id)
         })
@@ -4694,7 +4709,12 @@ export default {
             );
           } else return true;
         })
-        .filter((risk) => {
+        return {
+          unfiltered: {
+            risks
+          },
+          filtered: {
+         risks: risks.filter((risk) => {
           if (this.hideDraft) {
             return !risk.draft;
           } else return true;
@@ -4764,12 +4784,14 @@ export default {
           if (this.hideImportant && this.hideBriefed && this.hideWatched) {
             return risk.important + risk.reportable + risk.watched;
           } else return true;
-        });
+        })
+       }
+     }
     },
     lessonsObj() {
-      if(this.currentTab != 'lessons')
-        return []
-      return this.portfolioLessons
+      // if(this.currentTab != 'lessons')
+      //   return []
+     let lessons = this.portfolioLessons
         .filter((lesson) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(lesson.facility_project_id)
         })
@@ -4820,7 +4842,12 @@ export default {
             );
           } else return true;
         })
-        .filter((lesson) => {
+        return {
+         unfiltered: {
+           lessons
+            },
+        filtered: {
+        lessons:  lessons.filter(lesson => {
           // Filtering 3 Lesson States
           if (this.hideDraft) {
             return !lesson.draft;
@@ -4848,43 +4875,45 @@ export default {
           if (this.hideImportant && this.hideBriefed) {
             return lesson.important + lesson.reportable;
           } else return true;
-        });
+        })
+       }
+      }
     },
     taskVariation() {
-      let planned = _.filter(this.tasksObj, (t) => t && t.planned);
+      let planned = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.planned);
       let taskDrafts = _.filter(
-        this.tasksObj,
+        this.tasksObj.unfiltered.tasks,
         (t) => t && t.draft == true
       );
       let important = _.filter(
-        this.tasksObj,
+        this.tasksObj.unfiltered.tasks,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.tasksObj,
+       this.tasksObj.unfiltered.tasks,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.tasksObj,
+       this.tasksObj.unfiltered.tasks,
         (t) => t && t.watched == true
       );
 
-      let completed = _.filter(this.tasksObj, (t) => t && t.completed);
-      let inProgress = _.filter(this.tasksObj, (t) => t && t.in_progress);
+      let completed = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.completed);
+      let inProgress = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.in_progress);
       let onHoldT = _.filter(
-        this.tasksObj,
+       this.tasksObj.unfiltered.tasks,
         (t) => t && t.on_hold == true
       );
       let ongoing = _.filter(
-        this.tasksObj,
+        this.tasksObj.unfiltered.tasks,
         (t) => t && t.ongoing == true
       );
       let ongoingClosed = _.filter(
-        this.portfolioTasks,
+       this.tasksObj.unfiltered.tasks,
         (t) => t && t.closed == true
       );
       let overdue = _.filter(
-        this.tasksObj,
+       this.tasksObj.unfiltered.tasks,
         (t) => t && t.is_overdue == true
       );
 
@@ -4929,38 +4958,37 @@ export default {
       };
     },
     issueVariation() {
-      let planned = _.filter(
-        this.issuesObj,
+      let planned = _.filter(this.issuesObj.unfiltered.issues,
         (t) => t && t.planned == true
         // (t) => t && t.startDate && t.startDate > this.today
       );
       let issueDrafts = _.filter(
-        this.issuesObj,
+        this.issuesObj.unfiltered.issues,
         (t) => t && t.draft == true
       );
-      let completed = _.filter(this.issuesObj, (t) => t && t.completed);
+      let completed = _.filter(this.issuesObj.unfiltered.issues, (t) => t && t.completed);
       let inProgress = _.filter(
-        this.issuesObj,
+        this.issuesObj.unfiltered.issues,
         (t) => t && t.in_progress == true
       );
       let onHoldI = _.filter(
-        this.issuesObj,
+        this.issuesObj.unfiltered.issues,
         (t) => t && t.on_hold == true
       );
       let overdue = _.filter(
-        this.issuesObj,
+      this.issuesObj.unfiltered.issues,
         (t) => t && t.is_overdue == true
       );
       let important = _.filter(
-        this.issuesObj,
+        this.issuesObj.unfiltered.issues,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.issuesObj,
+       this.issuesObj.unfiltered.issues,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.issuesObj,
+      this.issuesObj.unfiltered.issues,
         (t) => t && t.watched == true
       );
 
@@ -4998,53 +5026,53 @@ export default {
         },
       };
     },
-    filterOutWatched() {
-      return _.filter(this.tasksObj, (t) => t && t.watched == false);
-    },
+    // filterOutWatched() {
+    //   return _.filter(this.tasksObj, (t) => t && t.watched == false);
+    // },
     riskVariation() {
       let planned = _.filter(
-        this.risksObj,
+        this.risksObj.unfiltered.risks,
         (t) => t && t.planned == true
         // (t) => t && t.startDate && t.startDate > this.today
       );
       let riskDrafts = _.filter(
-        this.risksObj,
+       this.risksObj.unfiltered.risks,
         (t) => t && t.draft == true
       );
       let important = _.filter(
-        this.risksObj,
+        this.risksObj.unfiltered.risks,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.risksObj,
+        this.risksObj.unfiltered.risks,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.risksObj,
+        this.risksObj.unfiltered.risks,
         (t) => t && t.watched == true
       );
       let completed = _.filter(
-        this.risksObj,
+       this.risksObj.unfiltered.risks,
         (t) => t && t.completed == true
       );
       let inProgress = _.filter(
-        this.risksObj,
+       this.risksObj.unfiltered.risks,
         (t) => t && t.in_progress == true
       );
       let onHoldR = _.filter(
-        this.risksObj,
+       this.risksObj.unfiltered.risks,
         (t) => t && t.on_hold == true
       );
       let ongoing = _.filter(
-        this.risksObj,
+        this.risksObj.unfiltered.risks,
         (t) => t && t.ongoing == true
       );
       let ongoingClosed = _.filter(
-        this.portfolioRisks,
+      this.risksObj.unfiltered.risks,
         (t) => t && t.closed == true
       );
       let overdue = _.filter(
-        this.risksObj,
+      this.risksObj.unfiltered.risks,
         (t) => t && t.is_overdue == true
       );
       return {
@@ -5089,19 +5117,19 @@ export default {
     },
     lessonVariation() {
       let lessonDrafts = _.filter(
-        this.lessonsObj,
+        this.lessonsObj.unfiltered.lessons,
         (t) => t && t.draft == true
       );
       let important = _.filter(
-        this.lessonsObj,
+     this.lessonsObj.unfiltered.lessons,
         (t) => t && t.important == true
       );
       let briefings = _.filter(
-        this.lessonsObj,
+       this.lessonsObj.unfiltered.lessons,
         (t) => t && t.reportable == true
       );
       let completed = _.filter(
-        this.lessonsObj,
+        this.lessonsObj.unfiltered.lessons,
         (t) => t && t.draft == false
       );
       return {
@@ -5466,25 +5494,25 @@ export default {
     openTpresentation(){
       this.dialogVisible = true; 
       this.currentTaskSlide = 0 
-      this.dynamicObj = this.tasksObj  
+      this.dynamicObj = this.tasksObj.filtered.tasks
       this.action = "TASK"   
     },
    openIpresentation(){
       this.dialogVisible = true; 
       this.currentTaskSlide = 0 
-      this.dynamicObj = this.issuesObj;
+      this.dynamicObj = this.issuesObj.filtered.issues;
       this.action = "ISSUE"       
     },
     openRpresentation(){
       this.dialogVisible = true; 
       this.currentTaskSlide = 0 
-      this.dynamicObj = this.risksObj;
+      this.dynamicObj = this.risksObj.filtered.risks
       this.action = "RISK"       
     },
     openLpresentation(){
       this.dialogVisible = true; 
       this.currentTaskSlide = 0 
-      this.dynamicObj = this.lessonsObj;
+      this.dynamicObj = this.lessonsObj.filtered.lessons;
       this.action = "LESSON"       
     },
     nextTask(){
@@ -5514,7 +5542,7 @@ export default {
       this.currentSort = s;
     },
     nextPage: function () {
-      if (this.currentPage * this.C_tasksPerPage.value < this.tasksObj.length)
+      if (this.currentPage * this.C_tasksPerPage.value < this.tasksObj.filtered.tasks.length)
         this.currentPage++;
     },
     prevPage: function () {
@@ -5530,7 +5558,7 @@ export default {
     nextIssuesPage: function () {
       if (
         this.currentIssuesPage * this.C_issuesPerPage.value <
-        this.issuesObj.length
+        this.issuesObj.filtered.issues.length
       )
         this.currentIssuesPage++;
     },
@@ -5547,7 +5575,7 @@ export default {
     nextRisksPage: function () {
       if (
         this.currentRisksPage * this.C_risksPerPage.value <
-        this.risksObj.length
+        this.risksObj.filtered.risks.length
       )
         this.currentRisksPage++;
     },
@@ -5564,7 +5592,7 @@ export default {
     nextLessonsPage: function () {
       if (
         this.currentLessonsPage * this.C_lessonsPerPage.value <
-        this.lessonsObj.length
+        this.lessonsObj.filtered.lessons.length
       )
         this.currentLessonsPage++;
     },
@@ -5676,24 +5704,24 @@ export default {
       let tab_id = $(event.target).attr("id")
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
-        if(this.tasksObj && this.tasksObj.length < 1){
+        if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
           this.fetchPortfolioTasks();
         }
         
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
-        if(this.issuesObj && this.issuesObj.length < 1){
+        if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
           this.fetchPortfolioIssues();
         }
       }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'
-        if(this.risksObj && this.risksObj.length < 1){
+        if(this.risksObj.filtered.risks && this.risksObj.filtered.risks.length < 1){
           this.fetchPortfolioRisks();
         }
         
       }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
         this.currentTab = 'lessons'
-        if(this.lessonsObj && this.lessonsObj.length < 1){
+        if(this.lessonsObj.filtered.lessons && this.lessonsObj.filtered.lessons.length < 1){
           this.fetchPortfolioLessons();
         }
       } 
