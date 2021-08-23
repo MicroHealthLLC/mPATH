@@ -1158,6 +1158,8 @@ export default {
         return "map";
       } else if (this.$route.path.includes("sheet")) {
         return "sheet";
+     } else if (this.$route.path.includes("calendar")) {
+        return "calendar";
       } else if (this.$route.path.includes("lessons")) {
         return "lessons";
       } else {
@@ -1165,8 +1167,8 @@ export default {
       }
     },
     projectNameLink() {
-      if (this.$route.path.includes("lessons")) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar") || this.$route.path.includes("map") || this.$route.path.includes("sheet") ){
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
       }
     },
     isMapView() {
