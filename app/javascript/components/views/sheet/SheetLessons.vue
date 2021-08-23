@@ -622,6 +622,60 @@ export default {
           this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
         }        
     },
+       filteredLessons() {
+      // Returns filtered lessons based on search value from input
+      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+      return {
+      unfiltered: {
+       lessons:  this.projectLessons
+        .filter((lesson) =>
+          lesson.title.toLowerCase().match(this.search.toLowerCase())
+        )
+        .filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+        }).filter((lesson, index) => {
+          let start = (this.currentPage - 1) * this.lessonsPerPage.value;
+          let end = this.currentPage * this.lessonsPerPage.value;
+          if (index >= start && index < end) return true;
+          return this.end;
+        }) 
+          },
+        filtered : {
+          lessons: this.projectLessons.filter(lesson => {
+        // Filtering 3 Lesson States        
+        if (this.getHideDraft) {
+          return !lesson.draft
+        } else return true
+  
+      }).filter(lesson => {
+         if (this.getHideComplete) {
+          return lesson.draft
+        } else return true
+      }).filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+      // Filtering 3 Task Tags
+      }).filter(lesson => {
+         if (this.getHideBriefed && !this.getHideImportant ) {
+          return lesson.reportable
+        }
+        if (this.getHideBriefed && this.getHideImportant) {          
+           return lesson.reportable + lesson.important
+        } else return true
+         
+      }).filter(lesson => {
+         if (this.getHideImportant && !this.getHideBriefed) {
+          return lesson.important
+        } if (this.getHideImportant && this.getHideBriefed) {
+          return lesson.important + lesson.reportable
+       } else return true              
+        })
+      } 
+    }
+   },
    variation() {
      let drafts = _.filter(
      this.filteredLessons.unfiltered.lessons,
@@ -668,56 +722,7 @@ export default {
         this.setLessonsPerPageFilter(value);
       },
     },
-    filteredLessons() {
-      // Returns filtered lessons based on search value from input
-      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
-      return {
-      unfiltered: {
-       lessons:  this.projectLessons
-        .filter((lesson) =>
-          lesson.title.toLowerCase().match(this.search.toLowerCase())
-        )
-        .filter((lesson, index) => {
-          let start = (this.currentPage - 1) * this.lessonsPerPage.value;
-          let end = this.currentPage * this.lessonsPerPage.value;
-          if (index >= start && index < end) return true;
-          return this.end;
-        }) 
-          },
-        filtered : {
-          lessons: this.projectLessons.filter(lesson => {
-        // Filtering 3 Lesson States        
-        if (this.getHideDraft) {
-          return !lesson.draft
-        } else return true
-  
-      }).filter(lesson => {
-         if (this.getHideComplete) {
-          return lesson.draft
-        } else return true
-      }).filter(lesson => {
-        if(milestoneIds.length > 0) {
-          return milestoneIds.includes(lesson.task_type_id)
-        } else return true;
-      // Filtering 3 Task Tags
-      }).filter(lesson => {
-         if (this.getHideBriefed && !this.getHideImportant ) {
-          return lesson.reportable
-        }
-        if (this.getHideBriefed && this.getHideImportant) {          
-           return lesson.reportable + lesson.important
-        } else return true
-         
-      }).filter(lesson => {
-         if (this.getHideImportant && !this.getHideBriefed) {
-          return lesson.important
-        } if (this.getHideImportant && this.getHideBriefed) {
-          return lesson.important + lesson.reportable
-       } else return true              
-        })
-      } 
-    }
-   },
+ 
   },
   mounted() {
     // GET request action to retrieve all lessons for project
