@@ -3205,11 +3205,11 @@ export default {
         return "kanban";
       }
     },
-    projectNameLink() {
-     if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar") || this.$route.path.includes("map") || this.$route.path.includes("sheet")) {
+  projectNameLink() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
       } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
+        return `/programs/${this.$route.params.programId}/${this.tab}`;
       }
     },
   },
