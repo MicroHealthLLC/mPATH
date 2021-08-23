@@ -180,17 +180,56 @@
                                           <span v-else> <h4>No Assignments</h4></span>                                        
                                   </div>  
              
-                                   <div class="col" v-if="dynamicObj !== lessonsObj && !dynamicObj[currentTaskSlide].ongoing" >                               
+                                   <div class="col" v-if="dynamicObj !== lessonsObj && !dynamicObj[currentTaskSlide].ongoing && dynamicObj !== risksObj " >                               
                                                                
-                                         <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
-                                          <el-progress
-                                            type="circle"
-                                            class="py-2"                          
-                                            :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
-                                          ></el-progress>
-                                          </span>
-                                         <h4>{{action }} PROGRESS</h4>
-                                        </div>          
+                                    <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
+                                    <el-progress
+                                      type="circle"
+                                      class="py-2"                          
+                                      :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
+                                    ></el-progress>
+                                    </span>
+                                    <h4>{{action }} PROGRESS</h4>
+                                  </div>     
+
+                                   <div class="col mt-4" v-if="dynamicObj == risksObj " >  
+
+                                        <h6>RISK APPROACH</h6> 
+                                        
+                                        <h4 class="text-light label px-2 d-inline-block"> {{
+                                          dynamicObj[currentTaskSlide].risk_approach.charAt(0).toUpperCase() +
+                                          dynamicObj[currentTaskSlide].risk_approach.slice(1)
+                                          }}</h4>
+                                      <h6 class="mt-5">PRIORITY LEVEL</h6>  
+                                          <h4
+                                          v-if="dynamicObj[currentTaskSlide].priority_level == 'Very Low'"
+                                          class="gray2 text-dark px-1 riskLabels"
+                                          >Very Low</h4
+                                        >
+                                        <h4
+                                          v-else-if="dynamicObj[currentTaskSlide].priority_level == 'Low'"
+                                          class="green1 riskLabels px-1"
+                                          >Low</h4
+                                        >
+                                        <h4
+                                          v-else-if="dynamicObj[currentTaskSlide].priority_level == 'Moderate'"
+                                          class="yellow1 riskLabels px-1"
+                                          >Moderate</h4
+                                        >
+                                        <h4
+                                          v-else-if="dynamicObj[currentTaskSlide].priority_level == 'High'"
+                                          class="orange1 riskLabels px-1"
+                                          >High</h4
+                                        >
+                                        <h4
+                                          v-else-if="dynamicObj[currentTaskSlide].priority_level == 'Extreme'"
+                                          class="red1 riskLabels px-1"
+                                          >Extreme</h4
+                                        >                                                                  
+                          
+                                  </div>     
+
+
                                       </div>    
   
                                </div>   
@@ -5920,6 +5959,11 @@ table {
   cursor: default;
 }
 
+.riskLabels {
+    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
 .el-select-dropdown__item {
   font-size: 14px;
   display: block !important;
@@ -6104,4 +6148,8 @@ table {
   font-style: FuturaPTBook;
 }
 
+h4.text-light.label {
+  border: solid #f8f9fa 1px;
+  border-radius: 0.25rem;
+}
 </style>
