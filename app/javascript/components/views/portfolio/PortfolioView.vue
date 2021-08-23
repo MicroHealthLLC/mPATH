@@ -602,7 +602,7 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                      <button
-                      v-tooltip="`Briefing Mode`"
+                      v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue text-light"
                     >
@@ -1488,7 +1488,7 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                       <button
-                      v-tooltip="`Briefing Mode`"
+                      v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
                       class="btn btn-md presentBtn mr-1 text-light mh-blue"
                     >
@@ -2465,7 +2465,7 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                      <button
-                      v-tooltip="`Briefing Mode`"
+                      v-tooltip="`Presentation Mode`"
                       @click.prevent="openRpresentation"
                       class="btn btn-md mr-1 text-light mh-blue presentBtn"
                     >
@@ -3360,7 +3360,7 @@
                 <div class="col-2 px-0">
                   <span class="btnRow">
                    <button
-                      v-tooltip="`Briefing Mode`"
+                      v-tooltip="`Presentation Mode`"
                       @click.prevent="openLpresentation"
                       class="btn btn-md presentBtn mr-1 mh-blue"
                     >
