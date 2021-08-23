@@ -120,31 +120,41 @@
                                 </div>    
                                
                                                        
-                                <div class="col-5 text-center lastUpdateCol mx-4 pt-0 px-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
+                                <div class="col-5 text-center  mx-4 pt-0 px-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
+                                <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:350px; overflow-y:auto">
+                                 <div style="height:250px; overflow-y:auto">
                                  <span  v-if="dynamicObj[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
                                    <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].notes[dynamicObj[currentTaskSlide].notes.length - 1].body }}</em></h4>
                                   </span>
                                    <span
-                                    class="toolTip timeStamp px-2"                                                                 
+                                    class="px-2"                                                                 
                                    >
-                                    <h5>{{
+                                    <h6 class="mt-2">{{
                                       moment(dynamicObj[currentTaskSlide].notes_updated_at[0]).format(
                                         "DD MMM YYYY, h:mm a "
                                       ) + ' By: ' +
                                      dynamicObj[currentTaskSlide].notes[dynamicObj[currentTaskSlide].notes.length - 1].user.full_name
                                     }} 
-                                    </h5>
+                                    </h6>
                                   </span>
                                    </span>
                                    <span v-else>
                                      <br>
                                       <h4 class="px-3" style="color:lightgray"><em>NO UPDATES</em></h4>
                                    </span>
-                               </div>   
+                               </div>  
+                                </div> 
+
+                               <div class="lastUpdateCol mt-3" v-if="dynamicObj == risksObj.filtered.risks">
+
+                                 <h3 class="mh-green text-light d-block">RISK DESCRIPTION</h3>
+                                   <div style="height:100px; overflow-y:auto">
+                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].risk_description }}</h4>
+                                  </div>
+                               </div>
 
                                 </div>
 
@@ -168,13 +178,13 @@
                                   </div>    
                               
                               
-                                    <div class="col mt-4 truncate-line-two" v-if="dynamicObj == lessonsObj.filtered.lessons" >      
+                                    <div class="col mt-3 truncate-line-two" v-if="dynamicObj == lessonsObj.filtered.lessons" >      
                                    <i class="fas fa-user d-block text-light" style="font-size:2.8rem"></i>
                                           <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].added_by"><h4>Added By:  {{ dynamicObj[currentTaskSlide].added_by }}</h4></span>
                                                                             
                                   </div>  
                           
-                                   <div class="col mt-4 truncate-line-two" v-if="dynamicObj !== lessonsObj.filtered.lessons">
+                                   <div class="col mt-3 truncate-line-two" v-if="dynamicObj !== lessonsObj.filtered.lessons">
                                    <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
                                           <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].users.length > 0"><h4> {{ dynamicObj[currentTaskSlide].users }}</h4></span>
                                           <span v-else> <h4>No Assignments</h4></span>                                        
@@ -192,7 +202,7 @@
                                     <h4>{{action }} PROGRESS</h4>
                                   </div>     
 
-                                   <div class="col mt-4" v-if="dynamicObj == risksObj.filtered.risks" >  
+                                   <div class="col mt-3" v-if="dynamicObj == risksObj.filtered.risks" >  
 
                                         <h6>RISK APPROACH</h6> 
                                         
@@ -6148,11 +6158,11 @@ table {
   border-radius: 0.25rem;
   border: solid 1.5px #1D336F;
 }
-.timeStamp {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-}
+// .timeStamp {
+//   position: absolute;
+//   bottom: 0.5rem;
+//   right: 0.5rem;
+// }
 /deep/.el-progress-circle {
   height: 90px;
   width: 90px;
