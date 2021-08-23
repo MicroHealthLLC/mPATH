@@ -208,6 +208,7 @@ export default {
     ...mapMutations([
       "setLessonsPerPageFilter",
       'setShowCount',
+      'setTaskTypeFilter',
       // 2 States
       'setHideComplete',
       'setHideDraft',
@@ -288,6 +289,7 @@ export default {
       "lessonsLoaded",
       "projectLessons",
       "taskTypes",
+      'taskTypeFilter',
       'getShowCount',
       // 2 States
       'getHideComplete',       
@@ -296,6 +298,14 @@ export default {
       'getHideImportant',
       'getHideBriefed',
     ]),
+    C_taskTypeFilter: {
+      get() {
+        return this.taskTypeFilter
+      },
+      set(value) {
+        this.setTaskTypeFilter(value)
+      }
+    },
     C_showCountToggle: {                  
     get() {
       return this.getShowCount                
@@ -340,13 +350,18 @@ export default {
     },
     filteredLessons() {
          // Returns filtered lessons based on search value from input
+     let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
       return {
-
       unfiltered: {
             lessons:  this.projectLessons
         .filter((lesson) =>
           lesson.title.toLowerCase().match(this.search.toLowerCase())
         )
+       .filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+       })
       },     
       filtered : {
           lessons: this.projectLessons.filter(lesson => {
@@ -359,7 +374,10 @@ export default {
          if (this.getHideComplete) {
           return lesson.draft
         } else return true
-
+       }).filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;  
       // Filtering 3 Task Tags
       }).filter(lesson => {
          if (this.getHideBriefed && !this.getHideImportant ) {
