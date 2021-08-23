@@ -174,7 +174,7 @@
                                                                             
                                   </div>  
                           
-                                   <div class="col mt-4 truncate-line-two">      
+                                   <div class="col mt-4 truncate-line-two" v-if="dynamicObj !== lessonsObj">
                                    <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
                                           <span class="truncate-line-two" v-if="dynamicObj[currentTaskSlide].users.length > 0"><h4> {{ dynamicObj[currentTaskSlide].users }}</h4></span>
                                           <span v-else> <h4>No Assignments</h4></span>                                        
