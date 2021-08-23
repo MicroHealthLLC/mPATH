@@ -97,7 +97,7 @@
          <font-awesome-icon icon="plus-circle" data-cy="new_risk" />
           Add Risk
         </button>
-         <span class="d-inline-block tagCol px-2 mr-1">
+         <span class="d-inline-block tagCol pl-1">
              <div class="pr-3 text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
                    <span v-tooltip="`COMPLETE`" class="d-block">
                     <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>

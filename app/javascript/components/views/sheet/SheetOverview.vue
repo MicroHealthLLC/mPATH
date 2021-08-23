@@ -72,7 +72,7 @@
                 </div> 
               </div>
 
-              <div class="row text-center mt-0" :class="[taskStats.length > 0 ? '' : 'pb-3']">
+              <div class="row text-center mt-0" :class="[taskStats.length > 0 ? '' : '']">
                 <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{
                     taskVariation.completed.count
@@ -259,7 +259,7 @@
               </div>
 
 
-                <div class="row text-center mt-0" :class="[filteredIssues.length > 0 ? '' : 'pb-3']">
+                <div class="row text-center mt-0" :class="[filteredIssues.length > 0 ? '' : '']">
                 <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{
                     issueVariation.completed.count
@@ -468,7 +468,7 @@
                   </div> 
                </div>
 
-              <div class="row text-center mt-0" :class="[filteredRisks.length > 0 ? '' : 'pb-3']">
+              <div class="row text-center mt-0" :class="[filteredRisks.length > 0 ? '' : '']">
                 <div class="col pb-0 mb-0">
                    <h4 class="mb-0">{{
                     riskVariation.completed.count
