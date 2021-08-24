@@ -702,11 +702,11 @@
             </div>      
               <div class="row mt-3 text-center" >
                 <div class="col-6 p-0 mb-0">                  
-                  <span  class="d-block"><i class="fas fa-clipboard-check text-success font-md"></i></span>
+                  <span  class="d-block" v-tooltip="`COMPLETE`"><i class="fas fa-clipboard-check text-success font-md"></i></span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
                 </div>
                  <div class="col-6 p-0 mb-0">
-                <span class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span class="d-block"  v-tooltip="`DRAFTS`"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">DRAFTS</span>           
                 </div>
                 

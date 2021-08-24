@@ -23,8 +23,8 @@ export default {
     PortfolioFilterSidebar,
   },
   mounted() {
-    let id = this.$route.params.programId;
-    this.fetchDashboardData({ id });
+    // let id = this.$route.params.programId;
+    // this.fetchDashboardData({ id });
     // Prevent right-click context-menu from appearing accross whole app
     window.oncontextmenu = (e) => {
       if (e.target.nodeName !== "INPUT" && e.target.nodeName !== "TEXTAREA") {
