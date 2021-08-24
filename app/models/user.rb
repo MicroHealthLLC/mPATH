@@ -38,6 +38,35 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def provide_program_privileges
+    user = self
+    return if !user.project_ids.any?
+    privilege = user.privilege
+    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
+    privilege_attr.each do |k,v|
+      if v.is_a?(String)
+        privilege_attr[k] = v.chars
+      end
+    end
+    user_project_privileges = user.project_privileges
+    project_to_create_privileges = []
+    user.project_ids.each do |pid|
+      p = user_project_privileges.detect{|p| p.project_ids.map(&:to_i).include?(pid) }
+      if !p
+        project_to_create_privileges << pid
+      end
+    end
+    if project_to_create_privileges.any?
+      privilege_attr.merge!(user_id: user.id, project_ids: project_to_create_privileges.map(&:to_s))
+      p = ProjectPrivilege.create(privilege_attr)
+    end
+
+  end
+
+  def authorized_programs
+    Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active
+  end
+
   def full_name
     n = ''
     if self.first_name

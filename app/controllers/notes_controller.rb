@@ -47,7 +47,7 @@ class NotesController < AuthenticatedController
   private
   def set_noteable
     if params[:project_id].present? && params[:facility_id].present?
-      @project = current_user.projects.active.find(params[:project_id])
+      @project = current_user.authorized_programs.find(params[:project_id])
       @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
     elsif params[:facility_project_id].present?
       @noteable = FacilityProject.find(params[:facility_project_id])      
