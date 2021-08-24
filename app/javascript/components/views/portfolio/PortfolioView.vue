@@ -55,6 +55,13 @@
                             v-tooltip="`Ongoing: Closed`"
                             ><i class="fas fa-retweet mr-1 text-secondary" style="font-size:1.8rem"></i
                           ></span>
+                           <span
+                             v-if="dynamicObj[currentTaskSlide] && dynamicObj == lessonsObj.filtered.lessons && !dynamicObj[currentTaskSlide].draft"
+                             v-tooltip="`Completed`"
+                            ><i
+                              class="fas fa-clipboard-check text-success mr-1" style="font-size:1.8rem"
+                            ></i
+                          ></span>
                           <span
                              v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].on_hold == true"
                             v-tooltip="`On Hold`"
@@ -123,7 +130,7 @@
                                 <div class="col-5 text-center  mx-4 pt-0 px-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:250px; overflow-y:auto">
+                                 <div style="height:275px; overflow-y:auto">
                                  <span  v-if="dynamicObj[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
@@ -147,8 +154,24 @@
                                    </span>
                                </div>  
                                 </div> 
+                              <div class="wrap d-flex" v-if="dynamicObj == issuesObj.filtered.issues">
+                                  <div class="lastUpdateCol mt-3 px-0 w-50 mr-1 pt-0">
+                                 <h3 class="mh-green text-light d-block">ISSUE TYPE</h3>
+                                   <div style="height:45px; overflow-y:auto">
+                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].issue_type }}</h4>
+                                  </div>
+                               </div>
+                                  <div class="lastUpdateCol mt-3 px-0 pt-0 ml-1 w-50" v-if="dynamicObj == issuesObj.filtered.issues">
 
-                               <div class="lastUpdateCol mt-3" v-if="dynamicObj == risksObj.filtered.risks">
+                                 <h3 class="mh-green text-light d-block">ISSUE SEVERITY</h3>
+                                   <div style="height:45px; overflow-y:auto">
+                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].issue_severity }}</h4>
+                                  </div>
+                               </div>
+                              </div>
+                          
+
+                               <div class="lastUpdateCol mt-3 w-50 ml-1" v-if="dynamicObj == risksObj.filtered.risks">
 
                                  <h3 class="mh-green text-light d-block">RISK DESCRIPTION</h3>
                                    <div style="height:100px; overflow-y:auto">
@@ -383,8 +406,8 @@
             </template>
 
          
-            <div class="box-shadow py-3">
-              <div class="row pt-3 pr-2 pb-1">
+            <div class="box-shadow py-2">
+              <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
                   <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
                      <button class="btn btn-info btn-md">Add Task</button> 
@@ -649,7 +672,7 @@
                 </div>
 
                 <div class="col-2 px-0">
-                  <span class="btnRow">
+                  <span class="btnRow d-flex">
                      <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openTpresentation"
@@ -669,7 +692,7 @@
                       @click.prevent="
                         exportTasksToExcel('table', 'Portfolio Tasks')
                       "
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md mx-1 exportBtns text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -1246,69 +1269,21 @@
               <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
             </div>
           </el-tab-pane>
-          <el-tab-pane class="pt-2"  name="issues">
+          <el-tab-pane class="pt-2"  name="issues"
+           v-loading="!portfolioIssuesLoaded"
+            element-loading-text="Fetching your data. Please wait..."
+            :class="[!portfolioIssuesLoaded ? 'vh100': '']"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"         
+          >
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
                 <span>{{ portfolioCounts.issues_count }}</span>
               </span>
             </template>
-
-            <!-- <div class="row pb-4">
-              <div class="col-4 py-2">
-            <div class="w-100 d-flex">
-               <div class="d font-sm mt-2 mr-2">SEARCH</div>              
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_issues" >
-                <el-button slot="prepend" icon="el-icon-search"></el-button>
-              </el-input>
-              </div>
-               </div>
-               
-            <div  class="col-4 pl-0 py-2" >   
-            <div class="d-flex w-100">
-            <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
-                   <template>
-                    <treeselect  
-                    placeholder="Search and select" 
-                    :multiple="true" 
-                    :match-keys= "['facility_project_id', 'id', 'label']"
-                    :limit="3"
-                    :limitText="count => `...`"     
-                    track-by="name"                            
-                    :options="portfolioPrograms" 
-                    valueFormat="object"
-                    v-model="C_portfolioIssueNamesFilter"
-                    />         
-                 </template>              
-                </div>      
-              </div> 
-                  <div  class="col-4 pl-0 py-2">   
-                <div class="d-flex w-100">                  
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
-                   <template>
-                  <el-select 
-                    v-model="C_categoryNameFilter"                    
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Select Process Area"
-                  >
-                  <el-option 
-                    v-for="item in C_i_categories"                                                     
-                    :value="item"   
-                    :key="item"
-                    :label="item"                                                  
-                    >                   
-                      </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-            </div> -->
-
-            <div class="box-shadow pt-3 pb-1">
-              <div class="row pt-3 pb-1 pr-2">
+            <div class="box-shadow pt-2 pb-1">
+              <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
                   <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
                     <span class=""
@@ -1535,7 +1510,7 @@
                 </div>
 
                 <div class="col-2 px-0">
-                  <span class="btnRow">
+                  <span class="btnRow d-flex">
                       <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openIpresentation"
@@ -1555,7 +1530,7 @@
                       @click.prevent="
                         exportIssuesToExcel('table', 'Portfolio Issues')
                       "
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md mx-1 exportBtns text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -2184,7 +2159,16 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2" name="risks">
+          <el-tab-pane class="pt-2" name="risks"
+          
+            v-loading="!portfolioRisksLoaded"
+            element-loading-text="Fetching your data. Please wait..."
+            :class="[!portfolioRisksLoaded ? 'vh100': '']"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"       
+          
+          
+          >
             <template
               slot="label"
               class="text-right"
@@ -2251,8 +2235,8 @@
               </div>
             </div> -->
 
-            <div class="box-shadow py-3">
-              <div class="row pt-3 pb-1 pr-2">
+            <div class="box-shadow py-2">
+              <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
                   <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
                     <span class=""
@@ -2512,7 +2496,7 @@
                 </div>
 
                 <div class="col-2 px-0">
-                  <span class="btnRow">
+                  <span class="btnRow d-flex">
                      <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openRpresentation"
@@ -2532,7 +2516,7 @@
                       @click.prevent="
                         exportRisksToExcel('table', 'Portfolio Risks')
                       "
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md mx-1 exportBtns text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -3220,7 +3204,13 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2"  name="lessons">
+          <el-tab-pane class="pt-2"  name="lessons"
+            v-loading="!portfolioLessonsLoaded"
+            element-loading-text="Fetching your data. Please wait..."
+            :class="[!portfolioLessonsLoaded ? 'vh100': '']"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"         
+          >
             <template slot="label" class="text-right">
               LESSONS LEARNED
               <span class="badge badge-secondary badge-pill">
@@ -3285,8 +3275,8 @@
               </div>
             </div> -->
 
-            <div class="box-shadow py-3">
-              <div class="row pt-3 pb-1 pr-2">
+            <div class="box-shadow py-2">
+              <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
                   <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
                     <span class=""
@@ -3407,7 +3397,7 @@
                   </template>
                 </div>
                 <div class="col-2 px-0">
-                  <span class="btnRow">
+                  <span class="btnRow d-flex">
                    <button
                       v-tooltip="`Presentation Mode`"
                       @click.prevent="openLpresentation"
@@ -3427,7 +3417,7 @@
                       @click.prevent="
                         exportLessonsToExcel('table', 'Portfolio Lessons')
                       "
-                      class="btn btn-md exportBtns text-light"
+                      class="btn btn-md mx-1 exportBtns text-light"
                     >
                       <i class="far fa-file-excel"></i>
                     </button>
@@ -4097,6 +4087,9 @@ export default {
       'activeProjectUsers',
       'programNameFilter',
       'portfolioTasksLoaded',
+      'portfolioIssuesLoaded',
+      'portfolioRisksLoaded',
+      'portfolioLessonsLoaded',
       'taskTypes',
       'portfolioCategoriesFilter',
       'portfolioTasks',
@@ -5872,9 +5865,9 @@ ul {
 
 
 
-.box-shadow {
-  border-top: #ededed double 0.5px;
-}
+// .box-shadow {
+//   border-top: #ededed double 0.5px;
+// }
 
 /deep/.el-table {
   padding-top: 0px;
@@ -5985,8 +5978,9 @@ table {
   width: 20%;
 }
 .btnRow {
-  position: absolute;
+  // position: absolute;
   bottom: 45%; 
+  float: right;
 }
 .sort-th {
   min-width: 190px;
@@ -6121,7 +6115,7 @@ table {
 }
 
 .leftProgramCol {
-  border: solid #DD9036 2px;
+  border: solid #DD9036 1px;
 }
 .elBtn {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
@@ -6133,14 +6127,21 @@ table {
 //   0 3px 3px rgba(56, 56, 56, 0.23);
 // }
 .lastUpdateCol {
-  // position:absolute;
-  // right: 60px;
-  // width: 60%;
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
-  border: solid #9EC64C 2px;
+  border: solid #9EC64C 1px;
   border-radius: 0.25rem; 
   }
+
+.issueTypes {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+  0 3px 3px rgba(56, 56, 56, 0.23);
+  border: solid #6c757d 1px;
+  border-radius: 0.25rem; 
+  }
+
+
+
 
 .truncate-line-five
 {
