@@ -338,6 +338,9 @@ export default {
       var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
       let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
         let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+        if (resource.riskStageId == null) {
+            return resource.riskStageId !== null
+          }
         let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
         if(taskIssueUsers.length > 0){
           valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
