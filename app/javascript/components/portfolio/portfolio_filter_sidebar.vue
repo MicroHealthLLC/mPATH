@@ -148,7 +148,7 @@
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div >
 
-                 <label class="font-sm mb-0">Assignments</label>
+                 <!-- <label class="font-sm mb-0">Assignments</label>
                  <el-select 
                   v-model="C_myAssignmentsFilter"                   
                   class="w-100" 
@@ -166,7 +166,7 @@
                   :label="item.name"                                                  
                   >
                 </el-option>
-              </el-select> 
+              </el-select>  -->
 
                   <!-- Reference for Dropdown with multiple category labels (Do not delete)
                 <label class="font-sm mb-0">Flags</label>
@@ -195,8 +195,8 @@
                   </el-option-group>
               </el-select>  -->
               </div>
-              <div style="margin-top:0.5rem">
-                <label class="font-sm mb-0">Action % Progress Range</label>
+              <div>
+                <label class="font-sm mb-0 pb-1">Action % Progress Range</label>
                 <div class="form-row">
                   <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
