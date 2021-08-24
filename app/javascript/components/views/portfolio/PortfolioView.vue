@@ -17,7 +17,7 @@
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
-      <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
+      <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
            
              <el-dialog :visible.sync="dialogVisible" append-to-body center>
@@ -155,15 +155,15 @@
                                </div>  
                                 </div> 
                               <div class="wrap d-flex" v-if="dynamicObj == issuesObj.filtered.issues">
-                                  <div class="lastUpdateCol mt-3 px-0 w-50 mr-1 pt-0">
-                                 <h3 class="mh-green text-light d-block">ISSUE TYPE</h3>
+                                  <div class="issueTypes mt-3 px-0 w-50 mr-2 pt-0">
+                                 <h6 class="bg-secondary text-light py-1 d-block">ISSUE TYPE</h6>
                                    <div style="height:45px; overflow-y:auto">
                                       <h4 class="px-3">{{ dynamicObj[currentTaskSlide].issue_type }}</h4>
                                   </div>
                                </div>
-                                  <div class="lastUpdateCol mt-3 px-0 pt-0 ml-1 w-50" v-if="dynamicObj == issuesObj.filtered.issues">
+                                  <div class="issueTypes mt-3 px-0 pt-0 ml-2 w-50" v-if="dynamicObj == issuesObj.filtered.issues">
 
-                                 <h3 class="mh-green text-light d-block">ISSUE SEVERITY</h3>
+                                 <h6 class="text-light bg-secondary py-1 d-block">ISSUE SEVERITY</h6>
                                    <div style="height:45px; overflow-y:auto">
                                       <h4 class="px-3">{{ dynamicObj[currentTaskSlide].issue_severity }}</h4>
                                   </div>
@@ -171,9 +171,9 @@
                               </div>
                           
 
-                               <div class="lastUpdateCol mt-3 w-50 ml-1" v-if="dynamicObj == risksObj.filtered.risks">
+                               <div class="issueTypes mt-3" v-if="dynamicObj == risksObj.filtered.risks">
 
-                                 <h3 class="mh-green text-light d-block">RISK DESCRIPTION</h3>
+                                 <h6 class="bg-secondary text-light py-1 d-block">RISK DESCRIPTION</h6>
                                    <div style="height:100px; overflow-y:auto">
                                       <h4 class="px-3">{{ dynamicObj[currentTaskSlide].risk_description }}</h4>
                                   </div>
@@ -390,10 +390,10 @@
               </div>
             </div>
 
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" >
           
           <!-- TASKS -->
-          <el-tab-pane class="pt-2" name="tasks">
+          <el-tab-pane class="pt-2" name="tasks" style="postion:relative" >
             <template
               slot="label"
               class="text-right"              
@@ -406,7 +406,7 @@
             </template>
 
          
-            <div class="box-shadow py-2">
+            <div class="box-shadow py-2"  style="postion:relative"  >
               <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
                   <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -707,9 +707,10 @@
 
               <div
                 class="row text-center mt-2 pr-3"
+                style="postion:relative" 
                 v-if="tasksObj.filtered.tasks !== null && tasksObj.filtered.tasks.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto">
+                <div class="xTable px-3" style="overflow-x: auto;postion:relative" >
                   <table
                     class="table table-sm mt-3 stickyTableHeader table-bordered"
                     ref="table"
@@ -2019,7 +2020,7 @@
                     </th>
                   </thead>
                   <tbody>
-                    <tr v-for="(issue, index) in sortedIssues" :key="index">
+                    <tr v-for="(issue, index) in sortedIssues" :key="index" class="taskHover">
                       <td>{{ issue.program_name }}</td>
                       <td>{{ issue.project_name }}</td>
                       <td>{{ issue.title }}</td>
@@ -3010,7 +3011,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(risk, index) in sortedRisks" :key="index">
+                      <tr v-for="(risk, index) in sortedRisks" :key="index" class="taskHover">
                         <td>{{ risk.program_name }}</td>
                         <td>{{ risk.project_name }}</td>
                         <td>{{ risk.text }}</td>
@@ -3815,7 +3816,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index">
+                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="taskHover" >
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>

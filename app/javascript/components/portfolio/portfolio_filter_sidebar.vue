@@ -494,7 +494,7 @@ export default {
     this.fetchPortfolioIssueTypes()
     this.fetchPortfolioIssueSeverities()
     this.fetchPortfolioRiskApproaches()
-    this.fetchPortfolioRiskPriorities()
+    this.fetchPortfolioRiskPriorities()    
     // this.fetchFilters()
   },
   computed: {
