@@ -315,6 +315,9 @@ export default {
       let issues = _.orderBy(
         _.filter(this.facility.issues, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
+          if (resource.issueStageId == null) {
+            return resource.issueStageId !== null
+          }
           let userIds = [
             ..._.map(resource.checklists, "userId"),
             ...resource.userIds,

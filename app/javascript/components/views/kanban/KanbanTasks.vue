@@ -1,6 +1,7 @@
 <template>
 <div>
-  <div class="filters-wrapper">
+  <!-- <div class="filters-wrapper" :load="log(JSON.stringify(filteredTasks))"> -->
+     <div class="filters-wrapper" >
     <div class="d-flex align-item-center justify-content-between ml-3 mb-2 w-100">
       <div class="task-search-bar ninety mr-1">
          <label class="font-sm mb-0" style="visibility:hidden">Search</label>
@@ -230,9 +231,14 @@ export default {
         },
       });
     },
+
     toggleWatched(){
       this.setHideWatched(!this.getHideWatched)    
     },
+    // log(e){
+    //   console.log(e)
+
+    // },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    
     },
@@ -318,6 +324,7 @@ export default {
     filteredTasks() {
       let typeIds = _.map(this.C_taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
+      console.log("these are taskStageIds" + typeIds )
       const search_query = this.exists(this.searchTasksQuery.trim())
         ? new RegExp(
             _.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()),
@@ -341,6 +348,9 @@ export default {
       let tasks = _.orderBy(
         _.filter(this.facility.tasks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
+          if (resource.taskStageId == null) {
+            return resource.taskStageId !== null
+          }
           if (typeIds.length > 0)
             valid = valid && typeIds.includes(resource.taskTypeId);
           if (stageIds.length > 0)
