@@ -708,9 +708,9 @@
                 style="postion:relative" 
                 v-if="tasksObj.filtered.tasks !== null && tasksObj.filtered.tasks.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto;postion:relative" >
+                <div class="px-3 tableFixHead" >
                   <table
-                    class="table table-sm mt-3 stickyTableHeader table-bordered"
+                    class="table table-sm table-bordered"
                     ref="table"
                     id="portTasks"
                   >
@@ -1547,9 +1547,9 @@
               class="row text-center mt-1 pr-3"
               v-if="issuesObj.filtered.issues !== null && issuesObj.filtered.issues.length > 0"
             >
-              <div class="xTable px-3" style="overflow-x: auto">
+              <div class="px-3 tableFixHead" style="overflow-x: auto">
                 <table
-                  class="table table-sm mt-3 stickyTableHeader table-bordered"
+                  class="table table-sm table-bordered"
                   ref="issueTable"
                   id="portIssues"
                 >
@@ -2531,9 +2531,9 @@
                 class="row text-center mt-2 pr-3"
                 v-if="risksObj.filtered.risks !== null && risksObj.filtered.risks.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto">
+                <div class="px-3 tableFixHead">
                   <table
-                    class="table table-sm mt-3 stickyTableHeader table-bordered"
+                    class="table table-sm table-bordered"
                     ref="riskTable"
                     id="portRisks"
                   >
@@ -3433,9 +3433,9 @@
                 class="row text-center mt-2 pr-3"
                 v-if="lessonsObj.filtered.lessons !== null && lessonsObj.filtered.lessons.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto">
+                <div class="tableFixHead px-3">
                   <table
-                    class="table table-sm mt-3 stickyTableHeader table-bordered"
+                    class="table table-sm table-bordered"
                     ref="lessonTable"
                     id="portLessons"
                   >
@@ -5909,14 +5909,37 @@ table {
   position: relative;
   margin-bottom: 0 !important;
 }
-.stickyTableHeader {
-  position: sticky;
-  position: -webkit-sticky;
-  z-index: 10;
-  justify-content: center;
-  left: 15;
-  top: 0;
+.tableFixHead  { 
+  overflow-x: auto; 
+  height: 500px; 
 }
+.tableFixHead thead th { 
+  position: sticky; 
+  top: 0; 
+  z-index: 1;
+}
+table  { 
+  border-collapse: collapse; 
+  width: 100%; 
+}
+th, td { padding: 8px 16px; }
+th { 
+  background:#ededed; 
+}
+// BELOW CODE IS WIP: WORKING ON STICKY HEADER AND STICKY FIRST COL.  DO NOT DELETE.
+// th:first-child {
+// background-color: #ededed;
+
+// }
+
+// td:first-child {
+//   position: sticky;
+//   background-color: white;
+//   border: solid 1px #dee2e6;
+//   left: 0;
+//   z-index: ;
+// }
+// ABOVE CODE IS WIP: WORKING ON STICKY HEADER AND STICKY FIRST COL.  DO NOT DELETE.
 .page-btns {
   width: 20px;
   line-height: 1 !important;
@@ -6145,36 +6168,6 @@ table {
   font-style: FuturaPTBook;
 }
 
-// WORKING ON STICKY HEADER AND STICKY FIRST COL.  DO NOT DELETE.
-// table, thead, th:first-child {
-//   position: sticky;
-//   left: 0;
-//   z-index: 2;
-// }
-// th:first-child {
-// background-color: #ededed;
-
-// }
-
-// td:first-child {
-//   position: sticky;
-//   background-color: white;
-//   border: solid 1px #dee2e6;
-//   left: 0;
-//   z-index: 2;
-// }
-
-// table, tbody, th {
-//   position: relative;
-// }
-
-// table, thead, th {
-//   padding: 3px;
-//   position: sticky;
-//   top: 0;
-//   z-index: 1;
-//   // background: white;
-// }
 
 
 h4.text-light.label {
