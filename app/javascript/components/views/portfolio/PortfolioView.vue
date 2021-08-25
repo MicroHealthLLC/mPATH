@@ -595,7 +595,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
@@ -1436,7 +1436,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
@@ -2420,7 +2420,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
@@ -3333,7 +3333,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <!-- <div class="text-center icons" :class="[hideWatchedLessons == true ? '':'light']" @click.prevent="toggleWatchedL"   >             
@@ -5826,21 +5826,6 @@ ul > li {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
-
-// /deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
-//   border-bottom: none !important;
-// }
-
-// /deep/.el-card__body {
-//     padding-bottom: 0 !important;
-// }
-// /deep/.el-collapse-item__header {
-//   font-size: 2rem;
-//   }
-
-// /deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
-//   display: none;
-// }
 .programName {
   font-variant: small-caps;
 }
@@ -5863,12 +5848,6 @@ i,
 ul {
   margin-bottom: 0.5rem;
 }
-
-
-
-// .box-shadow {
-//   border-top: #ededed double 0.5px;
-// }
 
 /deep/.el-table {
   padding-top: 0px;
@@ -5915,8 +5894,6 @@ th {
   font-size: 1.4rem;
   font-weight: 400;
   transition: all 0.2s ease-in;
-  // box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-  //   0 3px 3px rgba(56, 56, 56, 0.23);
 }
 .fa-times-circle:hover {
   transform: scale(1.25);
@@ -5967,10 +5944,6 @@ table {
 .ten {
   width: 10%;
 }
-//  .loaderRow {
-
-//  }
-
 .fifteen {
   width: 15%;
 }
@@ -6046,10 +6019,10 @@ table {
   box-shadow: 0 1px 2.5px rgba(56, 56, 56, 0.19),
     0 1.5px 1.5px rgba(56, 56, 56, 0.23);
 }
-  .taskHover:hover {
-    cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);
-  }
+  // .taskHover:hover {
+  //   cursor: pointer;
+  //   background-color: rgba(91, 192, 222, 0.3);
+  // }
 
 .font-sm {
   font-weight: 600;
@@ -6108,8 +6081,6 @@ table {
 }
 
 .slideCol {
-  // position:absolute; 
-  // top:50px; 
   border-radius:0.25rem;
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
@@ -6123,10 +6094,6 @@ table {
   0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
-// .presentBtn {
-//  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-//   0 3px 3px rgba(56, 56, 56, 0.23);
-// }
 .lastUpdateCol {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
@@ -6140,9 +6107,6 @@ table {
   border: solid #6c757d 1px;
   border-radius: 0.25rem; 
   }
-
-
-
 
 .truncate-line-five
 {
@@ -6160,16 +6124,11 @@ table {
   border-radius: 0.25rem;
   border: solid 1.5px #1D336F;
 }
-// .timeStamp {
-//   position: absolute;
-//   bottom: 0.5rem;
-//   right: 0.5rem;
-// }
+
 /deep/.el-progress-circle {
   height: 90px;
   width: 90px;
 }
-
 .leftColLabel {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
@@ -6187,6 +6146,38 @@ table {
 /deep/.vue-treeselect__placeholder {
   font-style: FuturaPTBook;
 }
+
+// WORKING ON STICKY HEADER AND STICKY FIRST COL.  DO NOT DELETE.
+// table, thead, th:first-child {
+//   position: sticky;
+//   left: 0;
+//   z-index: 2;
+// }
+// th:first-child {
+// background-color: #ededed;
+
+// }
+
+// td:first-child {
+//   position: sticky;
+//   background-color: white;
+//   border: solid 1px #dee2e6;
+//   left: 0;
+//   z-index: 2;
+// }
+
+// table, tbody, th {
+//   position: relative;
+// }
+
+// table, thead, th {
+//   padding: 3px;
+//   position: sticky;
+//   top: 0;
+//   z-index: 1;
+//   // background: white;
+// }
+
 
 h4.text-light.label {
   border: solid #f8f9fa 1px;

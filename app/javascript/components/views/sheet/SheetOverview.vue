@@ -671,7 +671,7 @@
                 </div>
                  <div class="col-6 p-0 mb-0">
                 <span class="d-block" v-tooltip="`DRAFT`"><i class="fas fa-pencil-alt text-warning"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>           
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFT</span>           
                 </div>
                 
                   </div>
