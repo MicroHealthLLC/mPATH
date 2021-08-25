@@ -17,7 +17,7 @@
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
-      <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3">
+      <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
            
              <el-dialog :visible.sync="dialogVisible" append-to-body center>
@@ -155,15 +155,15 @@
                                </div>  
                                 </div> 
                               <div class="wrap d-flex" v-if="dynamicObj == issuesObj.filtered.issues">
-                                  <div class="lastUpdateCol mt-3 px-0 w-50 mr-1 pt-0">
-                                 <h3 class="mh-green text-light d-block">ISSUE TYPE</h3>
+                                  <div class="issueTypes mt-3 px-0 w-50 mr-2 pt-0">
+                                 <h6 class="bg-secondary text-light py-1 d-block">ISSUE TYPE</h6>
                                    <div style="height:45px; overflow-y:auto">
                                       <h4 class="px-3">{{ dynamicObj[currentTaskSlide].issue_type }}</h4>
                                   </div>
                                </div>
-                                  <div class="lastUpdateCol mt-3 px-0 pt-0 ml-1 w-50" v-if="dynamicObj == issuesObj.filtered.issues">
+                                  <div class="issueTypes mt-3 px-0 pt-0 ml-2 w-50" v-if="dynamicObj == issuesObj.filtered.issues">
 
-                                 <h3 class="mh-green text-light d-block">ISSUE SEVERITY</h3>
+                                 <h6 class="text-light bg-secondary py-1 d-block">ISSUE SEVERITY</h6>
                                    <div style="height:45px; overflow-y:auto">
                                       <h4 class="px-3">{{ dynamicObj[currentTaskSlide].issue_severity }}</h4>
                                   </div>
@@ -171,9 +171,9 @@
                               </div>
                           
 
-                               <div class="lastUpdateCol mt-3 w-50 ml-1" v-if="dynamicObj == risksObj.filtered.risks">
+                               <div class="issueTypes mt-3" v-if="dynamicObj == risksObj.filtered.risks">
 
-                                 <h3 class="mh-green text-light d-block">RISK DESCRIPTION</h3>
+                                 <h6 class="bg-secondary text-light py-1 d-block">RISK DESCRIPTION</h6>
                                    <div style="height:100px; overflow-y:auto">
                                       <h4 class="px-3">{{ dynamicObj[currentTaskSlide].risk_description }}</h4>
                                   </div>
@@ -260,10 +260,8 @@
                                           >Extreme</h4
                                         >                                                                  
                           
-                                  </div>     
-
-
-                                      </div>    
+                                  </div>    
+                                </div>   
   
                                </div>   
                                
@@ -271,7 +269,7 @@
                         
                         </div>
                         <div slot="footer" class="dialog-footer-left"  v-if="dynamicObj[currentTaskSlide] !== undefined">                       
-                            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">TAGS: </h5>
+                            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">FOCUS FLAGS: </h5>
                              <span
                             v-if="dynamicObj[currentTaskSlide].watched == true"
                             v-tooltip="`On Watch`"
@@ -390,10 +388,10 @@
               </div>
             </div>
 
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" >
           
           <!-- TASKS -->
-          <el-tab-pane class="pt-2" name="tasks">
+          <el-tab-pane class="pt-2" name="tasks" style="postion:relative" >
             <template
               slot="label"
               class="text-right"              
@@ -406,7 +404,7 @@
             </template>
 
          
-            <div class="box-shadow py-2">
+            <div class="box-shadow py-2"  style="postion:relative"  >
               <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
                   <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -595,7 +593,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
@@ -707,11 +705,12 @@
 
               <div
                 class="row text-center mt-2 pr-3"
+                style="postion:relative" 
                 v-if="tasksObj.filtered.tasks !== null && tasksObj.filtered.tasks.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto">
+                <div class="px-3 tableFixHead" >
                   <table
-                    class="table table-sm mt-3 stickyTableHeader table-bordered"
+                    class="table table-sm table-bordered"
                     ref="table"
                     id="portTasks"
                   >
@@ -1435,7 +1434,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
@@ -1548,9 +1547,9 @@
               class="row text-center mt-1 pr-3"
               v-if="issuesObj.filtered.issues !== null && issuesObj.filtered.issues.length > 0"
             >
-              <div class="xTable px-3" style="overflow-x: auto">
+              <div class="px-3 tableFixHead" style="overflow-x: auto">
                 <table
-                  class="table table-sm mt-3 stickyTableHeader table-bordered"
+                  class="table table-sm table-bordered"
                   ref="issueTable"
                   id="portIssues"
                 >
@@ -2019,7 +2018,7 @@
                     </th>
                   </thead>
                   <tbody>
-                    <tr v-for="(issue, index) in sortedIssues" :key="index">
+                    <tr v-for="(issue, index) in sortedIssues" :key="index" class="taskHover">
                       <td>{{ issue.program_name }}</td>
                       <td>{{ issue.project_name }}</td>
                       <td>{{ issue.title }}</td>
@@ -2419,7 +2418,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
@@ -2532,9 +2531,9 @@
                 class="row text-center mt-2 pr-3"
                 v-if="risksObj.filtered.risks !== null && risksObj.filtered.risks.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto">
+                <div class="px-3 tableFixHead">
                   <table
-                    class="table table-sm mt-3 stickyTableHeader table-bordered"
+                    class="table table-sm table-bordered"
                     ref="riskTable"
                     id="portRisks"
                   >
@@ -3010,7 +3009,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(risk, index) in sortedRisks" :key="index">
+                      <tr v-for="(risk, index) in sortedRisks" :key="index" class="taskHover">
                         <td>{{ risk.program_name }}</td>
                         <td>{{ risk.project_name }}</td>
                         <td>{{ risk.text }}</td>
@@ -3332,7 +3331,7 @@
                     </span>
 
                     <span class=""
-                      ><label class="font-sm mt-4 pr-2"><b>TAG FOCUS</b></label>
+                      ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
                       <!-- <div class="text-center icons" :class="[hideWatchedLessons == true ? '':'light']" @click.prevent="toggleWatchedL"   >             
@@ -3434,9 +3433,9 @@
                 class="row text-center mt-2 pr-3"
                 v-if="lessonsObj.filtered.lessons !== null && lessonsObj.filtered.lessons.length > 0"
               >
-                <div class="xTable px-3" style="overflow-x: auto">
+                <div class="tableFixHead px-3">
                   <table
-                    class="table table-sm mt-3 stickyTableHeader table-bordered"
+                    class="table table-sm table-bordered"
                     ref="lessonTable"
                     id="portLessons"
                   >
@@ -3815,7 +3814,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index">
+                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="taskHover" >
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
@@ -5825,21 +5824,6 @@ ul > li {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
-
-// /deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
-//   border-bottom: none !important;
-// }
-
-// /deep/.el-card__body {
-//     padding-bottom: 0 !important;
-// }
-// /deep/.el-collapse-item__header {
-//   font-size: 2rem;
-//   }
-
-// /deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
-//   display: none;
-// }
 .programName {
   font-variant: small-caps;
 }
@@ -5862,12 +5846,6 @@ i,
 ul {
   margin-bottom: 0.5rem;
 }
-
-
-
-// .box-shadow {
-//   border-top: #ededed double 0.5px;
-// }
 
 /deep/.el-table {
   padding-top: 0px;
@@ -5914,8 +5892,6 @@ th {
   font-size: 1.4rem;
   font-weight: 400;
   transition: all 0.2s ease-in;
-  // box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-  //   0 3px 3px rgba(56, 56, 56, 0.23);
 }
 .fa-times-circle:hover {
   transform: scale(1.25);
@@ -5933,14 +5909,37 @@ table {
   position: relative;
   margin-bottom: 0 !important;
 }
-.stickyTableHeader {
-  position: sticky;
-  position: -webkit-sticky;
-  z-index: 10;
-  justify-content: center;
-  left: 15;
-  top: 0;
+.tableFixHead  { 
+  overflow-x: auto; 
+  height: 500px; 
 }
+.tableFixHead thead th { 
+  position: sticky; 
+  top: 0; 
+  z-index: 1;
+}
+table  { 
+  border-collapse: collapse; 
+  width: 100%; 
+}
+th, td { padding: 8px 16px; }
+th { 
+  background:#ededed; 
+}
+// BELOW CODE IS WIP: WORKING ON STICKY HEADER AND STICKY FIRST COL.  DO NOT DELETE.
+// th:first-child {
+// background-color: #ededed;
+
+// }
+
+// td:first-child {
+//   position: sticky;
+//   background-color: white;
+//   border: solid 1px #dee2e6;
+//   left: 0;
+//   z-index: ;
+// }
+// ABOVE CODE IS WIP: WORKING ON STICKY HEADER AND STICKY FIRST COL.  DO NOT DELETE.
 .page-btns {
   width: 20px;
   line-height: 1 !important;
@@ -5966,10 +5965,6 @@ table {
 .ten {
   width: 10%;
 }
-//  .loaderRow {
-
-//  }
-
 .fifteen {
   width: 15%;
 }
@@ -6045,10 +6040,10 @@ table {
   box-shadow: 0 1px 2.5px rgba(56, 56, 56, 0.19),
     0 1.5px 1.5px rgba(56, 56, 56, 0.23);
 }
-  .taskHover:hover {
-    cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);
-  }
+  // .taskHover:hover {
+  //   cursor: pointer;
+  //   background-color: rgba(91, 192, 222, 0.3);
+  // }
 
 .font-sm {
   font-weight: 600;
@@ -6107,8 +6102,6 @@ table {
 }
 
 .slideCol {
-  // position:absolute; 
-  // top:50px; 
   border-radius:0.25rem;
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
@@ -6122,10 +6115,6 @@ table {
   0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
-// .presentBtn {
-//  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-//   0 3px 3px rgba(56, 56, 56, 0.23);
-// }
 .lastUpdateCol {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
@@ -6139,9 +6128,6 @@ table {
   border: solid #6c757d 1px;
   border-radius: 0.25rem; 
   }
-
-
-
 
 .truncate-line-five
 {
@@ -6159,16 +6145,11 @@ table {
   border-radius: 0.25rem;
   border: solid 1.5px #1D336F;
 }
-// .timeStamp {
-//   position: absolute;
-//   bottom: 0.5rem;
-//   right: 0.5rem;
-// }
+
 /deep/.el-progress-circle {
   height: 90px;
   width: 90px;
 }
-
 .leftColLabel {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
   0 3px 3px rgba(56, 56, 56, 0.23);
@@ -6186,6 +6167,8 @@ table {
 /deep/.vue-treeselect__placeholder {
   font-style: FuturaPTBook;
 }
+
+
 
 h4.text-light.label {
   border: solid #f8f9fa 1px;
