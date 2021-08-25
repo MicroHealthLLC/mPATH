@@ -260,10 +260,8 @@
                                           >Extreme</h4
                                         >                                                                  
                           
-                                  </div>     
-
-
-                                      </div>    
+                                  </div>    
+                                </div>   
   
                                </div>   
                                
@@ -271,7 +269,7 @@
                         
                         </div>
                         <div slot="footer" class="dialog-footer-left"  v-if="dynamicObj[currentTaskSlide] !== undefined">                       
-                            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">TAGS: </h5>
+                            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">FOCUS FLAGS: </h5>
                              <span
                             v-if="dynamicObj[currentTaskSlide].watched == true"
                             v-tooltip="`On Watch`"
