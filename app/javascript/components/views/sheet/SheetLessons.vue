@@ -120,7 +120,6 @@
           v-if="filteredLessons.filtered.lessons.length > 0"
           class="mb-3 w-100"
           id="lessonsPdf"
-          :load="log(JSON.stringify(filteredLessons))"
           ref="table"
         >
           <tr class="table-head">
@@ -372,9 +371,6 @@ export default {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
       );
-    },
-    log(e){
-      console.log(e)
     },
     exportToPdf() {
       const doc = new jsPDF("l");
