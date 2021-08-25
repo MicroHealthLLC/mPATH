@@ -6,10 +6,10 @@ class Api::V1::PortfolioController < AuthenticatedController
   def tab_counts
     json_response = {tasks_count: 0, issues_count: 0, risks_count: 0, lessons_count: 0}
     
-    json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => current_user.project_ids).count
-    json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => current_user.project_ids).count
-    json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => current_user.project_ids).count
-    json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_projects.project_id" => current_user.project_ids).count
+    json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).count
+    json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).count
+    json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).count
+    json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).count
 
     render json: json_response
   end
