@@ -151,7 +151,7 @@
                   </div>
                 </span>
   
-            <span class="pl-4 pr-2 font-sm hideLabels">TAG FOCUS</span>
+            <span class="pl-4 pr-2 font-sm hideLabels">FOCUS</span>
             <span class="tagCol d-inline-block p-1">
                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideWatched == true ? '':'light']" @click.prevent="toggleWatched"  >                              
                    <span class="d-block">

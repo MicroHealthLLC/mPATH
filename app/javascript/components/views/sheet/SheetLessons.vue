@@ -60,7 +60,7 @@
                   </div>
                 </span>
   
-            <span class="pl-4 pr-2 font-sm hideLabels">TAG FOCUS</span>
+            <span class="pl-4 pr-2 font-sm hideLabels">FOCUS</span>
             <span class="tagCol d-inline-block p-1">
                  
                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
@@ -120,6 +120,7 @@
           v-if="filteredLessons.filtered.lessons.length > 0"
           class="mb-3 w-100"
           id="lessonsPdf"
+          :load="log(JSON.stringify(filteredLessons))"
           ref="table"
         >
           <tr class="table-head">
@@ -235,7 +236,7 @@
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
                 > <i class="fas fa-pencil-alt text-warning"></i>
               </span>
-               <span v-if="lesson.draft == false" v-tooltip="`Complete`"
+               <span v-if="!lesson.draft" v-tooltip="`Complete`"
                 > <i class="fas fa-clipboard-check text-success"></i>
               </span>
               <span
@@ -371,6 +372,9 @@ export default {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
       );
+    },
+    log(e){
+      console.log(e)
     },
     exportToPdf() {
       const doc = new jsPDF("l");
@@ -691,7 +695,7 @@ export default {
       );
      let completed = _.filter(
         this.filteredLessons.unfiltered.lessons,
-        (t) => t && t.draft == false
+        (t) => t && t.draft == false 
       );
      return {
        important: {
