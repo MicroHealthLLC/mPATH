@@ -2,10 +2,10 @@ class Api::V1::ProfilesController < Api::ApplicationController
   def index; end
 
   def current_profile
-    # @active_projects = current_user.projects.includes(:facility_groups).active
+    # @active_projects = current_user.authorized_programs.includes(:facility_groups)
     # facility_groups = @active_projects.map(&:facility_groups).flatten.uniq
 
-    active_projects = current_user.projects.active
+    active_projects = current_user.authorized_programs
     active_project_ids = active_projects.map(&:id).compact.uniq
     all_facility_projects = FacilityProject.where(project_id: active_project_ids).compact.uniq
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq

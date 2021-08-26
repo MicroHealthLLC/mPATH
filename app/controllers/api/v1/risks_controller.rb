@@ -117,7 +117,7 @@ class  Api::V1::RisksController < Api::ApplicationController
 
   private
   def set_resources
-    @project = current_user.projects.active.find_by(id: params[:project_id])
+    @project = current_user.authorized_programs.find_by(id: params[:project_id])
     @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
   end
   

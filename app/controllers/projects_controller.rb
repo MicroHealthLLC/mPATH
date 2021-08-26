@@ -26,7 +26,7 @@ class ProjectsController < AuthenticatedController
       redirect_to current_user.allowed_redirect_url(params[:program_id])
       return
     end
-    if current_user.project_ids.include?(params[:program_id].to_i)
+    if current_user.authorized_programs.pluck(:id).include?(params[:program_id].to_i)
       if !current_user.allowed?(view)
         # raise CanCan::AccessDenied
         redirect_to current_user.allowed_redirect_url(params[:program_id])
@@ -44,13 +44,13 @@ class ProjectsController < AuthenticatedController
 
   def index
     respond_to do |format|
-      format.json {render json: {projects: current_user.projects.includes(:project_type).active.as_json}}
+      format.json {render json: {projects: current_user.authorized_programs.includes(:project_type).as_json}}
       format.html {}
     end
   end
 
   def show
-    @project = current_user.projects.active.find_by(id: params[:id])
+    @project = current_user.authorized_programs.find_by(id: params[:id])
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
@@ -166,7 +166,7 @@ class ProjectsController < AuthenticatedController
         issue_types: [],
         issue_severities: []
       }
-    @project = current_user.projects.includes(projects_include_hash).active.find_by(id: params[:id])
+    @project = current_user.authorized_programs.includes(projects_include_hash).find_by(id: params[:id])
   end
 
   def check_permit(view)

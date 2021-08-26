@@ -3,11 +3,11 @@ class Api::V1::ProjectsController < Api::ApplicationController
   before_action :authenticate_request!
 
   def index
-    render json: {projects: current_user.projects.includes(:project_type).active.as_json}
+    render json: {projects: current_user.authorized_programs.includes(:project_type).as_json}
   end
 
   def show
-    @project = current_user.projects.active.find_by(id: params[:id])
+    @project = current_user.authorized_programs.find_by(id: params[:id])
     check_permit("map_view")
     unless @project.nil?
       render json: {project: @project.build_json_response(current_user)}, status: 200
@@ -43,7 +43,7 @@ class Api::V1::ProjectsController < Api::ApplicationController
         issue_types: [],
         issue_severities: []
       }
-    @project = current_user.projects.includes(projects_include_hash).active.find_by(id: params[:id])
+    @project = current_user.authorized_programs.includes(projects_include_hash).find_by(id: params[:id])
   end
 
   def check_permit(view)

@@ -2,9 +2,9 @@ class Api::V1::FilterDataController < AuthenticatedController
   
   def programs
     response_json = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
 
-    programs = current_user.projects.active.distinct.includes({facility_projects: :facility}).select(:id, :name).where("projects.id": program_ids )
+    programs = current_user.authorized_programs.distinct.includes({facility_projects: :facility}).select(:id, :name).where("projects.id": program_ids )
 
     facility_group_ids = Facility.joins(:facility_projects).where("facility_projects.project_id" => programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
     facility_groups = FacilityGroup.select(:id, :name).where(id: facility_group_ids)
@@ -38,7 +38,7 @@ class Api::V1::FilterDataController < AuthenticatedController
 
   def users
     response_json = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
 
     users = User.joins(:project_users).where(project_users: {project_id: program_ids}).distinct.select(:id, :first_name, :last_name)
 
@@ -47,14 +47,14 @@ class Api::V1::FilterDataController < AuthenticatedController
 
   def statuses
     response_json = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     statues = Status.joins(:project_statuses).where(project_statuses: {project_id: program_ids }).distinct.select(:id, :name)
     render json: {statuses: statues.map{|u| {id: u.id, name: u.name } } }
   end
 
   def categories
     response_json = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
 
     task_types = TaskType.joins(:project_task_types).where(project_task_types: {project_id: program_ids }).distinct.select(:id, :name)
     render json: {categories: task_types.map{|u| {id: u.id, name: u.name } } }
@@ -64,7 +64,7 @@ class Api::V1::FilterDataController < AuthenticatedController
     response_json = []
     resource_name = params[:resource] || "task"
     stages = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     if resource_name == "task"
       stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name)
     elsif resource_name == "issue"
@@ -78,7 +78,7 @@ class Api::V1::FilterDataController < AuthenticatedController
   def issue_types
     response_json = []
     stages = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     issue_types = IssueType.joins(:project_issue_types).where(project_issue_types: {project_id: program_ids }).distinct.select(:id, :name)
 
     render json: {issue_types: issue_types}
@@ -87,7 +87,7 @@ class Api::V1::FilterDataController < AuthenticatedController
   def issue_severities
     response_json = []
     stages = []
-    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.projects.active.distinct.ids
+    program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     issue_severities = IssueSeverity.joins(:project_issue_severities).where(project_issue_severities: {project_id: program_ids }).distinct.select(:id, :name)
 
     render json: {issue_severities: issue_severities}
