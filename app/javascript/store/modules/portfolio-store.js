@@ -23,6 +23,10 @@ const portfolioModule = {
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
 
+    // This one handles the individual edit tasks when clicking on Task row in Portfolio table
+    portfolio_task: {},
+
+
 
     // PORTFOLIO ISSUES
     portfolio_issue_types: [],
@@ -367,6 +371,29 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
           });
       },  
+     fetchPortfolioTask({commit}, id) {
+        commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
+        // Send GET request for all lessons contained within a project
+        axios({
+          method: "GET",
+          // THIS URL IS NOT IN SERVICE, AWAITING BACKEND WORK
+          url: `/api/v1/tasks/${id}`,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            // Mutate state with response from back end
+             commit("SET_PORTFOLIO_TASK", res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
+          });
+      },  
     fetchPortfolioIssues({commit}) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all lessons contained within a project
@@ -493,6 +520,8 @@ const portfolioModule = {
     SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks,
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
+    SET_PORTFOLIO_TASK: (state, portfolio_task) => state.portfolio_task = portfolio_task,
+
     // PORTFOLIO ISSUES
     SET_PORTFOLIO_ISSUES: (state, portfolio_issues) => state.portfolio_issues = portfolio_issues,
     TOGGLE_PORTFOLIO_ISSUES_LOADED: (state, loaded ) => state.portfolio_issues_loaded = loaded,
@@ -594,6 +623,7 @@ const portfolioModule = {
     portfolioProgramsFilterLoaded: state => state.portfolio_programs_filter_loaded,
 
     portfolioTasks: state => state.portfolio_tasks,
+    portfolioTask: state => state.portfolio_task,
     portfolioTasksLoaded: state => state.portfolio_tasks_loaded,
 
     portfolioIssues: state => state.portfolio_issues,

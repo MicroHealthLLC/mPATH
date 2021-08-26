@@ -155,6 +155,8 @@ class Task < ApplicationRecord
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
+      project_id: facility.id, 
+      program_id: project.id, 
       is_overdue: is_overdue,
       program_progress:  self.project.progress,
       project_status: self.facility_project.status.name,
