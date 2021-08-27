@@ -216,8 +216,8 @@ ActiveAdmin.register Lesson do
     column(:lesson_stage) { |lesson| lesson.lesson_stage&.name }
     column(:description)
     column(:lesson_files) { |lesson| lesson.lesson_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
-    column(:project) { |lesson| lesson.project&.name }
-    column(:facility) { |lesson| lesson.facility&.facility_name }
+    column('Program') { |lesson| lesson.project&.name }
+    column('Project') { |lesson| lesson.facility&.facility_name }
     column(:users) { |lesson| lesson.users&.map(&:full_name) }
     column(:lesson_details) { |lesson| lesson.lesson_details&.map(&:detail_type) }
   end

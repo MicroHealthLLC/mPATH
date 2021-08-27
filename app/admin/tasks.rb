@@ -196,8 +196,8 @@ ActiveAdmin.register Task do
     column(:progress)
     column(:description)
     column(:task_files) { |task| task.task_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
-    column(:project) { |task| task.project&.name }
-    column(:facility) { |task| task.facility&.facility_name }
+    column('Program') { |task| task.project&.name }
+    column('Project') { |task| task.facility&.facility_name }
     column(:users) { |task| task.users&.map(&:full_name) }
   end
 

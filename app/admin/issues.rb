@@ -216,8 +216,8 @@ ActiveAdmin.register Issue do
     column(:start_date) { |issue| issue.start_date&.strftime('%d/%b/%Y') }
     column(:due_date) { |issue| issue.due_date&.strftime('%d/%b/%Y') }
     column(:issue_files) { |issue| issue.issue_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
-    column(:project) { |issue| issue.project&.name }
-    column(:facility) { |issue| issue.facility&.facility_name }
+    column('Program') { |issue| issue.project&.name }
+    column('Project') { |issue| issue.facility&.facility_name }
     column(:users) { |issue| issue.users&.map(&:full_name) }
   end
 

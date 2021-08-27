@@ -199,8 +199,8 @@ ActiveAdmin.register Risk do
     column(:task_type) { |risk| risk.task_type&.name }
     column(:risk_stage) { |risk| risk.risk_stage&.name }
     column(:risk_files) { |risk| risk.risk_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
-    column(:project) { |risk| risk.project&.name }
-    column(:facility) { |risk| risk.facility&.facility_name }
+    column('Program') { |risk| risk.project&.name }
+    column('Project') { |risk| risk.facility&.facility_name }
     column(:user) { |risk| risk.user&.full_name }
   end
 
