@@ -1116,6 +1116,10 @@ export default new Vuex.Store({
         if(taskIssueOnGoing == false && taksIssueNotOnGoing == true){
           valid = valid && onGoings.includes(false)
         }
+      } else if(page_name.toLowerCase().includes("issue")) {
+        if(taskIssueOnGoing == true && taksIssueNotOnGoing == false){
+          valid = false
+        }
       }
       return valid
     },
