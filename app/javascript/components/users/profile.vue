@@ -330,7 +330,11 @@
             if(program_id && program_id){
               this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             }
-
+            console.log(allowed_sub_navigation_tabs)
+            console.log(program_id)
+            console.log(project_id)
+            console.log(this.preferences.subNavigationMenu)
+            console.log(allowed_sub_navigation_tabs[program_id][project_id])
             // this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
             if(program_id && project_id && allowed_sub_navigation_tabs[program_id] && allowed_sub_navigation_tabs[program_id][project_id]){
               let subNavigationMenu = allowed_sub_navigation_tabs[program_id][project_id]
@@ -347,7 +351,7 @@
             //   this.selectedSubNavigation = this.subNavigationOptions[0]
             // }
             if(this.selectedNavigation){
-              if(this.selectedNavigation.id == "kanban"){
+              if(['kanban', 'calendar'].includes(this.selectedNavigation.id)){
                 // this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
                 this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[program_id][project_id], h => !["overview", "notes"].includes(h.id))
               }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
@@ -358,7 +362,7 @@
                 }                
               }else if(['gantt_chart', 'members'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
-              }              
+              }
             }
 
             this.gmap_address.formatted_address = this.profile.address
