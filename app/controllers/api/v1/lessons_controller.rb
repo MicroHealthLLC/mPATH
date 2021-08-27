@@ -1,4 +1,6 @@
-class Api::V1::LessonsController < Api::ApplicationController
+class Api::V1::LessonsController < AuthenticatedController 
+# NOTE: uncomment this when we move to token based authentication
+# class Api::V1::LessonsController < Api::ApplicationController
 
   def index
     # authorize!(:read, Lesson.new(project_id: params[:program_id]))
