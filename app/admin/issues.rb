@@ -206,6 +206,21 @@ ActiveAdmin.register Issue do
     redirect_to collection_path, notice: "Successfully created Issue checklists"
   end
 
+  csv do
+    column(:title)
+    column(:task_type) { |issue| issue.task_type&.name }
+    column(:issue_type) { |issue| issue.issue_type&.name }
+    column(:issue_severity) { |issue| issue.issue_severity&.name }
+    column(:issue_stage) { |issue| issue.issue_stage&.name }
+    column(:progress)
+    column(:start_date) { |issue| issue.start_date&.strftime('%d/%b/%Y') }
+    column(:due_date) { |issue| issue.due_date&.strftime('%d/%b/%Y') }
+    column(:issue_files) { |issue| issue.issue_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column(:project) { |issue| issue.project&.name }
+    column(:facility) { |issue| issue.facility&.facility_name }
+    column(:users) { |issue| issue.users&.map(&:full_name) }
+  end
+
   filter :title
   filter :task_type
   filter :issue_type

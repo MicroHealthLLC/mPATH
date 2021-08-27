@@ -210,6 +210,18 @@ ActiveAdmin.register Lesson do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Lessons"
   end
 
+  csv do
+    column(:title)
+    column(:task_type) { |lesson| lesson.task_type&.name }
+    column(:lesson_stage) { |lesson| lesson.lesson_stage&.name }
+    column(:description)
+    column(:lesson_files) { |lesson| lesson.lesson_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column(:project) { |lesson| lesson.project&.name }
+    column(:facility) { |lesson| lesson.facility&.facility_name }
+    column(:users) { |lesson| lesson.users&.map(&:full_name) }
+    column(:lesson_details) { |lesson| lesson.lesson_details&.map(&:detail_type) }
+  end
+
   filter :title, label: 'Name'
   filter :lesson_details_finding, as: :string, label: 'Finding'
   filter :lesson_details_recommendation, as: :string, label: 'Recommendation'

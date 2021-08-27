@@ -187,6 +187,20 @@ ActiveAdmin.register Task do
     redirect_to collection_path, notice: "Successfully created Task checklists"
   end
 
+  csv do
+    column(:text)
+    column(:task_type) { |task| task.task_type&.name }
+    column(:task_stage) { |task| task.task_stage&.name }
+    column(:start_date) { |task| task.start_date&.strftime('%d/%b/%Y') }
+    column(:due_date) { |task| task.due_date&.strftime('%d/%b/%Y') }
+    column(:progress)
+    column(:description)
+    column(:task_files) { |task| task.task_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column(:project) { |task| task.project&.name }
+    column(:facility) { |task| task.facility&.facility_name }
+    column(:users) { |task| task.users&.map(&:full_name) }
+  end
+
   filter :text
   filter :task_type
   filter :task_stage
