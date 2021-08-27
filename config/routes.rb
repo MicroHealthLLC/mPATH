@@ -44,6 +44,11 @@ Rails.application.routes.draw do
       get '/current_user', to: 'profiles#current_profile'
 
       resources :projects, path: 'programs', only: [:index, :show] do
+        
+        resources :lessons, only: [:index] do
+          get :count, on: :collection
+        end
+
         resources :facilities, path: 'projects' do
           resources :notes #, module: :facilities
           resources :issues do
@@ -61,26 +66,16 @@ Rails.application.routes.draw do
             post :create_duplicate, on: :member
             post :create_bulk_duplicate, on: :member
           end
+
+          resources :lessons do
+            get :count, on: :collection
+          end
         end
       end
 
-
-      # get "/portfolio", to: "portfolio#index"
     end
     post '/login' => 'authentication#login'
-
-    # TODO: Unused routes, Remove if no error found
-    # resources :task_types, only: [:index]
-    # resources :facility_groups, only: [:index]
-    # resources :statuses, only: [:index]
-    # resources :issue_severities, only: [:index]
-    # resources :issue_types, only: [:index]
-    # resources :issue_stages, only: [:index]
-    # resources :task_stages, only: [:index]
-    # resources :users, only: [:index]
-    # get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
-    # get '/projects/:id/task_issues', to: 'projects#index'
-
+    
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
     post '/sort-by', to: 'sorts#update'
@@ -118,15 +113,15 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
 
   # TODO: Comment this API and Uncomment the one in namespace once front end is working with JWT 
-  get "/api/v1/programs/:program_id/lessons" => "lessons#index"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons/count" => "lessons#count"
-  get "/api/v1/programs/:program_id/lessons/count" => "lessons#count"
-  get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+  # get "/api/v1/programs/:program_id/lessons" => "lessons#index"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons/count" => "lessons#count"
+  # get "/api/v1/programs/:program_id/lessons/count" => "lessons#count"
+  # get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
 
-  post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-  patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-  delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+  # post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+  # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+  # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
   get "/portfolio" => "dashboard#portfolio"
 
