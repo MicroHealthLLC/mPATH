@@ -43,8 +43,8 @@ Rails.application.routes.draw do
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
 
-      resources :projects, only: [:index, :show] do
-        resources :facilities do
+      resources :projects, path: 'programs', only: [:index, :show] do
+        resources :facilities, path: 'projects' do
           resources :notes #, module: :facilities
           resources :issues do
             post :batch_update, on: :collection
