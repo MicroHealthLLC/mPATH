@@ -47,6 +47,8 @@ import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm"
 import CalendarRisks from "./../components/views/calendar/CalendarRisks";
 import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
 
+import PageNotFound from "./../components/views/PageNotFound"
+
 export default new VueRouter({
   routes: [
     {
@@ -926,6 +928,7 @@ export default new VueRouter({
         },
       ],
     },
+    { path: "*", component: PageNotFound }
   ],
   hashbang: false,
   mode: "history",

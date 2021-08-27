@@ -86,6 +86,7 @@ Rails.application.routes.draw do
     post '/sort-by', to: 'sorts#update'
   end
 
+  # For Admin panel
   get '/facility_privileges/facility_privileges_partial' => "facility_privileges#facility_privileges_partial", as: :facility_privileges_partial
   get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form", as: :add_facility_privilege_form
 
@@ -93,29 +94,29 @@ Rails.application.routes.draw do
 
 
   ## New Routes for Vue
-  get "/programs/:id/"  => "projects#show"
+  # get "/programs/:id/"  => "projects#show"
 
-  get "/programs/:program_id/:tab" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
-  get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
+  # get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/overview" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/overview" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/issues" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/issues/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/issues" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/issues/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/risks" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/risks/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/risks" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/risks/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/notes" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/notes/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/notes" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/notes/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/lessons" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/lessons" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
 
   # TODO: Comment this API and Uncomment the one in namespace once front end is working with JWT 
   get "/api/v1/programs/:program_id/lessons" => "lessons#index"
@@ -133,10 +134,10 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
-  ##  get :watch_view, on: :member
+    ##  get :watch_view, on: :member
     get :sheet, on: :member
     get :member_list, on: :member
-  ##  get :facility_manager, on: :member
+    ##  get :facility_manager, on: :member
     get :kanban, on: :member
     get :map, on: :member    
     get :calendar, on: :member
@@ -202,6 +203,10 @@ Rails.application.routes.draw do
 
   root 'landing#index'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
+  
+  get "*path", to: 'home#index', constraints: -> (req) do
+    !req.xhr? && req.format.html?
+  end
 
   get '*all', to: "not_found#index", constraints: -> (req) do
     req.path.exclude? 'rails/active_storage'
