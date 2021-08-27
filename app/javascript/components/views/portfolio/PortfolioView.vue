@@ -5248,7 +5248,6 @@ export default {
         this.setPortfolioRiskStagesFilter(value);
       },
     },
-
     C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter;
@@ -5383,7 +5382,8 @@ export default {
         params: {
           programId: task.program_id,
           projectId: task.project_id,
-          taskId: task.id ,
+          taskId: task.id,
+          task: task,
         },
       });
     },

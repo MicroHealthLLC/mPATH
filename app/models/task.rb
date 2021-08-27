@@ -171,6 +171,8 @@ class Task < ApplicationRecord
       completed: completed,
       checklists: checklists.as_json,
       in_progress: in_progress,
+      task_type: task_type.name,
+      task_type_id: task_type.id,
       category: task_type.name,
       notes: notes.as_json,
       last_update: self.notes.last&.portfolio_json,

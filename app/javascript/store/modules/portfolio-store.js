@@ -371,29 +371,29 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
           });
       },  
-     fetchPortfolioTask({commit}, id) {
-        commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
-        // Send GET request for all lessons contained within a project
-        axios({
-          method: "GET",
-          // THIS URL IS NOT IN SERVICE, AWAITING BACKEND WORK
-          url: `/api/v1/tasks/${id}`,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-          .then((res) => {
-            // Mutate state with response from back end
-             commit("SET_PORTFOLIO_TASK", res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
-          });
-      },  
+    //  fetchPortfolioTask({commit}, { id, programId, projectId } ) {
+    //     commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
+    //     // Send GET request for all lessons contained within a project
+    //     axios({
+    //       method: "GET",
+    //       // THIS URL IS NOT IN SERVICE, AWAITING BACKEND WORK
+    //       url: `/api/v1/programs/${programId}/projects/${projectId}/tasks/${id}.json`,
+    //       headers: {
+    //         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+    //           .attributes["content"].value,
+    //       },
+    //     })
+    //       .then((res) => {
+    //         // Mutate state with response from back end
+    //          commit("SET_PORTFOLIO_TASK", res.data);
+    //       })
+    //       .catch((err) => {
+    //         console.log(err);
+    //       })
+    //       .finally(() => {
+    //         commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
+    //       });
+    //   },  
     fetchPortfolioIssues({commit}) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all lessons contained within a project
