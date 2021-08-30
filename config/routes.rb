@@ -129,9 +129,6 @@ Rails.application.routes.draw do
   # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
-  get "/portfolio" => "home#portfolio"
-
-  resources :dashboard, only: [:index]
   # resources :projects, only: [:index, :show] do
   #   get :gantt_chart, on: :member
   #   ##  get :watch_view, on: :member
@@ -190,6 +187,10 @@ Rails.application.routes.draw do
   #   end
   # end
 
+  get "/portfolio" => "home#portfolio"
+
+  resources :dashboard, only: [:index]
+
   get '/profile', to: 'profiles#index'
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
@@ -201,7 +202,7 @@ Rails.application.routes.draw do
 
   post '/progress_lists', to: 'progress_lists#create'
 
-  root 'landing#index'
+  root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
   
   get "*path", to: 'home#index', constraints: -> (req) do

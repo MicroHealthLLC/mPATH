@@ -1,4 +1,4 @@
-class Api::TaskTypesController < AuthenticatedController
+class  Api::V1::TaskTypesController < AuthenticatedController
 
   def index
     task_types = []

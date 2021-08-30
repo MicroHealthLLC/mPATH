@@ -1,5 +1,12 @@
 class HomeController < AuthenticatedController
   layout "application"
+  layout "portfolio_viewer", only: [:portfolio]
+  
+  def landing
+    # there is no need of eager loading here..
+    @preferences = current_user.get_preferences
+    @active_projects = current_user.authorized_programs.includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ])
+  end
 
   def index
 
@@ -25,10 +32,10 @@ class HomeController < AuthenticatedController
       view = "members"
     elsif tab == "lessons" || params[:lesson_id]
       view = "lessons"
-  ##  elsif params[:tab] == "watch_view"
-  ##    view = "watch_view"
-  ##  elsif params[:tab] == "facility_manager"
-  ##    view = "facility_manager_view" 
+    ##  elsif params[:tab] == "watch_view"
+    ##    view = "watch_view"
+    ##  elsif params[:tab] == "facility_manager"
+    ##    view = "facility_manager_view" 
     else
       redirect_to current_user.allowed_redirect_url(program_id)
       return
