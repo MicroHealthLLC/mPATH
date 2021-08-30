@@ -475,6 +475,8 @@ import axios from 'axios'
 import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
+import {API_BASE_PATH} from './../../mixins/utils'
+
 export default {
   name: 'FilterSidebar',
   data() {
@@ -994,7 +996,7 @@ export default {
       }
     },
     fetchFilters(){
-      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var url = `${API_BASE_PATH}/projects/${this.currentProject.id}/query_filters.json`
       var method = "GET"
 
       axios({

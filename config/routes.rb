@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+
       # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
       get "/portfolio/lessons", to: "portfolio#lessons"
@@ -44,6 +45,11 @@ Rails.application.routes.draw do
       get '/current_user', to: 'profiles#current_profile'
 
       resources :projects, only: [:index, :show] do
+        resources :query_filters do
+          collection do
+            delete "reset" => "query_filters#reset"
+          end
+        end
         resources :facilities do
           resources :notes #, module: :facilities
           resources :issues do
