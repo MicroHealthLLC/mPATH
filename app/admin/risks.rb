@@ -183,6 +183,27 @@ ActiveAdmin.register Risk do
     redirect_to collection_path, notice: "Successfully created Risk checklists"
   end
 
+  csv do
+    column(:text)
+    column(:risk_description)
+    column(:impact_description)
+    column(:probability_description)
+    column(:start_date) { |risk| risk.start_date&.strftime('%d/%b/%Y') }
+    column(:due_date) { |risk| risk.due_date&.strftime('%d/%b/%Y') }
+    column(:progress)
+    column(:probability)
+    column(:impact_level)
+    column(:priority_level)
+    column(:risk_approach)
+    column(:risk_approach_description)
+    column(:task_type) { |risk| risk.task_type&.name }
+    column(:risk_stage) { |risk| risk.risk_stage&.name }
+    column(:risk_files) { |risk| risk.risk_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column('Program') { |risk| risk.project&.name }
+    column('Project') { |risk| risk.facility&.facility_name }
+    column(:user) { |risk| risk.user&.full_name }
+  end
+
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]

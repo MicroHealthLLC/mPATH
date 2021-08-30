@@ -1,9 +1,29 @@
 <template>
   <div>
-    <div class="my-3">
-      <el-input type="search" placeholder="Search Lessons" v-model="search">
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>
+    <div class="d-flex align-item-center justify-content-between w-100 mb-3 mt-3">
+      <div class="input-group w-100">
+        <el-input type="search" style="height:30px" placeholder="Search Lessons" v-model="search">
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
+      </div>
+      <div class="ml-1 font-sm w-100">
+        <el-select
+          v-model="C_taskTypeFilter"
+          class="w-100"
+          track-by="name"
+          value-key="id"
+          multiple
+          placeholder="Select Category"
+          >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+        </el-select>
+      </div>
     </div>
     <div v-if="contentLoaded">
        <span class="d-inline">
@@ -312,8 +332,15 @@ export default {
     },
     set(value) {
       this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+    },
+    C_taskTypeFilter: {
+      get() {
+        return this.taskTypeFilter
+      },
+      set(value) {
+        this.setTaskTypeFilter(value)
+      }
     }
-        
   },
     variation() {
      let drafts = _.filter(
@@ -350,7 +377,7 @@ export default {
     },
     filteredLessons() {
          // Returns filtered lessons based on search value from input
-     let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
       return {
       unfiltered: {
             lessons:  this.projectLessons
@@ -374,10 +401,10 @@ export default {
          if (this.getHideComplete) {
           return lesson.draft
         } else return true
-       }).filter(lesson => {
+      }).filter(lesson => {
         if(milestoneIds.length > 0) {
           return milestoneIds.includes(lesson.task_type_id)
-        } else return true;  
+        } else return true
       // Filtering 3 Task Tags
       }).filter(lesson => {
          if (this.getHideBriefed && !this.getHideImportant ) {
