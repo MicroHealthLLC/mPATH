@@ -507,8 +507,7 @@
                 clearable
                 track-by="id"
                 value-key="id"
-                placeholder="Search and select Accountable User"
-               
+                placeholder="Search and select Accountable User"               
                 filterable
               >
                 <el-option
@@ -554,7 +553,7 @@
                 placeholder="Search and select Informed Users"             
               >
                 <el-option
-                    v-for="item in portfolioUsers"
+                  v-for="item in portfolioUsers"
                   :value="item"
                   :key="item.id"
                   :label="item.name"
@@ -1426,7 +1425,6 @@ export default {
       let s = permissionHash[salut]
       // return  fPrivilege.tasks.includes(s); 
     },
-
     selectedStage(item) {
      
         this.selectedTaskStage = item;
