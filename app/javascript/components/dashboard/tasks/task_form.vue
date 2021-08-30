@@ -1277,6 +1277,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
+import { API_BASE_PATH } from '../../../mixins/utils';
 const moment = extendMoment(Moment);
 export default {
   name: "TaskForm",
@@ -1767,11 +1768,11 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
         let method = "POST";
         let callback = "task-created";
         if (this.task && this.task.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
           method = "PUT";
           callback = "task-updated";
         }

@@ -1286,6 +1286,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+import { API_BASE_PATH } from '../../../mixins/utils'
 
 export default {
   name: "IssueForm",
@@ -1801,12 +1802,12 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/issues.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
         let callback = "issue-created";
 
         if (this.issue && this.issue.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.issue.facilityId}/issues/${this.issue.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.issue.facilityId}/issues/${this.issue.id}.json`;
           method = "PUT";
           callback = "issue-updated";
         }

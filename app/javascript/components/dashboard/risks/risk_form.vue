@@ -2041,6 +2041,7 @@ import * as Moment from "moment";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
+import { API_BASE_PATH } from '../../../mixins/utils';
 
 export default {
   name: "RiskForm",
@@ -2658,11 +2659,11 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/risks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
         let method = "POST";
         let callback = "risk-created";
         if (this.risk && this.risk.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
           method = "PUT";
           callback = "risk-updated";
         }
