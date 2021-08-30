@@ -155,6 +155,8 @@ class Task < ApplicationRecord
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
+      project_id: facility.id, 
+      program_id: project.id, 
       is_overdue: is_overdue,
       program_progress:  self.project.progress,
       project_status: self.facility_project.status.name,
@@ -169,12 +171,19 @@ class Task < ApplicationRecord
       completed: completed,
       checklists: checklists.as_json,
       in_progress: in_progress,
+      task_type: task_type.name,
+      task_type_id: task_type.id,
       category: task_type.name,
       notes: notes.as_json,
       last_update: self.notes.last&.portfolio_json,
       notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
       users: users.select(&:active?).map(&:full_name).join(", "),
-      task_users: users.map{|u| {id: u.id, name: u.full_name } } 
+      task_users: users.map{|u| {id: u.id, name: u.full_name } },
+      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: sub_issues.as_json(only: [:title, :id]),
+      sub_task_ids: sub_tasks.map(&:id),
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id),
     }
 
     self.attributes.merge!(merge_h)
