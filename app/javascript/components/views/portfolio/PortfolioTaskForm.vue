@@ -1,5 +1,5 @@
 <template>
-  <portfolioTaskForm :task="task" @on-close-form="redirectBack"/>
+  <portfolioTaskForm :task="portfolioTask" @on-close-form="redirectBack"/>
 </template>
 
 
@@ -13,11 +13,11 @@ export default {
   components: {
     portfolioTaskForm,
   },
-   data() {
-    return {
-      task: {},
-    };
-  },
+  //  data() {
+  //   return {
+  //     task: {},
+  //   };
+  // },
   methods:{
     ...mapActions(['fetchPortfolioTask', 'portfolioTasksLoaded']),
 
@@ -27,17 +27,17 @@ export default {
       );
     },
   },
-    mounted() {
-    if (this.portfolioTasksLoaded && this.$route.params.taskId !== "new") {
-      this.task = this.$route.params.task
-    }
+  //   mounted() {
+  //   if (this.portfolioTasksLoaded && this.$route.params.taskId !== "new") {
+  //     this.task = this.$route.params.task
+  //   }
+  // },
+  computed: {
+    ...mapGetters(['portfolioTask'])
   },
-  // computed: {
-  //   ...mapGetters(['portfolioTask'])
-  // },
-  // beforeMount(){
-  //   this.fetchPortfolioTask(this.$route.params.taskId)
-  // },
+  beforeMount(){
+    this.fetchPortfolioTask(this.$route.params)
+  },
 };
 </script>
 

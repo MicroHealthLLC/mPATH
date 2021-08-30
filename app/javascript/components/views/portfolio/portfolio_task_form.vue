@@ -7,16 +7,16 @@
       accept-charset="UTF-8"
       :class="{ _disabled: loading }"
     >
-      <div class="mt-2 mx-4 d-flex align-items-center">
+      <div class="mt-2 mx-4 d-flex align-items-center" :load="log(filteredProjects)">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link  :to="
+            <router-link v-if="DV_task"  :to="
                 `/portfolio`
               ">{{
-              this.$route.params.task.project_name
+                  DV_task.facility_name
             }}
             
             </router-link>
@@ -334,14 +334,14 @@
          <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
           <div v-if="selectedTaskStage !== undefined">       
           <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-            <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
+            <button @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
             </div>    
           <el-steps 
             class="exampleOne mt-3" 
             finish-status="success"  
             :class="{'overSixSteps': taskStagesSorted.length >= 6 }" 
             :active="taskStagesSorted.findIndex(stage => stage.id == selectedTaskStage.id)"
-            :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
+            :disabled="fixedStage  && isKanbanView"
             v-model="selectedTaskStage"
             track-by="id" 
             value-key="id"
@@ -368,7 +368,7 @@
               class="exampleOne"
               finish-status="success"
               :class="{ overSixSteps: taskStagesSorted.length >= 6 }"
-              :disabled="!_isallowed('write') || !!fixedStage"
+              :disabled="!!fixedStage"
               v-model="selectedTaskStage"
               track-by="id"
               value-key="id"
@@ -382,6 +382,13 @@
                 :title="item.name"
                 description=""
               ></el-step>
+
+               <!-- <el-option 
+                  v-for="item in portfolioTaskStages"                                                               
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  > -->
             </el-steps>
           </div>
 
@@ -480,15 +487,14 @@
                 clearable
                 track-by="id"
                 value-key="id"
-                placeholder="Search and select Responsible User"
-                :disabled="!_isallowed('write')"
+                placeholder="Search and select Responsible User"               
                 data-cy="task_owner"
               >
                 <el-option
-                  v-for="item in activeProjectUsers"
+                  v-for="item in portfolioUsers"
                   :value="item"
                   :key="item.id"
-                  :label="item.fullName"
+                  :label="item.name"
                 >
                 </el-option>
               </el-select>
@@ -502,14 +508,14 @@
                 track-by="id"
                 value-key="id"
                 placeholder="Search and select Accountable User"
-                :disabled="!_isallowed('write')"
+               
                 filterable
               >
                 <el-option
-                  v-for="item in activeProjectUsers"
+                  v-for="item in portfolioUsers"
                   :value="item"
                   :key="item.id"
-                  :label="item.fullName"
+                  :label="item.name"
                 >
                 </el-option>
               </el-select>
@@ -524,15 +530,14 @@
                 track-by="id"
                 value-key="id"
                 :multiple="true"
-                placeholder="Search and select Consulted Users"
-                :disabled="!_isallowed('write')"
+                placeholder="Search and select Consulted Users"               
                 filterable
               >
                 <el-option
-                  v-for="item in activeProjectUsers"
+                v-for="item in portfolioUsers"
                   :value="item"
                   :key="item.id"
-                  :label="item.fullName"
+                  :label="item.name"
                 >
                 </el-option>
               </el-select>
@@ -546,14 +551,13 @@
                 value-key="id"
                 multiple
                 filterable
-                placeholder="Search and select Informed Users"
-                :disabled="!_isallowed('write')"
+                placeholder="Search and select Informed Users"             
               >
                 <el-option
-                  v-for="item in activeProjectUsers"
+                    v-for="item in portfolioUsers"
                   :value="item"
                   :key="item.id"
-                  :label="item.fullName"
+                  :label="item.name"
                 >
                 </el-option>
               </el-select>
@@ -570,17 +574,16 @@
               <label class="font-sm mb-0 d-inline-flex align-items-center">
                 <input
                   type="checkbox"
-                  v-model="DV_task.autoCalculate"
-                  :disabled="!_isallowed('write')"
-                  :readonly="!_isallowed('write')"
+                  v-model="DV_task.auto_calculate"
+               
                 />
                 <span>&nbsp;&nbsp;Auto Calculate Progress</span></label
               >
             </span>
             <el-slider
               v-model="DV_task.progress"
-              :input="removeFromWatch()"    
-              :disabled="!_isallowed('write') || DV_task.autoCalculate"
+              :input="removeFromWatch()"  
+            
               :marks="{ 0: '0%', 25: '25%', 50: '50%', 75: '75%', 100: '100%' }"
               :format-tooltip="(value) => value + '%'"
               class="mx-2"
@@ -591,7 +594,7 @@
             <label class="font-md">Checklists</label>
             <span
               class="ml-2 clickable"
-              v-if="_isallowed('write')"
+           
               @click.prevent="addChecks"
             >
               <i class="fas fa-plus-circle"></i>
@@ -636,7 +639,7 @@
                           :checked="check.checked"
                           @change="updateCheckItem($event, 'check', index)"
                           :key="`check_${index}`"
-                          :disabled="!_isallowed('write') || !check.text.trim()"
+                          :disabled="!check.text.trim()"
                         />
                         <input
                           :value="check.text"
@@ -646,25 +649,24 @@
                           placeholder="Checkpoint name here"
                           type="text"
                           class="checklist-text pl-1"
-                          maxlength="80"
-                          :readonly="!_isallowed('write')"
+                          maxlength="80"                         
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                      
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                     
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
                         <v2-date-picker
-                          v-model="check.dueDate"
-                          :value="check.dueDate"
-                          :disabled="!_isallowed('write') || !check.text"
+                          v-model="check.due_date"
+                          :value="check.due_date"
+                          :disabled="!check.text"
                           @selected="updateCheckItem($event, 'dueDate', index)"
                           :key="`dueDate_${index}`"
                           value-type="YYYY-MM-DD"
@@ -696,9 +698,9 @@
                           >
                             Due Date:
                             <v2-date-picker
-                              v-model="check.dueDate"
-                              :value="check.dueDate"
-                              :disabled="!_isallowed('write') || !check.text"
+                              v-model="check.due_date"
+                              :value="check.due_date"
+                              
                               @selected="
                                 updateCheckItem($event, 'dueDate', index)
                               "
@@ -739,10 +741,10 @@
                                 placeholder="Search and select user"
                               >
                                 <el-option
-                                  v-for="item in activeProjectUsers"
+                                  v-for="item in portfolioUsers"
                                   :value="item"
                                   :key="item.id"
-                                  :label="item.fullName"
+                                  :label="item.name"
                                 >
                                 </el-option>
                               </el-select>
@@ -778,7 +780,7 @@
                           </span>
 
                           <table
-                            v-if="check.progressLists.length > 0"
+                            v-if="check.progress_lists.length > 0"
                             style="width:100%"
                             class="mt-1"
                           >
@@ -799,7 +801,7 @@
                             <tbody>
                               <tr
                                 v-for="(progress,
-                                pindex) in check.progressLists
+                                pindex) in check.progress_lists
                                   .slice()
                                   .reverse()"
                                 :key="pindex"
@@ -922,7 +924,7 @@
           <div class="container-fluid mx-4 mt-2">
             <div class="row">
               <div class="col-5 pr-4 links-col">
-                <div v-if="_isallowed('write')" class="form-group">
+                <div class="form-group">
                   <attachment-input
                     @input="addFile"
                     :show-label="true"
@@ -949,7 +951,7 @@
                     />
                   </div>
                   <span
-                    :class="{ _disabled: loading || !_isallowed('write') }"
+                    :class="{ _disabled: loading}"
                     class="del-check mt-2 clickable"
                     @click.prevent="deleteFile(file)"
                   >
@@ -959,7 +961,7 @@
               </div>
               <div class="col-6 mb-2 pl-4 links-col">
                 <div class="input-group mb-1">
-                  <div v-if="_isallowed('write')" class="d-block mt-1">
+                  <div class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span class="ml-2 clickable" @click.prevent="addFilesInput">
                       <i class="fas fa-plus-circle"></i>
@@ -967,7 +969,7 @@
                   </div>
 
                   <div
-                    v-for="(file, index) in DV_task.taskFiles.slice().reverse()"
+                    v-for="(file, index) in DV_task.task_files.slice().reverse()"
                     :key="index"
                     class="d-flex mb-2 w-75"
                     v-if="!file.id && file.link"
@@ -988,7 +990,7 @@
                       @input="updateFileLinkItem($event, 'text', file)"
                     />
                     <div
-                      :class="{ _disabled: loading || !_isallowed('write') }"
+                      :class="{ _disabled: loading }"
                       class="del-check clickable"
                       @click.prevent="deleteFile(file)"
                     >
@@ -1041,8 +1043,7 @@
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Tasks
               <span
-                class="ml-2 clickable"
-                v-if="_isallowed('write')"
+                class="ml-2 clickable"              
                 @click="openContextMenu($event, 'task')"
                 @contextmenu.prevent=""
               >
@@ -1076,8 +1077,7 @@
                     size="mini"
                     icon="el-icon-delete"
                     title="Remove Related Task"
-                    @click.prevent="removeRelatedTask(task)"
-                    :disabled="!_isallowed('delete')"
+                    @click.prevent="removeRelatedTask(task)"                 
                   ></el-button>
                 </li>
               </ul>
@@ -1087,7 +1087,7 @@
               Related Issues
               <span
                 class="ml-2 clickable"
-                v-if="_isallowed('write')"
+            
                 @click="openContextMenu($event, 'issue')"
                 @contextmenu.prevent=""
               >
@@ -1122,7 +1122,7 @@
                     icon="el-icon-delete"
                     title="Remove Related Issue"
                     @click.prevent="removeRelatedIssue(issue)"
-                    :disabled="!_isallowed('delete')"
+                  
                   ></el-button>
                 </li>
               </ul>
@@ -1132,7 +1132,7 @@
               Related Risks
               <span
                 class="ml-2 clickable"
-                v-if="_isallowed('write')"
+              
                 @click="openContextMenu($event, 'risk')"
                 @contextmenu.prevent=""
               >
@@ -1167,7 +1167,7 @@
                     icon="el-icon-delete"
                     title="Remove Related Risk"
                     @click.prevent="removeRelatedRisk(risk)"
-                    :disabled="!_isallowed('delete')"
+                  
                   ></el-button>
                 </li>
               </ul>
@@ -1177,12 +1177,11 @@
         
 
         <!-- UPDATE TAB 6 -->
-        <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
+        <!-- <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
           <div class="form-group mx-4 paginated-updates">
             <label class="font-sm">Updates:</label>
             <span
-              class="ml-2 clickable"
-              v-if="_isallowed('write')"
+              class="ml-2 clickable"             
               @click.prevent="addNote"
             >
               <i class="fas fa-plus-circle"></i>
@@ -1237,7 +1236,7 @@
               </el-card>
             </paginate>
           </div>
-        </div>
+        </div> -->
         <!-- closing div for tab5 -->
       
     
@@ -1369,19 +1368,19 @@ export default {
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
-      this.loadTask(this.$route.params.task);
+      this.loadTask(this.DV_task);
     }
-    if (this.$route.params.taskId && this.$route.params.taskId != "new") {
-        // this.facility.id = this.$route.params.programId
-      console.log( 
-      "this is the fac id " + JSON.stringify(this.$route.params.task))
+    // if (this.$route.params.taskId && this.$route.params.taskId != "new") {
+    //     // this.facility.id = this.$route.params.programId
+    //   console.log( 
+    //   "this is the fac id " + JSON.stringify(this.$route.params.task))
     
-      this.fetchPortfolioTask({
-        id: this.$route.params.taskId,
-        ...this.$route.params,
-      });
+    //   this.fetchPortfolioTask({
+    //     id: this.$route.params.taskId,
+    //     ...this.$route.params,
+    //   });
 
-    }
+    // }
 
     this.loading = false;
     this._ismounted = true;
@@ -1394,7 +1393,7 @@ export default {
         text: "",
         startDate: "",
         dueDate: "",
-        // facilityProjectId: this.$route.params.programId,
+        facilityProjectId: this.$route.params.projectId,
         checklistDueDate: "",
         taskTypeId: "",
         taskStageId: "",
@@ -1413,7 +1412,7 @@ export default {
         description: "",
         progress: 0,
         autoCalculate: true,
-        taskFiles: [],
+        task_files: [],
         checklists: [],
         notes: [],
       };
@@ -1429,12 +1428,12 @@ export default {
     },
 
     selectedStage(item) {
-      if (this._isallowed("write")) {
+     
         this.selectedTaskStage = item;
-      }
+    
     },
     log(e){
-      console.log("category" + e)
+      console.log("filteredProjects" + JSON.stringify(e))
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1502,31 +1501,31 @@ export default {
       if (!progressList.id) return;
       var date = moment(progressList.createdAt).format("MM/DD/YYYY");
       var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.fullName} at ${date} ${time} `;
+      return `${progressList.user.full_name} at ${date} ${time} `;
     },
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
-      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
+      this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.responsible_user_ids.includes(u.id)
       )[0];
-      this.accountableTaskUsers = _.filter(this.activeProjectUsers, (u) =>
+      this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.accountable_user_ids.includes(u.id)
       )[0];
-      this.consultedTaskUsers = _.filter(this.activeProjectUsers, (u) =>
+      this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.consulted_user_ids.includes(u.id)
       );
-      this.informedTaskUsers = _.filter(this.activeProjectUsers, (u) =>
+      this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.informed_user_ids.includes(u.id)
       );
       this.relatedIssues = _.filter(this.filteredIssues, (u) =>
-        this.DV_task.subIssueIds.includes(u.id)
+        this.DV_task.sub_issue_ids.includes(u.id)
       );
       this.relatedTasks = _.filter(this.filteredTasks, (u) =>
-        this.DV_task.subTaskIds.includes(u.id)
+        this.DV_task.sub_task_ids.includes(u.id)
       );
       this.relatedRisks = _.filter(this.filteredRisks, (u) =>
-        this.DV_task.subRiskIds.includes(u.id)
+        this.DV_task.sub_risk_ids.includes(u.id)
       );
       // this.selectedTaskType = this.C_categories.find(
       //   (t) => t === this.DV_task.task_type
@@ -1534,26 +1533,26 @@ export default {
       this.selectedTaskType = this.taskTypeIds.find(
         (t) => t === this.DV_task.task_type_id
       );
-      this.selectedTaskStage = this.taskStages.find(
+      this.selectedTaskStage = this.portfolioTaskStages.find(
         (t) => t.id === this.DV_task.task_stage_id
       );
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
         (t) => t.id === this.DV_task.facilityProjectId
       );
-      if (this.DV_task.attachFiles)
-        this.addFile(this.DV_task.attachFiles, false);
+      if (this.DV_task.attach_Files)
+        this.addFile(this.DV_task.attach_files, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
       });
     },
     addFile(files, append = true) {
-      let _files = append ? [...this.DV_task.taskFiles] : [];
+      let _files = append ? [...this.DV_task.task_files] : [];
       for (let file of files) {
         file.guid = this.guid();
         _files.push(file);
       }
-      this.DV_task.taskFiles = _files;
+      this.DV_task.task_files = _files;
     },
     deleteFile(file) {
       if (!file) return;
@@ -1563,20 +1562,20 @@ export default {
       if (!confirm) return;
 
       if (file.uri || file.link) {
-        let index = this.DV_task.taskFiles.findIndex(
+        let index = this.DV_task.task_files.findIndex(
           (f) => f.guid === file.guid
         );
         if (file.id) {
-          Vue.set(this.DV_task.taskFiles, index, { ...file, _destroy: true });
+          Vue.set(this.DV_task.task_files, index, { ...file, _destroy: true });
           this.destroyedFiles.push(file);
         }
-        this.DV_task.taskFiles.splice(
-          this.DV_task.taskFiles.findIndex((f) => f.guid === file.guid),
+        this.DV_task.task_files.splice(
+          this.DV_task.task_files.findIndex((f) => f.guid === file.guid),
           1
         );
       } else if (file.name) {
-        this.DV_task.taskFiles.splice(
-          this.DV_task.taskFiles.findIndex((f) => f.guid === file.guid),
+        this.DV_task.task_files.splice(
+          this.DV_task.task_files.findIndex((f) => f.guid === file.guid),
           1
         );
       }
@@ -1648,7 +1647,7 @@ export default {
         formData.append("task[task_type_id]", this.DV_task.task_type_id);
         formData.append("task[task_stage_id]", this.DV_task.task_stage_id);
         formData.append("task[progress]", this.DV_task.progress);
-        formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
+        formData.append("task[auto_calculate]", this.DV_task.auto_calculate);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
         formData.append("task[reportable]", this.DV_task.reportable);
@@ -1704,22 +1703,22 @@ export default {
         }
         // RACI USERS ABOVE THIS LINE  Awaiting backend work
         // More RACI Users in Computed section below
-        if (this.DV_task.subTaskIds.length) {
-          for (let u_id of this.DV_task.subTaskIds) {
+        if (this.DV_task.sub_task_ids.length) {
+          for (let u_id of this.DV_task.sub_task_ids) {
             formData.append("task[sub_task_ids][]", u_id);
           }
         } else {
           formData.append("task[sub_task_ids][]", []);
         }
-        if (this.DV_task.subIssueIds.length) {
-          for (let u_id of this.DV_task.subIssueIds) {
+        if (this.DV_task.sub_issue_ids.length) {
+          for (let u_id of this.DV_task.sub_issue_ids) {
             formData.append("task[sub_issue_ids][]", u_id);
           }
         } else {
           formData.append("task[sub_issue_ids][]", []);
         }
-        if (this.DV_task.subRiskIds.length) {
-          for (let u_id of this.DV_task.subRiskIds) {
+        if (this.DV_task.sub_risk_ids.length) {
+          for (let u_id of this.DV_task.sub_risk_ids) {
             formData.append("task[sub_risk_ids][]", u_id);
           }
         } else {
@@ -1743,8 +1742,8 @@ export default {
             if (["created_at", "updated_at", "progress_lists"].includes(key))
               continue;
             formData.append(`task[checklists_attributes][${i}][${key}]`, value);
-            for (let pi in check.progressLists) {
-              let progressList = check.progressLists[pi];
+            for (let pi in check.progress_lists) {
+              let progressList = check.progress_lists[pi];
               if (!progressList.body && !progressList._destroy) continue;
               for (let pkey in progressList) {
                 if (pkey === "user") pkey = "user_id";
@@ -1780,7 +1779,7 @@ export default {
             formData.append(`task[notes_attributes][${i}][${key}]`, value);
           }
         }
-        for (let file of this.DV_task.taskFiles) {
+        for (let file of this.DV_task.task_files) {
           if (file.id) continue;
           if (!file.link) {
             formData.append("task[task_files][]", file);
@@ -1850,8 +1849,8 @@ export default {
       });
     },
     addProgressList(check) {
-      var postion = check.progressLists.length;
-      check.progressLists.push({ body: "", position: postion });
+      var postion = check.progress_lists.length;
+      check.progress_lists.push({ body: "", position: postion });
       this.editToggle = true;
     },
     addChecks() {
@@ -1860,11 +1859,11 @@ export default {
         text: "",
         checked: false,
         position: postion,
-        progressLists: [],
+        progress_lists: [],
       });
     },
     addFilesInput() {
-      this.DV_task.taskFiles.push({
+      this.DV_task.task_files.push({
         name: "",
         uri: "",
         link: true,
@@ -1902,9 +1901,9 @@ export default {
       );
       if (!confirm) return;
       let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
+        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
         : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
       this.saveTask();
     },
     destroyCheck(check, index) {
@@ -2017,13 +2016,17 @@ export default {
   computed: {
     ...mapGetters([
       "activeProjectUsers",
+      "portfolioUsers",
       "currentIssues",
       "currentProject",
       "currentRisks",
       "currentTasks",
       'portfolioCategoriesFilter',
-      'portfolioTasks',
       "facilities",
+      "portfolioTasks",
+      "portfolioRisks",
+      "portfolioTasks",
+      'portfolioTaskStages',
       "facilityGroups",
       "getFacilityProjectOptions",
       "managerView",
@@ -2033,16 +2036,16 @@ export default {
       "taskTypes",
     ]),
     taskStagesSorted() {
-      var taskStagesSortedReturn = [...this.taskStages]; 
+      var taskStagesSortedReturn = [...this.portfolioTaskStages]; 
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
     readyToSave() {
       return (
         this.DV_task &&
         this.exists(this.DV_task.text) &&
-        this.exists(this.DV_task.taskTypeId) && 
-        this.exists(this.DV_task.dueDate)  &&  
-        this.exists(this.DV_task.startDate)
+        this.exists(this.DV_task.task_type_id) && 
+        this.exists(this.DV_task.due_date)  &&  
+        this.exists(this.DV_task.start_date)
       );
     },
     C_categories() {
@@ -2090,19 +2093,28 @@ export default {
       return _.filter(this.DV_task.checklists, (c) => !c._destroy);
     },
     filteredFiles() {
-      return _.filter(this.DV_task.taskFiles, (f) => !f._destroy);
+      return _.filter(this.DV_task.task_files, (f) => !f._destroy);
     },
     C_myTasks() {
       return _.map(this.myActionsFilter, "value").includes("tasks");
     },
+    filteredtProjects(){
+       return _.filter(this.portfolioTasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    },
+    filterediProjects(){
+       return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    },
+    filteredrProjects(){
+       return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    },
     filteredTasks() {
-      return _.filter(this.currentTasks, (t) => t.id !== this.DV_task.id);
+      return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
     },
     filteredRisks() {
-      return _.filter(this.currentRisks, (t) => t.id !== this.DV_task.id);
+      return _.filter(this.filteredrProjects, (t) => t.id !== this.DV_task.id);
     },
     filteredIssues() {
-      return this.currentIssues;
+      return this.filterediProjects;
     },
     filteredNotes() {
       return _.orderBy(
@@ -2143,8 +2155,8 @@ export default {
         this.loadTask(this.task);
       },
     },
-    "DV_task.startDate"(value) {
-      if (this._ismounted && !value) this.DV_task.dueDate = "";
+    "DV_task.start_date"(value) {
+      if (this._ismounted && !value) this.DV_task.due_date = "";
     },
     // "DV_task.dueDate"(value) {
     //   if (this._ismounted && this.facility.dueDate) {
@@ -2158,11 +2170,11 @@ export default {
     // },
     "DV_task.checklists": {
       handler: function(value) {
-        if (this.DV_task.autoCalculate) this.calculateProgress(value);
+        if (this.DV_task.auto_calculate) this.calculateProgress(value);
       },
       deep: true,
     },
-    "DV_task.autoCalculate"(value) {
+    "DV_task.auto_calculate"(value) {
       if (value) this.calculateProgress();
     },
     // RACI USERS HERE awaiting backend work
@@ -2212,19 +2224,19 @@ export default {
     },
     relatedIssues: {
       handler: function(value) {
-        if (value) this.DV_task.subIssueIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_task.sub_issue_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedTasks: {
       handler: function(value) {
-        if (value) this.DV_task.subTaskIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_task.sub_task_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedRisks: {
       handler: function(value) {
-        if (value) this.DV_task.subRiskIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_task.sub_risk_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },

@@ -5382,8 +5382,8 @@ export default {
         params: {
           programId: task.program_id,
           projectId: task.project_id,
-          taskId: task.id,
-          task: task,
+          id: task.id,
+          // task: task,
         },
       });
     },
