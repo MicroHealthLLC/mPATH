@@ -129,66 +129,66 @@ Rails.application.routes.draw do
   patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
-  get "/portfolio" => "dashboard#portfolio"
+  get "/portfolio" => "home#portfolio"
 
   resources :dashboard, only: [:index]
-  resources :projects, only: [:index, :show] do
-    get :gantt_chart, on: :member
-    ##  get :watch_view, on: :member
-    get :sheet, on: :member
-    get :member_list, on: :member
-    ##  get :facility_manager, on: :member
-    get :kanban, on: :member
-    get :map, on: :member    
-    get :calendar, on: :member
+  # resources :projects, only: [:index, :show] do
+  #   get :gantt_chart, on: :member
+  #   ##  get :watch_view, on: :member
+  #   get :sheet, on: :member
+  #   get :member_list, on: :member
+  #   ##  get :facility_manager, on: :member
+  #   get :kanban, on: :member
+  #   get :map, on: :member    
+  #   get :calendar, on: :member
 
-    resources :lessons
+  #   resources :lessons
 
-    resources :query_filters do
-      collection do
-        delete "reset" => "query_filters#reset"
-      end
-    end
+  #   resources :query_filters do
+  #     collection do
+  #       delete "reset" => "query_filters#reset"
+  #     end
+  #   end
 
-    resources :facilities do
-      resources :notes #, module: :facilities
-      resources :issues do
-        post :batch_update, on: :collection
-        post :create_duplicate, on: :member
-        post :create_bulk_duplicate, on: :member
-      end
-      resources :risks do
-        post :batch_update, on: :collection
-        post :create_duplicate, on: :member
-        post :create_bulk_duplicate, on: :member
-      end
-      resources :tasks do
-        post :batch_update, on: :collection
-        post :create_duplicate, on: :member
-        post :create_bulk_duplicate, on: :member
-      end
-    end
-  end
-  resources :facilities, only: [] do
-    resources :facility_projects, only: [:index, :update, :show]
-  end
-  resources :facility_projects, only: [:index, :update, :show] do
-    resources :issues do
-      post :batch_update, on: :collection
-      post :create_duplicate, on: :member
-      post :create_bulk_duplicate, on: :member
-    end
-    resources :risks do
-      post :batch_update, on: :collection
-      post :create_duplicate, on: :member
-      post :create_bulk_duplicate, on: :member
-    end
-    resources :tasks do
-      post :batch_update, on: :collection
-      post :create_duplicate, on: :member
-      post :create_bulk_duplicate, on: :member
-    end
-  end
+  #   resources :facilities do
+  #     resources :notes #, module: :facilities
+  #     resources :issues do
+  #       post :batch_update, on: :collection
+  #       post :create_duplicate, on: :member
+  #       post :create_bulk_duplicate, on: :member
+  #     end
+  #     resources :risks do
+  #       post :batch_update, on: :collection
+  #       post :create_duplicate, on: :member
+  #       post :create_bulk_duplicate, on: :member
+  #     end
+  #     resources :tasks do
+  #       post :batch_update, on: :collection
+  #       post :create_duplicate, on: :member
+  #       post :create_bulk_duplicate, on: :member
+  #     end
+  #   end
+  # end
+  # resources :facilities, only: [] do
+  #   resources :facility_projects, only: [:index, :update, :show]
+  # end
+  # resources :facility_projects, only: [:index, :update, :show] do
+  #   resources :issues do
+  #     post :batch_update, on: :collection
+  #     post :create_duplicate, on: :member
+  #     post :create_bulk_duplicate, on: :member
+  #   end
+  #   resources :risks do
+  #     post :batch_update, on: :collection
+  #     post :create_duplicate, on: :member
+  #     post :create_bulk_duplicate, on: :member
+  #   end
+  #   resources :tasks do
+  #     post :batch_update, on: :collection
+  #     post :create_duplicate, on: :member
+  #     post :create_bulk_duplicate, on: :member
+  #   end
+  # end
 
   get '/profile', to: 'profiles#index'
   get '/profile', to: 'profiles#index'

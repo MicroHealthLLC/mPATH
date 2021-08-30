@@ -1,4 +1,5 @@
 import axios from "axios";
+import {API_BASE_PATH} from './../../mixins/utils'
 
 const lessonModule = {
   state: () => ({
@@ -16,7 +17,7 @@ const lessonModule = {
       // Send GET request for all lessons contained within a program
       axios({
         method: "GET",
-        url: `/api/v1/programs/${programId}/lessons/count.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/lessons/count.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -39,7 +40,7 @@ const lessonModule = {
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -62,7 +63,7 @@ const lessonModule = {
       // Retrieve lesson by id
       axios({
         method: "GET",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -86,7 +87,7 @@ const lessonModule = {
 
       axios({
         method: "POST",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons.json`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -112,7 +113,7 @@ const lessonModule = {
 
       axios({
         method: "PATCH",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lessonId}`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons/${lessonId}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -134,7 +135,7 @@ const lessonModule = {
       // Delete a single lesson
       axios({
         method: "DELETE",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

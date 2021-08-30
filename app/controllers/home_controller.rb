@@ -49,4 +49,10 @@ class HomeController < AuthenticatedController
     end
   end
 
+  def portfolio
+    if !current_user.authorized_programs.any?
+      redirect_to root_path
+    end
+  end
+
 end
