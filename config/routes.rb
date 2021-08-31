@@ -189,18 +189,19 @@ Rails.application.routes.draw do
 
   get "/portfolio" => "home#portfolio"
 
-  resources :dashboard, only: [:index]
+  # resources :dashboard, only: [:index]
 
-  get '/profile', to: 'profiles#index'
-  get '/profile', to: 'profiles#index'
-  post '/profile', to: 'profiles#update'
-  get '/current_user', to: 'profiles#current_profile'
-  get '/settings', to: 'data#settings'
-  get '/facility_groups', to: 'data#facility_groups'
-  get '/task_types', to: 'data#task_types'
-  get '/statuses', to: 'data#statuses'
+  # get '/profile', to: 'profiles#index'
 
-  post '/progress_lists', to: 'progress_lists#create'
+  get '/profile', to: 'home#profile'
+  # post '/profile', to: 'home#update'
+  # get '/current_user', to: 'profiles#current_profile'
+
+  #TODO: remove if no error found
+  # get '/settings', to: 'data#settings'
+  # get '/facility_groups', to: 'data#facility_groups'
+  # get '/task_types', to: 'data#task_types'
+  # get '/statuses', to: 'data#statuses'
 
   root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'

@@ -1,3 +1,4 @@
+# NOTE: This controller is used for Admin
 class ProjectPrivilegesController < AuthenticatedController
   def load_form
     if params[:user_id]

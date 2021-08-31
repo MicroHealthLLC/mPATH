@@ -1,5 +1,5 @@
-class Api::V1::ProfilesController < Api::ApplicationController
-  def index; end
+# class Api::V1::ProfilesController < Api::ApplicationController
+class Api::V1::ProfilesController < AuthenticatedController 
 
   def current_profile
     # @active_projects = current_user.authorized_programs.includes(:facility_groups)

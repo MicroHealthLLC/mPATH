@@ -2,6 +2,9 @@ class HomeController < AuthenticatedController
   layout "application"
   layout "portfolio_viewer", only: [:portfolio]
   
+  def profile
+  end
+  
   def landing
     # there is no need of eager loading here..
     @preferences = current_user.get_preferences

@@ -238,6 +238,7 @@
 
 <script>
   import http from './../../common/http'
+  import { API_BASE_PATH } from '../../mixins/utils';
 
   export default {
     data() {
@@ -300,7 +301,7 @@
         }
       },
       fetchProfile() {
-        http.get('/current_user.json')
+        http.get(`${API_BASE_PATH}/current_user.json`)
           .then((res) => {
 
             this.profile = {...this.profile, ...res.data.currentUser}
@@ -422,7 +423,7 @@
           delete(data["preferences"])
 
           http
-            .post('/profile.json', {profile: data, preferences: preferences})
+            .post(`${API_BASE_PATH}/profile.json`, {profile: data, preferences: preferences})
             .then((res) => {
               console.log("profile-updated")
               var pref = res.data.preferences
