@@ -1501,7 +1501,7 @@ export default {
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
         (t) => t.id === this.DV_task.facilityProjectId
       );
-      if (this.DV_task.attach_Files)
+      if (this.DV_task.attach_files)
         this.addFile(this.DV_task.attach_files, false);
       this.$nextTick(() => {
         this.errors.clear();
