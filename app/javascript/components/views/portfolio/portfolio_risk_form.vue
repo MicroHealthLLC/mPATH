@@ -2046,7 +2046,7 @@ import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
 
 export default {
-  name: "RiskForm",
+  name: "portfolioRiskForm",
   props: ["facility", "risk", "facilities", "fixedStage"],
   components: {
     AttachmentInput,

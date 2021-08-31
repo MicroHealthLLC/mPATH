@@ -1261,7 +1261,7 @@ import * as Moment from "moment";
 import { extendMoment } from "moment-range";
 const moment = extendMoment(Moment);
 export default {
-  name: "TaskForm",
+  name: "portfolioTaskForm",
   props: ["facility", "task", "title", "fixedStage"],
   components: {
     AttachmentInput,
