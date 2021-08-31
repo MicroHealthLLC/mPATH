@@ -1,4 +1,4 @@
-class Api::V1::TaskStagesController < AuthenticatedController
+class Api::V1::Admin::TaskStagesController < AuthenticatedController
   def index
     task_stages = []
     if params[:project_id]

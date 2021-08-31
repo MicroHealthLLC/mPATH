@@ -523,13 +523,13 @@ jQuery(function($) {
       },
       methods: {
         fetchFacilityProjects(cb) {
-          $.get(`/facilities/${facility_id}/facility_projects.json`, (data) => {
+          $.get(`/api/v1/admin/facilities/${facility_id}/facility_projects.json`, (data) => {
             this.projects = data;
             this.fetchStatuses(cb);
           });
         },
         fetchStatuses(cb) {
-          $.get("/api/statuses.json", (data) => {
+          $.get("/api/v1/admin/statuses.json", (data) => {
             this.statuses = data.statuses;
             return cb();
           });
@@ -548,7 +548,7 @@ jQuery(function($) {
           let data = {facility_project: {due_date: this.project.due_date, status_id: this.project.status_id}};
           let _this = this;
           $.ajax({
-            url: `/facilities/${facility_id}/facility_projects/${this.project.id}.json`,
+            url: `api/v1/facilities/${facility_id}/facility_projects/${this.project.id}.json`,
             type: 'PUT',
             data: data,
             success: function(res) {
@@ -1357,12 +1357,12 @@ jQuery(function($) {
         methods: {
           submitSettings() {
             if (!this.permitted) return;
-            $.post("/api/settings.json", {settings: this.settings}, (data) => {
+            $.post("/api/v1/admin/settings.json", {settings: this.settings}, (data) => {
               window.location.href = "/admin/settings";
             });
           },
           fetchSettings() {
-            $.get("/api/settings.json", (data) => {
+            $.get("/api/v1/admin/settings.json", (data) => {
               for (let key in this.settings) {
                 this.settings[key] = data[key] || '';
               }
@@ -1521,13 +1521,13 @@ jQuery(function($) {
               this.project_id = $("select[name=Program]").children("option:selected").val();
             },
             fetchProjectUsers() {
-              $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/admin/users.json?project_id=${this.project_id}`, (data) => {
                 this.project_users = data.filter(u => u.status == "active");
                 this.loading = false;
               });
             },
             fetchProgramCategories(){
-              $.get(`/api/task_types.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/admin/task_types.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Category]").html("")
                 let task_types = data.task_types
                 for(var i = 0; i <= task_types.length; i++){
@@ -1539,7 +1539,7 @@ jQuery(function($) {
               });
             },
             fetchProgramStages(){
-              $.get(`/api/task_stages.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/admin/task_stages.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Stage]").html("")
                 let task_stages = data.task_stages
                 for(var i = 0; i <= task_stages.length; i++){
@@ -1800,7 +1800,7 @@ jQuery(function($) {
             this.u_id = $(`#${item.input_id}`).val();
           },
           fetchProjectUsers() {
-            $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+            $.get(`/api/v1/admin/users.json?project_id=${this.project_id}`, (data) => {
               this.users = data.filter(u => u.status == "active");
               this.loading = false;
             });
@@ -1871,7 +1871,7 @@ jQuery(function($) {
             this.u_ids = $(`#${this.type}_user_ids`).val().map(Number);
           },
           fetchProjectUsers() {
-            $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+            $.get(`/api/v1/admin/users.json?project_id=${this.project_id}`, (data) => {
               this.project_users = data.filter(u => u.status == "active");
               this.task_users = this.project_users.filter(u => this.u_ids.includes(u.id));
               this.loading = false;
@@ -1975,7 +1975,7 @@ jQuery(function($) {
             this.fetchProjectTaskIssues()
           },
           fetchProjectTaskIssues() {
-            $.get(`/api/projects/${this.project_id}/task_issues.json`, (data) => {
+            $.get(`/api/v1/admin/projects/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
               this.risks = data ? this.type == 'risk' ? data.risks.filter(t => t.id !== this._id) : data.risks : [];
@@ -2248,7 +2248,7 @@ jQuery(function($) {
           let order = sort_col.split('_').pop();
           sort_col = sort_col.replace(`_${order}`, '');
           let data = {relation: model, order: order, column: sort_col}
-          $.post("/api/sort-by.json", data, (res) => {/* Noops */});
+          $.post("/api/v1/admin/sort-by.json", data, (res) => {/* Noops */});
         }
       });
     }
@@ -2281,7 +2281,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/users.json`, (data) => {
+            $.get(`/api/v1/admin/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
@@ -2365,7 +2365,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/users.json`, (data) => {
+            $.get(`/api/v1/admin/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__checklist_users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));

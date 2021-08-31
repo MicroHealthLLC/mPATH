@@ -9,9 +9,27 @@ Rails.application.routes.draw do
     end
   end
 
-
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+
+      # For Admin panel
+      namespace :admin do
+        resources :facilities do
+          resources :facility_projects, only: [:index, :update, :show]
+        end
+        get '/settings', to: 'settings#index'
+        post '/settings', to: 'settings#update'
+
+        resources :task_types, only: [:index]
+        resources :facility_groups, only: [:index]
+        # resources :statuses, only: [:index]
+        # resources :issue_severities, only: [:index]
+        # resources :issue_types, only: [:index]
+        # resources :issue_stages, only: [:index]
+        # resources :task_stages, only: [:index]
+        # resources :users, only: [:index]
+        # post '/sort-by', to: 'sorts#update'
+      end
 
       # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
@@ -20,7 +38,7 @@ Rails.application.routes.draw do
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
       get "/portfolio/tab_counts", to: "portfolio#tab_counts"
-      get "/projects/:id", to: "projects#show"
+      # get "/projects/:id", to: "projects#show"
 
       # Filter data
       get "/filter_data/programs", to: "filter_data#programs"
@@ -32,14 +50,6 @@ Rails.application.routes.draw do
       get "/filter_data/issue_severities", to: "filter_data#issue_severities"
       get "/filter_data/risk_approaches", to: "filter_data#risk_approaches"
       get "/filter_data/risk_priority_level", to: "filter_data#risk_priority_level"
-
-      # NOTE: Replace this with resource.
-      # get "/programs/:program_id/lessons" => "lessons#index"
-      # get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-      # get "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
-      # post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-      # patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-      # delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
@@ -81,9 +91,6 @@ Rails.application.routes.draw do
     end
     post '/login' => 'authentication#login'
     
-    get '/settings', to: 'settings#index'
-    post '/settings', to: 'settings#update'
-    post '/sort-by', to: 'sorts#update'
   end
 
   # For Admin panel
@@ -91,7 +98,6 @@ Rails.application.routes.draw do
   get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form", as: :add_facility_privilege_form
 
   get '/project_privileges/load_form' => "project_privileges#load_form", as: :project_privileges_load_form
-
 
   ## New Routes for Vue
   # get "/programs/:id/"  => "projects#show"
@@ -187,13 +193,9 @@ Rails.application.routes.draw do
   #   end
   # end
 
-  get "/portfolio" => "home#portfolio"
-
   # resources :dashboard, only: [:index]
 
   # get '/profile', to: 'profiles#index'
-
-  get '/profile', to: 'home#profile'
   # post '/profile', to: 'home#update'
   # get '/current_user', to: 'profiles#current_profile'
 
@@ -202,6 +204,9 @@ Rails.application.routes.draw do
   # get '/facility_groups', to: 'data#facility_groups'
   # get '/task_types', to: 'data#task_types'
   # get '/statuses', to: 'data#statuses'
+
+  get "/portfolio" => "home#portfolio"
+  get '/profile' => 'home#profile'
 
   root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'

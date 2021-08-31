@@ -1,4 +1,4 @@
-class Api::V1::StatusesController < AuthenticatedController
+class Api::V1::Admin::StatusesController < AuthenticatedController
   # before_action :authenticate_request!
 
   def index
