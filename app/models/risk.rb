@@ -151,6 +151,8 @@ class Risk < ApplicationRecord
       project_name: facility.facility_name, 
       program_name: project.name, 
       risk_stage: risk_stage.try(:name),
+      project_id: facility.id, 
+      program_id: project.id, 
       category: task_type.name,
       is_overdue: is_overdue,
       program_progress:  self.project.progress,

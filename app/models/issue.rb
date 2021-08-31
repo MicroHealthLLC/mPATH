@@ -72,6 +72,8 @@ class Issue < ApplicationRecord
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
+      project_id: facility.id, 
+      program_id: project.id, 
       is_overdue: is_overdue,
       issue_stage: issue_stage.try(:name),
       program_progress:  self.project.progress,
