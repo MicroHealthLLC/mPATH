@@ -598,11 +598,10 @@ export default new Vuex.Store({
     getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
     getRiskPriorityLevelFilterOptions: (state, getters) => {
       var options = [
-        {id: 'very low', name: 'Very Low', value: 'very low'},
-        {id: 'low', name: 'Low', value: 'low'},
-        {id: 'moderate', name: 'Moderate', value: 'moderate'},
-        {id: 'high', name: 'High', value: 'high' },
-        {id: 'extreme', name: 'Extreme', value: 'extreme'}
+        {id: 'low', name: 'Low 1 - 3', value: 'low'},
+        {id: 'moderate', name: 'Moderate 4 - 6', value: 'moderate'},
+        {id: 'high', name: 'High 8 - 12', value: 'high' },
+        {id: 'extreme', name: 'Extreme 15 - 25', value: 'extreme'}
       ]
       return options;
     },
@@ -1117,6 +1116,10 @@ export default new Vuex.Store({
 
         if(taskIssueOnGoing == false && taksIssueNotOnGoing == true){
           valid = valid && onGoings.includes(false)
+        }
+      } else if(page_name.toLowerCase().includes("issue")) {
+        if(taskIssueOnGoing == true && taksIssueNotOnGoing == false){
+          valid = false
         }
       }
       return valid
