@@ -33,14 +33,14 @@ describe('Admin Panel Issue Stages', function() {
   //   cy.get('#index_table_issue_stages > tbody > tr').first().contains('New Issue Stage').should('be.visible')
   // })
 
-  it('Sort Issue Stage according to Percentage', function() {
-    cy.get('.sortable').contains('Percentage').click()
-    cy.get('#index_table_issue_stages > tbody > tr').first().contains(60).should('be.visible')
-    cy.get('.sortable').contains('Percentage').click()
-    cy.get('#index_table_issue_stages > tbody > tr').first().contains(0).should('be.visible')
-    cy.get('.sortable').contains('Percentage').click()
-    cy.get('#index_table_issue_stages > tbody > tr').first().contains(60).should('be.visible')
-  })
+  // it('Sort Issue Stage according to Percentage', function() {
+  //   cy.get('.sortable').contains('Percentage').click()
+  //   cy.get('#index_table_issue_stages > tbody > tr').first().contains(60).should('be.visible')
+  //   cy.get('.sortable').contains('Percentage').click()
+  //   cy.get('#index_table_issue_stages > tbody > tr').first().contains(0).should('be.visible')
+  //   cy.get('.sortable').contains('Percentage').click()
+  //   cy.get('#index_table_issue_stages > tbody > tr').first().contains(60).should('be.visible')
+  // })
   it('Could not Delete Issue stage of foreign constraint', function() {
     cy.get('#index_table_issue_stages').should('be.visible')
     cy.get('#index_table_issue_stages > tbody > tr').first().within(() => {
