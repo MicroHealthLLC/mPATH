@@ -771,10 +771,7 @@ Tab 1 Row Begins here -->
                         
                           <span v-if="editToggle">
                             <span class="ml-2 clickable">
-                              <font-awesome-icon
-                                icon="plus-circle"
-                                class="mr-1 text-danger"
-                              />
+                             <i class="fas fa-plus-circle mr-1 text-danger"></i>
                             </span>
                           </span>
                           
@@ -784,10 +781,7 @@ Tab 1 Row Begins here -->
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
                             >
-                              <font-awesome-icon
-                                icon="plus-circle"
-                                class="mr-1"
-                              />
+                           <i class="fas fa-plus-circle mr-1"></i>
                             </span>
                           </span>
 
@@ -951,8 +945,7 @@ Tab 1 Row Begins here -->
                     @click.prevent="downloadFile(file)"
                   >
                     <span class="scales"
-                      ><font-awesome-icon icon="file" class="mr-1"
-                    /></span>
+                      ><i class="far fa-file mr-1"></i></span>
                     <input
                       readonly
                       type="text"
@@ -1224,9 +1217,9 @@ Tab 1 Row Begins here -->
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
-                      <span v-if="note.updatedAt"
-                        >{{ note.user.fullName }} on
-                        {{ new Date(note.updatedAt).toLocaleString() }}</span
+                      <span v-if="note.updated_at"
+                        >{{ note.user.full_name }} on
+                        {{ new Date(note.updated_at).toLocaleString() }}</span
                       ><span v-else
                         >{{ $currentUser.full_name }} on
                         {{ new Date().toLocaleDateString() }}</span
@@ -1405,7 +1398,7 @@ export default {
         sub_task_ids: [],
         sub_risk_ids: [],
         sub_issue_ids: [],
-        issueFiles: [],
+        issue_files: [],
         checklists: [],
         notes: [],
       };
@@ -1657,7 +1650,7 @@ export default {
 
      //Responsible USer Id
         if (this.DV_issue.responsible_user_ids && this.DV_issue.responsible_user_ids.length) {
-        for (let u_id of this.DV_issue.responsibleUserIds) {
+        for (let u_id of this.DV_issue.responsible_user_ids) {
             formData.append("responsible_user_ids[]", u_id);
           }
         } else {
@@ -1671,7 +1664,7 @@ export default {
           this.DV_issue.accountable_user_ids.length
         ) {
         
-          for (let u_id of this.DV_issue.accountableUserIds) {
+          for (let u_id of this.DV_issue.accountable_user_ids) {
             formData.append("accountable_user_ids[]", u_id);
           }
         } else {
@@ -1681,7 +1674,7 @@ export default {
         // Consulted UserId
 
         if (this.DV_issue.consulted_user_ids.length) {
-         for (let u_id of this.DV_issue.consultedUserIds) {
+         for (let u_id of this.DV_issue.consulted_user_ids) {
             formData.append("consulted_user_ids[]", u_id);
           }
         } else {
@@ -1691,10 +1684,7 @@ export default {
         // Informed UserId
 
         if (this.DV_issue.informed_user_ids.length) {
-          // console.log("this.DV_issue.responsibleUserIds.length")
-          // console.log(this.DV_issue.informedUserIds.length)
-          // console.log(this.DV_issue.informedUserIds)
-          for (let u_id of this.DV_issue.informed_user_ids) {
+         for (let u_id of this.DV_issue.informed_user_ids) {
             formData.append("informed_user_ids[]", u_id);
           }
         } else {
@@ -1825,6 +1815,7 @@ export default {
             //this.$emit(callback, responseIssue)
             this.updateIssuesHash({ issue: responseIssue });
             if (response.status === 200) {
+              this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
@@ -1832,7 +1823,7 @@ export default {
               });
             }
           
-          this.fetchPortfolioIssues()
+        
            this.$router.push(
                 `/portfolio`
               );
@@ -1860,8 +1851,8 @@ export default {
     },
     noteBy(note) {
       return note.user
-        ? `${note.user.fullName} at ${new Date(
-            note.createdAt
+        ? `${note.user.full_name} at ${new Date(
+            note.created_at
           ).toLocaleString()}`
         : `${this.$currentUser.full_name} at (Now)`;
     },
@@ -1876,14 +1867,14 @@ export default {
       if (!confirm) return;
 
       let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
+        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
         : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
       this.saveIssue();
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_issue.startDate);
+      const startDate = new Date(this.DV_issue.start_date);
       startDate.setHours(48, 0, 0, 0);
       return date < startDate;
     },
@@ -1893,12 +1884,12 @@ export default {
         text: "",
         checked: false,
         position: postion,
-        progressLists: [],
+        progress_lists: [],
       });
     },
     addProgressList(check) {
-      var postion = check.progressLists.length;
-      check.progressLists.push({ body: "", position: postion });
+      var postion = check.progress_lists.length;
+      check.progress_lists.push({ body: "", position: postion });
       this.editToggle = true;
     },
     destroyCheck(check, index) {
@@ -2067,7 +2058,7 @@ export default {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },
     filteredFiles() {
-      return _.filter(this.DV_issue.issueFiles, (f) => !f._destroy);
+      return _.filter(this.DV_issue.issue_files, (f) => !f._destroy);
     },
     C_myIssues() {
       return _.map(this.myActionsFilter, "value").includes("issues");
@@ -2126,9 +2117,9 @@ export default {
       if (!value) this.DV_issue.due_date = "";
     },
     "DV_issue.due_date"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+      if (this.facility.due_date) {
+        if (moment(value).isAfter(this.facility.due_date, "day")) {
+          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facility_name} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
           confirmButtonText: 'Ok',
           type: 'warning'
         });

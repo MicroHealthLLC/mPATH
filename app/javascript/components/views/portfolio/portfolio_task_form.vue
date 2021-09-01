@@ -605,7 +605,7 @@
               >
                 <div
                   v-for="(check, index) in DV_task.checklists"
-                  :key="index"
+                  :key="index"                
                   class="d-flex w-100 mb-3 drag"
                   v-if="!check._destroy && isMyCheck(check)"
                 >
@@ -755,9 +755,8 @@
                             <i class="fal fa-plus-circle mr-1 text-danger"></i>
                             </span>
                           </span>
-
-                          <table
-                            v-if="check.progress_lists.length > 0"
+                          <div  v-if="check.progress_lists.length > 0">
+                          <table                           
                             style="width:100%"
                             class="mt-1"
                           >
@@ -812,7 +811,7 @@
                                   <span v-if="!progress.user"></span>
                                   <span v-else>
                                     {{
-                                      moment(progress.updatedAt).format(
+                                      moment(progress.updated_at).format(
                                         "DD MMM YYYY, h:mm a"
                                       )
                                     }}
@@ -820,7 +819,7 @@
                                 </td>
                                 <td>
                                   <span v-if="progress.user">
-                                    <span> {{ progress.user.fullName }}</span>
+                                    <span> {{ progress.user.full_name }}</span>
                                   </span>
                                   <span v-else>
                                     {{ $currentUser.full_name }}
@@ -871,6 +870,7 @@
                               </tr>
                             </tbody>
                           </table>
+                          </div>
                           <div v-else class="text-danger">
                             No Checklist Progress Updates to Display
                           </div>
@@ -917,7 +917,7 @@
                     :class="{ 'btn-disabled': !file.uri }"
                     @click.prevent="downloadFile(file)"
                   >
-                    <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                    <span><i class="far fa-file mr-1"></i></span>
 
                     <input
                       readonly
@@ -1190,9 +1190,9 @@
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
-                      <span v-if="note.updatedAt"
-                        >{{ note.user.fullName }} on
-                        {{ new Date(note.updatedAt).toLocaleString() }}</span
+                      <span v-if="note.updated_at"
+                        >{{ note.user.full_name }} on
+                        {{ new Date(note.updated_at).toLocaleString() }}</span
                       ><span v-else
                         >{{ $currentUser.full_name }} on
                         {{ new Date().toLocaleDateString() }}</span
@@ -1300,7 +1300,7 @@ export default {
             "Task Name",
             "Description",
             "Start Date",
-          
+            "Process Area",
             "Stage",
             "Start Date",
             "Date Closed",
@@ -1414,6 +1414,9 @@ export default {
         return str;
       }
     },
+    log(e){
+console.log("DV_checklists " + e)
+    },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
         behavior: "smooth",
@@ -1459,11 +1462,11 @@ export default {
       this.taskDeleted(this.DV_task);
       this.cancelSave();
     },
-    progressListTitleText(progressList) {
-      if (!progressList.id) return;
-      var date = moment(progressList.createdAt).format("MM/DD/YYYY");
-      var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.full_name} at ${date} ${time} `;
+    progressListTitleText(progress_list) {
+      if (!progress_list.id) return;
+      var date = moment(progress_list.created_at).format("MM/DD/YYYY");
+      var time = moment(progress_list.created_at).format("hh:mm:ss a");
+      return `${progress_list.user.full_name} at ${date} ${time} `;
     },
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
@@ -1499,9 +1502,9 @@ export default {
         (t) => t.id === this.DV_task.task_stage_id
       );
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
-        (t) => t.id === this.DV_task.facilityProjectId
+        (t) => t.id === this.DV_task.facility_project_id
       );
-      if (this.DV_task.attach_Files)
+      if (this.DV_task.attach_files)
         this.addFile(this.DV_task.attach_files, false);
       this.$nextTick(() => {
         this.errors.clear();
@@ -1577,7 +1580,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_task = { ...this.DV_task, on_hold: !this.DV_task.on_hold };
-      this.DV_task.dueDate = '';
+      this.DV_task.due_date = '';
     },
     toggleDraft() {
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
@@ -1590,10 +1593,11 @@ export default {
       this.DV_task.due_date = '';
     },
     cancelSave() {
-      this.$emit("on-close-form");
+     this.$emit("on-close-form");
+    //  this.setTaskForManager({ key: "task", value: null });
     },
     saveTask() {
-      // if (!this._isallowed("write")) return;
+      if (!this._isallowed("write")) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -1704,16 +1708,16 @@ export default {
               continue;
             formData.append(`task[checklists_attributes][${i}][${key}]`, value);
             for (let pi in check.progress_lists) {
-              let progressList = check.progress_lists[pi];
-              if (!progressList.body && !progressList._destroy) continue;
-              for (let pkey in progressList) {
+              let progress_list = check.progress_lists[pi];
+              if (!progress_list.body && !progress_list._destroy) continue;
+              for (let pkey in progress_list) {
                 if (pkey === "user") pkey = "user_id";
                 let pvalue =
                   pkey == "user_id"
-                    ? progressList.user
-                      ? progressList.user.id
+                    ? progress_list.user
+                      ? progress_list.user.id
                       : null
-                    : progressList[pkey];
+                    : progress_list[pkey];
                 pkey = humps.decamelize(pkey);
                 if (["created_at", "updated_at"].includes(pkey)) continue;
                 formData.append(
@@ -1832,8 +1836,8 @@ export default {
     },
     noteBy(note) {
       return note.user
-        ? `${note.user.fullName} at ${new Date(
-            note.createdAt
+        ? `${note.user.full_name} at ${new Date(
+            note.created_at
           ).toLocaleString()}`
         : `${this.$currentUser.full_name} at (Now)`;
     },
@@ -1841,15 +1845,15 @@ export default {
       let url = window.location.origin + file.uri;
       window.open(url, "_blank");
     },
-    destroyProgressList(check, progressList, index) {
+    destroyProgressList(check, progress_list, index) {
       let confirm = window.confirm(
         `Are you sure you want to delete this Progress List item?`
       );
       if (!confirm) return;
-      let i = progressList.id
-        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
+      let i = progress_list.id
+        ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
         : index;
-      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progress_list, _destroy: true });
       this.saveTask();
     },
     destroyCheck(check, index) {
@@ -1902,8 +1906,8 @@ export default {
         input.name = event.target.value;
       }
     },
-    updateProgressListItem(event, name, progressList) {
-      progressList.body = event.target.value;
+    updateProgressListItem(event, name, progress_list) {
+      progress_list.body = event.target.value;
     },
     isMyCheck(check) {
       return this.C_myTasks && check.id
