@@ -1550,7 +1550,7 @@ export default new Vuex.Store({
 
                 hash.push(
                   {
-                    taskUrl: `/projects/${getters.currentProject.id}/facilities/${facility.facility.id}/tasks/${task.id}`,
+                    taskUrl: `#{API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
                     facilityId: facility.id,
                     projectId: getters.currentProject.id,
                     id: t_id,
@@ -1779,7 +1779,7 @@ export default new Vuex.Store({
   actions: {
     fetchFacilities({commit, dispatch}, id) {
       return new Promise((resolve, reject) => {
-        http.get(`${API_BASE_PATH}/projects/${id}/facilities.json`)
+        http.get(`${API_BASE_PATH}/programs/${id}/projects.json`)
           .then((res) => {
             let facilities = []
             for (let facility of res.data.facilities) {
@@ -1796,7 +1796,7 @@ export default new Vuex.Store({
     },
     fetchCurrentProject({commit, dispatch}, id) {
       return new Promise((resolve, reject) => {
-        http.get(`${API_BASE_PATH}/projects/${id}.json`)
+        http.get(`${API_BASE_PATH}/programs/${id}.json`)
           .then((res) => {
             let facilities = []
             for (let facility of res.data.project.facilities) {
@@ -1827,7 +1827,7 @@ export default new Vuex.Store({
     },
     fetchFacility({commit, dispatch, getters}, {projectId, facilityId}) {
       return new Promise((resolve, reject) => {
-        http.get(`${API_BASE_PATH}/projects/${projectId}/facilities/${facilityId}.json`)
+        http.get(`${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}.json`)
           .then((res) => {
             let facility = Object.assign({}, {...res.data.facility, ...res.data.facility.facility})
             let index = getters.facilities.findIndex(f => f.id == facility.id)
@@ -1889,7 +1889,7 @@ export default new Vuex.Store({
     // store actions watch_view
     updateWatchedTasks({commit}, task) {
       return new Promise((resolve, reject) => {
-        http.put(`${API_BASE_PATH}/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`, {task: task})
+        http.put(`${API_BASE_PATH}/programs/${task.projectId}/projects/${task.facilityId}/tasks/${task.id}.json`, {task: task})
           .then((res) => {
             commit('updateTasksHash', {task: res.data.task})
             resolve()
@@ -1902,7 +1902,7 @@ export default new Vuex.Store({
     },
     updateWatchedIssues({commit}, issue) {
       return new Promise((resolve, reject) => {
-        http.put(`${API_BASE_PATH}/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`, {issue: issue})
+        http.put(`${API_BASE_PATH}/programs/${issue.projectId}/projects/${issue.facilityId}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             commit('updateIssuesHash', {issue: res.data.issue})
             resolve()
@@ -1915,7 +1915,7 @@ export default new Vuex.Store({
     },
     updateWatchedRisks({commit}, risk) {
       return new Promise((resolve, reject) => {
-        http.put(`${API_BASE_PATH}/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+        http.put(`${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
           .then((res) => {
             commit('updateRisksHash', {risk: res.data.risk})
             resolve()
@@ -1928,7 +1928,7 @@ export default new Vuex.Store({
     },
     updateApprovedRisks({commit}, risk) {
       return new Promise((resolve, reject) => {
-        http.put(`${API_BASE_PATH}/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+        http.put(`${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
           .then((res) => {
             commit('updateRisksHash', {risk: res.data.risk})
             resolve()
@@ -1942,7 +1942,7 @@ export default new Vuex.Store({
     // update_from_kanban_view
     updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
       return new Promise((resolve, reject) => {
-        http.post(`${API_BASE_PATH}/projects/${projectId}/facilities/${facilityId}/${type}/batch_update.json`, data)
+        http.post(`${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}/${type}/batch_update.json`, data)
           .then((res) => {
             let facility = Object.assign({}, {...res.data, ...res.data.facility})
             let index = getters.facilities.findIndex(f => f.id == facility.id)
@@ -1959,7 +1959,7 @@ export default new Vuex.Store({
     taskDeleted({commit}, task) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`)
+          .delete(`${API_BASE_PATH}/programs/${task.projectId}/projects/${task.facilityId}/tasks/${task.id}.json`)
           .then((res) => {
             commit('updateTasksHash', {task: task, action: 'delete'})
             resolve('Success')
@@ -1973,7 +1973,7 @@ export default new Vuex.Store({
     noteDeleted({commit}, {note, projectId, facilityId, cb}) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/projects/${projectId}/facilities/${facilityId}/notes/${note.id}.json`)
+          .delete(`${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`)
           .then((res) => {
             commit('updateNotesHash', {note: note, facilityId, action: 'delete'})
             if (cb) cb()
@@ -1988,7 +1988,7 @@ export default new Vuex.Store({
     issueDeleted({commit}, issue) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`)
+          .delete(`${API_BASE_PATH}/programs/${issue.projectId}/projects/${issue.facilityId}/issues/${issue.id}.json`)
           .then((res) => {
             commit('updateIssuesHash', {issue: issue, action: 'delete'})
             resolve('Success')
@@ -2002,7 +2002,7 @@ export default new Vuex.Store({
     riskDeleted({commit}, risk) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`)
+          .delete(`${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`)
           .then((res) => {
             commit('updateRisksHash', {risk: risk, action: 'delete'})
             resolve('Success')

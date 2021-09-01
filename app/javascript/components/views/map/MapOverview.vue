@@ -659,6 +659,7 @@
 import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
+import {API_BASE_PATH} from './../../../mixins/utils'
 
 export default {
   name: "MapOverview",
@@ -712,7 +713,7 @@ export default {
 
       http
         .put(
-          `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}.json`,
+          `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}.json`,
           data
         )
         .then((res) => {

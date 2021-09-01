@@ -91,6 +91,7 @@ import Vue from "vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import axios from "axios";
 import humps from "humps";
+import {API_BASE_PATH} from './../../mixins/utils'
 
 export default {
   name: "ContextMenu",
@@ -218,7 +219,7 @@ export default {
 
         formData.append("task[facility_project_id]", facilityProjectId);
 
-        let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
         let method = "PUT";
         let callback = "task-updated";
 
@@ -279,7 +280,7 @@ export default {
       facilities[facilityIndex].tasks.push(task);
     },
     createDuplicate() {
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
       let method = "POST";
       let callback = "task-created";
 
@@ -342,7 +343,7 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
       let method = "POST";
       let callback = "task-created";
 

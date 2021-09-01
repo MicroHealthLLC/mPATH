@@ -246,6 +246,7 @@ library.add(faFilePdf)
 import * as Moment from 'moment'
 import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
+import {API_BASE_PATH} from './../../../mixins/utils'
 
 export default {
   name: 'IssueIndex',
@@ -351,7 +352,7 @@ export default {
     },
     issueDeleted(issue) {
       http
-        .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
+        .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`)
         .then((res) => {
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
