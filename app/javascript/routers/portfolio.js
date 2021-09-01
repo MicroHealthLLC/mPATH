@@ -30,7 +30,7 @@ export default new VueRouter({
      },
      {
       name: "PortfolioIssueForm",
-      path: "/program/:programId/project/:projectId/issues/:issueId",
+      path: "/",
       component: PortfolioIssueForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;

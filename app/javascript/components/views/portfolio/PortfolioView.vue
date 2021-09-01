@@ -5152,9 +5152,9 @@ export default {
         this.setPortfolioRiskApproachesFilter(value);
       },
     },
-    C_programNames() {
-      return this.portfolioPrograms;
-    },
+    // C_programNames() {
+    //   return this.portfolioPrograms;
+    // },
     C_categories() {
       let category = this.portfolioTasks;
       return [
@@ -5385,7 +5385,6 @@ export default {
     });
     },
     openRisk(risk) {   
-         console.log("This hworks")     
       this.$router.push({
       name: "PortfolioRiskForm",
       params: {
@@ -5641,7 +5640,6 @@ export default {
     toggleOverdue() {
       this.hideOverdue = !this.hideOverdue;
     },
-
     setPage(val) {
       this.page = val;
     },

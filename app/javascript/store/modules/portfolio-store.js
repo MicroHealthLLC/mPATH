@@ -26,8 +26,12 @@ const portfolioModule = {
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
 
+
+
     // This one handles the individual edit tasks when clicking on Task row in Portfolio table
     portfolio_task: {},
+
+    portfolio_tasks_loaded: true,
 
       // This one handles the individual edit issues when clicking on Task row in Portfolio table
     portfolio_issue: {},
@@ -417,7 +421,7 @@ const portfolioModule = {
           .then((res) => {
             // Mutate state with response from back end
             console.log(res.data.task)
-             commit("SET_PORTFOLIO_TASK", res.data.task);
+             commit("SET_PORTFOLIO_TASKS", res.data.task);
           })
           .catch((err) => {
             console.log(err);
@@ -601,6 +605,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
     SET_PORTFOLIO_TASK: (state, portfolio_task) => state.portfolio_task = portfolio_task,
+    TOGGLE_PORTFOLIO_TASK_LOADED: (state, loaded ) => state.portfolio_task_loaded = loaded,
 
     // PORTFOLIO ISSUES
     SET_PORTFOLIO_ISSUES: (state, portfolio_issues) => state.portfolio_issues = portfolio_issues,
@@ -608,7 +613,7 @@ const portfolioModule = {
 
     SET_PORTFOLIO_ISSUE: (state, portfolio_issue) => state.portfolio_issue = portfolio_issue,
 
-    SET_PORTFOLIO_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
+    SET_PORTFOLIOportfolioNameFilter_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
     TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED: (state, loaded ) => state.portfolio_issue_types_loaded = loaded,   
     setPortfolioIssueTypesFilter: (state, portfolioIssueTypesFilter) => state.portfolioIssueTypesFilter = portfolioIssueTypesFilter,
 
@@ -710,6 +715,7 @@ const portfolioModule = {
 
     portfolioTasks: state => state.portfolio_tasks,
     portfolioTask: state => state.portfolio_task,
+    portfolioTaskLoaded: state => state.portfolio_task_loaded,
     portfolioTasksLoaded: state => state.portfolio_tasks_loaded,
 
     portfolioIssues: state => state.portfolio_issues,

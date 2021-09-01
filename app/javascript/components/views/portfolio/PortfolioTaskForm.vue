@@ -13,7 +13,7 @@ export default {
     portfolioTaskForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioTask', 'portfolioTasksLoaded', 'fetchPortfolioTasks', 'fetchPortfolioCategories']),
+    ...mapActions(['fetchPortfolioTask', 'portfolioTaskLoaded', 'fetchPortfolioTasks', 'fetchPortfolioCategories']),
     redirectBack() {
       this.fetchPortfolioTasks()
       this.$router.push(
