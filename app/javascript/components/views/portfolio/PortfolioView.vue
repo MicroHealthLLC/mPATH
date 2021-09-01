@@ -351,7 +351,7 @@
                     :multiple="true" 
                     @input="updateProgramFilterValue"
                     :value="C_portfolioNamesFilter"
-                    :options="portfolioPrograms" 
+                    :options="portfolioPrograms"
                     v-model="C_portfolioNamesFilter"
                     track-by="name"      
                     :limit="3"              
@@ -373,6 +373,8 @@
                       track-by="name"
                       value-key="id"
                       multiple
+                      clearable
+                      @clear="setValueNull"
                       placeholder="Select Process Area"
                     >
                       <el-option
@@ -5445,6 +5447,9 @@ export default {
     	this.dialogVisible = false;
       done();
     },
+    setValueNull(val) {
+      this.setPortfolioCategoriesFilter('');
+    },
     // NOTE: WIP
     programAjaxFilterOptions({ action, parentNode, callback }) {
       // Typically, do the AJAX stuff here.
@@ -5737,7 +5742,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-
-
+<style>
+.portfolioView_main .vue-treeselect__placeholder {
+  font-size: 14px;
+}
+.portfolioView_main .vue-treeselect__value-remove {
+  border: none !important;
+}
 </style>
