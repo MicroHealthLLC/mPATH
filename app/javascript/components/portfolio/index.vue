@@ -48,8 +48,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.vh100{
-  height: 100vh;
-  width: 100vw;
-}
+// .vh100{
+//   height: 100vh;
+//   width: 100vw;
+// }
 </style>

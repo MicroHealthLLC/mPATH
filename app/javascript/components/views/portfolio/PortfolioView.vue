@@ -1097,7 +1097,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(task, index) in sortedTasks" :key="index" class="taskHover" @click="openTask(task)">
+                      <tr v-for="(task, index) in sortedTasks" :key="index" class="portTable taskHover" @click="openTask(task)">
                    
                         <td>{{ task.program_name }}</td>
                         <td>{{ task.project_name }}</td>
@@ -2018,7 +2018,7 @@
                     </th>
                   </thead>
                   <tbody>
-                    <tr v-for="(issue, index) in sortedIssues" :key="index" class="taskHover">
+                    <tr v-for="(issue, index) in sortedIssues" :key="index" class="portTable taskHover" @click="openIssue(issue)">
                       <td>{{ issue.program_name }}</td>
                       <td>{{ issue.project_name }}</td>
                       <td>{{ issue.title }}</td>
@@ -3009,7 +3009,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(risk, index) in sortedRisks" :key="index" class="taskHover">
+                      <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openRisk(risk)">
                         <td>{{ risk.program_name }}</td>
                         <td>{{ risk.project_name }}</td>
                         <td>{{ risk.text }}</td>
@@ -3749,7 +3749,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="taskHover">
+                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover">
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
@@ -3877,14 +3877,6 @@
         </el-tabs>
         <div class="row pt-2">
           <div class="col-6 py-0 pl-0">
-            <!-- <el-popover
-          placement="top-start"
-          title="Project #"
-          width="200"
-          trigger="hover"
-          content="This is the total number of programs in your portfolio.">
-        <b class="badge bg-secondary text-light badge-pill" slot="reference"> </b>
-        </el-popover> -->
           </div>
         </div>
       </el-tab-pane>
@@ -3992,11 +3984,6 @@ export default {
       // entire view has been rendered
       $("#tab-tasks").trigger('click');
     })
-    
-    // this.fetchPortfolioTasks();
-    // this.fetchPortfolioIssues();
-    // this.fetchPortfolioRisks();
-    // this.fetchPortfolioLessons();
   },
   computed: {
     ...mapGetters([
@@ -4013,6 +4000,7 @@ export default {
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
       'getShowCount',
+      'portfolioCategories',
       'portfolioNameFilter',
       'portfolioRiskNameFilter',
       'facilityDueDateFilter',
@@ -5377,14 +5365,34 @@ export default {
       //  console.log("number" + e)
     },
    openTask(task) {      
-       this.$router.push({
-        name: "PortfolioTaskForm",
-        params: {
-          programId: task.program_id,
-          projectId: task.project_id,
-          id: task.id,
-          // task: task,
-        },
+      this.$router.push({
+      name: "PortfolioTaskForm",
+      params: {
+        programId: task.program_id,
+        projectId: task.project_id,
+        id: task.id,
+      },
+    });
+    },
+    openIssue(issue) {   
+      this.$router.push({
+      name: "PortfolioIssueForm",
+      params: {
+        programId: issue.program_id,
+        projectId: issue.project_id,
+        id: issue.id,
+      },
+    });
+    },
+    openRisk(risk) {   
+         console.log("This hworks")     
+      this.$router.push({
+      name: "PortfolioRiskForm",
+      params: {
+        programId: risk.program_id,
+        projectId: risk.project_id,
+        id: risk.id,
+      },
       });
     },
     beforeClose(done) {
@@ -5597,9 +5605,6 @@ export default {
       };
       window.location.href =
         this.uri + this.base64(this.format(this.template, ctx));
-    },
-    log(e) {
-      //  console.log("Users" + e)
     },
     // Toggle for 3 Action Tags
     toggleWatched() {

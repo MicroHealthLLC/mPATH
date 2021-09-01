@@ -1,22 +1,23 @@
 <template>
   <div>
    <form
-      id="tasks-form"
-      @submit.prevent="saveTask"
-      class="mx-auto tasks-form"
+      id="issues-form"
+      @submit.prevent="saveIssue"
+      class="mx-auto issues-form"
       accept-charset="UTF-8"
+      data-cy="issue_form"
       :class="{ _disabled: loading }"
     >
-      <div class="mt-2 mx-4 d-flex align-items-center">
+    <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link v-if="DV_task"  :to="
+              <router-link v-if="DV_issue"  :to="
                 `/portfolio`
               ">{{
-                  DV_task.facility_name
+                  DV_issue.facility_name
             }}            
             </router-link>
             <el-icon
@@ -27,46 +28,46 @@
               :to="
                 `/portfolio`
               "
-              >Tasks</router-link
+              >Issues</router-link
             >
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
-            <span v-if="DV_task.text.length > 0">{{ DV_task.text }}</span>
-            <span v-else style="color: gray">(Task Name)</span>
+            <span v-if="DV_issue.title.length > 0">{{ DV_issue.title }}</span>
+            <span v-else style="color: gray">(Issue Name)</span>
           </h5>
         </div>
        
-        <div class="ml-auto d-flex" v-if="_isallowed('read')">  
-          <button    
-            v-if="_isallowed('write')"      
+        <div class="ml-auto d-flex" v-if="_isallowed('read')">
+          <button
+            v-if="_isallowed('write')"
             class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
-            data-cy="task_save_btn"
+            data-cy="issue_save_btn"
           >
-            Save Task
+            Save Issue
           </button>
           <button
             v-else
             disabled
             class="btn btn-sm sticky-btn btn-primary mr-2"
-            data-cy="task_read_only_btn"
+            data-cy="issue_read_only_btn"
           >
             Read Only
           </button>
           <button
             class="btn btn-sm sticky-btn btn-outline-secondary"
-            @click.prevent="cancelSave"
-            data-cy="task_close_btn"
+            @click.prevent="cancelIssueSave"
+            data-cy="issue_close_btn"
           >
             Close
           </button>
         </div>
-      
-      </div>
-
+    </div>
+    
       <hr class="mx-4 mb-6 mt-2" />
-        <div
+
+      <div
         v-if="_isallowed('read')"
         class="d-flex form-group pt-1 mb-1 justify-content-start"
       >
@@ -82,8 +83,9 @@
         <span style="color: #dc3545; font-size: 15px">*</span> Indicates
         required fields
       </h6>
+
       <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
-      <div class="formTitle fixed-form pt-1">
+      <div class="formTitle fixed-form">
         <div v-if="errors.items.length > 0" class="text-danger mx-4">
           Please fill the required fields before submitting
           <ul class="error-list mx-4">
@@ -91,7 +93,7 @@
               v-for="(error, index) in errors.all()"
               :key="index"
               v-tooltip="{
-                content: 'Field is located on Task Info',
+                content: 'Field is located on Issue Info',
                 placement: 'left',
               }"
             >
@@ -99,262 +101,307 @@
             </li>
           </ul>
         </div>
-      
-
-        <!-- TASK INFO TAB #1 -->
+        <!-- ISSUE INFO TAB #1 -->
         <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
           <div class="form-group pt-3 mx-4">
             <label class="font-md"
-              >Task Name <span style="color: #dc3545">*</span></label
+              >Issue Name <span style="color: #dc3545">*</span></label
             >
-            <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
 
-              <span class="statesCol p-1 mr-1">           
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleOngoing"
-              data-cy="task_ongoing"
-              v-tooltip="`Ongoing`" 
-            >
-              <span              
-                v-show="DV_task.ongoing">
-              <i class="fas fa-retweet text-success"></i>
-              </span>
-              <span              
-                v-show="!DV_task.ongoing">
-              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Ongoing
-              </small>
-            </span>
+          <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
+           <span class="statesCol p-1 mr-1">
 
-              <span
+             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
-              data-cy="task_on_hold"
-               v-tooltip="`On Hold`" 
+              data-cy="issue_on_hold"
+              v-tooltip="`On Hold`" 
             >
-              <span                
-                v-show="DV_task.on_hold">
-                <i class="fas fa-pause-circle mr-1 text-primary"></i>
+              <span 
               
+                v-show="DV_issue.on_hold">
+                <i class="fas fa-pause-circle mr-1 text-primary"></i>
               </span>
-              <span
-                v-show="!DV_task.on_hold">
-              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>              
-              </span>             
+              <span 
+               v-show="!DV_issue.on_hold">
+              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
               <small 
                 :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                On Hold
-              </small>
-            </span>   
-          
-              <span
+                style="vertical-align:text-top"> On Hold</small>
+            </span>
+
+             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
-              data-cy="task_important"
+              data-cy="issue_important"
               v-tooltip="`Draft`" 
             >
-              <span               
-                 v-show="DV_task.draft">
+              <span              
+                v-show="DV_issue.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
               </span>
-              <span               
-                v-show="!DV_task.draft">
+              <span 
+               v-show="!DV_issue.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
               </span>
              
               <small 
                 :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Draft
+                style="vertical-align:text-top"> Draft</small>
+            </span>
+
+           </span>
+
+           <span class="tagsCol p-1">
+                 <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleWatched"
+              data-cy="issue_on_watch"
+              v-tooltip="`On Watch`" 
+            >
+              <span               
+                v-show="DV_issue.watched" 
+                ><i class="fas fa-eye mr-1"></i
+              ></span>
+              <span 
+                 v-show="!DV_issue.watched" 
+                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+              ></span>
+           
+              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
+                On Watch
               </small>
             </span>
-           </span>
-              <span class="tagsCol p-1">
-              <span
-                v-if="_isallowed('write')"
-                class="watch_action clickable mx-2"
-                v-tooltip="`On Watch`" 
-                @click.prevent.stop="toggleWatched"
-                data-cy="task_on_watch"
-              >
-                <span                
-                  v-show="DV_task.watched" 
-                  ><i class="fas fa-eye mr-1"></i
-                ></span>
-                <span 
-                  v-show="!DV_task.watched" 
-                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-                ></span>           
-                <small 
-                  style="vertical-align:text-top" 
-                  :class="{'d-none': isMapView }"
-                > 
-                  On Watch
-                </small>
-              </span>
-              <span
-              v-if="_isallowed('write')"  
+      
+           
+
+            <span
+              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
+              data-cy="issue_important"
               v-tooltip="`Important`" 
             >
-              <span 
-                v-show="DV_task.important">
+               <span               
+                v-show="DV_issue.important">
                <i class="fas fa-star text-warning"></i>
               </span>
               <span 
-                v-show="!DV_task.important">
+               v-show="!DV_issue.important">
                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-               :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Important
-              </small>
               </span>
-              <span
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Important</small>
+            </span>
+             <span
                 v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
-                data-cy="task_reportable"
+                data-cy="issue_reportable"
                 v-tooltip="`Briefings`" 
               >
-                <span               
-                  v-show="DV_task.reportable">
+                <span
+              
+                  v-show="DV_issue.reportable">
                 <i class="fas fa-presentation text-primary"></i>
                 </span>
                 <span 
-                v-show="!DV_task.reportable">
+               
+                  v-show="!DV_issue.reportable">
                 <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
                 </span>
               
                 <small 
                   :class="{'d-none': isMapView }"
                   style="vertical-align:text-top"> 
-                Briefings
+               Briefings
                 </small>
-              </span>                
-              </span>
-            </div>
+                </span>
+           </span>
+        
+        
+          </div>
 
             <el-input
-              name="Task Name"
+              name="Issue Name"
               v-validate="'required'"
               type="text"
-              v-model="DV_task.text"
-              placeholder="Task Name"
+              v-model="DV_issue.title"
+              placeholder="Issue Name"
               :readonly="!_isallowed('write')"
-              :class="{ error: errors.has('Task Name'), }"
-              data-cy="task_name"
+              :class="{ error: errors.has('Issue Name') }"
+              data-cy="issue_title"
             />
             <div
-              v-show="errors.has('Task Name')"
+              v-show="errors.has('Issue Name')"
               class="text-danger"
-              data-cy="task_name_error"
+              data-cy="issue_title_error"
             >
-              {{ errors.first("Task Name") }}
+              {{ errors.first("Issue Name") }}
             </div>
           </div>
+
           <div class="form-group mx-4">
             <label class="font-md">Description</label>
             <el-input
               type="textarea"
-              placeholder="Task brief description"
-              v-model="DV_task.description"
+              placeholder="Issue brief description"
+              v-model="DV_issue.description"
               rows="4"
               :readonly="!_isallowed('write')"
-              data-cy="task_description"
+              data-cy="issue_description"
             />
           </div>
 
           <!-- Row begins -->
-          <div class="d-flex mb-1 form-group">
-            <div class="simple-select form-group w-33 ml-4">
-              <label class="font-md"
-                >Process Area <span style="color: #dc3545">*</span></label
-              >
-                <el-select
-                v-model="selectedTaskType"              
+          <div class="d-flex mb-0 mx-4 form-group">
+            <div class="simple-select w-100 form-group">
+              <label class="font-md">Process Area</label>
+              <el-select
+                v-model="selectedTaskType"
                 class="w-100"
+                clearable
                 track-by="id"
-                value-key="id" 
-               :disabled="!_isallowed('write')"             
-                data-cy="task_type"    
-              :class="{ 'error': errors.has('Process Area') }"         
+                value-key="id"
+                :disabled="!_isallowed('write')"
+                data-cy="task_type"
+                name="Process Area"
+                placeholder="Select Process Area"
               >
-              <el-option
-                v-for="item in taskTypes"  
+                <el-option
+                v-for="item in taskTypes"     
                 :value="item"
                 :key="item.id"
                 :label="item.name"
                 >
                 </el-option>
               </el-select>
-               <div
-                v-show="errors.has('Process Area')"
-                class="text-danger"
-                data-cy="task_category_error"
+            </div>
+            </div>
+
+            <div class="simple-select form-group mx-4">
+              <label class="font-md"
+                >Issue Type <span style="color: #dc3545">*</span></label
               >
-                {{ errors.first("Process Area") }}
+              <el-select
+                v-model="selectedIssueType"
+                v-validate="'required'"
+                class="w-100"
+                track-by="id"
+                value-key="id"
+                :class="{ 'error': errors.has('Issue Type') }"
+                data-cy="issue_type_field"
+                name="Issue Type"
+                :disabled="!_isallowed('write')"
+                placeholder="Issue Type"
+              >
+                <el-option
+                  v-for="item in issueTypes"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>
+      
+              <div
+                v-show="errors.has('Issue Type')"
+                class="text-danger"
+                data-cy="issue_type_error"
+              >
+                {{ errors.first("Issue Type") }}
               </div>
-             
+            </div>
+         
+          <!-- Tab 1 Row ends here -->
+          <!-- Tab 1 Row begins here -->
+          <div class="d-flex mx-4">
+            <div class="simple-select form-group w-100">
+              <label class="font-md"
+                >Issue Severity <span style="color: #dc3545">*</span></label
+              >
+              <el-select
+                v-model="selectedIssueSeverity"
+                v-validate="'required'"
+                class="w-100"
+                track-by="id"
+                value-key="id"
+                :disabled="!_isallowed('write')"
+                :class="{ 'error': errors.has('Issue Severity') }"
+                data-cy="issue_severity"
+                name="Issue Severity"
+                placeholder="Issue Severity"
+              >
+                <el-option
+                  v-for="item in issueSeverities"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>
+     
+          <div
+            v-show="errors.has('Issue Severity')"
+            class="text-danger"
+            data-cy="issue_severity_error"
+          >
+            {{ errors.first("Issue Severity") }}
+          </div>
+         </div>       
+        </div>  
+          
+            <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
+              <div v-if="selectedIssueStage !== undefined">       
+              <div style="position:relative"><label class="font-md mb-0">Stage</label>               
+                <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
+              </div>    
+            <el-steps 
+              class="exampleOne mt-3" 
+              :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
+              :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
+              finish-status="success"  
+              :disabled="!_isallowed('write') || !!fixedStage"
+              v-model="selectedIssueStage"
+              track-by="id" 
+              value-key="id"
+              >         
+              <el-step
+              v-for="item in issueStagesSorted"
+              :key="item.id"             
+              :value="item"
+              style="cursor:pointer"
+              @click.native="selectedStage(item)"        
+              :title="item.name"   
+              description=""                    
+            ></el-step>          
+              </el-steps>          
             </div>
           </div>
 
-         <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
-          <div v-if="selectedTaskStage !== undefined">       
-          <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-         <button  v-if="_isallowed('write')"  @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
-            </div>    
-          <el-steps 
-            class="exampleOne mt-3" 
-            finish-status="success"  
-            :class="{'overSixSteps': taskStagesSorted.length >= 6 }" 
-            :active="taskStagesSorted.findIndex(stage => stage.id == selectedTaskStage.id)"
-            :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
-            v-model="selectedTaskStage"
-            track-by="id" 
-            value-key="id"
-            >    
-          <el-step
-            v-for="item in taskStagesSorted"
-            :key="item.id"                       
-            :value="item"        
-            style="cursor:pointer"
-            @click.native="selectedStage(item)"        
-            :title="item.name"   
-            description=""                    
-          ></el-step>          
-            </el-steps>          
-          </div>
-         </div>
-
+     
           <div
             class="mx-4 mt-2 mb-4"
-            v-if="selectedTaskStage == null || selectedTaskStage == undefined"
+            v-if="selectedIssueStage == null || selectedIssueStage == undefined"
           >
             <label class="font-md">Select Stage</label>
             <el-steps
               class="exampleOne"
+              :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
-              :class="{ overSixSteps: taskStagesSorted.length >= 6 }"
               :disabled="!_isallowed('write') || !!fixedStage"
-              v-model="selectedTaskStage"
+              v-model="selectedIssueStage"
               track-by="id"
               value-key="id"
             >
               <el-step
-                v-for="item in taskStagesSorted"
+                v-for="item in issueStagesSorted"
                 :key="item.id"
                 :value="item"
                 style="cursor:pointer"
@@ -362,97 +409,79 @@
                 :title="item.name"
                 description=""
               ></el-step>
-         
             </el-steps>
           </div>
 
-          <!-- Stages Row ends -->
-
-          <div class="form-row mx-4">
-            <div class="form-group col-md-6 pl-0">
-              <span v-if="DV_task.ongoing">
-              <label class="font-md"
-                >Date Identified</label
-              ></span>
-               <span v-else>
+          <!--
+Tab 1 Row Begins here -->
+          <div class="d-flex mb-0 mx-4 form-group">
+            <div class="form-group mx-1 w-75">
               <label class="font-md"
                 >Start Date <span style="color: #dc3545">*</span></label
-              ></span>
-              <div :class="{ 'error': errors.has('Start Date') }">
-                <v2-date-picker
-                  v-validate="{ required: !DV_task.ongoing }"
-                  v-model="DV_task.start_date"
-                  value-type="YYYY-MM-DD"
-                  format="DD MMM YYYY"
-                  placeholder="DD MM YYYY"
-                  name="Start Date"
-                  class="w-100 vue2-datepicker"
-                  :disabled="!_isallowed('write')"
-                  data-cy="task_start_date"
-                />
-              </div>
+              >
+              <v2-date-picker
+                v-validate="'required'"
+                v-model="DV_issue.start_date"
+                value-type="YYYY-MM-DD"
+                format="DD MMM YYYY"
+                placeholder="DD MM YYYY"
+                name="Start Date"
+                class="w-100 vue2-datepicker"
+                :class="{ 'error': errors.has('Start Date') }"
+                :disabled="!_isallowed('write')"
+                data-cy="issue_start_date"
+              />
               <div
                 v-show="errors.has('Start Date')"
                 class="text-danger"
-                data-cy="task_start_date_error"
+                data-cy="issue_start_date_error"
               >
                 {{ errors.first("Start Date") }}
               </div>
             </div>
-            <div class="form-group col-md-6 pr-0">
-              <span v-if="DV_task.ongoing ">           
-               <label class="font-md"
-                ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
-              ></span>
-               <span v-else-if="DV_task.on_hold ">           
+            <div class="form-group w-75 ml-1">
+             <span v-if="DV_issue.on_hold ">           
                 <label class="font-md">
-                Due Date <span><small class="text-danger">(Not required if Task is On Hold)</small></span>
+                Estimated Completion Date <span><small class="text-danger">(Not required if Issue is On Hold)</small></span>
                  </label
                   ></span>
-              <span v-else>           
-               <label class="font-md"
-                >Due Date <span style="color: #dc3545">*</span></label
+                  <span v-else>
+              <label class="font-md"
+                >Estimated Completion Date
+                <span style="color: #dc3545">*</span></label
               ></span>
-          
-                <v2-date-picker
-                  v-validate="{ required: !DV_task.ongoing && !DV_task.on_hold }"
-                  v-model="DV_task.due_date"
-                  value-type="YYYY-MM-DD"
-                  format="DD MMM YYYY"
-                  placeholder="DD MM YYYY"
-                  name="Due Date"
-                  class="w-100 vue2-datepicker"
-                    :class="{
-                      'error': errors.has('Due Date'),
-                    }"
-                   :disabled="
-                    !_isallowed('write') ||
-                      DV_task.start_date === '' ||
-                      DV_task.start_date === null
-                  "
-                  :disabled-date="disabledDueDate"
-                  data-cy="task_due_date"
-                />
-            
+             
+              <v2-date-picker           
+                v-validate="{ required: !DV_issue.on_hold }"
+                v-model="DV_issue.due_date"
+                value-type="YYYY-MM-DD"
+                format="DD MMM YYYY"
+                placeholder="DD MM YYYY"
+                name="Estimated Completion Date"
+                class="w-100 vue2-datepicker"
+                :class="{
+                  'error': errors.has('Estimated Completion Date'),
+                }"
+                :disabled="
+                  !_isallowed('write') ||
+                    DV_issue.start_date === '' ||
+                    DV_issue.start_date === null
+                "
+                :disabled-date="disabledDueDate"
+                data-cy="issue_due_date"
+              />
               <div
-                v-show="errors.has('Due Date')"
+                v-show="errors.has('Estimated Completion Date')"
                 class="text-danger"
-                data-cy="task_due_date_error"
+                data-cy="issue_due_date_error"
               >
-                {{ errors.first("Due Date") }}
+                {{ errors.first("Estimated Completion Date") }}
               </div>
-              
-          
-            <!-- <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
-              THIS TASK IS ONGOING
-            </span> -->
             </div>
-               
           </div>
 
-          <!-- closing div for tab1 -->
         </div>
-
+        <!-- ASSIGN USERS TAB # 2-->
         <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
           <div class="form-group mb-0 pt-3 d-flex w-100">
             <div class="form-group user-select ml-4 mr-1 w-100">
@@ -465,12 +494,12 @@
                 clearable
                 track-by="id"
                 value-key="id"
-                placeholder="Search and select Responsible User"      
-                :disabled="!_isallowed('write')"         
+                placeholder="Search and select Responsible User"
+                :disabled="!_isallowed('write')"
                 data-cy="task_owner"
               >
                 <el-option
-                  v-for="item in portfolioUsers"
+                  v-for="item in activeProjectUsers"
                   :value="item"
                   :key="item.id"
                   :label="item.name"
@@ -481,17 +510,17 @@
             <div class="form-group user-select ml-1 mr-4 w-100">
               <label class="font-md mb-0">Accountable</label>
               <el-select
-                v-model="accountableTaskUsers"
+                v-model="accountableIssueUsers"
                 class="w-100"
                 clearable
                 track-by="id"
                 value-key="id"
-                placeholder="Search and select Accountable User"               
+                placeholder="Search and select Accountable User"
+                :disabled="!_isallowed('write')"
                 filterable
-               :disabled="!_isallowed('write')"
               >
                 <el-option
-                  v-for="item in portfolioUsers"
+                  v-for="item in activeProjectUsers"
                   :value="item"
                   :key="item.id"
                   :label="item.name"
@@ -500,42 +529,44 @@
               </el-select>
             </div>
           </div>
-          <div class="mt-0 d-flex w-100">
-            <div class="ml-4 form-group w-100 mr-1">
+          <div class="form-group  mt-0 d-flex w-100">
+            <div class="form-group user-select ml-4 mr-1 w-100">
               <label class="font-md mb-0">Consulted</label>
               <el-select
-                v-model="consultedTaskUsers"
+                v-model="consultedIssueUsers"
                 class="w-100"
                 track-by="id"
                 value-key="id"
                 :multiple="true"
-                placeholder="Search and select Consulted Users"               
+                placeholder="Search and select Consulted Users"
+                :disabled="!_isallowed('write')"
                 filterable
-               :disabled="!_isallowed('write')"
               >
                 <el-option
-                v-for="item in portfolioUsers"
+                  v-for="item in activeProjectUsers"
                   :value="item"
                   :key="item.id"
                   :label="item.name"
                 >
                 </el-option>
               </el-select>
+        
             </div>
-            <div class="ml-1 form-group mr-4 w-100">
+            <div class="form-group user-select ml-1 mr-4 w-100">
               <label class="font-md mb-0">Informed</label>
+
               <el-select
-                v-model="informedTaskUsers"
-                class="informed w-100"
+                v-model="informedIssueUsers"
+                class="w-100"
                 track-by="id"
                 value-key="id"
                 multiple
-                :disabled="!_isallowed('write')"
                 filterable
-                placeholder="Search and select Informed Users"             
+                placeholder="Search and select Informed Users"
+                :disabled="!_isallowed('write')"
               >
                 <el-option
-                  v-for="item in portfolioUsers"
+                  v-for="item in activeProjectUsers"
                   :value="item"
                   :key="item.id"
                   :label="item.name"
@@ -546,32 +577,28 @@
           </div>
         </div>
 
-        <!-- CHECKLIST TAB #3-->
-
-        <div v-show="currentTab == 'tab3'" class="paperLookTab tab3">
-          <div v-show="!DV_task.ongoing" class="form-group pt-3 ml-4 mr-5">
+        <!-- CHECKLIST TAB #3 -->
+        <div v-show="currentTab == 'tab3'" class="paperLookTab tab2">
+          <div class="form-group pt-3 ml-4 mr-5">
             <label class="font-md mb-0">Progress (in %)</label>
             <span class="ml-3">
-              <label class="font-sm mb-0 d-inline-flex align-items-center">
-                <input
+              <label class="font-sm mb-0 d-inline-flex align-items-center"
+                ><input
                   type="checkbox"
-                  v-model="DV_task.auto_calculate"
+                  v-model="DV_issue.auto_calculate"
                   :disabled="!_isallowed('write')"
                   :readonly="!_isallowed('write')"
-                />
-                <span>&nbsp;&nbsp;Auto Calculate Progress</span></label
+                /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
               >
             </span>
             <el-slider
-              v-model="DV_task.progress"
-              :input="removeFromWatch()"  
-              :disabled="!_isallowed('write') || DV_task.auto_calculate"
+              v-model="DV_issue.progress"
+              :disabled="!_isallowed('write') || DV_issue.auto_calculate"
               :marks="{ 0: '0%', 25: '25%', 50: '50%', 75: '75%', 100: '100%' }"
               :format-tooltip="(value) => value + '%'"
               class="mx-2"
             ></el-slider>
           </div>
-
           <div class="form-group pt-3 mx-4">
             <label class="font-md">Checklists</label>
             <span
@@ -595,16 +622,17 @@
               Displaying:
               <span class="mx-1">{{ filteredChecks.length }}</span> item
             </span>
+
             <div v-if="filteredChecks.length > 0">
               <draggable
                 :move="handleMove"
-                @change="(e) => handleEnd(e, DV_task.checklists)"
-                :list="DV_task.checklists"
+                @change="(e) => handleEnd(e, DV_issue.checklists)"
+                :list="DV_issue.checklists"
                 :animation="100"
                 ghost-class="ghost-card"
               >
                 <div
-                  v-for="(check, index) in DV_task.checklists"
+                  v-for="(check, index) in DV_issue.checklists"
                   :key="index"
                   class="d-flex w-100 mb-3 drag"
                   v-if="!check._destroy && isMyCheck(check)"
@@ -631,18 +659,16 @@
                           placeholder="Checkpoint name here"
                           type="text"
                           class="checklist-text pl-1"
-                          maxlength="80"  
-                          :readonly="!_isallowed('write')"                       
+                          maxlength="80"
+                          :readonly="!_isallowed('write')"
                         />
                       </div>
                       <div
-                      
-                        class="col-1 pl-0 pr-0"
+                      class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                     
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -698,6 +724,7 @@
                             />
                           </div>
                         </div>
+
                         <div
                           class="row justify-content-end pt-2"
                           style="background-color:#fafafa;position:inherit"
@@ -708,23 +735,23 @@
                           >
                             <div
                               class="d-flex w-100"
-                              style="padding-left:6.1rem"
+                              style="padding-left:4.5rem"
                             >
-                              <span class="font-sm pt-2 pr-2"
+                              <span class="font-md pt-2 pr-2 m"
                                 >Assigned To:</span
                               >
                               <el-select
                                 v-model="check.user"
                                 class="w-75"
                                 track-by="id"
-                                clearable
                                 value-key="id"
+                                clearable
                                 filterable
                                 :disabled="!_isallowed('write') || !check.text"
                                 placeholder="Search and select user"
                               >
                                 <el-option
-                                  v-for="item in portfolioUsers"
+                                  v-for="item in activeProjectUsers"
                                   :value="item"
                                   :key="item.id"
                                   :label="item.name"
@@ -733,26 +760,34 @@
                               </el-select>
                             </div>
                           </div>
-                         
                         </div>
 
                         <!-- Start Checkbox Progress List -->
                         <!-- Create component to manage progress list -->
                         <div class="pt-5 vuetify-checkitem pb-3" style="background-color:#fafafa">
-                        <div class="font-md pt-3">
+                         
+                          <div class="font-md vuetify-mt pt-3">
                           Progress Update
+                        
                           <span v-if="editToggle">
                             <span class="ml-2 clickable">
-                             <i class="fal fa-plus-circle mr-1 text-danger"></i>
+                              <font-awesome-icon
+                                icon="plus-circle"
+                                class="mr-1 text-danger"
+                              />
                             </span>
                           </span>
+                          
                           <span v-else>
                             <span
                               class="ml-2 clickable"
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
                             >
-                            <i class="fal fa-plus-circle mr-1 text-danger"></i>
+                              <font-awesome-icon
+                                icon="plus-circle"
+                                class="mr-1"
+                              />
                             </span>
                           </span>
 
@@ -812,7 +847,7 @@
                                   <span v-if="!progress.user"></span>
                                   <span v-else>
                                     {{
-                                      moment(progress.updatedAt).format(
+                                      moment(progress.updated_at).format(
                                         "DD MMM YYYY, h:mm a"
                                       )
                                     }}
@@ -820,7 +855,7 @@
                                 </td>
                                 <td>
                                   <span v-if="progress.user">
-                                    <span> {{ progress.user.fullName }}</span>
+                                    <span> {{ progress.user.full_name }}</span>
                                   </span>
                                   <span v-else>
                                     {{ $currentUser.full_name }}
@@ -835,20 +870,19 @@
                                     class="pl-2"
                                     v-tooltip="`Save`"
                                     v-if="!progress.user"
-                                    @click.prevent="saveTask"
+                                    @click.prevent="saveIssue"
                                   >
-                                  <i class="far fa-save text-primary clickable"></i>
+                                 <i class="far fa-save text-primary clickable"></i>
                                   </span>
                                   <span
                                     v-tooltip="`Edit`"
                                     v-if="progress.user"
                                     class="px-2"
                                   >
-
                                 <i class="fas fa-pencil-alt text-info clickable"  
                                   @click.prevent="editProgress"
                                   :readonly="!_isallowed('write')">
-                                </i>                                   
+                                </i>       
                                   </span>
                                   <span
                                     v-tooltip="`Delete`"
@@ -865,7 +899,7 @@
                                         )
                                       "                                 
                                   >
-                                  </i>                              
+                                  </i>                 
                                   </span>
                                 </td>
                               </tr>
@@ -876,7 +910,7 @@
                           </div>
                           <!-- End Checkbox Progress List -->
                         </div>
-                      </div>
+                          </div>
                       </el-collapse-item>
                     </el-collapse>
                   </div>
@@ -892,16 +926,15 @@
             </div>
             <p v-else class="text-danger font-sm">No checks..</p>
           </div>
-          <!-- closing div for tab2 -->
+          <!-- closing div for tab3 -->
         </div>
-        
 
         <!-- FILES TAB # 4-->
         <div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
           <div class="container-fluid mx-4 mt-2">
             <div class="row">
               <div class="col-5 pr-4 links-col">
-                <div class="form-group">
+                <div v-if="_isallowed('write')" class="form-group">
                   <attachment-input
                     @input="addFile"
                     :show-label="true"
@@ -913,22 +946,24 @@
                   v-if="!file.link"
                 >
                   <div
-                    class="input-group-text  d-inline clickable px-1 w-100 hover"
+                    class="input-group-text d-inline clickable px-1 w-100 hover"
                     :class="{ 'btn-disabled': !file.uri }"
                     @click.prevent="downloadFile(file)"
                   >
-                    <span><font-awesome-icon icon="file" class="mr-1"/></span>
-
+                    <span class="scales"
+                      ><font-awesome-icon icon="file" class="mr-1"
+                    /></span>
                     <input
                       readonly
                       type="text"
-                      style="border:none; cursor:pointer;background-color:transparent"
                       class="w-100 mr-1 file-link"
+                      style="border:none; cursor:pointer; background-color:transparent"
                       :value="file.name || file.uri"
                     />
                   </div>
+
                   <span
-                    :class="{ _disabled: loading}"
+                    :class="{ _disabled: loading || !_isallowed('write') }"
                     class="del-check mt-2 clickable"
                     @click.prevent="deleteFile(file)"
                   >
@@ -938,7 +973,7 @@
               </div>
               <div class="col-6 mb-2 pl-4 links-col">
                 <div class="input-group mb-1">
-                  <div class="d-block mt-1">
+                  <div v-if="_isallowed('write')" class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span class="ml-2 clickable" @click.prevent="addFilesInput">
                       <i class="fas fa-plus-circle"></i>
@@ -946,7 +981,8 @@
                   </div>
 
                   <div
-                    v-for="(file, index) in DV_task.task_files.slice().reverse()"
+                    v-for="(file,
+                    index) in DV_issue.issue_files.slice().reverse()"
                     :key="index"
                     class="d-flex mb-2 w-75"
                     v-if="!file.id && file.link"
@@ -967,7 +1003,7 @@
                       @input="updateFileLinkItem($event, 'text', file)"
                     />
                     <div
-                      :class="{ _disabled: loading }"
+                      :class="{ _disabled: loading || !_isallowed('write') }"
                       class="del-check clickable"
                       @click.prevent="deleteFile(file)"
                     >
@@ -1010,63 +1046,17 @@
               </div>
             </div>
           </div>
-          <!-- closing div for tab4 -->
         </div>
 
         <!-- RELATED TAB #5 -->
-        <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
+        <div v-show="currentTab == 'tab5'" class="paperLookTab tab4">
           <div class="row mx-3 mt-2">
-            <!-- RELATED TASKS -->
-            <div :class="[isMapView ? 'col-12' : 'col']">
-              Related Tasks
-              <span
-                class="ml-2 clickable"  
-                v-if="_isallowed('write')"            
-                @click="openContextMenu($event, 'task')"
-                @contextmenu.prevent=""
-              >
-                <i class="fas fa-plus-circle"></i>
-              </span>
-
-              <hr class="mt-0" />
-
-              <ul class="text-smaller">
-                <li
-                  class="d-flex justify-content-between align-items-center my-2"
-                  v-for="(task, index) in relatedTasks"
-                  :key="index"
-                >
-                  <el-popover placement="right" width="200" trigger="hover">
-                    <div>
-                      <p class="m-0 text-left">
-                        <el-tag size="mini">Project Name</el-tag>
-                        {{ task.facilityName }}
-                      </p>
-                    </div>
-                    <router-link
-                      :to="
-                        `/programs/${$route.params.programId}/${tab}/projects/${task.facilityId}/tasks/${task.id}`
-                      "
-                      slot="reference"
-                      >{{ task.text }}</router-link
-                    ></el-popover
-                  >
-                  <el-button
-                    size="mini"
-                    icon="el-icon-delete"
-                    title="Remove Related Task"
-                    @click.prevent="removeRelatedTask(task)" 
-                    :disabled="!_isallowed('delete')"           
-                  ></el-button>
-                </li>
-              </ul>
-            </div>
             <!-- RELATED ISSUES -->
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Issues
               <span
                 class="ml-2 clickable"
-                 v-if="_isallowed('write')"
+                v-if="_isallowed('write')"
                 @click="openContextMenu($event, 'issue')"
                 @contextmenu.prevent=""
               >
@@ -1085,7 +1075,7 @@
                     <div>
                       <p class="m-0 text-left">
                         <el-tag size="mini">Project Name</el-tag>
-                        {{ issue.facilityName }}
+                        {{ issue.facility_name }}
                       </p>
                     </div>
                     <router-link
@@ -1101,6 +1091,51 @@
                     icon="el-icon-delete"
                     title="Remove Related Issue"
                     @click.prevent="removeRelatedIssue(issue)"
+                    :disabled="!_isallowed('delete')"
+                  ></el-button>
+                </li>
+              </ul>
+            </div>
+            <!-- RELATED TASKS -->
+            <div :class="[isMapView ? 'col-12' : 'col']">
+              Related Tasks
+              <span
+                class="ml-2 clickable"
+                v-if="_isallowed('write')"
+                @click="openContextMenu($event, 'task')"
+                @contextmenu.prevent=""
+              >
+                <i class="fas fa-plus-circle"></i>
+              </span>
+
+              <hr class="mt-0" />
+
+              <ul class="text-smaller">
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                  v-for="(task, index) in relatedTasks"
+                  :key="index"
+                >
+                  <el-popover placement="right" width="200" trigger="hover">
+                    <div>
+                      <p class="m-0 text-left">
+                        <el-tag size="mini">Project Name</el-tag>
+                        {{ task.facility_name }}
+                      </p>
+                    </div>
+                    <router-link
+                      :to="
+                        `/programs/${$route.params.programId}/${tab}/projects/${task.facilityId}/tasks/${task.id}`
+                      "
+                      slot="reference"
+                      >{{ task.text }}</router-link
+                    ></el-popover
+                  >
+                  <el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                    @click.prevent="removeRelatedTask(task)"
                     :disabled="!_isallowed('delete')"
                   ></el-button>
                 </li>
@@ -1130,7 +1165,7 @@
                     <div>
                       <p class="m-0 text-left">
                         <el-tag size="mini">Project Name</el-tag>
-                        {{ risk.facilityName }}
+                        {{ risk.facility_name }}
                       </p>
                     </div>
                     <router-link
@@ -1153,15 +1188,14 @@
             </div>
           </div>
         </div>
-        
 
         <!-- UPDATE TAB 6 -->
         <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
           <div class="form-group mx-4 paginated-updates">
-            <label class="font-sm">Updates:</label>
+            <label class="font-md">Updates</label>
             <span
-              class="ml-2 clickable"    
-              v-if="_isallowed('write')"         
+              class="ml-2 clickable"
+              v-if="_isallowed('write')"
               @click.prevent="addNote"
             >
               <i class="fas fa-plus-circle"></i>
@@ -1218,23 +1252,21 @@
           </div>
         </div>
         <!-- closing div for tab5 -->
-      
     
       </div>
 
-      <!-- TABBED OUT SECTION END HERE -->
-  </form>  
+      <div ref="addUpdates" class="pt-0 mt-0"></div>
+    </form>
     <div
       v-if="loading"
       class="load-spinner spinner-border text-dark"
       role="status"
     ></div>
- 
 
-    <RelatedTaskMenu
+    <RelatedIssueMenu
       :facilities="facilities"
       :facilityGroups="facilityGroups"
-      :task="task"
+      :issue="issue"
       :relatedTasks="relatedTasks"
       :relatedIssues="relatedIssues"
       :relatedRisks="relatedRisks"
@@ -1243,144 +1275,137 @@
       @add-related-risks="addRelatedRisks"
       ref="menu"
     >
-    </RelatedTaskMenu>
+    </RelatedIssueMenu>
   </div>
-
-   
 </template>
 
 <script>
 import axios from "axios";
-import Draggable from "vuedraggable";
-import FormTabs from "./../../shared/FormTabs";
-import RelatedTaskMenu from "./../../shared/RelatedTaskMenu";
 import humps from "humps";
+import Draggable from "vuedraggable";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
-import * as Moment from "moment";
-import { extendMoment } from "moment-range";
-const moment = extendMoment(Moment);
+import FormTabs from "./../../shared/FormTabs";
+import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+
 export default {
-  name: "portfolioTaskForm",
-  props: ["facility", "task", "title", "fixedStage"],
+  name: "portfolioIssueForm",
+  props: ["facility", "issue", "task", "fixedStage"],
   components: {
     AttachmentInput,
     Draggable,
     FormTabs,
-    RelatedTaskMenu,
+    RelatedIssueMenu,
   },
   data() {
     return {
-      DV_task: this.INITIAL_TASK_STATE(),
+      DV_issue: this.INITIAL_ISSUE_STATE(),
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
-      editTimeLive: "",
+      selectedIssueType: null,
       selectedTaskType: null,
-      selectedTaskStage: null,
+      selectedIssueSeverity: null,
+      editToggle: false,  
+      selectedIssueStage: null,
+      issueUsers: [],
       responsibleUsers: null,
-      accountableTaskUsers: null,
-      consultedTaskUsers: [],
-      informedTaskUsers: [],
+      accountableIssueUsers: null,
+      consultedIssueUsers: [],
+      informedIssueUsers: [],
       relatedIssues: [],
       relatedTasks: [],
       relatedRisks: [],
-      editToggle: false,
-      _ismounted: false,
       showErrors: false,
       loading: true,
       movingSlot: "",
       currentTab: "tab1",
       tabs: [
         {
-          label: "Task Info",
+          label: "Issue Info",
           key: "tab1",
           closable: false,
           form_fields: [
-            "Task Name",
+            "Issue Name",
             "Description",
-            "Start Date",
-          
+            "Process Area",
+            "Issue Type",
+            "Issue Severity",
             "Stage",
             "Start Date",
-            "Date Closed",
+            "Estimated Completion Date",
           ],
         },
         {
           label: "Assignments",
           key: "tab2",
           closable: false,
-          form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
         },
         {
           label: "Checklist",
           key: "tab3",
           closable: false,
-          form_fields: ["Checklists"],
         },
         {
           label: "Files & Links",
           key: "tab4",
           closable: false,
-          form_fields: ["Files"],
         },
         {
           label: "Related",
           key: "tab5",
           closable: false,
-          form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
         },
         {
           label: "Updates",
           key: "tab6",
           closable: false,
-          form_fields: ["Progress", "Updates"],
         },
       ],
     };
   },
   updated() {
     if (this.fixedStage) {
-      this.selectedTaskStage = this.fixedStage;
+      this.selectedIssueStage = this.fixedStage;
     }
   },
   mounted() {
-    if (!_.isEmpty(this.task)) {
-      this.loadTask(this.task);
+    if (!_.isEmpty(this.issue)) {
+      this.loadIssue(this.issue);
     } else {
-      this.loadTask(this.DV_task);
+      this.loadIssue(this.DV_issue);     
     }
     this.loading = false;
     this._ismounted = true;
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateTasksHash", 'setPortfolioCategoriesFilter']),
-    ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks", 'fetchPortfolioTask']),
-    INITIAL_TASK_STATE() {
+    ...mapMutations(["setTaskForManager", "updateIssuesHash"]),
+    ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues", 'fetchPortfolioIssue']),
+    INITIAL_ISSUE_STATE() {
       return {
-        text: "",
+        title: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.$route.params.projectId,
-        checklistDueDate: "",
+        facilityProjectId: this.$route.params.projectId,       
+        issueTypeId: "",
         taskTypeId: "",
-        taskStageId: "",
+        progress: 0,
+        issueSeverityId: "",
+        issueStageId: "",
+        description: "",
+        auto_calculate: true,
         important: false,
-        reportable: false,
+        reportable: false, 
         on_hold: false,
         draft: false,
-        ongoing: false,
         responsible_user_ids: [],
         accountable_user_ids: [],
         consulted_user_ids: [],
         informed_user_ids: [],
-         sub_task_ids: [],
+        sub_task_ids: [],
         sub_risk_ids: [],
         sub_issue_ids: [],
-        description: "",
-        progress: 0,
-        autoCalculate: true,
-        task_files: [],
+        issueFiles: [],
         checklists: [],
         notes: [],
       };
@@ -1392,14 +1417,16 @@ export default {
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
+      return  fPrivilege.issues.includes(s); 
     },
-    selectedStage(item) {     
-        this.selectedTaskStage = item;    
+    selectedStage(item) {
+      if (this._isallowed("write")) {
+        this.selectedIssueStage = item;
+      }
     },
     clearStages() {
-      this.selectedTaskStage = null;
-      this.taskStageId = "";
+      this.selectedIssueStage = null;
+      this.IssueStageId = "";
     },
     urlShortener(str, length, ending) {
       if (length == null) {
@@ -1420,7 +1447,10 @@ export default {
         block: "start",
         inline: "nearest",
       });
-      this.DV_task.checklists.push({ text: "", checked: false });
+      this.DV_issue.checklists.push({ text: "", checked: false });
+    },
+    onChangeTab(tab) {
+      this.currentTab = tab ? tab.key : "tab1";
     },
     scrollToUpdates() {
       this.$refs.addUpdates.scrollIntoView({
@@ -1428,17 +1458,14 @@ export default {
         block: "end",
         inline: "nearest",
       });
-      this.DV_task.notes.unshift({ body: "", user_id: "", guid: this.guid() });
+      this.DV_issue.notes.unshift({ body: "", user_id: "", guid: this.guid() });
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key;
       return true;
     },
-    onChangeTab(tab) {
-      this.currentTab = tab ? tab.key : "tab1";
-    },
     handleEnd(e, checklists) {
-      var cc = this.DV_task.checklists;
+      var cc = this.DV_issue.checklists;
       var count = 0;
       for (var checklist of cc) {
         checklist.position = count;
@@ -1449,72 +1476,82 @@ export default {
       this.editToggle = !this.editToggle;
       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
     },
-    deleteTask() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete "${this.DV_task.text}"?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.taskDeleted(this.DV_task);
-      this.cancelSave();
-    },
     progressListTitleText(progressList) {
       if (!progressList.id) return;
       var date = moment(progressList.createdAt).format("MM/DD/YYYY");
       var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.full_name} at ${date} ${time} `;
+      return `${progressList.user.fullName} at ${date} ${time} `;
     },
-    // RACI USERS commented out out here.....Awaiting backend work
-    loadTask(task) {
-      this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
-      this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
-        this.DV_task.responsible_user_ids.includes(u.id)
+    loadIssue(issue) {
+      this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
+
+      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.responsible_user_ids.includes(u.id)
       )[0];
-      this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
-        this.DV_task.accountable_user_ids.includes(u.id)
+      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.accountable_user_ids.includes(u.id)
       )[0];
-      this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
-        this.DV_task.consulted_user_ids.includes(u.id)
+      this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.consulted_user_ids.includes(u.id)
       );
-      this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
-        this.DV_task.informed_user_ids.includes(u.id)
+      this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.informed_user_ids.includes(u.id)
       );
-      this.relatedIssues = _.filter(this.filteredIssues, (u) =>
-        this.DV_task.sub_issue_ids.includes(u.id)
+
+      this.relatedIssues = _.filter(this.currentIssues, (u) =>
+        this.DV_issue.sub_issue_ids.includes(u.id)
       );
-      this.relatedTasks = _.filter(this.filteredTasks, (u) =>
-        this.DV_task.sub_task_ids.includes(u.id)
+      this.relatedTasks = _.filter(this.currentTasks, (u) =>
+        this.DV_issue.sub_task_ids.includes(u.id)
       );
       this.relatedRisks = _.filter(this.filteredRisks, (u) =>
-        this.DV_task.sub_risk_ids.includes(u.id)
+        this.DV_issue.sub_risk_ids.includes(u.id)
+      );
+      this.selectedIssueType = this.issueTypes.find(
+        (t) => t.id === this.DV_issue.issue_type_id
       );
       this.selectedTaskType = this.taskTypes.find(
-        (t) => t.id === this.DV_task.task_type_id
+        (t) => t.id === this.DV_issue.task_type_id
       );
-      // this.selectedTaskType = this.taskTypeIds.find(
-      //   (t) => t === this.DV_task.task_type_id
-      // );
-      this.selectedTaskStage = this.portfolioTaskStages.find(
-        (t) => t.id === this.DV_task.task_stage_id
+      this.selectedIssueSeverity = this.issueSeverities.find(
+        (t) => t.id === this.DV_issue.issue_severity_id
       );
-      this.selectedFacilityProject = this.getFacilityProjectOptions.find(
-        (t) => t.id === this.DV_task.facilityProjectId
+      this.selectedIssueStage = this.issueStages.find(
+        (t) => t.id === this.DV_issue.issue_stage_id
       );
-      if (this.DV_task.attach_files)
-        this.addFile(this.DV_task.attach_files, false);
+      if (this.DV_issue.attach_files)
+        this.addFile(this.DV_issue.attach_files, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
+        this.loading = false;
       });
     },
-    addFile(files, append = true) {
-      let _files = append ? [...this.DV_task.task_files] : [];
+    addFilesInput() {
+      this.DV_issue.issue_files.push({
+        name: "",
+        uri: "",
+        link: true,
+        guid: this.guid(),
+      });
+    },
+    addFile(files = [], append = true) {
+      let _files = append ? [...this.DV_issue.issue_files] : [];
       for (let file of files) {
         file.guid = this.guid();
         _files.push(file);
       }
-      this.DV_task.task_files = _files;
+      this.DV_issue.issue_files = _files;
+    },
+    deleteIssue() {
+      let confirm = window.confirm(
+        `Are you sure you want to delete this issue?`
+      );
+      if (!confirm) {
+        return;
+      }
+      this.issueDeleted(this.DV_issue);
+      this.cancelIssueSave();
     },
     deleteFile(file) {
       if (!file) return;
@@ -1524,76 +1561,73 @@ export default {
       if (!confirm) return;
 
       if (file.uri || file.link) {
-        let index = this.DV_task.task_files.findIndex(
+        let index = this.DV_issue.issue_files.findIndex(
           (f) => f.guid === file.guid
         );
+
         if (file.id) {
-          Vue.set(this.DV_task.task_files, index, { ...file, _destroy: true });
+          Vue.set(this.DV_issue.issue_files, index, { ...file, _destroy: true });
           this.destroyedFiles.push(file);
         }
-        this.DV_task.task_files.splice(
-          this.DV_task.task_files.findIndex((f) => f.guid === file.guid),
+        this.DV_issue.issue_files.splice(
+          this.DV_issue.issue_files.findIndex((f) => f.guid === file.guid),
           1
         );
       } else if (file.name) {
-        this.DV_task.task_files.splice(
-          this.DV_task.task_files.findIndex((f) => f.guid === file.guid),
+        this.DV_issue.issue_files.splice(
+          this.DV_issue.issue_files.findIndex((f) => f.guid === file.guid),
           1
         );
       }
     },
     toggleWatched() {
-       if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
-         this.$message({
-            message: `Tasks at 100% progress cannot be placed On Watch status.`,
-            type: "warning",
-            showClose: true,
-          });      
-        return
-      } 
-      if (this.DV_task.watched) {
-         this.$message({
-            message: `${this.DV_task.text} has been removed from On Watch status.`,
-            type: "warning",
-            showClose: true,
-          });
+      if (this.DV_issue.progress == 100 && !this.DV_issue.watched) {
+        this.$message({
+          message: `Issues at 100% progress cannot be placed On Watch status.`,
+          type: "warning",
+          showClose: true,
+        });
+        return;
+      }
+      if (this.DV_issue.watched) {
+        this.$message({
+          message: `${this.DV_issue.title} has been removed from On Watch status.`,
+          type: "warning",
+          showClose: true,
+        });
       } else {
-         this.$message({
-            message: `${this.DV_task.text} successfully placed On Watch status.`,
-            type: "success",
-            showClose: true,
-          });
+        this.$message({
+          message: `${this.DV_issue.title} successfully placed On Watch status.`,
+          type: "success",
+          showClose: true,
+        });
       }
-      this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
-      this.updateWatchedTasks(this.DV_task);
-    },
-    removeFromWatch() {
-      if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
-        this.toggleWatched()     
-      }
+      this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
+      this.updateWatchedIssues(this.DV_issue);
     },
     toggleImportant() {
-      this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
+      this.DV_issue = { ...this.DV_issue, important: !this.DV_issue.important };
     },
     toggleOnhold() {
-      this.DV_task = { ...this.DV_task, on_hold: !this.DV_task.on_hold };
-      this.DV_task.dueDate = '';
+      this.DV_issue = { ...this.DV_issue, on_hold: !this.DV_issue.on_hold };
+      this.DV_issue.due_date = '';
     },
     toggleDraft() {
-      this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
+      this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
     },
    toggleReportable() {
-      this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
+      this.DV_issue = { ...this.DV_issue, reportable: !this.DV_issue.reportable };
     },
-    toggleOngoing() {
-      this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
-      this.DV_task.due_date = '';
+    removeFromWatch() {
+      if (this.DV_issue.progress == 100 && this.DV_issue.watched == true) {
+        this.toggleWatched();
+      }
     },
-    cancelSave() {
+    cancelIssueSave() {
       this.$emit("on-close-form");
+      this.setTaskForManager({ key: "issue", value: null });
     },
-    saveTask() {
-      // if (!this._isallowed("write")) return;
+    saveIssue() {
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -1602,91 +1636,97 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
-        formData.append("task[text]", this.DV_task.text);
-        formData.append("task[due_date]", this.DV_task.due_date);
-        formData.append("task[start_date]", this.DV_task.start_date);
-        formData.append("task[task_type_id]", this.DV_task.task_type_id);
-        formData.append("task[task_stage_id]", this.DV_task.task_stage_id);
-        formData.append("task[progress]", this.DV_task.progress);
-        formData.append("task[auto_calculate]", this.DV_task.auto_calculate);
-        formData.append("task[description]", this.DV_task.description);
-        formData.append("task[important]", this.DV_task.important);
-        formData.append("task[reportable]", this.DV_task.reportable);
-        formData.append("task[on_hold]", this.DV_task.on_hold);
-        formData.append("task[draft]", this.DV_task.draft);
-        formData.append("task[ongoing]", this.DV_task.ongoing);
+        formData.append("issue[title]", this.DV_issue.title);
+        formData.append("issue[due_date]", this.DV_issue.due_date);
+        formData.append("issue[start_date]", this.DV_issue.start_date);
+        formData.append("issue[issue_type_id]", this.DV_issue.issue_type_id);
+        formData.append("issue[task_type_id]", this.DV_issue.task_type_id);
+        formData.append("issue[important]", this.DV_issue.important);
+        formData.append("issue[reportable]", this.DV_issue.reportable);
         formData.append(
-          "task[destroy_file_ids]",
-          _.map(this.destroyedFiles, "id")
+          "issue[issue_severity_id]",
+          this.DV_issue.issue_severity_id
         );
-        // RACI USERS START HERE Awaiting backend work
+        formData.append("issue[issue_stage_id]", this.DV_issue.issue_stage_id);
+        formData.append("issue[progress]", this.DV_issue.progress);
+        formData.append("issue[description]", this.DV_issue.description);
+        formData.append("issue[auto_calculate]", this.DV_issue.auto_calculate);
+        formData.append("issue[on_hold]", this.DV_issue.on_hold);
+        formData.append("issue[draft]", this.DV_issue.draft);
+        formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
 
-        //Responsible USer Id
-        //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
-        if (
-          this.DV_task.responsible_user_ids &&
-          this.DV_task.responsible_user_ids.length
-        ) {
-          for (let u_id of this.DV_task.responsible_user_ids) {
+     //Responsible USer Id
+        if (this.DV_issue.responsible_user_ids && this.DV_issue.responsible_user_ids.length) {
+        for (let u_id of this.DV_issue.responsibleUserIds) {
             formData.append("responsible_user_ids[]", u_id);
           }
         } else {
           formData.append("responsible_user_ids[]", []);
         }
+
         // Accountable UserId
+
         if (
-          this.DV_task.accountable_user_ids &&
-          this.DV_task.accountable_user_ids.length
+          this.DV_issue.accountable_user_ids &&
+          this.DV_issue.accountable_user_ids.length
         ) {
-          for (let u_id of this.DV_task.accountable_user_ids) {
+        
+          for (let u_id of this.DV_issue.accountableUserIds) {
             formData.append("accountable_user_ids[]", u_id);
           }
         } else {
           formData.append("accountable_user_ids[]", []);
         }
+
         // Consulted UserId
 
-        if (this.DV_task.consulted_user_ids.length) {
-          for (let u_id of this.DV_task.consulted_user_ids) {
+        if (this.DV_issue.consulted_user_ids.length) {
+         for (let u_id of this.DV_issue.consultedUserIds) {
             formData.append("consulted_user_ids[]", u_id);
           }
         } else {
           formData.append("consulted_user_ids[]", []);
         }
+
         // Informed UserId
 
-        if (this.DV_task.informed_user_ids.length) {
-          for (let u_id of this.DV_task.informed_user_ids) {
+        if (this.DV_issue.informed_user_ids.length) {
+          // console.log("this.DV_issue.responsibleUserIds.length")
+          // console.log(this.DV_issue.informedUserIds.length)
+          // console.log(this.DV_issue.informedUserIds)
+          for (let u_id of this.DV_issue.informed_user_ids) {
             formData.append("informed_user_ids[]", u_id);
           }
         } else {
           formData.append("informed_user_ids[]", []);
         }
-        // RACI USERS ABOVE THIS LINE  Awaiting backend work
-        // More RACI Users in Computed section below
-        if (this.DV_task.sub_task_ids.length) {
-          for (let u_id of this.DV_task.sub_task_ids) {
-            formData.append("task[sub_task_ids][]", u_id);
+
+        if (this.DV_issue.sub_task_ids.length) {
+          for (let u_id of this.DV_issue.sub_task_ids) {
+            formData.append("issue[sub_task_ids][]", u_id);
           }
         } else {
-          formData.append("task[sub_task_ids][]", []);
+          formData.append("issue[sub_task_ids][]", []);
         }
-        if (this.DV_task.sub_issue_ids.length) {
-          for (let u_id of this.DV_task.sub_issue_ids) {
-            formData.append("task[sub_issue_ids][]", u_id);
+
+        if (this.DV_issue.sub_risk_ids.length) {
+          for (let u_id of this.DV_issue.sub_risk_ids) {
+            formData.append("issue[sub_risk_ids][]", u_id);
           }
         } else {
-          formData.append("task[sub_issue_ids][]", []);
+          formData.append("issue[sub_risk_ids][]", []);
         }
-        if (this.DV_task.sub_risk_ids.length) {
-          for (let u_id of this.DV_task.sub_risk_ids) {
-            formData.append("task[sub_risk_ids][]", u_id);
+
+        if (this.DV_issue.sub_issue_ids.length) {
+          for (let u_id of this.DV_issue.sub_issue_ids) {
+            formData.append("issue[sub_issue_ids][]", u_id);
           }
         } else {
-          formData.append("task[sub_risk_ids][]", []);
+          formData.append("issue[sub_issue_ids][]", []);
         }
-        for (let i in this.DV_task.checklists) {
-          let check = this.DV_task.checklists[i];
+
+        for (let i in this.DV_issue.checklists) {
+          let check = this.DV_issue.checklists[i];
           if (!check.text && !check._destroy) continue;
           for (let key in check) {
             if (key === "user") key = "user_id";
@@ -1696,36 +1736,41 @@ export default {
                   ? check.user.id
                   : null
                 : check[key];
-            // if (key === "dueDate"){
-            //   key = "due_date"
+            // if (key === "dueDate") {
+            //   key = "due_date";
             // }
             key = humps.decamelize(key);
             if (["created_at", "updated_at", "progress_lists"].includes(key))
               continue;
-            formData.append(`task[checklists_attributes][${i}][${key}]`, value);
-            for (let pi in check.progress_lists) {
-              let progressList = check.progress_lists[pi];
-              if (!progressList.body && !progressList._destroy) continue;
-              for (let pkey in progressList) {
-                if (pkey === "user") pkey = "user_id";
-                let pvalue =
-                  pkey == "user_id"
-                    ? progressList.user
-                      ? progressList.user.id
-                      : null
-                    : progressList[pkey];
-                pkey = humps.decamelize(pkey);
-                if (["created_at", "updated_at"].includes(pkey)) continue;
-                formData.append(
-                  `task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`,
-                  pvalue
-                );
-              }
+            formData.append(
+              `issue[checklists_attributes][${i}][${key}]`,
+              value
+            );
+          }
+          for (let pi in check.progress_lists) {
+            let progressList = check.progress_lists[pi];
+            if (!progressList.body && !progressList._destroy) continue;
+            for (let pkey in progressList) {
+              if (pkey === "user") pkey = "user_id";
+              let pvalue =
+                pkey == "user_id"
+                  ? progressList.user
+                    ? progressList.user.id
+                    : null
+                  : progressList[pkey];
+
+              pkey = humps.decamelize(pkey);
+              if (["created_at", "updated_at"].includes(pkey)) continue;
+              formData.append(
+                `issue[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`,
+                pvalue
+              );
             }
           }
         }
-        for (let i in this.DV_task.notes) {
-          let note = this.DV_task.notes[i];
+
+        for (let i in this.DV_issue.notes) {
+          let note = this.DV_issue.notes[i];
           if (!note.body && !note._destroy) continue;
           for (let key in note) {
             let value =
@@ -1734,29 +1779,33 @@ export default {
                   ? note.user_id
                   : this.$currentUser.id
                 : note[key];
-                if ( key == 'body') {
+            if ( key == 'body') {
                   value = value.replace(/[^ -~]/g,'')
-                }           
-            formData.append(`task[notes_attributes][${i}][${key}]`, value);
+                }  
+            formData.append(`issue[notes_attributes][${i}][${key}]`, value);
           }
         }
-        for (let file of this.DV_task.task_files) {
+
+        for (let file of this.DV_issue.issue_files) {
           if (file.id) continue;
           if (!file.link) {
-            formData.append("task[task_files][]", file);
+            formData.append("issue[issue_files][]", file);
           } else if (file.link) {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/tasks.json`;
+
+        let url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
-        let callback = "task-created";
-        if (this.task && this.task.id) {
-          url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/tasks/${this.task.id}.json`;
+        let callback = "issue-created";
+
+        if (this.issue && this.issue.id) {
+          url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
           method = "PUT";
-          callback = "task-updated";
+          callback = "issue-updated";
         }
-        // var beforeSaveTask = this.task
+        // var beforeIssue = this.issue
+
         axios({
           method: method,
           url: url,
@@ -1767,68 +1816,47 @@ export default {
           },
         })
           .then((response) => {
-            // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            var responseTask = humps.camelizeKeys(response.data.task);
-            this.loadTask(responseTask);
-            //this.$emit(callback, responseTask)
-            this.updateTasksHash({ task: responseTask });
+            // if(beforeIssue.facilityId && beforeIssue.projectId )
+            //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
+            // this.$emit(callback, humps.camelizeKeys(response.data.issue));
+
+            var responseIssue = humps.camelizeKeys(response.data.issue);
+            this.loadIssue(responseIssue);
+            //this.$emit(callback, responseIssue)
+            this.updateIssuesHash({ issue: responseIssue });
             if (response.status === 200) {
               this.$message({
-                message: `${response.data.task.text} was saved successfully.`,
+                message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
                 showClose: true,
               });
             }
-            //Route to newly created task form page
-           this.fetchPortfolioTasks()
+          
+          this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
           })
           .catch((err) => {
-            alert(err.response.data.error);
+            console.log(err);
           })
           .finally(() => {
             this.loading = false;
           });
       });
     },
-    addProgressList(check) {
-      var postion = check.progress_lists.length;
-      check.progress_lists.push({ body: "", position: postion });
-      this.editToggle = true;
-    },
-    addChecks() {
-      var postion = this.DV_task.checklists.length;
-      this.DV_task.checklists.push({
-        text: "",
-        checked: false,
-        position: postion,
-        progress_lists: [],
-      });
-    },
-    addFilesInput() {
-      this.DV_task.task_files.push({
-        name: "",
-        uri: "",
-        link: true,
-        guid: this.guid(),
-      });
-    },
     addNote() {
-      this.DV_task.notes.unshift({ body: "", user_id: "", guid: this.guid() });
+      this.DV_issue.notes.unshift({ body: "", user_id: "", guid: this.guid() });
     },
-
     destroyNote(note) {
       let confirm = window.confirm(
-        `Are you sure you want to delete this update note?`
+        `Are you sure, you want to delete this update note?`
       );
       if (!confirm) return;
       let i = note.id
-        ? this.DV_task.notes.findIndex((n) => n.id === note.id)
-        : this.DV_task.notes.findIndex((n) => n.guid === note.guid);
-      Vue.set(this.DV_task.notes, i, { ...note, _destroy: true });
+        ? this.DV_issue.notes.findIndex((n) => n.id === note.id)
+        : this.DV_issue.notes.findIndex((n) => n.guid === note.guid);
+      Vue.set(this.DV_issue.notes, i, { ...note, _destroy: true });
     },
     noteBy(note) {
       return note.user
@@ -1846,53 +1874,70 @@ export default {
         `Are you sure you want to delete this Progress List item?`
       );
       if (!confirm) return;
+
       let i = progressList.id
-        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
+        ? check.progressLists.findIndex((c) => c.id === progressList.id)
         : index;
-      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
-      this.saveTask();
-    },
-    destroyCheck(check, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this checklist item?`
-      );
-      if (!confirm) return;
-      let i = check.id
-        ? this.DV_task.checklists.findIndex((c) => c.id === check.id)
-        : index;
-      Vue.set(this.DV_task.checklists, i, { ...check, _destroy: true });
-      this.saveTask();
+      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+      this.saveIssue();
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_task.start_date);
+      const startDate = new Date(this.DV_issue.startDate);
       startDate.setHours(48, 0, 0, 0);
       return date < startDate;
     },
+    addChecks() {
+      var postion = this.DV_issue.checklists.length;
+      this.DV_issue.checklists.push({
+        text: "",
+        checked: false,
+        position: postion,
+        progressLists: [],
+      });
+    },
+    addProgressList(check) {
+      var postion = check.progressLists.length;
+      check.progressLists.push({ body: "", position: postion });
+      this.editToggle = true;
+    },
+    destroyCheck(check, index) {
+      let confirm = window.confirm(
+        `Are you sure, you want to delete this checklist item?`
+      );
+      if (!confirm) return;
+
+      let i = check.id
+        ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
+        : index;
+      Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
+      this.saveIssue();
+    },
     calculateProgress(checks = null) {
       try {
-        if (!checks) checks = this.DV_task.checklists;
+        if (!checks) checks = this.DV_issue.checklists;
         let checked = _.filter(
           checks,
           (v) => !v._destroy && v.checked && v.text.trim()
         ).length;
         let total = _.filter(checks, (v) => !v._destroy && v.text.trim())
           .length;
-        this.DV_task.progress = Number(
+        this.DV_issue.progress = Number(
           ((checked / total) * 100 || 0).toFixed(2)
         );
       } catch (err) {
-        this.DV_task.progress = 0;
+        this.DV_issue.progress = 0;
       }
     },
     updateCheckItem(event, name, index) {
       if (name === "text") {
-        this.DV_task.checklists[index].text = event.target.value;
-        if (!event.target.value) this.DV_task.checklists[index].checked = false;
-      } else if (name === "check" && this.DV_task.checklists[index].text) {
-        this.DV_task.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_task.checklists[index].text) {
-        this.DV_task.checklists[index].dueDate = event.target.value;
+        this.DV_issue.checklists[index].text = event.target.value;
+        if (!event.target.value)
+          this.DV_issue.checklists[index].checked = false;
+      } else if (name === "check" && this.DV_issue.checklists[index].text) {
+        this.DV_issue.checklists[index].checked = event.target.checked;
+      } else if (name === "dueDate" && this.DV_issue.checklists[index].text) {
+        this.DV_issue.checklists[index].dueDate = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -1906,7 +1951,7 @@ export default {
       progressList.body = event.target.value;
     },
     isMyCheck(check) {
-      return this.C_myTasks && check.id
+      return this.C_myIssues && check.id
         ? check.user && check.user.id == this.$currentUser.id
         : true;
     },
@@ -1923,9 +1968,10 @@ export default {
       );
     },
     disabledDateRange(date) {
-      var dueDate = new Date(this.DV_task.due_date);
+      var dueDate = new Date(this.DV_issue.due_date);
       dueDate.setDate(dueDate.getDate() + 1);
-      return date < new Date(this.DV_task.start_date) || date > dueDate;
+
+      return date < new Date(this.DV_issue.start_date) || date > dueDate;
     },
     openContextMenu(e, item) {
       e.preventDefault();
@@ -1961,104 +2007,93 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "activeProjectUsers",
-      "portfolioUsers",
       "currentIssues",
+      "portfolioUsers",
       "currentProject",
       "currentRisks",
+      "portfolioIssues",
       "currentTasks",
       'portfolioCategories',
-      "fetchPortfolioTasks",
-      'portfolioCategoriesFilter',
+      'portfolioIssueTypes',
       "facilities",
-      "portfolioTasks",
-      "portfolioRisks",
-      "portfolioTasks",
-      'portfolioTaskStages',
+      'fetchPortfolioIssues',
       "facilityGroups",
       "getFacilityProjectOptions",
+      'portfolioIssueSeverities',
+      "issueStages",
       "managerView",
       "myActionsFilter",
       "projectUsers",
-      "taskStages",
-       ]),
-    taskStagesSorted() {
-      var taskStagesSortedReturn = [...this.portfolioTaskStages]; 
-      return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
-    taskTypes(){
-      return this.portfolioCategories
+    ]),
+    issueStagesSorted() {
+      var issueStagesSortedReturn = [...this.issueStages]; 
+      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
     readyToSave() {
       return (
-        this.DV_task &&
-        this.exists(this.DV_task.text) &&
-        this.exists(this.DV_task.task_type_id) && 
-        this.exists(this.DV_task.due_date)  &&  
-        this.exists(this.DV_task.start_date)
+        this.DV_issue &&
+        this.exists(this.DV_issue.title) &&
+        this.exists(this.DV_issue.issue_type_id) &&
+        this.exists(this.DV_issue.issue_severity_id) &&
+        this.exists(this.DV_issue.due_date) &&
+        this.exists(this.DV_issue.start_date)
       );
     },
-   C_categoryNameFilter: {
-      get() {
-        return this.portfolioCategoriesFilter;
-      },
-      set(value) {
-        // console.log(value)
-        this.setPortfolioCategoriesFilter(value);
-      },
+    activeProjectUsers(){
+      return this.portfolioUsers;
+    },
+    issueTypes(){
+      return this.portfolioIssueTypes;
+    },
+    taskTypes(){
+      return this.portfolioCategories  
+    },
+    issueSeverities(){
+      return this.portfolioIssueSeverities;
     },
     isMapView() {
-      return this.$route.name === "MapTaskForm";
-    },
-    isKanbanView() {
-      return this.$route.name === "KanbanTaskForm";
+      return this.$route.name === "MapIssueForm";
     },
     isSheetsView() {
-      return this.$route.name === "SheetTaskForm";
+      return this.$route.name === "SheetIssueForm";
+    },
+    isKanbanView() {
+      return this.$route.name === "KanbanIssueForm";
     },
     isCalendarView() {
-      return this.$route.name === "CalendarTaskForm";
+      return this.$route.name === "CalendarIssueForm";
     },
     filteredChecks() {
-      return _.filter(this.DV_task.checklists, (c) => !c._destroy);
+      return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },
     filteredFiles() {
-      return _.filter(this.DV_task.task_files, (f) => !f._destroy);
+      return _.filter(this.DV_issue.issueFiles, (f) => !f._destroy);
     },
-    C_myTasks() {
-      return _.map(this.myActionsFilter, "value").includes("tasks");
+    C_myIssues() {
+      return _.map(this.myActionsFilter, "value").includes("issues");
     },
-    filteredtProjects(){
-       return _.filter(this.portfolioTasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filterediProjects(){
-       return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filteredrProjects(){
-       return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    title() {
+      return this._isallowed("write")
+        ? this.DV_issue.id
+          ? "Edit Issue"
+          : "Report an Issue"
+        : "Issue";
     },
     filteredTasks() {
-      return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
-    },
-    filteredRisks() {
-      return _.filter(this.filteredrProjects, (t) => t.id !== this.DV_task.id);
+      return this.currentTasks;
     },
     filteredIssues() {
-      return this.filterediProjects;
+      return _.filter(this.currentIssues, (t) => t.id !== this.DV_issue.id);
+    },
+    filteredRisks() {
+      return _.filter(this.currentRisks, (t) => t.id !== this.DV_issue.id);
     },
     filteredNotes() {
       return _.orderBy(
-        _.filter(this.DV_task.notes, (n) => !n._destroy),
+        _.filter(this.DV_issue.notes, (n) => !n._destroy),
         "createdAt",
         "desc"
       );
-    },
-    C_title() {
-      return this._isallowed("write")
-        ? this.task.id
-          ? "Edit Task"
-          : "Add Task"
-        : "Task";
     },
     tab() {
       if (this.$route.path.includes("map")) {
@@ -2071,7 +2106,7 @@ export default {
         return "kanban";
       }
     },
-    projectNameLink() {
+  projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
       } else {
@@ -2080,105 +2115,110 @@ export default {
     },
   },
   watch: {
-    task: {
-      handler: function(value) {
-        this.loadTask(this.task);
+    issue: {
+      handler() {
+        if (this.issue) {
+          this.loadIssue(this.issue);
+        }
       },
     },
-    "DV_task.start_date"(value) {
-      if (this._ismounted && !value) this.DV_task.due_date = "";
+    "DV_issue.start_date"(value) {
+      if (!value) this.DV_issue.due_date = "";
     },
-    // "DV_task.dueDate"(value) {
-    //   if (this._ismounted && this.facility.dueDate) {
-    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
-    //       this.$alert(`${this.DV_task.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_task.text} Due Date Warning`, {
-    //       confirmButtonText: 'Ok',
-    //       type: 'warning'
-    //     });
-    //     }
-    //   }
-    // },
-    "DV_task.checklists": {
+    "DV_issue.due_date"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'warning'
+        });
+        }
+      }
+    },
+    "DV_issue.checklists": {
       handler: function(value) {
-        if (this.DV_task.auto_calculate) this.calculateProgress(value);
+        if (this.DV_issue.auto_calculate) this.calculateProgress(value);
       },
       deep: true,
     },
-    "DV_task.auto_calculate"(value) {
+    "DV_issue.auto_calculate"(value) {
       if (value) this.calculateProgress();
     },
-    // RACI USERS HERE awaiting backend work
     responsibleUsers: {
       handler: function(value) {
         if (value) {
-          this.DV_task.responsible_user_ids = _.uniq(
+          this.DV_issue.responsible_user_ids = _.uniq(
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.responsible_user_ids = null;
+          this.DV_issue.responsible_user_ids = null;
         }
       },
       deep: true,
     },
-    accountableTaskUsers: {
+    accountableIssueUsers: {
       handler: function(value) {
         if (value) {
-          this.DV_task.accountable_user_ids = _.uniq(
+          this.DV_issue.accountable_user_ids = _.uniq(
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_task.accountable_user_ids = null;
+          this.DV_issue.accountable_user_ids= null;
         }
       },
       deep: true,
     },
-    consultedTaskUsers: {
+    consultedIssueUsers: {
       handler: function(value) {
-        if (value) {
-          this.DV_task.consulted_user_ids = _.uniq(_.map(value, "id"));
-        } else {
-          this.DV_task.consulted_user_ids = [];
-        }
+        if (value) this.DV_issue.consulted_user_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
-    informedTaskUsers: {
+    informedIssueUsers: {
       handler: function(value) {
-        if (value) {
-          this.DV_task.informed_user_ids = _.uniq(_.map(value, "id"));
-        } else {
-          this.DV_task.informed_user_ids = [];
-        }
+        if (value) this.DV_issue.informed_user_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedIssues: {
       handler: function(value) {
-        if (value) this.DV_task.sub_issue_ids = _.uniq(_.map(value, "id"));
+        if (value) this.DV_issue.sub_issue_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedTasks: {
       handler: function(value) {
-        if (value) this.DV_task.sub_task_ids = _.uniq(_.map(value, "id"));
+        if (value) this.DV_issue.sub_task_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedRisks: {
       handler: function(value) {
-        if (value) this.DV_task.sub_risk_ids = _.uniq(_.map(value, "id"));
+        if (value) this.DV_issue.sub_risk_ids = _.uniq(_.map(value, "id"));
+      },
+      deep: true,
+    },
+    selectedIssueType: {
+      handler: function(value) {
+        this.DV_issue.issueTypeId = value ? value.id : null;
       },
       deep: true,
     },
     selectedTaskType: {
       handler: function(value) {
-        this.DV_task.task_type_id = value ? value.id : null;
+        this.DV_issue.taskTypeId = value ? value.id : null;
       },
       deep: true,
     },
-    selectedTaskStage: {
+    selectedIssueSeverity: {
       handler: function(value) {
-        this.DV_task.task_stage_id = value ? value.id : null;
+        this.DV_issue.issueSeverityId = value ? value.id : null;
+      },
+      deep: true,
+    },
+    selectedIssueStage: {
+      handler: function(value) {
+        this.DV_issue.issueStageId = value ? value.id : null;
       },
       deep: true,
     },
@@ -2220,43 +2260,29 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-// .tasks-form {
-// }
-td,
-th {
-  border: solid 1px #ededed;
-  padding: 1px 3px;
+<style lang="scss" scoped>
+.issues-form {
 }
-tbody {
-  background-color: #fff;
-}
-
-th {
-  background: #ededed;
-  color: #383838;
-  padding: 1px 3px;
-}
-.error {
+.form-control.error {
   border-color: #e84444;
+}
+.title {
+  font-size: 15px;
+  margin-left: 65px;
 }
 .checklist-text {
   margin-left: 5px;
-  min-height: 33px;
   border: 0;
   width: 95%;
   outline: none;
   border: solid #ededed 1px;
   border-radius: 4px;
 }
-.drag {
-  cursor: all-scroll;
-}
 .del-check {
   position: absolute;
   display: flex;
-  font-weight: 500;
   right: 2rem;
+  font-weight: 500;
   background: transparent;
   height: fit-content;
   color: #dc3545;
@@ -2265,57 +2291,30 @@ ul {
   list-style-type: none;
   padding: 0;
 }
+.drag {
+  cursor: all-scroll;
+}
+// Checklist feature UI
+/deep/.el-collapse-item__header {
+  background-color: #fafafa !important;
+}
+/deep/.el-collapse-item__header {
+  float: right;
+  margin-top: -38px;
+  font: small;
+  color: #d9534f !important;
+  border-bottom: none !important;
+}
+/deep/ .el-collapse {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+/deep/.el-collapse-item__content {
+  padding-bottom: 0 !important;
+}
 .paperLook {
-  padding-bottom: 20px;
-  margin-bottom: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   position: relative;
-}
-.paginate-links.filteredNotes {
-  list-style: none !important;
-  user-select: none;
-  text-decoration-line: none !important;
-  margin-bottom: 18px;
-  a {
-    width: 20px;
-    height: 25px;
-    margin-right: 0;
-    border-radius: 2px;
-    background-color: white;
-    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-      0 3px 3px rgba(56, 56, 56, 0.23);
-    color: #383838;
-    padding: 5px 12px;
-    cursor: pointer;
-    text-decoration-line: none !important;
-  }
-  a:hover {
-    background-color: #ededed;
-  }
-  li.active a {
-    font-weight: bold;
-    color: #383838;
-    background-color: rgba(211, 211, 211, 10%);
-  }
-  a.active {
-    background-color: rgba(211, 211, 211, 10%);
-  }
-  li.next:before {
-    content: " | ";
-    margin-right: 13px;
-    color: #ddd;
-  }
-  li.disabled a {
-    color: #ccc;
-    cursor: no-drop;
-  }
-  li {
-    display: inline !important;
-    margin: 1px;
-    color: #383838 !important;
-  }
-}
-.red-border {
-  border: solid 0.5px red;
 }
 .sticky-btn {
   margin-top: 5px;
@@ -2323,15 +2322,32 @@ ul {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
     0 1px 1px rgba(56, 56, 56, 0.23);
 }
-
-.scrollToChecklist,
-.addCheckProgBtn,
-.check-items {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+.sticky {
+  justify-content: center;
+  z-index: 1000;
+  left: 15;
+  top: 0;
+  width: 100%;
+  padding: 6px;
+  background-color: rgba(237, 237, 237, 0.85);
+  box-shadow: 0 10px 20px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+}
+.sticky-kanban {
+  position: sticky;
+  position: -webkit-sticky;
+  margin-bottom: -2.5rem;
+}
+.scrollToChecklist {
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
     0 1px 1px rgba(56, 56, 56, 0.23);
 }
-.addCheckProgBtn:hover {
-  background-color: lightgray !important;
+.btn-group {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 .check-due-date {
   text-align: end;
@@ -2339,15 +2355,32 @@ ul {
 .disabled {
   opacity: 0.6;
 }
-.simple-select /deep/ .multiselect {
-  .multiselect__placeholder {
-    text-overflow: ellipsis;
-  }
-}
 .custom-tab {
+  width: min-content;
   background-color: #fff;
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
+}
+.tab2,
+.tab3,
+.tab4,
+.tab5 {
+  min-height: 400px;
+  background-color: #fff;
+}
+
+td,
+th {
+  border: solid 1px #ededed;
+  padding: 1px 3px;
+}
+tbody {
+  background-color: #fff;
+}
+th {
+  background: #ededed;
+  color: #383838;
+  padding: 1px 3px;
 }
 .fixed-form {
   overflow-y: auto;
@@ -2357,6 +2390,18 @@ ul {
 .display-length {
   border-radius: 0.15rem;
   margin-right: 12px;
+}
+.red-border {
+  border: solid 0.5px red;
+}
+.checklist-text {
+  margin-left: 5px;
+  min-height: 33px;
+  border: 0;
+  width: 95%;
+  outline: none;
+  border: solid #ededed 1px;
+  border-radius: 4px;
 }
 .fa-building {
   font-size: large !important;
@@ -2371,36 +2416,14 @@ ul {
 .text-danger {
   font-size: 13px;
 }
+.error-border {
+  border: 1px solid red;
+  border-radius: 4px;
+}
 .overflow-ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow-x: hidden;
-}
-/deep/.el-collapse-item__header {
-  background-color: #fafafa;
-}
-/deep/ .el-collapse {
-  border-top: none !important;
-  border-bottom: none !important;
-}
-/deep/.el-collapse-item__content {
-  padding-bottom: 0 !important;
-}
-/deep/.el-collapse-item__header {
-  background-color: #fafafa;
-}
-#roll_up {
-  /deep/.el-collapse-item__header {
-    float: right;
-    padding: 1em;
-    margin-top: -36px;
-    color: #d9534f !important;
-    border-bottom: none !important;
-    background-color: #fafafa !important;
-  }
-}
-.informed.el-input__inner {
-  height: 32px;
 }
 .no-text-decoration:link {
   text-decoration: none;
@@ -2417,13 +2440,14 @@ ul {
   color: #495057;
   text-decoration-color: none;
 }
+
 .hover {
   background: transparent;
   border-radius: 0 !important;
 }
 .hover:hover {
   cursor: pointer;
-  background-color: rgba(91, 192, 222, 0.3);
+  background-color: rgba(91, 192, 222, 0.3) !important;
 }
 input.file-link {
   outline: 0 none;
@@ -2432,13 +2456,11 @@ input.file-link {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
-
 .exampleTwo.el-steps,
 .exampleTwo.el-steps--simple {
   border: 1px solid #dcdfe6;
   background: #fff;
 }
-
 .overSixSteps {
   /deep/.el-step__title {
     font-size: 11px !important;
@@ -2464,6 +2486,7 @@ a:hover {
 .tagsCol, .statesCol {  
   border: .5px solid lightgray;
 }
+
 .statesCol {
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
