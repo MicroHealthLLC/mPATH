@@ -5702,7 +5702,6 @@ export default {
 
 <style scoped lang="scss">
 
-<style>
 .portfolioView_main .vue-treeselect__placeholder {
   font-size: 14px;
 }
