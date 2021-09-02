@@ -378,10 +378,10 @@ body {
     box-shadow: 0 1px 2.5px rgba(56, 56, 56, 0.19),
       0 1.5px 1.5px rgba(56, 56, 56, 0.23);
   }
-    // .taskHover:hover {
-    //   cursor: pointer;
-    //   background-color: rgba(91, 192, 222, 0.3);
-    // }
+    .portTable.taskHover:hover {
+      cursor: pointer;
+      background-color: rgba(91, 192, 222, 0.3);
+    }
   
   .font-sm {
     font-weight: 600;
@@ -1094,7 +1094,10 @@ td.col-issue_type, td.col-issue_severity {
 .portfolio-page:hover { 
   transform: scale(1.015); 
 }
-
+.vh100{
+  height: 100vh;
+  width: 100vw;
+}
 .portfolioViewerBtn {
   background-color: #DD9036;
   border-radius: 3px;

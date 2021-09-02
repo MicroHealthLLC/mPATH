@@ -370,7 +370,10 @@ export default {
     exportToExcel(table, name) {
       if (!table.nodeType) table = this.$refs.table
       var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
-      window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+      var link = document.createElement('a');
+      link.setAttribute('href', this.uri + this.base64(this.format(this.template, ctx)));
+      link.setAttribute('download', 'Issue_Log.xls');
+      link.click();
     },
     issueEdited(issue) {
       this.currentIssue = issue

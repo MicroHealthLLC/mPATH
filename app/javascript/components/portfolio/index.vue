@@ -6,7 +6,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)">   
     <!-- <tabsbar></tabsbar> -->
-    <portfolio-filter-sidebar v-if="portfolioTasksLoaded"></portfolio-filter-sidebar>
+    <portfolio-filter-sidebar></portfolio-filter-sidebar>
     <router-view></router-view>
   </div>
 </template>
@@ -48,8 +48,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.vh100{
-  height: 100vh;
-  width: 100vw;
-}
+// .vh100{
+//   height: 100vh;
+//   width: 100vw;
+// }
 </style>

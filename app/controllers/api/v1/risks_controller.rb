@@ -1,5 +1,7 @@
-class  Api::V1::RisksController < Api::ApplicationController
-  before_action :set_resources, except: [:show]
+class Api::V1::RisksController < AuthenticatedController 
+# NOTE: uncomment this when we move to token based authentication
+# class  Api::V1::RisksController < Api::ApplicationController
+  before_action :set_resources#, except: [:show]
   before_action :set_risk, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
   before_action :check_permission
 
@@ -98,7 +100,6 @@ class  Api::V1::RisksController < Api::ApplicationController
   end
 
   def show
-    @facility_project = FacilityProject.find(params[:facility_project_id])
     @risk = @facility_project.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
     render json: {risk: @risk.to_json}
   end

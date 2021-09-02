@@ -377,6 +377,7 @@
               v-for="task in sortedTasks"           
               class="taskHover"        
               href="#"
+              :load="log(JSON.stringify(task))"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -567,7 +568,7 @@
         this.currentSort = s;
       },
       log(e){
-        // console.log("Task:  " + e)
+        console.log("Task:  " + e)
       },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
@@ -648,7 +649,10 @@
       exportToExcel(table, name){
         if (!table.nodeType) table = this.$refs.table
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
-        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+        var link = document.createElement('a');
+        link.setAttribute('href', this.uri + this.base64(this.format(this.template, ctx)));
+        link.setAttribute('download', 'Task_List.xls');
+        link.click();
       }
     },
     computed: {

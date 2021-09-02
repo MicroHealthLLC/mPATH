@@ -63,33 +63,33 @@ Vue.prototype.$portfolio_heading = window.portfolio_heading
 Vue.prototype.$portfolio_title = window.portfolio_heading
 
 
-// var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
+var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 // Format: {<program_id> : {
     // <project_id>:{
     //   modules: ["R", "W", "D"]
     // }
 // }}
-// var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
-// var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
+var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
+var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
 
-// var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
+var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
 
-// var topNavigationPermissions = {}
-// for (var key in privilege) {
-//   if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
-//   var value = privilege[key]
-//   topNavigationPermissions[key] = {
-//     read: value.includes('R'),
-//     write: value.includes('W'),
-//     delete: value.includes('D')
-//   }
-// }
+var topNavigationPermissions = {}
+for (var key in privilege) {
+  if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
+  var value = privilege[key]
+  topNavigationPermissions[key] = {
+    read: value.includes('R'),
+    write: value.includes('W'),
+    delete: value.includes('D')
+  }
+}
 
-// Vue.prototype.$currentUser = current_user
-// Vue.prototype.$topNavigationPermissions = topNavigationPermissions
-// Vue.prototype.$projectPrivileges = projectPrivileges
+Vue.prototype.$currentUser = current_user
+Vue.prototype.$topNavigationPermissions = topNavigationPermissions
+Vue.prototype.$projectPrivileges = projectPrivileges
 
-// Vue.prototype.$preferences = preferences
+Vue.prototype.$preferences = preferences
 
 // eslint-disable-next-line no-unused-vars
 const portfolioApp = new Vue({
