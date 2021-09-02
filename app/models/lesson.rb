@@ -74,7 +74,9 @@ class Lesson < ApplicationRecord
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-      project_id: facility_project.facility_id,
+      # project_id: facility_project.facility_id,
+      project_id: facility.id, 
+      program_id: project.id, 
     ).as_json
 
   end
@@ -313,6 +315,8 @@ class Lesson < ApplicationRecord
   end
 
   def create_or_update_lesson(params, user)
+    params[:lesson].delete(:user_id)
+
     lesson_params = params.require(:lesson).permit(Lesson.params_to_permit)
 
     lesson = self
@@ -353,8 +357,8 @@ class Lesson < ApplicationRecord
       params_lesson_details = ( params_lesson_details + params_best_practices ).compact
     end
 
-    if params[:project_id] && params[:program_id]
-      fp = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
+    if params[:project_id] && params[:facility_id]
+      fp = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       t_params[:facility_project_id] = fp.id
     end
 

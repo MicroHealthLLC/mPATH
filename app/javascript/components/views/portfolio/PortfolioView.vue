@@ -1099,7 +1099,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(task, index) in sortedTasks" :key="index" class="taskHover">
+                      <tr v-for="(task, index) in sortedTasks" :key="index" class="portTable taskHover" @click="openTask(task)">
                    
                         <td>{{ task.program_name }}</td>
                         <td>{{ task.project_name }}</td>
@@ -2020,7 +2020,7 @@
                     </th>
                   </thead>
                   <tbody>
-                    <tr v-for="(issue, index) in sortedIssues" :key="index" class="taskHover">
+                    <tr v-for="(issue, index) in sortedIssues" :key="index" class="portTable taskHover" @click="openIssue(issue)">
                       <td>{{ issue.program_name }}</td>
                       <td>{{ issue.project_name }}</td>
                       <td>{{ issue.title }}</td>
@@ -3011,7 +3011,7 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(risk, index) in sortedRisks" :key="index" class="taskHover">
+                      <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openRisk(risk)">
                         <td>{{ risk.program_name }}</td>
                         <td>{{ risk.project_name }}</td>
                         <td>{{ risk.text }}</td>
@@ -3218,64 +3218,6 @@
                 {{ portfolioCounts.lessons_count }}
               </span>
             </template>
-
-            <!-- <div class="row pb-4">
-              <div class="col-4 py-2">
-                <div class="w-100 d-flex">
-                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
-                  <el-input
-                    type="search"
-                    placeholder="Enter Search Criteria"
-                    v-model="search_lessons"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                </div>
-              </div>
-
-              <div class="col-4 py-2">
-                <div class="d-flex w-100">   
-               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
-                   <template>
-                    <treeselect  
-                    placeholder="Search and select" 
-                    :limit="3"
-                    :match-keys= "['facility_project_id', 'id', 'label']"
-                    :limitText="count => `...`"     
-                    :multiple="true" 
-                    track-by="name"  
-                   :options="portfolioPrograms" 
-                    valueFormat="object"
-                    v-model="C_portfolioLessonNamesFilter"
-                    />         
-                 </template>              
-                </div>              
-              </div> 
-                       <div  class="col-4 pl-0 py-2">   
-                <div class="d-flex w-100">                  
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
-                   <template>
-                  <el-select 
-                    v-model="C_categoryNameFilter"                    
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                             
-                    placeholder="Select Process Area"
-                  >
-                  <el-option 
-                    v-for="item in C_l_categories"                                                     
-                    :value="item"   
-                    :key="item"
-                    :label="item"                                                  
-                    >
-                   </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-            </div> -->
-
             <div class="box-shadow py-2">
               <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
@@ -3336,13 +3278,6 @@
                       ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
                     </span>
                     <span class="tagsCol d-flex px-3 py-2">
-                      <!-- <div class="text-center icons" :class="[hideWatchedLessons == true ? '':'light']" @click.prevent="toggleWatchedL"   >             
-                 <span class="d-block">
-                      <i class="fas fa-eye" ></i>
-                 </span>                  
-                  <span class="smallerFont">ON WATCH</span>                 
-                   <h5 :class="[getShowCount == false ? 'd-none' : 'd-block']">{{ lessonVariation.watched.count }}</h5>  
-                  </div> -->
                       <div
                         class="pr-4 text-center icons"
                         :class="[hideImportant == true ? '' : 'light']"
@@ -3816,7 +3751,8 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="taskHover" >
+                      <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
+                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable" >
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
@@ -3944,14 +3880,6 @@
         </el-tabs>
         <div class="row pt-2">
           <div class="col-6 py-0 pl-0">
-            <!-- <el-popover
-          placement="top-start"
-          title="Project #"
-          width="200"
-          trigger="hover"
-          content="This is the total number of programs in your portfolio.">
-        <b class="badge bg-secondary text-light badge-pill" slot="reference"> </b>
-        </el-popover> -->
           </div>
         </div>
       </el-tab-pane>
@@ -3984,7 +3912,7 @@ const simulateAsyncOperation = fn => {
 
 export default {
   name: "PortfolioView",
-  props: ["from"],
+  props: ["facility"],
   components: {
     Loader
   },
@@ -4005,7 +3933,6 @@ export default {
       search_lessons: "",
       currentSort: "program_name",
       currentSortDir: "asc",
-      currentTab: 'tasks',
       currentPage: 1,
       // selectedProgram: this.C_programNameFilter,
       currentIssuesPage: 1,
@@ -4057,13 +3984,8 @@ export default {
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
-      $("#tab-tasks").trigger('click');
+      $(this.currTab).trigger('click');
     })
-    
-    // this.fetchPortfolioTasks();
-    // this.fetchPortfolioIssues();
-    // this.fetchPortfolioRisks();
-    // this.fetchPortfolioLessons();
   },
   computed: {
     ...mapGetters([
@@ -4080,6 +4002,9 @@ export default {
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
       'getShowCount',
+      'currTab',
+      'portfolioTab',
+      'portfolioCategories',
       'portfolioNameFilter',
       'portfolioRiskNameFilter',
       'facilityDueDateFilter',
@@ -4092,6 +4017,7 @@ export default {
       'portfolioRisksLoaded',
       'portfolioLessonsLoaded',
       'taskTypes',
+      'currentProject',
       'portfolioCategoriesFilter',
       'portfolioTasks',
       'portfolioCounts',
@@ -4121,7 +4047,22 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
-
+ currentTab: {
+      get() {        
+        return this.portfolioTab 
+      },
+      set(value) {
+        if(value === 'issues') {
+            this.setCurrTab('#tab-issues')
+        } else if (value === 'risks') {
+            this.setCurrTab('#tab-risks')
+        } else if (value === 'lessons') {
+            this.setCurrTab('#tab-lessons')
+        } else 
+          this.setCurrTab('#tab-tasks')
+          this.setPortfolioTab(value)
+      }
+  },
    sortedTasks:function() {
           return this.tasksObj.filtered.tasks.sort((a,b) => {
           let modifier = 1;
@@ -5230,9 +5171,9 @@ export default {
         this.setPortfolioRiskApproachesFilter(value);
       },
     },
-    C_programNames() {
-      return this.portfolioPrograms;
-    },
+    // C_programNames() {
+    //   return this.portfolioPrograms;
+    // },
     C_categories() {
       let category = this.portfolioTasks;
       return [
@@ -5314,7 +5255,6 @@ export default {
         this.setPortfolioRiskStagesFilter(value);
       },
     },
-
     C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter;
@@ -5395,6 +5335,8 @@ export default {
       "setPortfolioNameFilter",
       "setPortfolioRiskNameFilter",
       "setTaskIssueUserFilter",
+      'setPortfolioTab',
+      'setCurrTab',
       "setPortfolioUsersFilter",
       "setTasksPerPageFilter",
       "setTaskIssueProgressFilter",
@@ -5443,6 +5385,49 @@ export default {
     log(e) {
       //  console.log("number" + e)
     },
+   openTask(task) {      
+      this.$router.push({
+      name: "PortfolioTaskForm",
+      params: {
+        programId: task.program_id,
+        projectId: task.project_id,
+        id: task.id,
+      },
+    });
+    },
+    openIssue(issue) {   
+      this.$router.push({
+      name: "PortfolioIssueForm",
+      params: {
+        programId: issue.program_id,
+        projectId: issue.project_id,
+        id: issue.id,
+      },
+    });
+    },
+    openRisk(risk) {   
+      this.$router.push({
+      name: "PortfolioRiskForm",
+      params: {
+        programId: risk.program_id,
+        projectId: risk.project_id,
+        id: risk.id,
+      },
+      });
+    },
+    // openLesson(lesson) {     
+    //    console.log(lesson) 
+    //   this.$router.push({
+    //   name: "PortfolioLessonForm",
+    //   params: {
+    //     programId: lesson.program_id,
+    //     projectId: lesson.project_id,
+    //     id: lesson.id,
+    //     lessonId: lesson.id, 
+    //     lesson, 
+    //   },
+    // });
+    // },
     beforeClose(done) {
     	this.dialogVisible = false;
       done();
@@ -5657,9 +5642,6 @@ export default {
       window.location.href =
         this.uri + this.base64(this.format(this.template, ctx));
     },
-    log(e) {
-      //  console.log("Users" + e)
-    },
     // Toggle for 3 Action Tags
     toggleWatched() {
       this.hideWatched = !this.hideWatched;
@@ -5695,7 +5677,6 @@ export default {
     toggleOverdue() {
       this.hideOverdue = !this.hideOverdue;
     },
-
     setPage(val) {
       this.page = val;
     },
@@ -5739,14 +5720,25 @@ export default {
       this.$store && this.$store.commit("nullifyTasksForManager");
     },
   },
+    //  "$route.path": {
+    //   handler() {
+    //     if (this.openTask) {
+    //       this.facility = this.portfolioTasks.find(
+    //         (p) => p.facility_project_id == this.openTask.project_id
+    //       );
+    //     }
+    //   },
+    // },
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+
 .portfolioView_main .vue-treeselect__placeholder {
   font-size: 14px;
 }
 .portfolioView_main .vue-treeselect__value-remove {
   border: none !important;
 }
+
 </style>

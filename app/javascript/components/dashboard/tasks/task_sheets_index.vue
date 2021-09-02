@@ -376,6 +376,7 @@
               v-for="task in sortedTasks"           
               class="taskHover"        
               href="#"
+              :load="log(JSON.stringify(task))"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -566,7 +567,7 @@
         this.currentSort = s;
       },
       log(e){
-        // console.log("Task:  " + e)
+        console.log("Task:  " + e)
       },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;

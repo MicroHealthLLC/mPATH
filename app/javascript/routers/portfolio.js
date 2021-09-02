@@ -1,4 +1,8 @@
 import PortfolioView from "./../components/views/portfolio/PortfolioView";
+import PortfolioTaskForm from "./../components/views/portfolio/PortfolioTaskForm";
+import PortfolioIssueForm from "./../components/views/portfolio/PortfolioIssueForm";
+import PortfolioRiskForm from "./../components/views/portfolio/PortfolioRiskForm";
+import PortfolioLessonForm from "./../components/views/portfolio/PortfolioLessonForm";
 
 export default new VueRouter({
   routes: [
@@ -7,7 +11,63 @@ export default new VueRouter({
       // path: "/api/v1/portfolio/programs",    
       path: "/portfolio",    
       component: PortfolioView,
-    }
+     },
+     {
+      name: "PortfolioTaskForm",
+      path: "/program/:programId/project/:projectId/tasks/:taskId",
+      component: PortfolioTaskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "PortfolioIssueForm",
+      path: "/",
+      component: PortfolioIssueForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "PortfolioRiskForm",
+      path: "/program/:programId/project/:projectId/risks/:riskId",
+      component: PortfolioRiskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "PortfolioLessonForm",
+      path: "/",
+      component: PortfolioLessonForm,   
+     },
   ],
   hashbang: false,
   mode: "history",
