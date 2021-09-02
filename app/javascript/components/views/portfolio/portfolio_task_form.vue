@@ -635,27 +635,26 @@
                           :readonly="!_isallowed('write')"                       
                         />
                       </div>
-                      <div
-                      
+                      <div        
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
-                      <div
-                     
+                      <div                     
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
                         <v2-date-picker
                           v-model="check.due_date"
+                          :load="log(check.due_date)"
                           :value="check.due_date"
                           :disabled="!_isallowed('write') || !check.text"
-                          @selected="updateCheckItem($event, 'dueDate', index)"
-                          :key="`dueDate_${index}`"
+                          @selected="updateCheckItem($event, 'due_date', index)"
+                          :key="`due_date_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
-                          name="dueDate"
+                          name="due_date"
                           class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
@@ -685,13 +684,13 @@
                               :value="check.due_date"
                               :disabled="!_isallowed('write') || !check.text"
                               @selected="
-                                updateCheckItem($event, 'dueDate', index)
+                                updateCheckItem($event, 'due_date', index)
                               "
-                              :key="`dueDate_${index}`"
+                              :key="`due_date_${index}`"
                               value-type="YYYY-MM-DD"
                               format="DD MMM YYYY"
                               placeholder="DD MM YYYY"
-                              name="dueDate"
+                              name="due_date"
                               class="w-100 vue2-datepicker d-flex ml-auto"
                               :disabled-date="disabledDateRange"
                               :class="{ disabled: disabledDateRange }"
@@ -752,13 +751,13 @@
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
                             >
-                            <i class="fal fa-plus-circle mr-1 text-danger"></i>
+                            <i class="fal fa-plus-circle mr-1"></i>
                             </span>
                           </span>
-                          <div  v-if="check.progress_lists.length > 0">
-                          <table                           
+                         <table                           
                             style="width:100%"
                             class="mt-1"
+                            v-if="check.progress_lists !== undefined"
                           >
                             <thead>
                               <tr>
@@ -870,7 +869,7 @@
                               </tr>
                             </tbody>
                           </table>
-                          </div>
+                          
                           <div v-else class="text-danger">
                             No Checklist Progress Updates to Display
                           </div>
@@ -912,6 +911,7 @@
                   class="d-flex mb-2 w-100"
                   v-if="!file.link"
                 >
+
                   <div
                     class="input-group-text  d-inline clickable px-1 w-100 hover"
                     :class="{ 'btn-disabled': !file.uri }"
@@ -1359,8 +1359,8 @@ export default {
     INITIAL_TASK_STATE() {
       return {
         text: "",
-        startDate: "",
-        dueDate: "",
+        start_date: "",
+        due_date: "",
         facilityProjectId: this.$route.params.projectId,
         checklistDueDate: "",
         taskTypeId: "",
@@ -1415,7 +1415,7 @@ export default {
       }
     },
     log(e){
-console.log("DV_checklists " + e)
+console.log("check.dueDate " + e)
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -1790,18 +1790,24 @@ console.log("DV_checklists " + e)
                 `/portfolio`
               );
           })
-          .catch((err) => {
-            alert(err.response.data.error);
-          })
+          // .catch((err) => {
+          //   alert(err.response.data.error);
+          // })
           .finally(() => {
             this.loading = false;
           });
       });
     },
     addProgressList(check) {
-      var postion = check.progress_lists.length;
-      check.progress_lists.push({ body: "", position: postion });
-      this.editToggle = true;
+      if (check.progress_lists !== undefined || null) {
+       var postion = check.progress_lists.length;
+        check.progress_lists.push({ body: "", position: postion });
+
+          this.editToggle = true;
+      }
+    
+     
+    
     },
     addChecks() {
       var postion = this.DV_task.checklists.length;
@@ -1895,8 +1901,8 @@ console.log("DV_checklists " + e)
         if (!event.target.value) this.DV_task.checklists[index].checked = false;
       } else if (name === "check" && this.DV_task.checklists[index].text) {
         this.DV_task.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_task.checklists[index].text) {
-        this.DV_task.checklists[index].dueDate = event.target.value;
+      } else if (name === "due_date" && this.DV_task.checklists[index].text) {
+        this.DV_task.checklists[index].due_date = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -1927,9 +1933,9 @@ console.log("DV_checklists " + e)
       );
     },
     disabledDateRange(date) {
-      var dueDate = new Date(this.DV_task.due_date);
-      dueDate.setDate(dueDate.getDate() + 1);
-      return date < new Date(this.DV_task.start_date) || date > dueDate;
+      var due_date = new Date(this.DV_task.due_date);
+      due_date.setDate(due_date.getDate() + 1);
+      return date < new Date(this.DV_task.start_date) || date > due_date;
     },
     openContextMenu(e, item) {
       e.preventDefault();

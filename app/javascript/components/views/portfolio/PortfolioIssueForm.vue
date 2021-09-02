@@ -13,14 +13,15 @@ export default {
   methods:{
     ...mapActions(['fetchPortfolioIssue', 'portfolioIssuesLoaded', 'fetchPortfolioIssues', 'fetchPortfolioCategories']),
     redirectBack() {
-      this.fetchPortfolioIssues()
+      this.fetchPortfolioIssues()  
       this.$router.push(
         `/portfolio`
       );
+        
     },
   },
   computed: {
-    ...mapGetters(['portfolioIssue'])
+    ...mapGetters(['portfolioIssue', 'portfolioTab'])
   },
   beforeMount(){
     this.fetchPortfolioIssue(this.$route.params)

@@ -676,12 +676,12 @@ Tab 1 Row Begins here -->
                           v-model="check.due_date"
                           :value="check.due_date"
                           :disabled="!_isallowed('write') || !check.text"
-                          @selected="updateCheckItem($event, 'dueDate', index)"
+                          @selected="updateCheckItem($event, 'due_date', index)"
                           :key="`dueDate_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
-                          name="dueDate"
+                          name="due_date"
                           class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
@@ -711,13 +711,13 @@ Tab 1 Row Begins here -->
                               :value="check.due_date"
                               :disabled="!_isallowed('write') || !check.text"
                               @selected="
-                                updateCheckItem($event, 'dueDate', index)
+                                updateCheckItem($event, 'due_date', index)
                               "
                               :key="`dueDate_${index}`"
                               value-type="YYYY-MM-DD"
                               format="DD MMM YYYY"
                               placeholder="DD MM YYYY"
-                              name="dueDate"
+                              name="due_date"
                               class="w-100 vue2-datepicker d-flex ml-auto"
                               :disabled-date="disabledDateRange"
                               :class="{ disabled: disabledDateRange }"
@@ -786,7 +786,7 @@ Tab 1 Row Begins here -->
                           </span>
 
                           <table
-                            v-if="check.progress_lists.length > 0"
+                            v-if="check.progress_lists !== undefined"
                             style="width:100%"
                             class="mt-1"
                           >
@@ -1377,8 +1377,8 @@ export default {
     INITIAL_ISSUE_STATE() {
       return {
         title: "",
-        startDate: "",
-        dueDate: "",
+        start_date: "",
+        due_date: "",
         facilityProjectId: this.$route.params.projectId,       
         issueTypeId: "",
         taskTypeId: "",
@@ -1618,7 +1618,6 @@ export default {
     },
     cancelIssueSave() {
       this.$emit("on-close-form");
-      this.setTaskForManager({ key: "issue", value: null });
     },
     saveIssue() {
       this.$validator.validate().then((success) => {
@@ -1815,7 +1814,7 @@ export default {
             //this.$emit(callback, responseIssue)
             this.updateIssuesHash({ issue: responseIssue });
             if (response.status === 200) {
-              this.fetchPortfolioIssues()
+              // this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
@@ -1823,14 +1822,14 @@ export default {
               });
             }
           
-        
+           this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
           })
-          .catch((err) => {
-            console.log(err);
-          })
+          // .catch((err) => {
+          //   console.log(err);
+          // })
           .finally(() => {
             this.loading = false;
           });
@@ -1887,10 +1886,13 @@ export default {
         progress_lists: [],
       });
     },
+
     addProgressList(check) {
-      var postion = check.progress_lists.length;
-      check.progress_lists.push({ body: "", position: postion });
-      this.editToggle = true;
+       if (check.progress_lists !== undefined || null) {
+       var postion = check.progress_lists.length;
+        check.progress_lists.push({ body: "", position: postion });
+          this.editToggle = true;
+      }
     },
     destroyCheck(check, index) {
       let confirm = window.confirm(
@@ -1927,8 +1929,8 @@ export default {
           this.DV_issue.checklists[index].checked = false;
       } else if (name === "check" && this.DV_issue.checklists[index].text) {
         this.DV_issue.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_issue.checklists[index].text) {
-        this.DV_issue.checklists[index].dueDate = event.target.value;
+      } else if (name === "due_date" && this.DV_issue.checklists[index].text) {
+        this.DV_issue.checklists[index].due_date = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -2003,19 +2005,23 @@ export default {
       "currentProject",
       "currentRisks",
       "portfolioIssues",
+      'portfolioIssueStages',
       "currentTasks",
       'portfolioCategories',
       'portfolioIssueTypes',
       "facilities",
+      'portfolioIssues',
       'fetchPortfolioIssues',
       "facilityGroups",
       "getFacilityProjectOptions",
       'portfolioIssueSeverities',
-      "issueStages",
       "managerView",
       "myActionsFilter",
       "projectUsers",
     ]),
+    issueStages(){
+      return this.portfolioIssueStages
+    },
     issueStagesSorted() {
       var issueStagesSortedReturn = [...this.issueStages]; 
       return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
@@ -2116,16 +2122,16 @@ export default {
     "DV_issue.start_date"(value) {
       if (!value) this.DV_issue.due_date = "";
     },
-    "DV_issue.due_date"(value) {
-      if (this.facility.due_date) {
-        if (moment(value).isAfter(this.facility.due_date, "day")) {
-          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facility_name} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_issue.due_date"(value) {
+    //   if (this.facility.due_date) {
+    //     if (moment(value).isAfter(this.facility.due_date, "day")) {
+    //       this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facility_name} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_issue.checklists": {
       handler: function(value) {
         if (this.DV_issue.auto_calculate) this.calculateProgress(value);
@@ -2191,25 +2197,25 @@ export default {
     },
     selectedIssueType: {
       handler: function(value) {
-        this.DV_issue.issueTypeId = value ? value.id : null;
+        this.DV_issue.issue_type_id = value ? value.id : null;
       },
       deep: true,
     },
     selectedTaskType: {
       handler: function(value) {
-        this.DV_issue.taskTypeId = value ? value.id : null;
+        this.DV_issue.task_type_id = value ? value.id : null;
       },
       deep: true,
     },
     selectedIssueSeverity: {
       handler: function(value) {
-        this.DV_issue.issueSeverityId = value ? value.id : null;
+        this.DV_issue.issue_severity_id = value ? value.id : null;
       },
       deep: true,
     },
     selectedIssueStage: {
       handler: function(value) {
-        this.DV_issue.issueStageId = value ? value.id : null;
+        this.DV_issue.issue_stage_id = value ? value.id : null;
       },
       deep: true,
     },

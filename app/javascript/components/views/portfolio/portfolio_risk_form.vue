@@ -1328,13 +1328,13 @@
                             :value="check.due_date"
                             :disabled="!_isallowed('write') || !check.text"
                             @selected="
-                              updateCheckItem($event, 'dueDate', index)
+                              updateCheckItem($event, 'due_date', index)
                             "
                             :key="`dueDate_${index}`"
                             value-type="YYYY-MM-DD"
                             format="DD MMM YYYY"
                             placeholder="DD MM YYYY"
-                            name="dueDate"
+                            name="due_date"
                             class="w-100 vue2-datepicker d-flex ml-auto"
                             :disabled-date="disabledDateRange"
                             :class="{ disabled: disabledDateRange }"
@@ -1370,13 +1370,13 @@
                                 :value="check.due_date"
                                 :disabled="!_isallowed('write') || !check.text"
                                 @selected="
-                                  updateCheckItem($event, 'dueDate', index)
+                                  updateCheckItem($event, 'due_date', index)
                                 "
                                 :key="`dueDate_${index}`"
                                 value-type="YYYY-MM-DD"
                                 format="DD MMM YYYY"
                                 placeholder="DD MM YYYY"
-                                name="dueDate"
+                                name="due_date"
                                 class="w-100 vue2-datepicker d-flex ml-auto"
                                 :disabled-date="disabledDateRange"
                                 :class="{ disabled: disabledDateRange }"
@@ -1449,7 +1449,7 @@
                             </span>
 
                             <table
-                              v-if="check.progress_lists.length > 0"
+                              v-if="check.progress_lists !== undefined"
                               style="width: 100%"
                               class="mt-1"
                             >
@@ -1873,22 +1873,20 @@
                   :readonly="!_isallowed('write')"
                   data-cy="risk_explanation"
                  
-                />
-              
+                />              
               </div>
-
               <div class="d-flex mb-1 mx-4 form-group">
                 <div class="simple-select form-group w-50">
                   <label class="font-md"
                     >Status</label
                   >
                   <el-select
-                    v-model="selectedStatus"                  
+                    v-model="selectedStatus"                                            
                     class="w-100"
-                    track-by="name" 
-                    clearable               
-                    :disabled="!_isallowed('write')"
-                    data-cy="risk_status"                  
+                    :load="log(selectedStatus)"
+                    clearable
+                    track-by="name"                  
+                    :disabled="!_isallowed('write')"                                 
                     placeholder="Risk Disposition Status"
                   >
                     <el-option
@@ -1899,16 +1897,15 @@
                       class="upperCase"
                     >
                     </el-option>
-                  </el-select>
-
-                  
+                  </el-select>                  
                 </div>
                   <div class="simple-select form-group w-50 ml-4">
                   <label class="font-md"
                     >Duration</label
                   >
                   <el-select
-                    v-model="selectedDuration"                            
+                    v-model="selectedDuration"  
+                                           
                     class="w-100"
                     clearable
                     track-by="name"                  
@@ -2184,9 +2181,9 @@ export default {
         progress: 0,
         startDate: "",
         getRiskImpactLevelNames: "1 - Negligible",
-        getRiskDispositionDuration: "Nothing Selected",
-        getRiskDispositionStatus: "Nothing Selected",
-        dueDate: "",
+        // getRiskDispositionDuration: "Nothing Selected",
+        // getRiskDispositionStatus: "Nothing Selected",
+        due_date: "",
         autoCalculate: true,
         important: false,
         reportable: false, 
@@ -2206,9 +2203,9 @@ export default {
         notes: [],
       };
     },
-      //  log(e){
-      //     console.log("This is the riskDispStatus item: " + e)
-      // },
+       log(e){
+          console.log("This is the riskDispStatus item: " + JSON.stringify(e))
+      },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;
@@ -2310,11 +2307,11 @@ export default {
         this.selectedDuration = this.getRiskDispositionDuration.find(
         (t) => t.id === this.DV_risk.duration
       );
-        this.selectedStatus = this.getRiskDispositionStatus.find(
+       this.selectedStatus = this.getRiskDispositionStatus.find(
         (t) => t.id === this.DV_risk.status
       );
-      if (this.DV_risk.attachFiles)
-        this.addFile(this.DV_risk.attachFiles, false);
+      if (this.DV_risk.attach_files)
+        this.addFile(this.DV_risk.attach_files, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -2322,12 +2319,12 @@ export default {
       });
     },
     addFile(files = [], append = true) {
-      let _files = append ? [...this.DV_risk.riskFiles] : [];
+      let _files = append ? [...this.DV_risk.risk_files] : [];
       for (let file of files) {
         file.guid = this.guid();
         _files.push(file);
       }
-      this.DV_risk.riskFiles = _files;
+      this.DV_risk.risk_files = _files;
     },
     deleteRisk() {
       let confirm = window.confirm(
@@ -2483,10 +2480,9 @@ export default {
         if (this.selectedStatus) {        
           formData.append("risk[status]", this.selectedStatus.id);
           formData.append("risk[status_name]", this.selectedStatus.name);
-           
-        } else {
-           formData.append("risk[status]", null);
-           formData.append("risk[status_name]", '');
+        } else {          
+            formData.append("risk[status_name]", '');
+            formData.append("risk[status]", null);
         }
                 
         if (this.selectedDuration) {
@@ -2706,9 +2702,11 @@ export default {
       });
     },
     addProgressList(check) {
-      var postion = check.progress_lists.length;
-      check.progress_lists.push({ body: "", position: postion });
-      this.editToggle = true;
+      if (check.progress_lists !== undefined || null) {
+       var postion = check.progress_lists.length;
+        check.progress_lists.push({ body: "", position: postion });
+          this.editToggle = true;
+      }
     },
     destroyProgressList(check, progressList, index) {
       let confirm = window.confirm(
@@ -2794,7 +2792,7 @@ export default {
         if (!event.target.value) this.DV_risk.checklists[index].checked = false;
       } else if (name === "check" && this.DV_risk.checklists[index].text) {
         this.DV_risk.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_risk.checklists[index].text) {
+      } else if (name === "due_date" && this.DV_risk.checklists[index].text) {
         this.DV_risk.checklists[index].due_date = event.target.value;
       }
     },
@@ -2914,8 +2912,11 @@ export default {
       "riskApproaches",
       'riskDispositionStatuses',
       'riskDispositionDuration',
-      "riskStages",
+      "portfolioRiskStages",
      ]),
+    riskStages(){
+      return this.portfolioRiskStages
+    },
     riskStagesSorted() {
       var riskStagesSortedReturn = [...this.riskStages]; 
       return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
@@ -3220,16 +3221,16 @@ export default {
     "DV_risk.start_date"(value) {
       if (!value) this.DV_risk.due_date = "";
     },
-    "DV_risk.due_date"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_risk.due_date"(value) {
+    //   if (this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_risk.checklists": {
       handler: function(value) {
         if (this.DV_risk.auto_calculate) this.calculateProgress(value);
@@ -3315,8 +3316,7 @@ export default {
     },
    selectedDuration: {
       handler: function(value) {
-        this.DV_risk.duration = value ? value.id : null;
-      
+        this.DV_risk.duration = value ? value.id : null;      
       },
       deep: true,
     },

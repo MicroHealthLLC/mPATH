@@ -3751,7 +3751,8 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover">
+                      <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
+                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable" >
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
@@ -3932,7 +3933,6 @@ export default {
       search_lessons: "",
       currentSort: "program_name",
       currentSortDir: "asc",
-      currentTab: 'tasks',
       currentPage: 1,
       // selectedProgram: this.C_programNameFilter,
       currentIssuesPage: 1,
@@ -3984,7 +3984,7 @@ export default {
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
-      $("#tab-tasks").trigger('click');
+      $(this.currTab).trigger('click');
     })
   },
   computed: {
@@ -4002,6 +4002,8 @@ export default {
       'getRisksPerPageFilter', 
       'getLessonsPerPageFilter', 
       'getShowCount',
+      'currTab',
+      'portfolioTab',
       'portfolioCategories',
       'portfolioNameFilter',
       'portfolioRiskNameFilter',
@@ -4045,7 +4047,22 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
-
+ currentTab: {
+      get() {        
+        return this.portfolioTab 
+      },
+      set(value) {
+        if(value === 'issues') {
+            this.setCurrTab('#tab-issues')
+        } else if (value === 'risks') {
+            this.setCurrTab('#tab-risks')
+        } else if (value === 'lessons') {
+            this.setCurrTab('#tab-lessons')
+        } else 
+          this.setCurrTab('#tab-tasks')
+          this.setPortfolioTab(value)
+      }
+  },
    sortedTasks:function() {
           return this.tasksObj.filtered.tasks.sort((a,b) => {
           let modifier = 1;
@@ -5318,6 +5335,8 @@ export default {
       "setPortfolioNameFilter",
       "setPortfolioRiskNameFilter",
       "setTaskIssueUserFilter",
+      'setPortfolioTab',
+      'setCurrTab',
       "setPortfolioUsersFilter",
       "setTasksPerPageFilter",
       "setTaskIssueProgressFilter",
@@ -5396,6 +5415,19 @@ export default {
       },
       });
     },
+    // openLesson(lesson) {     
+    //    console.log(lesson) 
+    //   this.$router.push({
+    //   name: "PortfolioLessonForm",
+    //   params: {
+    //     programId: lesson.program_id,
+    //     projectId: lesson.project_id,
+    //     id: lesson.id,
+    //     lessonId: lesson.id, 
+    //     lesson, 
+    //   },
+    // });
+    // },
     beforeClose(done) {
     	this.dialogVisible = false;
       done();
