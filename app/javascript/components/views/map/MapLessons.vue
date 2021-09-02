@@ -13,6 +13,7 @@
           track-by="name"
           value-key="id"
           multiple
+          clearable
           placeholder="Select Category"
           >
           <el-option

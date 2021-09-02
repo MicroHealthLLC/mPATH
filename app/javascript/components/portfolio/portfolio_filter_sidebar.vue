@@ -32,6 +32,7 @@
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"      
                     :multiple="true" 
+                    clearable
                     :options="portfolioPrograms" 
                     v-model="C_portfolioNamesFilter"  
                     valueFormat="object" />   
@@ -76,7 +77,8 @@
                     track-by="name" 
                     value-key="id"
                     data-cy="project_status"                
-                    multiple                                                                                                                                                         
+                    multiple
+                    clearable
                     placeholder="Select Project Status"
                     >
                   <el-option 
@@ -111,7 +113,8 @@
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
-                    multiple                                                                                                                                               
+                    multiple
+                    clearable
                     placeholder="Select Process Areas"
                   >
                   <el-option 
@@ -132,7 +135,8 @@
                   value-key="id" 
                   filterable                 
                   data-cy="task_category"       
-                  multiple                                                                                                                                                         
+                  multiple
+                  clearable
                   placeholder="Search and select names"
                   >
                  <el-option 
@@ -239,7 +243,8 @@
                   track-by="name" 
                   value-key="id"                  
                   data-cy="task_stage"                     
-                  multiple                                                                                                                                                         
+                  multiple
+                  clearable
                   placeholder="Select Task Stage"
                   >
                 <el-option 
@@ -262,7 +267,8 @@
                   track-by="name" 
                   value-key="id"                  
                   data-cy="issue_stage"            
-                  multiple                                                                                                                                                         
+                  multiple
+                  clearable
                   placeholder="Select Issue Stage"
                   >
                 <el-option 
@@ -283,7 +289,8 @@
                   track-by="name" 
                   value-key="id"                  
                   data-cy="issue_type"            
-                  multiple                                                                                                                                                         
+                  multiple
+                  clearable
                   placeholder="Select Issue Type"
                   >
                 <el-option 
@@ -305,6 +312,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Severity"
                   >
                 <el-option 
@@ -329,6 +337,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Stage"
                   >
                  <el-option 
@@ -347,6 +356,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Approach"
                   >
                 <el-option 
@@ -365,6 +375,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Priority Level"
                   >
                 <el-option 
