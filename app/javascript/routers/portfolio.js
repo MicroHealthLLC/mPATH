@@ -2,6 +2,7 @@ import PortfolioView from "./../components/views/portfolio/PortfolioView";
 import PortfolioTaskForm from "./../components/views/portfolio/PortfolioTaskForm";
 import PortfolioIssueForm from "./../components/views/portfolio/PortfolioIssueForm";
 import PortfolioRiskForm from "./../components/views/portfolio/PortfolioRiskForm";
+import PortfolioLessonForm from "./../components/views/portfolio/PortfolioLessonForm";
 
 export default new VueRouter({
   routes: [
@@ -61,6 +62,11 @@ export default new VueRouter({
           return;
         }
       },
+     },
+     {
+      name: "PortfolioLessonForm",
+      path: "/",
+      component: PortfolioLessonForm,   
      },
   ],
   hashbang: false,

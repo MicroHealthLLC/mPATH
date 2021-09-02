@@ -74,7 +74,9 @@ class Lesson < ApplicationRecord
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-      project_id: facility_project.facility_id,
+      # project_id: facility_project.facility_id,
+      project_id: facility.id, 
+      program_id: project.id, 
     ).as_json
 
   end
