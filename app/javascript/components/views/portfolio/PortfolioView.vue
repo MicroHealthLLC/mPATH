@@ -5742,11 +5742,6 @@ export default {
 };
 </script>
 
-<style>
-.portfolioView_main .vue-treeselect__placeholder {
-  font-size: 14px;
-}
-.portfolioView_main .vue-treeselect__value-remove {
-  border: none !important;
-}
+<style scoped lang="scss">
+
 </style>
