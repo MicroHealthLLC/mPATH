@@ -423,14 +423,14 @@
                     <span class="d-flex statesCol mr-3 px-3 py-2">
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideComplete == true ? 'light' : '']"
+                        :class="[hideCompleteFlag == true ? 'light' : '']"
                         @click.prevent="toggleComplete"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-clipboard-check"
                             :class="[
-                              hideComplete == true ? 'light' : 'text-success',
+                              hideCompleteFlag == true ? 'light' : 'text-success',
                             ]"
                           ></i>
                         </span>
@@ -446,14 +446,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideInprogress == true ? 'light' : '']"
+                        :class="[hideInprogressFlag == true ? 'light' : '']"
                         @click.prevent="toggleInprogress"
                       >
                         <span class="d-block">
                           <i
                             class="far fa-tasks"
                             :class="[
-                              hideInprogress == true ? 'light' : 'text-primary',
+                              hideInprogressFlag == true ? 'light' : 'text-primary',
                             ]"
                           ></i>
                         </span>
@@ -469,14 +469,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOverdue == true ? 'light' : '']"
+                        :class="[hideOverdueFlag == true ? 'light' : '']"
                         @click.prevent="toggleOverdue"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-calendar"
                             :class="[
-                              hideOverdue == true ? 'light' : 'text-danger',
+                              hideOverdueFlag == true ? 'light' : 'text-danger',
                             ]"
                           ></i>
                         </span>
@@ -492,14 +492,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOngoing == true ? 'light' : '']"
+                        :class="[hideOngoingFlag == true ? 'light' : '']"
                         @click.prevent="toggleOngoing"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-retweet"
                             :class="[
-                              hideOngoing == true ? 'light' : 'text-success',
+                              hideOngoingFlag == true ? 'light' : 'text-success',
                             ]"
                           ></i>
                         </span>
@@ -525,14 +525,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hidePlanned == true ? 'light' : '']"
+                        :class="[hidePlannedFlag == true ? 'light' : '']"
                         @click.prevent="togglePlanned"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-calendar-check"
                             :class="[
-                              hidePlanned == true ? 'light' : 'text-info',
+                              hidePlannedFlag == true ? 'light' : 'text-info',
                             ]"
                           ></i>
                         </span>
@@ -550,14 +550,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOnhold == true ? 'light' : '']"
+                        :class="[hideOnholdFlag == true ? 'light' : '']"
                         @click.prevent="toggleOnhold"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pause-circle"
                             :class="[
-                              hideOnhold == true ? 'light' : 'text-primary',
+                              hideOnholdFlag == true ? 'light' : 'text-primary',
                             ]"
                           ></i>
                         </span>
@@ -572,14 +572,14 @@
                       </div>
                       <div
                         class="text-center icons"
-                        :class="[hideDraft == true ? 'light' : '']"
+                        :class="[hideDraftFlag == true ? 'light' : '']"
                         @click.prevent="toggleDraft"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pencil-alt"
                             :class="[
-                              hideDraft == true ? 'light' : 'text-warning',
+                              hideDraftFlag == true ? 'light' : 'text-warning',
                             ]"
                           ></i>
                         </span>
@@ -600,7 +600,7 @@
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
                         class="text-center icons"
-                        :class="[hideWatched == true ? '' : 'light']"
+                        :class="[hideWatchedFlag == true ? '' : 'light']"
                         @click.prevent="toggleWatched"
                       >
                         <span class="d-block">
@@ -618,14 +618,14 @@
                       </div>
                       <div
                         class="px-4 text-center icons"
-                        :class="[hideImportant == true ? '' : 'light']"
+                        :class="[hideImportantFlag == true ? '' : 'light']"
                         @click.prevent="toggleImportant"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-star"
                             :class="[
-                              hideImportant == true ? 'text-warning' : 'light',
+                              hideImportantFlag == true ? 'text-warning' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -641,14 +641,14 @@
                       </div>
                       <div
                         class="text-center icons"
-                        :class="[hideBriefed == true ? '' : 'light']"
+                        :class="[hideBriefedFlag == true ? '' : 'light']"
                         @click.prevent="toggleBriefing"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-presentation"
                             :class="[
-                              hideBriefed == true ? 'text-primary' : 'light',
+                              hideBriefedFlag == true ? 'text-primary' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -1296,14 +1296,14 @@
                     <span class="d-flex statesCol mr-3 px-3 py-2">
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideComplete == true ? 'light' : '']"
+                        :class="[hideCompleteFlag == true ? 'light' : '']"
                         @click.prevent="toggleComplete"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-clipboard-check"
                             :class="[
-                              hideComplete == true ? 'light' : 'text-success',
+                              hideCompleteFlag == true ? 'light' : 'text-success',
                             ]"
                           ></i>
                         </span>
@@ -1319,14 +1319,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideInprogress == true ? 'light' : '']"
+                        :class="[hideInprogressFlag == true ? 'light' : '']"
                         @click.prevent="toggleInprogress"
                       >
                         <span class="d-block">
                           <i
                             class="far fa-tasks"
                             :class="[
-                              hideInprogress == true ? 'light' : 'text-primary',
+                              hideInprogressFlag == true ? 'light' : 'text-primary',
                             ]"
                           ></i>
                         </span>
@@ -1342,14 +1342,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOverdue == true ? 'light' : '']"
+                        :class="[hideOverdueFlag == true ? 'light' : '']"
                         @click.prevent="toggleOverdue"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-calendar"
                             :class="[
-                              hideOverdue == true ? 'light' : 'text-danger',
+                              hideOverdueFlag == true ? 'light' : 'text-danger',
                             ]"
                           ></i>
                         </span>
@@ -1365,14 +1365,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hidePlanned == true ? 'light' : '']"
+                        :class="[hidePlannedFlag == true ? 'light' : '']"
                         @click.prevent="togglePlanned"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-calendar-check"
                             :class="[
-                              hidePlanned == true ? 'light' : 'text-info',
+                              hidePlannedFlag == true ? 'light' : 'text-info',
                             ]"
                           ></i>
                         </span>
@@ -1390,14 +1390,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOnhold == true ? 'light' : '']"
+                        :class="[hideOnholdFlag == true ? 'light' : '']"
                         @click.prevent="toggleOnhold"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pause-circle"
                             :class="[
-                              hideOnhold == true ? 'light' : 'text-primary',
+                              hideOnholdFlag == true ? 'light' : 'text-primary',
                             ]"
                           ></i>
                         </span>
@@ -1413,14 +1413,14 @@
 
                       <div
                         class="text-center icons"
-                        :class="[hideDraft == true ? 'light' : '']"
+                        :class="[hideDraftFlag == true ? 'light' : '']"
                         @click.prevent="toggleDraft"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pencil-alt"
                             :class="[
-                              hideDraft == true ? 'light' : 'text-warning',
+                              hideDraftFlag == true ? 'light' : 'text-warning',
                             ]"
                           ></i>
                         </span>
@@ -1441,7 +1441,7 @@
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
                         class="text-center icons"
-                        :class="[hideWatched == true ? '' : 'light']"
+                        :class="[hideWatchedFlag == true ? '' : 'light']"
                         @click.prevent="toggleWatched"
                       >
                         <span class="d-block">
@@ -1459,14 +1459,14 @@
                       </div>
                       <div
                         class="px-4 text-center icons"
-                        :class="[hideImportant == true ? '' : 'light']"
+                        :class="[hideImportantFlag == true ? '' : 'light']"
                         @click.prevent="toggleImportant"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-star"
                             :class="[
-                              hideImportant == true ? 'text-warning' : 'light',
+                              hideImportantFlag == true ? 'text-warning' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -1482,13 +1482,13 @@
                       </div>
                       <div
                         class="text-center icons"
-                        :class="[hideBriefed == true ? '' : 'light']"
+                        :class="[hideBriefedFlag == true ? '' : 'light']"
                         @click.prevent="toggleBriefing"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-presentation"
-                            :class="[hideBriefed == true ? 'text-primary' : '']"
+                            :class="[hideBriefedFlag == true ? 'text-primary' : '']"
                           ></i>
                         </span>
                         <span class="smallerFont">BRIEFINGS </span>
@@ -2249,14 +2249,14 @@
                     <span class="d-flex statesCol mr-3 px-3 py-2">
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideComplete == true ? 'light' : '']"
+                        :class="[hideCompleteFlag == true ? 'light' : '']"
                         @click.prevent="toggleComplete"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-clipboard-check"
                             :class="[
-                              hideComplete == true ? 'light' : 'text-success',
+                              hideCompleteFlag == true ? 'light' : 'text-success',
                             ]"
                           ></i>
                         </span>
@@ -2272,14 +2272,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideInprogress == true ? 'light' : '']"
+                        :class="[hideInprogressFlag == true ? 'light' : '']"
                         @click.prevent="toggleInprogress"
                       >
                         <span class="d-block">
                           <i
                             class="far fa-tasks"
                             :class="[
-                              hideInprogress == true ? 'light' : 'text-primary',
+                              hideInprogressFlag == true ? 'light' : 'text-primary',
                             ]"
                           ></i>
                         </span>
@@ -2295,14 +2295,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOverdue == true ? 'light' : '']"
+                        :class="[hideOverdueFlag == true ? 'light' : '']"
                         @click.prevent="toggleOverdue"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-calendar"
                             :class="[
-                              hideOverdue == true ? 'light' : 'text-danger',
+                              hideOverdueFlag == true ? 'light' : 'text-danger',
                             ]"
                           ></i>
                         </span>
@@ -2318,14 +2318,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOngoing == true ? 'light' : '']"
+                        :class="[hideOngoingFlag == true ? 'light' : '']"
                         @click.prevent="toggleOngoing"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-retweet"
                             :class="[
-                              hideOngoing == true ? 'light' : 'text-success',
+                              hideOngoingFlag == true ? 'light' : 'text-success',
                             ]"
                           ></i>
                         </span>
@@ -2349,14 +2349,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hidePlanned == true ? 'light' : '']"
+                        :class="[hidePlannedFlag == true ? 'light' : '']"
                         @click.prevent="togglePlanned"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-calendar-check"
                             :class="[
-                              hidePlanned == true ? 'light' : 'text-info',
+                              hidePlannedFlag == true ? 'light' : 'text-info',
                             ]"
                           ></i>
                         </span>
@@ -2374,14 +2374,14 @@
 
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideOnhold == true ? 'light' : '']"
+                        :class="[hideOnholdFlag == true ? 'light' : '']"
                         @click.prevent="toggleOnhold"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pause-circle"
                             :class="[
-                              hideOnhold == true ? 'light' : 'text-primary',
+                              hideOnholdFlag == true ? 'light' : 'text-primary',
                             ]"
                           ></i>
                         </span>
@@ -2397,14 +2397,14 @@
 
                       <div
                         class="text-center icons"
-                        :class="[hideDraft == true ? 'light' : '']"
+                        :class="[hideDraftFlag == true ? 'light' : '']"
                         @click.prevent="toggleDraft"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pencil-alt"
                             :class="[
-                              hideDraft == true ? 'light' : 'text-warning',
+                              hideDraftFlag == true ? 'light' : 'text-warning',
                             ]"
                           ></i>
                         </span>
@@ -2425,7 +2425,7 @@
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
                         class="text-center icons"
-                        :class="[hideWatched == true ? '' : 'light']"
+                        :class="[hideWatchedFlag == true ? '' : 'light']"
                         @click.prevent="toggleWatched"
                       >
                         <span class="d-block">
@@ -2443,14 +2443,14 @@
                       </div>
                       <div
                         class="px-4 text-center icons"
-                        :class="[hideImportant == true ? '' : 'light']"
+                        :class="[hideImportantFlag == true ? '' : 'light']"
                         @click.prevent="toggleImportant"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-star"
                             :class="[
-                              hideImportant == true ? 'text-warning' : 'light',
+                              hideImportantFlag == true ? 'text-warning' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -2466,14 +2466,14 @@
                       </div>
                       <div
                         class="text-center icons"
-                        :class="[hideBriefed == true ? '' : 'light']"
+                        :class="[hideBriefedFlag == true ? '' : 'light']"
                         @click.prevent="toggleBriefing"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-presentation"
                             :class="[
-                              hideBriefed == true ? 'text-primary ' : 'light',
+                              hideBriefedFlag == true ? 'text-primary ' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -3230,14 +3230,14 @@
                     <span class="d-flex statesCol mr-3 px-3 py-2">
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideComplete == true ? 'light' : '']"
+                        :class="[hideCompleteFlag == true ? 'light' : '']"
                         @click.prevent="toggleComplete"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-clipboard-check"
                             :class="[
-                              hideComplete == true ? 'light' : 'text-success',
+                              hideCompleteFlag == true ? 'light' : 'text-success',
                             ]"
                           ></i>
                         </span>
@@ -3252,14 +3252,14 @@
                       </div>
                       <div
                         class="text-center icons"
-                        :class="[hideDraft == true ? 'light' : '']"
+                        :class="[hideDraftFlag == true ? 'light' : '']"
                         @click.prevent="toggleDraft"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-pencil-alt"
                             :class="[
-                              hideDraft == true ? 'light' : 'text-warning',
+                              hideDraftFlag == true ? 'light' : 'text-warning',
                             ]"
                           ></i>
                         </span>
@@ -3280,14 +3280,14 @@
                     <span class="tagsCol d-flex px-3 py-2">
                       <div
                         class="pr-4 text-center icons"
-                        :class="[hideImportant == true ? '' : 'light']"
+                        :class="[hideImportantFlag == true ? '' : 'light']"
                         @click.prevent="toggleImportant"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-star"
                             :class="[
-                              hideImportant == true ? 'text-warning' : 'light',
+                              hideImportantFlag == true ? 'text-warning' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -3303,14 +3303,14 @@
                       </div>
                       <div
                         class="text-center icons"
-                        :class="[hideBriefed == true ? '' : 'light']"
+                        :class="[hideBriefedFlag == true ? '' : 'light']"
                         @click.prevent="toggleBriefing"
                       >
                         <span class="d-block">
                           <i
                             class="fas fa-presentation"
                             :class="[
-                              hideBriefed == true ? 'text-primary ' : 'light',
+                              hideBriefedFlag == true ? 'text-primary ' : 'light',
                             ]"
                           ></i>
                         </span>
@@ -3751,7 +3751,8 @@
                       </th>
                     </thead>
                     <tbody>
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
+                      <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
+                          <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable">
                         
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
@@ -3942,20 +3943,6 @@ export default {
       loadIssues: false,
       loadRisks: false,
       loadLessons: false,
-
-      // 3 Tags for Tasks
-      hideWatched: false,
-      hideImportant: false,
-      hideBriefed: false,
-
-      hideDraft: false,
-      hideComplete: false,
-      hideOngoing: false,
-      hideInprogress: false,
-      hideOverdue: false,
-      hidePlanned: false,
-      hideOnhold: false,
-
       programId: null,
       programName: null,
       page: 1,
@@ -4003,6 +3990,17 @@ export default {
       'getLessonsPerPageFilter', 
       'getShowCount',
       'currTab',
+      // 'hideWatchedFlag',
+      'getHideWatched',
+      'getHideImportant',
+      'getHideBriefed',
+      'getHideDraft',
+      'getHideComplete',
+      'getHideOngoing',
+      'getHideInprogress',
+      'getHideOverdue',
+      'getHidePlanned',
+      'getHideOnhold',      
       'portfolioTab',
       'portfolioCategories',
       'portfolioNameFilter',
@@ -4061,6 +4059,86 @@ export default {
         } else 
           this.setCurrTab('#tab-tasks')
           this.setPortfolioTab(value)
+      }
+  },
+   hideWatchedFlag: {
+      get() {        
+        return this.getHideWatched
+      },
+      set(value) {
+        this.setHideWatched(value)
+      }
+  }, 
+    hideCompleteFlag: {
+      get() {        
+        return this.getHideComplete
+      },
+      set(value) {
+        this.setHideComplete(value)
+      }
+  },
+    hideInprogressFlag: {
+      get() {        
+        return this.getHideInprogress
+      },
+      set(value) {
+        this.setHideInprogress(value)
+      }
+  },
+    hideDraftFlag: {
+      get() {        
+        return this.getHideDraft
+      },
+      set(value) {
+        this.setHideDraft(value)
+      }
+  },
+    hideOverdueFlag: {
+      get() {        
+        return this.getHideOverdue
+      },
+      set(value) {
+        this.setHideOverdue(value)
+      }
+  },
+    hidePlannedFlag: {
+      get() {        
+        return this.getHidePlanned
+      },
+      set(value) {
+        this.setHidePlanned(value)
+      }
+  },
+    hideOngoingFlag: {
+      get() {        
+        return this.getHideOngoing
+      },
+      set(value) {
+        this.setHideOngoing(value)
+      }
+  },
+    hideOnholdFlag: {
+      get() {        
+        return this.getHideOnhold
+      },
+      set(value) {
+        this.setHideOnhold(value)
+      }
+  },
+    hideBriefedFlag: {
+      get() {        
+        return this.getHideBriefed
+      },
+      set(value) {
+        this.setHideBriefed(value)
+      }
+  },
+    hideImportantFlag: {
+      get() {        
+        return this.getHideImportant
+      },
+      set(value) {
+        this.setHideImportant(value)
       }
   },
    sortedTasks:function() {
@@ -4259,75 +4337,75 @@ export default {
             },
         filtered: {
          tasks:  tasks.filter(task => {
-          if (this.hideDraft) {
+          if (this.hideDraftFlag) {
             return !task.draft;
           } else return true;
         })
         .filter((task) => {
-          if (this.hideOnhold) {
+          if (this.hideOnholdFlag) {
             return !task.on_hold;
           } else return true;
         })
         .filter((task) => {
-          if (this.hideOngoing) {
+          if (this.hideOngoingFlag) {
             return !task.ongoing;
           } else return true;
         })
         .filter((task) => {
-          if (this.hideInprogress) {
+          if (this.hideInprogressFlag) {
             return !task.in_progress;
           } else return true;
         })
         .filter((task) => {
-          if (this.hidePlanned) {
+          if (this.hidePlannedFlag) {
             return !task.planned;
           } else return true;
         })
         .filter((task) => {
-          if (this.hideOverdue) {
+          if (this.hideOverdueFlag) {
             return !task.is_overdue;
           } else return true;
         })
         .filter((task) => {
-          if (this.hideComplete) {
+          if (this.hideCompleteFlag) {
             return !task.completed;
           } else return true;
           // Filtering 3 Task Tags
         })
         .filter((task) => {
-          if (this.hideBriefed && !this.hideWatched && !this.hideImportant) {
+          if (this.hideBriefedFlag && !this.hideWatchedFlag && !this.hideImportantFlag) {
             return task.reportable;
           }
-          if (this.hideBriefed && this.hideWatched && !this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && !this.hideImportantFlag) {
             return task.reportable + task.watched;
           }
-          if (this.hideBriefed && this.hideWatched && this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && this.hideImportantFlag) {
             return task.reportable + task.watched + task.important;
           } else return true;
         })
         .filter((task) => {
           // This and last 2 filters are for Filtered Tags
-          if (this.hideWatched && !this.hideBriefed && !this.hideImportant) {
+          if (this.hideWatchedFlag && !this.hideBriefedFlag && !this.hideImportantFlag) {
             return task.watched;
           }
-          if (this.hideWatched && !this.hideBriefed && this.hideImportant) {
+          if (this.hideWatchedFlag && !this.hideBriefedFlag && this.hideImportantFlag) {
             return task.watched + task.important;
           }
-          if (this.hideWatched && this.hideBriefed && !this.hideImportant) {
+          if (this.hideWatchedFlag && this.hideBriefedFlag && !this.hideImportantFlag) {
             return task.watched + task.reportable;
           }
-          if (this.hideWatched && this.hideBriefed && this.hideImportant) {
+          if (this.hideWatchedFlag && this.hideBriefedFlag && this.hideImportantFlag) {
             return task.watched + task.reportable + task.important;
           } else return true;
         })
         .filter((task) => {
-          if (this.hideImportant && !this.hideBriefed && !this.hideWatched) {
+          if (this.hideImportantFlag && !this.hideBriefedFlag && !this.hideWatchedFlag) {
             return task.important;
           }
-          if (this.hideImportant && this.hideBriefed && !this.hideWatched) {
+          if (this.hideImportantFlag && this.hideBriefedFlag && !this.hideWatchedFlag) {
             return task.important + task.reportable;
           }
-          if (this.hideImportant && this.hideBriefed && this.hideWatched) {
+          if (this.hideImportantFlag && this.hideBriefedFlag && this.hideWatchedFlag) {
             return task.important + task.reportable + task.watched;
           } else return true;
         })
@@ -4468,69 +4546,69 @@ export default {
             },
         filtered: {
          issues:  issues.filter(issue => {
-          if (this.hideDraft) {
+          if (this.hideDraftFlag) {
             return !issue.draft;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hideOnhold) {
+          if (this.hideOnholdFlag) {
             return !issue.on_hold;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hideOverdue) {
+          if (this.hideOverdueFlag) {
             return !issue.is_overdue;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hideComplete) {
+          if (this.hideCompleteFlag) {
             return !issue.completed;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hideInprogress) {
+          if (this.hideInprogressFlag) {
             return !issue.in_progress;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hidePlanned) {
+          if (this.hidePlannedFlag) {
             return !issue.planned;
           } else return true;
           // Filtering 3 Issues Tags
         })
         .filter((issue) => {
-          if (this.hideBriefed && !this.hideWatched && !this.hideImportant) {
+          if (this.hideBriefedFlag && !this.hideWatchedFlag && !this.hideImportantFlag) {
             return issue.reportable;
           }
-          if (this.hideBriefed && this.hideWatched && !this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && !this.hideImportantFlag) {
             return issue.reportable + issue.watched;
           }
-          if (this.hideBriefed && this.hideWatched && this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && this.hideImportantFlag) {
             return issue.reportable + issue.watched + issue.important;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hideWatched && !this.hideBriefed && !this.hideImportant) {
+          if (this.hideWatchedFlag && !this.hideBriefedFlag && !this.hideImportantFlag) {
             return issue.watched;
           }
-          if (this.hideWatched && !this.hideBriefed && this.hideImportant) {
+          if (this.hideWatchedFlag && !this.hideBriefedFlag && this.hideImportantFlag) {
             return issue.watched + issue.important;
           }
-          if (this.hideWatched && this.hideImportant && !this.hideBriefed) {
+          if (this.hideWatchedFlag && this.hideImportantFlag && !this.hideBriefedFlag) {
             return issue.important + issue.watched;
           }
-          if (this.hideWatched && this.hideImportant && this.hideBriefed) {
+          if (this.hideWatchedFlag && this.hideImportantFlag && this.hideBriefedFlag) {
             return issue.important + issue.watched + issue.reportable;
           } else return true;
         })
         .filter((issue) => {
-          if (this.hideImportant && !this.hideBriefed && !this.hideWatched) {
+          if (this.hideImportantFlag && !this.hideBriefedFlag && !this.hideWatchedFlag) {
             return issue.important;
           }
-          if (this.hideImportant && this.hideBriefed && !this.hideWatched) {
+          if (this.hideImportantFlag && this.hideBriefedFlag && !this.hideWatchedFlag) {
             return issue.important + issue.reportable;
           }
-          if (this.hideImportant && this.hideBriefed && this.hideWatched) {
+          if (this.hideImportantFlag && this.hideBriefedFlag && this.hideWatchedFlag) {
             return issue.important + issue.reportable + issue.watched;
           } else return true;
         })
@@ -4660,73 +4738,73 @@ export default {
           },
           filtered: {
          risks: risks.filter((risk) => {
-          if (this.hideDraft) {
+          if (this.hideDraftFlag) {
             return !risk.draft;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideOnhold) {
+          if (this.hideOnholdFlag) {
             return !risk.on_hold;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideInprogress) {
+          if (this.hideInprogressFlag) {
             return !risk.in_progress;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hidePlanned) {
+          if (this.hidePlannedFlag) {
             return !risk.planned;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideOverdue) {
+          if (this.hideOverdueFlag) {
             return !risk.is_overdue;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideOngoing) {
+          if (this.hideOngoingFlag) {
             return !risk.ongoing;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideComplete) {
+          if (this.hideCompleteFlag) {
             return !risk.completed;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideBriefed && !this.hideWatched && !this.hideImportant) {
+          if (this.hideBriefedFlag && !this.hideWatchedFlag && !this.hideImportantFlag) {
             return risk.reportable;
           }
-          if (this.hideBriefed && this.hideWatched && !this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && !this.hideImportantFlag) {
             return risk.reportable + risk.watched;
           }
-          if (this.hideBriefed && this.hideWatched && this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && this.hideImportantFlag) {
             return risk.reportable + risk.watched + risk.important;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideWatched && !this.hideBriefed && !this.hideImportant) {
+          if (this.hideWatchedFlag && !this.hideBriefedFlag && !this.hideImportantFlag) {
             return risk.watched;
           }
-          if (this.hideWatched && !this.hideBriefed && this.hideImportant) {
+          if (this.hideWatchedFlag && !this.hideBriefedFlag && this.hideImportantFlag) {
             return risk.watched + risk.important;
           }
-          if (this.hideWatched && this.hideImportant && !this.hideBriefed) {
+          if (this.hideWatchedFlag && this.hideImportantFlag && !this.hideBriefedFlag) {
             return risk.important + risk.watched;
           }
-          if (this.hideWatched && this.hideImportant && this.hideBriefed) {
+          if (this.hideWatchedFlag && this.hideImportantFlag && this.hideBriefedFlag) {
             return risk.important + risk.watched + risk.reportable;
           } else return true;
         })
         .filter((risk) => {
-          if (this.hideImportant && !this.hideBriefed && !this.hideWatched) {
+          if (this.hideImportantFlag && !this.hideBriefedFlag && !this.hideWatchedFlag) {
             return risk.important;
           }
-          if (this.hideImportant && this.hideBriefed && !this.hideWatched) {
+          if (this.hideImportantFlag && this.hideBriefedFlag && !this.hideWatchedFlag) {
             return risk.important + risk.reportable;
           }
-          if (this.hideImportant && this.hideBriefed && this.hideWatched) {
+          if (this.hideImportantFlag && this.hideBriefedFlag && this.hideWatchedFlag) {
             return risk.important + risk.reportable + risk.watched;
           } else return true;
         })
@@ -4794,30 +4872,30 @@ export default {
         filtered: {
         lessons:  lessons.filter(lesson => {
           // Filtering 3 Lesson States
-          if (this.hideDraft) {
+          if (this.hideDraftFlag) {
             return !lesson.draft;
           } else return true;
         })
         .filter((lesson) => {
-          if (this.hideComplete) {
+          if (this.hideCompleteFlag) {
             return lesson.draft;
           } else return true;
 
           // Filtering 3 Task Tags
         })
         .filter((lesson) => {
-          if (this.hideBriefed && !this.hideImportant) {
+          if (this.hideBriefedFlag && !this.hideImportantFlag) {
             return lesson.reportable;
           }
-          if (this.hideBriefed && this.hideWatched && this.hideImportant) {
+          if (this.hideBriefedFlag && this.hideWatchedFlag && this.hideImportantFlag) {
             return lesson.reportable + lesson.watched + lesson.important;
           } else return true;
         })
         .filter((lesson) => {
-          if (this.hideImportant && !this.hideBriefed) {
+          if (this.hideImportantFlag && !this.hideBriefedFlag) {
             return lesson.important;
           }
-          if (this.hideImportant && this.hideBriefed) {
+          if (this.hideImportantFlag && this.hideBriefedFlag) {
             return lesson.important + lesson.reportable;
           } else return true;
         })
@@ -5362,6 +5440,16 @@ export default {
       "setPortfolioIssueTypes",
       "setPortfolioIssueTypesFilter",
       "setTaskTypeFilter",
+      'setHideWatched',
+      'setHideComplete',
+      'setHideInprogress',
+      'setHideDraft',
+      'setHidePlanned',
+      'setHideOverdue',
+      'setHideOngoing',
+      'setHideOnhold',
+      'setHideBriefed',
+      'setHideImportant',
       "setShowCount",
       "setPortfolioRiskPriorities",
       "setPortfolioRiskPrioritiesFilter",
@@ -5415,19 +5503,19 @@ export default {
       },
       });
     },
-    openLesson(lesson) {     
-       console.log(lesson) 
-      this.$router.push({
-      name: "PortfolioLessonForm",
-      params: {
-        programId: lesson.program_id,
-        projectId: lesson.project_id,
-        id: lesson.id,
-        lessonId: lesson.id, 
-        lesson, 
-      },
-    });
-    },
+    // openLesson(lesson) {     
+    //   //  console.log(lesson) 
+    //   this.$router.push({
+    //   name: "PortfolioLessonForm",
+    //   params: {
+    //     programId: lesson.program_id,
+    //     projectId: lesson.project_id,
+    //     id: lesson.id,
+    //     lessonId: lesson.id, 
+    //     lesson, 
+    //   },
+    // });
+    // },
     beforeClose(done) {
     	this.dialogVisible = false;
       done();
@@ -5644,38 +5732,39 @@ export default {
     },
     // Toggle for 3 Action Tags
     toggleWatched() {
-      this.hideWatched = !this.hideWatched;
+      this.setHideWatched(!this.getHideWatched)
+      // this.hideWatchedFlag = !this.hideWatchedFlag;
     },
     toggleBriefing() {
-      this.hideBriefed = !this.hideBriefed;
+      this.setHideBriefed(!this.getHideBriefed)
     },
     toggleImportant() {
-      this.hideImportant = !this.hideImportant;
+       this.setHideImportant(!this.getHideImportant)
     },
     // Toggle for 7 Action States
     toggleComplete() {
-      this.hideComplete = !this.hideComplete;
+       this.setHideComplete(!this.getHideComplete)
     },
     toggleInprogress() {
-      this.hideInprogress = !this.hideInprogress;
+      this.setHideInprogress(!this.getHideInprogress)
     },
     toggleOverdue() {
-      this.hideOverdue = !this.hideOverdue;
+       this.setHideOverdue(!this.getHideOverdue)
     },
     toggleOngoing() {
-      this.hideOngoing = !this.hideOngoing;
+      this.setHideOngoing(!this.getHideOngoing)
     },
     toggleDraft() {
-      this.hideDraft = !this.hideDraft;
+       this.setHideDraft(!this.getHideDraft)
     },
     togglePlanned() {
-      this.hidePlanned = !this.hidePlanned;
+       this.setHidePlanned(!this.getHidePlanned)
     },
     toggleOnhold() {
-      this.hideOnhold = !this.hideOnhold;
+      this.setHideOnhold(!this.getHideOnhold)
     },
     toggleOverdue() {
-      this.hideOverdue = !this.hideOverdue;
+      this.setHideOverdue(!this.getHideOverdue)
     },
     setPage(val) {
       this.page = val;
