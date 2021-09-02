@@ -1883,7 +1883,6 @@
                   <el-select
                     v-model="selectedStatus"                                            
                     class="w-100"
-                    :load="log(selectedStatus)"
                     clearable
                     track-by="name"                  
                     :disabled="!_isallowed('write')"                                 
@@ -2204,7 +2203,7 @@ export default {
       };
     },
        log(e){
-          console.log("This is the riskDispStatus item: " + JSON.stringify(e))
+          // console.log("This is the riskDispStatus item: " + JSON.stringify(e))
       },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
@@ -2668,10 +2667,8 @@ export default {
           },
         })
           .then((response) => {
-            var responseRisk = humps.camelizeKeys(response.data.risk);
-            this.loadRisk(responseRisk);
-            //this.$emit(callback, responseRisk);
-            this.updateRisksHash({ risk: responseRisk });
+           this.loadRisk(response.data.risk);
+           this.updateRisksHash({ risk: response.data.risk });
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,

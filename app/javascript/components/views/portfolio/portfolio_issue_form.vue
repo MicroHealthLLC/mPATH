@@ -1809,10 +1809,10 @@ export default {
             //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
             // this.$emit(callback, humps.camelizeKeys(response.data.issue));
 
-            var responseIssue = humps.camelizeKeys(response.data.issue);
-            this.loadIssue(responseIssue);
+         
+            this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: responseIssue });
+            this.updateIssuesHash({ issue: response.data.issue });
             if (response.status === 200) {
               // this.fetchPortfolioIssues()
               this.$message({

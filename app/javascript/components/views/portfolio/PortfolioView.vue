@@ -3751,8 +3751,8 @@
                       </th>
                     </thead>
                     <tbody>
-                      <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
-                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable" >
+                      <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
+                        
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
@@ -5415,19 +5415,19 @@ export default {
       },
       });
     },
-    // openLesson(lesson) {     
-    //    console.log(lesson) 
-    //   this.$router.push({
-    //   name: "PortfolioLessonForm",
-    //   params: {
-    //     programId: lesson.program_id,
-    //     projectId: lesson.project_id,
-    //     id: lesson.id,
-    //     lessonId: lesson.id, 
-    //     lesson, 
-    //   },
-    // });
-    // },
+    openLesson(lesson) {     
+       console.log(lesson) 
+      this.$router.push({
+      name: "PortfolioLessonForm",
+      params: {
+        programId: lesson.program_id,
+        projectId: lesson.project_id,
+        id: lesson.id,
+        lessonId: lesson.id, 
+        lesson, 
+      },
+    });
+    },
     beforeClose(done) {
     	this.dialogVisible = false;
       done();

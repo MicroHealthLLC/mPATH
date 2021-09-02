@@ -6,6 +6,7 @@
       class="mx-auto tasks-form"
       accept-charset="UTF-8"
       :class="{ _disabled: loading }"
+
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -646,7 +647,6 @@
                       >
                         <v2-date-picker
                           v-model="check.due_date"
-                          :load="log(check.due_date)"
                           :value="check.due_date"
                           :disabled="!_isallowed('write') || !check.text"
                           @selected="updateCheckItem($event, 'due_date', index)"
@@ -1415,7 +1415,7 @@ export default {
       }
     },
     log(e){
-console.log("check.dueDate " + e)
+// console.log("check.dueDate " + e)
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -1771,12 +1771,9 @@ console.log("check.dueDate " + e)
           },
         })
           .then((response) => {
-            // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            var responseTask = humps.camelizeKeys(response.data.task);
-            this.loadTask(responseTask);
-            //this.$emit(callback, responseTask)
-            this.updateTasksHash({ task: responseTask });
+           
+            this.loadTask(response.data.task);
+            this.updateTasksHash({ task: response.data.task });
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1972,6 +1969,7 @@ console.log("check.dueDate " + e)
   computed: {
     ...mapGetters([
       "activeProjectUsers",
+      'portfolioTaskLoaded',
       "portfolioUsers",
       "currentIssues",
       "currentProject",
