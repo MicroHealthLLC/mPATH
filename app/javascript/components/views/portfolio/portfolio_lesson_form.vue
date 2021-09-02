@@ -902,9 +902,11 @@ export default {
 
         // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
-          this.updateLesson({
+          console.log({ ...lessonData, ...this.$route.params})
+          this.updateLesson({           
             ...lessonData,
             ...this.$route.params,
+            
           });
         } else {
           lessonData.lesson.user_id = this.$currentUser.id;
@@ -1269,16 +1271,11 @@ export default {
           });
           this.SET_LESSON_STATUS(0);
           //Route to newly created task form page
-          if (this.$route.path.includes("sheet")) {
+         
             this.$router.push(
-              `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          } else {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          }
-        }
+              `/portfolio`
+          
+        )}
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
         this.bestPractices = this.lesson.best_practices;

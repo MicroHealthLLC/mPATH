@@ -1346,6 +1346,7 @@ export default {
         },
         {
           label: "Related",
+          disabled: true, 
           key: "tab5",
           closable: false,
         },
@@ -1471,9 +1472,9 @@ export default {
     },
     progressListTitleText(progressList) {
       if (!progressList.id) return;
-      var date = moment(progressList.createdAt).format("MM/DD/YYYY");
-      var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.fullName} at ${date} ${time} `;
+      var date = moment(progressList.created_at).format("MM/DD/YYYY");
+      var time = moment(progressList.created_at).format("hh:mm:ss a");
+      return `${progressList.user.full_name} at ${date} ${time} `;
     },
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
@@ -1809,10 +1810,10 @@ export default {
             //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
             // this.$emit(callback, humps.camelizeKeys(response.data.issue));
 
-            var responseIssue = humps.camelizeKeys(response.data.issue);
-            this.loadIssue(responseIssue);
+         
+            this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: responseIssue });
+            this.updateIssuesHash({ issue: response.data.issue });
             if (response.status === 200) {
               // this.fetchPortfolioIssues()
               this.$message({
@@ -1951,13 +1952,13 @@ export default {
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
@@ -2088,7 +2089,7 @@ export default {
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_issue.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },

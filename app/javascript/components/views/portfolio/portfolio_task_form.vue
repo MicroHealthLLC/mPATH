@@ -6,6 +6,7 @@
       class="mx-auto tasks-form"
       accept-charset="UTF-8"
       :class="{ _disabled: loading }"
+
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -580,6 +581,7 @@
               @click.prevent="addChecks"
             >
               <i class="fas fa-plus-circle"></i>
+              
             </span>
             <span
               class="float-right bg-dark font-sm text-light display-length px-1"
@@ -646,7 +648,6 @@
                       >
                         <v2-date-picker
                           v-model="check.due_date"
-                          :load="log(check.due_date)"
                           :value="check.due_date"
                           :disabled="!_isallowed('write') || !check.text"
                           @selected="updateCheckItem($event, 'due_date', index)"
@@ -750,8 +751,8 @@
                               class="ml-2 clickable"
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
-                            >
-                            <i class="fal fa-plus-circle mr-1"></i>
+                            >                          
+                               <i class="fas fa-plus-circle mr-1"></i>
                             </span>
                           </span>
                          <table                           
@@ -1328,6 +1329,7 @@ export default {
           label: "Related",
           key: "tab5",
           closable: false,
+          disabled: true, 
           form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
         },
         {
@@ -1415,7 +1417,7 @@ export default {
       }
     },
     log(e){
-console.log("check.dueDate " + e)
+// console.log("check.dueDate " + e)
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -1771,12 +1773,9 @@ console.log("check.dueDate " + e)
           },
         })
           .then((response) => {
-            // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            var responseTask = humps.camelizeKeys(response.data.task);
-            this.loadTask(responseTask);
-            //this.$emit(callback, responseTask)
-            this.updateTasksHash({ task: responseTask });
+           
+            this.loadTask(response.data.task);
+            this.updateTasksHash({ task: response.data.task });
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1802,12 +1801,8 @@ console.log("check.dueDate " + e)
       if (check.progress_lists !== undefined || null) {
        var postion = check.progress_lists.length;
         check.progress_lists.push({ body: "", position: postion });
-
           this.editToggle = true;
-      }
-    
-     
-    
+      }   
     },
     addChecks() {
       var postion = this.DV_task.checklists.length;
@@ -1923,13 +1918,13 @@ console.log("check.dueDate " + e)
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
@@ -1972,6 +1967,7 @@ console.log("check.dueDate " + e)
   computed: {
     ...mapGetters([
       "activeProjectUsers",
+      'portfolioTaskLoaded',
       "portfolioUsers",
       "currentIssues",
       "currentProject",
@@ -2059,7 +2055,7 @@ console.log("check.dueDate " + e)
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_task.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },
