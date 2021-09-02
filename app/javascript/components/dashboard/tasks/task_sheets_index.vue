@@ -43,6 +43,7 @@
            track-by="name"
            value-key="id"
            multiple
+           clearable
            placeholder="Select Process Area"
            >
           <el-option

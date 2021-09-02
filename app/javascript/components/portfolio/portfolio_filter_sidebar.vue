@@ -32,6 +32,7 @@
                     :match-keys= "['facility_project_id', 'id', 'label']"
                     :limitText="count => `...`"      
                     :multiple="true" 
+                    clearable
                     :options="portfolioPrograms" 
                     v-model="C_portfolioNamesFilter"  
                     valueFormat="object" />   
