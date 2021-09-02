@@ -902,11 +902,10 @@ export default {
 
         // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
-          console.log({ ...lessonData, ...this.$route.params})
+          delete this.$route.params.lesson;
           this.updateLesson({           
             ...lessonData,
             ...this.$route.params,
-            
           });
         } else {
           lessonData.lesson.user_id = this.$currentUser.id;
