@@ -519,7 +519,7 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            // console.log(res.data.risk)
+            console.log(res.data.risk)
              commit("SET_PORTFOLIO_RISK", res.data.risk);
           })
           .catch((err) => {
