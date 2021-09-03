@@ -1,20 +1,21 @@
 <template>
   <form
     @submit.prevent="saveLesson"
+    style="padding:40px"
     :class="{ _disabled: !lessonsLoaded }"
     accept-charset="UTF-8"
   >
-    <div class="mt-2  d-flex align-items-center">
+    <div class="mt-2  d-flex align-items-center" >
       <!-- Breadcrumbs and form buttons -->
       <div>
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fas fa-suitcase"></i
           ></span>
-            <router-link v-if="lesson"  :to="
+            <router-link v-if="loadedLesson"  :to="
                 `/portfolio`
               ">{{
-                  lesson.facility_name
+                  loadedLesson.facility_name
             }}            
             </router-link>
           <el-icon
@@ -31,7 +32,7 @@
             class="el-icon-arrow-right"
             style="font-size: 12px"
           ></el-icon>
-          <span>{{ lesson.title || "(Lesson Name)" }}</span>
+          <span >{{ loadedLesson.title || "(Lesson Name)" }}</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -176,12 +177,13 @@
           {{ errors.first("Name") }}
         </div>
       </div>
-      <div class="col-12 px-0">
+      <div class="col-12 px-0" :load="log(lesson)">
         <label class="font-md"
           >Description <span style="color: #dc3545">*</span></label
         >
         <el-input
           name="Description"
+
           type="textarea"
           v-validate="'required'"
           v-model="lesson.description"
@@ -243,7 +245,7 @@
         <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
-            v-show="lesson.lesson_stage_id"
+            v-show="loadedLesson.lesson_stage_id"
             class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
             :disabled="!this._isallowed('write')"
@@ -255,11 +257,11 @@
         <el-steps
           :active="
             lessonStages.findIndex(
-              (stage) => stage.id == lesson.lesson_stage_id
+              (stage) => stage.id == loadedLesson.lesson_stage_id
             )
           "
           finish-status="success"
-          v-model="lesson.lesson_stage_id"
+          v-model="loadedLesson.lesson_stage_id"
           value-key="id"
           track-by="id"
           :class="{ 'over-six-steps': lessonStages.length >= 6 }"
@@ -277,7 +279,7 @@
       </div>
     </div>
     <!-- Related Tab -->
-    <div v-show="currentTab == 'tab2'">
+    <!-- <div v-show="currentTab == 'tab2'">
       <div class="row mt-1">
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
@@ -418,9 +420,9 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- Successes Tab -->
-    <div v-show="currentTab == 'tab3'" class="mt-2">
+    <div v-show="currentTab == 'tab2'" class="mt-2">
       <span>Successes</span>
       <span
         v-if="_isallowed('write')"
@@ -433,7 +435,7 @@
         <label>Successes without findings will be deleted before Lesson is saved</label>
       </div>
       <paginate-links
-        v-if="successes.length"
+        v-if="successes"
         for="successes"
         class="paginate"
         :show-step-links="true"
@@ -503,7 +505,7 @@
         <label>Failures without findings will be deleted before Lesson is saved</label>
       </div>
       <paginate-links
-        v-if="failures.length"
+        v-if="failures !== undefined"
         for="failures"
         class="paginate"
         :show-step-links="true"
@@ -574,7 +576,7 @@
         <label>Best Practices without findings will be deleted before Lesson is saved</label>
       </div>
       <paginate-links
-        v-if="bestPractices.length"
+        v-if="bestPractices !== undefined"
         for="bestPractices"
         class="paginate"
         :show-step-links="true"
@@ -704,7 +706,7 @@
         <i class="fas fa-plus-circle"></i>
       </span>
       <paginate-links
-        v-if="updates.length"
+        v-if="updates"
         for="updates"
         class="paginate"
         :show-step-links="true"
@@ -786,6 +788,7 @@ export default {
     return {
       formLoaded: false,
       currentTab: "tab1",
+      loadedLesson: {},
       paginate: ["successes", "failures", "bestPractices", "updates"],
       tabs: [
         {
@@ -801,20 +804,20 @@ export default {
             "Stage",
           ],
         },
-        {
-          label: "Related",
-          key: "tab2",
-          closable: false,
-          form_fields: [
-            "Projects",
-            "Related Task",
-            "Related Issue",
-            "Related Risk",
-          ],
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab2",
+        //   closable: false,
+        //   form_fields: [
+        //     "Projects",
+        //     "Related Task",
+        //     "Related Issue",
+        //     "Related Risk",
+        //   ],
+        // },
         {
           label: "Successes",
-          key: "tab3",
+          key: "tab2",
           closable: false,
           form_fields: [],
         },
@@ -863,6 +866,7 @@ export default {
   methods: {
     ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
     ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS"]),
+
     saveLesson() {
       this.$validator.validate().then((success) => {
         if (!success) {
@@ -902,7 +906,9 @@ export default {
 
         // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
+          
           delete this.$route.params.lesson;
+          console.log({...lessonData})
           this.updateLesson({           
             ...lessonData,
             ...this.$route.params,
@@ -915,6 +921,9 @@ export default {
           });
         }
       });
+    },
+    log(e){
+      console.log("this is the port lesson obj" + e)
     },
     removeEmptyUpdates(){
       var returnUpdates = [];
@@ -1066,7 +1075,7 @@ export default {
         .catch(() => {});
     },
     author(id) {
-      return this.projectUsers.find((user) => user.id == id).fullName;
+      return this.projectUsers.find((user) => user.id == id).name;
     },
     addFile(files) {
       files.forEach((file) => {
@@ -1145,41 +1154,35 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "projectUsers",
+      "portfolioUsers",
+      "portfolioLessonLoaded",
       "contentLoaded",
       "facilities",
+      // 'fetchPortfolioLessons',
       "facilityGroups",
       "lesson",
       "lessonsLoaded",
-      "lessonStages",
+      "portfolioLessonStages",
       "lessonStatus",
-      "taskTypes",
+      'portfolioCategories'
+      // "taskTypes",
     ]),
-    tab() {
-      if (this.$route.path.includes("map")) {
-        return "map";
-      } else if (this.$route.path.includes("sheet")) {
-        return "sheet";
-     } else if (this.$route.path.includes("calendar")) {
-        return "calendar";
-      } else if (this.$route.path.includes("lessons")) {
-        return "lessons";
-      } else {
-        return "kanban";
-      }
-    },
-    projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      }
-    },
     isMapView() {
       return this.$route.name === "MapLessonForm";
     },
+   taskTypes(){
+      return this.portfolioCategories  
+    },
+    projectUsers() {
+      return this.portfolioUsers
+    },
+    lessonStages(){
+    return this.portfolioLessonStages
+  },
   },
   mounted() {
+    this.loadedLesson = this.$route.params.lesson
+    // console.log(this.loadedLesson)
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
         id: this.$route.params.lessonId,
@@ -1191,44 +1194,24 @@ export default {
     // Clear current lesson in store
     this.SET_LESSON({});
   },
+
   watch: {
-    lesson: {
-      handler(newValue, oldValue) {
-        if (
-          this.contentLoaded &&
-          Object.keys(oldValue).length === 0 &&
-          this.$route.params.lessonId != "new"
-        ) {
-          this.relatedTasks = this.lesson.sub_tasks;
-          this.relatedIssues = this.lesson.sub_issues;
-          this.important = this.lesson.important;
-          this.draft = this.lesson.draft;
-          this.reportable = this.lesson.reportable;
-          this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.successes;
-          this.failures = this.lesson.failures;
-          this.bestPractices = this.lesson.best_practices;
-          this.updates = this.lesson.notes;
-          this.files = this.lesson.attach_files.filter((file) => !file.link);
-          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
-        }
-      },
-    },
-    contentLoaded: {
+    portfolioLessonLoaded: {
       handler() {
-        if (this.lesson) {
-          this.relatedTasks = this.lesson.sub_tasks;
-          this.relatedIssues = this.lesson.sub_issues;
+        if (this.loadedLesson) {
+          console.log("yes" + JSON.stringify(this.loadedLesson))
+          this.relatedTasks = this.loadedLesson.sub_tasks;
+          this.relatedIssues = this.loadedLesson.sub_issues;
           this.important = this.lesson.important;
-          this.draft = this.lesson.draft;
-          this.reportable = this.lesson.reportable;
-          this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.successes;
-          this.failures = this.lesson.failures;
-          this.bestPractices = this.lesson.best_practices;
-          this.updates = this.lesson.notes;
-          this.files = this.lesson.attach_files.filter((file) => !file.link);
-          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
+          this.draft = this.loadedLesson.draft;
+          this.reportable = this.loadedLesson.reportable;
+          this.relatedRisks = this.loadedLesson.sub_risks;
+          this.successes = this.loadedLesson.successes;
+          this.failures = this.loadedLesson.failures;
+          this.bestPractices = this.loadedLesson.best_practices;
+          this.updates = this.loadedLesson.notes;
+          this.files = this.loadedLesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.loadedLesson.attach_files.filter((file) => file.link);
         }
       },
     },
@@ -1272,8 +1255,7 @@ export default {
           //Route to newly created task form page
          
             this.$router.push(
-              `/portfolio`
-          
+              `/portfolio`          
         )}
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;

@@ -1015,9 +1015,9 @@
         </div>
 
         <!-- RELATED TAB #5 -->
-        <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
+        <!-- <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
           <div class="row mx-3 mt-2">
-            <!-- RELATED TASKS -->
+          
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Tasks
               <span
@@ -1062,7 +1062,7 @@
                 </li>
               </ul>
             </div>
-            <!-- RELATED ISSUES -->
+         
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Issues
               <span
@@ -1107,7 +1107,7 @@
                 </li>
               </ul>
             </div>
-            <!-- RELATED RISKS -->
+          
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Risks
               <span
@@ -1153,11 +1153,11 @@
               </ul>
             </div>
           </div>
-        </div>
+        </div> -->
         
 
         <!-- UPDATE TAB 6 -->
-        <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
+        <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
           <div class="form-group mx-4 paginated-updates">
             <label class="font-sm">Updates:</label>
             <span
@@ -1325,16 +1325,16 @@ export default {
           closable: false,
           form_fields: ["Files"],
         },
-        {
-          label: "Related",
-          key: "tab5",
-          closable: false,
-          disabled: true, 
-          form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab5",
+        //   closable: false,
+        //   disabled: true, 
+        //   form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
+        // },
         {
           label: "Updates",
-          key: "tab6",
+          key: "tab5",
           closable: false,
           form_fields: ["Progress", "Updates"],
         },
