@@ -581,6 +581,7 @@
               @click.prevent="addChecks"
             >
               <i class="fas fa-plus-circle"></i>
+              
             </span>
             <span
               class="float-right bg-dark font-sm text-light display-length px-1"
@@ -750,8 +751,8 @@
                               class="ml-2 clickable"
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
-                            >
-                            <i class="fal fa-plus-circle mr-1"></i>
+                            >                          
+                               <i class="fas fa-plus-circle mr-1"></i>
                             </span>
                           </span>
                          <table                           
@@ -1328,6 +1329,7 @@ export default {
           label: "Related",
           key: "tab5",
           closable: false,
+          disabled: true, 
           form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
         },
         {
@@ -1799,12 +1801,8 @@ export default {
       if (check.progress_lists !== undefined || null) {
        var postion = check.progress_lists.length;
         check.progress_lists.push({ body: "", position: postion });
-
           this.editToggle = true;
-      }
-    
-     
-    
+      }   
     },
     addChecks() {
       var postion = this.DV_task.checklists.length;
@@ -1920,13 +1918,13 @@ export default {
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
@@ -2057,7 +2055,7 @@ export default {
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_task.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },

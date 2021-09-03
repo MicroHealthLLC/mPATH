@@ -40,7 +40,14 @@ class Lesson < ApplicationRecord
   def portfolio_json
     resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
     p_users = users.select(&:active?)
+    
+    all_lesson_details = self.lesson_details.sort{|n| n.updated_at }
+    successes = all_lesson_details.select{|l| l.detail_type == "success"}
+    failures = all_lesson_details.select{|l| l.detail_type == "failure"}
+    best_practices = all_lesson_details.select{|l| l.detail_type == "best_practices"}
 
+    # notes_attributes = t_params.delete(:notes_attributes)
+    # destroy_file_ids = t_params.delete(:destroy_file_ids)&.map(&:to_i)
 
     users_hash = {} 
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
@@ -65,14 +72,23 @@ class Lesson < ApplicationRecord
         full_name: user.full_name
       },
       last_update: latest_update,
+     
       notes: notes.as_json,
+      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: sub_issues.as_json(only: [:title, :id]),
+      sub_task_ids: sub_tasks.map(&:id),
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id),
       category: task_type&.name,
       project_group_name: facility.facility_group.name,
       added_by: user.full_name,
       project_name: facility.facility_name, 
       program_name: project.name, 
       lesson_stage_id: self.lesson_stage_id,
-      lesson_stage: lesson_stage.try(:name),
+      lesson_stage: lesson_stage.try(:name),      
+      successes: successes.map(&:to_json),
+      failures: failures.map(&:to_json),
+      best_practices: best_practices.map(&:to_json),
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       # project_id: facility_project.facility_id,
       project_id: facility.id, 

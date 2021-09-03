@@ -1372,7 +1372,7 @@
                                 @selected="
                                   updateCheckItem($event, 'due_date', index)
                                 "
-                                :key="`dueDate_${index}`"
+                                :key="`due_date_${index}`"
                                 value-type="YYYY-MM-DD"
                                 format="DD MMM YYYY"
                                 placeholder="DD MM YYYY"
@@ -1444,7 +1444,7 @@
                                 v-if="_isallowed('write')"
                                 @click.prevent="addProgressList(check)"
                               >
-                              <i class="fal fa-plus-circle mr-1 text-danger"></i>
+                              <i class="fas fa-plus-circle mr-1"></i>
                               </span>
                             </span>
 
@@ -1644,7 +1644,7 @@
 
                     <div
                       v-for="(file,
-                      index) in DV_risk.riskFiles.slice().reverse()"
+                      index) in DV_risk.risk_files.slice().reverse()"
                       :key="index"
                       class="d-flex mb-2 w-75"
                       v-if="!file.id && file.link"
@@ -2113,6 +2113,7 @@ export default {
         {
           label: "Related",
           key: "tab6",
+          disabled: true, 
           closable: false,
         },
         {
@@ -2178,7 +2179,7 @@ export default {
         probabilityName: "1 - Rare",
         impactLevelName: "1 - Negligible",
         progress: 0,
-        startDate: "",
+        start_date: "",
         getRiskImpactLevelNames: "1 - Negligible",
         // getRiskDispositionDuration: "Nothing Selected",
         // getRiskDispositionStatus: "Nothing Selected",
@@ -2194,7 +2195,7 @@ export default {
         accountable_user_ids: [],
         consulted_user_ids: [],
         informed_user_ids: [],
-        riskFiles: [],
+        risk_files: [],
         sub_task_ids: [],
         sub_risk_ids: [],
         sub_issue_ids: [],
@@ -2432,11 +2433,11 @@ export default {
       this.editToggle = !this.editToggle;
       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
     },
-    progressListTitleText(progressList) {
-      if (!progressList.id) return;
-      var date = moment(progressList.createdAt).format("MM/DD/YYYY");
-      var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.fullName} at ${date} ${time} `;
+    progressListTitleText(progress_list) {
+      if (!progress_list.id) return;
+      var date = moment(progress_list.created_at).format("MM/DD/YYYY");
+      var time = moment(progress_list.created_at).format("hh:mm:ss a");
+      return `${progress_list.user.full_name} at ${date} ${time} `;
     },
     cancelRiskSave() {
       this.$emit("on-close-form");
@@ -2601,16 +2602,16 @@ export default {
             formData.append(`risk[checklists_attributes][${i}][${key}]`, value);
 
             for (let pi in check.progress_lists) {
-              let progressList = check.progress_lists[pi];
-              if (!progressList.body && !progressList._destroy) continue;
-              for (let pkey in progressList) {
+              let progress_list = check.progress_lists[pi];
+              if (!progress_list.body && !progress_list._destroy) continue;
+              for (let pkey in progress_list) {
                 if (pkey === "user") pkey = "user_id";
                 let pvalue =
                   pkey == "user_id"
-                    ? progressList.user
-                      ? progressList.user.id
+                    ? progress_list.user
+                      ? progress_list.user.id
                       : null
-                    : progressList[pkey];
+                    : progress_list[pkey];
 
                 pkey = humps.decamelize(pkey);
                 if (["created_at", "updated_at"].includes(pkey)) continue;
@@ -2705,15 +2706,15 @@ export default {
           this.editToggle = true;
       }
     },
-    destroyProgressList(check, progressList, index) {
+    destroyProgressList(check, progress_list, index) {
       let confirm = window.confirm(
         `Are you sure you want to delete this Progress List item?`
       );
       if (!confirm) return;
-      let i = progressList.id
-        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
+      let i = progress_list.id
+        ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
         : index;
-      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progress_list, _destroy: true });
       this.validateThenSave();
     },
     downloadFile(file) {
@@ -2800,8 +2801,8 @@ export default {
         input.name = event.target.value;
       }
     },
-    updateProgressListItem(event, name, progressList) {
-      progressList.body = event.target.value;
+    updateProgressListItem(event, name, progress_list) {
+      progress_list.body = event.target.value;
     },
     isMyCheck(check) {
       return this.C_myRisks && check.id
@@ -2811,13 +2812,13 @@ export default {
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
@@ -3003,7 +3004,7 @@ export default {
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_risk.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },

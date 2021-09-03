@@ -462,9 +462,12 @@ body {
   }
   
   .vue-treeselect__placeholder {
+    font-size: 14px;
     font-style: FuturaPTBook;
   }
-  
+  .vue-treeselect__value-remove {
+    border: none !important;
+  }
   
   h4.text-light.label {
     border: solid #f8f9fa 1px;
@@ -477,6 +480,20 @@ body {
     z-index: 1100;
     transition: .4s ease;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
+  }
+  .vue-treeselect__multi-value-item {
+    background-color: #41b883;
+    color: white;
+  }
+  .vue-treeselect__value-remove {
+    color: rgba(56, 56, 56, 0.5);
+  }
+  .vue-treeselect__placeholder {
+    font-size: 14px;
+    font-style: FuturaPTBook;
+  }
+  .vue-treeselect__value-remove {
+    border: none !important;
   }
   .vdp-datepicker.dp {
     height: 42.8px !important;
@@ -600,7 +617,7 @@ body {
   .filter-header {
     height: 30px;
   }
-  .duedate-range /deep/ .mx-datepicker-range {
+  .duedate-range, .portFilter /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -621,7 +638,7 @@ body {
       }
     }
   }
-  .notedate-range /deep/ .mx-datepicker-range {
+  .notedate-range, .portFilter /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -642,7 +659,7 @@ body {
       }
     }
   }
-  .taskissueduedate-range /deep/ .mx-datepicker-range {
+  .taskissueduedate-range, .portFilter /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -1458,6 +1475,10 @@ td.col-issue_type, td.col-issue_severity {
   margin-left: -20px;
 }
 .mx-datepicker-main.mx-datepicker-popup {
+  z-index: 10000001 !important;
+}
+
+.portFilter.mx-datepicker-main.mx-datepicker-popup {
   z-index: 10000001 !important;
 }
 

@@ -29,6 +29,7 @@
           track-by="name"
           value-key="id"
           multiple
+          clearable
           placeholder="Select Process Area"
           >
         <el-option
@@ -73,6 +74,7 @@
                 track-by="name"
                 value-key="id"
                 multiple
+                clearable
                 placeholder="Filter by Risk Approach"
                 >
                 <el-option
@@ -90,6 +92,7 @@
                 track-by="name"
                 value-key="id"
                 multiple
+                clearable
                 placeholder="Filter by Risk Priority Levels"
                 >
                 <el-option
