@@ -93,6 +93,7 @@ const portfolioModule = {
     portfolio_programs_filter: [],
     portfolio_loaded: true,
 
+    portfolio_lesson_loaded: true,
 
 // Portfolio Stages
     portfolio_task_stages: [],
@@ -556,7 +557,7 @@ const portfolioModule = {
           });
        },
        fetchPortfolioLesson({commit}, { id, programId, projectId } ) {
-        commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", false);
+        commit("TOGGLE_PORTFOLIO_LESSON_LOADED", false);
         // Send GET request for all risks contained within a project
         axios({
           method: "GET",
@@ -575,7 +576,7 @@ const portfolioModule = {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
+            commit("TOGGLE_PORTFOLIO_LESSON_LOADED", true);
           });
       }, 
       fetchPortfolioLessonStages({commit}) {
@@ -803,6 +804,8 @@ const portfolioModule = {
     portfolioLessons: state => state.portfolio_lessons,
     portfolioLesson: state => state.portfolio_lesson,
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
+
+    portfolioLessonLoaded: state => state.portfolio_lesson_loaded,
 
     programNameFilter: state => state.programNameFilter,
     portfolioNameFilter: state => state.portfolioNameFilter,

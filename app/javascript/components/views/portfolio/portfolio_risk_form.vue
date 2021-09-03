@@ -1712,9 +1712,9 @@
           <!-- END RISK CONTROL TAB SECTION -->
 
           <!-- BEGIN RISK RELATED TAB SECTION -->
-          <div v-show="currentTab == 'tab6'" class="paperLookTab">
+          <!-- <div v-show="currentTab == 'tab6'" class="paperLookTab">
             <div class="row mx-3 mt-2">
-              <!-- RELATED RISKS -->
+            
               <div :class="[isMapView ? 'col-12' : 'col']">
                 Related Risks
                 <span
@@ -1759,7 +1759,7 @@
                   </li>
                 </ul>
               </div>
-              <!-- RELATED TASKS -->
+           
               <div :class="[isMapView ? 'col-12' : 'col']">
                 Related Tasks
                 <span
@@ -1804,7 +1804,7 @@
                   </li>
                 </ul>
               </div>
-              <!-- RELATED ISSUES -->
+            
               <div :class="[isMapView ? 'col-12' : 'col']">
                 Related Issues
                 <span
@@ -1850,12 +1850,12 @@
                 </ul>
               </div>
             </div>
-          </div>
+          </div> -->
           <!-- END RISK RELATED TAB SECTION -->
 
           <!-- BEGIN RISK DISPOSITION SECTION TAB -->
           <div
-            v-show="currentTab == 'tab7'"
+            v-show="currentTab == 'tab6'"
             style="min-height: 300px"
             class="paperLookTab"
           >
@@ -2110,12 +2110,12 @@ export default {
           key: "tab5",
           closable: false,
         },
-        {
-          label: "Related",
-          key: "tab6",
-          disabled: true, 
-          closable: false,
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab6",
+        //   disabled: true, 
+        //   closable: false,
+        // },
         {
           label: "Updates",
           key: "tab8",
@@ -2123,7 +2123,7 @@ export default {
         },
         {
           label: "Disposition",
-          key: "tab7",
+          key: "tab6",
           closable: false,
           disabled: false,
         },
