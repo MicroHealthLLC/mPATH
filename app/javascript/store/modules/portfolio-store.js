@@ -543,7 +543,29 @@ const portfolioModule = {
       .finally(() => {
         commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
       });
-    }
+    },
+    fetchPortfolioLessonStages({commit}) {
+      commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/filter_data/stages.json?resource=lesson`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+        // Mutate state with response from back end    
+          commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", true);
+        });
+    },
   },
   mutations: {
     setPortfolioWatchedTasksToggle: (state, showAll) => state.portfolioWatchedTasksToggle = showAll,
