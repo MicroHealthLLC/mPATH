@@ -69,6 +69,7 @@ const portfolioModule = {
 
     // PORTFOLIO LESSONS
     portfolio_lessons: [],
+    portfolio_lesson: {},
     portfolio_lessons_loaded: true,
 
      portfolio_users: [],
@@ -682,6 +683,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_RISKS_LOADED: (state, loaded ) => state.portfolio_risks_loaded = loaded,
 
     SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,
+    SET_PORTFOLIO_LESSON: (state, portfolio_lesson) => state.portfolio_lesson = portfolio_lesson,
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
