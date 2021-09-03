@@ -734,7 +734,8 @@ const portfolioModule = {
     portfolioUsersLoaded: state => state.portfolio_users_loaded,
     portfolioUsersFilter: state => state.portfolioUsersFilter,
 
-    portfolioCategories: state => state.portfolio_categories,
+    portfolioCategories: state => state.portfolio_categories,    
+    portfolioLessonStages: state => state.portfolio_lesson_stages, 
     portfolioCategoriesLoaded: state => state.portfolio_categories_loaded,
 
     // GETTER FOR PORTFOLIO STAGES
@@ -760,7 +761,6 @@ const portfolioModule = {
     portfolioRiskStagesLoaded: state => state.portfolio_risk_stages_loaded,
     portfolioRiskStagesFilter: state => state.portfolioRiskStagesFilter,
 
-    portfolioLessonStages: state => state.portfolio_lesson_stages, 
     portfolioLessonStagesLoaded: state => state.portfolio_lesson_stages_loaded,
     portfolioLessonStagesFilter: state => state.portfolioLessonStagesFilter,
 

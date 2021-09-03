@@ -2,7 +2,7 @@
   <div>
     <form
       @submit.prevent="validateThenSave"
-      class="risks-form mx-auto"
+      class="portfolio-risk-form mx-auto"
       :class="{
         _disabled: loading,
       }"
