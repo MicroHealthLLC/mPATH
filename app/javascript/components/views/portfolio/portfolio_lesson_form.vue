@@ -2,7 +2,8 @@
   <form
     @submit.prevent="saveLesson"
     style="padding:40px"
-    :class="{ _disabled: !lessonsLoaded }"
+    class="portfolio-lesson-form"
+    :class="{ _disabled: !portfolioLessonLoaded }"
     accept-charset="UTF-8"
   >
     <div class="mt-2  d-flex align-items-center" >
@@ -15,7 +16,7 @@
             <router-link v-if="loadedLesson"  :to="
                 `/portfolio`
               ">{{
-                  loadedLesson.facility_name
+                  loadedLesson.project_name
             }}            
             </router-link>
           <el-icon
@@ -228,7 +229,7 @@
           <v2-date-picker
             name="Date"
             v-validate="'required'"
-            v-model="lesson.date"
+            v-model="loadedLesson.date"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
@@ -256,7 +257,7 @@
 
         <el-steps
           :active="
-            lessonStages.findIndex(
+            portfolioLessonStages.findIndex(
               (stage) => stage.id == loadedLesson.lesson_stage_id
             )
           "
@@ -264,10 +265,10 @@
           v-model="loadedLesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': lessonStages.length >= 6 }"
+          :class="{ 'over-six-steps': portfolioLessonStages.length >= 6 }"
         >
           <el-step
-            v-for="stage in lessonStages"
+            v-for="stage in portfolioLessonStages"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -883,7 +884,7 @@ export default {
             description: this.lesson.description,
             date: this.lesson.date,
             task_type_id: this.lesson.task_type_id,
-            lesson_stage_id: this.lesson.lesson_stage_id,
+            lesson_stage_id: this.loadedLesson.lesson_stage_id,
             important: this.lesson.important,
             reportable: this.lesson.reportable,
             draft: this.lesson.draft,
@@ -1129,8 +1130,8 @@ export default {
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      if (this.lesson.id && this._isallowed("write")) {
-        this.lesson.lesson_stage_id = stage.id;
+      if (this.loadLesson.id && this._isallowed("write")) {
+        this.loadLesson.lesson_stage_id = stage.id;
       } else if (this._isallowed("write")) {
         this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
       }
@@ -1158,11 +1159,10 @@ export default {
       "portfolioLessonLoaded",
       "contentLoaded",
       "facilities",
-      // 'fetchPortfolioLessons',
       "facilityGroups",
       "lesson",
       "lessonsLoaded",
-      "portfolioLessonStages",
+      'portfolioLessonStages',
       "lessonStatus",
       'portfolioCategories'
       // "taskTypes",
@@ -1183,6 +1183,7 @@ export default {
   mounted() {
     this.loadedLesson = this.$route.params.lesson
     // console.log(this.loadedLesson)
+   
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
         id: this.$route.params.lessonId,
