@@ -496,18 +496,18 @@ export default {
     }
   },
   mounted() {
-    this.resetFilters()
-    this.fetchPortfolioPrograms()
-    this.fetchPortfolioUsers()
-    this.fetchPortfolioStatuses()
-    this.fetchPortfolioTaskStages()
-    this.fetchPortfolioRiskStages()
-    this.fetchPortfolioIssueStages()
-    this.fetchPortfolioIssueTypes()
-    this.fetchPortfolioIssueSeverities()
-    this.fetchPortfolioRiskApproaches()
-    this.fetchPortfolioRiskPriorities()    
-    // this.fetchFilters()
+    // this.resetFilters()
+    // this.fetchPortfolioPrograms()
+    // this.fetchPortfolioUsers()
+    // this.fetchPortfolioStatuses()
+    // this.fetchPortfolioTaskStages()
+    // this.fetchPortfolioRiskStages()
+    // this.fetchPortfolioIssueStages()
+    // this.fetchPortfolioIssueTypes()
+    // this.fetchPortfolioIssueSeverities()
+    // this.fetchPortfolioRiskApproaches()
+    // this.fetchPortfolioRiskPriorities()
+    // // this.fetchFilters()
   },
   computed: {
     ...mapGetters([
@@ -970,6 +970,40 @@ export default {
      
     },
     toggleFilters() {
+      if(!this.getShowAdvancedFilter){
+        // this.resetFilters()
+
+        if(this.portfolioUsers && this.portfolioUsers.length < 1){
+          this.fetchPortfolioPrograms()
+        }
+        if(this.portfolioUsers && this.portfolioUsers.length < 1){
+          this.fetchPortfolioUsers()
+        }
+        if(this.portfolioStatuses && this.portfolioStatuses.length < 1){
+          this.fetchPortfolioStatuses()
+        }
+        if(this.portfolioTaskStages && this.portfolioTaskStages.length < 1){
+          this.fetchPortfolioTaskStages()
+        }
+        if(this.portfolioRiskStages && this.portfolioRiskStages.length < 1){
+          this.fetchPortfolioRiskStages()
+        }
+        if(this.portfolioIssueStages && this.portfolioIssueStages.length < 1){
+          this.fetchPortfolioIssueStages()
+        }
+        if(this.portfolioIssueTypes && this.portfolioIssueTypes.length < 1){
+          this.fetchPortfolioIssueTypes()
+        }
+        if(this.portfolioIssueSeverities && this.portfolioIssueSeverities.length < 1){
+          this.fetchPortfolioIssueSeverities()
+        }
+        if(this.portfolioRiskApproaches && this.portfolioRiskApproaches.length < 1){
+          this.fetchPortfolioRiskApproaches()
+        }
+        if(this.portfolioRiskPriorities && this.portfolioRiskPriorities.length < 1){
+          this.fetchPortfolioRiskPriorities()
+        }
+      }
       this.setShowAdvancedFilter(!this.getShowAdvancedFilter)
     },
     updateProjectQuery(selected, index) {
@@ -1335,7 +1369,7 @@ export default {
       this.setPortfolioIssueSeveritiesFilter([])
       this.setPortfolioIssueTypesFilter([])
       this.setPortfolioRiskApproachesFilter([])
-       this.setPortfolioRiskPrioritiesFilter([])
+      this.setPortfolioRiskPrioritiesFilter([])
 
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
