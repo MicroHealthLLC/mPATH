@@ -60,10 +60,7 @@ class ProjectsController < AuthenticatedController
         format.html {render action: :index}
       end
      else
-      respond_to do |format|
-       format.json {render json: {}, status: :not_found}
-       format.html {render 'layouts/_not_found', locals: {message: "Project with id #{params[:id]} doesn't exists"}}
-      end
+      raise ActiveRecord::RecordNotFound.new("Record Not found!")
     end
   end
 
