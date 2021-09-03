@@ -107,6 +107,10 @@ const portfolioModule = {
     portfolio_risk_stages_loaded: true,
     portfolioRiskStagesFilter: null,
 
+    portfolio_lesson_stages: [],
+    portfolio_lesson_stages_loaded: true,
+    portfolioLessonStagesFilter: null,
+
 
     // Flags Work throughout CLient faSolarPanel...move to new store
 // 7 States
@@ -564,7 +568,7 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            // console.log(res.data.lesson)
+            console.log(res.data.lesson)
              commit("SET_PORTFOLIO_LESSON", res.data.lesson);
           })
           .catch((err) => {
@@ -573,7 +577,29 @@ const portfolioModule = {
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
           });
-      },  
+      }, 
+      fetchPortfolioLessonStages({commit}) {
+        commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", false);
+        // Send GET request for all lessons contained within a project
+        axios({
+          method: "GET",
+          url: `/api/v1/filter_data/stages.json?resource=lesson`,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+          // Mutate state with response from back end    
+            commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", true);
+          });
+      },
   },
   mutations: {
     setPortfolioWatchedTasksToggle: (state, showAll) => state.portfolioWatchedTasksToggle = showAll,
@@ -626,6 +652,10 @@ const portfolioModule = {
     SET_PORTFOLIO_RISK_STAGES: (state, portfolio_risk_stages) => state.portfolio_risk_stages = portfolio_risk_stages,
     TOGGLE_PORTFOLIO_RISK_STAGES_LOADED: (state, loaded ) => state.portfolio_risk_stages_loaded = loaded,   
     setPortfolioRiskStagesFilter: (state, portfolioRiskStagesFilter) => state.portfolioRiskStagesFilter = portfolioRiskStagesFilter,
+
+    SET_PORTFOLIO_LESSON_STAGES: (state, portfolio_lesson_stages) => state.portfolio_lesson_stages = portfolio_lesson_stages,
+    TOGGLE_PORTFOLIO_LESSON_LOADED: (state, loaded ) => state.portfolio_lesson_loaded = loaded,   
+    setPortfolioLessonStagesFilter: (state, portfolioLessonStagesFilter) => state.portfolioLessonStagesFilter = portfolioLessonStagesFilter,
 
     SET_PORTFOLIO_CATEGORIES: (state, portfolio_categories) => state.portfolio_categories = portfolio_categories,
     TOGGLE_PORTFOLIO_CATEGORIES_LOADED: (state, loaded ) => state.portfolio_categories_loaded = loaded,  
@@ -728,6 +758,12 @@ const portfolioModule = {
     portfolioRiskStages: state => state.portfolio_risk_stages, 
     portfolioRiskStagesLoaded: state => state.portfolio_risk_stages_loaded,
     portfolioRiskStagesFilter: state => state.portfolioRiskStagesFilter,
+
+    portfolioLessonStages: state => state.portfolio_lesson_stages, 
+    portfolioLessonStagesLoaded: state => state.portfolio_lesson_stages_loaded,
+    portfolioLessonStagesFilter: state => state.portfolioLessonStagesFilter,
+
+
 
     portfolioRiskApproaches: state => state.portfolio_risk_approaches, 
     portfolioRiskApproachesLoaded: state => state.portfolio_risk_approaches_loaded,

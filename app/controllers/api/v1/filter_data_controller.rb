@@ -71,6 +71,8 @@ class Api::V1::FilterDataController < AuthenticatedController
       stages = IssueStage.joins(:project_issue_stages).where(project_issue_stages: {project_id: program_ids }).distinct.select(:id, :name)
     elsif resource_name == "risk"
       stages = RiskStage.joins(:project_risk_stages).where(project_risk_stages: {project_id: program_ids }).distinct.select(:id, :name)
+    elsif resource_name == "lesson"
+      stages = LessonStage.joins(:project_lesson_stages).where(project_lesson_stages: {project_id: program_ids }).distinct.select(:id, :name)
     end
     render json: {stages: stages}
   end
