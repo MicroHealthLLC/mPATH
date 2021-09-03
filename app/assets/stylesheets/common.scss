@@ -1490,9 +1490,12 @@ a:hover {
   }
   
   .vue-treeselect__placeholder {
+    font-size: 14px;
     font-style: FuturaPTBook;
   }
-  
+  .vue-treeselect__value-remove {
+    border: none !important;
+  }
   
   h4.text-light.label {
     border: solid #f8f9fa 1px;
@@ -1505,6 +1508,20 @@ a:hover {
     z-index: 1100;
     transition: .4s ease;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
+  }
+  .vue-treeselect__multi-value-item {
+    background-color: #41b883;
+    color: white;
+  }
+  .vue-treeselect__value-remove {
+    color: rgba(56, 56, 56, 0.5);
+  }
+  .vue-treeselect__placeholder {
+    font-size: 14px;
+    font-style: FuturaPTBook;
+  }
+  .vue-treeselect__value-remove {
+    border: none !important;
   }
   .vdp-datepicker.dp {
     height: 42.8px !important;

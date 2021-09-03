@@ -24,6 +24,7 @@
           track-by="name"
           value-key="id"
           multiple
+          clearable
           placeholder="Select Process Area"
           collapse-tags
         >

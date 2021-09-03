@@ -4702,8 +4702,8 @@ export default {
         })
         .filter((risk) => {
           if (this.C_riskPriorityLevelFilter.length > 0) {
-            let priority = this.C_riskPriorityLevelFilter.map((t) => t.name);
-            return priority.includes(risk.priority_level);
+            let priority = this.C_riskPriorityLevelFilter.map((t) => t.id);
+            return priority.includes(risk.priority_level.toLowerCase());
           } else return true;
         })
         .filter((risk) => {
@@ -5822,12 +5822,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.portfolioView_main .vue-treeselect__placeholder {
-  font-size: 14px;
-}
-.portfolioView_main .vue-treeselect__value-remove {
-  border: none !important;
-}
 
 </style>
