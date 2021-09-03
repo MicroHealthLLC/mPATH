@@ -93,7 +93,7 @@
               </div>
               <div class="mt-1">
                 <label class="font-sm mb-0">Project Completion Date Range</label>
-                <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
+                <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker portFilter dp" placeholder="Select Date Range" @open="datePicker=true" range />
               </div>
               <!-- To Do: Convert to multiselect to match other filter toggles -->
               <!-- <div class="mt-1 d-flex flex-column">
@@ -211,11 +211,11 @@
               <div class="col-md-4">
                 <div>
               <label class="font-sm mb-0">Action Due Date Range</label>
-              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
+              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker portFilter" @open="datePicker=true" range />
             </div>
             <div>
               <label class="font-sm mb-0">Updates Date Range</label>
-              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
+              <v2-date-picker v-model="C_noteDateFilter" class="datepicker portFilter" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
               </div>
           </div>

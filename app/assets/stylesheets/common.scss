@@ -600,7 +600,7 @@ body {
   .filter-header {
     height: 30px;
   }
-  .duedate-range /deep/ .mx-datepicker-range {
+  .duedate-range, .portFilter /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -621,7 +621,7 @@ body {
       }
     }
   }
-  .notedate-range /deep/ .mx-datepicker-range {
+  .notedate-range, .portFilter /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -642,7 +642,7 @@ body {
       }
     }
   }
-  .taskissueduedate-range /deep/ .mx-datepicker-range {
+  .taskissueduedate-range, .portFilter /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;
@@ -1458,6 +1458,10 @@ td.col-issue_type, td.col-issue_severity {
   margin-left: -20px;
 }
 .mx-datepicker-main.mx-datepicker-popup {
+  z-index: 10000001 !important;
+}
+
+.portFilter.mx-datepicker-main.mx-datepicker-popup {
   z-index: 10000001 !important;
 }
 
