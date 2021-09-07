@@ -467,10 +467,12 @@
 </div>
 </template>
 <script>
-import humps from 'humps'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
+import 'vue2-datepicker/index.css'
  Vue.component('treeselect', VueTreeselect.Treeselect)
+ Vue.component('v2-date-picker', DatePicker)
+ import DatePicker from 'vue2-datepicker'
 export default {
   name: 'PortfolioFilterSidebar',
   data() {
