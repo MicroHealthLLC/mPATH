@@ -6,10 +6,6 @@ const portfolioModule = {
     portfolioBriefedTasksToggle: true,
     portfolioImportantTasksToggle: true,
     showCount: true,  
-
-    portfolio_tab: '', 
-
-    curr_tab: '#tab-tasks', 
    
     programNameFilter: null,
 
@@ -43,11 +39,6 @@ const portfolioModule = {
         // This one handles the individual edit risks when clicking on Task row in Portfolio table
     portfolio_risk: {},
 
-
-    // This one handles the individual edit risks when clicking on Task row in Portfolio table
-    portfolio_lesson: {},
-
-
     // PORTFOLIO ISSUES
     portfolio_issue_types: [],
     portfolio_issue_types_loaded: true,
@@ -59,8 +50,6 @@ const portfolioModule = {
 
     portfolio_issues: [],
     portfolio_issues_loaded: true,
-
-  
 
 
    // PORTFOLIO RISKS
@@ -80,6 +69,7 @@ const portfolioModule = {
 
     // PORTFOLIO LESSONS
     portfolio_lessons: [],
+    portfolio_lesson: {},
     portfolio_lessons_loaded: true,
 
      portfolio_users: [],
@@ -420,9 +410,9 @@ const portfolioModule = {
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
           });
-      },  
-     fetchPortfolioTask({commit}, { id, programId, projectId } ) {
-        commit("TOGGLE_PORTFOLIO_TASK_LOADED", false);
+    },  
+    fetchPortfolioTask({commit}, { id, programId, projectId } ) {
+        commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
@@ -434,16 +424,16 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            // console.log(res.data.task)
-             commit("SET_PORTFOLIO_TASK", res.data.task);
+            console.log(res.data.task)
+             commit("SET_PORTFOLIO_TASKS", res.data.task);
           })
           .catch((err) => {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_PORTFOLIO_TASK_LOADED", true);
+            commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
           });
-      },  
+    },  
     fetchPortfolioIssues({commit}) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all lessons contained within a project
@@ -465,8 +455,8 @@ const portfolioModule = {
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", true);
           });
-      },  
-      fetchPortfolioIssue({commit}, { id, programId, projectId } ) {
+    },  
+    fetchPortfolioIssue({commit}, { id, programId, projectId } ) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all issues contained within a project
         axios({
@@ -479,7 +469,7 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            // console.log(res.data.issue)
+            console.log(res.data.issue)
              commit("SET_PORTFOLIO_ISSUE", res.data.issue);
           })
           .catch((err) => {
@@ -488,75 +478,75 @@ const portfolioModule = {
           .finally(() => {
             commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", true);
           });
-      },  
-      fetchPortfolioRisks({commit}) {
-        commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
-        // Send GET request for all lessons contained within a project
-        axios({
-          method: "GET",
-          url: `/api/v1/portfolio/risks`,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
+    },  
+    fetchPortfolioRisks({commit}) {
+      commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/portfolio/risks`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end
+          commit("SET_PORTFOLIO_RISKS", res.data);
         })
-          .then((res) => {
-            // Mutate state with response from back end
-            commit("SET_PORTFOLIO_RISKS", res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_PORTFOLIO_RISKS_LOADED", true);
-          });
-       },
-       fetchPortfolioRisk({commit}, { id, programId, projectId } ) {
-        commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
-        // Send GET request for all risks contained within a project
-        axios({
-          method: "GET",
-          url: `/api/v1/programs/${programId}/projects/${projectId}/risks/${id}.json`,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
+        .catch((err) => {
+          console.log(err);
         })
-          .then((res) => {
-            // Mutate state with response from back end
-            console.log(res.data.risk)
-             commit("SET_PORTFOLIO_RISK", res.data.risk);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_PORTFOLIO_RISKS_LOADED", true);
-          });
-      },  
-       fetchPortfolioLessons({commit}) {
-        commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", false);
-        // Send GET request for all lessons contained within a project
-        axios({
-          method: "GET",
-          url: `/api/v1/portfolio/lessons`,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_RISKS_LOADED", true);
+        });
+    },
+    fetchPortfolioRisk({commit}, { id, programId, projectId } ) {
+      commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
+      // Send GET request for all risks contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/programs/${programId}/projects/${projectId}/risks/${id}.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end
+          console.log(res.data.risk)
+            commit("SET_PORTFOLIO_RISK", res.data.risk);
         })
-          .then((res) => {
-            // Mutate state with response from back end
-            commit("SET_PORTFOLIO_LESSONS", res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
-          });
-       },
-       fetchPortfolioLesson({commit}, { id, programId, projectId } ) {
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_RISKS_LOADED", true);
+        });
+    },  
+    fetchPortfolioLessons({commit}) {
+      commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/portfolio/lessons`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+      .then((res) => {
+        // Mutate state with response from back end
+        commit("SET_PORTFOLIO_LESSONS", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
+      });
+    },
+   fetchPortfolioLesson({commit}, { id, programId, projectId } ) {
         commit("TOGGLE_PORTFOLIO_LESSON_LOADED", false);
         // Send GET request for all risks contained within a project
         axios({
@@ -608,8 +598,6 @@ const portfolioModule = {
     setPortfolioBriefedTasksToggle: (state, showAll) => state.portfolioBriefedTasksToggle = showAll,
     setShowCount: (state, count) => state.showCount = count,
 
-    setPortfolioTab: (state, tab) => state.portfolio_tab = tab,
-    setCurrTab: (state, tab) => state.curr_tab = tab, 
     updateProgramFilterValue: (state, value) =>  state.programNameFilter = value,
 
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
@@ -678,9 +666,10 @@ const portfolioModule = {
 
     SET_PORTFOLIO_ISSUE: (state, portfolio_issue) => state.portfolio_issue = portfolio_issue,
 
-    SET_PORTFOLIO_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
+    SET_PORTFOLIOportfolioNameFilter_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
     TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED: (state, loaded ) => state.portfolio_issue_types_loaded = loaded,   
     setPortfolioIssueTypesFilter: (state, portfolioIssueTypesFilter) => state.portfolioIssueTypesFilter = portfolioIssueTypesFilter,
+    SET_PORTFOLIO_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
 
     
     SET_PORTFOLIO_ISSUE_SEVERITIES: (state, portfolio_issue_severities) => state.portfolio_issue_severities = portfolio_issue_severities,
@@ -693,7 +682,7 @@ const portfolioModule = {
     SET_PORTFOLIO_RISK: (state, portfolio_risk) => state.portfolio_risk = portfolio_risk,
     TOGGLE_PORTFOLIO_RISKS_LOADED: (state, loaded ) => state.portfolio_risks_loaded = loaded,
 
-    SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,    
+    SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,
     SET_PORTFOLIO_LESSON: (state, portfolio_lesson) => state.portfolio_lesson = portfolio_lesson,
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
@@ -723,9 +712,6 @@ const portfolioModule = {
     getPortfolioImportantTasksToggle: state => state.portfolioImportantTasksToggle,
     getPortfolioBriefedTasksToggle: state => state.portfolioBriefedTasksToggle, 
     
-    portfolioTab: state => state.portfolio_tab, 
-    currTab: state => state.curr_tab,
-
     portfolioPrograms: state => state.portfolio_programs, 
     portfolioProgramsLoaded: state => state.portfolio_programs_loaded,
 
@@ -734,8 +720,7 @@ const portfolioModule = {
     portfolioUsersLoaded: state => state.portfolio_users_loaded,
     portfolioUsersFilter: state => state.portfolioUsersFilter,
 
-    portfolioCategories: state => state.portfolio_categories,    
-    portfolioLessonStages: state => state.portfolio_lesson_stages, 
+    portfolioCategories: state => state.portfolio_categories,
     portfolioCategoriesLoaded: state => state.portfolio_categories_loaded,
 
     // GETTER FOR PORTFOLIO STAGES
@@ -761,6 +746,7 @@ const portfolioModule = {
     portfolioRiskStagesLoaded: state => state.portfolio_risk_stages_loaded,
     portfolioRiskStagesFilter: state => state.portfolioRiskStagesFilter,
 
+    portfolioLessonStages: state => state.portfolio_lesson_stages, 
     portfolioLessonStagesLoaded: state => state.portfolio_lesson_stages_loaded,
     portfolioLessonStagesFilter: state => state.portfolioLessonStagesFilter,
 
@@ -802,7 +788,6 @@ const portfolioModule = {
     portfolioRisksLoaded: state => state.portfolio_risks_loaded,
 
     portfolioLessons: state => state.portfolio_lessons,
-    portfolioLesson: state => state.portfolio_lesson,
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
 
     portfolioLessonLoaded: state => state.portfolio_lesson_loaded,

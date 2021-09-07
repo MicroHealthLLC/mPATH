@@ -868,8 +868,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
-    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS"]),
+    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioUsers"]),
+    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "TOGGLE_LESSONS_LOADED"]),
 
     saveLesson() {
       this.$validator.validate().then((success) => {
@@ -1079,7 +1079,11 @@ export default {
         .catch(() => {});
     },
     author(id) {
-      return this.projectUsers.find((user) => user.id == id).name;
+      let a = this.projectUsers.find((user) => user.id == id)
+      if(a){
+        return a.name
+      } 
+      // return this.portfolioUsers.find((user) => user.id == id).name;
     },
     addFile(files) {
       files.forEach((file) => {
@@ -1168,7 +1172,6 @@ export default {
       'portfolioLessonStages',
       "lessonStatus",
       'portfolioCategories'
-      // "taskTypes",
     ]),
     isMapView() {
       return this.$route.name === "MapLessonForm";
@@ -1184,14 +1187,16 @@ export default {
   },
   },
   mounted() {
-    this.loadedLesson = this.$route.params.lesson
-    // console.log(this.loadedLesson)
-   
+
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
+      if(this.portfolioUsers && this.portfolioUsers.length < 1){
+        this.fetchPortfolioUsers()
+      }
+      
     }
   },
   beforeDestroy() {
@@ -1200,22 +1205,25 @@ export default {
   },
 
   watch: {
-    portfolioLessonLoaded: {
-      handler() {
-        if (this.loadedLesson) {
-          // console.log("yes" + JSON.stringify(this.loadedLesson))
-          this.relatedTasks = this.loadedLesson.sub_tasks;
-          this.relatedIssues = this.loadedLesson.sub_issues;
+    lessonsLoaded: {
+      handler(newValue, oldValue) {
+        if (
+          this.lessonsLoaded &&
+          Object.keys(oldValue).length === 0 &&
+          this.$route.params.lessonId != "new"
+        ) {
+          this.relatedTasks = this.lesson.sub_tasks;
+          this.relatedIssues = this.lesson.sub_issues;
           this.important = this.lesson.important;
-          this.draft = this.loadedLesson.draft;
-          this.reportable = this.loadedLesson.reportable;
-          this.relatedRisks = this.loadedLesson.sub_risks;
-          this.successes = this.loadedLesson.successes;
-          this.failures = this.loadedLesson.failures;
-          this.bestPractices = this.loadedLesson.best_practices;
-          this.updates = this.loadedLesson.notes;
-          this.files = this.loadedLesson.attach_files.filter((file) => !file.link);
-          this.fileLinks = this.loadedLesson.attach_files.filter((file) => file.link);
+          this.draft = this.lesson.draft;
+          this.reportable = this.lesson.reportable;
+          this.relatedRisks = this.lesson.sub_risks;
+          this.successes = this.lesson.successes;
+          this.failures = this.lesson.failures;
+          this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
+          this.files = this.lesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
       },
     },
