@@ -96,7 +96,7 @@ const portfolioApp = new Vue({
   router,
   store,
   el: '#portfolio',
-  vuetify: new Vuetify(),
+  // vuetify: new Vuetify(),
   template: '<Portfolio />',
   components: { Portfolio }
 })
