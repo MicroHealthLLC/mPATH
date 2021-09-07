@@ -6,7 +6,7 @@
     :class="{ _disabled: !portfolioLessonLoaded }"
     accept-charset="UTF-8"
   >
-    <div class="mt-2  d-flex align-items-center">
+    <div class="mt-2  d-flex align-items-center" :load="log(portfolioLessonStages)">
       <!-- Breadcrumbs and form buttons -->
       <div  >
         <h5 class="mb-0">
@@ -229,7 +229,7 @@
           <v2-date-picker
             name="Date"
             v-validate="'required'"
-            v-model="loadedLesson.date"
+            v-model="lesson.date"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
@@ -246,7 +246,7 @@
         <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
-            v-show="loadedLesson.lesson_stage_id"
+            v-show="lesson.lesson_stage_id"
             class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
             :disabled="!this._isallowed('write')"
@@ -258,11 +258,11 @@
         <el-steps
           :active="
             portfolioLessonStages.findIndex(
-              (stage) => stage.id == loadedLesson.lesson_stage_id
+              (stage) => stage.id == lesson.lesson_stage_id
             )
           "
           finish-status="success"
-          v-model="loadedLesson.lesson_stage_id"
+          v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
           :class="{ 'over-six-steps': portfolioLessonStages.length >= 6 }"
@@ -776,9 +776,6 @@ import { mapActions, mapMutations, mapGetters } from "vuex";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
 import AttachmentInput from "./../../shared/attachment_input.vue";
-import 'vue2-datepicker/index.css'
- Vue.component('v2-date-picker', DatePicker)
- import DatePicker from 'vue2-datepicker'
 
 export default {
   name: "portfolioLessonForm",
@@ -869,7 +866,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioUsers"]),
+    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioUsers", "fetchPortfolioLessons"]),
     ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "TOGGLE_LESSONS_LOADED"]),
 
     saveLesson() {
@@ -888,7 +885,7 @@ export default {
             description: this.lesson.description,
             date: this.lesson.date,
             task_type_id: this.lesson.task_type_id,
-            lesson_stage_id: this.loadedLesson.lesson_stage_id,
+            lesson_stage_id: this.lesson.lesson_stage_id,
             important: this.lesson.important,
             reportable: this.lesson.reportable,
             draft: this.lesson.draft,
@@ -918,6 +915,9 @@ export default {
             ...lessonData,
             ...this.$route.params,
           });
+
+          
+  
         } else {
           lessonData.lesson.user_id = this.$currentUser.id;
           this.addLesson({
@@ -928,7 +928,7 @@ export default {
       });
     },
     log(e){
-      console.log("this is the port lesson obj" + e)
+      console.log("port lesson stages" + e)
     },
     removeEmptyUpdates(){
       var returnUpdates = [];
@@ -955,6 +955,7 @@ export default {
         return  fPrivilege.lessons.includes(s);      
     },
     close() {
+      
        this.$emit("on-close-form");
     },
     onChangeTab(tab) {
@@ -1138,8 +1139,8 @@ export default {
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      if (this.loadLesson.id && this._isallowed("write")) {
-        this.loadLesson.lesson_stage_id = stage.id;
+      if (this.lesson.id && this._isallowed("write")) {
+        this.lesson.lesson_stage_id = stage.id;
       } else if (this._isallowed("write")) {
         this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
       }
@@ -1171,6 +1172,7 @@ export default {
       "lesson",
       "lessonsLoaded",
       'portfolioLessonStages',
+      'portfolioTaskStages',
       "lessonStatus",
       'portfolioCategories'
     ]),
@@ -1188,7 +1190,7 @@ export default {
   },
   },
   mounted() {
-    // console.log()
+    console.log(this.portfolioLessonStages)
 
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
@@ -1266,6 +1268,7 @@ export default {
             showClose: true,
           });
           this.SET_LESSON_STATUS(0);
+          this.fetchPortfolioLessons();
           //Route to newly created task form page
          
             this.$router.push(
