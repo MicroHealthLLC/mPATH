@@ -470,9 +470,10 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
 import 'vue2-datepicker/index.css'
- Vue.component('treeselect', VueTreeselect.Treeselect)
  Vue.component('v2-date-picker', DatePicker)
  import DatePicker from 'vue2-datepicker'
+ Vue.component('treeselect', VueTreeselect.Treeselect)
+
 export default {
   name: 'PortfolioFilterSidebar',
   data() {
@@ -974,10 +975,7 @@ export default {
     toggleFilters() {
       if(!this.getShowAdvancedFilter){
         // this.resetFilters()
-        // TODO: Move this all condition which is checking the data
-        // and then doing fetch request to respective method.
-        // e.g. if(this.portfolioUsers && this.portfolioUsers.length < 1)
-        // should be in this.fetchPortfolioUsers()
+
         if(this.portfolioUsers && this.portfolioUsers.length < 1){
           this.fetchPortfolioPrograms()
         }
