@@ -34,6 +34,7 @@
                     filterable
                     value-key="id"
                     multiple                                                                                                                                               
+                    clearable
                     placeholder="Search and select Project Group"
                   >
                   <el-option 
@@ -55,6 +56,7 @@
                     :loading="isLoading"
                     multiple   
                     filterable                                                                                                                                                        
+                    clearable
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
@@ -92,6 +94,7 @@
                     value-key="id"
                     data-cy="project_status"                
                     multiple                                                                                                                                                         
+                    clearable
                     placeholder="Select Project Status"
                     >
                   <el-option 
@@ -128,6 +131,7 @@
                   value-key="id"                  
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Process Areas"
                   >
                 <el-option 
@@ -149,6 +153,7 @@
                   filterable                 
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Search and select names"
                   >
                 <el-option 
@@ -173,6 +178,7 @@
                   filterable                 
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Option"
                   >
                 <el-option 
@@ -194,6 +200,7 @@
                   filterable                 
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Filter by Flags"
                   >
                   <el-option-group
@@ -256,6 +263,7 @@
                   value-key="id"                  
                   data-cy="task_stage"             
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Task Stage"
                   >
                 <el-option 
@@ -279,6 +287,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Stage"
                   >
                 <el-option 
@@ -300,6 +309,7 @@
                   value-key="id"                  
                   data-cy="issue_type"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Type"
                   >
                 <el-option 
@@ -321,6 +331,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Severity"
                   >
                 <el-option 
@@ -345,6 +356,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Stage"
                   >
                 <el-option 
@@ -363,6 +375,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Approach"
                   >
                 <el-option 
@@ -381,6 +394,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Priority Level"
                   >
                 <el-option 

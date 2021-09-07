@@ -71,6 +71,8 @@ class Api::V1::FilterDataController < AuthenticatedController
       stages = IssueStage.joins(:project_issue_stages).where(project_issue_stages: {project_id: program_ids }).distinct.select(:id, :name)
     elsif resource_name == "risk"
       stages = RiskStage.joins(:project_risk_stages).where(project_risk_stages: {project_id: program_ids }).distinct.select(:id, :name)
+    elsif resource_name == "lesson"
+      stages = LessonStage.joins(:project_lesson_stages).where(project_lesson_stages: {project_id: program_ids }).distinct.select(:id, :name)
     end
     render json: {stages: stages}
   end
@@ -105,11 +107,11 @@ class Api::V1::FilterDataController < AuthenticatedController
 
   def risk_priority_level
     risk_priority_levels = [
-      {id: 1, value: 1, name: "Very Low"},
-      {id: 2, value: 2, name: "Low"},
-      {id: 3, value: 3, name: "Moderate"},
-      {id: 4, value: 4, name: "High"},
-      {id: 5, value: 5, name: "Extreme"}
+      {id: 'very low', value: 'very low', name: 'Very Low 1'},
+      {id: 'low', value: 'low', name: 'Low 2 - 3'},
+      {id: 'moderate', value: 'moderate', name: 'Moderate 4 - 6'},
+      {id: 'high', value: 'high', name: 'High 8 - 12'},
+      {id: 'extreme', value: 'extreme', name: 'Extreme 15 - 25'}
     ]
     render json: {risk_priorities: risk_priority_levels}
   end

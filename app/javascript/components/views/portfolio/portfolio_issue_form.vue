@@ -1,9 +1,9 @@
 <template>
   <div>
    <form
-      id="issues-form"
+      id="portfolio-issue-form"
       @submit.prevent="saveIssue"
-      class="mx-auto issues-form"
+      class="mx-auto portfolio-issue-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
       :class="{ _disabled: loading }"
@@ -676,12 +676,12 @@ Tab 1 Row Begins here -->
                           v-model="check.due_date"
                           :value="check.due_date"
                           :disabled="!_isallowed('write') || !check.text"
-                          @selected="updateCheckItem($event, 'dueDate', index)"
+                          @selected="updateCheckItem($event, 'due_date', index)"
                           :key="`dueDate_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
-                          name="dueDate"
+                          name="due_date"
                           class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
@@ -711,13 +711,13 @@ Tab 1 Row Begins here -->
                               :value="check.due_date"
                               :disabled="!_isallowed('write') || !check.text"
                               @selected="
-                                updateCheckItem($event, 'dueDate', index)
+                                updateCheckItem($event, 'due_date', index)
                               "
                               :key="`dueDate_${index}`"
                               value-type="YYYY-MM-DD"
                               format="DD MMM YYYY"
                               placeholder="DD MM YYYY"
-                              name="dueDate"
+                              name="due_date"
                               class="w-100 vue2-datepicker d-flex ml-auto"
                               :disabled-date="disabledDateRange"
                               :class="{ disabled: disabledDateRange }"
@@ -771,10 +771,7 @@ Tab 1 Row Begins here -->
                         
                           <span v-if="editToggle">
                             <span class="ml-2 clickable">
-                              <font-awesome-icon
-                                icon="plus-circle"
-                                class="mr-1 text-danger"
-                              />
+                             <i class="fas fa-plus-circle mr-1 text-danger"></i>
                             </span>
                           </span>
                           
@@ -784,15 +781,12 @@ Tab 1 Row Begins here -->
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
                             >
-                              <font-awesome-icon
-                                icon="plus-circle"
-                                class="mr-1"
-                              />
+                           <i class="fas fa-plus-circle mr-1"></i>
                             </span>
                           </span>
 
                           <table
-                            v-if="check.progress_lists.length > 0"
+                            v-if="check.progress_lists !== undefined"
                             style="width:100%"
                             class="mt-1"
                           >
@@ -951,8 +945,7 @@ Tab 1 Row Begins here -->
                     @click.prevent="downloadFile(file)"
                   >
                     <span class="scales"
-                      ><font-awesome-icon icon="file" class="mr-1"
-                    /></span>
+                      ><i class="far fa-file mr-1"></i></span>
                     <input
                       readonly
                       type="text"
@@ -1049,9 +1042,9 @@ Tab 1 Row Begins here -->
         </div>
 
         <!-- RELATED TAB #5 -->
-        <div v-show="currentTab == 'tab5'" class="paperLookTab tab4">
+        <!-- <div v-show="currentTab == 'tab5'" class="paperLookTab tab4">
           <div class="row mx-3 mt-2">
-            <!-- RELATED ISSUES -->
+         
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Issues
               <span
@@ -1096,7 +1089,7 @@ Tab 1 Row Begins here -->
                 </li>
               </ul>
             </div>
-            <!-- RELATED TASKS -->
+         
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Tasks
               <span
@@ -1141,7 +1134,7 @@ Tab 1 Row Begins here -->
                 </li>
               </ul>
             </div>
-            <!-- RELATED RISKS -->
+     
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Risks
               <span
@@ -1187,10 +1180,10 @@ Tab 1 Row Begins here -->
               </ul>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- UPDATE TAB 6 -->
-        <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
+        <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
           <div class="form-group mx-4 paginated-updates">
             <label class="font-md">Updates</label>
             <span
@@ -1224,9 +1217,9 @@ Tab 1 Row Begins here -->
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
-                      <span v-if="note.updatedAt"
-                        >{{ note.user.fullName }} on
-                        {{ new Date(note.updatedAt).toLocaleString() }}</span
+                      <span v-if="note.updated_at"
+                        >{{ note.user.full_name }} on
+                        {{ new Date(note.updated_at).toLocaleString() }}</span
                       ><span v-else
                         >{{ $currentUser.full_name }} on
                         {{ new Date().toLocaleDateString() }}</span
@@ -1288,6 +1281,9 @@ import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
 import {API_BASE_PATH} from './../../../mixins/utils'
+import 'vue2-datepicker/index.css'
+ Vue.component('v2-date-picker', DatePicker)
+ import DatePicker from 'vue2-datepicker'
 
 export default {
   name: "portfolioIssueForm",
@@ -1352,14 +1348,15 @@ export default {
           key: "tab4",
           closable: false,
         },
-        {
-          label: "Related",
-          key: "tab5",
-          closable: false,
-        },
+        // {
+        //   label: "Related",
+        //   disabled: true, 
+        //   key: "tab5",
+        //   closable: false,
+        // },
         {
           label: "Updates",
-          key: "tab6",
+          key: "tab5",
           closable: false,
         },
       ],
@@ -1385,8 +1382,8 @@ export default {
     INITIAL_ISSUE_STATE() {
       return {
         title: "",
-        startDate: "",
-        dueDate: "",
+        start_date: "",
+        due_date: "",
         facilityProjectId: this.$route.params.projectId,       
         issueTypeId: "",
         taskTypeId: "",
@@ -1406,7 +1403,7 @@ export default {
         sub_task_ids: [],
         sub_risk_ids: [],
         sub_issue_ids: [],
-        issueFiles: [],
+        issue_files: [],
         checklists: [],
         notes: [],
       };
@@ -1479,9 +1476,9 @@ export default {
     },
     progressListTitleText(progressList) {
       if (!progressList.id) return;
-      var date = moment(progressList.createdAt).format("MM/DD/YYYY");
-      var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.fullName} at ${date} ${time} `;
+      var date = moment(progressList.created_at).format("MM/DD/YYYY");
+      var time = moment(progressList.created_at).format("hh:mm:ss a");
+      return `${progressList.user.full_name} at ${date} ${time} `;
     },
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
@@ -1626,7 +1623,6 @@ export default {
     },
     cancelIssueSave() {
       this.$emit("on-close-form");
-      this.setTaskForManager({ key: "issue", value: null });
     },
     saveIssue() {
       this.$validator.validate().then((success) => {
@@ -1658,7 +1654,7 @@ export default {
 
      //Responsible USer Id
         if (this.DV_issue.responsible_user_ids && this.DV_issue.responsible_user_ids.length) {
-        for (let u_id of this.DV_issue.responsibleUserIds) {
+        for (let u_id of this.DV_issue.responsible_user_ids) {
             formData.append("responsible_user_ids[]", u_id);
           }
         } else {
@@ -1672,7 +1668,7 @@ export default {
           this.DV_issue.accountable_user_ids.length
         ) {
         
-          for (let u_id of this.DV_issue.accountableUserIds) {
+          for (let u_id of this.DV_issue.accountable_user_ids) {
             formData.append("accountable_user_ids[]", u_id);
           }
         } else {
@@ -1682,7 +1678,7 @@ export default {
         // Consulted UserId
 
         if (this.DV_issue.consulted_user_ids.length) {
-         for (let u_id of this.DV_issue.consultedUserIds) {
+         for (let u_id of this.DV_issue.consulted_user_ids) {
             formData.append("consulted_user_ids[]", u_id);
           }
         } else {
@@ -1692,10 +1688,7 @@ export default {
         // Informed UserId
 
         if (this.DV_issue.informed_user_ids.length) {
-          // console.log("this.DV_issue.responsibleUserIds.length")
-          // console.log(this.DV_issue.informedUserIds.length)
-          // console.log(this.DV_issue.informedUserIds)
-          for (let u_id of this.DV_issue.informed_user_ids) {
+         for (let u_id of this.DV_issue.informed_user_ids) {
             formData.append("informed_user_ids[]", u_id);
           }
         } else {
@@ -1821,11 +1814,12 @@ export default {
             //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
             // this.$emit(callback, humps.camelizeKeys(response.data.issue));
 
-            var responseIssue = humps.camelizeKeys(response.data.issue);
-            this.loadIssue(responseIssue);
+         
+            this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: responseIssue });
+            this.updateIssuesHash({ issue: response.data.issue });
             if (response.status === 200) {
+              // this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
@@ -1833,14 +1827,14 @@ export default {
               });
             }
           
-          this.fetchPortfolioIssues()
+           this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
           })
-          .catch((err) => {
-            console.log(err);
-          })
+          // .catch((err) => {
+          //   console.log(err);
+          // })
           .finally(() => {
             this.loading = false;
           });
@@ -1861,8 +1855,8 @@ export default {
     },
     noteBy(note) {
       return note.user
-        ? `${note.user.fullName} at ${new Date(
-            note.createdAt
+        ? `${note.user.full_name} at ${new Date(
+            note.created_at
           ).toLocaleString()}`
         : `${this.$currentUser.full_name} at (Now)`;
     },
@@ -1877,14 +1871,14 @@ export default {
       if (!confirm) return;
 
       let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
+        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
         : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
       this.saveIssue();
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_issue.startDate);
+      const startDate = new Date(this.DV_issue.start_date);
       startDate.setHours(48, 0, 0, 0);
       return date < startDate;
     },
@@ -1894,13 +1888,16 @@ export default {
         text: "",
         checked: false,
         position: postion,
-        progressLists: [],
+        progress_lists: [],
       });
     },
+
     addProgressList(check) {
-      var postion = check.progressLists.length;
-      check.progressLists.push({ body: "", position: postion });
-      this.editToggle = true;
+       if (check.progress_lists !== undefined || null) {
+       var postion = check.progress_lists.length;
+        check.progress_lists.push({ body: "", position: postion });
+          this.editToggle = true;
+      }
     },
     destroyCheck(check, index) {
       let confirm = window.confirm(
@@ -1937,8 +1934,8 @@ export default {
           this.DV_issue.checklists[index].checked = false;
       } else if (name === "check" && this.DV_issue.checklists[index].text) {
         this.DV_issue.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_issue.checklists[index].text) {
-        this.DV_issue.checklists[index].dueDate = event.target.value;
+      } else if (name === "due_date" && this.DV_issue.checklists[index].text) {
+        this.DV_issue.checklists[index].due_date = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -1959,13 +1956,13 @@ export default {
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
@@ -2013,19 +2010,23 @@ export default {
       "currentProject",
       "currentRisks",
       "portfolioIssues",
+      'portfolioIssueStages',
       "currentTasks",
       'portfolioCategories',
       'portfolioIssueTypes',
       "facilities",
+      'portfolioIssues',
       'fetchPortfolioIssues',
       "facilityGroups",
       "getFacilityProjectOptions",
       'portfolioIssueSeverities',
-      "issueStages",
       "managerView",
       "myActionsFilter",
       "projectUsers",
     ]),
+    issueStages(){
+      return this.portfolioIssueStages
+    },
     issueStagesSorted() {
       var issueStagesSortedReturn = [...this.issueStages]; 
       return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
@@ -2068,7 +2069,7 @@ export default {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },
     filteredFiles() {
-      return _.filter(this.DV_issue.issueFiles, (f) => !f._destroy);
+      return _.filter(this.DV_issue.issue_files, (f) => !f._destroy);
     },
     C_myIssues() {
       return _.map(this.myActionsFilter, "value").includes("issues");
@@ -2092,7 +2093,7 @@ export default {
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_issue.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },
@@ -2126,16 +2127,16 @@ export default {
     "DV_issue.start_date"(value) {
       if (!value) this.DV_issue.due_date = "";
     },
-    "DV_issue.due_date"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_issue.due_date"(value) {
+    //   if (this.facility.due_date) {
+    //     if (moment(value).isAfter(this.facility.due_date, "day")) {
+    //       this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facility_name} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_issue.checklists": {
       handler: function(value) {
         if (this.DV_issue.auto_calculate) this.calculateProgress(value);
@@ -2201,25 +2202,25 @@ export default {
     },
     selectedIssueType: {
       handler: function(value) {
-        this.DV_issue.issueTypeId = value ? value.id : null;
+        this.DV_issue.issue_type_id = value ? value.id : null;
       },
       deep: true,
     },
     selectedTaskType: {
       handler: function(value) {
-        this.DV_issue.taskTypeId = value ? value.id : null;
+        this.DV_issue.task_type_id = value ? value.id : null;
       },
       deep: true,
     },
     selectedIssueSeverity: {
       handler: function(value) {
-        this.DV_issue.issueSeverityId = value ? value.id : null;
+        this.DV_issue.issue_severity_id = value ? value.id : null;
       },
       deep: true,
     },
     selectedIssueStage: {
       handler: function(value) {
-        this.DV_issue.issueStageId = value ? value.id : null;
+        this.DV_issue.issue_stage_id = value ? value.id : null;
       },
       deep: true,
     },
@@ -2262,245 +2263,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.issues-form {
-}
-.form-control.error {
-  border-color: #e84444;
-}
-.title {
-  font-size: 15px;
-  margin-left: 65px;
-}
-.checklist-text {
-  margin-left: 5px;
-  border: 0;
-  width: 95%;
-  outline: none;
-  border: solid #ededed 1px;
-  border-radius: 4px;
-}
-.del-check {
-  position: absolute;
-  display: flex;
-  right: 2rem;
-  font-weight: 500;
-  background: transparent;
-  height: fit-content;
-  color: #dc3545;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-.drag {
-  cursor: all-scroll;
-}
-// Checklist feature UI
-/deep/.el-collapse-item__header {
-  background-color: #fafafa !important;
-}
-/deep/.el-collapse-item__header {
-  float: right;
-  margin-top: -38px;
-  font: small;
-  color: #d9534f !important;
-  border-bottom: none !important;
-}
-/deep/ .el-collapse {
-  border-top: none !important;
-  border-bottom: none !important;
-}
-/deep/.el-collapse-item__content {
-  padding-bottom: 0 !important;
-}
-.paperLook {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  position: relative;
-}
-.sticky-btn {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
-    0 1px 1px rgba(56, 56, 56, 0.23);
-}
-.sticky {
-  justify-content: center;
-  z-index: 1000;
-  left: 15;
-  top: 0;
-  width: 100%;
-  padding: 6px;
-  background-color: rgba(237, 237, 237, 0.85);
-  box-shadow: 0 10px 20px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-.sticky-kanban {
-  position: sticky;
-  position: -webkit-sticky;
-  margin-bottom: -2.5rem;
-}
-.scrollToChecklist {
-  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
-    0 1px 1px rgba(56, 56, 56, 0.23);
-}
-.btn-group {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
-.check-due-date {
-  text-align: end;
-}
-.disabled {
-  opacity: 0.6;
-}
-.custom-tab {
-  width: min-content;
-  background-color: #fff;
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-.tab2,
-.tab3,
-.tab4,
-.tab5 {
-  min-height: 400px;
-  background-color: #fff;
-}
 
-td,
-th {
-  border: solid 1px #ededed;
-  padding: 1px 3px;
-}
-tbody {
-  background-color: #fff;
-}
-th {
-  background: #ededed;
-  color: #383838;
-  padding: 1px 3px;
-}
-.fixed-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 275px);
-}
-.display-length {
-  border-radius: 0.15rem;
-  margin-right: 12px;
-}
-.red-border {
-  border: solid 0.5px red;
-}
-.checklist-text {
-  margin-left: 5px;
-  min-height: 33px;
-  border: 0;
-  width: 95%;
-  outline: none;
-  border: solid #ededed 1px;
-  border-radius: 4px;
-}
-.fa-building {
-  font-size: large !important;
-  color: #383838 !important;
-}
-.error-list {
-  list-style-type: circle;
-  li {
-    width: max-content;
-  }
-}
-.text-danger {
-  font-size: 13px;
-}
-.error-border {
-  border: 1px solid red;
-  border-radius: 4px;
-}
-.overflow-ellipsis {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-.no-text-decoration:link {
-  text-decoration: none;
-  color: #495057;
-  text-decoration-color: none;
-}
-.no-text-decoration:active {
-  text-decoration: none;
-  color: #495057;
-  text-decoration-color: none;
-}
-.no-text-decoration:visited {
-  text-decoration: none;
-  color: #495057;
-  text-decoration-color: none;
-}
-
-.hover {
-  background: transparent;
-  border-radius: 0 !important;
-}
-.hover:hover {
-  cursor: pointer;
-  background-color: rgba(91, 192, 222, 0.3) !important;
-}
-input.file-link {
-  outline: 0 none;
-}
-.clearStageBtn {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-.exampleTwo.el-steps,
-.exampleTwo.el-steps--simple {
-  border: 1px solid #dcdfe6;
-  background: #fff;
-}
-.overSixSteps {
-  /deep/.el-step__title {
-    font-size: 11px !important;
-    line-height: 23px !important;
-    margin: 5px !important;
-  }
-}
-a {
-  color: #007bff;
-}
-a:hover {
-  text-decoration: unset;
-}
-.text-smaller {
-  font-size: smaller;
-}
-.update-card {
-  background-color: #ededed;
-  border-color: lightgray;
-  border-left: 10px solid #5aaaff;
-}
-
-.tagsCol, .statesCol {  
-  border: .5px solid lightgray;
-}
-
-.statesCol {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.tagsCol {
-  background-color: #f8f9fa;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-
-}
 </style>

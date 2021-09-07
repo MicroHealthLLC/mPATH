@@ -6,6 +6,10 @@ const portfolioModule = {
     portfolioBriefedTasksToggle: true,
     portfolioImportantTasksToggle: true,
     showCount: true,  
+
+    portfolio_tab: '', 
+
+    curr_tab: '#tab-tasks', 
    
     programNameFilter: null,
 
@@ -26,14 +30,23 @@ const portfolioModule = {
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
 
+
+
     // This one handles the individual edit tasks when clicking on Task row in Portfolio table
     portfolio_task: {},
+
+    portfolio_tasks_loaded: true,
 
       // This one handles the individual edit issues when clicking on Task row in Portfolio table
     portfolio_issue: {},
 
         // This one handles the individual edit risks when clicking on Task row in Portfolio table
     portfolio_risk: {},
+
+
+    // This one handles the individual edit risks when clicking on Task row in Portfolio table
+    portfolio_lesson: {},
+
 
     // PORTFOLIO ISSUES
     portfolio_issue_types: [],
@@ -80,6 +93,7 @@ const portfolioModule = {
     portfolio_programs_filter: [],
     portfolio_loaded: true,
 
+    portfolio_lesson_loaded: true,
 
 // Portfolio Stages
     portfolio_task_stages: [],
@@ -93,6 +107,10 @@ const portfolioModule = {
     portfolio_risk_stages: [],
     portfolio_risk_stages_loaded: true,
     portfolioRiskStagesFilter: null,
+
+    portfolio_lesson_stages: [],
+    portfolio_lesson_stages_loaded: true,
+    portfolioLessonStagesFilter: null,
 
 
     // Flags Work throughout CLient faSolarPanel...move to new store
@@ -404,7 +422,7 @@ const portfolioModule = {
           });
       },  
      fetchPortfolioTask({commit}, { id, programId, projectId } ) {
-        commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
+        commit("TOGGLE_PORTFOLIO_TASK_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
@@ -416,14 +434,14 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            console.log(res.data.task)
+            // console.log(res.data.task)
              commit("SET_PORTFOLIO_TASK", res.data.task);
           })
           .catch((err) => {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_PORTFOLIO_TASKS_LOADED", true);
+            commit("TOGGLE_PORTFOLIO_TASK_LOADED", true);
           });
       },  
     fetchPortfolioIssues({commit}) {
@@ -461,7 +479,7 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            console.log(res.data.issue)
+            // console.log(res.data.issue)
              commit("SET_PORTFOLIO_ISSUE", res.data.issue);
           })
           .catch((err) => {
@@ -471,7 +489,7 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", true);
           });
       },  
-     fetchPortfolioRisks({commit}) {
+      fetchPortfolioRisks({commit}) {
         commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
@@ -538,6 +556,51 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", true);
           });
        },
+       fetchPortfolioLesson({commit}, { id, programId, projectId } ) {
+        commit("TOGGLE_PORTFOLIO_LESSON_LOADED", false);
+        // Send GET request for all risks contained within a project
+        axios({
+          method: "GET",
+          url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            // Mutate state with response from back end
+            console.log(res.data.lesson)
+             commit("SET_PORTFOLIO_LESSON", res.data.lesson);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_PORTFOLIO_LESSON_LOADED", true);
+          });
+      }, 
+      fetchPortfolioLessonStages({commit}) {
+        commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", false);
+        // Send GET request for all lessons contained within a project
+        axios({
+          method: "GET",
+          url: `/api/v1/filter_data/stages.json?resource=lesson`,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+          // Mutate state with response from back end    
+            commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED", true);
+          });
+      },
   },
   mutations: {
     setPortfolioWatchedTasksToggle: (state, showAll) => state.portfolioWatchedTasksToggle = showAll,
@@ -545,6 +608,8 @@ const portfolioModule = {
     setPortfolioBriefedTasksToggle: (state, showAll) => state.portfolioBriefedTasksToggle = showAll,
     setShowCount: (state, count) => state.showCount = count,
 
+    setPortfolioTab: (state, tab) => state.portfolio_tab = tab,
+    setCurrTab: (state, tab) => state.curr_tab = tab, 
     updateProgramFilterValue: (state, value) =>  state.programNameFilter = value,
 
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
@@ -589,6 +654,10 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_RISK_STAGES_LOADED: (state, loaded ) => state.portfolio_risk_stages_loaded = loaded,   
     setPortfolioRiskStagesFilter: (state, portfolioRiskStagesFilter) => state.portfolioRiskStagesFilter = portfolioRiskStagesFilter,
 
+    SET_PORTFOLIO_LESSON_STAGES: (state, portfolio_lesson_stages) => state.portfolio_lesson_stages = portfolio_lesson_stages,
+    TOGGLE_PORTFOLIO_LESSON_LOADED: (state, loaded ) => state.portfolio_lesson_loaded = loaded,   
+    setPortfolioLessonStagesFilter: (state, portfolioLessonStagesFilter) => state.portfolioLessonStagesFilter = portfolioLessonStagesFilter,
+
     SET_PORTFOLIO_CATEGORIES: (state, portfolio_categories) => state.portfolio_categories = portfolio_categories,
     TOGGLE_PORTFOLIO_CATEGORIES_LOADED: (state, loaded ) => state.portfolio_categories_loaded = loaded,  
 
@@ -601,6 +670,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
     SET_PORTFOLIO_TASK: (state, portfolio_task) => state.portfolio_task = portfolio_task,
+    TOGGLE_PORTFOLIO_TASK_LOADED: (state, loaded ) => state.portfolio_task_loaded = loaded,
 
     // PORTFOLIO ISSUES
     SET_PORTFOLIO_ISSUES: (state, portfolio_issues) => state.portfolio_issues = portfolio_issues,
@@ -623,7 +693,8 @@ const portfolioModule = {
     SET_PORTFOLIO_RISK: (state, portfolio_risk) => state.portfolio_risk = portfolio_risk,
     TOGGLE_PORTFOLIO_RISKS_LOADED: (state, loaded ) => state.portfolio_risks_loaded = loaded,
 
-    SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,
+    SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,    
+    SET_PORTFOLIO_LESSON: (state, portfolio_lesson) => state.portfolio_lesson = portfolio_lesson,
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
    
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
@@ -652,6 +723,9 @@ const portfolioModule = {
     getPortfolioImportantTasksToggle: state => state.portfolioImportantTasksToggle,
     getPortfolioBriefedTasksToggle: state => state.portfolioBriefedTasksToggle, 
     
+    portfolioTab: state => state.portfolio_tab, 
+    currTab: state => state.curr_tab,
+
     portfolioPrograms: state => state.portfolio_programs, 
     portfolioProgramsLoaded: state => state.portfolio_programs_loaded,
 
@@ -660,7 +734,8 @@ const portfolioModule = {
     portfolioUsersLoaded: state => state.portfolio_users_loaded,
     portfolioUsersFilter: state => state.portfolioUsersFilter,
 
-    portfolioCategories: state => state.portfolio_categories,
+    portfolioCategories: state => state.portfolio_categories,    
+    portfolioLessonStages: state => state.portfolio_lesson_stages, 
     portfolioCategoriesLoaded: state => state.portfolio_categories_loaded,
 
     // GETTER FOR PORTFOLIO STAGES
@@ -686,6 +761,11 @@ const portfolioModule = {
     portfolioRiskStagesLoaded: state => state.portfolio_risk_stages_loaded,
     portfolioRiskStagesFilter: state => state.portfolioRiskStagesFilter,
 
+    portfolioLessonStagesLoaded: state => state.portfolio_lesson_stages_loaded,
+    portfolioLessonStagesFilter: state => state.portfolioLessonStagesFilter,
+
+
+
     portfolioRiskApproaches: state => state.portfolio_risk_approaches, 
     portfolioRiskApproachesLoaded: state => state.portfolio_risk_approaches_loaded,
     portfolioRiskApproachesFilter: state => state.portfolioRiskApproachesFilter,
@@ -710,6 +790,7 @@ const portfolioModule = {
 
     portfolioTasks: state => state.portfolio_tasks,
     portfolioTask: state => state.portfolio_task,
+    portfolioTaskLoaded: state => state.portfolio_task_loaded,
     portfolioTasksLoaded: state => state.portfolio_tasks_loaded,
 
     portfolioIssues: state => state.portfolio_issues,
@@ -721,7 +802,10 @@ const portfolioModule = {
     portfolioRisksLoaded: state => state.portfolio_risks_loaded,
 
     portfolioLessons: state => state.portfolio_lessons,
+    portfolioLesson: state => state.portfolio_lesson,
     portfolioLessonsLoaded: state => state.portfolio_lessons_loaded,
+
+    portfolioLessonLoaded: state => state.portfolio_lesson_loaded,
 
     programNameFilter: state => state.programNameFilter,
     portfolioNameFilter: state => state.portfolioNameFilter,

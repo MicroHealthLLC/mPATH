@@ -1,11 +1,12 @@
 <template>
   <div>
    <form
-      id="tasks-form"
+      id="portfolio-task-form"
       @submit.prevent="saveTask"
-      class="mx-auto tasks-form"
+      class="mx-auto portfolio-task-form"
       accept-charset="UTF-8"
       :class="{ _disabled: loading }"
+
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -580,6 +581,7 @@
               @click.prevent="addChecks"
             >
               <i class="fas fa-plus-circle"></i>
+              
             </span>
             <span
               class="float-right bg-dark font-sm text-light display-length px-1"
@@ -605,7 +607,7 @@
               >
                 <div
                   v-for="(check, index) in DV_task.checklists"
-                  :key="index"
+                  :key="index"                
                   class="d-flex w-100 mb-3 drag"
                   v-if="!check._destroy && isMyCheck(check)"
                 >
@@ -635,14 +637,12 @@
                           :readonly="!_isallowed('write')"                       
                         />
                       </div>
-                      <div
-                      
+                      <div        
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
-                      <div
-                     
+                      <div                     
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -650,12 +650,12 @@
                           v-model="check.due_date"
                           :value="check.due_date"
                           :disabled="!_isallowed('write') || !check.text"
-                          @selected="updateCheckItem($event, 'dueDate', index)"
-                          :key="`dueDate_${index}`"
+                          @selected="updateCheckItem($event, 'due_date', index)"
+                          :key="`due_date_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
-                          name="dueDate"
+                          name="due_date"
                           class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
@@ -664,7 +664,7 @@
                     </div>
 
                     <!-- Collpase section begins here -->
-                    <el-collapse id="roll_up" style="background-color:#fafafa">
+                    <el-collapse id="roll_up collapse" style="background-color:#fafafa">
                       <el-collapse-item
                         title="Details"
                         name="1"
@@ -685,13 +685,13 @@
                               :value="check.due_date"
                               :disabled="!_isallowed('write') || !check.text"
                               @selected="
-                                updateCheckItem($event, 'dueDate', index)
+                                updateCheckItem($event, 'due_date', index)
                               "
-                              :key="`dueDate_${index}`"
+                              :key="`due_date_${index}`"
                               value-type="YYYY-MM-DD"
                               format="DD MMM YYYY"
                               placeholder="DD MM YYYY"
-                              name="dueDate"
+                              name="due_date"
                               class="w-100 vue2-datepicker d-flex ml-auto"
                               :disabled-date="disabledDateRange"
                               :class="{ disabled: disabledDateRange }"
@@ -751,15 +751,14 @@
                               class="ml-2 clickable"
                               v-if="_isallowed('write')"
                               @click.prevent="addProgressList(check)"
-                            >
-                            <i class="fal fa-plus-circle mr-1 text-danger"></i>
+                            >                          
+                               <i class="fas fa-plus-circle mr-1"></i>
                             </span>
                           </span>
-
-                          <table
-                            v-if="check.progress_lists.length > 0"
+                         <table                           
                             style="width:100%"
                             class="mt-1"
+                            v-if="check.progress_lists !== undefined"
                           >
                             <thead>
                               <tr>
@@ -812,7 +811,7 @@
                                   <span v-if="!progress.user"></span>
                                   <span v-else>
                                     {{
-                                      moment(progress.updatedAt).format(
+                                      moment(progress.updated_at).format(
                                         "DD MMM YYYY, h:mm a"
                                       )
                                     }}
@@ -820,7 +819,7 @@
                                 </td>
                                 <td>
                                   <span v-if="progress.user">
-                                    <span> {{ progress.user.fullName }}</span>
+                                    <span> {{ progress.user.full_name }}</span>
                                   </span>
                                   <span v-else>
                                     {{ $currentUser.full_name }}
@@ -871,6 +870,7 @@
                               </tr>
                             </tbody>
                           </table>
+                          
                           <div v-else class="text-danger">
                             No Checklist Progress Updates to Display
                           </div>
@@ -912,12 +912,13 @@
                   class="d-flex mb-2 w-100"
                   v-if="!file.link"
                 >
+
                   <div
                     class="input-group-text  d-inline clickable px-1 w-100 hover"
                     :class="{ 'btn-disabled': !file.uri }"
                     @click.prevent="downloadFile(file)"
                   >
-                    <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                    <span><i class="far fa-file mr-1"></i></span>
 
                     <input
                       readonly
@@ -1014,9 +1015,9 @@
         </div>
 
         <!-- RELATED TAB #5 -->
-        <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
+        <!-- <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
           <div class="row mx-3 mt-2">
-            <!-- RELATED TASKS -->
+          
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Tasks
               <span
@@ -1061,7 +1062,7 @@
                 </li>
               </ul>
             </div>
-            <!-- RELATED ISSUES -->
+         
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Issues
               <span
@@ -1106,7 +1107,7 @@
                 </li>
               </ul>
             </div>
-            <!-- RELATED RISKS -->
+          
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Risks
               <span
@@ -1152,11 +1153,11 @@
               </ul>
             </div>
           </div>
-        </div>
+        </div> -->
         
 
         <!-- UPDATE TAB 6 -->
-        <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
+        <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
           <div class="form-group mx-4 paginated-updates">
             <label class="font-sm">Updates:</label>
             <span
@@ -1190,9 +1191,9 @@
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
-                      <span v-if="note.updatedAt"
-                        >{{ note.user.fullName }} on
-                        {{ new Date(note.updatedAt).toLocaleString() }}</span
+                      <span v-if="note.updated_at"
+                        >{{ note.user.full_name }} on
+                        {{ new Date(note.updated_at).toLocaleString() }}</span
                       ><span v-else
                         >{{ $currentUser.full_name }} on
                         {{ new Date().toLocaleDateString() }}</span
@@ -1253,6 +1254,9 @@
 import axios from "axios";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs";
+import 'vue2-datepicker/index.css'
+ Vue.component('v2-date-picker', DatePicker)
+ import DatePicker from 'vue2-datepicker'
 import RelatedTaskMenu from "./../../shared/RelatedTaskMenu";
 import humps from "humps";
 import { mapGetters, mapMutations, mapActions } from "vuex";
@@ -1302,7 +1306,7 @@ export default {
             "Task Name",
             "Description",
             "Start Date",
-          
+            "Process Area",
             "Stage",
             "Start Date",
             "Date Closed",
@@ -1326,15 +1330,16 @@ export default {
           closable: false,
           form_fields: ["Files"],
         },
-        {
-          label: "Related",
-          key: "tab5",
-          closable: false,
-          form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab5",
+        //   closable: false,
+        //   disabled: true, 
+        //   form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
+        // },
         {
           label: "Updates",
-          key: "tab6",
+          key: "tab5",
           closable: false,
           form_fields: ["Progress", "Updates"],
         },
@@ -1361,8 +1366,8 @@ export default {
     INITIAL_TASK_STATE() {
       return {
         text: "",
-        startDate: "",
-        dueDate: "",
+        start_date: "",
+        due_date: "",
         facilityProjectId: this.$route.params.projectId,
         checklistDueDate: "",
         taskTypeId: "",
@@ -1416,6 +1421,9 @@ export default {
         return str;
       }
     },
+    log(e){
+// console.log("check.dueDate " + e)
+    },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
         behavior: "smooth",
@@ -1461,11 +1469,11 @@ export default {
       this.taskDeleted(this.DV_task);
       this.cancelSave();
     },
-    progressListTitleText(progressList) {
-      if (!progressList.id) return;
-      var date = moment(progressList.createdAt).format("MM/DD/YYYY");
-      var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.full_name} at ${date} ${time} `;
+    progressListTitleText(progress_list) {
+      if (!progress_list.id) return;
+      var date = moment(progress_list.created_at).format("MM/DD/YYYY");
+      var time = moment(progress_list.created_at).format("hh:mm:ss a");
+      return `${progress_list.user.full_name} at ${date} ${time} `;
     },
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
@@ -1501,7 +1509,7 @@ export default {
         (t) => t.id === this.DV_task.task_stage_id
       );
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
-        (t) => t.id === this.DV_task.facilityProjectId
+        (t) => t.id === this.DV_task.facility_project_id
       );
       if (this.DV_task.attach_files)
         this.addFile(this.DV_task.attach_files, false);
@@ -1579,7 +1587,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_task = { ...this.DV_task, on_hold: !this.DV_task.on_hold };
-      this.DV_task.dueDate = '';
+      this.DV_task.due_date = '';
     },
     toggleDraft() {
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
@@ -1592,10 +1600,11 @@ export default {
       this.DV_task.due_date = '';
     },
     cancelSave() {
-      this.$emit("on-close-form");
+     this.$emit("on-close-form");
+    //  this.setTaskForManager({ key: "task", value: null });
     },
     saveTask() {
-      // if (!this._isallowed("write")) return;
+      if (!this._isallowed("write")) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -1706,16 +1715,16 @@ export default {
               continue;
             formData.append(`task[checklists_attributes][${i}][${key}]`, value);
             for (let pi in check.progress_lists) {
-              let progressList = check.progress_lists[pi];
-              if (!progressList.body && !progressList._destroy) continue;
-              for (let pkey in progressList) {
+              let progress_list = check.progress_lists[pi];
+              if (!progress_list.body && !progress_list._destroy) continue;
+              for (let pkey in progress_list) {
                 if (pkey === "user") pkey = "user_id";
                 let pvalue =
                   pkey == "user_id"
-                    ? progressList.user
-                      ? progressList.user.id
+                    ? progress_list.user
+                      ? progress_list.user.id
                       : null
-                    : progressList[pkey];
+                    : progress_list[pkey];
                 pkey = humps.decamelize(pkey);
                 if (["created_at", "updated_at"].includes(pkey)) continue;
                 formData.append(
@@ -1769,12 +1778,9 @@ export default {
           },
         })
           .then((response) => {
-            // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            var responseTask = humps.camelizeKeys(response.data.task);
-            this.loadTask(responseTask);
-            //this.$emit(callback, responseTask)
-            this.updateTasksHash({ task: responseTask });
+           
+            this.loadTask(response.data.task);
+            this.updateTasksHash({ task: response.data.task });
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1788,18 +1794,20 @@ export default {
                 `/portfolio`
               );
           })
-          .catch((err) => {
-            alert(err.response.data.error);
-          })
+          // .catch((err) => {
+          //   alert(err.response.data.error);
+          // })
           .finally(() => {
             this.loading = false;
           });
       });
     },
     addProgressList(check) {
-      var postion = check.progress_lists.length;
-      check.progress_lists.push({ body: "", position: postion });
-      this.editToggle = true;
+      if (check.progress_lists !== undefined || null) {
+       var postion = check.progress_lists.length;
+        check.progress_lists.push({ body: "", position: postion });
+          this.editToggle = true;
+      }   
     },
     addChecks() {
       var postion = this.DV_task.checklists.length;
@@ -1834,8 +1842,8 @@ export default {
     },
     noteBy(note) {
       return note.user
-        ? `${note.user.fullName} at ${new Date(
-            note.createdAt
+        ? `${note.user.full_name} at ${new Date(
+            note.created_at
           ).toLocaleString()}`
         : `${this.$currentUser.full_name} at (Now)`;
     },
@@ -1843,15 +1851,15 @@ export default {
       let url = window.location.origin + file.uri;
       window.open(url, "_blank");
     },
-    destroyProgressList(check, progressList, index) {
+    destroyProgressList(check, progress_list, index) {
       let confirm = window.confirm(
         `Are you sure you want to delete this Progress List item?`
       );
       if (!confirm) return;
-      let i = progressList.id
-        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
+      let i = progress_list.id
+        ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
         : index;
-      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progress_list, _destroy: true });
       this.saveTask();
     },
     destroyCheck(check, index) {
@@ -1893,8 +1901,8 @@ export default {
         if (!event.target.value) this.DV_task.checklists[index].checked = false;
       } else if (name === "check" && this.DV_task.checklists[index].text) {
         this.DV_task.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_task.checklists[index].text) {
-        this.DV_task.checklists[index].dueDate = event.target.value;
+      } else if (name === "due_date" && this.DV_task.checklists[index].text) {
+        this.DV_task.checklists[index].due_date = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -1904,8 +1912,8 @@ export default {
         input.name = event.target.value;
       }
     },
-    updateProgressListItem(event, name, progressList) {
-      progressList.body = event.target.value;
+    updateProgressListItem(event, name, progress_list) {
+      progress_list.body = event.target.value;
     },
     isMyCheck(check) {
       return this.C_myTasks && check.id
@@ -1915,19 +1923,19 @@ export default {
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
-      var dueDate = new Date(this.DV_task.due_date);
-      dueDate.setDate(dueDate.getDate() + 1);
-      return date < new Date(this.DV_task.start_date) || date > dueDate;
+      var due_date = new Date(this.DV_task.due_date);
+      due_date.setDate(due_date.getDate() + 1);
+      return date < new Date(this.DV_task.start_date) || date > due_date;
     },
     openContextMenu(e, item) {
       e.preventDefault();
@@ -1964,6 +1972,7 @@ export default {
   computed: {
     ...mapGetters([
       "activeProjectUsers",
+      'portfolioTaskLoaded',
       "portfolioUsers",
       "currentIssues",
       "currentProject",
@@ -2051,7 +2060,7 @@ export default {
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_task.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },
@@ -2225,260 +2234,5 @@ export default {
 <style scoped lang="scss">
 // .tasks-form {
 // }
-td,
-th {
-  border: solid 1px #ededed;
-  padding: 1px 3px;
-}
-tbody {
-  background-color: #fff;
-}
 
-th {
-  background: #ededed;
-  color: #383838;
-  padding: 1px 3px;
-}
-.error {
-  border-color: #e84444;
-}
-.checklist-text {
-  margin-left: 5px;
-  min-height: 33px;
-  border: 0;
-  width: 95%;
-  outline: none;
-  border: solid #ededed 1px;
-  border-radius: 4px;
-}
-.drag {
-  cursor: all-scroll;
-}
-.del-check {
-  position: absolute;
-  display: flex;
-  font-weight: 500;
-  right: 2rem;
-  background: transparent;
-  height: fit-content;
-  color: #dc3545;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-.paperLook {
-  padding-bottom: 20px;
-  margin-bottom: 10px;
-  position: relative;
-}
-.paginate-links.filteredNotes {
-  list-style: none !important;
-  user-select: none;
-  text-decoration-line: none !important;
-  margin-bottom: 18px;
-  a {
-    width: 20px;
-    height: 25px;
-    margin-right: 0;
-    border-radius: 2px;
-    background-color: white;
-    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-      0 3px 3px rgba(56, 56, 56, 0.23);
-    color: #383838;
-    padding: 5px 12px;
-    cursor: pointer;
-    text-decoration-line: none !important;
-  }
-  a:hover {
-    background-color: #ededed;
-  }
-  li.active a {
-    font-weight: bold;
-    color: #383838;
-    background-color: rgba(211, 211, 211, 10%);
-  }
-  a.active {
-    background-color: rgba(211, 211, 211, 10%);
-  }
-  li.next:before {
-    content: " | ";
-    margin-right: 13px;
-    color: #ddd;
-  }
-  li.disabled a {
-    color: #ccc;
-    cursor: no-drop;
-  }
-  li {
-    display: inline !important;
-    margin: 1px;
-    color: #383838 !important;
-  }
-}
-.red-border {
-  border: solid 0.5px red;
-}
-.sticky-btn {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
-    0 1px 1px rgba(56, 56, 56, 0.23);
-}
-
-.scrollToChecklist,
-.addCheckProgBtn,
-.check-items {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 1px 1px rgba(56, 56, 56, 0.23);
-}
-.addCheckProgBtn:hover {
-  background-color: lightgray !important;
-}
-.check-due-date {
-  text-align: end;
-}
-.disabled {
-  opacity: 0.6;
-}
-.simple-select /deep/ .multiselect {
-  .multiselect__placeholder {
-    text-overflow: ellipsis;
-  }
-}
-.custom-tab {
-  background-color: #fff;
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-.fixed-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 275px);
-}
-.display-length {
-  border-radius: 0.15rem;
-  margin-right: 12px;
-}
-.fa-building {
-  font-size: large !important;
-  color: #383838 !important;
-}
-.error-list {
-  list-style-type: circle;
-  li {
-    width: max-content;
-  }
-}
-.text-danger {
-  font-size: 13px;
-}
-.overflow-ellipsis {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-/deep/.el-collapse-item__header {
-  background-color: #fafafa;
-}
-/deep/ .el-collapse {
-  border-top: none !important;
-  border-bottom: none !important;
-}
-/deep/.el-collapse-item__content {
-  padding-bottom: 0 !important;
-}
-/deep/.el-collapse-item__header {
-  background-color: #fafafa;
-}
-#roll_up {
-  /deep/.el-collapse-item__header {
-    float: right;
-    padding: 1em;
-    margin-top: -36px;
-    color: #d9534f !important;
-    border-bottom: none !important;
-    background-color: #fafafa !important;
-  }
-}
-.informed.el-input__inner {
-  height: 32px;
-}
-.no-text-decoration:link {
-  text-decoration: none;
-  color: #495057;
-  text-decoration-color: none;
-}
-.no-text-decoration:active {
-  text-decoration: none;
-  color: #495057;
-  text-decoration-color: none;
-}
-.no-text-decoration:visited {
-  text-decoration: none;
-  color: #495057;
-  text-decoration-color: none;
-}
-.hover {
-  background: transparent;
-  border-radius: 0 !important;
-}
-.hover:hover {
-  cursor: pointer;
-  background-color: rgba(91, 192, 222, 0.3);
-}
-input.file-link {
-  outline: 0 none;
-}
-.clearStageBtn {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-
-.exampleTwo.el-steps,
-.exampleTwo.el-steps--simple {
-  border: 1px solid #dcdfe6;
-  background: #fff;
-}
-
-.overSixSteps {
-  /deep/.el-step__title {
-    font-size: 11px !important;
-    line-height: 23px !important;
-    margin: 5px !important;
-  }
-}
-a {
-  color: #007bff;
-}
-a:hover {
-  text-decoration: unset;
-}
-.text-smaller {
-  font-size: smaller;
-}
-.update-card {
-  background-color: #ededed;
-  border-color: lightgray;
-  border-left: 10px solid #5aaaff;
-}
-
-.tagsCol, .statesCol {  
-  border: .5px solid lightgray;
-}
-.statesCol {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.tagsCol {
-  background-color: #f8f9fa;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-
-}
 </style>

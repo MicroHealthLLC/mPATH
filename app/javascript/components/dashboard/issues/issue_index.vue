@@ -27,6 +27,7 @@
       track-by="name" 
       value-key="id"
       multiple                                                                                                                                               
+      clearable
       placeholder="Select Process Area"
       >
     <el-option 
@@ -45,6 +46,7 @@
         track-by="name"
         value-key="id"
         multiple
+        clearable
         placeholder="Filter by Issue Types"
       >
       <el-option
@@ -62,6 +64,7 @@
         track-by="name"
         value-key="id"
         multiple
+        clearable
         placeholder="Filter by Issue Severities"
       >
       <el-option

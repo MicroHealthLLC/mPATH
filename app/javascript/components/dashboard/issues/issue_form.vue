@@ -535,6 +535,7 @@ Tab 1 Row Begins here -->
                 track-by="id"
                 value-key="id"
                 :multiple="true"
+                clearable
                 placeholder="Search and select Consulted Users"
                 :disabled="!_isallowed('write')"
                 filterable
@@ -559,6 +560,7 @@ Tab 1 Row Begins here -->
                 value-key="id"
                 multiple
                 filterable
+                clearable
                 placeholder="Search and select Informed Users"
                 :disabled="!_isallowed('write')"
               >

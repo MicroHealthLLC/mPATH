@@ -6,7 +6,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)">   
     <!-- <tabsbar></tabsbar> -->
-    <portfolio-filter-sidebar v-if="portfolioTasksLoaded"></portfolio-filter-sidebar>
+    <portfolio-filter-sidebar></portfolio-filter-sidebar>
     <router-view></router-view>
   </div>
 </template>

@@ -530,6 +530,7 @@
                   track-by="id"
                   value-key="id"
                   :multiple="true"
+                  clearable
                   placeholder="Search and select Consulted Users"
                   :disabled="!_isallowed('write')"
                   filterable
@@ -551,6 +552,7 @@
                   track-by="id"
                   value-key="id"
                   multiple
+                  clearable
                   filterable
                   placeholder="Search and select Informed Users"
                   :disabled="!_isallowed('write')"

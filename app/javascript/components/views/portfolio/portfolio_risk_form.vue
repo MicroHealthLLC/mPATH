@@ -2,7 +2,7 @@
   <div>
     <form
       @submit.prevent="validateThenSave"
-      class="risks-form mx-auto"
+      class="portfolio-risk-form mx-auto"
       :class="{
         _disabled: loading,
       }"
@@ -1314,14 +1314,12 @@
                             :readonly="!_isallowed('write')"
                           />
                         </div>
-                        <div
-                          v-if="isSheetsView || isKanbanView || isCalendarView"
+                        <div                      
                           class="col-1 pl-0 pr-0"
                         >
                           <span class="font-sm dueDate">Due Date:</span>
                         </div>
-                        <div
-                          v-if="isSheetsView || isKanbanView || isCalendarView"
+                        <div                        
                           class="col-3 pl-0"
                           style="margin-left: -25px"
                         >
@@ -1330,13 +1328,13 @@
                             :value="check.due_date"
                             :disabled="!_isallowed('write') || !check.text"
                             @selected="
-                              updateCheckItem($event, 'dueDate', index)
+                              updateCheckItem($event, 'due_date', index)
                             "
                             :key="`dueDate_${index}`"
                             value-type="YYYY-MM-DD"
                             format="DD MMM YYYY"
                             placeholder="DD MM YYYY"
-                            name="dueDate"
+                            name="due_date"
                             class="w-100 vue2-datepicker d-flex ml-auto"
                             :disabled-date="disabledDateRange"
                             :class="{ disabled: disabledDateRange }"
@@ -1372,13 +1370,13 @@
                                 :value="check.due_date"
                                 :disabled="!_isallowed('write') || !check.text"
                                 @selected="
-                                  updateCheckItem($event, 'dueDate', index)
+                                  updateCheckItem($event, 'due_date', index)
                                 "
-                                :key="`dueDate_${index}`"
+                                :key="`due_date_${index}`"
                                 value-type="YYYY-MM-DD"
                                 format="DD MMM YYYY"
                                 placeholder="DD MM YYYY"
-                                name="dueDate"
+                                name="due_date"
                                 class="w-100 vue2-datepicker d-flex ml-auto"
                                 :disabled-date="disabledDateRange"
                                 :class="{ disabled: disabledDateRange }"
@@ -1437,10 +1435,7 @@
                             Progress Update
                             <span v-if="editToggle">
                               <span class="ml-2 clickable">
-                                <font-awesome-icon
-                                  icon="plus-circle"
-                                  class="mr-1 text-danger"
-                                />
+                             <i class="fal fa-plus-circle mr-1 text-danger"></i>
                               </span>
                             </span>
                             <span v-else>
@@ -1449,15 +1444,12 @@
                                 v-if="_isallowed('write')"
                                 @click.prevent="addProgressList(check)"
                               >
-                                <font-awesome-icon
-                                  icon="plus-circle"
-                                  class="mr-1"
-                                />
+                              <i class="fas fa-plus-circle mr-1"></i>
                               </span>
                             </span>
 
                             <table
-                              v-if="check.progressLists.length > 0"
+                              v-if="check.progress_lists !== undefined"
                               style="width: 100%"
                               class="mt-1"
                             >
@@ -1479,7 +1471,7 @@
                               <tbody>
                                 <tr
                                   v-for="(progress,
-                                  pindex) in check.progressLists
+                                  pindex) in check.progress_lists
                                     .slice()
                                     .reverse()"
                                   :key="pindex"
@@ -1515,7 +1507,7 @@
                                     <span v-if="!progress.user"></span>
                                     <span v-else>
                                       {{
-                                        moment(progress.updatedAt).format(
+                                        moment(progress.updated_at).format(
                                           "DD MMM YYYY, h:mm a"
                                         )
                                       }}
@@ -1523,7 +1515,7 @@
                                   </td>
                                   <td>
                                     <span v-if="progress.user">
-                                      <span> {{ progress.user.fullName }}</span>
+                                      <span> {{ progress.user.full_name }}</span>
                                     </span>
                                     <span v-else>
                                       {{ $currentUser.full_name }}
@@ -1620,7 +1612,7 @@
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                      <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                    <span><i class="far fa-file mr-1"></i></span>
                       <input
                         readonly
                         type="text"
@@ -1652,7 +1644,7 @@
 
                     <div
                       v-for="(file,
-                      index) in DV_risk.riskFiles.slice().reverse()"
+                      index) in DV_risk.risk_files.slice().reverse()"
                       :key="index"
                       class="d-flex mb-2 w-75"
                       v-if="!file.id && file.link"
@@ -1720,9 +1712,9 @@
           <!-- END RISK CONTROL TAB SECTION -->
 
           <!-- BEGIN RISK RELATED TAB SECTION -->
-          <div v-show="currentTab == 'tab6'" class="paperLookTab">
+          <!-- <div v-show="currentTab == 'tab6'" class="paperLookTab">
             <div class="row mx-3 mt-2">
-              <!-- RELATED RISKS -->
+            
               <div :class="[isMapView ? 'col-12' : 'col']">
                 Related Risks
                 <span
@@ -1767,7 +1759,7 @@
                   </li>
                 </ul>
               </div>
-              <!-- RELATED TASKS -->
+           
               <div :class="[isMapView ? 'col-12' : 'col']">
                 Related Tasks
                 <span
@@ -1812,7 +1804,7 @@
                   </li>
                 </ul>
               </div>
-              <!-- RELATED ISSUES -->
+            
               <div :class="[isMapView ? 'col-12' : 'col']">
                 Related Issues
                 <span
@@ -1858,12 +1850,12 @@
                 </ul>
               </div>
             </div>
-          </div>
+          </div> -->
           <!-- END RISK RELATED TAB SECTION -->
 
           <!-- BEGIN RISK DISPOSITION SECTION TAB -->
           <div
-            v-show="currentTab == 'tab7'"
+            v-show="currentTab == 'tab6'"
             style="min-height: 300px"
             class="paperLookTab"
           >
@@ -1881,22 +1873,19 @@
                   :readonly="!_isallowed('write')"
                   data-cy="risk_explanation"
                  
-                />
-              
+                />              
               </div>
-
               <div class="d-flex mb-1 mx-4 form-group">
                 <div class="simple-select form-group w-50">
                   <label class="font-md"
                     >Status</label
                   >
                   <el-select
-                    v-model="selectedStatus"                  
+                    v-model="selectedStatus"                                            
                     class="w-100"
-                    track-by="name" 
-                    clearable               
-                    :disabled="!_isallowed('write')"
-                    data-cy="risk_status"                  
+                    clearable
+                    track-by="name"                  
+                    :disabled="!_isallowed('write')"                                 
                     placeholder="Risk Disposition Status"
                   >
                     <el-option
@@ -1907,16 +1896,15 @@
                       class="upperCase"
                     >
                     </el-option>
-                  </el-select>
-
-                  
+                  </el-select>                  
                 </div>
                   <div class="simple-select form-group w-50 ml-4">
                   <label class="font-md"
                     >Duration</label
                   >
                   <el-select
-                    v-model="selectedDuration"                            
+                    v-model="selectedDuration"  
+                                           
                     class="w-100"
                     clearable
                     track-by="name"                  
@@ -1977,9 +1965,9 @@
                     <div class="font-sm">
                       <el-tag size="mini"
                         ><span class="font-weight-bold">Submitted by:</span>
-                        <span v-if="note.updatedAt"
-                          >{{ note.user.fullName }} on
-                          {{ new Date(note.updatedAt).toLocaleString() }}</span
+                        <span v-if="note.updated_at"
+                          >{{ note.user.full_name }} on
+                          {{ new Date(note.updated_at).toLocaleString() }}</span
                         ><span v-else
                           >{{ $currentUser.full_name }} on
                           {{ new Date().toLocaleDateString() }}</span
@@ -2045,6 +2033,9 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
 import {API_BASE_PATH} from './../../../mixins/utils'
+import 'vue2-datepicker/index.css'
+ Vue.component('v2-date-picker', DatePicker)
+ import DatePicker from 'vue2-datepicker'
 
 export default {
   name: "portfolioRiskForm",
@@ -2123,11 +2114,12 @@ export default {
           key: "tab5",
           closable: false,
         },
-        {
-          label: "Related",
-          key: "tab6",
-          closable: false,
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab6",
+        //   disabled: true, 
+        //   closable: false,
+        // },
         {
           label: "Updates",
           key: "tab8",
@@ -2135,7 +2127,7 @@ export default {
         },
         {
           label: "Disposition",
-          key: "tab7",
+          key: "tab6",
           closable: false,
           disabled: false,
         },
@@ -2176,7 +2168,7 @@ export default {
         text: "",
         facilityProjectId: this.$route.params.projectId,
         text: "",
-        riskDescription: "",
+        risk_description: "",
         explanation: "",
         impactDescription: "",
         probabilityDescription: "",
@@ -2191,11 +2183,11 @@ export default {
         probabilityName: "1 - Rare",
         impactLevelName: "1 - Negligible",
         progress: 0,
-        startDate: "",
+        start_date: "",
         getRiskImpactLevelNames: "1 - Negligible",
-        getRiskDispositionDuration: "Nothing Selected",
-        getRiskDispositionStatus: "Nothing Selected",
-        dueDate: "",
+        // getRiskDispositionDuration: "Nothing Selected",
+        // getRiskDispositionStatus: "Nothing Selected",
+        due_date: "",
         autoCalculate: true,
         important: false,
         reportable: false, 
@@ -2207,7 +2199,7 @@ export default {
         accountable_user_ids: [],
         consulted_user_ids: [],
         informed_user_ids: [],
-        riskFiles: [],
+        risk_files: [],
         sub_task_ids: [],
         sub_risk_ids: [],
         sub_issue_ids: [],
@@ -2215,9 +2207,6 @@ export default {
         notes: [],
       };
     },
-      //  log(e){
-      //     console.log("This is the riskDispStatus item: " + e)
-      // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;
@@ -2319,11 +2308,11 @@ export default {
         this.selectedDuration = this.getRiskDispositionDuration.find(
         (t) => t.id === this.DV_risk.duration
       );
-        this.selectedStatus = this.getRiskDispositionStatus.find(
+       this.selectedStatus = this.getRiskDispositionStatus.find(
         (t) => t.id === this.DV_risk.status
       );
-      if (this.DV_risk.attachFiles)
-        this.addFile(this.DV_risk.attachFiles, false);
+      if (this.DV_risk.attach_files)
+        this.addFile(this.DV_risk.attach_files, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -2331,12 +2320,12 @@ export default {
       });
     },
     addFile(files = [], append = true) {
-      let _files = append ? [...this.DV_risk.riskFiles] : [];
+      let _files = append ? [...this.DV_risk.risk_files] : [];
       for (let file of files) {
         file.guid = this.guid();
         _files.push(file);
       }
-      this.DV_risk.riskFiles = _files;
+      this.DV_risk.risk_files = _files;
     },
     deleteRisk() {
       let confirm = window.confirm(
@@ -2355,20 +2344,20 @@ export default {
       );
       if (!confirm) return;
       if (file.uri || file.link) {
-        let index = this.DV_risk.riskFiles.findIndex(
+        let index = this.DV_risk.risk_files.findIndex(
           (f) => f.guid === file.guid
         );
         if (file.id) {
-          Vue.set(this.DV_risk.riskFiles, index, { ...file, _destroy: true });
+          Vue.set(this.DV_risk.risk_files, index, { ...file, _destroy: true });
           this.destroyedFiles.push(file);
         }
-        this.DV_risk.riskFiles.splice(
-          this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
+        this.DV_risk.risk_files.splice(
+          this.DV_risk.risk_files.findIndex((f) => f.guid === file.guid),
           1
         );
       } else if (file.name) {
-        this.DV_risk.riskFiles.splice(
-          this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
+        this.DV_risk.risk_files.splice(
+          this.DV_risk.risk_files.findIndex((f) => f.guid === file.guid),
           1
         );
       }
@@ -2403,11 +2392,11 @@ export default {
     },
     toggleOngoing() {
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
-      this.DV_risk.dueDate = '';
+      this.DV_risk.due_date = '';
     },
     toggleOnhold() {
         this.DV_risk = { ...this.DV_risk, on_hold: !this.DV_risk.on_hold };
-        this.DV_risk.dueDate = '';
+        this.DV_risk.due_date = '';
       },
     toggleDraft() {
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
@@ -2424,10 +2413,10 @@ export default {
       if(!this._isallowed("write"))
         return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
-      this.DV_risk.approvalTime =
+      this.DV_risk.approval_time =
         this.$currentUser.full_name + " on " + new Date().toLocaleString();
       if (!this.DV_risk.approved) {
-        this.DV_risk.approvalTime = "";
+        this.DV_risk.approval_time = "";
       }
       this.updateApprovedRisks(this.DV_risk);
       this.validateThenSave(e);
@@ -2445,11 +2434,11 @@ export default {
       this.editToggle = !this.editToggle;
       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
     },
-    progressListTitleText(progressList) {
-      if (!progressList.id) return;
-      var date = moment(progressList.createdAt).format("MM/DD/YYYY");
-      var time = moment(progressList.createdAt).format("hh:mm:ss a");
-      return `${progressList.user.fullName} at ${date} ${time} `;
+    progressListTitleText(progress_list) {
+      if (!progress_list.id) return;
+      var date = moment(progress_list.created_at).format("MM/DD/YYYY");
+      var time = moment(progress_list.created_at).format("hh:mm:ss a");
+      return `${progress_list.user.full_name} at ${date} ${time} `;
     },
     cancelRiskSave() {
       this.$emit("on-close-form");
@@ -2466,7 +2455,7 @@ export default {
         this.loading = true;
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
-        formData.append("risk[risk_description]", this.DV_risk.riskDescription);
+        formData.append("risk[risk_description]", this.DV_risk.risk_description);
         if (!this.DV_risk.explanation) {
           formData.append("risk[explanation]",'')
         } else {
@@ -2474,11 +2463,11 @@ export default {
         }      
         formData.append(
           "risk[impact_description]",
-          this.DV_risk.impactDescription
+          this.DV_risk.impact_description
         );
         formData.append(
           "risk[probability_description]",
-          this.DV_risk.probabilityDescription
+          this.DV_risk.probability_description
         );
         formData.append(
           "risk[probability_name]",
@@ -2492,10 +2481,9 @@ export default {
         if (this.selectedStatus) {        
           formData.append("risk[status]", this.selectedStatus.id);
           formData.append("risk[status_name]", this.selectedStatus.name);
-           
-        } else {
-           formData.append("risk[status]", null);
-           formData.append("risk[status_name]", '');
+        } else {          
+            formData.append("risk[status_name]", '');
+            formData.append("risk[status]", null);
         }
                 
         if (this.selectedDuration) {
@@ -2510,14 +2498,14 @@ export default {
         formData.append("risk[risk_approach]", this.DV_risk.risk_approach);
         formData.append(
           "risk[risk_approach_description]",
-          this.DV_risk.riskApproachDescription
+          this.DV_risk.risk_approach_description
         );
         formData.append("risk[approval_time]", this.DV_risk.approval_time);     
         formData.append("risk[task_type_id]", this.DV_risk.task_type_id);
         formData.append("risk[risk_stage_id]", this.DV_risk.risk_stage_id);
         formData.append("risk[progress]", this.DV_risk.progress);
         formData.append("risk[start_date]", this.DV_risk.start_date);
-        formData.append("risk[due_date]", this.DV_risk.dueDate);
+        formData.append("risk[due_date]", this.DV_risk.due_date);
         formData.append("risk[auto_calculate]", this.DV_risk.auto_calculate);
         formData.append("risk[important]", this.DV_risk.important);
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
@@ -2614,17 +2602,17 @@ export default {
               continue;
             formData.append(`risk[checklists_attributes][${i}][${key}]`, value);
 
-            for (let pi in check.progressLists) {
-              let progressList = check.progressLists[pi];
-              if (!progressList.body && !progressList._destroy) continue;
-              for (let pkey in progressList) {
+            for (let pi in check.progress_lists) {
+              let progress_list = check.progress_lists[pi];
+              if (!progress_list.body && !progress_list._destroy) continue;
+              for (let pkey in progress_list) {
                 if (pkey === "user") pkey = "user_id";
                 let pvalue =
                   pkey == "user_id"
-                    ? progressList.user
-                      ? progressList.user.id
+                    ? progress_list.user
+                      ? progress_list.user.id
                       : null
-                    : progressList[pkey];
+                    : progress_list[pkey];
 
                 pkey = humps.decamelize(pkey);
                 if (["created_at", "updated_at"].includes(pkey)) continue;
@@ -2653,7 +2641,7 @@ export default {
             formData.append(`risk[notes_attributes][${i}][${key}]`, value);
           }
         }
-        for (let file of this.DV_risk.riskFiles) {
+        for (let file of this.DV_risk.risk_files) {
           if (file.id) continue;
           if (!file.link) {
             formData.append("risk[risk_files][]", file);
@@ -2681,10 +2669,8 @@ export default {
           },
         })
           .then((response) => {
-            var responseRisk = humps.camelizeKeys(response.data.risk);
-            this.loadRisk(responseRisk);
-            //this.$emit(callback, responseRisk);
-            this.updateRisksHash({ risk: responseRisk });
+           this.loadRisk(response.data.risk);
+           this.updateRisksHash({ risk: response.data.risk });
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,
@@ -2707,7 +2693,7 @@ export default {
       });
     },
     addFilesInput() {
-      this.DV_risk.riskFiles.push({
+      this.DV_risk.risk_files.push({
         name: "",
         uri: "",
         link: true,
@@ -2715,19 +2701,21 @@ export default {
       });
     },
     addProgressList(check) {
-      var postion = check.progressLists.length;
-      check.progressLists.push({ body: "", position: postion });
-      this.editToggle = true;
+      if (check.progress_lists !== undefined || null) {
+       var postion = check.progress_lists.length;
+        check.progress_lists.push({ body: "", position: postion });
+          this.editToggle = true;
+      }
     },
-    destroyProgressList(check, progressList, index) {
+    destroyProgressList(check, progress_list, index) {
       let confirm = window.confirm(
         `Are you sure you want to delete this Progress List item?`
       );
       if (!confirm) return;
-      let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
+      let i = progress_list.id
+        ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
         : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+      Vue.set(check.progress_lists, i, { ...progress_list, _destroy: true });
       this.validateThenSave();
     },
     downloadFile(file) {
@@ -2736,7 +2724,7 @@ export default {
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_risk.startDate);
+      const startDate = new Date(this.DV_risk.start_date);
       startDate.setHours(48, 0, 0, 0);
       // console.log(startDate)
       return date < startDate;
@@ -2762,8 +2750,8 @@ export default {
     },
     noteBy(note) {
       return note.user
-        ? `${note.user.fullName} at ${new Date(
-            note.createdAt
+        ? `${note.user.full_name} at ${new Date(
+            note.created_at
           ).toLocaleString()}`
         : `${this.$currentUser.full_name} at (Now)`;
     },
@@ -2803,8 +2791,8 @@ export default {
         if (!event.target.value) this.DV_risk.checklists[index].checked = false;
       } else if (name === "check" && this.DV_risk.checklists[index].text) {
         this.DV_risk.checklists[index].checked = event.target.checked;
-      } else if (name === "dueDate" && this.DV_risk.checklists[index].text) {
-        this.DV_risk.checklists[index].dueDate = event.target.value;
+      } else if (name === "due_date" && this.DV_risk.checklists[index].text) {
+        this.DV_risk.checklists[index].due_date = event.target.value;
       }
     },
     updateFileLinkItem(event, name, input) {
@@ -2814,8 +2802,8 @@ export default {
         input.name = event.target.value;
       }
     },
-    updateProgressListItem(event, name, progressList) {
-      progressList.body = event.target.value;
+    updateProgressListItem(event, name, progress_list) {
+      progress_list.body = event.target.value;
     },
     isMyCheck(check) {
       return this.C_myRisks && check.id
@@ -2825,19 +2813,19 @@ export default {
     allowDeleteNote(note) {
       return (
         (this._isallowed("delete") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     allowEditNote(note) {
       return (
         (this._isallowed("write") && note.guid) ||
-        note.userId == this.$currentUser.id
+        note.user_id == this.$currentUser.id
       );
     },
     disabledDateRange(date) {
-      var dueDate = new Date(this.DV_risk.dueDate);
+      var dueDate = new Date(this.DV_risk.due_date);
       dueDate.setDate(dueDate.getDate() + 1);
-      return date < new Date(this.DV_risk.startDate) || date > dueDate;
+      return date < new Date(this.DV_risk.start_date) || date > dueDate;
     },
     errorLocation(error) {
       var identifyTabFields = [
@@ -2923,8 +2911,11 @@ export default {
       "riskApproaches",
       'riskDispositionStatuses',
       'riskDispositionDuration',
-      "riskStages",
+      "portfolioRiskStages",
      ]),
+    riskStages(){
+      return this.portfolioRiskStages
+    },
     riskStagesSorted() {
       var riskStagesSortedReturn = [...this.riskStages]; 
       return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
@@ -2945,7 +2936,7 @@ export default {
         this.exists(this.DV_risk.risk_approach) &&
         // this.exists(this.DV_risk.riskApproachDescription) &&
         this.exists(this.DV_risk.task_type_id) &&
-        this.exists(this.DV_risk.star_date) &&
+        this.exists(this.DV_risk.start_date) &&
         this.exists(this.DV_risk.due_date)
       );
     },
@@ -2971,7 +2962,7 @@ export default {
       return _.filter(this.DV_risk.checklists, (c) => !c._destroy);
     },
     filteredFiles() {
-      return _.filter(this.DV_risk.riskFiles, (f) => !f._destroy);
+      return _.filter(this.DV_risk.risk_files, (f) => !f._destroy);
     },
     C_myRisks() {
       return _.map(this.myActionsFilter, "value").includes("risks");
@@ -3014,7 +3005,7 @@ export default {
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_risk.notes, (n) => !n._destroy),
-        "createdAt",
+        "created_at",
         "desc"
       );
     },
@@ -3218,7 +3209,7 @@ export default {
         if (risk && risk.id) {
           this.DV_risk = this.INITIAL_RISK_STATE();
         } 
-        this.DV_risk.riskFiles = [];
+        this.DV_risk.risk_files = [];
         this.destroyedFiles = [];
         if (risk) {
           this.loadRisk(risk);
@@ -3226,22 +3217,22 @@ export default {
       },
       deep: true,
     },
-    "DV_risk.startDate"(value) {
-      if (!value) this.DV_risk.dueDate = "";
+    "DV_risk.start_date"(value) {
+      if (!value) this.DV_risk.due_date = "";
     },
-    "DV_risk.dueDate"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_risk.due_date"(value) {
+    //   if (this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_risk.checklists": {
       handler: function(value) {
-        if (this.DV_risk.autoCalculate) this.calculateProgress(value);
+        if (this.DV_risk.auto_calculate) this.calculateProgress(value);
       },
       deep: true,
     },
@@ -3251,11 +3242,11 @@ export default {
     responsibleUsers: {
       handler: function(value) {
         if (value) {
-          this.DV_risk.responsibleUserIds = _.uniq(
+          this.DV_risk.responsible_user_ids = _.uniq(
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_risk.responsibleUserIds = null;
+          this.DV_risk.responsible_user_ids = null;
         }
       },
       deep: true,
@@ -3263,11 +3254,11 @@ export default {
     accountableRiskUsers: {
       handler: function(value) {
         if (value) {
-          this.DV_risk.accountableUserIds = _.uniq(
+          this.DV_risk.accountable_user_ids = _.uniq(
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_risk.accountableUserIds = null;
+          this.DV_risk.accountable_user_ids = null;
         }
       },
       deep: true,
@@ -3275,9 +3266,9 @@ export default {
     consultedRiskUsers: {
       handler: function(value) {
         if (value) {
-          this.DV_risk.consultedUserIds = _.uniq(_.map(value, "id"));
+          this.DV_risk.consulted_user_ids = _.uniq(_.map(value, "id"));
         } else {
-          this.DV_risk.consultedUserIds = [];
+          this.DV_risk.consulted_user_ids = [];
         }
       },
       deep: true,
@@ -3285,34 +3276,34 @@ export default {
     informedRiskUsers: {
       handler: function(value) {
         if (value) {
-          this.DV_risk.informedUserIds = _.uniq(_.map(value, "id"));
+          this.DV_risk.informed_user_ids = _.uniq(_.map(value, "id"));
         } else {
-          this.DV_risk.informedUserIds = [];
+          this.DV_risk.informed_user_ids = [];
         }
       },
       deep: true,
     },
     relatedIssues: {
       handler: function(value) {
-        if (value) this.DV_risk.subIssueIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_risk.sub_issue_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedTasks: {
       handler: function(value) {
-        if (value) this.DV_risk.subTaskIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_risk.sub_task_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedRisks: {
       handler: function(value) {
-        if (value) this.DV_risk.subRiskIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_risk.sub_risk_ids = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     selectedTaskType: {
       handler: function(value) {
-        this.DV_risk.taskTypeId = value ? value.id : null;
+        this.DV_risk.task_type_id = value ? value.id : null;
       },
       deep: true,
     },
@@ -3324,15 +3315,14 @@ export default {
     },
    selectedDuration: {
       handler: function(value) {
-        this.DV_risk.duration = value ? value.id : null;
-      
+        this.DV_risk.duration = value ? value.id : null;      
       },
       deep: true,
     },
     selectedRiskStage: {
       handler: function(value) {
         // console.log("This is the watcher id value: " + value.id)
-        this.DV_risk.riskStageId = value ? value.id : null;
+        this.DV_risk.risk_stage_id = value ? value.id : null;
       },
       deep: true,
     },
