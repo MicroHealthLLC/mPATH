@@ -682,7 +682,7 @@ Tab 1 Row Begins here -->
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
                           name="due_date"
-                          class="w-100 vue2-datepicker d-flex ml-auto"
+                          class=""
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
                         />

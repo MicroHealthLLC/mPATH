@@ -27,8 +27,8 @@ body {
 }  
 
 .portfolio-task-form {
-  td,
-th {
+  
+td,th {
   border: solid 1px #ededed;
   padding: 1px 3px;
 }
@@ -180,21 +180,21 @@ ul {
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
-/deep/ .el-collapse-item__header {
+.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/ .el-collapse {
+.el-collapse {
   border-top: none !important;
   border-bottom: none !important;
 }
-/deep/.el-collapse-item__content {
+.el-collapse-item__content {
   padding-bottom: 0 !important;
 }
-/deep/.el-collapse-item__header {
+.el-collapse-item__header {
   background-color: #fafafa;
 }
 #roll_up {
-  /deep/.el-collapse-item__header {
+  .el-collapse-item__header {
     float: right;
     padding: 1em;
     margin-top: -36px;
@@ -244,7 +244,7 @@ input.file-link {
 }
 
 .overSixSteps {
-  /deep/.el-step__title {
+  .el-step__title {
     font-size: 11px !important;
     line-height: 23px !important;
     margin: 5px !important;
@@ -415,21 +415,21 @@ a:hover {
     cursor: all-scroll;
   }
   // Checklist feature UI
-  /deep/.el-collapse-item__header {
+  .el-collapse-item__header {
     background-color: #fafafa !important;
   }
-  /deep/.el-collapse-item__header {
+  .el-collapse-item__header {
     float: right;
     margin-top: -38px;
     font: small;
     color: #d9534f !important;
     border-bottom: none !important;
   }
-  /deep/ .el-collapse {
+  .el-collapse {
     border-top: none !important;
     border-bottom: none !important;
   }
-  /deep/.el-collapse-item__content {
+  .el-collapse-item__content {
     padding-bottom: 0 !important;
   }
   .paperLook {
@@ -905,7 +905,7 @@ a:hover {
     border: solid 0.5px red;
   }
   #roll_up {
-    /deep/.el-collapse-item__header {
+    .el-collapse-item__header {
       float: right;
       padding: 1em;
       margin-top: -32px;
@@ -915,26 +915,26 @@ a:hover {
     }
   }
   .risk_matrix {
-    /deep/.el-collapse-item__header {
+    .el-collapse-item__header {
       border-bottom: none !important;
       background-color: #fff !important;
     }
   }
-  /deep/ .el-collapse {
+  .el-collapse {
     border-top: none !important;
     border-bottom: none !important;
   }
-  /deep/.el-collapse-item__content {
+  .el-collapse-item__content {
     padding-bottom: 0 !important;
   }
-  /deep/.el-collapse-item__header {
+  .el-collapse-item__header {
     background-color: #fafafa;
   }
-  /deep/.el-input__inner {
+  .el-input__inner {
     text-transform: capitalize;
   }
   .inner-name-lowercase{
-    /deep/.el-input__inner{
+    .el-input__inner{
       text-transform: none !important;
     }
   }
@@ -2908,4 +2908,42 @@ i.el-icon-circle-close {
   input {
     border-color: #e84444;
   }
+}
+
+.form-tabs {
+  cursor: pointer;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.1);
+  text-align: center;
+  &.active {
+    border-bottom: 5px solid #007bff;
+    color: #007bff;
+  }
+  &.disabled .inner-label-text {
+    opacity: 0.5;
+  }
+  &.disabled:hover {
+    cursor: not-allowed;
+  }
+  &:hover {
+    color: #007bff;
+  }
+}
+.map-width {
+  transform: scale(0.85);
+  transform-origin: left;
+}
+.map-risk-width {
+  transform: scale(0.75);
+  transform-origin: left;
+}
+.label::after {
+  content: "*";
+  color: #dc3545;
+  font-weight: 600;
+  margin-left: -8px;
+}
+.inner-label-text {
+  margin-left: 10px;
+  margin-right: 10px;
+  white-space: nowrap;
 }

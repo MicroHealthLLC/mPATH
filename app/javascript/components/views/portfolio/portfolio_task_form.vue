@@ -3,7 +3,7 @@
    <form
       id="portfolio-task-form"
       @submit.prevent="saveTask"
-      class="mx-auto portfolio-tasks-form"
+      class="mx-auto portfolio-task-form"
       accept-charset="UTF-8"
       :class="{ _disabled: loading }"
 
