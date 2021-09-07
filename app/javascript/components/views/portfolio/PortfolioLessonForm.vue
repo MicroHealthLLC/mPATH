@@ -25,7 +25,7 @@ export default {
     ...mapGetters(['portfolioLesson'])
   },
   beforeMount(){
-    this.fetchPortfolioLesson(this.$route.params)
+    // this.fetchPortfolioLesson(this.$route.params)
     this.fetchPortfolioCategories()
   },
 };
