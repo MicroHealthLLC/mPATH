@@ -2206,9 +2206,6 @@ export default {
         notes: [],
       };
     },
-       log(e){
-          // console.log("This is the riskDispStatus item: " + JSON.stringify(e))
-      },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;
