@@ -6,17 +6,17 @@
     :class="{ _disabled: !portfolioLessonLoaded }"
     accept-charset="UTF-8"
   >
-    <div class="mt-2  d-flex align-items-center" >
+    <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
-      <div>
+      <div  >
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fas fa-suitcase"></i
           ></span>
-            <router-link v-if="loadedLesson"  :to="
+            <router-link v-if="lesson"  :to="
                 `/portfolio`
               ">{{
-                  loadedLesson.project_name
+                  projectName
             }}            
             </router-link>
           <el-icon
@@ -33,7 +33,7 @@
             class="el-icon-arrow-right"
             style="font-size: 12px"
           ></el-icon>
-          <span >{{ loadedLesson.title || "(Lesson Name)" }}</span>
+          <span v-if="lesson" >{{ lesson.title || "(Lesson Name)" }}</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -648,7 +648,7 @@
             class="clickable file-name d-flex justify-content-between w-100 py-1"
           >
             <div @click.prevent="downloadFile(file)">
-              <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
+               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
             <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
@@ -792,6 +792,7 @@ export default {
     return {
       formLoaded: false,
       currentTab: "tab1",
+      projectName: this.$route.params.lesson.project_name, 
       loadedLesson: {},
       paginate: ["successes", "failures", "bestPractices", "updates"],
       tabs: [
@@ -927,7 +928,7 @@ export default {
       });
     },
     log(e){
-      // console.log("this is the port lesson obj" + e)
+      console.log("this is the port lesson obj" + e)
     },
     removeEmptyUpdates(){
       var returnUpdates = [];
@@ -1187,6 +1188,7 @@ export default {
   },
   },
   mounted() {
+    // console.log()
 
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
