@@ -3,15 +3,15 @@ class ApplicationController < ActionController::Base
 
   after_action :release_memory#, if: -> {Rails.env.development?}
 
-  rescue_from NameError, Exception, with: lambda { |exception| render_error(exception.message, 500) }
-  rescue_from ActionController::RoutingError, with: lambda { |exception| render_error("Invalid request", 404) }
-  rescue_from ::AbstractController::ActionNotFound, with: lambda { |exception| render_error("Invalid request", 404) }
+  rescue_from NameError, Exception, with: lambda { |exception| render_error(exception, 500) }
+  rescue_from ActionController::RoutingError, with: lambda { |exception| render_error(exception, 404) }
+  rescue_from ::AbstractController::ActionNotFound, with: lambda { |exception| render_error(exception, 404) }
 
-  rescue_from ActiveRecord::RecordNotFound, with: lambda { |exception| render_error("Record not found", 404,{e: exception}) }
+  rescue_from ActiveRecord::RecordNotFound, with: lambda { |exception| render_error(exception, 404,{e: exception}) }
 
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
-      format.json {render json: {error: exception.message} , status: 403}
+      format.json {render json: {error: exception.message} , status: 401}
       format.html {redirect_to main_app.root_url, notice: exception.message}
       format.js {head :forbidden, content_type: 'text/html'}
     end
@@ -36,7 +36,18 @@ class ApplicationController < ActionController::Base
     raise CanCan::AccessDenied.new("Not authorized!")
   end
 
-  def render_error(error_msg = "Error occurred!", status_code = 500, options = {})
+  def render_error(error_obj = Exception.new("Error occurred!"), status_code = 500, options = {})
+    
+    if error_obj.is_a?(Exception)
+      error_msg = error_obj.message
+      Rails.logger.error error_obj.message
+      Rails.logger.error error_obj.backtrace.join("\n")
+    elsif error_obj.is_a?(String)
+      error_msg = error_obj
+    else
+      error_msg = "Error occurred!"
+    end
+
     render json: {error: error_msg},  status: status_code
   end
 

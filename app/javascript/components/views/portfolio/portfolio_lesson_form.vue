@@ -6,17 +6,17 @@
     :class="{ _disabled: !portfolioLessonLoaded }"
     accept-charset="UTF-8"
   >
-    <div class="mt-2  d-flex align-items-center" >
+    <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
-      <div>
+      <div  >
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fas fa-suitcase"></i
           ></span>
-            <router-link v-if="loadedLesson"  :to="
+            <router-link v-if="lesson"  :to="
                 `/portfolio`
               ">{{
-                  loadedLesson.project_name
+                  projectName
             }}            
             </router-link>
           <el-icon
@@ -33,7 +33,7 @@
             class="el-icon-arrow-right"
             style="font-size: 12px"
           ></el-icon>
-          <span >{{ loadedLesson.title || "(Lesson Name)" }}</span>
+          <span v-if="lesson" >{{ lesson.title || "(Lesson Name)" }}</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -648,7 +648,7 @@
             class="clickable file-name d-flex justify-content-between w-100 py-1"
           >
             <div @click.prevent="downloadFile(file)">
-              <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
+               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
             <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
@@ -792,6 +792,7 @@ export default {
     return {
       formLoaded: false,
       currentTab: "tab1",
+      projectName: this.$route.params.lesson.project_name, 
       loadedLesson: {},
       paginate: ["successes", "failures", "bestPractices", "updates"],
       tabs: [
@@ -868,8 +869,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
-    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS"]),
+    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioUsers"]),
+    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "TOGGLE_LESSONS_LOADED"]),
 
     saveLesson() {
       this.$validator.validate().then((success) => {
@@ -927,7 +928,7 @@ export default {
       });
     },
     log(e){
-      // console.log("this is the port lesson obj" + e)
+      console.log("this is the port lesson obj" + e)
     },
     removeEmptyUpdates(){
       var returnUpdates = [];
@@ -1079,7 +1080,11 @@ export default {
         .catch(() => {});
     },
     author(id) {
-      return this.projectUsers.find((user) => user.id == id).name;
+      let a = this.projectUsers.find((user) => user.id == id)
+      if(a){
+        return a.name
+      } 
+      // return this.portfolioUsers.find((user) => user.id == id).name;
     },
     addFile(files) {
       files.forEach((file) => {
@@ -1168,7 +1173,6 @@ export default {
       'portfolioLessonStages',
       "lessonStatus",
       'portfolioCategories'
-      // "taskTypes",
     ]),
     isMapView() {
       return this.$route.name === "MapLessonForm";
@@ -1184,14 +1188,17 @@ export default {
   },
   },
   mounted() {
-    this.loadedLesson = this.$route.params.lesson
-    // console.log(this.loadedLesson)
-   
+    // console.log()
+
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
+      if(this.portfolioUsers && this.portfolioUsers.length < 1){
+        this.fetchPortfolioUsers()
+      }
+      
     }
   },
   beforeDestroy() {
@@ -1200,22 +1207,25 @@ export default {
   },
 
   watch: {
-    portfolioLessonLoaded: {
-      handler() {
-        if (this.loadedLesson) {
-          // console.log("yes" + JSON.stringify(this.loadedLesson))
-          this.relatedTasks = this.loadedLesson.sub_tasks;
-          this.relatedIssues = this.loadedLesson.sub_issues;
+    lessonsLoaded: {
+      handler(newValue, oldValue) {
+        if (
+          this.lessonsLoaded &&
+          Object.keys(oldValue).length === 0 &&
+          this.$route.params.lessonId != "new"
+        ) {
+          this.relatedTasks = this.lesson.sub_tasks;
+          this.relatedIssues = this.lesson.sub_issues;
           this.important = this.lesson.important;
-          this.draft = this.loadedLesson.draft;
-          this.reportable = this.loadedLesson.reportable;
-          this.relatedRisks = this.loadedLesson.sub_risks;
-          this.successes = this.loadedLesson.successes;
-          this.failures = this.loadedLesson.failures;
-          this.bestPractices = this.loadedLesson.best_practices;
-          this.updates = this.loadedLesson.notes;
-          this.files = this.loadedLesson.attach_files.filter((file) => !file.link);
-          this.fileLinks = this.loadedLesson.attach_files.filter((file) => file.link);
+          this.draft = this.lesson.draft;
+          this.reportable = this.lesson.reportable;
+          this.relatedRisks = this.lesson.sub_risks;
+          this.successes = this.lesson.successes;
+          this.failures = this.lesson.failures;
+          this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
+          this.files = this.lesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
       },
     },

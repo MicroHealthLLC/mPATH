@@ -10,7 +10,7 @@ const portfolioModule = {
     portfolio_tab: '', 
 
     curr_tab: '#tab-tasks', 
-   
+
     programNameFilter: null,
 
     portfolioNameFilter: null,
@@ -60,7 +60,7 @@ const portfolioModule = {
     portfolio_issues: [],
     portfolio_issues_loaded: true,
 
-  
+
 
 
    // PORTFOLIO RISKS
@@ -76,7 +76,7 @@ const portfolioModule = {
     portfolio_risk_priorities: [],
     portfolio_risk_priorities_loaded: true,
     portfolioRiskPrioritiesFilter: null,
-    
+
 
     // PORTFOLIO LESSONS
     portfolio_lessons: [],
@@ -89,7 +89,7 @@ const portfolioModule = {
     portfolio_statuses: [],
     portfolio_statuses_loaded: true,
     portfolioStatusesFilter: null,
-    
+
     portfolio_programs_filter: [],
     portfolio_loaded: true,
 
@@ -127,7 +127,7 @@ const portfolioModule = {
     hideBriefed: false,
     hideImportant: false,
     hideWatched: false,
-  
+
   }),
   actions: {
     fetchPortfolioCounts({commit}) {
@@ -233,7 +233,7 @@ const portfolioModule = {
         },
       })
         .then((res) => {
- 
+
           // Mutate state with response from back end    
              commit("SET_PORTFOLIO_STATUSES", res.data.statuses);
         })
@@ -615,7 +615,7 @@ const portfolioModule = {
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
     TOGGLE_PORTFOLIO_PROGRAMS_FILTER_LOADED: (state, loaded ) => state.portfolio_programs_filter_loaded = loaded,
 
-   
+
     SET_PORTFOLIO_PROGRAMS: (state, portfolio_programs) => state.portfolio_programs = portfolio_programs,
     TOGGLE_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.portfolio_programs_loaded = loaded,
 
@@ -639,7 +639,7 @@ const portfolioModule = {
     setPortfolioIssueStagesFilter: (state, portfolioIssueStagesFilter) => state.portfolioIssueStagesFilter = portfolioIssueStagesFilter,
 
 
- 
+
 
     //PORTFOLIO RISKS
     SET_PORTFOLIO_RISK_APPROACHES: (state, portfolio_risk_approaches) => state.portfolio_risk_approaches = portfolio_risk_approaches,
@@ -682,12 +682,12 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED: (state, loaded ) => state.portfolio_issue_types_loaded = loaded,   
     setPortfolioIssueTypesFilter: (state, portfolioIssueTypesFilter) => state.portfolioIssueTypesFilter = portfolioIssueTypesFilter,
 
-    
+
     SET_PORTFOLIO_ISSUE_SEVERITIES: (state, portfolio_issue_severities) => state.portfolio_issue_severities = portfolio_issue_severities,
     TOGGLE_PORTFOLIO_ISSUE_SEVERITIES_LOADED: (state, loaded ) => state.portfolio_issue_severities_loaded = loaded,   
     setPortfolioIssueSeveritiesFilter: (state, portfolioIssueSeveritiesFilter) => state.portfolioIssueSeveritiesFilter = portfolioIssueSeveritiesFilter,
 
-    
+
     // PORTFOLIO RISKS
     SET_PORTFOLIO_RISKS: (state, portfolio_risks) => state.portfolio_risks = portfolio_risks,
     SET_PORTFOLIO_RISK: (state, portfolio_risk) => state.portfolio_risk = portfolio_risk,
@@ -696,14 +696,14 @@ const portfolioModule = {
     SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,    
     SET_PORTFOLIO_LESSON: (state, portfolio_lesson) => state.portfolio_lesson = portfolio_lesson,
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
-   
+
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
     setPortfolioNameFilter: (state, filter) => state.portfolioNameFilter = filter,
 
     setPortfolioCategoriesFilter: (state, filter) => state.portfolioCategoriesFilter = filter,
 
      // Flags Work throughout CLient faSolarPanel...move to new store
-     
+
     //  7 States
     setHideComplete: (state, complete) => state.hideComplete = complete,
     setHideInprogress: (state, inprogress) => state.hideInprogress = inprogress,
@@ -722,7 +722,7 @@ const portfolioModule = {
     getPortfolioWatchedTasksToggle: state => state.portfolioWatchedTasksToggle,
     getPortfolioImportantTasksToggle: state => state.portfolioImportantTasksToggle,
     getPortfolioBriefedTasksToggle: state => state.portfolioBriefedTasksToggle, 
-    
+
     portfolioTab: state => state.portfolio_tab, 
     currTab: state => state.curr_tab,
 
@@ -784,7 +784,7 @@ const portfolioModule = {
     portfolioCounts: state => state.portfolio_counts,
     portfolioCountsLoaded: state => state.portfolio_counts_loaded,
 
-    
+
     portfolioProgramsFilter: state => state.portfolio_programs_filter, 
     portfolioProgramsFilterLoaded: state => state.portfolio_programs_filter_loaded,
 
@@ -813,7 +813,7 @@ const portfolioModule = {
 
     getShowCount: (state) => state.showCount,
 
-  
+
      // Flags Work throughout CLient faSolarPanel...move to new store
 
     //  7 States
