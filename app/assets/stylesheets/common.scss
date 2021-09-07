@@ -1010,7 +1010,7 @@ a:hover {
     background: #fff;
   }
   .overSixSteps {
-    /deep/.el-step__title {
+    .el-step__title {
       font-size: 11px !important;
       line-height: 23px !important;
       margin: 5px !important;
@@ -2947,3 +2947,49 @@ i.el-icon-circle-close {
   margin-right: 10px;
   white-space: nowrap;
 }
+
+// .portfolio-task-form {
+
+//   .mx-datepicker-main {
+//     font: 14px/1.5 "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei",sans-serif;
+//     color: #73879c;
+//     background-color: #fff;
+//     border: 1px solid #e8e8e8;
+// }
+// .mx-datepicker-popup {
+//   position: absolute;
+//   margin-top: 1px;
+//   margin-bottom: 1px;
+//   -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+//   box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+//   z-index: 2001;
+// }
+// .mx-datepicker-body {
+//   position: relative;
+//   -webkit-user-select: none;
+//   -moz-user-select: none;
+//   -ms-user-select: none;
+//   user-select: none;
+// }
+//   .mx-range-wrapper {
+//     display: flex;
+//   }
+
+//   .mx-calendar {
+//     box-sizing: border-box;
+//     width: 248px;
+//     padding: 6px 12px;
+//   }
+
+//   .mx-calendar-header {
+//     box-sizing: border-box;
+//     height: 34px;
+//     line-height: 34px;
+//     text-align: center;
+//     overflow: hidden;
+
+//     .mx-btn-icon-double-left {
+//       float: left;
+//   }
+//   }
+// }
