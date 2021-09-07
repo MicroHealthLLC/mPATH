@@ -178,7 +178,7 @@
           {{ errors.first("Name") }}
         </div>
       </div>
-      <div class="col-12 px-0" :load="log(lesson)">
+      <div class="col-12 px-0">
         <label class="font-md"
           >Description <span style="color: #dc3545">*</span></label
         >
@@ -776,6 +776,9 @@ import { mapActions, mapMutations, mapGetters } from "vuex";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
 import AttachmentInput from "./../../shared/attachment_input.vue";
+import 'vue2-datepicker/index.css'
+ Vue.component('v2-date-picker', DatePicker)
+ import DatePicker from 'vue2-datepicker'
 
 export default {
   name: "portfolioLessonForm",
@@ -909,7 +912,7 @@ export default {
         if (this.lesson.id) {
           
           delete this.$route.params.lesson;
-          console.log({...lessonData})
+          // console.log({...lessonData})
           this.updateLesson({           
             ...lessonData,
             ...this.$route.params,
@@ -924,7 +927,7 @@ export default {
       });
     },
     log(e){
-      console.log("this is the port lesson obj" + e)
+      // console.log("this is the port lesson obj" + e)
     },
     removeEmptyUpdates(){
       var returnUpdates = [];
@@ -1200,7 +1203,7 @@ export default {
     portfolioLessonLoaded: {
       handler() {
         if (this.loadedLesson) {
-          console.log("yes" + JSON.stringify(this.loadedLesson))
+          // console.log("yes" + JSON.stringify(this.loadedLesson))
           this.relatedTasks = this.loadedLesson.sub_tasks;
           this.relatedIssues = this.loadedLesson.sub_issues;
           this.important = this.lesson.important;

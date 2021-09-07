@@ -682,7 +682,7 @@ Tab 1 Row Begins here -->
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
                           name="due_date"
-                          class=""
+                          class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
                           :class="{ disabled: disabledDateRange }"
                         />
@@ -1280,6 +1280,9 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+import 'vue2-datepicker/index.css'
+ Vue.component('v2-date-picker', DatePicker)
+ import DatePicker from 'vue2-datepicker'
 
 export default {
   name: "portfolioIssueForm",
