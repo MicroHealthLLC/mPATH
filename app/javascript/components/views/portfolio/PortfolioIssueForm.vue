@@ -11,7 +11,7 @@ export default {
     portfolioIssueForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioIssue', 'portfolioIssuesLoaded', 'fetchPortfolioIssues', 'fetchPortfolioCategories']),
+    ...mapActions(['fetchPortfolioIssue', 'portfolioIssuesLoaded', 'fetchPortfolioIssues', 'fetchPortfolioCategories', 'fetchPortfolioIssueStages']),
     redirectBack() {
       this.fetchPortfolioIssues()  
       this.$router.push(
@@ -26,6 +26,7 @@ export default {
   beforeMount(){
     this.fetchPortfolioIssue(this.$route.params)
     this.fetchPortfolioCategories()
+    this.fetchPortfolioIssueStages()
   },
 };
 </script>
