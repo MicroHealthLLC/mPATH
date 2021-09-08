@@ -12,8 +12,8 @@
       </span>
       <span class="float-right mr-4">
         <!-- <button style="cursor: pointer" @click.prevent="closeWindow"> -->
-          <router-link :to="`/`" replace> 
-          <i class="far fa-times-circle"></i>
+          <router-link :to="`/`"> 
+           <i class="far fa-times-circle"></i>
           </router-link>
           
         <!-- </button> -->
@@ -84,11 +84,11 @@
                             <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
                           ></span>
 
-                            <span v-if="dynamicObj[currentTaskSlide].text" class="breakWord"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                            <span v-if="dynamicObj[currentTaskSlide].text"> 
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
                             </span>
-                              <span v-if="dynamicObj[currentTaskSlide].title" class="breakWord"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].title }}</h2>
+                              <span v-if="dynamicObj[currentTaskSlide].title"> 
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].title }}</h2>
                             </span>
                              </div>
                                  <div class="col-3 mt-3">
@@ -5777,9 +5777,9 @@ export default {
       this.programId = id;
       // console.log(id);
     },
-    // closeWindow() {
-    //  this.$router.go(-1)
-    // },
+    closeWindow() {
+      window.close()
+    },
     handleClick(tab, event) {
             // console.log(tab);
       let tab_id = $(event.target).attr("id")
