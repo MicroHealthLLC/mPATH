@@ -11,9 +11,12 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-        <button style="cursor: pointer" @click.prevent="closeWindow">
+        <!-- <button style="cursor: pointer" @click.prevent="closeWindow"> -->
+          <router-link :to="`/`" replace> 
           <i class="far fa-times-circle"></i>
-        </button>
+          </router-link>
+          
+        <!-- </button> -->
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -33,7 +36,7 @@
                                     :src="require('../../../../assets/images/mpath.png')"
                                   />
                              </div>
-                             <div class="col-5 text-center px-3 py-2"  v-if="dynamicObj[currentTaskSlide]">
+                             <div class="col-5 text-center px-3 py-2" v-if="dynamicObj[currentTaskSlide]">
                               
                         
                               
@@ -81,11 +84,11 @@
                             <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
                           ></span>
 
-                          <span v-if="dynamicObj[currentTaskSlide].text"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                            <span v-if="dynamicObj[currentTaskSlide].text" class="breakWord"> 
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
                             </span>
                               <span v-if="dynamicObj[currentTaskSlide].title"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].title }}</h2>
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].title }}</h2>
                             </span>
                              </div>
                                  <div class="col-3 mt-3">
@@ -127,10 +130,10 @@
                                 </div>    
                                
                                                        
-                                <div class="col-5 text-center  mx-4 pt-0 px-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
+                                <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:275px; overflow-y:auto">
+                                 <div style="height:410px; overflow-y:auto">
                                  <span  v-if="dynamicObj[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
@@ -5773,9 +5776,9 @@ export default {
       this.programId = id;
       // console.log(id);
     },
-    closeWindow() {
-     window.close()
-    },
+    // closeWindow() {
+    //  this.$router.go(-1)
+    // },
     handleClick(tab, event) {
             // console.log(tab);
       let tab_id = $(event.target).attr("id")
@@ -5822,5 +5825,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.breakWord {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
 
 </style>
