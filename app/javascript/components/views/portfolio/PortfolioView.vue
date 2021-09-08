@@ -85,10 +85,10 @@
                           ></span>
 
                             <span v-if="dynamicObj[currentTaskSlide].text" class="breakWord"> 
-                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].text }}</h2>
                             </span>
-                              <span v-if="dynamicObj[currentTaskSlide].title"> 
-                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].title }}</h2>
+                              <span v-if="dynamicObj[currentTaskSlide].title" class="breakWord"> 
+                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].title }}</h2>
                             </span>
                              </div>
                                  <div class="col-3 mt-3">
@@ -5204,6 +5204,7 @@ export default {
           //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
           //   }
           // }
+            console.log("k:" + k)
           if(value[k].program_id){
             this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
             break
@@ -5214,7 +5215,7 @@ export default {
           }
         }
         this.facility_project_ids = _.uniq(this.facility_project_ids)
-        // console.log("------")
+      
         // console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
       },
