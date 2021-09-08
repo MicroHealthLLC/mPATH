@@ -159,7 +159,7 @@ ActiveAdmin.register Lesson do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :lesson_files
           div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
-          f.input :file_links, label: 'Add Links'
+          f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
         end
       end
 
