@@ -2033,9 +2033,6 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
 import {API_BASE_PATH} from './../../../mixins/utils'
-import 'vue2-datepicker/index.css'
- Vue.component('v2-date-picker', DatePicker)
- import DatePicker from 'vue2-datepicker'
 
 export default {
   name: "portfolioRiskForm",

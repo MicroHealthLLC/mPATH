@@ -1254,9 +1254,6 @@
 import axios from "axios";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs";
-import 'vue2-datepicker/index.css'
- Vue.component('v2-date-picker', DatePicker)
- import DatePicker from 'vue2-datepicker'
 import RelatedTaskMenu from "./../../shared/RelatedTaskMenu";
 import humps from "humps";
 import { mapGetters, mapMutations, mapActions } from "vuex";

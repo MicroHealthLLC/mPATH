@@ -256,7 +256,7 @@ const portfolioModule = {
         },
       })
         .then((res) => {
-           // Mutate state with response from back end           
+           // Mutate state with response from back end   
           commit("SET_PORTFOLIO_TASK_STAGES", res.data.stages);
         })
         .catch((err) => {
@@ -524,7 +524,7 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            console.log(res.data.risk)
+            // console.log(res.data.risk)
              commit("SET_PORTFOLIO_RISK", res.data.risk);
           })
           .catch((err) => {
@@ -569,7 +569,7 @@ const portfolioModule = {
         })
           .then((res) => {
             // Mutate state with response from back end
-            console.log(res.data.lesson)
+         
              commit("SET_PORTFOLIO_LESSON", res.data.lesson);
           })
           .catch((err) => {
@@ -592,6 +592,7 @@ const portfolioModule = {
         })
           .then((res) => {
           // Mutate state with response from back end    
+          console.log("portfolio store lesson stages: " + res.data.stages)
             commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
           })
           .catch((err) => {
@@ -655,6 +656,7 @@ const portfolioModule = {
     setPortfolioRiskStagesFilter: (state, portfolioRiskStagesFilter) => state.portfolioRiskStagesFilter = portfolioRiskStagesFilter,
 
     SET_PORTFOLIO_LESSON_STAGES: (state, portfolio_lesson_stages) => state.portfolio_lesson_stages = portfolio_lesson_stages,
+    TOGGLE_PORTFOLIO_LESSON_STAGES_LOADED: (state, loaded ) => state.portfolio_lesson_stages_loaded = loaded,   
     TOGGLE_PORTFOLIO_LESSON_LOADED: (state, loaded ) => state.portfolio_lesson_loaded = loaded,   
     setPortfolioLessonStagesFilter: (state, portfolioLessonStagesFilter) => state.portfolioLessonStagesFilter = portfolioLessonStagesFilter,
 
