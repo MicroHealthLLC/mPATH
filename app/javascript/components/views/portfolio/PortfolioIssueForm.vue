@@ -11,7 +11,7 @@ export default {
     portfolioIssueForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioIssue', 'portfolioIssuesLoaded', 'fetchPortfolioIssues', 'fetchPortfolioUsers', 'fetchPortfolioCategories', 'fetchPortfolioIssueStages']),
+    ...mapActions(['fetchPortfolioIssue', 'portfolioIssuesLoaded', 'fetchPortfolioIssueSeverities', 'fetchPortfolioIssueTypes',  'fetchPortfolioIssues', 'fetchPortfolioUsers', 'fetchPortfolioCategories', 'fetchPortfolioIssueStages']),
     redirectBack() {
       this.fetchPortfolioIssues()  
       this.$router.push(
@@ -28,6 +28,8 @@ export default {
     this.fetchPortfolioCategories()
     this.fetchPortfolioIssueStages()
     this.fetchPortfolioUsers()
+    this.fetchPortfolioIssueTypes()
+    this.fetchPortfolioIssueSeverities()
   },
 };
 </script>
