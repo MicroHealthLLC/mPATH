@@ -13,7 +13,7 @@ export default {
     portfolioTaskForm,
   },
   methods:{
-    ...mapActions(['fetchPortfolioTask', 'portfolioTaskLoaded', 'fetchPortfolioTasks', 'fetchPortfolioCategories', 'fetchPortfolioTaskStages']),
+    ...mapActions(['fetchPortfolioTask', 'portfolioTaskLoaded', 'fetchPortfolioUsers', 'fetchPortfolioTasks', 'fetchPortfolioCategories', 'fetchPortfolioTaskStages']),
     redirectBack() {
       this.fetchPortfolioTasks()
       this.$router.push(
@@ -26,6 +26,7 @@ export default {
   },
   beforeMount(){
     this.fetchPortfolioTask(this.$route.params)
+    this.fetchPortfolioUsers()
     this.fetchPortfolioCategories()
     this.fetchPortfolioTaskStages()
   },

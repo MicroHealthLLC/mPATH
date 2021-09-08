@@ -928,7 +928,7 @@ export default {
       });
     },
     log(e){
-      console.log("port lesson stages" + e)
+      // console.log("port lesson stages" + e)
     },
     removeEmptyUpdates(){
       var returnUpdates = [];
@@ -1190,9 +1190,7 @@ export default {
   },
   },
   mounted() {
-    console.log(this.portfolioLessonStages)
-
-    if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
+      if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
