@@ -5774,7 +5774,7 @@ export default {
       // console.log(id);
     },
     closeWindow() {
-     router.back()
+     window.close()
     },
     handleClick(tab, event) {
             // console.log(tab);
