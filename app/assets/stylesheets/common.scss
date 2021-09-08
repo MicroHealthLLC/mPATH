@@ -2947,49 +2947,21 @@ i.el-icon-circle-close {
   margin-right: 10px;
   white-space: nowrap;
 }
+.breakWord {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
 
-// .portfolio-task-form {
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
 
-//   .mx-datepicker-main {
-//     font: 14px/1.5 "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei",sans-serif;
-//     color: #73879c;
-//     background-color: #fff;
-//     border: 1px solid #e8e8e8;
-// }
-// .mx-datepicker-popup {
-//   position: absolute;
-//   margin-top: 1px;
-//   margin-bottom: 1px;
-//   -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
-//   box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
-//   z-index: 2001;
-// }
-// .mx-datepicker-body {
-//   position: relative;
-//   -webkit-user-select: none;
-//   -moz-user-select: none;
-//   -ms-user-select: none;
-//   user-select: none;
-// }
-//   .mx-range-wrapper {
-//     display: flex;
-//   }
-
-//   .mx-calendar {
-//     box-sizing: border-box;
-//     width: 248px;
-//     padding: 6px 12px;
-//   }
-
-//   .mx-calendar-header {
-//     box-sizing: border-box;
-//     height: 34px;
-//     line-height: 34px;
-//     text-align: center;
-//     overflow: hidden;
-
-//     .mx-btn-icon-double-left {
-//       float: left;
-//   }
-//   }
-// }
