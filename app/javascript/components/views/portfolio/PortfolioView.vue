@@ -11,12 +11,12 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-        <!-- <button style="cursor: pointer" @click.prevent="closeWindow"> -->
-          <router-link :to="`/`"> 
+        <button style="cursor: pointer" @click.prevent="closeWindow">
+          <!-- <router-link :to="`/`">  -->
            <i class="far fa-times-circle"></i>
-          </router-link>
+          <!-- </router-link> -->
           
-        <!-- </button> -->
+        </button>
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -133,7 +133,7 @@
                                 <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:410px; overflow-y:auto">
+                                 <div style="height:300px; overflow-y:auto">
                                  <span  v-if="dynamicObj[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
@@ -182,6 +182,14 @@
                                   </div>
                                </div>
 
+                                 <div class="issueTypes mt-3" v-if="dynamicObj == tasksObj.filtered.tasks">
+
+                                 <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
+                                   <div style="height:100px; overflow-y:auto">
+                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
+                                  </div>
+                               </div>
+
                                 </div>
 
 
@@ -221,7 +229,7 @@
                                     <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
                                     <el-progress
                                       type="circle"
-                                      class="py-2"                          
+                                      class="py-2 text-light"                          
                                       :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
                                     ></el-progress>
                                     </span>
