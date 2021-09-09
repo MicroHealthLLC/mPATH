@@ -271,8 +271,17 @@
         </v-list-item>
           <v-list-item>
           <v-list-item-title @click.prevent="scrollToStartDate" class="point">          
-            <span class="d-inline mr-1"><small><b>Date Identified:</b></small></span>            
-             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
+             <span v-if="selectedEvent.isOngoing == true && !selectedEvent.isClosed" class="d-inline mr-1">
+                <small><b>Date Identified:</b></small>
+                    {{ moment(selectedEvent.start).format('DD MMM YYYY') }} 
+              </span>       
+                <span v-else-if="selectedEvent.isOngoing == true && selectedEvent.isClosed && selectedEvent.start == '2000-01-01'" class="d-inline mr-1">
+                <small><b>Date Identified:</b></small>
+               <i class="far fa-retweet text-secondary"></i>
+              </span>              
+              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small>           
+              {{ moment(selectedEvent.start).format('DD MMM YYYY') }} 
+              </span>   
           </v-list-item-title>
         </v-list-item>
           <v-list-item>
@@ -298,9 +307,9 @@
          <v-list-item >
            <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
-               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-2"> 
-              <font-awesome-icon icon="retweet" class="text-success"  />   
-              </span>   
+               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
+            <i class="far fa-retweet text-success"></i>
+                </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   
@@ -626,6 +635,10 @@
       if(this.riskData[i].ongoing && !this.riskData[i].closed && (this.riskEndDates[i] == null || this.riskEndDates[i] == undefined)){    
        this.riskEndDates[i] = '2099-01-01'
       }
+      if(this.riskData[i].ongoing && !this.riskData[i].closed && (this.riskStartDates[i] == null || this.riskStartDates[i] == undefined)){    
+       this.riskStartDates[i] = '2000-01-01'
+      }     
+      
       if(this.riskData[i].onHold) {
         this.riskNames[i] = this.riskNames[i] + " (On Hold)"          
         }
