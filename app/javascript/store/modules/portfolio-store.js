@@ -6,10 +6,9 @@ const portfolioModule = {
     portfolioBriefedTasksToggle: true,
     portfolioImportantTasksToggle: true,
     showCount: true,  
-
     portfolio_tab: '', 
-
     curr_tab: '#tab-tasks', 
+    facility_project_ids: [],
 
     programNameFilter: null,
 
@@ -592,7 +591,6 @@ const portfolioModule = {
         })
           .then((res) => {
           // Mutate state with response from back end    
-          console.log("portfolio store lesson stages: " + res.data.stages)
             commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
           })
           .catch((err) => {
@@ -612,6 +610,8 @@ const portfolioModule = {
     setPortfolioTab: (state, tab) => state.portfolio_tab = tab,
     setCurrTab: (state, tab) => state.curr_tab = tab, 
     updateProgramFilterValue: (state, value) =>  state.programNameFilter = value,
+
+    setFacilityProjectIds: (state, value) => state.facility_project_ids = value,
 
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
     TOGGLE_PORTFOLIO_PROGRAMS_FILTER_LOADED: (state, loaded ) => state.portfolio_programs_filter_loaded = loaded,
@@ -730,6 +730,8 @@ const portfolioModule = {
 
     portfolioPrograms: state => state.portfolio_programs, 
     portfolioProgramsLoaded: state => state.portfolio_programs_loaded,
+
+    facility_project_ids: state => state.facility_project_ids, 
 
     // GETTER FOR PORTFOLIO USERS
     portfolioUsers: state => state.portfolio_users, 
