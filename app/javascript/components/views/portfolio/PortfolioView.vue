@@ -236,7 +236,7 @@
                                    <div class="col mt-3" v-if="dynamicObj == risksObj.filtered.risks" >  
 
                                         <h6>RISK APPROACH</h6>                                         
-                                        <h4 class="text-light label px-2 d-inline-block"> {{
+                                        <h4 class="text-light labels px-2 d-inline-block"> {{
                                           dynamicObj[currentTaskSlide].risk_approach.charAt(0).toUpperCase() +
                                           dynamicObj[currentTaskSlide].risk_approach.slice(1)
                                           }}</h4>
@@ -3997,9 +3997,11 @@ export default {
       },
     };
   },
+  beforeMount(){
+    this.fetchPortfolioCounts();
+  },
   mounted() {
     this.fetchPortfolioPrograms();
-    this.fetchPortfolioCounts();
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
