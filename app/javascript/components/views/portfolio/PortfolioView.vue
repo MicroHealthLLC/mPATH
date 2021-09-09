@@ -11,12 +11,25 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-        <button style="cursor: pointer" @click.prevent="closeWindow">
-          <!-- <router-link :to="`/`">  -->
-           <i class="far fa-times-circle"></i>
-          <!-- </router-link> -->
-          
-        </button>
+       
+      <!-- <router-link to="/">  
+       <i class="fas fa-home-lg-alt mr-3"></i>  
+      </router-link> 
+
+     <router-link :to="{ name: current_user }">  
+       <i class="fas fa-home-lg-alt mr-3"></i>  
+      </router-link>  -->
+
+        <button style="cursor: pointer" @click="$router.go(-1)">
+          <i class="fad fa-home-lg-alt portfolioHomeBtn m-2"></i>  
+        </button>  
+
+<!-- 
+        <button style="cursor: pointer" @click="closeWindow">
+         <i class="fas fa-home-lg-alt"></i>  
+        </button>    -->
+
+
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -238,12 +251,12 @@
 
                                    <div class="col mt-3" v-if="dynamicObj == risksObj.filtered.risks" >  
 
-                                        <h6>RISK APPROACH</h6> 
-                                        
+                                        <h6>RISK APPROACH</h6>                                         
                                         <h4 class="text-light label px-2 d-inline-block"> {{
                                           dynamicObj[currentTaskSlide].risk_approach.charAt(0).toUpperCase() +
                                           dynamicObj[currentTaskSlide].risk_approach.slice(1)
                                           }}</h4>
+
                                       <h6 class="mt-5">PRIORITY LEVEL</h6>  
                                           <h4
                                           v-if="dynamicObj[currentTaskSlide].priority_level == 'Very Low'"
@@ -1141,7 +1154,15 @@
                         <td class="text-left" v-else>No Update</td>
 
                         <td>
-                          {{ moment(task.start_date).format("DD MMM YYYY") }}
+                         <span v-if="task.ongoing && !task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="task.ongoing && task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                             </span>
+                         <span v-else>{{
+                           moment(task.start_date).format("DD MMM YYYY") 
+                          }}</span>
                         </td>
                         <td>
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
@@ -3085,7 +3106,16 @@
                           >
                         </td>
                         <td>
-                          {{ moment(risk.start_date).format("DD MMM YYYY") }}
+                           <span v-if="risk.ongoing && !risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="risk.ongoing && risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                         </span>
+                         <span v-else>{{
+                           moment(risk.start_date).format("DD MMM YYYY") 
+                          }}</span>
+                       
                         </td>
                         <td>
                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
@@ -3923,6 +3953,7 @@ const simulateAsyncOperation = fn => {
 }
 
 export default {
+
   name: "PortfolioView",
   props: ["facility"],
   components: {
@@ -3930,6 +3961,12 @@ export default {
   },
   data() {
     return {
+     prevRoute: null,
+     beforeRouteEnter(to, from, next) {
+        next(vm => {
+          vm.prevRoute = from
+        })
+      },
       showLess: "Show More",
       activeName: 'tasks',
       dialogVisible: false,
@@ -4056,6 +4093,7 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
+ prevRoutePath() {return this.prevRoute ? this.prevRoute.path : '/'},
  currentTab: {
       get() {        
         return this.portfolioTab 
@@ -5499,6 +5537,7 @@ export default {
       },
     });
     },
+    hasHistory () { return window.history.length > 2 },
     openIssue(issue) {   
       this.$router.push({
       name: "PortfolioIssueForm",
@@ -5790,7 +5829,7 @@ export default {
       // console.log(id);
     },
     closeWindow() {
-      window.close()
+    window.close()
     },
     handleClick(tab, event) {
             // console.log(tab);

@@ -2612,6 +2612,14 @@ body /deep/ .mx-input.disabled {
   background-color: #41b883;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
 }
+.portfolioHomeBtn { 
+ transition: all .2s ease-in-out; 
+ font-size: 1.25rem;
+}
+
+.portfolioHomeBtn:hover { 
+  transition: all .2s ease-in-out; 
+ }
 
 .presentBtn { 
   transition: all .2s ease-in-out; 
@@ -2623,7 +2631,7 @@ body /deep/ .mx-input.disabled {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
 }
 .total-table-btns, .addCheckProgBtn {box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); }
-.exportBtns:hover, #printBtn:hover, .presentBtn:hover { transform: scale(1.06); }
+.exportBtns:hover, #printBtn:hover, .presentBtn:hover, .portfolioHomeBtn:hover { transform: scale(1.06); }
 th {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
