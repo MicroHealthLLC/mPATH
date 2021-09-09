@@ -7,7 +7,7 @@
         =image_tag "mpath.svg"
     br
     -if @active_projects.size > 0
-      =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn", target: "_blank" do
+      =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn" do
         | PORTFOLIO DATA VIEWER
     .grid-container.program-name
       -if @active_projects.size > 0

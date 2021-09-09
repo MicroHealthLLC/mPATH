@@ -11,12 +11,9 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-        <button style="cursor: pointer" @click.prevent="closeWindow">
-          <!-- <router-link :to="`/`">  -->
-           <i class="far fa-times-circle"></i>
-          <!-- </router-link> -->
-          
-        </button>
+        <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backHomeBtn">
+          <i class="fas fa-home text-light"></i>  
+        </button>  
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -238,12 +235,12 @@
 
                                    <div class="col mt-3" v-if="dynamicObj == risksObj.filtered.risks" >  
 
-                                        <h6>RISK APPROACH</h6> 
-                                        
-                                        <h4 class="text-light label px-2 d-inline-block"> {{
+                                        <h6>RISK APPROACH</h6>                                         
+                                        <h4 class="text-light labels px-2 d-inline-block"> {{
                                           dynamicObj[currentTaskSlide].risk_approach.charAt(0).toUpperCase() +
                                           dynamicObj[currentTaskSlide].risk_approach.slice(1)
                                           }}</h4>
+
                                       <h6 class="mt-5">PRIORITY LEVEL</h6>  
                                           <h4
                                           v-if="dynamicObj[currentTaskSlide].priority_level == 'Very Low'"
@@ -1141,7 +1138,15 @@
                         <td class="text-left" v-else>No Update</td>
 
                         <td>
-                          {{ moment(task.start_date).format("DD MMM YYYY") }}
+                         <span v-if="task.ongoing && !task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="task.ongoing && task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                             </span>
+                         <span v-else>{{
+                           moment(task.start_date).format("DD MMM YYYY") 
+                          }}</span>
                         </td>
                         <td>
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
@@ -3085,7 +3090,16 @@
                           >
                         </td>
                         <td>
-                          {{ moment(risk.start_date).format("DD MMM YYYY") }}
+                           <span v-if="risk.ongoing && !risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="risk.ongoing && risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                         </span>
+                         <span v-else>{{
+                           moment(risk.start_date).format("DD MMM YYYY") 
+                          }}</span>
+                       
                         </td>
                         <td>
                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
@@ -3923,6 +3937,7 @@ const simulateAsyncOperation = fn => {
 }
 
 export default {
+
   name: "PortfolioView",
   props: ["facility"],
   components: {
@@ -3930,6 +3945,12 @@ export default {
   },
   data() {
     return {
+     prevRoute: null,
+     beforeRouteEnter(to, from, next) {
+        next(vm => {
+          vm.prevRoute = from
+        })
+      },
       showLess: "Show More",
       activeName: 'tasks',
       dialogVisible: false,
@@ -3976,13 +3997,16 @@ export default {
       },
     };
   },
+  beforeMount(){
+    this.fetchPortfolioCounts();
+  },
   mounted() {
     this.fetchPortfolioPrograms();
-    this.fetchPortfolioCounts();
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
       $(this.currTab).trigger('click');
+      this.setFacilityProjectIds()
     })
   },
   computed: {
@@ -4056,6 +4080,7 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
+ prevRoutePath() {return this.prevRoute ? this.prevRoute.path : '/'},
  currentTab: {
       get() {        
         return this.portfolioTab 
@@ -5207,29 +5232,8 @@ export default {
         return this.portfolioNameFilter;
       },
       set(value) {
-        this.facility_project_ids = [];
-        // console.log(value)
-        for(let k = 0; k < value.length; k++){
-          // this.searchChildren(value[k]);
-          // if(value[k].children && value[k].children.length > 0){
-          //   if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
-          //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-          //   }
-          // }
-            console.log("k:" + k)
-          if(value[k].program_id){
-            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-            break
-          }else if(value[k].project_group_id){
-            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-          }else if(value[k].project_id){
-            this.facility_project_ids.push(value[k].facility_project_id)
-          }
-        }
-        this.facility_project_ids = _.uniq(this.facility_project_ids)
-      
-        // console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
+        this.setFacilityProjectIds()
       },
     },
     C_portfolioIssueTypesFilter: {
@@ -5489,6 +5493,23 @@ export default {
     log(e) {
       //  console.log("number" + e)
     },
+    setFacilityProjectIds(){
+      this.facility_project_ids = [];
+      let value = this.portfolioNameFilter
+      if(!value){
+        return
+      }
+      for(let k = 0; k < value.length; k++){
+        if(value[k].program_id){
+          this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+        }else if(value[k].project_group_id){
+          this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+        }else if(value[k].project_id){
+          this.facility_project_ids.push(value[k].facility_project_id)
+        }
+      }
+      this.facility_project_ids = _.uniq(this.facility_project_ids)
+    },
    openTask(task) {      
       this.$router.push({
       name: "PortfolioTaskForm",
@@ -5499,6 +5520,7 @@ export default {
       },
     });
     },
+    hasHistory () { return window.history.length > 2 },
     openIssue(issue) {   
       this.$router.push({
       name: "PortfolioIssueForm",
@@ -5789,8 +5811,8 @@ export default {
       this.programId = id;
       // console.log(id);
     },
-    closeWindow() {
-      window.close()
+    backHomeBtn() {
+      window.location.pathname = "/dashboard"
     },
     handleClick(tab, event) {
             // console.log(tab);
