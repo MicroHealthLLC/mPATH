@@ -11,12 +11,25 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-        <!-- <button style="cursor: pointer" @click.prevent="closeWindow"> -->
-          <router-link :to="`/`" replace> 
-          <i class="far fa-times-circle"></i>
-          </router-link>
-          
-        <!-- </button> -->
+       
+      <!-- <router-link to="/">  
+       <i class="fas fa-home-lg-alt mr-3"></i>  
+      </router-link> 
+
+     <router-link :to="{ name: current_user }">  
+       <i class="fas fa-home-lg-alt mr-3"></i>  
+      </router-link>  -->
+
+        <button style="cursor: pointer" @click="$router.go(-1)">
+          <i class="fad fa-home-lg-alt portfolioHomeBtn m-2"></i>  
+        </button>  
+
+<!-- 
+        <button style="cursor: pointer" @click="closeWindow">
+         <i class="fas fa-home-lg-alt"></i>  
+        </button>    -->
+
+
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -84,11 +97,11 @@
                             <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
                           ></span>
 
-                            <span v-if="dynamicObj[currentTaskSlide].text" class="breakWord"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                            <span v-if="dynamicObj[currentTaskSlide].text"> 
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
                             </span>
-                              <span v-if="dynamicObj[currentTaskSlide].title" class="breakWord"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].title }}</h2>
+                              <span v-if="dynamicObj[currentTaskSlide].title"> 
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].title }}</h2>
                             </span>
                              </div>
                                  <div class="col-3 mt-3">
@@ -133,7 +146,7 @@
                                 <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:410px; overflow-y:auto">
+                                 <div style="height:300px; overflow-y:auto">
                                  <span  v-if="dynamicObj[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
@@ -182,6 +195,14 @@
                                   </div>
                                </div>
 
+                                 <div class="issueTypes mt-3" v-if="dynamicObj == tasksObj.filtered.tasks">
+
+                                 <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
+                                   <div style="height:100px; overflow-y:auto">
+                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
+                                  </div>
+                               </div>
+
                                 </div>
 
 
@@ -221,7 +242,7 @@
                                     <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
                                     <el-progress
                                       type="circle"
-                                      class="py-2"                          
+                                      class="py-2 text-light"                          
                                       :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
                                     ></el-progress>
                                     </span>
@@ -230,12 +251,12 @@
 
                                    <div class="col mt-3" v-if="dynamicObj == risksObj.filtered.risks" >  
 
-                                        <h6>RISK APPROACH</h6> 
-                                        
+                                        <h6>RISK APPROACH</h6>                                         
                                         <h4 class="text-light label px-2 d-inline-block"> {{
                                           dynamicObj[currentTaskSlide].risk_approach.charAt(0).toUpperCase() +
                                           dynamicObj[currentTaskSlide].risk_approach.slice(1)
                                           }}</h4>
+
                                       <h6 class="mt-5">PRIORITY LEVEL</h6>  
                                           <h4
                                           v-if="dynamicObj[currentTaskSlide].priority_level == 'Very Low'"
@@ -668,7 +689,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -1133,7 +1154,15 @@
                         <td class="text-left" v-else>No Update</td>
 
                         <td>
-                          {{ moment(task.start_date).format("DD MMM YYYY") }}
+                         <span v-if="task.ongoing && !task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="task.ongoing && task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                             </span>
+                         <span v-else>{{
+                           moment(task.start_date).format("DD MMM YYYY") 
+                          }}</span>
                         </td>
                         <td>
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
@@ -1507,7 +1536,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -2493,7 +2522,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -3077,7 +3106,16 @@
                           >
                         </td>
                         <td>
-                          {{ moment(risk.start_date).format("DD MMM YYYY") }}
+                           <span v-if="risk.ongoing && !risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="risk.ongoing && risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                         </span>
+                         <span v-else>{{
+                           moment(risk.start_date).format("DD MMM YYYY") 
+                          }}</span>
+                       
                         </td>
                         <td>
                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
@@ -3330,7 +3368,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -3915,6 +3953,7 @@ const simulateAsyncOperation = fn => {
 }
 
 export default {
+
   name: "PortfolioView",
   props: ["facility"],
   components: {
@@ -3922,6 +3961,12 @@ export default {
   },
   data() {
     return {
+     prevRoute: null,
+     beforeRouteEnter(to, from, next) {
+        next(vm => {
+          vm.prevRoute = from
+        })
+      },
       showLess: "Show More",
       activeName: 'tasks',
       dialogVisible: false,
@@ -4049,6 +4094,7 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
+ prevRoutePath() {return this.prevRoute ? this.prevRoute.path : '/'},
  currentTab: {
       get() {        
         return this.portfolioTab 
@@ -5175,6 +5221,9 @@ export default {
         },
       };
     },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
     C_showCountToggle: {
       get() {
         return this.getShowCount;
@@ -5183,6 +5232,7 @@ export default {
         this.setShowCount(value) || this.setShowCount(!this.getShowCount);
       },
     },
+
     C_portfolioUsersFilter: {
       get() {
         return this.portfolioUsersFilter;
@@ -5493,6 +5543,7 @@ export default {
       },
     });
     },
+    hasHistory () { return window.history.length > 2 },
     openIssue(issue) {   
       this.$router.push({
       name: "PortfolioIssueForm",
@@ -5783,9 +5834,9 @@ export default {
       this.programId = id;
       // console.log(id);
     },
-    // closeWindow() {
-    //  this.$router.go(-1)
-    // },
+    closeWindow() {
+    window.close()
+    },
     handleClick(tab, event) {
             // console.log(tab);
       let tab_id = $(event.target).attr("id")
