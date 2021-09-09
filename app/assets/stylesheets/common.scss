@@ -2614,12 +2614,8 @@ body /deep/ .mx-input.disabled {
 }
 .portfolioHomeBtn { 
  transition: all .2s ease-in-out; 
- font-size: 1.25rem;
+ box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
 }
-
-.portfolioHomeBtn:hover { 
-  transition: all .2s ease-in-out; 
- }
 
 .presentBtn { 
   transition: all .2s ease-in-out; 

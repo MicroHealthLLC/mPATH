@@ -11,25 +11,9 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-       
-      <!-- <router-link to="/">  
-       <i class="fas fa-home-lg-alt mr-3"></i>  
-      </router-link> 
-
-     <router-link :to="{ name: current_user }">  
-       <i class="fas fa-home-lg-alt mr-3"></i>  
-      </router-link>  -->
-
-        <button style="cursor: pointer" @click="$router.go(-1)">
-          <i class="fad fa-home-lg-alt portfolioHomeBtn m-2"></i>  
+        <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backHomeBtn">
+          <i class="fas fa-home text-light"></i>  
         </button>  
-
-<!-- 
-        <button style="cursor: pointer" @click="closeWindow">
-         <i class="fas fa-home-lg-alt"></i>  
-        </button>    -->
-
-
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -5834,8 +5818,8 @@ export default {
       this.programId = id;
       // console.log(id);
     },
-    closeWindow() {
-    window.close()
+    backHomeBtn() {
+      window.location.pathname = "/dashboard"
     },
     handleClick(tab, event) {
             // console.log(tab);
