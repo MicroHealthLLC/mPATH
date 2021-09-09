@@ -3975,6 +3975,7 @@ export default {
       // Code that will run only after the
       // entire view has been rendered
       $(this.currTab).trigger('click');
+      this.setFacilityProjectIds()
     })
   },
   computed: {
@@ -5195,29 +5196,8 @@ export default {
         return this.portfolioNameFilter;
       },
       set(value) {
-        this.facility_project_ids = [];
-        // console.log(value)
-        for(let k = 0; k < value.length; k++){
-          // this.searchChildren(value[k]);
-          // if(value[k].children && value[k].children.length > 0){
-          //   if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
-          //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-          //   }
-          // }
-            console.log("k:" + k)
-          if(value[k].program_id){
-            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-            break
-          }else if(value[k].project_group_id){
-            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-          }else if(value[k].project_id){
-            this.facility_project_ids.push(value[k].facility_project_id)
-          }
-        }
-        this.facility_project_ids = _.uniq(this.facility_project_ids)
-      
-        // console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
+        this.setFacilityProjectIds()
       },
     },
     C_portfolioIssueTypesFilter: {
@@ -5476,6 +5456,32 @@ export default {
       ]),
     log(e) {
       //  console.log("number" + e)
+    },
+    setFacilityProjectIds(){
+      this.facility_project_ids = [];
+      // console.log(value)
+      let value = this.portfolioNameFilter
+      if(!value){
+        return
+      }
+      for(let k = 0; k < value.length; k++){
+        // this.searchChildren(value[k]);
+        // if(value[k].children && value[k].children.length > 0){
+        //   if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
+        //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+        //   }
+        // }
+        console.log("k:" + k)
+        if(value[k].program_id){
+          this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+          break
+        }else if(value[k].project_group_id){
+          this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+        }else if(value[k].project_id){
+          this.facility_project_ids.push(value[k].facility_project_id)
+        }
+      }
+      this.facility_project_ids = _.uniq(this.facility_project_ids)
     },
    openTask(task) {      
       this.$router.push({
