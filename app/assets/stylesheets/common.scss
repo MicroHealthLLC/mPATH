@@ -1052,8 +1052,6 @@ a:hover {
   }
 }
 
-
-
 .portfolioDialogMode {
   .el-dialog {
     height: 100vh;
@@ -1063,6 +1061,9 @@ a:hover {
     border-top: solid 15px #1D336F;
     border-bottom: solid 15px #1D336F;
     margin-top: 0 !important;
+  }
+  .el-progress__text {
+    color:  #f8f9fa;
   }
   .riskLabels {
     box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
@@ -1485,6 +1486,8 @@ a:hover {
   .el-progress__text {
     color:  #f8f9fa;
   }
+
+
   .el-dialog__headerbtn {
     margin-right: 1.5rem;
   }
