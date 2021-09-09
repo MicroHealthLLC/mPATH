@@ -12,7 +12,10 @@
       </span>
       <span class="float-right mr-4">
         <button style="cursor: pointer" @click.prevent="closeWindow">
-          <i class="far fa-times-circle"></i>
+          <!-- <router-link :to="`/`">  -->
+           <i class="far fa-times-circle"></i>
+          <!-- </router-link> -->
+          
         </button>
       </span>
     </div>
@@ -33,7 +36,7 @@
                                     :src="require('../../../../assets/images/mpath.png')"
                                   />
                              </div>
-                             <div class="col-5 text-center px-3 py-2"  v-if="dynamicObj[currentTaskSlide]">
+                             <div class="col-5 text-center px-3 py-2" v-if="dynamicObj[currentTaskSlide]">
                               
                         
                               
@@ -81,11 +84,11 @@
                             <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
                           ></span>
 
-                          <span v-if="dynamicObj[currentTaskSlide].text"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].text }}</h2>
+                            <span v-if="dynamicObj[currentTaskSlide].text"> 
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].text }}</h2>
                             </span>
                               <span v-if="dynamicObj[currentTaskSlide].title"> 
-                              <h2 class="mt-2 d-inline text-truncate">{{ dynamicObj[currentTaskSlide].title }}</h2>
+                              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentTaskSlide].title }}</h2>
                             </span>
                              </div>
                                  <div class="col-3 mt-3">
@@ -127,10 +130,10 @@
                                 </div>    
                                
                                                        
-                                <div class="col-5 text-center  mx-4 pt-0 px-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
+                                <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentTaskSlide] !== undefined">
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
-                                 <div style="height:275px; overflow-y:auto">
+                                 <div style="height:300px; overflow-y:auto">
                                  <span  v-if="dynamicObj[currentTaskSlide].notes_updated_at.length > 0">                    
                                   <span>
                                     <br>
@@ -179,6 +182,14 @@
                                   </div>
                                </div>
 
+                                 <div class="issueTypes mt-3" v-if="dynamicObj == tasksObj.filtered.tasks">
+
+                                 <h6 class="bg-secondary text-light py-1 d-block">TASK DESCRIPTION</h6>
+                                   <div style="height:100px; overflow-y:auto">
+                                      <h4 class="px-3">{{ dynamicObj[currentTaskSlide].description }}</h4>
+                                  </div>
+                               </div>
+
                                 </div>
 
 
@@ -218,7 +229,7 @@
                                     <span :class="{ 'text-light': dynamicObj[currentTaskSlide].progress <= 0 }">
                                     <el-progress
                                       type="circle"
-                                      class="py-2"                          
+                                      class="py-2 text-light"                          
                                       :percentage="Math.round(dynamicObj[currentTaskSlide].progress)"
                                     ></el-progress>
                                     </span>
@@ -665,7 +676,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -1504,7 +1515,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -2490,7 +2501,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -3327,7 +3338,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -5171,6 +5182,9 @@ export default {
         },
       };
     },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
     C_showCountToggle: {
       get() {
         return this.getShowCount;
@@ -5179,6 +5193,7 @@ export default {
         this.setShowCount(value) || this.setShowCount(!this.getShowCount);
       },
     },
+
     C_portfolioUsersFilter: {
       get() {
         return this.portfolioUsersFilter;
@@ -5201,6 +5216,7 @@ export default {
           //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
           //   }
           // }
+            console.log("k:" + k)
           if(value[k].program_id){
             this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
             break
@@ -5211,7 +5227,7 @@ export default {
           }
         }
         this.facility_project_ids = _.uniq(this.facility_project_ids)
-        // console.log("------")
+      
         // console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
       },
@@ -5774,7 +5790,7 @@ export default {
       // console.log(id);
     },
     closeWindow() {
-     router.back()
+      window.close()
     },
     handleClick(tab, event) {
             // console.log(tab);
@@ -5822,5 +5838,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.breakWord {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
 
 </style>
