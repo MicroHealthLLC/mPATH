@@ -676,7 +676,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -1515,7 +1515,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -2501,7 +2501,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -3338,7 +3338,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox v-model="C_showCountToggle"
+                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -5182,6 +5182,9 @@ export default {
         },
       };
     },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
     C_showCountToggle: {
       get() {
         return this.getShowCount;
@@ -5190,6 +5193,7 @@ export default {
         this.setShowCount(value) || this.setShowCount(!this.getShowCount);
       },
     },
+
     C_portfolioUsersFilter: {
       get() {
         return this.portfolioUsersFilter;
