@@ -185,7 +185,6 @@ Rails.application.routes.draw do
   end
 
   get '/profile', to: 'profiles#index'
-  get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'
   get '/settings', to: 'data#settings'

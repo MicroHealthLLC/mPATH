@@ -5790,7 +5790,7 @@ export default {
       // console.log(id);
     },
     backHomeBtn() {
-      window.location.pathname = "/dashboard"
+      window.location.pathname = "/"
     },
     handleClick(tab, event) {
             // console.log(tab);
