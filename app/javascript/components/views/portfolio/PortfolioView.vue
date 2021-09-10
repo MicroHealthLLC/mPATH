@@ -1,7 +1,5 @@
 <template>
-  <div 
-    class="container-fluid mt-3 mx-3 portfolioView_main"
-    >
+  <div>
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -3872,8 +3870,6 @@
 </template>
 
 <script>
-
-import axios from 'axios'
 import Loader from "../../shared/loader.vue";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -5461,6 +5457,9 @@ export default {
       "fetchPortfolioTasks",
       "fetchPortfolioIssues",
       "fetchPortfolioCounts",
+      "fetchPortfolioIssueTypes",
+      "fetchPortfolioIssueSeverities",
+      "fetchPortfolioCategories",
       "fetchPortfolioRisks",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
@@ -5805,6 +5804,9 @@ export default {
         this.currentTab = 'issues'
         if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
           this.fetchPortfolioIssues();
+          this.fetchPortfolioCategories()
+          this.fetchPortfolioIssueTypes()
+          this.fetchPortfolioIssueSeverities()
         }
       }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'
