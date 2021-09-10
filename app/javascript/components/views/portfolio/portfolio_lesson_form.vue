@@ -1,12 +1,19 @@
 <template>
+<div 
+  v-loading="!lessonsLoaded"
+  element-loading-text="Fetching Lesson data. Please wait..."
+  :class="[!lessonsLoaded ? 'vh100': '']"
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
   <form
     @submit.prevent="saveLesson"
     style="padding:40px"
     class="portfolio-lesson-form"
-    :class="{ _disabled: !portfolioLessonLoaded }"
+    :class="{ _disabled: !lessonsLoaded }"
     accept-charset="UTF-8"
   >
-    <div class="mt-2  d-flex align-items-center" :load="log(portfolioLessonStages)">
+    <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
       <div  >
         <h5 class="mb-0">
@@ -32,8 +39,9 @@
           <el-icon
             class="el-icon-arrow-right"
             style="font-size: 12px"
-          ></el-icon>
-          <span v-if="lesson" >{{ lesson.title || "(Lesson Name)" }}</span>
+          ></el-icon>       
+           <span v-if="lessonsLoaded && lesson">{{ lesson.title }}</span>
+           <span v-else>...</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -756,7 +764,7 @@
       </paginate>
     </div>
 
-    <div v-if="!lessonsLoaded" class="load-spinner spinner-border"></div>
+    <!-- <div v-if="!lessonsLoaded" class="load-spinner spinner-border"></div> -->
     <RelatedLessonMenu
       :facilities="facilities"
       :facilityGroups="facilityGroups"
@@ -769,6 +777,7 @@
       ref="menu"
     />
   </form>
+</div>
 </template>
 
 <script>

@@ -270,11 +270,17 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title @click.prevent="scrollToStartDate" class="point">     
-              <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
+              <span v-if="selectedEvent.isOngoing == true && selectedEvent.isClosed == false" class="d-inline mr-1">
                 <small><b>Date Identified:</b></small>
-              </span>                 
-              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>              
-              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}              
+                    {{ moment(selectedEvent.start).format('DD MMM YYYY') }} 
+              </span>       
+                <span v-else-if="selectedEvent.isOngoing == true && selectedEvent.isClosed == true && selectedEvent.start == '2000-01-01'" class="d-inline mr-1">
+                <small><b>Date Identified:</b></small>
+               <i class="far fa-retweet text-secondary"></i>
+              </span>              
+              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small>            
+              {{ moment(selectedEvent.start).format('DD MMM YYYY') }} 
+              </span>  
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -628,6 +634,9 @@
 
             if(this.taskData[i].ongoing && !this.taskData[i].closed && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
             this.taskEndDates[i] = '2099-01-01'
+            }
+            if(this.taskData[i].ongoing && !this.taskData[i].closed && this.taskStartDates[i] == null || this.taskStartDates[i] == undefined ) {        
+            this.taskStartDates[i] = '2000-01-01'
             }
             if(this.taskData[i].ongoing) {
             this.taskNames[i] = this.taskNames[i] + " (Ongoing)"          

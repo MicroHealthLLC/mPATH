@@ -35,7 +35,15 @@
              <div class="font-sm col-md-12 pt-1 pb-0">
                <span class="mr-2">
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(task.startDate)}}
+                <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
+                <i class="fas fa-retweet text-success"></i>
+                </span>
+                <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
+                  <i class="fas fa-retweet text-secondary"></i>
+                    </span>
+                <span v-else>{{
+                moment(task.startDate).format("DD MMM YYYY") 
+                  }}</span>
                </span>              
                 <span  v-if="task.dueDate !== null">
                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>                  

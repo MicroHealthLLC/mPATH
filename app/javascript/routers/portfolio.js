@@ -14,7 +14,7 @@ export default new VueRouter({
      },
      {
       name: "PortfolioTaskForm",
-      path: "/program/:programId/project/:projectId/tasks/:taskId",
+      path: "/portfolio/program/:programId/project/:projectId/task/:id",
       component: PortfolioTaskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -31,7 +31,7 @@ export default new VueRouter({
      },
      {
       name: "PortfolioIssueForm",
-      path: "/",
+      path: "/portfolio/program/:programId/project/:projectId/issue/:id",
       component: PortfolioIssueForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -48,7 +48,7 @@ export default new VueRouter({
      },
      {
       name: "PortfolioRiskForm",
-      path: "/program/:programId/project/:projectId/risks/:riskId",
+      path: "/portfolio/program/:programId/project/:projectId/risk/:id",
       component: PortfolioRiskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -65,7 +65,7 @@ export default new VueRouter({
      },
      {
       name: "PortfolioLessonForm",
-      path: "/",
+      path: "/portfolio/program/:programId/project/:projectId/lesson/:id",
       component: PortfolioLessonForm,   
      },
   ],

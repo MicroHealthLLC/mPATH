@@ -12,7 +12,17 @@
             <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
             <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
        </td>
-       <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
+       <td class="eight text-center">         
+          <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
+            <i class="fas fa-retweet text-success"></i>
+          </span>
+          <span v-else-if="risk.ongoing && risk.closed && risk.startDate == null || undefined">
+            <i class="fas fa-retweet text-secondary"></i>
+              </span>
+          <span v-else>{{
+            moment(risk.startDate).format("DD MMM YYYY") 
+          }}</span>
+         </td>
        <td class="eight text-center">
          <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
          <span v-else-if="risk.onHold && risk.dueDate == ''" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>

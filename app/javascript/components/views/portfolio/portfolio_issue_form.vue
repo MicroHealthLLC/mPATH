@@ -1,5 +1,11 @@
 <template>
-  <div>
+  <div
+  v-loading="!portfolioIssueLoaded"
+  element-loading-text="Fetching Issue data. Please wait..."
+  :class="[!portfolioIssueLoaded ? 'vh100': '']"
+  element-loading-spinner="el-icon-loading"
+   element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
       id="portfolio-issue-form"
       @submit.prevent="saveIssue"
@@ -34,8 +40,8 @@
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
-            <span v-if="DV_issue.title.length > 0">{{ DV_issue.title }}</span>
-            <span v-else style="color: gray">(Issue Name)</span>
+            <span v-if="portfolioIssueLoaded && DV_issue">{{ DV_issue.title }}</span>
+            <span v-else>...</span>
           </h5>
         </div>
        
@@ -2011,6 +2017,7 @@ export default {
       "currentRisks",
       "portfolioIssues",
       'portfolioIssueStages',
+      "portfolioIssueLoaded",
       "currentTasks",
       'portfolioCategories',
       'portfolioIssueTypes',

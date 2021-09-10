@@ -1,5 +1,7 @@
 <template>
-  <div class="container-fluid mt-3 mx-3 portfolioView_main">
+  <div 
+    class="container-fluid mt-3 mx-3 portfolioView_main"
+    >
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -11,12 +13,9 @@
         <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
       </span>
       <span class="float-right mr-4">
-        <button style="cursor: pointer" @click.prevent="closeWindow">
-          <!-- <router-link :to="`/`">  -->
-           <i class="far fa-times-circle"></i>
-          <!-- </router-link> -->
-          
-        </button>
+        <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backHomeBtn">
+          <i class="fas fa-home text-light"></i>  
+        </button>  
       </span>
     </div>
     <el-tabs class="mt-1 mr-3" type="border-card">
@@ -238,12 +237,12 @@
 
                                    <div class="col mt-3" v-if="dynamicObj == risksObj.filtered.risks" >  
 
-                                        <h6>RISK APPROACH</h6> 
-                                        
-                                        <h4 class="text-light label px-2 d-inline-block"> {{
+                                        <h6>RISK APPROACH</h6>                                         
+                                        <h4 class="text-light labels px-2 d-inline-block"> {{
                                           dynamicObj[currentTaskSlide].risk_approach.charAt(0).toUpperCase() +
                                           dynamicObj[currentTaskSlide].risk_approach.slice(1)
                                           }}</h4>
+
                                       <h6 class="mt-5">PRIORITY LEVEL</h6>  
                                           <h4
                                           v-if="dynamicObj[currentTaskSlide].priority_level == 'Very Low'"
@@ -404,7 +403,9 @@
         <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" >
           
           <!-- TASKS -->
-          <el-tab-pane class="pt-2" name="tasks" style="postion:relative" >
+          <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
+                
+           >
             <template
               slot="label"
               class="text-right"              
@@ -676,9 +677,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
 
@@ -1141,7 +1145,15 @@
                         <td class="text-left" v-else>No Update</td>
 
                         <td>
-                          {{ moment(task.start_date).format("DD MMM YYYY") }}
+                         <span v-if="task.ongoing && !task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="task.ongoing && task.closed && task.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                             </span>
+                         <span v-else>{{
+                           moment(task.start_date).format("DD MMM YYYY") 
+                          }}</span>
                         </td>
                         <td>
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
@@ -1278,15 +1290,14 @@
                   </button>
                 </div>
               </div>
-              <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
+              <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+              <div v-else class="mt-5">NO RESULTS TO DISPLAY
+ 
+                  
+              </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane class="pt-2"  name="issues"
-           v-loading="!portfolioIssuesLoaded"
-            element-loading-text="Fetching your data. Please wait..."
-            :class="[!portfolioIssuesLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"         
+          <el-tab-pane class="pt-2"  name="issues"             
           >
             <template slot="label" class="text-right">
               ISSUES
@@ -1515,9 +1526,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block  portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
 
@@ -2166,20 +2180,14 @@
                 </button>
               </div>
             </div>
+             <div v-else-if="!portfolioIssuesLoaded" class="load-spinner spinner-border"></div>
             <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
           </el-tab-pane>
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2" name="risks"
-          
-            v-loading="!portfolioRisksLoaded"
-            element-loading-text="Fetching your data. Please wait..."
-            :class="[!portfolioRisksLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"       
-          
-          
+          <el-tab-pane class="pt-2" name="risks"          
+           
           >
             <template
               slot="label"
@@ -2189,63 +2197,8 @@
               RISKS
               <span class="badge badge-secondary badge-pill">
                 <span>{{ portfolioCounts.risks_count }}</span>
-                <!-- <span v-if="getPortfolioWatchedTasksToggle">{{ tasksObj.length }}</span>
-                <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
-              </span>
+               </span>
             </template>
-
-            <!-- <div class="row pb-4">
-              <div class="col-4 py-2">
-             <div class="w-100 d-flex">
-              <div class="d font-sm mt-2 mr-2">SEARCH</div>                
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
-                <el-button slot="prepend" icon="el-icon-search"></el-button>
-              </el-input>             
-               </div>
-              </div>
-            <div  class="col-4 py-2">   
-            <div class="d-flex w-100">
-
-               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
-                   <template>
-                    <treeselect  
-                    placeholder="Search and select" 
-                    :multiple="true"     
-                    :limit="3"
-                    :match-keys= "['facility_project_id', 'id', 'label']"
-                    :limitText="count => `...`"            
-                    track-by="name"  
-                   :options="portfolioPrograms" 
-                    valueFormat="object"
-                    v-model="C_portfolioRiskNamesFilter"
-                    />         
-                 </template>              
-                </div>      
-              </div> 
-                  <div  class="col-4 pl-0 py-2">   
-                <div class="d-flex w-100">                  
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
-                   <template>
-                  <el-select 
-                    v-model="C_categoryNameFilter"                    
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Select Process Area"
-                  >
-                  <el-option 
-                    v-for="item in C_r_categories"                                                     
-                    :value="item"   
-                    :key="item"
-                    :label="item"                                                  
-                    >
-                   </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-            </div> -->
 
             <div class="box-shadow py-2">
               <div class="row py-1 pr-2">
@@ -2501,9 +2454,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
 
@@ -3085,7 +3041,16 @@
                           >
                         </td>
                         <td>
-                          {{ moment(risk.start_date).format("DD MMM YYYY") }}
+                           <span v-if="risk.ongoing && !risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-success"></i>
+                         </span>
+                          <span v-else-if="risk.ongoing && risk.closed && risk.start_date == null || undefined">
+                           <i class="fas fa-retweet text-secondary"></i>
+                         </span>
+                         <span v-else>{{
+                           moment(risk.start_date).format("DD MMM YYYY") 
+                          }}</span>
+                       
                         </td>
                         <td>
                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
@@ -3211,17 +3176,13 @@
                   </button>
                 </div>
               </div>
+              <div v-else-if="!portfolioRisksLoaded" class="load-spinner spinner-border"></div>
 
               <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2"  name="lessons"
-            v-loading="!portfolioLessonsLoaded"
-            element-loading-text="Fetching your data. Please wait..."
-            :class="[!portfolioLessonsLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"         
+          <el-tab-pane class="pt-2"  name="lessons"          
           >
             <template slot="label" class="text-right">
               LESSONS LEARNED
@@ -3338,9 +3299,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
                 <div class="col-2 px-0">
@@ -3886,6 +3850,7 @@
                   </button>
                 </div>
               </div>
+              <div v-else-if="!portfolioLessonsLoaded" class="load-spinner spinner-border"></div>
               <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
             </div>
           </el-tab-pane>
@@ -3923,6 +3888,7 @@ const simulateAsyncOperation = fn => {
 }
 
 export default {
+
   name: "PortfolioView",
   props: ["facility"],
   components: {
@@ -3930,6 +3896,7 @@ export default {
   },
   data() {
     return {
+      prevRoute: null,
       showLess: "Show More",
       activeName: 'tasks',
       dialogVisible: false,
@@ -3945,12 +3912,6 @@ export default {
       search_lessons: "",
       currentSort: "program_name",
       currentSortDir: "asc",
-      currentPage: 1,
-      // selectedProgram: this.C_programNameFilter,
-      currentIssuesPage: 1,
-      currentRisksPage: 1,
-      currentLessonsPage: 1,
-      // tSlide: this.tasksObj[this.currentTaskSlide],
       loadIssues: false,
       loadRisks: false,
       loadLessons: false,
@@ -3960,9 +3921,7 @@ export default {
       pageSize: 10,
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
-
       facility_project_ids: [],
-
       uri: "data:application/vnd.ms-excel;base64,",
       template:
         '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
@@ -3976,20 +3935,27 @@ export default {
       },
     };
   },
+  beforeMount(){
+    this.fetchPortfolioCounts();
+  },
   mounted() {
     this.fetchPortfolioPrograms();
-    this.fetchPortfolioCounts();
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
       $(this.currTab).trigger('click');
+      this.setFacilityProjectIds()
     })
   },
   computed: {
     ...mapGetters([
-      'getPortfolioWatchedTasksToggle', 
+      'getPortfolioWatchedTasksToggle',       
       'getPortfolioBriefedTasksToggle',
-       'getMyAssignmentsFilter',
+      'getMyAssignmentsFilter',
+      'currentTaskPage',
+      'currentIssuePage',
+      'currentRiskPage',
+      'currentLessonPage',
       'getTasksPerPageFilterOptions',
       'getIssuesPerPageFilterOptions',
       'getRisksPerPageFilterOptions',
@@ -4034,6 +4000,7 @@ export default {
       'portfolioRisks', 
       'portfolioLessons',
       'portfolioPrograms', 
+      'portfolioProgramsLoaded',
       'facilityProgressFilter',
       'programProgressFilter',
       'portfolioUsers',
@@ -4056,6 +4023,7 @@ export default {
       'portfolioRiskApproachesFilter',
       'taskIssueProgressFilter'
     ]),
+ prevRoutePath() {return this.prevRoute ? this.prevRoute.path : '/'},
  currentTab: {
       get() {        
         return this.portfolioTab 
@@ -5181,19 +5149,15 @@ export default {
           // percentage: Math.round(completed_percent),
         },
       };
-    },
-    showCounts(){
-      this.setShowCount(!this.getShowCount)       
-    },
+    }, 
     C_showCountToggle: {
       get() {
-        return this.getShowCount;
+        return this.getShowCount 
       },
       set(value) {
         this.setShowCount(value) || this.setShowCount(!this.getShowCount);
       },
     },
-
     C_portfolioUsersFilter: {
       get() {
         return this.portfolioUsersFilter;
@@ -5207,29 +5171,8 @@ export default {
         return this.portfolioNameFilter;
       },
       set(value) {
-        this.facility_project_ids = [];
-        // console.log(value)
-        for(let k = 0; k < value.length; k++){
-          // this.searchChildren(value[k]);
-          // if(value[k].children && value[k].children.length > 0){
-          //   if(value[k].all_facility_project_ids && value[k].all_facility_project_ids.length > 0){
-          //     this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-          //   }
-          // }
-            console.log("k:" + k)
-          if(value[k].program_id){
-            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-            break
-          }else if(value[k].project_group_id){
-            this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
-          }else if(value[k].project_id){
-            this.facility_project_ids.push(value[k].facility_project_id)
-          }
-        }
-        this.facility_project_ids = _.uniq(this.facility_project_ids)
-      
-        // console.log(this.facility_project_ids)
         this.setPortfolioNameFilter(value);
+        this.setFacilityProjectIds()
       },
     },
     C_portfolioIssueTypesFilter: {
@@ -5394,6 +5337,38 @@ export default {
         this.setTasksPerPageFilter(value);
       },
     },
+    currentPage:{
+       get() {
+        return this.currentTaskPage
+      },
+      set(value) {
+        this.setCurrentPage(value);
+      },
+    },
+    currentIssuesPage:{
+       get() {
+        return this.currentIssuePage
+      },
+      set(value) {
+        this.setCurrentIssuePage(value);
+      },
+    },
+      currentRisksPage:{
+       get() {
+        return this.currentRiskPage
+      },
+      set(value) {
+        this.setCurrentRiskPage(value);
+      },
+    },
+      currentLessonsPage:{
+       get() {
+        return this.currentLessonPage
+      },
+      set(value) {
+        this.setCurrentLessonPage(value);
+      },
+    },
     C_risksPerPage: {
       get() {
         return this.getRisksPerPageFilter || { id: 15, name: "15", value: 15 };
@@ -5427,6 +5402,10 @@ export default {
     ...mapMutations([
       "setPortfolioWatchedTasksToggle",
       "setPortfolioNameFilter",
+      'setCurrentPage',
+      'setCurrentIssuePage',
+      'setCurrentRiskPage',
+      'setCurrentLessonPage',
       "setPortfolioRiskNameFilter",
       "setTaskIssueUserFilter",
       'setPortfolioTab',
@@ -5489,6 +5468,26 @@ export default {
     log(e) {
       //  console.log("number" + e)
     },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
+    setFacilityProjectIds(){
+      this.facility_project_ids = [];
+      let value = this.portfolioNameFilter
+      if(!value){
+        return
+      }
+      for(let k = 0; k < value.length; k++){
+        if(value[k].program_id){
+          this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+        }else if(value[k].project_group_id){
+          this.facility_project_ids = this.facility_project_ids.concat(value[k].all_facility_project_ids)
+        }else if(value[k].project_id){
+          this.facility_project_ids.push(value[k].facility_project_id)
+        }
+      }
+      this.facility_project_ids = _.uniq(this.facility_project_ids)
+    },
    openTask(task) {      
       this.$router.push({
       name: "PortfolioTaskForm",
@@ -5499,6 +5498,7 @@ export default {
       },
     });
     },
+    hasHistory () { return window.history.length > 2 },
     openIssue(issue) {   
       this.$router.push({
       name: "PortfolioIssueForm",
@@ -5789,8 +5789,8 @@ export default {
       this.programId = id;
       // console.log(id);
     },
-    closeWindow() {
-      window.close()
+    backHomeBtn() {
+      window.location.pathname = "/"
     },
     handleClick(tab, event) {
             // console.log(tab);

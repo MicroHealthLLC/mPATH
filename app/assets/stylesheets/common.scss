@@ -25,6 +25,12 @@ body {
     border-radius: 4px;
   }
 }  
+.portfolio {
+  .v-label {
+    margin-bottom: 0;
+    color: #007bff !important;
+  }
+}
 
 .portfolio-task-form {
   
@@ -1344,9 +1350,13 @@ a:hover {
     width: 20%;
   }
   .btnRow {
-    // position: absolute;
+    position: absolute;
     bottom: 45%; 
-    float: right;
+    right: 18px;
+  }
+  .portBtnRow {
+    position: absolute;
+    right: -290px;
   }
   .sort-th {
     min-width: 190px;
@@ -1500,7 +1510,7 @@ a:hover {
     border: none !important;
   }
   
-  h4.text-light.label {
+  h4.text-light.labels {
     border: solid #f8f9fa 1px;
     border-radius: 0.25rem;
   }
@@ -2612,6 +2622,10 @@ body /deep/ .mx-input.disabled {
   background-color: #41b883;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
 }
+.portfolioHomeBtn { 
+ transition: all .2s ease-in-out; 
+ box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+}
 
 .presentBtn { 
   transition: all .2s ease-in-out; 
@@ -2623,7 +2637,7 @@ body /deep/ .mx-input.disabled {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
 }
 .total-table-btns, .addCheckProgBtn {box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); }
-.exportBtns:hover, #printBtn:hover, .presentBtn:hover { transform: scale(1.06); }
+.exportBtns:hover, #printBtn:hover, .presentBtn:hover, .portfolioHomeBtn:hover { transform: scale(1.06); }
 th {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

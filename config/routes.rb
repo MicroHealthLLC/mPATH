@@ -205,7 +205,7 @@ Rails.application.routes.draw do
   # get '/task_types', to: 'data#task_types'
   # get '/statuses', to: 'data#statuses'
 
-  get "/portfolio" => "home#portfolio"
+  # get "/portfolio" => "home#portfolio"
   get '/profile' => 'home#profile'
 
   root 'home#landing'
@@ -215,6 +215,11 @@ Rails.application.routes.draw do
     !req.xhr? && req.format.html?
   end
 
+  # Strictly matching /portfolio
+  get '*all', to: "home#portfolio", constraints: -> (req) do
+    (p = req.path.split("/")[1] ) && p.split("portfolio").size < 2
+  end
+  
   get '*all', to: "not_found#index", constraints: -> (req) do
     req.path.exclude? 'rails/active_storage'
   end
