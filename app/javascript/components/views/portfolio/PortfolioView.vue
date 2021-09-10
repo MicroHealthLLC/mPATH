@@ -404,11 +404,7 @@
           
           <!-- TASKS -->
           <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
-            v-loading="!portfolioTasksLoaded"
-            element-loading-text="Fetching Portfolio Tasks data. Please wait..."
-            :class="[!portfolioTasksLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"         
+                
            >
             <template
               slot="label"
@@ -681,9 +677,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
 
@@ -1291,15 +1290,14 @@
                   </button>
                 </div>
               </div>
-              <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
+              <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+              <div v-else class="mt-5">NO RESULTS TO DISPLAY
+ 
+                  
+              </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane class="pt-2"  name="issues"
-           v-loading="!portfolioIssuesLoaded"
-            element-loading-text="Fetching Portfolio Issues data. Please wait..."
-            :class="[!portfolioIssuesLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"         
+          <el-tab-pane class="pt-2"  name="issues"             
           >
             <template slot="label" class="text-right">
               ISSUES
@@ -1528,9 +1526,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block  portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
 
@@ -2179,17 +2180,14 @@
                 </button>
               </div>
             </div>
+             <div v-else-if="!portfolioIssuesLoaded" class="load-spinner spinner-border"></div>
             <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
           </el-tab-pane>
 
           <!-- RISKS TAB STARTS HERE -->
 
           <el-tab-pane class="pt-2" name="risks"          
-            v-loading="!portfolioRisksLoaded"
-            element-loading-text="Fetching Portfolio Risks data. Please wait..."
-            :class="[!portfolioRisksLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"         
+           
           >
             <template
               slot="label"
@@ -2199,63 +2197,8 @@
               RISKS
               <span class="badge badge-secondary badge-pill">
                 <span>{{ portfolioCounts.risks_count }}</span>
-                <!-- <span v-if="getPortfolioWatchedTasksToggle">{{ tasksObj.length }}</span>
-                <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
-              </span>
+               </span>
             </template>
-
-            <!-- <div class="row pb-4">
-              <div class="col-4 py-2">
-             <div class="w-100 d-flex">
-              <div class="d font-sm mt-2 mr-2">SEARCH</div>                
-              <el-input type="search" placeholder="Enter Search Criteria" v-model="search_risks" >
-                <el-button slot="prepend" icon="el-icon-search"></el-button>
-              </el-input>             
-               </div>
-              </div>
-            <div  class="col-4 py-2">   
-            <div class="d-flex w-100">
-
-               <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
-                   <template>
-                    <treeselect  
-                    placeholder="Search and select" 
-                    :multiple="true"     
-                    :limit="3"
-                    :match-keys= "['facility_project_id', 'id', 'label']"
-                    :limitText="count => `...`"            
-                    track-by="name"  
-                   :options="portfolioPrograms" 
-                    valueFormat="object"
-                    v-model="C_portfolioRiskNamesFilter"
-                    />         
-                 </template>              
-                </div>      
-              </div> 
-                  <div  class="col-4 pl-0 py-2">   
-                <div class="d-flex w-100">                  
-                  <div class="font-sm mr-2 mt-2">CATEGORY FILTER</div>           
-                   <template>
-                  <el-select 
-                    v-model="C_categoryNameFilter"                    
-                    class="w-75" 
-                    track-by="name" 
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Select Process Area"
-                  >
-                  <el-option 
-                    v-for="item in C_r_categories"                                                     
-                    :value="item"   
-                    :key="item"
-                    :label="item"                                                  
-                    >
-                   </el-option>
-                    </el-select>
-                  </template>
-                </div>
-              </div>
-            </div> -->
 
             <div class="box-shadow py-2">
               <div class="row py-1 pr-2">
@@ -2511,9 +2454,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
 
@@ -3230,17 +3176,13 @@
                   </button>
                 </div>
               </div>
+              <div v-else-if="!portfolioRisksLoaded" class="load-spinner spinner-border"></div>
 
               <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2"  name="lessons"
-            v-loading="!portfolioLessonsLoaded"
-            element-loading-text="Fetching Portfolio Lessons data. Please wait..."
-            :class="[!portfolioLessonsLoaded ? 'vh100': '']"
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"         
+          <el-tab-pane class="pt-2"  name="lessons"          
           >
             <template slot="label" class="text-right">
               LESSONS LEARNED
@@ -3357,9 +3299,12 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
-                      >Show Counts</el-checkbox
-                    >
+                  <v-checkbox     
+                  v-model="C_showCountToggle"     
+                  class="d-inline-block portfolio"  
+                  @click.prevent="showCounts"   
+                  :label="`Show Counts`"
+                ></v-checkbox>
                   </template>
                 </div>
                 <div class="col-2 px-0">
@@ -3905,6 +3850,7 @@
                   </button>
                 </div>
               </div>
+              <div v-else-if="!portfolioLessonsLoaded" class="load-spinner spinner-border"></div>
               <div v-else class="mt-5">NO RESULTS TO DISPLAY</div>
             </div>
           </el-tab-pane>
@@ -5203,19 +5149,15 @@ export default {
           // percentage: Math.round(completed_percent),
         },
       };
-    },
-    showCounts(){
-      this.setShowCount(!this.getShowCount)       
-    },
+    }, 
     C_showCountToggle: {
       get() {
-        return this.getShowCount;
+        return this.getShowCount 
       },
       set(value) {
         this.setShowCount(value) || this.setShowCount(!this.getShowCount);
       },
     },
-
     C_portfolioUsersFilter: {
       get() {
         return this.portfolioUsersFilter;
@@ -5525,6 +5467,9 @@ export default {
       ]),
     log(e) {
       //  console.log("number" + e)
+    },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
     },
     setFacilityProjectIds(){
       this.facility_project_ids = [];
