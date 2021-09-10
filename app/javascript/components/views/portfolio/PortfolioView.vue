@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  class="container-fluid mt-3 mx-3 portfolioView_main">
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -684,7 +684,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                      <button
                       v-tooltip="`Presentation Mode`"
@@ -1533,7 +1533,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                       <button
                       v-tooltip="`Presentation Mode`"
@@ -2461,7 +2461,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                      <button
                       v-tooltip="`Presentation Mode`"
@@ -3305,7 +3305,7 @@
                 ></v-checkbox>
                   </template>
                 </div>
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                    <button
                       v-tooltip="`Presentation Mode`"

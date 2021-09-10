@@ -1350,9 +1350,8 @@ a:hover {
     width: 20%;
   }
   .btnRow {
-    position: absolute;
     bottom: 45%; 
-    right: 18px;
+    float: right;
   }
   .portBtnRow {
     position: absolute;
