@@ -1,5 +1,7 @@
 <template>
-  <div class="container-fluid mt-3 mx-3 portfolioView_main">
+  <div 
+    class="container-fluid mt-3 mx-3 portfolioView_main"
+    >
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -401,7 +403,13 @@
         <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" >
           
           <!-- TASKS -->
-          <el-tab-pane class="pt-2" name="tasks" style="postion:relative" >
+          <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
+            v-loading="!portfolioTasksLoaded"
+            element-loading-text="Fetching Portfolio Tasks data. Please wait..."
+            :class="[!portfolioTasksLoaded ? 'vh100': '']"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"         
+           >
             <template
               slot="label"
               class="text-right"              
@@ -673,7 +681,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
+                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -1288,7 +1296,7 @@
           </el-tab-pane>
           <el-tab-pane class="pt-2"  name="issues"
            v-loading="!portfolioIssuesLoaded"
-            element-loading-text="Fetching your data. Please wait..."
+            element-loading-text="Fetching Portfolio Issues data. Please wait..."
             :class="[!portfolioIssuesLoaded ? 'vh100': '']"
             element-loading-spinner="el-icon-loading"
             element-loading-background="rgba(0, 0, 0, 0.8)"         
@@ -1520,7 +1528,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
+                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -2176,15 +2184,12 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2" name="risks"
-          
+          <el-tab-pane class="pt-2" name="risks"          
             v-loading="!portfolioRisksLoaded"
-            element-loading-text="Fetching your data. Please wait..."
+            element-loading-text="Fetching Portfolio Risks data. Please wait..."
             :class="[!portfolioRisksLoaded ? 'vh100': '']"
             element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"       
-          
-          
+            element-loading-background="rgba(0, 0, 0, 0.8)"         
           >
             <template
               slot="label"
@@ -2506,7 +2511,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
+                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -3232,7 +3237,7 @@
 
           <el-tab-pane class="pt-2"  name="lessons"
             v-loading="!portfolioLessonsLoaded"
-            element-loading-text="Fetching your data. Please wait..."
+            element-loading-text="Fetching Portfolio Lessons data. Please wait..."
             :class="[!portfolioLessonsLoaded ? 'vh100': '']"
             element-loading-spinner="el-icon-loading"
             element-loading-background="rgba(0, 0, 0, 0.8)"         
@@ -3352,7 +3357,7 @@
                     </span>
                   </div>
                   <template>
-                    <el-checkbox @change.native="showCounts" v-model="C_showCountToggle"
+                    <el-checkbox :change="showCounts" v-model="C_showCountToggle"
                       >Show Counts</el-checkbox
                     >
                   </template>
@@ -3945,12 +3950,7 @@ export default {
   },
   data() {
     return {
-     prevRoute: null,
-     beforeRouteEnter(to, from, next) {
-        next(vm => {
-          vm.prevRoute = from
-        })
-      },
+      prevRoute: null,
       showLess: "Show More",
       activeName: 'tasks',
       dialogVisible: false,
@@ -3966,12 +3966,6 @@ export default {
       search_lessons: "",
       currentSort: "program_name",
       currentSortDir: "asc",
-      currentPage: 1,
-      // selectedProgram: this.C_programNameFilter,
-      currentIssuesPage: 1,
-      currentRisksPage: 1,
-      currentLessonsPage: 1,
-      // tSlide: this.tasksObj[this.currentTaskSlide],
       loadIssues: false,
       loadRisks: false,
       loadLessons: false,
@@ -3981,9 +3975,7 @@ export default {
       pageSize: 10,
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
-
       facility_project_ids: [],
-
       uri: "data:application/vnd.ms-excel;base64,",
       template:
         '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
@@ -4011,9 +4003,13 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'getPortfolioWatchedTasksToggle', 
+      'getPortfolioWatchedTasksToggle',       
       'getPortfolioBriefedTasksToggle',
-       'getMyAssignmentsFilter',
+      'getMyAssignmentsFilter',
+      'currentTaskPage',
+      'currentIssuePage',
+      'currentRiskPage',
+      'currentLessonPage',
       'getTasksPerPageFilterOptions',
       'getIssuesPerPageFilterOptions',
       'getRisksPerPageFilterOptions',
@@ -4058,6 +4054,7 @@ export default {
       'portfolioRisks', 
       'portfolioLessons',
       'portfolioPrograms', 
+      'portfolioProgramsLoaded',
       'facilityProgressFilter',
       'programProgressFilter',
       'portfolioUsers',
@@ -5398,6 +5395,38 @@ export default {
         this.setTasksPerPageFilter(value);
       },
     },
+    currentPage:{
+       get() {
+        return this.currentTaskPage
+      },
+      set(value) {
+        this.setCurrentPage(value);
+      },
+    },
+    currentIssuesPage:{
+       get() {
+        return this.currentIssuePage
+      },
+      set(value) {
+        this.setCurrentIssuePage(value);
+      },
+    },
+      currentRisksPage:{
+       get() {
+        return this.currentRiskPage
+      },
+      set(value) {
+        this.setCurrentRiskPage(value);
+      },
+    },
+      currentLessonsPage:{
+       get() {
+        return this.currentLessonPage
+      },
+      set(value) {
+        this.setCurrentLessonPage(value);
+      },
+    },
     C_risksPerPage: {
       get() {
         return this.getRisksPerPageFilter || { id: 15, name: "15", value: 15 };
@@ -5431,6 +5460,10 @@ export default {
     ...mapMutations([
       "setPortfolioWatchedTasksToggle",
       "setPortfolioNameFilter",
+      'setCurrentPage',
+      'setCurrentIssuePage',
+      'setCurrentRiskPage',
+      'setCurrentLessonPage',
       "setPortfolioRiskNameFilter",
       "setTaskIssueUserFilter",
       'setPortfolioTab',
