@@ -9,7 +9,7 @@
       -else
         p You are not authorized!
       -if user_signed_in?
-        = link_to dashboard_index_path, class: "btn btn-link" do
+        = link_to root_path, class: "btn btn-link" do
           | Go back safely
       -else
         = link_to new_user_session_path, class: "btn btn-link" do
