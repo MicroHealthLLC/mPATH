@@ -20,7 +20,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['portfolioRisk'])
+    ...mapGetters(['portfolioRisk', 'portfolioRisks'])
   },
   beforeMount(){
     this.fetchPortfolioRisk(this.$route.params)
