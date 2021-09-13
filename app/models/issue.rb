@@ -11,12 +11,14 @@ class Issue < ApplicationRecord
   has_many_attached :issue_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
 
-  validates :title, :start_date, :due_date, presence: true
+  validates :title, :start_date, :due_date, presence: true, if: ->  { !on_hold }
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
+  before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
+  attr_accessor :file_links
 
   amoeba do
     include_association :issue_type
@@ -48,7 +50,53 @@ class Issue < ApplicationRecord
     }
   end
 
+  def portfolio_json
+    self.on_hold = false if draft & on_hold
 
+    is_overdue = false
+    if !on_hold && !draft
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    in_progress = false
+    completed = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today 
+    if start_date && progress && start_date < Date.today && progress && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
+    end
+    
+    merge_h = { 
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      project_id: facility.id, 
+      program_id: project.id, 
+      is_overdue: is_overdue,
+      issue_stage: issue_stage.try(:name),
+      program_progress:  self.project.progress,
+      project_group_name: self.facility_group.name,
+      project_due_date: self.facility_project.due_date,
+      project_status: self.facility_project.status.name,
+      planned: planned,
+      on_hold: self.on_hold,
+      completed: completed,
+      category: task_type&.name,
+      in_progress: in_progress,
+      issue_type: issue_type.name,
+      issue_severity: issue_severity.name,
+      last_update: self.notes.last&.portfolio_json,
+      notes: notes.as_json,
+      notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
+      users: users.select(&:active?).map(&:full_name).join(", "),
+      issue_users: users.map{|u| {id: u.id, name: u.full_name } } 
+    }
+
+    self.attributes.merge!(merge_h)
+  end
+  
   def self.params_to_permit
     [
       :title,
@@ -66,9 +114,10 @@ class Issue < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
-      :on_hold, 
-      :draft, 
+      :on_hold,
+      :draft,
       issue_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -127,7 +176,7 @@ class Issue < ApplicationRecord
     end
 
     fp = self.facility_project
-    
+
     t_users = options[:all_issue_users] || []
     all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :issue_index].include?(options[:for])
@@ -143,35 +192,43 @@ class Issue < ApplicationRecord
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
 
-    p_users = [] 
+    p_users = []
     if all_users.any?
       p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
       p_users = users.select(&:active?) #User.where(id: resource_user_ids).active
     end
 
-    users_hash = {} 
+    users_hash = {}
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     # Last name values added for improved sorting in datatables
-    users_last_name_hash = {} 
+    users_last_name_hash = {}
     p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
     # First name values added for improved sorting in datatables
-    users_first_name_hash = {} 
+    users_first_name_hash = {}
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
-    if(progress >= 100)
-      progress_status = "completed"
-    end
+
+    progress_status = "completed" if progress >= 100
 
     is_overdue = false
-    if !on_hold
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    is_overdue = progress < 100 && (due_date < Date.today) if !on_hold && !draft
+
+    in_progress = false
+    completed = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
+    if start_date && progress && start_date < Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
     end
 
     task_type_name = self.task_type&.name
@@ -181,7 +238,9 @@ class Issue < ApplicationRecord
       class_name: self.class.name,
       progress_status: progress_status,
       attach_files: attach_files,
-      is_overdue: is_overdue,
+      completed: completed,
+      planned: planned,
+      in_progress: in_progress,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
@@ -191,10 +250,9 @@ class Issue < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       user_ids: p_users.map(&:id).compact.uniq,
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
-      on_hold: on_hold, 
-      draft: draft, 
-
-      
+      is_overdue: is_overdue,
+      on_hold: on_hold,
+      draft: draft,
 
       # Add RACI user name
       # Last name values added for improved sorting in datatables
@@ -204,13 +262,13 @@ class Issue < ApplicationRecord
       accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
       accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
       accountable_users_first_name: accountable_user_ids.map{|id| users_first_name_hash[id] }.compact,
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact, 
-      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact,
 
 
      # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
-      accountable_user_ids: accountable_user_ids,  
+      accountable_user_ids: accountable_user_ids,
       consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids,
 
@@ -230,20 +288,24 @@ class Issue < ApplicationRecord
   end
 
   def files_as_json
-    issue_files.map do |file|
-      if file.blob.content_type == "text/plain"
+    issue_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+        link: false
+      }
+    end.as_json
+  end
+
+  def links_as_json
+    issue_files.reject {|f| !valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
         {
           id: file.id,
           name: file.blob.filename.instance_variable_get("@filename"),
           uri: file.blob.filename.instance_variable_get("@filename"),
           link: true
-        }
-      else
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-          link: false
         }
       end
     end.as_json
@@ -319,7 +381,7 @@ class Issue < ApplicationRecord
           c.progress_lists.each do |p|
             p.user_id = user.id
           end
-          c.save       
+          c.save
         end
         Checklist.import(checklist_objs) if checklist_objs.any?
       end
@@ -404,15 +466,28 @@ class Issue < ApplicationRecord
       end
       users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
     end
-    
+
     records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
-    
+
     if users_to_delete.any?
       resource_users.where(user_id: users_to_delete).destroy_all
     end
 
     if records_to_import.any?
       IssueUser.import(records_to_import)
+    end
+  end
+
+  def manipulate_links(params)
+    return unless params[:issue][:file_links].present?
+    link_params = JSON.parse(params[:issue][:file_links])
+    link_params.each do |link|
+      next if !link.present? || link.nil? || !valid_url?(link["uri"])
+      if link['_destroy']
+        issue_files.find_by_id(link['id'])&.purge
+      elsif link['_new']
+        self.issue_files.attach(io: StringIO.new(link['uri']), filename: link['uri'], content_type: "text/plain")
+      end
     end
   end
 
@@ -446,5 +521,11 @@ class Issue < ApplicationRecord
 
   def init_kanban_order
     self.kanban_order = facility_project.issues.where(issue_stage_id: issue_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.issue_stage_id.present?
+  end
+
+  private
+
+  def validate_states
+    self.on_hold = false if self.draft?
   end
 end

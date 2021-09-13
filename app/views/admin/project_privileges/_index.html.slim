@@ -1,0 +1,33 @@
+- project_privileges = user.project_privileges.order("created_at DESC")
+- all_project_ids = project_privileges.map(&:project_ids)
+- all_projects = Project.where(id: ( all_project_ids +  user.project_ids ).uniq ).active.distinct 
+- option_array = all_projects.map{|fp| [fp.id, fp.name ] }
+
+a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button adminPanelBtn"}Add Program Privilege
+
+div{id="message_div"}
+
+div{id="project_privileges_list"}
+  - project_privileges.each do |fp|
+    - index = SecureRandom.random_number(10000000)
+    - project_ids = fp.project_ids
+
+    fieldset(class="inputs has_many_fields")
+      input(type="checkbox" class="remove-box" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
+      ol
+        li(class="select input required")
+          div{id="project_privileges#{index}"}
+            input(type='hidden' value=(fp.id) name="user[project_privileges_attributes][#{index}][id]" )
+                    
+          label(class="label") Select Program
+          select{class="project_select" name="user[project_privileges_attributes][#{index}][project_ids][]" data-div-id="project_section_#{index}" data-user-id="#{user.id}"  data-selected=(project_ids) multiple="true"}
+            - all_projects.each do |project|
+              option{value=(project.id) selected=("selected" if fp.project_id == project.id) }= project.name
+
+        - ProjectPrivilege::PRIVILEGE_MODULE.each do |m_name|
+          li(class="select input required")
+            label(class="label")= m_name
+            input{type="hidden" value="" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}
+            
+            - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+              input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]

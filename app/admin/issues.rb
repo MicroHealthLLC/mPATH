@@ -1,6 +1,6 @@
 ActiveAdmin.register Issue do
   menu priority: 5
-  actions :all, except: [:show, :new]
+  actions :all, except: [:show]
 
   breadcrumb do
     links = [link_to('Admin', admin_root_path), link_to('Issues', admin_issues_path)]
@@ -24,6 +24,7 @@ ActiveAdmin.register Issue do
       :facility_project_id,
       :auto_calculate,
       issue_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -46,9 +47,9 @@ ActiveAdmin.register Issue do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_delete?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :title
-    column "Category", :task_type, nil, sortable: 'task_types.name' do |issue|
+    column :task_type, nil, sortable: 'task_types.name' do |issue|
       if current_user.admin_write?
         link_to "#{issue.task_type.name}", "#{edit_admin_task_type_path(issue.task_type)}" if issue.task_type.present?
       else
@@ -105,7 +106,7 @@ ActiveAdmin.register Issue do
       issue.issue_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          if file.blob.content_type == "text/plain"
+          if file.blob.content_type == "text/plain" && issue.valid_url?(file.blob.filename.instance_variable_get("@filename"))
             link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
           else
             link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
@@ -130,7 +131,7 @@ ActiveAdmin.register Issue do
         f.inputs 'Basic Details' do
           f.input :id, input_html: { value: f.object.id }, as: :hidden
           f.input :title
-          f.input :task_type, label: 'Category', include_blank: true
+          f.input :task_type, include_blank: true
           f.input :description
           div id: 'facility_projects' do
             f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
@@ -171,6 +172,8 @@ ActiveAdmin.register Issue do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :issue_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
         end
       end
 
@@ -203,8 +206,23 @@ ActiveAdmin.register Issue do
     redirect_to collection_path, notice: "Successfully created Issue checklists"
   end
 
+  csv do
+    column(:title)
+    column(:task_type) { |issue| issue.task_type&.name }
+    column(:issue_type) { |issue| issue.issue_type&.name }
+    column(:issue_severity) { |issue| issue.issue_severity&.name }
+    column(:issue_stage) { |issue| issue.issue_stage&.name }
+    column(:progress)
+    column(:start_date) { |issue| issue.start_date&.strftime('%d/%b/%Y') }
+    column(:due_date) { |issue| issue.due_date&.strftime('%d/%b/%Y') }
+    column(:issue_files) { |issue| issue.issue_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column('Program') { |issue| issue.project&.name }
+    column('Project') { |issue| issue.facility&.facility_name }
+    column(:users) { |issue| issue.users&.map(&:full_name) }
+  end
+
   filter :title
-  filter :task_type, label: 'Category'
+  filter :task_type
   filter :issue_type
   filter :issue_severity
   filter :issue_stage
@@ -214,8 +232,8 @@ ActiveAdmin.register Issue do
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
-  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true}
+  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   controller do
@@ -232,11 +250,13 @@ ActiveAdmin.register Issue do
 
     def create
       build_resource
+      handle_links
       handle_files
       super
     end
 
     def update
+      handle_links
       handle_files
       super
     end
@@ -244,6 +264,11 @@ ActiveAdmin.register Issue do
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:issue].delete(:issue_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:issue].delete(:file_links)
     end
 
     def destroy

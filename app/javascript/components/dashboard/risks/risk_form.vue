@@ -104,150 +104,152 @@
                   >Risk Name <span style="color: #dc3545">*</span></label
                 >
 
-              <div class="toggleWrapper float-right" id="risk_toggles" :class="{'font-sm': isMapView}">
-                <span
-                  v-if="_isallowed('write')"
-                  class="watch_action mt-3 clickable ml-2"
-                  @click.prevent.stop="toggleWatched"
-                  data-cy="risk_on_watch"
-                   v-tooltip="`On Watch`" 
-                >
-                  <span 
-                   v-show="DV_risk.watched" 
-                ><i class="fas fa-eye mr-1"></i
-                 ></span>
-                 <span                 
-                  v-show="!DV_risk.watched" 
-                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-                 ></span>            
-                <small 
-                  style="vertical-align:text-top"
-                  :class="{'d-none': isMapView }"
-                  > 
-                  On Watch
-                </small>
-                </span>
+           <div class="toggleWrapper float-right" id="risk_toggles" :class="{'font-sm': isMapView}">
+               
+              <span class="statesCol p-1 mr-1">           
+            <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOngoing"
+              data-cy="task_ongoing"
+              v-tooltip="`Ongoing`" 
+            >
+              <span              
+                v-show="DV_risk.ongoing">
+              <i class="fas fa-retweet text-success"></i>
+              </span>
+              <span              
+                v-show="!DV_risk.ongoing">
+              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+              </span>             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Ongoing
+              </small>
+            </span>
 
               <span
-                v-if="_isallowed('write')"
-                class="watch_action clickable mx-2"
-                @click.prevent.stop="toggleOnhold"
-                data-cy="task_on_hold"
-                v-tooltip="`On Hold`" 
-              >
-              <span              
-                v-show="DV_risk.onHold"
-                >
-               <i class="fas fa-pause-circle mr-1 text-primary"></i>
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOnhold"
+              data-cy="task_on_hold"
+               v-tooltip="`On Hold`" 
+            >
+              <span                
+                v-show="DV_risk.onHold">
+                <i class="fas fa-pause-circle mr-1 text-primary"></i>
               
               </span>
-              <span 
-               v-show="!DV_risk.onHold"
-              >
-              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
-             
+              <span
+                v-show="!DV_risk.onHold">
+              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>              
               </span>
              
               <small 
                 :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"
-              > 
-                On Hold</small>
+                style="vertical-align:text-top"> 
+                On Hold
+              </small>
+            </span>
+           
+          
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleDraft"
+              data-cy="task_important"
+              v-tooltip="`Draft`" 
+            >
+              <span               
+                 v-show="DV_risk.draft">
+               <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
+              <span               
+                v-show="!DV_risk.draft">
+               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Draft
+              </small>
+            </span>
+
+
+
               </span>
 
-                <span
-                  v-if="_isallowed('write')"
-                  class="watch_action clickable mx-2"
-                  @click.prevent.stop="toggleImportant"
-                  data-cy="issue_important"
-                   v-tooltip="`Important`"   
-                >
-                <span                  
-                  v-show="DV_risk.important">
-                <i class="fas fa-star text-warning"></i>
-                </span>
-                <span 
-                  v-show="!DV_risk.important">
-                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-                </span>
-                  <small 
-                    :class="{'d-none': isMapView }"
-                    style="vertical-align:text-top"
-                  >
-                  Important
-                </small>
-                </span>
 
-                 <span
-                  v-if="_isallowed('write')"
-                  class="watch_action clickable mx-2"
-                  @click.prevent.stop="toggleOngoing"
-                  data-cy="risk_ongoing"
-                  v-tooltip="`Ongoing`" 
-                   >
-                  <span                   
-                    v-show="DV_risk.ongoing">
-                  <i class="fas fa-retweet text-success"></i>
-                  </span>
-                  <span 
-                    v-show="!DV_risk.ongoing">
-                  <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-                  </span>
-                    <small 
-                     :class="{'d-none': isMapView }"
-                     style="vertical-align:text-top"> 
-                     Ongoing
-                    </small>
-                    </span>
-                <span
-                  v-if="_isallowed('write')"
-                  class="watch_action clickable mx-2"
-                  @click.prevent.stop="toggleReportable"
-                  data-cy="risk_reportable"
-                  v-tooltip="`Briefings`" 
-                >
-                  <span
-                    v-show="DV_risk.reportable">
-                   <i class="fas fa-presentation text-primary"></i>
-                  </span>
-                  <span 
-                    v-show="!DV_risk.reportable">
-                    <i class="fas fa-presentation mr-1" style="color:lightgray;cursor:pointer" ></i>
-               
-                  </span>
-                
-                  <small 
-                    :class="{'d-none': isMapView }"
-                    style="vertical-align:text-top"> 
-                  Briefings
-                  </small>
-                </span>
-
+              <span class="tagsCol p-1">
 
               <span
                 v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
-                @click.prevent.stop="toggleDraft"
-                data-cy="task_important"
-                v-tooltip="`Draft`" 
+                v-tooltip="`On Watch`" 
+                @click.prevent.stop="toggleWatched"
+                data-cy="task_on_watch"
               >
+                <span                
+                  v-show="DV_risk.watched" 
+                  ><i class="fas fa-eye mr-1"></i
+                ></span>
                 <span 
-               
-                  v-show="DV_risk.draft">
-                <i class="fas fa-pencil-alt text-warning"></i>
+                  v-show="!DV_risk.watched" 
+                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+                ></span>           
+                <small 
+                  style="vertical-align:text-top" 
+                  :class="{'d-none': isMapView }"
+                > 
+                  On Watch
+                </small>
+              </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleImportant"
+              data-cy="task_important"
+              v-tooltip="`Important`" 
+            >
+              <span 
+                v-show="DV_risk.important">
+               <i class="fas fa-star text-warning"></i>
+              </span>
+              <span 
+                v-show="!DV_risk.important">
+               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+              </span>             
+              <small 
+               :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Important
+              </small>
+              </span>
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleReportable"
+                data-cy="task_reportable"
+                v-tooltip="`Briefings`" 
+              >
+                <span               
+                  v-show="DV_risk.reportable">
+                <i class="fas fa-presentation text-primary"></i>
                 </span>
                 <span 
-                  v-show="!DV_risk.draft">
-                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+                v-show="!DV_risk.reportable">
+                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
                 </span>
               
                 <small 
-                 :class="{'d-none': isMapView }"
-                 style="vertical-align:text-top"
-                 > 
-                 Draft
+                  :class="{'d-none': isMapView }"
+                  style="vertical-align:text-top"> 
+                Briefings
                 </small>
-            </span>
+              </span>                
+              </span>
 
               </div>
 
@@ -259,6 +261,7 @@
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
+                  class ="inner-name-lowercase"
                   :class="{
                     error: errors.has('Risk Name'),
                   }"
@@ -301,7 +304,7 @@
               <div class="d-flex mb-1 form-group">
                 <div class="simple-select form-group w-33 ml-4">
                   <label class="font-md"
-                    >Category <span style="color: #dc3545">*</span></label
+                    >Process Area <span style="color: #dc3545">*</span></label
                   >
                   <el-select
                     v-model="selectedTaskType"
@@ -311,9 +314,9 @@
                     value-key="id"
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"
-                    name="Category"
-                    :class="{ 'error': errors.has('Category') }"
-                    placeholder="Select Category"
+                    name="Process Area"
+                    :class="{ 'error': errors.has('Process Area') }"
+                    placeholder="Select Process Area"
                   >
                     <el-option
                       v-for="item in taskTypes"
@@ -325,11 +328,11 @@
                   </el-select>
 
                   <div
-                    v-show="errors.has('Category')"
+                    v-show="errors.has('Process Area')"
                     class="text-danger"
                     data-cy="risk_milestone_error"
                   >
-                    {{ errors.first("Category") }}
+                    {{ errors.first("Process Area") }}
                   </div>
                 </div>
               </div>
@@ -341,8 +344,8 @@
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
-                  :class="{'overSixSteps': riskStages.length >= 6 }" 
-                  :active="riskStages.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
+                  :class="{'overSixSteps': riskStagesSorted.length >= 6 }" 
+                  :active="riskStagesSorted.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
@@ -350,7 +353,7 @@
                   value-key="id"
                   >         
                 <el-step
-                  v-for="item in riskStages"
+                  v-for="item in riskStagesSorted"
                   :key="item.id"                        
                   :value="item"
                   style="cursor:pointer"
@@ -371,7 +374,7 @@
                 <label class="font-md">Select Stage</label>
                 <el-steps
                   class="exampleOne"
-                  :class="{ overSixSteps: riskStages.length >= 6 }"
+                  :class="{ overSixSteps: riskStagesSorted.length >= 6 }"
                   finish-status="success"
                   :disabled="
                     !_isallowed('write') || (fixedStage && isKanbanView)
@@ -381,7 +384,7 @@
                   value-key="id"
                 >
                   <el-step
-                    v-for="item in riskStages"
+                    v-for="item in riskStagesSorted"
                     :key="item.id"
                     :value="item"
                     style="cursor:pointer"
@@ -420,18 +423,23 @@
                 </div>
 
                 <div class="form-group col-md-6 pr-0">
-                <span v-if="DV_risk.ongoing ">           
+                <span v-if="DV_risk.ongoing">           
                 <label class="font-md"><i class="fas fa-retweet text-success mr-1"></i>
                  Date Closed
                  </label
                   ></span>
-                  <span v-else>           
+                <span v-if="DV_risk.onHold">           
+                <label class="font-md">
+                Risk Approach Due Date <span><small class="text-danger">(Not required if Risk is On Hold)</small></span>
+                 </label
+                  ></span>
+                  <span v-if="!DV_risk.ongoing && !DV_risk.onHold">           
                   <label class="font-md"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
                   ></span>
                   <v2-date-picker
-                    v-validate="{ required: !DV_risk.ongoing }"
+                    v-validate="{ required: !DV_risk.ongoing && !DV_risk.onHold }"
                     v-model="DV_risk.dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
@@ -522,6 +530,7 @@
                   track-by="id"
                   value-key="id"
                   :multiple="true"
+                  clearable
                   placeholder="Search and select Consulted Users"
                   :disabled="!_isallowed('write')"
                   filterable
@@ -543,6 +552,7 @@
                   track-by="id"
                   value-key="id"
                   multiple
+                  clearable
                   filterable
                   placeholder="Search and select Informed Users"
                   :disabled="!_isallowed('write')"
@@ -1180,7 +1190,7 @@
                   ></span>
                   <span
                     v-show="!DV_risk.approved"
-                    class="empty_box mr-1 approver-pointer"
+                    class="empty_box mx-1 approver-pointer"
                     ><i class="far fa-square"></i
                   ></span>
                   <small style="vertical-align: text-top">Approved</small>
@@ -1868,7 +1878,7 @@
                   v-if="!null"
                   rows="3"
                   :readonly="!_isallowed('write')"
-                  data-cy="risk_description"
+                  data-cy="risk_explanation"
                  
                 />
               
@@ -1885,7 +1895,7 @@
                     track-by="name" 
                     clearable               
                     :disabled="!_isallowed('write')"
-                    data-cy="task_type"                  
+                    data-cy="risk_status"                  
                     placeholder="Risk Disposition Status"
                   >
                     <el-option
@@ -1905,8 +1915,7 @@
                     >Duration</label
                   >
                   <el-select
-                    v-model="selectedDuration"  
-                   :load="log(DV_risk.duration)"                
+                    v-model="selectedDuration"                            
                     class="w-100"
                     clearable
                     track-by="name"                  
@@ -1963,7 +1972,7 @@
                   class="update-card mb-3"
                 >
                   <div class="d-flex justify-content-between">
-                    <label class="font-md">Description</label>
+                    <label class="font-md">Update</label>
                     <div class="font-sm">
                       <el-tag size="mini"
                         ><span class="font-weight-bold">Submitted by:</span>
@@ -2079,7 +2088,7 @@ export default {
           form_fields: [
             "Risk Name",
             "Risk Description",
-            "Category",
+            "Process Area",
             "Date Identified",
             "Risk Approach Due Date",
           ],
@@ -2204,9 +2213,18 @@ export default {
         notes: [],
       };
     },
-       log(e){
-          console.log("This is the riskDispStatus item: " + e)
-      },
+      //  log(e){
+      //     console.log("This is the riskDispStatus item: " + e)
+      // },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.risks.includes(s); 
+    },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2387,6 +2405,7 @@ export default {
     },
     toggleOnhold() {
         this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+        this.DV_risk.dueDate = '';
       },
     toggleDraft() {
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
@@ -2400,6 +2419,8 @@ export default {
       }
     },
     toggleApproved() {
+      if(!this._isallowed("write"))
+        return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
       this.DV_risk.approvalTime =
         this.$currentUser.full_name + " on " + new Date().toLocaleString();
@@ -2833,7 +2854,7 @@ export default {
       var identifyTabFields = [
         "Risk Name",
         "Risk Description",
-        "Category",
+        "Process Area",
         "Date Identified",
         "Risk Approach Due Date",
       ];
@@ -2913,6 +2934,10 @@ export default {
       "riskStages",
       "taskTypes",
     ]),
+    riskStagesSorted() {
+      var riskStagesSortedReturn = [...this.riskStages]; 
+      return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
     readyToSave() {
       return (
         this.DV_risk &&
@@ -2995,11 +3020,6 @@ export default {
         "createdAt",
         "desc"
       );
-    },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.risks[salut];
     },
     matrix11() {
       if (
@@ -3187,11 +3207,11 @@ export default {
         return "kanban";
       }
     },
-    projectNameLink() {
-      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`;
+  projectNameLink() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
       } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+        return `/programs/${this.$route.params.programId}/${this.tab}`;
       }
     },
   },
@@ -3665,7 +3685,12 @@ ul {
   background-color: #fafafa;
 }
 /deep/.el-input__inner {
-  text-transform: capitalize !important;
+  text-transform: capitalize;
+}
+.inner-name-lowercase{
+  /deep/.el-input__inner{
+    text-transform: none !important;
+  }
 }
 .fa-building {
   font-size: large !important;
@@ -3758,5 +3783,25 @@ a:hover {
   background-color: #ededed;
   border-color: lightgray;
   border-left: 10px solid #5aaaff;
+}
+
+.tagsCol, .statesCol {  
+  border: .5px solid lightgray;
+}
+
+.statesCol {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tagsCol {
+  background-color: #f8f9fa;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
 }
 </style>

@@ -38,8 +38,8 @@ en:
         one: Facility Group
         other: Facility Groups
       task_type:
-        one: Category
-        other: Categories
+        one: Process Area
+        other: Process Areas
       project:
         one: Program
         other: Programs
@@ -54,17 +54,44 @@ en:
         other: Project Groups
     attributes:
       task:
-        text: ""
+        text: "Name"
         facility_name: "Project Name"
+        task_stage:
+          one: "Stage"
+        task_type:
+          one: Process Area
+          other: Process Areas
       issue:
         facility_name: "Project Name"
+        task_stage:
+          one: "Stage"
+        task_type:
+          one: Process Area
+          other: Process Areas
       risk:
         facility_name: "Project Name"
+        task_stage:
+          one: "Stage"
+        task_type:
+          one: Process Area
+          other: Process Areas
+      lesson:
+        task_stage:
+          one: "Stage"
+        task_type:
+          one: Process Area
+          other: Process Areas
       facility:
         facility_name: "Project Name"
+      facility_privilege:
+        facility_project_ids: ""
     errors:
       models:
         task:
           attributes:
             text:
               blank: "Name is required"
+        facility_privilege:
+          attributes:
+            facility_project_ids:
+              blank: "At least one project is required"

@@ -61,30 +61,23 @@ export default {
     };
   },
   mounted() {
-    // var programId = this.$route.params.programId;
-    // var projectId = this.$route.params.projectId
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId;
+
+    let fPrivilege = this.$projectPrivileges[programId][projectId];
+
     // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
 
-    // if(fPrivilege){
-    //   for(var i = 0; i < this.tabs.length; i++){
-    //     this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-    //   }
-    // }
-    for (var i = 0; i < this.tabs.length; i++) {
-      var hide =
-        !this.$permissions[this.tabs[i].key]["read"] &&
-        !this.$permissions[this.tabs[i].key]["write"] &&
-        !this.$permissions[this.tabs[i].key]["delete"];
-      this.tabs[i].hidden = hide;
+    if (fPrivilege) {
+      for (var i = 0; i < this.tabs.length; i++) {
+        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
+      }
     }
   },
   methods: {
     changeTab(tab) {
-      if (tab.key === "overview") {
-        this.$router.push(this.path);
-      } else {
-        this.$router.push(this.path + `/${tab.key}`);
-      }
+      this.$router.push(this.path + `/${tab.key}`);
     },
   },
   computed: {
@@ -113,6 +106,23 @@ export default {
     },
     tabsVisible() {
       return this.tabs.some((tab) => tab.hidden === false);
+    },
+  },
+  watch: {
+    "$route.path": {
+      handler() {
+        if (this.contentLoaded) {
+          let privileges = this.$projectPrivileges[
+            this.$route.params.programId
+          ][this.$route.params.projectId];
+
+          if (privileges) {
+            for (var i = 0; i < this.tabs.length; i++) {
+              this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
+            }
+          }
+        }
+      },
     },
   },
 };

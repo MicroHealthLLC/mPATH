@@ -3,11 +3,7 @@
     class="main-container d-flex align-items-center justify-content-center"
   >
     <el-card class="font-lg text-center">
-       <font-awesome-icon
-          icon="columns"
-          class="mr-1 "
-          style="color: #9EC64C"
-        />
+       <i class="fal fa-columns mr-1" style="color: #9EC64C"></i>
       <h4>Kanban View</h4>
       <p v-show="$route.name === 'KanbanDefault'" style="color:#9EC64C">
         Select a Project to get started!

@@ -1,16 +1,26 @@
-
 <template>
   <div id="task-sheets">
     <table v-if="!has_task" class="table table-sm table-bordered table-striped p-3">
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="oneSix">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
-        <td class="eight text-center">{{formatDate(task.startDate)}}</td>
+        <td class="eight text-center">                          
+          <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
+            <i class="fas fa-retweet text-success"></i>
+          </span>
+          <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
+            <i class="fas fa-retweet text-secondary"></i>
+              </span>
+          <span v-else>{{
+            moment(task.startDate).format("DD MMM YYYY") 
+          }}</span>
+        </td>
         <td class="eigth text-center">
-         <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-else-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
         <span v-else>
          {{formatDate(task.dueDate)}}
-        </span>
+        </span>      
        </td>
         <td class="fort" >
           <span v-if="(task.responsibleUsers.length > 0) && (task.responsibleUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
@@ -22,36 +32,30 @@
          </span>        
         </td>
         <td class="eight text-center">
-        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-        <span v-else>{{task.progress + "%"}}</span>
+         <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+           
+         <span v-else-if="task.ongoing == true && task.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
+          <span v-else>{{task.progress + "%"}}</span>
+     
         </td>
-        <td class="fort text-center">
-            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+        <td class="ten text-center">
+            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
-            <span v-if="task.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-            <span v-if="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.isOverdue" v-tooltip="`Overdue`"><i class="fas fa-calendar text-danger mr-1"></i></span>
+            <span v-if="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+            <span v-if="task.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
             <span v-if="task.onHold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
-            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
-            <span v-if="
-                      task.important == false &&
-                      task.reportable == false &&
-                      task.watched == false &&
-                      task.ongoing == false && 
-                      task.isOverdue == false &&
-                      task.onHold == false &&  
-                      task.draft == false && 
-                      task.progress < 100 "             
-                    >
-                  No flags at this time         
-            </span>              
-        </td>
+            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>  
+            <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
+            <span v-if="task.inProgress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
+         </td>
         <td class="twentyTwo" v-if="task.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
           {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
+          <span class="truncate-line-five">
             {{task.lastUpdate.body}}
           </span>         
         </td>  
@@ -129,6 +133,15 @@ export default {
   methods: {
     ...mapMutations(["updateTasksHash", "setTaskForManager", "setToggleRACI"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.tasks.includes(s); 
+    },
     openSubTask(subTask) {
       let task = this.currentTasks.find((t) => t.id == subTask.id);
       if (!task) return;
@@ -193,11 +206,6 @@ export default {
       "currentProject",
       "getUnfilteredFacilities"
     ]),
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
-    },
     facility() {
       return this.facilities.find((f) => f.id == this.DV_task.facilityId);
     },
@@ -262,7 +270,7 @@ table {
   width: 20%;
 }
 .twentyTwo {
-  width: 22%;
+  width: 26%;
 }
 .pg-content {
   width: 100%;
@@ -357,6 +365,18 @@ td {
     &:hover {
       background-color: rgba(91, 192, 222, 0.3);
     }
+  }
+}
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
   }
 }
 </style>

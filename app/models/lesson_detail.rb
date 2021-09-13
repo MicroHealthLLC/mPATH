@@ -2,6 +2,7 @@ class LessonDetail < ApplicationRecord
   # Detail Type: [success, failure, best_practices]
   belongs_to :lesson
   belongs_to :user
+  validates_presence_of :user_id, :detail_type, :lesson_id, :finding
 
   def success?
     detail_type == "success"

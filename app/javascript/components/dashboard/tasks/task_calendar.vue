@@ -1,13 +1,12 @@
-
 <template>
 <div>
-   <span class="filters-wrapper w-75">
+   <span class="filters-wrapper">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
         <div class="task-search-bar w-100">
-          <label class="font-sm mb-0"><span style="visibility:hidden">L</span></label>
+      <label class="font-sm mb-0" style="visibility:hidden">Search</label>
            <el-input
             type="search"          
-            placeholder="Search Tasks"
+           placeholder="Enter Search Criteria"
             aria-label="Search"            
             aria-describedby="search-addon"    
             v-model="tasksQuery"     
@@ -16,8 +15,8 @@
           <el-button slot="prepend" icon="el-icon-search"></el-button>
         </el-input>
         </div>
-        <div class="mx-1 w-100">
-         <label class="font-sm mb-0">Category</label>
+        <div class="mx-1 ninety">
+         <label class="font-sm mb-0">Process Area</label>
 
           <el-select
            v-model="C_taskTypeFilter"
@@ -26,7 +25,8 @@
            track-by="name"
            value-key="id"
            multiple
-           placeholder="Select Category"
+           clearable
+           placeholder="Select Process Area"
            collapse-tags
            >
           <el-option
@@ -40,27 +40,100 @@
         </div>
 
         <div class="w-100">
-            <label class="font-sm mb-0">Flags</label>
- 
-           <el-select
-           v-model="C_calendarTaskFilter"
-          :key="componentKey"   
-           class="w-100"
-           track-by="name"
-           value-key="id"
-           multiple
-           placeholder="Filter by Flags"
-           collapse-tags
-           >
-          <el-option
-            v-for="item in getAdvancedFilterOptions"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-        </div>
+        <label class="font-sm mb-0">Flags</label>
+             <span class="d-flex px-0 mr-1" :class="[getShowCount == true ? '': 'toggleHeight']">
+               <span class="one statesCol px-2 mr-1 d-flex">
+                 <div class="pt-1 pr-3 text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                   <span class="d-block" v-tooltip="`COMPLETE`" >
+                    <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+                    </span>      
+               
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                  </div>
+                 <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideInprogress == true ? 'light':'']" @click.prevent="toggleInprogress">                              
+                   <span v-tooltip="`IN PROGRESS`" class="d-block">
+                    <i class="far fa-tasks" :class="[getHideInprogress == true ? 'light':'text-primary']"></i>
+                    </span>      
+                
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.inProgress.count }}</h6>
+                  </div>
+                   <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHidePlanned == true ? 'light':'']" @click.prevent="togglePlanned">                              
+                   <span v-tooltip="`PLANNED`" class="d-block">
+                    <i class="fas fa-calendar-check"  :class="[getHidePlanned == true ? 'light':'text-info']"></i>
+                    </span>      
+                
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.planned.count }}</h6>
+                  </div>
+                  <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideOverdue == true ? 'light':'']" @click.prevent="toggleOverdue" >                              
+                   <span v-tooltip="`OVERDUE`" class="d-block">
+                    <i class="fas fa-calendar" :class="[getHideOverdue == true ? 'light':'text-danger']"></i>
+                    </span>      
+                
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.overdue.count }}</h6>
+                  </div>
+                    <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideOngoing == true ? 'light':'']" @click.prevent="toggleOngoing" >                              
+                   <span v-tooltip="`ONGOING`"  class="d-block">
+                    <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
+                    </span>      
+              
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}</h6>
+                  </div>
+  
+                  <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
+                   <span v-tooltip="`ON HOLD`"  class="d-block">
+                    <i class="fas fa-pause-circle" :class="[getHideOnhold == true ? 'light':'text-primary']"></i>
+                    </span>      
+        
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.onHold.count }}</h6>
+                  </div>
+                  <div class="pr-1 pt-1 text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                   <span v-tooltip="`DRAFT`" class="d-block">
+                    <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+                    </span>      
+         
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                  </div>
+                
+  
+               </span>
+                <!-- <label>Tafsd</label> -->
+               <span class="tagsCol px-2 d-flex">
+     
+                  <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideWatched == true ? '':'light']" @click.prevent="toggleWatched"  >                              
+                   <span v-tooltip="`ON WATCH`"  class="d-block">
+                    <i class="fas fa-eye"></i>
+                    </span>      
+          
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.watched.count }}</h6>
+                  </div>
+  
+                  <div class="pr-3 pt-1 text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                   <span v-tooltip="`IMPORTANT`" class="d-block">
+                    <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+                    </span>      
+          
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                  </div>
+                  <div class="pr-2 pt-1 text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                   <span v-tooltip="`BRIEFINGS`" class="d-block">
+                    <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+                    </span>      
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                  </div>  
+
+               </span>
+
+          <div class="d-inline-block mx-0">
+            <v-checkbox     
+              v-model="C_showCountToggle"     
+              class="d-inline-block mt-0 px-2 ml-1"  
+              @click.prevent="showCounts"               
+              v-tooltip="`Show Counts`"
+          ></v-checkbox>
+            </div>
+            </span>
+      
+      </div>
     </div>
    </span>
   <v-app id="app" class="mt-4 mr-2">
@@ -144,15 +217,15 @@
               :label="item.name"
               small
             >
-            <span v-if="item.id == 'day'"><font-awesome-icon icon="calendar-day" class="mr-1"  /> Day</span>
-            <span v-if="item.id == 'week'"><font-awesome-icon icon="calendar-week" class="mr-1"  /> Week</span>
-            <span v-if="item.id == 'month'"><font-awesome-icon icon="calendar-alt" class="mr-1"  /> Month</span>
-            <span v-if="item.id == '4day'"><font-awesome-icon icon="calendar-minus" class="mr-1"  /> 4 Day</span>
+            <span v-if="item.id == 'day'"><i class="far fa-calendar-day mr-1"></i> Day</span>
+            <span v-if="item.id == 'week'"><i class="far fa-calendar-week mr-1"></i> Week</span>
+            <span v-if="item.id == 'month'"><i class="far fa-calendar-alt mr-1"></i> Month</span>
+            <span v-if="item.id == '4day'"><i class="far fa-calendar-minus"></i> 4 Day</span>
          
             </v-btn>        
            </v-btn-toggle>   
           <button class="btn btn-sm btn-info ml-3 total-table-btns">
-          Total: {{filteredCalendar.length}}
+          Total: {{filteredCalendar.filtered.tasks.length}}
          </button>
 
         </v-toolbar>
@@ -191,17 +264,23 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>            
-              <span class="d-inline mr-1"><small><b>Category:</b></small></span>
+              <span class="d-inline mr-1"><small><b>Process Area:</b></small></span>
               {{ selectedEvent.category }}            
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title @click.prevent="scrollToStartDate" class="point">     
-              <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
+              <span v-if="selectedEvent.isOngoing == true && selectedEvent.isClosed == false" class="d-inline mr-1">
                 <small><b>Date Identified:</b></small>
-              </span>                 
-              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>              
-              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}              
+                    {{ moment(selectedEvent.start).format('DD MMM YYYY') }} 
+              </span>       
+                <span v-else-if="selectedEvent.isOngoing == true && selectedEvent.isClosed == true && selectedEvent.start == '2000-01-01'" class="d-inline mr-1">
+                <small><b>Date Identified:</b></small>
+               <i class="far fa-retweet text-secondary"></i>
+              </span>              
+              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small>            
+              {{ moment(selectedEvent.start).format('DD MMM YYYY') }} 
+              </span>  
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -215,7 +294,10 @@
              <span v-if="selectedEvent.isOngoing == true && 
                selectedEvent.end == '2099-01-01'" class="mr-1">
                <i class="far fa-retweet text-success"></i>
-                </span>                
+                </span>
+                <span v-else-if="selectedEvent.isOnHold == true && selectedEvent.end == null">
+                 <i class="fas fa-pause-circle text-primary"></i>
+                </span>              
                <span v-else> 
               {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
                </span>
@@ -236,13 +318,14 @@
           <v-list-item>
             <v-list-item-title>
             <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
-                <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
                  <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
-                <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-                <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+                <span v-if="selectedEvent.isOngoing == true && !selectedEvent.isClosed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+               <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
+                <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`">  <i class="fas fa-pause-circle text-primary"></i></span>   
+                <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
@@ -271,7 +354,7 @@
             @click.prevent="detailsBtn"
             color="primary"
           >
-            <font-awesome-icon icon="edit" class="mr-1" />
+           <i class="far fa-edit mr-1"></i>
             Details
           </v-btn>
             
@@ -279,8 +362,9 @@
             color="error"
             small
             @click.prevent="deleteTask"           
+            v-if="_isallowed('delete')"
           >
-          <font-awesome-icon icon="trash-alt" class="mr-1" />
+        <i class="far fa-trash-alt mr-1"></i>
           DELETE
           </v-btn>
      
@@ -313,7 +397,8 @@
       return {         
         focus: this.C_lastFocus,
         showMore: false,    
-        type: this.C_calendarView,     
+        type: this.C_calendarView, 
+        // eventCalendar: this.filteredCalendar.filtered.tasks,     
         tasksQuery: '',
         taskNames: [], 
         taskIds:[],       
@@ -352,7 +437,20 @@
         'setMyActionsFilter',
         'setOnWatchFilter',     
         'setTaskForManager',
-        'updateTasksHash'
+        'updateTasksHash',   
+        'setShowCount',
+        // 7 States
+        'setHideComplete',
+        'setHideInprogress',
+        'setHidePlanned',
+        'setHideOverdue',
+        'setHideOngoing',
+        'setHideOnhold',
+          'setHideDraft',
+        // 3 Tags
+        'setHideWatched',
+        'setHideImportant',
+        'setHideBriefed',     
       ]),
        ...mapActions([
         'taskDeleted',
@@ -362,6 +460,40 @@
       // log(e){
       //   console.log("Focus: " + e)
       // },
+     toggleWatched(){
+      this.setHideWatched(!this.getHideWatched)    
+    },
+    toggleImportant(){
+      this.setHideImportant(!this.getHideImportant)    
+    },
+    toggleBriefed(){
+        this.setHideBriefed(!this.getHideBriefed)    
+    },
+    toggleComplete(){
+      this.setHideComplete(!this.getHideComplete)    
+    },
+    toggleDraft(){
+      this.setHideDraft(!this.getHideDraft)    
+    },
+    togglePlanned(){
+        this.setHidePlanned(!this.getHidePlanned)    
+    },
+    toggleInprogress(){
+      this.setHideInprogress(!this.getHideInprogress)    
+    },
+    toggleOngoing(){
+        this.setHideOngoing(!this.getHideOngoing)    
+    },
+    toggleOnhold(){
+        this.setHideOnhold(!this.getHideOnhold)    
+    },
+    toggleOverdue(){
+    //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
+      this.setHideOverdue(!this.getHideOverdue)    
+    },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
       reRenderCalendar() {
         this.componentKey += 1;
       },   
@@ -385,7 +517,7 @@
      },
       setToday (resource) {
        this.focus = '' || this.setLastFocusFilter('')  
-       console.log("Resource: " + resource)
+      //  console.log("Resource: " + resource)
       },
       prev () {
         this.$refs.calendar.prev()
@@ -401,7 +533,6 @@
         );
       },
       editTask(event) {  
-        console.log("This is the edit task event: " + event)
         let eventObj = event     
         this.selectedEventId = eventObj.event.taskId;
         this.calendarTask = eventObj.event.task 
@@ -468,35 +599,50 @@
            this.reRenderCalendar()
         }
       },
+      _isallowed(salut) {
+         var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return  fPrivilege.tasks.includes(s); 
+      },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
-      if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
-        this.taskData = this.filteredCalendar.map(task => task)  
-        this.taskNames = this.filteredCalendar.map(task => task.text)    
-        this.taskIds = this.filteredCalendar.map(task => task.id)      
-        this.taskStartDates = this.filteredCalendar.map(task => task.startDate)     
-        this.taskEndDates = this.filteredCalendar.map(task => task.dueDate) 
-        this.categories = this.filteredCalendar.map(task => task.taskType) 
-        this.onWatch = this.filteredCalendar.map(task => task.watched)   
-        this.overdue = this.filteredCalendar.map(task => task.isOverdue) 
-        this.star = this.filteredCalendar.map(task => task.important)
-        this.ongoing = this.filteredCalendar.map(task => task.ongoing)
-        this.percentage = this.filteredCalendar.map(task => task.progress)
-        this.onhold = this.filteredCalendar.map(task => task.onHold)
-        this.draft = this.filteredCalendar.map(task => task.draft)
+      if (this.filteredCalendar.filtered.tasks !== undefined && this.filteredCalendar.filtered.tasks.length > 0) {
+        this.taskData = this.filteredCalendar.filtered.tasks.map(task => task)  
+        this.taskNames = this.filteredCalendar.filtered.tasks.map(task => task.text)    
+        this.taskIds = this.filteredCalendar.filtered.tasks.map(task => task.id)      
+        this.taskStartDates = this.filteredCalendar.filtered.tasks.map(task => task.startDate)     
+        this.taskEndDates = this.filteredCalendar.filtered.tasks.map(task => task.dueDate) 
+        this.categories = this.filteredCalendar.filtered.tasks.map(task => task.taskType) 
+        this.onWatch = this.filteredCalendar.filtered.tasks.map(task => task.watched)   
+        this.overdue = this.filteredCalendar.filtered.tasks.map(task => task.isOverdue) 
+        this.star = this.filteredCalendar.filtered.tasks.map(task => task.important)
+        this.ongoing = this.filteredCalendar.filtered.tasks.map(task => task.ongoing)
+        this.closed = this.filteredCalendar.filtered.tasks.map(task => task.closed)
+        this.percentage = this.filteredCalendar.filtered.tasks.map(task => task.progress)
+        this.onhold = this.filteredCalendar.filtered.tasks.map(task => task.onHold)
+        this.draft = this.filteredCalendar.filtered.tasks.map(task => task.draft)
            
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
         const days = (max.getTime() - min.getTime()) / 86400000   
         // For loop to determine length of Calendar Tasks 
-        for (let i = 0; i < this.filteredCalendar.length; i++) {
+        for (let i = 0; i < this.filteredCalendar.filtered.tasks.length; i++) {
 
-            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
+            if(this.taskData[i].ongoing && !this.taskData[i].closed && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
             this.taskEndDates[i] = '2099-01-01'
+            }
+            if(this.taskData[i].ongoing && !this.taskData[i].closed && this.taskStartDates[i] == null || this.taskStartDates[i] == undefined ) {        
+            this.taskStartDates[i] = '2000-01-01'
             }
             if(this.taskData[i].ongoing) {
             this.taskNames[i] = this.taskNames[i] + " (Ongoing)"          
+            }
+           if(this.taskData[i].onHold) {
+            this.taskNames[i] = this.taskNames[i] + " (On Hold)"          
             }
             events.push({            
             name: this.taskNames[i],
@@ -511,6 +657,7 @@
             // color: this.colors.defaultColor,  
             hasStar: this.star[i], 
             isOngoing: this.ongoing[i], 
+            isClosed: this.closed[i], 
             isDraft: this.draft[i],
             isOnHold: this.onhold[i]           
           })
@@ -561,13 +708,23 @@
         "viewPermit",
         "currentProject",
         'taskUserFilter',
-        'taskTypes',    
-     
+        'taskTypes', 
+        'getShowCount',
+        // 7 States
+        'getHideComplete',
+        'getHideInprogress',
+        'getHidePlanned',
+        'getHideOngoing',
+        'getHideOnhold',
+        'getHideDraft',
+        'getHideOverdue',
+        // 3 Tags
+        'getHideWatched',
+        'getHideImportant',
+        'getHideBriefed',        
      
        ]),
-       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
+
       filteredCalendar() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
@@ -625,15 +782,162 @@
          
           return valid
         }), ['dueDate'])
-          if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
-        
-        return tasks
-        
-       } else  {        
-        tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
-        return tasks     
-       }       
-    }, 
+         return {
+       unfiltered: {
+            tasks
+            },
+       filtered: {
+         tasks:  tasks.filter(t => {
+        if (this.getHideOverdue == true) {          
+         return t.isOverdue == false
+       } else return true
+
+      }).filter(t => {
+      if (this.getHideComplete == true) { 
+        return !t.completed
+      } else return true
+
+      }).filter(t => {
+      if (this.getHidePlanned == true) { 
+        return t.planned == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideOnhold == true) { 
+        return t.onHold == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideInprogress == true) { 
+        return t.inProgress == false
+      } else return true
+
+      }).filter(t => {
+       if (this.getHideDraft == true){
+         return t.draft == false
+       } else return true   
+
+
+      }).filter(t => {
+      if (this.getHideOngoing == true) {
+        return t.ongoing == false
+      } else return true       
+
+      }).filter(t => {
+        if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+        return t.reportable
+      }
+      if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+          return t.reportable + t.watched
+
+      } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+          return t.reportable + t.watched + t.important
+      } else return true
+
+      }).filter(t => {
+        // This and last 2 filters are for Filtered Tags
+         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
+           return t.watched
+        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
+           return  t.watched + t.reportable
+        } if (this.getHideWatched && !this.getHideBriefed && this.getHideImportant) {
+           return t.watched + t.important
+        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
+           return  t.watched + t.reportable + t.important
+        } else return true          
+       
+      }).filter(t => {
+         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
+          return t.important
+        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
+          return t.important + t.reportable
+       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
+          return t.important + t.reportable + t.watched
+        } else return true           
+       }),  
+        }
+       }     
+    },
+  variation() {
+    let planned = _.filter(
+      this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.planned == true
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
+     let drafts = _.filter(
+     this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+      this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.important == true
+      ); 
+        let briefings = _.filter(
+       this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.reportable == true
+      );
+      let watched = _.filter(
+     this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.watched == true
+      );
+              
+      let completed = _.filter(
+      this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.completed == true
+      );
+    let inProgress = _.filter(
+      this.filteredCalendar.unfiltered.tasks,
+        (t) => t && t.inProgress == true
+      );
+     let onHold = _.filter( this.filteredCalendar.unfiltered.tasks, (t) => t && t.onHold == true );
+     let ongoing = _.filter( this.filteredCalendar.unfiltered.tasks, (t) => t && t.ongoing == true );
+     let overdue = _.filter( this.filteredCalendar.unfiltered.tasks,(t) => t.isOverdue == true);
+
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        watched: {
+          count: watched.length,          
+        },
+        onHold: {
+          count: onHold.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+        ongoing: {
+          count: ongoing.length
+        },     
+      };
+    },
+   C_showCountToggle: {                  
+    get() {
+      return this.getShowCount                
+    },
+    set(value) {
+      this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+    }        
+  },
      C_calendarTaskFilter: {           
         get() {
           this.reRenderCalendar()
@@ -714,7 +1018,7 @@
       handler(value) {
         if (value) {
           this.reRenderCalendar()        
-        } if (value && this.filteredCalendar.length == 0)   {
+        } if (value && this.filteredCalendar.filtered.tasks.length == 0)   {
           this.events = []
         }           
       },
@@ -746,7 +1050,7 @@
       },
     },
   },
-   
+
   }
 </script>
 
@@ -830,4 +1134,24 @@ input[type=search] {
  .point:hover {
    background-color: rgba(214, 219, 223, .45);
  }
+ .ninety {
+  width: 75%;
+}
+.filters-wrapper {
+    float: right;
+    margin-top: -95px;
+    width: 85%;
+  }
+.tagsCol, .statesCol {
+  border-radius: 4px;
+  border: .5px solid lightgray;
+}
+
+.tagsCol {
+  background-color: #f8f9fa;
+}
+
+.toggleHeight {
+  height: 32px;
+}
 </style> 

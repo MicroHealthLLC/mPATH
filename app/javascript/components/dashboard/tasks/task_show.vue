@@ -17,22 +17,14 @@
             <span v-show="task.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
             <span v-show="task.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
-            <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-            <span v-show="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>   
-            <span v-show="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+            <span v-show="is_overdue" v-tooltip="`Overdue`"><i class="fas fa-calendar text-danger"></i></span>   
+            <span v-show="task.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+            <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+            <span v-if="task.ongoing == true && task.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
             <span v-show="task.onHold" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-show="task.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
-             <span v-if="                                      
-                      task.ongoing == false && 
-                      task.isOverdue == false &&
-                      task.reportable == false &&
-                      task.watched == false &&
-                      task.onHold == false &&  
-                      task.draft == false && 
-                      task.progress < 100 "             
-                    >                        
-            </span>
-               
+            <span v-if="task.planned" v-tooltip="`Planned`">  <i class="fas fa-calendar-check text-info mr-1"></i></span>
+            <span v-if="task.inProgress" v-tooltip="`In Progress`">    <i class="far fa-tasks text-primary mr-1"></i></span>
           </div>
          
         </div>
@@ -43,21 +35,31 @@
              <div class="font-sm col-md-12 pt-1 pb-0">
                <span class="mr-2">
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(task.startDate)}}
-               </span>              
-                <span  v-if="task.ongoing == false">
-                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
-                    {{formatDate(DV_task.dueDate)}}
+                <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
+                <i class="fas fa-retweet text-success"></i>
                 </span>
-                <span v-else v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
-                
+                <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
+                  <i class="fas fa-retweet text-secondary"></i>
+                    </span>
+                <span v-else>{{
+                moment(task.startDate).format("DD MMM YYYY") 
+                  }}</span>
+               </span>              
+                <span  v-if="task.dueDate !== null">
+                    <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>                  
+                    {{formatDate(DV_task.dueDate)}}
+                  </span>
+                  <span  v-if="task.onHold == true && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`">                              
+                  <i class="fas fa-pause-circle text-primary"></i>
+                  </span>
+                  <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
              </div>
           </div>     
          
           <div class="row d-flex my-1">
             <div class="font-sm col-md-12 py-1">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-              <span v-tooltip="`Category`">{{task.taskType}}</span>
+              <span v-tooltip="`Process Area`">{{task.taskType}}</span>
             </div>
           </div>
 
@@ -147,6 +149,15 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.tasks.includes(s); 
+    },
       deleteTask() {
         let confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
@@ -204,9 +215,6 @@
         'currentProject',
         'viewPermit',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
       is_overdue() {
         return this.DV_task.isOverdue
       },

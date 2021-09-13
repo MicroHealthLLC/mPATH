@@ -106,30 +106,31 @@
               >Task Name <span style="color: #dc3545">*</span></label
             >
             <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
+
+              <span class="statesCol p-1 mr-1">           
             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
-               v-tooltip="`On Watch`" 
-              @click.prevent.stop="toggleWatched"
-              data-cy="task_on_watch"
+              @click.prevent.stop="toggleOngoing"
+              data-cy="task_ongoing"
+              v-tooltip="`Ongoing`" 
             >
-              <span                
-                v-show="DV_task.watched" 
-                ><i class="fas fa-eye mr-1"></i
-              ></span>
-              <span 
-                v-show="!DV_task.watched" 
-                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-              ></span>           
+              <span              
+                v-show="DV_task.ongoing">
+              <i class="fas fa-retweet text-success"></i>
+              </span>
+              <span              
+                v-show="!DV_task.ongoing">
+              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+              </span>             
               <small 
-                style="vertical-align:text-top" 
                 :class="{'d-none': isMapView }"
-              > 
-                On Watch
+                style="vertical-align:text-top"> 
+                Ongoing
               </small>
             </span>
-            
-             <span
+
+              <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
@@ -153,72 +154,7 @@
               </small>
             </span>
            
-
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
-              v-tooltip="`Important`" 
-            >
-              <span 
-                v-show="DV_task.important">
-               <i class="fas fa-star text-warning"></i>
-              </span>
-              <span 
-                v-show="!DV_task.important">
-               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-               :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Important
-              </small>
-            </span>
-
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleOngoing"
-              data-cy="task_ongoing"
-              v-tooltip="`Ongoing`" 
-            >
-              <span              
-                v-show="DV_task.ongoing">
-              <i class="fas fa-retweet text-success"></i>
-              </span>
-              <span              
-                v-show="!DV_task.ongoing">
-              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Ongoing
-              </small>
-            </span>
-              <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleReportable"
-              data-cy="task_reportable"
-              v-tooltip="`Briefings`" 
-            >
-              <span               
-                 v-show="DV_task.reportable">
-               <i class="fas fa-presentation text-primary"></i>
-              </span>
-              <span 
-               v-show="!DV_task.reportable">
-               <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-               Briefings
-              </small>
-            </span>
+          
               <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
@@ -242,6 +178,83 @@
               </small>
             </span>
 
+
+
+              </span>
+
+
+              <span class="tagsCol p-1">
+
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                v-tooltip="`On Watch`" 
+                @click.prevent.stop="toggleWatched"
+                data-cy="task_on_watch"
+              >
+                <span                
+                  v-show="DV_task.watched" 
+                  ><i class="fas fa-eye mr-1"></i
+                ></span>
+                <span 
+                  v-show="!DV_task.watched" 
+                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+                ></span>           
+                <small 
+                  style="vertical-align:text-top" 
+                  :class="{'d-none': isMapView }"
+                > 
+                  On Watch
+                </small>
+              </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleImportant"
+              data-cy="task_important"
+              v-tooltip="`Important`" 
+            >
+              <span 
+                v-show="DV_task.important">
+               <i class="fas fa-star text-warning"></i>
+              </span>
+              <span 
+                v-show="!DV_task.important">
+               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+              </span>             
+              <small 
+               :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Important
+              </small>
+              </span>
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleReportable"
+                data-cy="task_reportable"
+                v-tooltip="`Briefings`" 
+              >
+                <span               
+                  v-show="DV_task.reportable">
+                <i class="fas fa-presentation text-primary"></i>
+                </span>
+                <span 
+                v-show="!DV_task.reportable">
+                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small 
+                  :class="{'d-none': isMapView }"
+                  style="vertical-align:text-top"> 
+                Briefings
+                </small>
+              </span>                
+              </span>
+
+
+          
+     
 
             </div>
 
@@ -279,7 +292,7 @@
           <div class="d-flex mb-1 form-group">
             <div class="simple-select form-group w-33 ml-4">
               <label class="font-md"
-                >Category <span style="color: #dc3545">*</span></label
+                >Process Area <span style="color: #dc3545">*</span></label
               >
               <el-select
                 v-model="selectedTaskType"
@@ -289,9 +302,9 @@
                 value-key="id"
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
-                name="Category"
-                :class="{ 'error': errors.has('Category') }"
-                placeholder="Select Category"
+                name="Process Area"
+                :class="{ 'error': errors.has('Process Area') }"
+                placeholder="Select Process Area"
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -302,11 +315,11 @@
                 </el-option>
               </el-select>
               <div
-                v-show="errors.has('Category')"
+                v-show="errors.has('Process Area')"
                 class="text-danger"
                 data-cy="task_category_error"
               >
-                {{ errors.first("Category") }}
+                {{ errors.first("Process Area") }}
               </div>
             </div>
           </div>
@@ -319,15 +332,15 @@
           <el-steps 
             class="exampleOne mt-3" 
             finish-status="success"  
-            :class="{'overSixSteps': taskStages.length >= 6 }" 
-            :active="taskStages.findIndex(stage => stage.id == selectedTaskStage.id)"
+            :class="{'overSixSteps': taskStagesSorted.length >= 6 }" 
+            :active="taskStagesSorted.findIndex(stage => stage.id == selectedTaskStage.id)"
             :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
             v-model="selectedTaskStage"
             track-by="id" 
             value-key="id"
             >    
           <el-step
-            v-for="item in taskStages"
+            v-for="item in taskStagesSorted"
             :key="item.id"                       
             :value="item"        
             style="cursor:pointer"
@@ -347,14 +360,14 @@
             <el-steps
               class="exampleOne"
               finish-status="success"
-              :class="{ overSixSteps: taskStages.length >= 6 }"
+              :class="{ overSixSteps: taskStagesSorted.length >= 6 }"
               :disabled="!_isallowed('write') || !!fixedStage"
               v-model="selectedTaskStage"
               track-by="id"
               value-key="id"
             >
               <el-step
-                v-for="item in taskStages"
+                v-for="item in taskStagesSorted"
                 :key="item.id"
                 :value="item"
                 style="cursor:pointer"
@@ -403,19 +416,27 @@
                <label class="font-md"
                 ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
               ></span>
+               <span v-else-if="DV_task.onHold ">           
+                <label class="font-md">
+                Due Date <span><small class="text-danger">(Not required if Task is On Hold)</small></span>
+                 </label
+                  ></span>
               <span v-else>           
                <label class="font-md"
                 >Due Date <span style="color: #dc3545">*</span></label
               ></span>
-               <div :class="{ 'error': errors.has('Due Date') }">
+          
                 <v2-date-picker
-                  v-validate="{ required: !DV_task.ongoing }"
+                  v-validate="{ required: !DV_task.ongoing && !DV_task.onHold }"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
                   placeholder="DD MM YYYY"
                   name="Due Date"
                   class="w-100 vue2-datepicker"
+                    :class="{
+                      'error': errors.has('Due Date'),
+                    }"
                   :disabled="
                     !_isallowed('write') ||
                       DV_task.startDate === '' ||
@@ -424,7 +445,7 @@
                   :disabled-date="disabledDueDate"
                   data-cy="task_due_date"
                 />
-              </div>
+            
               <div
                 v-show="errors.has('Due Date')"
                 class="text-danger"
@@ -500,6 +521,7 @@
                 track-by="id"
                 value-key="id"
                 :multiple="true"
+                clearable
                 placeholder="Search and select Consulted Users"
                 :disabled="!_isallowed('write')"
                 filterable
@@ -521,6 +543,7 @@
                 track-by="id"
                 value-key="id"
                 multiple
+                clearable
                 filterable
                 placeholder="Search and select Informed Users"
                 :disabled="!_isallowed('write')"
@@ -1183,7 +1206,7 @@
                 class="update-card mb-3"
               >
                 <div class="d-flex justify-content-between">
-                  <label class="font-md">Description</label>
+                  <label class="font-md">Update</label>
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
@@ -1297,7 +1320,7 @@ export default {
             "Task Name",
             "Description",
             "Start Date",
-            "Category",
+            "Process Area",
             "Stage",
             "Start Date",
             "Date Closed",
@@ -1382,6 +1405,15 @@ export default {
         checklists: [],
         notes: [],
       };
+    },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.tasks.includes(s); 
     },
     selectedStage(item) {
       if (this._isallowed("write")) {
@@ -1565,6 +1597,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_task = { ...this.DV_task, onHold: !this.DV_task.onHold };
+      this.DV_task.dueDate = '';
     },
     toggleDraft() {
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
@@ -1788,8 +1821,7 @@ export default {
             }
           })
           .catch((err) => {
-            // var errors = err.response.data.errors
-            console.log(err);
+            alert(err.response.data.error);
           })
           .finally(() => {
             this.loading = false;
@@ -1977,6 +2009,10 @@ export default {
       "taskStages",
       "taskTypes",
     ]),
+    taskStagesSorted() {
+      var taskStagesSortedReturn = [...this.taskStages]; 
+      return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
     readyToSave() {
       return (
         this.DV_task &&
@@ -2023,11 +2059,6 @@ export default {
         "desc"
       );
     },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
-    },
     C_title() {
       return this._isallowed("write")
         ? this.task.id
@@ -2047,10 +2078,10 @@ export default {
       }
     },
     projectNameLink() {
-      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`;
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
       } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+        return `/programs/${this.$route.params.programId}/${this.tab}`;
       }
     },
   },
@@ -2434,5 +2465,24 @@ a:hover {
   background-color: #ededed;
   border-color: lightgray;
   border-left: 10px solid #5aaaff;
+}
+
+.tagsCol, .statesCol {  
+  border: .5px solid lightgray;
+}
+.statesCol {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tagsCol {
+  background-color: #f8f9fa;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
 }
 </style>

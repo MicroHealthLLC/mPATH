@@ -12,10 +12,10 @@
       <hr />
       <el-menu-item
         @click="createDuplicate"
-        :disabled="!$permissions.risks.write"
+        :disabled="!isAllowed('write', 'risks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!$permissions.risks.write">
+      <el-submenu index="1" :disabled="!isAllowed('write', 'risks')">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -57,7 +57,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!$permissions.risks.write">
+      <el-submenu index="2" :disabled="!isAllowed('write', 'risks')">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
@@ -79,7 +79,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-menu-item @click="deleteRisk" :disabled="!$permissions.risks.delete"
+      <el-menu-item @click="deleteRisk" :disabled="!isAllowed('delete', 'risks')"
         >Delete</el-menu-item
       >
     </el-menu>
@@ -156,16 +156,19 @@ export default {
       } else {
         return this.submitted;
       }
-    },
-    isAllowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.risks[salut];
-    },
+    }
   },
   methods: {
     ...mapActions(["riskDeleted"]),
     ...mapMutations(["updateRisksHash"]),
+    isAllowed(salut, module) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege[module].includes(s); 
+    },
     // closes context menu
     close() {
       this.show = false;
@@ -194,7 +197,7 @@ export default {
       this.close();
     },
     moveRisk(risk, facilityProjectId) {
-      if (!this.isAllowed("write")) return;
+      if (!this.isAllowed("write", 'risks')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;

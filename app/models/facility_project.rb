@@ -1,11 +1,13 @@
 class FacilityProject < ApplicationRecord
   belongs_to :facility
   belongs_to :project
+  
   belongs_to :status, optional: true
   has_many :tasks, dependent: :destroy
   has_many :task_types, through: :tasks
   has_many :issues, dependent: :destroy
   has_many :risks, dependent: :destroy
+  has_many :lessons, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
   

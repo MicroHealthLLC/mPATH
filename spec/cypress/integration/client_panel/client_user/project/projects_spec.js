@@ -1,8 +1,16 @@
 describe('Projects List', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
+  })
+
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+  
+  after(() => {
+    cy.clearCookies()
   })
 
   it('Display list of projects', function() {
@@ -18,7 +26,7 @@ describe('Projects List', function() {
       cy.get('[data-cy=overall_progress]').should('contain', 'Overall Program Progress')
     })
     cy.get('[data-cy=project_list_items]').its('length').should('be.eq', 1)
-    cy.logout()
+    // cy.logout()
   })
 
   it('Open a particular project', function() {
@@ -27,13 +35,13 @@ describe('Projects List', function() {
       cy.contains('Test Project').should('be.visible')
       cy.contains('4').should('be.visible')
     })
-    cy.logout()
+    // cy.logout()
   })
 
   it('Open a facility of a project', function() {
     cy.openFacility()
     cy.facilityRollup()
-    cy.logout()
+    // cy.logout()
   })
 })
 
@@ -48,8 +56,8 @@ describe('No Project for client', function() {
   it('Display no projects', function() {
     cy.get('[data-cy=project_list_items]').should('not.exist')
     cy.get('[data-cy=not_access_projects]')
-      .contains('Currently you dont have permissions to access projects')
+      .contains('Currently you do not have permissions to access progams')
       .should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 })

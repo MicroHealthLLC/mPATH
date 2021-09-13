@@ -12,10 +12,21 @@
             <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
             <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
        </td>
-       <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
+       <td class="eight text-center">         
+          <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
+            <i class="fas fa-retweet text-success"></i>
+          </span>
+          <span v-else-if="risk.ongoing && risk.closed && risk.startDate == null || undefined">
+            <i class="fas fa-retweet text-secondary"></i>
+              </span>
+          <span v-else>{{
+            moment(risk.startDate).format("DD MMM YYYY") 
+          }}</span>
+         </td>
        <td class="eight text-center">
-         <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-        <span v-else>
+         <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+         <span v-else-if="risk.onHold && risk.dueDate == ''" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+         <span v-else>
          {{formatDate(risk.dueDate)}}
         </span>
        </td>
@@ -29,40 +40,33 @@
          </span>        
         </td>
         <td class="eight text-center" >
-        <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-else-if="risk.ongoing == true && risk.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>  
         <span v-else>{{risk.progress + "%"}}</span>
         </td>
-        <td class="fort text-center">
-                <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+        <td class="ten text-center">
+                <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
                 <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="risk.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
-                <span v-if="risk.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-                <span v-if="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+                <span v-if="risk.isOverdue" v-tooltip="`Overdue`"> <i class="fas fa-calendar text-danger mr-1"></i></span>
+                <span v-if="risk.completed" v-tooltip="`Completed`"><i class="fas fa-clipboard-check text-success mr-1"></i></span>   
+                <span v-if="risk.ongoing == true && !risk.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+                <span v-if="risk.closed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary mr-1"></i></span>   
                 <span v-if="risk.onHold == true" v-tooltip="`On Hold`">   <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
                 <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
-                <span v-if="                   
-                     risk.ongoing == false && 
-                     risk.watched == false &&
-                     risk.reportable == false &&
-                     risk.important == false &&
-                     risk.isOverdue == false &&
-                     risk.onHold == false &&  
-                     risk.draft == false && 
-                     risk.progress < 100 "             
-                     class="text-secondary">
-                    No flags at this time           
-                </span>          
+                <span v-if="risk.planned" v-tooltip="`Planned`"> <i class="fas fa-calendar-check text-info mr-1"></i></span>
+                <span v-if="risk.inProgress" v-tooltip="`In Progress`"> <i class="far fa-tasks text-primary mr-1"></i></span>
+               
          </td>  
-         <td class="twenty" v-if="risk.notes.length > 0">       
+         <td class="twentyFour" v-if="risk.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
+          <span class="truncate-line-five">
             {{risk.lastUpdate.body}}
           </span>         
         </td>  
-         <td  class="twenty" v-else >No Updates</td> 
+         <td  class="twentyFour" v-else >No Updates</td> 
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu
@@ -125,6 +129,15 @@
         'taskUpdated',
         'updateWatchedRisks'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.risks.includes(s); 
+    },
       deleteRisk() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
         if (!confirm) {return}
@@ -186,9 +199,6 @@
         'viewPermit',
         'getToggleRACI',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
-      },
       is_overdue() {
         return this.DV_risk.progress !== 100 && new Date(this.DV_risk.dueDate).getTime() < new Date().getTime()
       },
@@ -269,6 +279,9 @@
   .twenty{
     width: 20%;
   }
+  .twentyFour{
+    width: 24%;
+  }
   .pg-content {
     width: 100%;
     height: 20px;
@@ -336,5 +349,17 @@
   }
    .green1, .orange1, .red1 {   
     color:#fff;   
+  }
+  .truncate-line-five
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    &:hover
+    {
+      display: -webkit-box;
+      -webkit-line-clamp: unset;
+    }
   }
 </style>

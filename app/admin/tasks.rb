@@ -21,6 +21,7 @@ ActiveAdmin.register Task do
       :start_date,
       :auto_calculate,
       task_files: [],
+      file_links: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
@@ -43,9 +44,9 @@ ActiveAdmin.register Task do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_delete?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column "Name", :text
-    column "Category", :task_type, nil, sortable: 'task_types.name' do |task|
+    column :task_type, nil, sortable: 'task_types.name' do |task|
       if current_user.admin_write?
         link_to "#{task.task_type.name}", "#{edit_admin_task_type_path(task.task_type)}" if task.task_type.present?
       else
@@ -67,7 +68,7 @@ ActiveAdmin.register Task do
       task.task_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          if file.blob.content_type == "text/plain"
+          if file.blob.content_type == "text/plain" && task.valid_url?(file.blob.filename.instance_variable_get("@filename"))
             link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
           else
             link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
@@ -120,7 +121,7 @@ ActiveAdmin.register Task do
                 fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
             end
           end
-          f.input :task_type, label: 'Category', include_blank: false
+          f.input :task_type, include_blank: false
           f.input :task_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
           f.input :start_date, as: :datepicker
           f.input :due_date, as: :datepicker
@@ -152,6 +153,8 @@ ActiveAdmin.register Task do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :task_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :file_links, label: 'Add Links', hint: 'Input link then "Enter"'
         end
       end
 
@@ -184,16 +187,30 @@ ActiveAdmin.register Task do
     redirect_to collection_path, notice: "Successfully created Task checklists"
   end
 
-  filter :text, label: 'Name'
-  filter :task_type, label: 'Category'
-  filter :task_stage, label: 'Stage'
+  csv do
+    column(:text)
+    column(:task_type) { |task| task.task_type&.name }
+    column(:task_stage) { |task| task.task_stage&.name }
+    column(:start_date) { |task| task.start_date&.strftime('%d/%b/%Y') }
+    column(:due_date) { |task| task.due_date&.strftime('%d/%b/%Y') }
+    column(:progress)
+    column(:description)
+    column(:task_files) { |task| task.task_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column('Program') { |task| task.project&.name }
+    column('Project') { |task| task.facility&.facility_name }
+    column(:users) { |task| task.users&.map(&:full_name) }
+  end
+
+  filter :text
+  filter :task_type
+  filter :task_stage
   filter :start_date
   filter :due_date
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
-  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true}
+  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
@@ -211,11 +228,13 @@ ActiveAdmin.register Task do
 
     def create
       build_resource
+      handle_links
       handle_files
       super
     end
 
     def update
+      handle_links
       handle_files
       super
     end
@@ -223,6 +242,11 @@ ActiveAdmin.register Task do
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:task].delete(:task_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:task].delete(:file_links)
     end
 
     def destroy

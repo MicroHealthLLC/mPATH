@@ -37,7 +37,7 @@ class FacilitiesController < AuthenticatedController
   end
 
   def set_project
-    @project = current_user.projects.active.find_by(id: params[:project_id])
+    @project = current_user.authorized_programs.find_by(id: params[:project_id])
   end
 
   def facility_params

@@ -44,41 +44,41 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.form-tabs {
-  cursor: pointer;
-  border-bottom: 5px solid rgba(0, 0, 0, 0.1);
-  text-align: center;
-  &.active {
-    border-bottom: 5px solid #007bff;
-    color: #007bff;
-  }
-  &.disabled .inner-label-text {
-    opacity: 0.5;
-  }
-  &.disabled:hover {
-    cursor: not-allowed;
-  }
-  &:hover {
-    color: #007bff;
-  }
-}
-.map-width {
-  transform: scale(0.85);
-  transform-origin: left;
-}
-.map-risk-width {
-  transform: scale(0.75);
-  transform-origin: left;
-}
-.label::after {
-  content: "*";
-  color: #dc3545;
-  font-weight: 600;
-  margin-left: -8px;
-}
-.inner-label-text {
-  margin-left: 10px;
-  margin-right: 10px;
-  white-space: nowrap;
-}
+// .form-tabs {
+//   cursor: pointer;
+//   border-bottom: 5px solid rgba(0, 0, 0, 0.1);
+//   text-align: center;
+//   &.active {
+//     border-bottom: 5px solid #007bff;
+//     color: #007bff;
+//   }
+//   &.disabled .inner-label-text {
+//     opacity: 0.5;
+//   }
+//   &.disabled:hover {
+//     cursor: not-allowed;
+//   }
+//   &:hover {
+//     color: #007bff;
+//   }
+// }
+// .map-width {
+//   transform: scale(0.85);
+//   transform-origin: left;
+// }
+// .map-risk-width {
+//   transform: scale(0.75);
+//   transform-origin: left;
+// }
+// .label::after {
+//   content: "*";
+//   color: #dc3545;
+//   font-weight: 600;
+//   margin-left: -8px;
+// }
+// .inner-label-text {
+//   margin-left: 10px;
+//   margin-right: 10px;
+//   white-space: nowrap;
+// }
 </style>

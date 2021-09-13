@@ -76,7 +76,7 @@ ActiveAdmin.register Project do
           input :facilities, label: 'Projects in Program', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :statuses, label: 'Statuses in Program', as: :select, collection:  options_for_select( Status.all.map{|u| [u.name, u.id]}, f.object.status_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :task_stages, label: 'Task Stages in Program', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :task_types, label: 'Categories in Program', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :task_types, label: 'Process Areas in Program', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :issue_types, label: 'Issue Types in Program', as: :select, collection: options_for_select( IssueType.all.map{|u| [u.name, u.id]}, f.object.issue_type_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :issue_severities, label: 'Issue Severities in Program', as: :select, collection: options_for_select( IssueSeverity.all.map{|u| [u.name, u.id]}, f.object.issue_severity_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :issue_stages, label: 'Issue Stages in Program', as: :select, collection: options_for_select( IssueStage.all.map{|u| [u.name, u.id]}, f.object.issue_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
@@ -157,6 +157,12 @@ ActiveAdmin.register Project do
 
     def update(options={}, &block)
       normalize_comment_params
+      if params[:project][:user_ids]
+        removed_user_ids = resource.user_ids - params[:project][:user_ids].map(&:to_i)
+        User.where(id: removed_user_ids).each do |user|
+          user.remove_all_privileges(resource.id)
+        end if removed_user_ids.any?
+      end
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
         block.call(success, failure) if block

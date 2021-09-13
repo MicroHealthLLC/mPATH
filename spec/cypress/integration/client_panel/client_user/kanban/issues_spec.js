@@ -1,16 +1,25 @@
 describe('Kanban Issues View', function() {
-  beforeEach(() => {
+
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openKanbanIssue()
   })
 
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+
+  after(() => {
+    cy.clearCookies()
+  })
+
   it('Open kanban issues in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_col_title]').contains('Test Issue Stage').should('be.visible')
     })
-    cy.logout()
+    // cy.logout()
   })
 
   it('Cannot open new Issue form and edit/delete existing issue', function() {
@@ -24,7 +33,7 @@ describe('Kanban Issues View', function() {
     cy.get('[data-cy=issue_save_btn]').should('not.exist')
     cy.get('[data-cy=issue_delete_btn]').should('not.exist')
     cy.get('[data-cy=issue_close_btn]').click({force: true})
-    cy.logout()
+    // cy.logout()
   })
 
   it('Search issue by typing title', function() {
@@ -33,7 +42,7 @@ describe('Kanban Issues View', function() {
       cy.get('[data-cy=issues]').should('not.exist')
     })
 
-    cy.get('[data-cy=search_issues]').clear({force: true}).type('Test Issue').should('have.value', 'Test Issue')
+    cy.get('[data-cy=search_issues]').clear({force: true}).type('Test Issue 1').should('have.value', 'Test Issue 1')
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=issues]').its('length').should('be.eq', 1)
     })
@@ -42,6 +51,6 @@ describe('Kanban Issues View', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
     })
-    cy.logout()
+    // cy.logout()
   })
 })

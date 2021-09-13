@@ -65,6 +65,9 @@ Rails.application.configure do
     config.action_mailer.default_url_options = emails['action_mailer_config'].symbolize_keys if emails['action_mailer_config']
   end
 
+  # This will generate copy of log files if log reaches to 500 kb. 2 meaning 1 copy file and 1 current log file.
+  config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 2, 500.kilobytes)
+
   # config.after_initialize do
 
   #   Bullet.enable = true

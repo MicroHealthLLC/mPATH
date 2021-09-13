@@ -1,44 +1,53 @@
 describe('Admin Panel Project Group', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openProjectGroupAP()
   })
+  beforeEach(() => {
+    cy.get('#tabs').within(() => {
+      cy.get('#facility_groups').contains('Project Groups').click({force: true})
+    })
+    cy.preserveAllCookiesOnce()
+  })
+
+  // it('Sort Project Groups according to Name', function() {
+  //   // cy.visit('http://localhost:5017/admin/facility_groups?order=name_desc')
+  //   cy.wait(2000)
+  //   cy.get('.sortable').contains('Name').click()
+  //   cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
+  //   cy.get('.sortable').contains('Name').click()
+  //   cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
+  //   cy.get('.sortable').contains('Name').click()
+  //   cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
+  //   // cy.get('#logout').click()
+  // })
+
+  // it('Sort Project Groups according to Code', function() {
+  //   // cy.visit('http://localhost:5017/admin/facility_groups?order=code_desc')
+  //   cy.wait(2000)
+  //   cy.get('.sortable').contains('Code').click()
+  //   cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
+  //   cy.get('.sortable').contains('Code').click()
+  //   cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG1').should('be.visible')
+  //   cy.get('.sortable').contains('Code').click()
+  //   cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
+  //   // cy.get('#logout').click()
+  // })
 
   it('Click on Project Groups on tabs open facility Group information page', function() {
     cy.get('#page_title').contains('Project Group').should('be.visible')
     cy.get('#index_table_facility_groups').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Open and close new Project Group form', function() {
     cy.get('.action_item > a').contains('New Project Group').click()
     cy.get('#page_title').contains('New Project Group').should('be.visible')
     cy.get('.cancel > a').contains('Cancel').click()
-    cy.get('#logout').click()
-  })
-
-  it('Create new Project Group', function() {
-    cy.get('.action_item > a').contains('New Project Group').click()
-    cy.get('#page_title').contains('New Project Group').should('be.visible')
-    cy.get('#facility_group_name').type('New Test Facility Group').should('have.value', 'New Test Facility Group')
-    cy.get('#facility_group_code').type('NTFG').should('have.value', 'NTFG')
-    cy.get('#facility_group_submit_action').contains('Create Project Group').click()
-    cy.get('.flashes').contains('Project Group was successfully created.')
-    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 3)
-    cy.get('#logout').click()
-  })
-
-  it('Could not create new Project Group if name is blank', function() {
-    cy.get('.action_item > a').contains('New Project Group').click()
-    cy.get('#page_title').contains('New Project Group').should('be.visible')
-    cy.get('#facility_group_submit_action').contains('Create Project Group').click()
-    cy.get('.errors').contains("Name can't be blank")
-    cy.get('.inline-errors').contains("can't be blank")
-    cy.get('#page_title').contains('New Project Group').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Could not Delete Project Group of foreign constraint', function() {
@@ -48,7 +57,7 @@ describe('Admin Panel Project Group', function() {
     })
     cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Delete Project Group', function() {
@@ -61,27 +70,28 @@ describe('Admin Panel Project Group', function() {
     })
     cy.get('.flashes').contains('Project Group was successfully destroyed.').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
-  it('Sort Project Groups according to Name', function() {
-    cy.get('.sortable').contains('Name').click()
-    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
-    cy.get('.sortable').contains('Name').click()
-    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
-    cy.get('.sortable').contains('Name').click()
-    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
-    cy.get('#logout').click()
+  it('Could not create new Project Group if name is blank', function() {
+    cy.get('.action_item > a').contains('New Project Group').click()
+    cy.get('#page_title').contains('New Project Group').should('be.visible')
+    cy.get('#facility_group_submit_action').contains('Create Project Group').click()
+    cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Project Group').should('be.visible')
+    // cy.get('#logout').click()
   })
 
-  it('Sort Project Groups according to Code', function() {
-    cy.get('.sortable').contains('Code').click()
-    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
-    cy.get('.sortable').contains('Code').click()
-    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG1').should('be.visible')
-    cy.get('.sortable').contains('Code').click()
-    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
-    cy.get('#logout').click()
+  it('Create new Project Group', function() {
+    cy.get('.action_item > a').contains('New Project Group').click()
+    cy.get('#page_title').contains('New Project Group').should('be.visible')
+    cy.get('#facility_group_name').type('New Test Facility Group').should('have.value', 'New Test Facility Group')
+    cy.get('#facility_group_code').type('NTFG').should('have.value', 'NTFG')
+    cy.get('#facility_group_submit_action').contains('Create Project Group').click()
+    cy.get('.flashes').contains('Project Group was successfully created.')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 3)
+    // cy.get('#logout').click()
   })
 
   it('Search Project group contains name', function() {
@@ -93,7 +103,7 @@ describe('Admin Panel Project Group', function() {
     cy.get('.current_filter').contains('Name contains Test Facility Group 1').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Project group contains code', function() {
@@ -105,6 +115,6 @@ describe('Admin Panel Project Group', function() {
     cy.get('.current_filter').contains('Code contains TFG1').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 })

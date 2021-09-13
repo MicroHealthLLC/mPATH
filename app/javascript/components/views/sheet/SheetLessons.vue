@@ -1,19 +1,98 @@
 <template>
   <div v-if="contentLoaded">
-    <div class="pl-3 w-70">
-      <el-input type="search" placeholder="Search Lessons" v-model="search">
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>
+       <div class="d-flex align-item-center w-70 float-right filters-wrapper">
+      <div class="ml-3 risk-search-bar w-100">
+        <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
+        <el-input type="search" placeholder="Search Lessons" v-model="search">
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
+      </div>
+      <div class="mx-1 w-75">
+        <label class="font-sm my-0">Process Area</label>
+        <el-select
+          v-model="C_taskTypeFilter"
+          class="w-100"
+          track-by="name"
+          value-key="id"
+          multiple
+          clearable
+          placeholder="Select Process Area"
+          >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+        </el-select>
+      </div>
     </div>
     <div class="wrapper mt-3 p-3">
+
+    <div class="d-inline ">
+    <span class="text-center">  
+    <span class="d-inline">  
       <button
-        v-if="isAllowed('write')"
-        class="btn btn-md btn-primary addLessonBtn mr-3"
+        v-if="_isallowed('write')"
+        class="btn btn-md btn-primary addLessonBtn mr-5 float-left"
         @click="addLesson"
       >
         <font-awesome-icon icon="plus-circle" />
         Add Lesson
       </button>
+
+       <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>     
+                
+                <span class="statesCol d-inline-block p-1 mr-2">
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                   <span class="d-block">
+                    <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">COMPLETE</span>
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                  </div>              
+                  <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                   <span class="d-block">
+                    <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+                    </span>      
+                  <span class="smallerFont">DRAFT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                  </div>
+                </span>
+  
+            <span class="pl-4 pr-2 font-sm hideLabels">FOCUS</span>
+            <span class="tagCol d-inline-block p-1">
+                 
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                   <span class="d-block">
+                    <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+                    </span>      
+                  <span class="smallerFont">IMPORTANT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                   <span class="d-block">
+                    <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+                    </span>      
+                  <span class="smallerFont">BRIEFINGS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                  </div>
+              </span>            
+     </span> 
+     </span>     
+    </div>
+    <div class="d-inline-block ml-3">
+        <!-- <v-app id="app"> -->
+      <v-checkbox     
+      v-model="C_showCountToggle"     
+      class="d-inline-block"  
+      @click.prevent="showCounts"   
+      :label="`Show Counts`"
+    ></v-checkbox>
+        <!-- </v-app> -->
+
+    </div>
       <div class="float-right">
         <button
           v-tooltip="`Export to PDF`"
@@ -33,14 +112,14 @@
           class="ml-2 btn btn-md btn-info total-table-btns"
           data-cy="lessons_total"
         >
-          Total: {{ projectLessons.length }}
+          Total: {{ filteredLessons.filtered.lessons.length }}
         </button>
       </div>
       <!-- Lessons Learned Table -->
       <div style="margin-bottom:50px" data-cy="lessons_table">
         <table
-          v-if="filteredLessons.length > 0"
-          class="my-3 w-100"
+          v-if="filteredLessons.filtered.lessons.length > 0"
+          class="mb-3 w-100"
           id="lessonsPdf"
           ref="table"
         >
@@ -137,7 +216,7 @@
             </th>
           </tr>
           <tr
-            v-for="lesson in filteredLessons"
+            v-for="lesson in filteredLessons.filtered.lessons"
             :key="lesson.id"
             @click="openLesson(lesson.id)"
             @mouseup.right="openContextMenu($event, lesson)"
@@ -146,7 +225,7 @@
             <td>{{ lesson.title }}</td>
             <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
             <td class="text-center">{{ lesson.created_by.full_name }}</td>
-            <td>{{ lesson.description }}</td>
+            <td><span class="truncate-line-five">{{ lesson.description }}</span></td>
             <td class="text-center">
               <span v-if="lesson.important == true" v-tooltip="`Important`">
                 <i class="fas fa-star text-warning mr-1"></i
@@ -157,6 +236,9 @@
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
                 > <i class="fas fa-pencil-alt text-warning"></i>
               </span>
+               <span v-if="!lesson.draft" v-tooltip="`Complete`"
+                > <i class="fas fa-clipboard-check text-success"></i>
+              </span>
               <span
                 v-if="
                   lesson.important == false &&
@@ -164,7 +246,7 @@
                     lesson.draft == false
                 "
               >
-                No flags at this time
+               
               </span>
             </td>
             <td>
@@ -179,8 +261,10 @@
                     )
                   }}
                 </div>
-                {{ lesson.last_update.body }}</span
-              >
+                <span class="truncate-line-five">
+                  {{ lesson.last_update.body }}
+                </span>
+              </span>
               <span v-else>No Updates</span>
             </td>
           </tr>
@@ -190,7 +274,7 @@
 
         <!-- Lessons Per Page Toggle -->
         <div
-          v-if="filteredLessons.length > 0"
+          v-if="filteredLessons.filtered.lessons.length > 0"
           class="float-right mb-4 mt-2 font-sm"
         >
           <div class="simple-select d-inline-block text-right font-sm">
@@ -218,7 +302,7 @@
           </button>
           <button class="btn btn-sm page-btns" id="page-count">
             {{ currentPage }} of
-            {{ Math.ceil(projectLessons.length / lessonsPerPage.value) }}
+            {{ Math.ceil( projectLessons.length / lessonsPerPage.value) }}
           </button>
           <button class="btn btn-sm page-btns" @click="nextPage">
             <i class="fas fa-angle-right"></i>
@@ -243,6 +327,7 @@ import LessonContextMenu from "./../../shared/LessonContextMenu";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import moment from "moment";
+import { counter } from '@fortawesome/fontawesome-svg-core';
 Vue.prototype.moment = moment;
 
 export default {
@@ -254,7 +339,6 @@ export default {
       activeSortValue: "",
       sortAsc: false,
       showContextMenu: false,
-      currentPage: 1,
       clickedLesson: {},
       search: "",
       uri: "data:application/vnd.ms-excel;base64,",
@@ -272,7 +356,18 @@ export default {
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
-    ...mapMutations(["setLessonsPerPageFilter"]),
+    ...mapMutations([
+      "setLessonsPerPageFilter",
+      'setShowCount',
+      'setTaskTypeFilter',
+      'setCurrentLessonPage',
+      // 2 States
+      'setHideComplete',
+      'setHideDraft',
+      // 2 Tags
+      'setHideImportant',
+      'setHideBriefed',      
+      ]),
     addLesson() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
@@ -287,8 +382,13 @@ export default {
     exportToExcel(table, name) {
       if (!table.nodeType) table = this.$refs.table;
       var ctx = { worksheet: name || "Worksheet", table: table.innerHTML };
-      window.location.href =
-        this.uri + this.base64(this.format(this.template, ctx));
+      var link = document.createElement('a');
+      link.setAttribute('href', this.uri + this.base64(this.format(this.template, ctx)));
+      link.setAttribute('download', 'Lessons Learned.xls');
+      link.click();
+    },
+    log(e){
+      // console.log("this is Lessons length: " + e)
     },
     openLesson(id) {
       this.$router.push({
@@ -462,21 +562,170 @@ export default {
       e.preventDefault();
       this.$refs.menu.open(e);
     },
-    isAllowed(privilege) {
-      return (
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.lessons[privilege]
-      );
+   _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return  fPrivilege.lessons.includes(s);      
     },
+    toggleImportant(){
+      this.setHideImportant(!this.getHideImportant)    
+    },
+    toggleBriefed(){
+        this.setHideBriefed(!this.getHideBriefed)    
+    },
+    toggleComplete(){
+      this.setHideComplete(!this.getHideComplete)    
+    },
+    toggleDraft(){
+      this.setHideDraft(!this.getHideDraft)    
+    },
+    showCounts(){
+      this.setShowCount(!this.getShowCount)       
+    },
+    // _isallowed(privilege) {
+    //   return (
+    //     
+    //     this.$permissions.lessons[privilege]
+    //   );
+    // },
   },
   computed: {
     ...mapGetters([
-      "contentLoaded",
-      "lessonsLoaded",
-      "projectLessons",
-      "getLessonsPerPageFilterOptions",
-      "getLessonsPerPageFilter",
+      'contentLoaded',
+      'lessonsLoaded',
+      'projectLessons',
+      'currentLessonPage',
+      'getLessonsPerPageFilterOptions',
+      'getLessonsPerPageFilter',
+      'getShowCount',
+      'taskTypeFilter',
+      'taskTypes',
+      // 2 States
+      'getHideComplete',       
+      'getHideDraft',   
+      // 2 Tags      
+      'getHideImportant',
+      'getHideBriefed',
     ]),
+    currentPage:{
+       get() {
+        return this.currentLessonPage
+      },
+      set(value) {
+        this.setCurrentLessonPage(value);
+      },
+    },
+    C_taskTypeFilter: {
+      get() {
+        return this.taskTypeFilter
+      },
+      set(value) {
+        this.setTaskTypeFilter(value)
+      }
+    },
+    C_showCountToggle: {                  
+        get() {
+         return this.getShowCount                
+        },
+        set(value) {
+          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+        }        
+    },
+       filteredLessons() {
+      // Returns filtered lessons based on search value from input
+      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+      return {
+      unfiltered: {
+       lessons:  this.projectLessons
+        .filter((lesson) =>
+          lesson.title.toLowerCase().match(this.search.toLowerCase())
+        )
+        .filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+        }).filter((lesson, index) => {
+          let start = (this.currentPage - 1) * this.lessonsPerPage.value;
+          let end = this.currentPage * this.lessonsPerPage.value;
+          if (index >= start && index < end) return true;
+          return this.end;
+        }) 
+          },
+        filtered : {
+          lessons: this.projectLessons.filter(lesson => {
+        // Filtering 3 Lesson States        
+        if (this.getHideDraft) {
+          return !lesson.draft
+        } else return true
+  
+      }).filter(lesson => {
+         if (this.getHideComplete) {
+          return lesson.draft
+        } else return true
+      }).filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+      // Filtering 3 Task Tags
+      }).filter(lesson => {
+         if (this.getHideBriefed && !this.getHideImportant ) {
+          return lesson.reportable
+        }
+        if (this.getHideBriefed && this.getHideImportant) {          
+           return lesson.reportable + lesson.important
+        } else return true
+         
+      }).filter(lesson => {
+         if (this.getHideImportant && !this.getHideBriefed) {
+          return lesson.important
+        } if (this.getHideImportant && this.getHideBriefed) {
+          return lesson.important + lesson.reportable
+       } else return true              
+        })
+      } 
+    }
+   },
+   variation() {
+     let drafts = _.filter(
+     this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+      this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.important == true
+      ); 
+     let briefings = _.filter(
+       this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.reportable == true
+      );
+     let completed = _.filter(
+        this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.draft == false 
+      );
+     return {
+       important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },  
+        count: {
+         val: completed.length + drafts.length
+          
+        }
+
+      };
+    },
     lessonsPerPage: {
       get() {
         return this.getLessonsPerPageFilter || { id: 5, name: "5", value: 5 };
@@ -485,22 +734,11 @@ export default {
         this.setLessonsPerPageFilter(value);
       },
     },
-    filteredLessons() {
-      // Returns filtered lessons based on search value from input
-      return this.projectLessons
-        .filter((lesson) =>
-          lesson.title.toLowerCase().match(this.search.toLowerCase())
-        )
-        .filter((lesson, index) => {
-          let start = (this.currentPage - 1) * this.lessonsPerPage.value;
-          let end = this.currentPage * this.lessonsPerPage.value;
-          if (index >= start && index < end) return true;
-          return this.end;
-        });
-    },
+ 
   },
   mounted() {
     // GET request action to retrieve all lessons for project
+     console.log(this.projectLessons.length)
     this.fetchProjectLessons(this.$route.params);
   },
   watch: {
@@ -581,7 +819,7 @@ tr:hover {
 }
 .added-by-col,
 .flags-col {
-  width: 12.5%;
+  width: 10%;
 }
 .lesson-col {
   width: 20%;
@@ -590,7 +828,7 @@ tr:hover {
   width: 20%;
 }
 .last-update-col {
-  width: 25%;
+  width: 27.5%;
 }
 .sort-icon-arrow {
   color: #c0c4cc;
@@ -608,6 +846,46 @@ tr:hover {
 .sort-dsc {
   color: #17a2b8;
 }
+
+.tagCol {
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: .5px solid lightgray;
+}
+  
+i, .icons {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.statesCol {
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+
+}
+.hideLabels {
+  font-weight: 600;
+}
+.smallerFont {
+  font-size: 10px;
+}
+/deep/.v-input__slot {
+  display: inline;
+  .v-label {
+   font-family: 'FuturaPTBook';
+  //  font-weight: 600;
+   color: #007bff !important;
+  }
+}
+  @media screen and (max-width: 1550px) {
+  .hideLabels {
+    display: none !important;
+  }
+}
 .date-chip {
   background-color: #6c757d !important;
   font-size: 0.75rem;
@@ -616,4 +894,27 @@ tr:hover {
   border-radius: 3px;
   width: fit-content;
 }
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+    overflow: hidden;
+  }
+}
+.filters-wrapper {
+    float: right;
+    margin-top: -85px;
+}
+@media screen and (max-width: 1500px) {
+  .filters-wrapper {
+      width: 65% !important;
+  }
+}
+
 </style>

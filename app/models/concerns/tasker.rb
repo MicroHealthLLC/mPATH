@@ -12,6 +12,7 @@ module Tasker
     belongs_to :facility_project
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project
+    has_one :facility_group, through: :facility
 
     has_many :checklists, as: :listable, dependent: :destroy
 
