@@ -567,7 +567,6 @@
         now: new Date().toISOString(),
         risksQuery: '',
         comma: 'test',
-        currentPage:1,
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
@@ -583,6 +582,7 @@
         'setRiskPriorityLevelFilter',
         'setAdvancedFilter',
         'setRisksPerPageFilter',
+        'setCurrentRiskPage',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -718,6 +718,7 @@
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',
+        'currentRiskPage',
         // 'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
@@ -754,6 +755,14 @@
         'getHideImportant',
         'getHideBriefed',
       ]),
+     currentPage:{
+       get() {
+        return this.currentRiskPage
+      },
+      set(value) {
+        this.setCurrentRiskPage(value);
+       }
+      },
       filteredRisks() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')

@@ -191,6 +191,9 @@ class Lesson < ApplicationRecord
       notes: sorted_notes.as_json,
       notes_updated_at: sorted_notes.map(&:updated_at).uniq,
       project_id: facility_project.facility_id,
+      project_name: facility.facility_name, 
+    
+
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

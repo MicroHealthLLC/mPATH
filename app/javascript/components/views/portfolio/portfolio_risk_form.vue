@@ -1,5 +1,11 @@
 <template>
-  <div>
+  <div
+    v-loading="!portfolioRiskLoaded"
+    element-loading-text="Fetching Risk data. Please wait..."
+    :class="[!portfolioRiskLoaded ? 'vh100': '']"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
     <form
       @submit.prevent="validateThenSave"
       class="portfolio-risk-form mx-auto"
@@ -35,8 +41,8 @@
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
               ></el-icon>
-              <span v-if="DV_risk.text.length > 0">{{ DV_risk.text }}</span>
-              <span v-else style="color: gray">(Risk Name)</span>
+              <span v-if="portfolioRiskLoaded && DV_risk.text">{{ DV_risk.text }}</span>
+              <span v-else>...</span>
             </h5>
           </div>
           <div class="ml-auto d-flex" v-if="_isallowed('read')">
@@ -586,6 +592,7 @@
                     <br />
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           1
@@ -595,6 +602,7 @@
                     >
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           2
@@ -604,6 +612,7 @@
                     >
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           3
@@ -613,6 +622,7 @@
                     >
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           4
@@ -622,6 +632,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           5
@@ -631,6 +642,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           6
@@ -640,6 +652,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           8
@@ -649,6 +662,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           9
@@ -658,6 +672,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           10
@@ -667,6 +682,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
                           12
@@ -676,6 +692,7 @@
                     </span>
                     <span
                       v-if="
+                       this.selectedRiskImpactLevel &&  
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id >=
                           15
@@ -2001,11 +2018,11 @@
       <div ref="addUpdates" class="pt-0 mt-0"></div>
       <div></div>
     </form>
-    <div
+    <!-- <div
       v-if="loading"
       class="load-spinner spinner-border text-dark"
       role="status"
-    ></div>
+    ></div> -->
 
     <RelatedRiskMenu
       :facilities="facilities"
@@ -2886,6 +2903,7 @@ export default {
       "currentIssues",
       "portfolioCategories", 
       'fetchPortfolioRisks',
+      'portfolioRiskLoaded',
       "categories",
       "currentProject",
       "currentRisks",
@@ -2986,9 +3004,6 @@ export default {
           : "Create Risk"
         : "Risk";
     },
-    calculatePriorityLevel() {
-      return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id;
-    },
     filteredTasks() {
       return this.currentTasks;
     },
@@ -3007,178 +3022,182 @@ export default {
     },
     matrix11() {
       if (
-        this.selectedRiskImpactLevel.id == 1 &&
+        this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 1 &&
         this.selectedRiskPossibility.id == 1
       )
         return true;
     },
     matrix12() {
       if (
-        this.selectedRiskImpactLevel.id == 1 &&
+         this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 1 &&
         this.selectedRiskPossibility.id == 2
       )
         return true;
     },
     matrix13() {
       if (
-        this.selectedRiskImpactLevel.id == 1 &&
+         this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 1 &&
         this.selectedRiskPossibility.id == 3
       )
         return true;
     },
     matrix14() {
       if (
-        this.selectedRiskImpactLevel.id == 1 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 1 &&
         this.selectedRiskPossibility.id == 4
       )
         return true;
     },
     matrix15() {
       if (
-        this.selectedRiskImpactLevel.id == 1 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 1 &&
         this.selectedRiskPossibility.id == 5
       )
         return true;
     },
     matrix21() {
       if (
-        this.selectedRiskImpactLevel.id == 2 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 2 &&
         this.selectedRiskPossibility.id == 1
       )
         return true;
     },
     matrix22() {
       if (
-        this.selectedRiskImpactLevel.id == 2 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 2 &&
         this.selectedRiskPossibility.id == 2
       )
         return true;
     },
     matrix23() {
       if (
-        this.selectedRiskImpactLevel.id == 2 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 2 &&
         this.selectedRiskPossibility.id == 3
       )
         return true;
     },
     matrix24() {
       if (
-        this.selectedRiskImpactLevel.id == 2 &&
+     this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 2 &&
         this.selectedRiskPossibility.id == 4
       )
         return true;
     },
     matrix25() {
       if (
-        this.selectedRiskImpactLevel.id == 2 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 2 &&
         this.selectedRiskPossibility.id == 5
       )
         return true;
     },
     matrix31() {
       if (
-        this.selectedRiskImpactLevel.id == 3 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 3 &&
         this.selectedRiskPossibility.id == 1
       )
         return true;
     },
     matrix32() {
       if (
-        this.selectedRiskImpactLevel.id == 3 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 3 &&
         this.selectedRiskPossibility.id == 2
       )
         return true;
     },
     matrix33() {
       if (
-        this.selectedRiskImpactLevel.id == 3 &&
+     this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 3 &&
         this.selectedRiskPossibility.id == 3
       )
         return true;
     },
     matrix34() {
       if (
-        this.selectedRiskImpactLevel.id == 3 &&
+     this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 3 &&
         this.selectedRiskPossibility.id == 4
       )
         return true;
     },
     matrix35() {
       if (
-        this.selectedRiskImpactLevel.id == 3 &&
+     this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 3 &&
         this.selectedRiskPossibility.id == 5
       )
         return true;
     },
     matrix41() {
       if (
-        this.selectedRiskImpactLevel.id == 4 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 4 &&
         this.selectedRiskPossibility.id == 1
       )
         return true;
     },
     matrix42() {
       if (
-        this.selectedRiskImpactLevel.id == 4 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 4 &&
         this.selectedRiskPossibility.id == 2
       )
         return true;
     },
     matrix43() {
       if (
-        this.selectedRiskImpactLevel.id == 4 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 4 &&
         this.selectedRiskPossibility.id == 3
       )
         return true;
     },
     matrix44() {
       if (
-        this.selectedRiskImpactLevel.id == 4 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 4 &&
         this.selectedRiskPossibility.id == 4
       )
         return true;
     },
     matrix45() {
       if (
-        this.selectedRiskImpactLevel.id == 4 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 4 &&
         this.selectedRiskPossibility.id == 5
       )
         return true;
     },
     matrix51() {
       if (
-        this.selectedRiskImpactLevel.id == 5 &&
+     this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 5 &&
         this.selectedRiskPossibility.id == 1
       )
         return true;
     },
     matrix52() {
       if (
-        this.selectedRiskImpactLevel.id == 5 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 5 &&
         this.selectedRiskPossibility.id == 2
       )
         return true;
     },
     matrix53() {
       if (
-        this.selectedRiskImpactLevel.id == 5 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 5 &&
         this.selectedRiskPossibility.id == 3
       )
         return true;
     },
     matrix54() {
       if (
-        this.selectedRiskImpactLevel.id == 5 &&
+       this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 5 &&
         this.selectedRiskPossibility.id == 4
       )
         return true;
     },
     matrix55() {
       if (
-        this.selectedRiskImpactLevel.id == 5 &&
+      this.selectedRiskImpactLevel &&  this.selectedRiskImpactLevel.id == 5 &&
         this.selectedRiskPossibility.id == 5
       )
         return true;
+    },
+    calculatePriorityLevel() {   
+      if (this.selectedRiskImpactLevel !== undefined)
+       return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id;
     },
     tab() {
       if (this.$route.path.includes("map")) {
@@ -3232,7 +3251,7 @@ export default {
       },
       deep: true,
     },
-    "DV_risk.autoCalculate"(value) {
+    "DV_risk.auto_calculate"(value) {
       if (value) this.calculateProgress();
     },
     responsibleUsers: {
@@ -3364,7 +3383,7 @@ export default {
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 275px);
+  height: calc(100vh - 175px);
 }
 .title {
   font-size: 15px;

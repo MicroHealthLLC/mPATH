@@ -123,8 +123,6 @@ Rails.application.routes.draw do
   # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
-  get "/portfolio" => "dashboard#portfolio"
-
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
@@ -185,7 +183,6 @@ Rails.application.routes.draw do
   end
 
   get '/profile', to: 'profiles#index'
-  get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'
   get '/settings', to: 'data#settings'
@@ -198,6 +195,11 @@ Rails.application.routes.draw do
   root 'landing#index'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
+  # Strictly matching /portfolio
+  get '*all', to: "dashboard#portfolio", constraints: -> (req) do
+    (p = req.path.split("/")[1] ) && p.split("portfolio").size < 2
+  end
+  
   get '*all', to: "not_found#index", constraints: -> (req) do
     req.path.exclude? 'rails/active_storage'
   end

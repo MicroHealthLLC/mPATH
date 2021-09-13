@@ -642,7 +642,7 @@
             class="clickable file-name d-flex justify-content-between w-100 py-1"
           >
             <div @click.prevent="downloadFile(file)">
-              <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
+              <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
             <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>

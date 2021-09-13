@@ -1,5 +1,11 @@
 <template>
-  <div>
+  <div
+  v-loading="!portfolioTaskLoaded"
+  element-loading-text="Fetching Task data. Please wait..."
+  :class="[!portfolioTaskLoaded ? 'vh100': '']"
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
       id="portfolio-task-form"
       @submit.prevent="saveTask"
@@ -34,8 +40,8 @@
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
-            <span v-if="DV_task.text.length > 0">{{ DV_task.text }}</span>
-            <span v-else style="color: gray">(Task Name)</span>
+            <span v-if="portfolioTaskLoaded && DV_task">{{ DV_task.text }}</span>
+            <span v-else>...</span>
           </h5>
         </div>
        

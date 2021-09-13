@@ -377,7 +377,6 @@
               v-for="task in sortedTasks"           
               class="taskHover"        
               href="#"
-              :load="log(JSON.stringify(task))"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -512,7 +511,7 @@
         today: new Date().toISOString().slice(0, 10),
         now: new Date().toISOString(),
         tasksQuery: '',
-        currentPage:1,
+        // currentPage:1,
         showFilters: false,
         datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
@@ -533,6 +532,7 @@
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
+        'setCurrentPage',
         'setOnWatchFilter',
         'setToggleRACI',
         'setShowAdvancedFilter',
@@ -567,9 +567,9 @@
       }
         this.currentSort = s;
       },
-      log(e){
-        console.log("Task:  " + e)
-      },
+      // log(e){
+      //   console.log("Task:  " + e)
+      // },
       nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
       },
@@ -664,6 +664,7 @@
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
         "getFilterValue",
+        "currentTaskPage",
         "getAllFilterNames",
         'getTaskIssueTabFilterOptions',
         'getTaskIssueProgressStatusOptions',
@@ -697,7 +698,15 @@
         'getHideImportant',
         'getHideBriefed',
       ]),
-      filteredTasks() {
+          currentPage:{
+       get() {
+        return this.currentTaskPage
+      },
+      set(value) {
+        this.setCurrentPage(value);
+      },
+    },
+    filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null

@@ -4,7 +4,17 @@
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="oneSix">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
-        <td class="eight text-center">{{formatDate(task.startDate)}}</td>
+        <td class="eight text-center">                          
+          <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
+            <i class="fas fa-retweet text-success"></i>
+          </span>
+          <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
+            <i class="fas fa-retweet text-secondary"></i>
+              </span>
+          <span v-else>{{
+            moment(task.startDate).format("DD MMM YYYY") 
+          }}</span>
+        </td>
         <td class="eigth text-center">
         <span v-if="task.ongoing == true && !task.closed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>

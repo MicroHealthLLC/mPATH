@@ -42,11 +42,9 @@ class User < ApplicationRecord
     user = self
     return if !user.project_ids.any?
     privilege = user.privilege
-    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
+    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view", "admin" ).clone
     privilege_attr.each do |k,v|
-      if v.is_a?(String)
-        privilege_attr[k] = v.chars
-      end
+      privilege_attr[k] = ["R"]
     end
     user_project_privileges = user.project_privileges
     project_to_create_privileges = []
@@ -116,11 +114,11 @@ class User < ApplicationRecord
       if !project_privilege.project_ids.any?
         project_privilege.destroy
       else
-        project_privilege.save  
+        project_privilege.save
       end
     end
     facility_privileges = FacilityPrivilege.where(user_id: self.id, project_id: program_id)
-    facility_privileges.destroy_all
+    facility_privileges.destroy_all if facility_privileges.any?
   end
 
   def encrypted_authentication_token

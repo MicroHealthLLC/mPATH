@@ -10,6 +10,11 @@ const portfolioModule = {
     curr_tab: '#tab-tasks', 
     facility_project_ids: [],
 
+    current_page: 1,
+    current_issue_page: 1,
+    current_risk_page: 1,
+    current_lesson_page: 1,
+
     programNameFilter: null,
 
     portfolioNameFilter: null,
@@ -29,23 +34,22 @@ const portfolioModule = {
     portfolio_tasks: [],
     portfolio_tasks_loaded: true,
 
-
-
     // This one handles the individual edit tasks when clicking on Task row in Portfolio table
     portfolio_task: {},
-
-    portfolio_tasks_loaded: true,
+    portfolio_task_loaded: true,
 
       // This one handles the individual edit issues when clicking on Task row in Portfolio table
     portfolio_issue: {},
+    portfolio_issue_loaded: true,
 
         // This one handles the individual edit risks when clicking on Task row in Portfolio table
     portfolio_risk: {},
+    portfolio_risk_loaded: true,
 
 
     // This one handles the individual edit risks when clicking on Task row in Portfolio table
     portfolio_lesson: {},
-
+    portfolio_lesson_loaded: true,
 
     // PORTFOLIO ISSUES
     portfolio_issue_types: [],
@@ -58,9 +62,6 @@ const portfolioModule = {
 
     portfolio_issues: [],
     portfolio_issues_loaded: true,
-
-
-
 
    // PORTFOLIO RISKS
     portfolio_risks: [],
@@ -466,7 +467,7 @@ const portfolioModule = {
           });
       },  
       fetchPortfolioIssue({commit}, { id, programId, projectId } ) {
-        commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
+        commit("TOGGLE_PORTFOLIO_ISSUE_LOADED", false);
         // Send GET request for all issues contained within a project
         axios({
           method: "GET",
@@ -485,7 +486,7 @@ const portfolioModule = {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", true);
+            commit("TOGGLE_PORTFOLIO_ISSUE_LOADED", true);
           });
       },  
       fetchPortfolioRisks({commit}) {
@@ -511,7 +512,7 @@ const portfolioModule = {
           });
        },
        fetchPortfolioRisk({commit}, { id, programId, projectId } ) {
-        commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
+        commit("TOGGLE_PORTFOLIO_RISK_LOADED", false);
         // Send GET request for all risks contained within a project
         axios({
           method: "GET",
@@ -530,7 +531,7 @@ const portfolioModule = {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_PORTFOLIO_RISKS_LOADED", true);
+            commit("TOGGLE_PORTFOLIO_RISK_LOADED", true);
           });
       },  
        fetchPortfolioLessons({commit}) {
@@ -616,7 +617,11 @@ const portfolioModule = {
     SET_PORTFOLIO_PROGRAMS_FILTER: (state, portfolio_programs_filter) => state.portfolio_programs_filter = portfolio_programs_filter,
     TOGGLE_PORTFOLIO_PROGRAMS_FILTER_LOADED: (state, loaded ) => state.portfolio_programs_filter_loaded = loaded,
 
-
+    setCurrentPage: (state, value) => state.current_page = value,
+    setCurrentIssuePage: (state, value) => state.current_issue_page = value,
+    setCurrentRiskPage: (state, value) => state.current_risk_page = value,
+    setCurrentLessonPage: (state, value) => state.current_lesson_page = value,
+  
     SET_PORTFOLIO_PROGRAMS: (state, portfolio_programs) => state.portfolio_programs = portfolio_programs,
     TOGGLE_PORTFOLIO_PROGRAMS_LOADED: (state, loaded ) => state.portfolio_programs_loaded = loaded,
 
@@ -638,8 +643,6 @@ const portfolioModule = {
     SET_PORTFOLIO_ISSUE_STAGES: (state, portfolio_issue_stages) => state.portfolio_issue_stages = portfolio_issue_stages,
     TOGGLE_PORTFOLIO_ISSUE_STAGES_LOADED: (state, loaded ) => state.portfolio_issue_stages_loaded = loaded,   
     setPortfolioIssueStagesFilter: (state, portfolioIssueStagesFilter) => state.portfolioIssueStagesFilter = portfolioIssueStagesFilter,
-
-
 
 
     //PORTFOLIO RISKS
@@ -678,7 +681,9 @@ const portfolioModule = {
     SET_PORTFOLIO_ISSUES: (state, portfolio_issues) => state.portfolio_issues = portfolio_issues,
     TOGGLE_PORTFOLIO_ISSUES_LOADED: (state, loaded ) => state.portfolio_issues_loaded = loaded,
 
+
     SET_PORTFOLIO_ISSUE: (state, portfolio_issue) => state.portfolio_issue = portfolio_issue,
+    TOGGLE_PORTFOLIO_ISSUE_LOADED: (state, loaded ) => state.portfolio_issue_loaded = loaded,
 
     SET_PORTFOLIO_ISSUE_TYPES: (state, portfolio_issue_types) => state.portfolio_issue_types = portfolio_issue_types,
     TOGGLE_PORTFOLIO_ISSUE_TYPES_LOADED: (state, loaded ) => state.portfolio_issue_types_loaded = loaded,   
@@ -694,10 +699,12 @@ const portfolioModule = {
     SET_PORTFOLIO_RISKS: (state, portfolio_risks) => state.portfolio_risks = portfolio_risks,
     SET_PORTFOLIO_RISK: (state, portfolio_risk) => state.portfolio_risk = portfolio_risk,
     TOGGLE_PORTFOLIO_RISKS_LOADED: (state, loaded ) => state.portfolio_risks_loaded = loaded,
+    TOGGLE_PORTFOLIO_RISK_LOADED: (state, loaded ) => state.portfolio_risk_loaded = loaded,
 
     SET_PORTFOLIO_LESSONS: (state, portfolio_lessons) => state.portfolio_lessons = portfolio_lessons,    
     SET_PORTFOLIO_LESSON: (state, portfolio_lesson) => state.portfolio_lesson = portfolio_lesson,
     TOGGLE_PORTFOLIO_LESSONS_LOADED: (state, loaded ) => state.portfolio_lessons_loaded = loaded,
+    TOGGLE_PORTFOLIO_LESSON_LOADED: (state, loaded ) => state.portfolio_lesson_loaded = loaded,
 
     setProgramNameFilter: (state, filter) => state.programNameFilter = filter,
     setPortfolioNameFilter: (state, filter) => state.portfolioNameFilter = filter,
@@ -732,6 +739,11 @@ const portfolioModule = {
     portfolioProgramsLoaded: state => state.portfolio_programs_loaded,
 
     facility_project_ids: state => state.facility_project_ids, 
+
+    currentTaskPage: state => state.current_page, 
+    currentIssuePage: state => state.current_issue_page, 
+    currentRiskPage: state => state.current_risk_page, 
+    currentLessonPage: state => state.current_lesson_page, 
 
     // GETTER FOR PORTFOLIO USERS
     portfolioUsers: state => state.portfolio_users, 
@@ -800,10 +812,12 @@ const portfolioModule = {
     portfolioIssues: state => state.portfolio_issues,
     portfolioIssue: state => state.portfolio_issue,
     portfolioIssuesLoaded: state => state.portfolio_issues_loaded,
+    portfolioIssueLoaded: state => state.portfolio_issue_loaded,
 
     portfolioRisks: state => state.portfolio_risks,
     portfolioRisk: state => state.portfolio_risk,
     portfolioRisksLoaded: state => state.portfolio_risks_loaded,
+    portfolioRiskLoaded: state => state.portfolio_risk_loaded,
 
     portfolioLessons: state => state.portfolio_lessons,
     portfolioLesson: state => state.portfolio_lesson,

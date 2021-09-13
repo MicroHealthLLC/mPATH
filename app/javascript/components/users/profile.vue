@@ -439,7 +439,7 @@
         })
       },
       gotoDashboard() {
-        window.location.pathname = "/dashboard"
+        window.location.pathname = "/"
       },
       getProjectGroups(program){
         return _.filter(this.allProjectGroups, f => program.projectGroupIds.includes(f.id) )
