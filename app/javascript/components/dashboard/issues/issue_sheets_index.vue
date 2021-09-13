@@ -526,7 +526,6 @@
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         issuesQuery: '',
-        currentPage:1,
         currentSort:'title',
         currentSortDir:'asc',
         uri :'data:application/vnd.ms-excel;base64,',
@@ -548,6 +547,7 @@
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
+        'setCurrentIssuePage',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setToggleRACI',
@@ -687,9 +687,9 @@
    },
     computed: {
       ...mapGetters([
-        // 'getAdvancedFilterOptions',
         'getIssuesPerPageFilterOptions',
         'getIssuesPerPageFilter',
+        'currentIssuePage',
         'getShowAdvancedFilter',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
@@ -730,6 +730,14 @@
         'getHideImportant',
         'getHideBriefed',
       ]),
+    currentPage:{
+       get() {
+        return this.currentIssuePage
+      },
+      set(value) {
+        this.setCurrentIssuePage(value);
+      },
+    },
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')

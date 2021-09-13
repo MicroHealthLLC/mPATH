@@ -1,6 +1,6 @@
 <template>
   <div v-if="contentLoaded">
-    <div class="d-flex align-item-center w-70 float-right filters-wrapper">
+       <div class="d-flex align-item-center w-70 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
         <el-input type="search" placeholder="Search Lessons" v-model="search">
@@ -302,7 +302,7 @@
           </button>
           <button class="btn btn-sm page-btns" id="page-count">
             {{ currentPage }} of
-            {{ Math.ceil(projectLessons.length / lessonsPerPage.value) }}
+            {{ Math.ceil( projectLessons.length / lessonsPerPage.value) }}
           </button>
           <button class="btn btn-sm page-btns" @click="nextPage">
             <i class="fas fa-angle-right"></i>
@@ -339,7 +339,6 @@ export default {
       activeSortValue: "",
       sortAsc: false,
       showContextMenu: false,
-      currentPage: 1,
       clickedLesson: {},
       search: "",
       uri: "data:application/vnd.ms-excel;base64,",
@@ -361,6 +360,7 @@ export default {
       "setLessonsPerPageFilter",
       'setShowCount',
       'setTaskTypeFilter',
+      'setCurrentLessonPage',
       // 2 States
       'setHideComplete',
       'setHideDraft',
@@ -387,9 +387,9 @@ export default {
       link.setAttribute('download', 'Lessons Learned.xls');
       link.click();
     },
-    // log(e){
-    //   console.log("this is Lessons obj: " + e)
-    // },
+    log(e){
+      // console.log("this is Lessons length: " + e)
+    },
     openLesson(id) {
       this.$router.push({
         name: "SheetLessonForm",
@@ -594,11 +594,12 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "contentLoaded",
-      "lessonsLoaded",
-      "projectLessons",
-      "getLessonsPerPageFilterOptions",
-      "getLessonsPerPageFilter",
+      'contentLoaded',
+      'lessonsLoaded',
+      'projectLessons',
+      'currentLessonPage',
+      'getLessonsPerPageFilterOptions',
+      'getLessonsPerPageFilter',
       'getShowCount',
       'taskTypeFilter',
       'taskTypes',
@@ -609,6 +610,14 @@ export default {
       'getHideImportant',
       'getHideBriefed',
     ]),
+    currentPage:{
+       get() {
+        return this.currentLessonPage
+      },
+      set(value) {
+        this.setCurrentLessonPage(value);
+      },
+    },
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter
@@ -729,6 +738,7 @@ export default {
   },
   mounted() {
     // GET request action to retrieve all lessons for project
+     console.log(this.projectLessons.length)
     this.fetchProjectLessons(this.$route.params);
   },
   watch: {

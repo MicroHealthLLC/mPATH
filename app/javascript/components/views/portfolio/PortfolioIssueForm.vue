@@ -31,15 +31,13 @@ export default {
   computed: {
     ...mapGetters(['portfolioIssue', 'portfolioTab'])
   },
-  mounted(){
-  this.fetchPortfolioIssueSeverities()
-  this.fetchPortfolioCategories()
-  },
   beforeMount(){
     this.fetchPortfolioIssue(this.$route.params)
     this.fetchPortfolioIssueStages()
     this.fetchPortfolioUsers()
     this.fetchPortfolioIssueTypes()
+    this.fetchPortfolioIssueSeverities()
+    this.fetchPortfolioCategories()
   },
 };
 </script>

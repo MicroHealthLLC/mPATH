@@ -710,7 +710,7 @@
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md mh-orange px-1 profile-btns"
+                      class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
                     >
                       RESULTS: {{ tasksObj.filtered.tasks.length }}
                     </button></span
@@ -1559,7 +1559,7 @@
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md mh-orange px-1 profile-btns"
+                      class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
                     >
                       RESULTS: {{ issuesObj.filtered.issues.length }}
                     </button>
@@ -2487,7 +2487,7 @@
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md mh-orange px-1 profile-btns"
+                      class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
                     >
                       RESULTS: {{ risksObj.filtered.risks.length }}
                     </button>
@@ -3331,7 +3331,7 @@
                       <i class="far fa-file-excel"></i>
                     </button>
                     <button
-                      class="btn text-light btn-md mh-orange px-1 profile-btns"
+                      class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
                     >
                       RESULTS: {{ lessonsObj.filtered.lessons.length }}
                     </button>
@@ -3931,15 +3931,13 @@ export default {
       },
     };
   },
-  beforeMount(){
-    this.fetchPortfolioCounts();
-  },
   mounted() {
     this.fetchPortfolioPrograms();
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
       $(this.currTab).trigger('click');
+      this.fetchPortfolioCounts();
       this.setFacilityProjectIds()
     })
   },
