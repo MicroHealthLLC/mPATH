@@ -5457,9 +5457,6 @@ export default {
       "fetchPortfolioTasks",
       "fetchPortfolioIssues",
       "fetchPortfolioCounts",
-      "fetchPortfolioIssueTypes",
-      "fetchPortfolioIssueSeverities",
-      "fetchPortfolioCategories",
       "fetchPortfolioRisks",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
@@ -5803,10 +5800,7 @@ export default {
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
         if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-          this.fetchPortfolioIssues();
-          this.fetchPortfolioCategories()
-          this.fetchPortfolioIssueTypes()
-          this.fetchPortfolioIssueSeverities()
+          this.fetchPortfolioIssues();  
         }
       }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'

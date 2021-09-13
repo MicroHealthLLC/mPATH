@@ -20,10 +20,10 @@
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fas fa-suitcase"></i
           ></span>
-            <router-link v-if="lesson"  :to="
+            <router-link v-if="lessonsLoaded && lesson"  :to="
                 `/portfolio`
               ">{{
-                  projectName
+              lesson.project_name
             }}            
             </router-link>
           <el-icon
@@ -585,21 +585,21 @@
         <label>Best Practices without findings will be deleted before Lesson is saved</label>
       </div>
       <paginate-links
-        v-if="bestPractices !== undefined"
-        for="bestPractices"
+        v-if="best_practices !== undefined"
+        for="best_practices"
         class="paginate"
         :show-step-links="true"
         :limit="2"
       ></paginate-links>
       <paginate
         ref="paginator"
-        name="bestPractices"
-        :list="bestPractices"
+        name="best_practices"
+        :list="best_practices"
         :per="4"
-        :key="bestPractices ? bestPractices.length : 1"
+        :key="best_practices ? best_practices.length : 1"
       >
         <el-card
-          v-for="(bestPractice, index) in paginated('bestPractices')"
+          v-for="(bestPractice, index) in paginated('best_practices')"
           :key="index"
           class="best-practice-card mb-3"
         >
@@ -798,9 +798,9 @@ export default {
     return {
       formLoaded: false,
       currentTab: "tab1",
-      projectName: this.$route.params.lesson.project_name, 
+      // projectName: this.$route.params.lesson.project_name, 
       loadedLesson: {},
-      paginate: ["successes", "failures", "bestPractices", "updates"],
+      paginate: ["successes", "failures", "best_practices", "updates"],
       tabs: [
         {
           label: "Lesson Info",
@@ -865,7 +865,7 @@ export default {
       failures: [],
       // important: null,
       deleteFailures: [],
-      bestPractices: [],
+      best_practices: [],
       deleteBestPractices: [],
       updates: [],
       deleteUpdates: [],
@@ -887,7 +887,7 @@ export default {
         this.removeEmptyUpdates()
         this.successes = this.removeEmptySFBP(this.successes)
         this.failures = this.removeEmptySFBP(this.failures)
-        this.bestPractices = this.removeEmptySFBP(this.bestPractices)
+        this.best_practices = this.removeEmptySFBP(this.best_practices)
         let lessonData = {
           lesson: {
             title: this.lesson.title,
@@ -905,7 +905,7 @@ export default {
             successes: [...this.successes, ...this.deleteSuccesses],
             failures: [...this.failures, ...this.deleteFailures],
             best_practices: [
-              ...this.bestPractices,
+              ...this.best_practices,
               ...this.deleteBestPractices,
             ],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
@@ -918,11 +918,12 @@ export default {
         // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
           
-          delete this.$route.params.lesson;
-          // console.log({...lessonData})
+          delete this.$route.params.lesson;    
           this.updateLesson({           
             ...lessonData,
             ...this.$route.params,
+            lessonId: this.lesson.id
+            // ...this.$route.params.lessonId
           });
 
           
@@ -936,9 +937,9 @@ export default {
         }
       });
     },
-    log(e){
-      // console.log("port lesson stages" + e)
-    },
+    // log(e){
+    //   console.log("lesson" + e)
+    // },
     removeEmptyUpdates(){
       var returnUpdates = [];
       for (let i in this.updates) {
@@ -1049,7 +1050,7 @@ export default {
     },
     addBestPractice() {
       if (this._isallowed("write")) {
-        this.bestPractices.unshift({ id: "", finding: "", recommendation: "" });
+        this.best_practices.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
     removeBestPractice(index) {
@@ -1063,9 +1064,9 @@ export default {
         }
       )
         .then(() => {
-          this.bestPractices[index]._destroy = true;
-          this.deleteBestPractices.push(this.bestPractices[index]);
-          this.bestPractices.splice(index, 1);
+          this.best_practices[index]._destroy = true;
+          this.deleteBestPractices.push(this.best_practices[index]);
+          this.best_practices.splice(index, 1);
         })
         .catch(() => {});
     },
@@ -1166,10 +1167,6 @@ export default {
     toggleReportable() {
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
-    log(e)
-    {
-      // console.log(""+e);
-    },
   },
   computed: {
     ...mapGetters([
@@ -1199,16 +1196,14 @@ export default {
   },
   },
   mounted() {
-      if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
       if(this.portfolioUsers && this.portfolioUsers.length < 1){
         this.fetchPortfolioUsers()
-      }
-      
-    }
+      }    
+    
   },
   beforeDestroy() {
     // Clear current lesson in store
@@ -1220,8 +1215,8 @@ export default {
       handler(newValue, oldValue) {
         if (
           this.lessonsLoaded &&
-          Object.keys(oldValue).length === 0 &&
-          this.$route.params.lessonId != "new"
+          Object.keys(oldValue).length === 0
+          // this.$route.params.lessonId != "new"
         ) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
@@ -1231,7 +1226,7 @@ export default {
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
-          this.bestPractices = this.lesson.best_practices;
+          this.best_practices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
           this.files = this.lesson.attach_files.filter((file) => !file.link);
           this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
@@ -1252,7 +1247,7 @@ export default {
         }
       });
     },
-    "bestPractices.length"(value, previous) {
+    "best_practices.length"(value, previous) {
       this.$nextTick(() => {
         if (this.$refs.paginator && (value === 1 || previous === 0)) {
           this.$refs.paginator.goToPage(1);
@@ -1276,14 +1271,11 @@ export default {
           });
           this.SET_LESSON_STATUS(0);
           this.fetchPortfolioLessons();
-          //Route to newly created task form page
-         
-            this.$router.push(
-              `/portfolio`          
-        )}
+          //Route to newly created task form page         
+        }
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
-        this.bestPractices = this.lesson.best_practices;
+        this.best_practices = this.lesson.best_practices;
         this.updates = this.lesson.notes;
       },
     },

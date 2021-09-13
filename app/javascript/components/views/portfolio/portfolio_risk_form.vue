@@ -3383,7 +3383,7 @@ export default {
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 275px);
+  height: calc(100vh - 175px);
 }
 .title {
   font-size: 15px;
