@@ -1,7 +1,5 @@
 <template>
-  <div 
-    class="container-fluid mt-3 mx-3 portfolioView_main"
-    >
+  <div  class="container-fluid mt-3 mx-3 portfolioView_main">
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -686,7 +684,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                      <button
                       v-tooltip="`Presentation Mode`"
@@ -1535,7 +1533,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                       <button
                       v-tooltip="`Presentation Mode`"
@@ -2463,7 +2461,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                      <button
                       v-tooltip="`Presentation Mode`"
@@ -3307,7 +3305,7 @@
                 ></v-checkbox>
                   </template>
                 </div>
-                <div class="col-2 px-0">
+                <div class="col-2 pl-0 pr-2">
                   <span class="btnRow d-flex">
                    <button
                       v-tooltip="`Presentation Mode`"
@@ -3872,8 +3870,6 @@
 </template>
 
 <script>
-
-import axios from 'axios'
 import Loader from "../../shared/loader.vue";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -5804,7 +5800,7 @@ export default {
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
         if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-          this.fetchPortfolioIssues();
+          this.fetchPortfolioIssues();  
         }
       }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'
