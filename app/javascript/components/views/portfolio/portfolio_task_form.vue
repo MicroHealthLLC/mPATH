@@ -1790,7 +1790,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioTasks()
+           //this.fetchPortfolioTasks()
            this.$router.push(
                 `/portfolio`
               );

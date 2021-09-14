@@ -48,6 +48,7 @@
         <button
           v-if="_isallowed('write')"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
+          data-cy="lesson_save_btn"
         >
           Save Lesson
         </button>
@@ -61,6 +62,7 @@
         <button
           class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
+          data-cy="lesson_close_btn"
         >
           Close
         </button>
@@ -174,10 +176,11 @@
         </div>
 
         <el-input
-          name="Lesson Name"
+          name="Lesson Name11"
           v-validate="'required'"
           v-model="lesson.title"
           type="text"
+          data-cy="lesson_name"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
           :readonly="!_isallowed('write')"
@@ -192,7 +195,7 @@
         >
         <el-input
           name="Description"
-
+          data-cy="lesson_description"
           type="textarea"
           v-validate="'required'"
           v-model="lesson.description"
