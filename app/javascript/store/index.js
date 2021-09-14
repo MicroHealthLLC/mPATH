@@ -1044,8 +1044,14 @@ export default new Vuex.Store({
         valid = valid && _progressStatuses.includes('active')
       }
 
-      if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.length > 0) {
-        valid = valid && _progressStatuses.includes('completed')
+      if(page_name.toLowerCase().includes("lesson")){
+        if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.length > 0) {
+          valid = valid && _isDrafts.includes(false)
+        }
+      } else {
+        if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.length > 0) {
+          valid = valid && _progressStatuses.includes('completed')
+        }
       }
 
       // var notes = _.flatten(_.map(resources, 'notes'))

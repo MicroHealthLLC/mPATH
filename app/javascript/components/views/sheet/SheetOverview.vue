@@ -655,7 +655,7 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                   <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                   projectLessons.length
+                   filteredLessons.length
                   }}</b>
                 </h5>
                
@@ -1057,7 +1057,12 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-  
+    filteredLessons() {
+      return _.filter(this.projectLessons, (resource) => {
+        let valid = true;
+        return valid && this.filterDataForAdvancedFilter([resource], "facilityShowLessons");
+      })
+    },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
@@ -1548,8 +1553,8 @@ export default {
       };
     },
     lessonVariation() {
-      let completes = this.projectLessons.filter(l => !l.draft )
-       let drafts = this.projectLessons.filter(l => l.draft)
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
       return {
         completes,
         drafts
