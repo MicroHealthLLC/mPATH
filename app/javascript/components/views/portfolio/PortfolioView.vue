@@ -1268,7 +1268,7 @@
           <tr></tr>
       </thead>
       <tbody v-for="(p, i) in validTaskPrograms" :key="i">  
-        <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+        <tr id="program">  <th scope="row"><b>{{ p }}</b></th></tr>
            <tr v-for="(task, index) in sortedTasks" :key="index" v-if="task.program_name == p">            
               <td>{{ task.text }}</td>
               <td>{{ task.category }}</td>
@@ -6178,7 +6178,27 @@ export default {
     exportTasksToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
-      doc.autoTable({ html: "#portTasks" });
+      doc.autoTable({ 
+        html: "#portTasks",       
+        didParseCell: function(hookData) {  
+          console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
       doc.save("Portfolio_Task_List.pdf");
     },
     exportTasksToExcel(table, name) {
@@ -6190,7 +6210,27 @@ export default {
     exportIssuesToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
-      doc.autoTable({ html: "#portIssues" });
+            doc.autoTable({ 
+        html: "#portIssues",       
+        didParseCell: function(hookData) {  
+          console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
       doc.save("Portfolio_Issues_Log.pdf");
     },
     exportIssuesToExcel(issueTable, name) {
@@ -6202,7 +6242,27 @@ export default {
     exportRisksToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
-      doc.autoTable({ html: "#portRisks" });
+      doc.autoTable({ 
+        html: "#portRisks",       
+        didParseCell: function(hookData) {  
+          console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
       doc.save("Portfolio_Risk_List.pdf");
     },
     exportRisksToExcel(riskTable, name) {
@@ -6214,7 +6274,27 @@ export default {
     exportLessonsToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
-      doc.autoTable({ html: "#portLessons" });
+        doc.autoTable({ 
+        html: "#portLessons",       
+        didParseCell: function(hookData) {  
+          console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
       doc.save("Portfolio_Lessons_List.pdf");
     },
     exportLessonsToExcel(lessonTable, name) {
