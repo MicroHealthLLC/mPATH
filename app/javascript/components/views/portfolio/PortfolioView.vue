@@ -726,8 +726,7 @@
                 <div class="px-3 tableFixHead" >
                   <table
                     class="table table-sm table-bordered"
-                    ref="table"
-                    id="portTasks"
+                    ref="table"                   
                   >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sort('program_name')">
@@ -1248,6 +1247,133 @@
                       </tr>
                     </tbody>
                   </table>
+<!-- EXPORT (Display:None) -->
+        <table
+          class="table table-bordered w-100"
+          id="portTasks"
+          style="display:none"        
+        >
+         <thead>      
+        <tr style="background-color:#ededed">
+          <th>Task</th>
+          <th>Process Area</th>
+          <th>Project</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>        
+          <th>Flags</th>
+          <th>Last Update</th>
+        </tr>
+          <tr></tr>
+      </thead>
+      <tbody v-for="(p, i) in validTaskPrograms" :key="i">  
+        <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+           <tr v-for="(task, index) in sortedTasks" :key="index" v-if="task.program_name == p">            
+              <td>{{ task.text }}</td>
+              <td>{{ task.category }}</td>
+              <td> {{ task.project_name}} </td>
+                <td>
+                <span v-if="task.ongoing && !task.closed && task.start_date == null || undefined">
+                  <i class="fas fa-retweet text-success"></i>
+                </span>
+                <span v-else-if="task.ongoing && task.closed && task.start_date == null || undefined">
+                  <i class="fas fa-retweet text-secondary"></i>
+                    </span>
+                <span v-else>{{
+                  moment(task.start_date).format("DD MMM YYYY") 
+                }}</span>
+              </td>
+                  <td>
+                <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+                  ><i class="fas fa-retweet text-success"></i
+                ></span>
+                <span
+                  v-else-if="task.on_hold && task.due_date == null"
+                  v-tooltip="`On Hold (w/no Due Date)`"
+                  ><i class="fas fa-pause-circle text-primary"></i
+                ></span>
+                <span v-else>{{
+                  moment(task.due_date).format("DD MMM YYYY")
+                }}</span>
+              </td>
+                  <td>{{ task.users }}</td>
+
+                  <td>                          
+                  <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+                  ><i class="fas fa-retweet text-success"></i
+                ></span>
+                <span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
+                  ><i class="fas fa-retweet text-secondary"></i
+                ></span>
+                
+                  <span v-else>
+                {{ task.progress + "%" }}
+                  </span>
+              </td>
+                <td class="text-center">
+                <span v-if="task.is_overdue" v-tooltip="`Overdue`">
+                 Overdue
+                 </span>
+                <span v-if="task.completed" v-tooltip="`Completed`"
+                  >
+                  Completed
+                  </span>
+                <span
+                  v-if="task.ongoing == true && !task.closed"
+                  v-tooltip="`Ongoing`"
+                  >Ongoing</span>
+                <span
+                  v-if="task.closed"
+                  v-tooltip="`Ongoing: Closed`"
+                  >Ongoing</span>
+                <span
+                  v-if="task.on_hold == true"
+                  v-tooltip="`On Hold`"
+                >
+                 On Hold
+                 </span>
+                <span v-if="task.draft == true" v-tooltip="`Draft`">
+                   Draft
+                 </span>          
+               
+                <span v-if="task.planned" v-tooltip="`Planned`">
+                 Planned
+                 </span>
+                <span
+                  v-if="task.in_progress"
+                  v-tooltip="`In Progress`"
+                >
+                In Progress
+                 </span>
+              </td>
+              <td
+                class="text-left"
+                v-if="task.notes_updated_at.length > 0"
+              >
+                <span
+                  class="toolTip"
+                  v-tooltip="
+                    'By: ' +
+                    task.notes[task.notes.length - 1].user.full_name
+                  "
+                >
+                  {{
+                    moment(task.notes_updated_at[0]).format(
+                      "DD MMM YYYY, h:mm a"
+                    )
+                  }}
+                </span>
+                <br />
+                <span class="truncate-line-five">
+                  {{ task.notes[task.notes.length - 1].body }}
+                </span>
+              </td>
+              <td class="text-left" v-else>No Update</td> 
+            </tr>
+         </tbody>
+        </table>
+                
                 </div>
                 <div class="ml-auto mb-4 mt-2 font-sm">
                   <div class="simple-select d-inline-block text-right font-sm">
@@ -1576,8 +1702,7 @@
                 <table
                   class="table table-sm table-bordered"
                   ref="issueTable"
-                  id="portIssues"
-                >
+                  >
                   <thead style="background-color: #ededed">
                     <th class="sort-th twenty" @click="sortI('program_name')">
                       Program Name
@@ -2042,7 +2167,7 @@
                       ></span>
                     </th>
                   </thead>
-                  <tbody>
+                  <tbody >
                     <tr v-for="(issue, index) in sortedIssues" :key="index" class="portTable taskHover" @click="openIssue(issue)">
                       <td>{{ issue.program_name }}</td>
                       <td>{{ issue.project_name }}</td>
@@ -2138,6 +2263,98 @@
                     </tr>
                   </tbody>
                 </table>
+       <table
+        class="table table-bordered w-100"
+        id="portIssues"        
+        >
+         <thead>      
+        <tr style="background-color:#ededed">
+            <th>Issue</th>
+            <th>Issue Type</th>
+            <th>Project</th>
+            <th>Issue Severity</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Assigned Users</th>
+            <th>Progress</th>
+            <th>Flags</th>
+            <th>Last Update</th>
+        </tr>
+          <tr></tr>
+      </thead>
+      <tbody v-for="(p, i) in validIssuePrograms" :key="i">  
+        <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+           <tr v-for="(issue, index) in sortedIssues" :key="index" v-if="issue.program_name == p">            
+              <td>{{ issue.title }}</td>
+              <td>{{ issue.issue_type }}</td>
+              <td>{{ issue.project_name }}</td>
+              <td>{{ issue.issue_severity }}</td>
+               <td>
+                    {{ moment(issue.start_date).format("DD MMM YYYY") }}
+                  </td>
+                  <td>
+                    <span
+                      v-if="issue.on_hold && issue.due_date == null"
+                      v-tooltip="`On Hold (w/no Due Date)`"
+                      ><i class="fas fa-pause-circle text-primary"></i
+                    ></span>
+                    <span v-else
+                      >{{ moment(issue.due_date).format("DD MMM YYYY") }}
+                    </span>
+                  </td>
+                  <td>{{ issue.users }}</td>
+                  <td>{{ issue.progress + "%" }}</td>
+                  <td class="text-center">
+                    <span v-if="issue.is_overdue" v-tooltip="`Overdue`">
+                      Overdue
+                    </span>
+                    <span v-if="issue.completed" v-tooltip="`Completed`">
+                      Completed</span>
+                    <span
+                      v-if="issue.on_hold == true"
+                      v-tooltip="`On Hold`"
+                    >
+                     On Hold
+                    </span>
+                    <span v-if="issue.draft == true" v-tooltip="`Draft`">
+                     Draft
+                     </span>
+                 
+                    <span v-if="issue.planned" v-tooltip="`Planned`">
+                      Planned
+                     </span>
+                    <span
+                      v-if="issue.in_progress"
+                      v-tooltip="`In Progress`"
+                    >
+                     In Progress
+                    </span>
+                  </td>
+                    <td
+                    class="text-left"
+                    v-if="issue.notes_updated_at.length > 0"
+                  >
+                    <span
+                      class="toolTip"
+                      v-tooltip="
+                        'By: ' +
+                        issue.notes[issue.notes.length - 1].user.full_name
+                      "
+                    >
+                      {{
+                        moment(issue.notes_updated_at[0]).format(
+                          "DD MMM YYYY, h:mm a"
+                        )
+                      }}
+                    </span>
+                    <br />
+                    <span class="truncate-line-five">
+                      {{ issue.notes[issue.notes.length - 1].body }}
+                    </span>
+                  </td>           
+            </tr>
+         </tbody>
+        </table>
               </div>
               <div class="ml-auto mb-4 mt-2 font-sm">
                 <div class="simple-select d-inline-block text-right font-sm">
@@ -2501,8 +2718,7 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="riskTable"
-                    id="portRisks"
+                    ref="riskTable"                   
                   >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sort('program_name')">
@@ -3134,6 +3350,170 @@
                       </tr>
                     </tbody>
                   </table>
+                  <!-- Export (Display:none) -->
+                  <table
+                    class="table table-bordered w-100"
+                    id="portRisks"
+                    style="display:none"        
+                  >
+                  <thead>      
+                  <tr style="background-color:#ededed">
+                    <th>Risk</th>
+                    <th>Project</th>
+                    <th>Risk Approach</th>
+                    <th>Priority Level</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Assigned Users</th>
+                    <th>Progress</th>    
+                    <th>Flags</th>        
+                    <th>Last Update</th>
+                  </tr>
+                    <tr></tr>
+                </thead>
+                <tbody v-for="(p, i) in validRiskPrograms" :key="i">  
+                  <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+                  <tr  v-for="(risk, index) in sortedRisks" :key="index" v-if="risk.program_name == p">            
+                  <td>{{ risk.text }}</td>
+                  <td>{{ risk.project_name}} </td>
+                  <td>
+                    {{
+                      risk.risk_approach.charAt(0).toUpperCase() +
+                      risk.risk_approach.slice(1)
+                    }}
+                  </td>
+                  <td>
+                    <span
+                      v-if="risk.priority_level == 'Very Low'"
+                      class="gray2"
+                      >Very Low</span
+                    >
+                    <span
+                      v-else-if="risk.priority_level == 'Low'"
+                      class="green1"
+                      >Low</span
+                    >
+                    <span
+                      v-else-if="risk.priority_level == 'Moderate'"
+                      class="yellow1"
+                      >Moderate</span
+                    >
+                    <span
+                      v-else-if="risk.priority_level == 'High'"
+                      class="orange1"
+                      >High</span
+                    >
+                    <span
+                      v-else-if="risk.priority_level == 'Extreme'"
+                      class="red1"
+                      >Extreme</span
+                    >
+                  </td>
+                   <td>
+                      <span v-if="risk.ongoing && !risk.closed && risk.start_date == null || undefined">
+                        <i class="fas fa-retweet text-success"></i>
+                      </span>
+                      <span v-else-if="risk.ongoing && risk.closed && risk.start_date == null || undefined">
+                        <i class="fas fa-retweet text-secondary"></i>
+                      </span>
+                      <span v-else>{{
+                        moment(risk.start_date).format("DD MMM YYYY") 
+                      }}</span>
+                    </td>
+                      <td>
+                        <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
+                          ><i class="fas fa-retweet text-success"></i
+                        ></span>
+                        <span
+                          v-else-if="risk.on_hold && risk.due_date == null"
+                          v-tooltip="`On Hold (w/no Due Date)`"
+                          ><i class="fas fa-pause-circle text-primary"></i
+                        ></span>
+                        <span v-else>{{
+                          moment(risk.due_date).format("DD MMM YYYY")
+                        }}</span>
+                      </td>
+                      <td>{{ risk.users }}</td>
+                      <td>
+                        <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
+                          >
+                          Ongoing
+                          </span>
+                          <span v-else-if="risk.closed" v-tooltip="`Ongoing: Closed`"
+                          >
+                          Ongoing
+                          </span>
+                        <span v-else>
+                        {{ risk.progress + "%" }}
+                        </span>
+                      </td>
+                       <td class="text-center">
+                        <span v-if="risk.is_overdue" v-tooltip="`Overdue`">
+                          Overdue
+                        </span>
+                        <span v-if="risk.completed" v-tooltip="`Completed`"
+                          >
+                          Completed
+                          </span>
+                        <span
+                          v-if="risk.ongoing == true && !risk.closed"
+                          v-tooltip="`Ongoing`"
+                          >
+                          Ongoing
+                          </span>
+                        <span
+                          v-if="risk.closed == true"
+                          v-tooltip="`Ongoing: Closed`"
+                          >
+                          Ongoing
+                          </span>
+                        <span
+                          v-if="risk.on_hold == true"
+                          v-tooltip="`On Hold`"
+                        >
+                         On Hold
+                         </span>
+                        <span v-if="risk.draft == true" v-tooltip="`Draft`">
+                          Draft
+                        </span>
+                             
+                        <span v-if="risk.planned" v-tooltip="`Planned`">
+                         Planned
+                        </span>
+                        <span
+                          v-if="risk.in_progress"
+                          v-tooltip="`In Progress`"
+                        >
+                         In Progress
+                         </span>
+                       </td>
+                        <td
+                          class="text-left"
+                          v-if="risk.notes_updated_at.length > 0"
+                         >
+                          <span
+                            class="toolTip"
+                            v-tooltip="
+                              'By: ' +
+                              risk.notes[risk.notes.length - 1].user.full_name
+                            "
+                          >
+                            {{
+                              moment(risk.notes_updated_at[0]).format(
+                                "DD MMM YYYY, h:mm a"
+                              )
+                            }}
+                          </span>
+                          <br />
+                          <span class="truncate-line-five">
+                            {{ risk.notes[risk.notes.length - 1].body }}
+                          </span>
+                        </td>
+                                  <!-- <td v-else class="twentyTwo">No Updates</td> -->
+                        <td class="text-left" v-else>No Update</td>
+                      </tr>
+                  </tbody>
+                  </table>
                 </div>
                 <div class="ml-auto mb-4 mt-2 font-sm">
                   <div class="simple-select d-inline-block text-right font-sm">
@@ -3347,8 +3727,7 @@
                   <table
                     class="table table-sm table-bordered"
                     ref="lessonTable"
-                    id="portLessons"
-                  >
+                    >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sortL('program_name')">
                         Program Name
@@ -3770,7 +4149,7 @@
                           ></span>
                           <span
                             v-if="lesson.draft == false"
-                            v-tooltip="`Draft`"
+                            v-tooltip="`Completed`"
                           >
                             <i class="fas fa-clipboard-check text-success"></i
                           ></span>
@@ -3807,6 +4186,77 @@
                         <!-- <td> {{ lesson.progress }} </td> -->
                       </tr>
                     </tbody>
+                  </table>
+                  <table
+                    class="table table-bordered w-100"
+                    id="portLessons"
+                    style="display:none"        
+                  >
+                  <thead>      
+                  <tr style="background-color:#ededed">
+                    <th>Lesson</th>
+                    <th>Date Added</th>
+                    <th>Added By</th>    
+                    <th>Description</th>    
+                    <th>Flags</th>    
+                    <th>Last Update</th>
+                  </tr>
+                    <tr></tr>
+                </thead>
+                  <tbody v-for="(p, i) in validLessonPrograms" :key="i">  
+                    <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+                    <tr v-for="(lesson, index) in sortedLessons" :key="index"  v-if="lesson.program_name == p">            
+                    <td>{{ lesson.title }}</td>
+                    <td>
+                    {{ moment(lesson.created_at).format("DD MMM YYYY") }}
+                    </td>
+                    <td>
+                      {{ lesson.added_by }}
+                    </td>
+                   <td>
+                    <span class="truncate-line-five">{{
+                      lesson.description
+                    }}</span>
+                  </td> 
+                    <td class="text-center">
+                          <span v-if="lesson.draft == true" v-tooltip="`Draft`">
+                            Draft
+                         </span>
+                          <span
+                            v-if="lesson.draft == false"
+                             >
+                          Completed
+                          </span>
+                      
+                        </td>
+                           <td
+                          class="text-left"
+                          v-if="lesson.notes_updated_at.length > 0"
+                        >
+                          <span
+                            class="toolTip"
+                            v-tooltip="
+                              'By: ' +
+                              lesson.notes[lesson.notes.length - 1].user
+                                .full_name
+                            "
+                          >
+                            {{
+                              moment(lesson.notes_updated_at[0]).format(
+                                "DD MMM YYYY, h:mm a"
+                              )
+                            }}
+                          </span>
+                          <br />
+                          <span class="truncate-line-five">
+                            {{ lesson.notes[lesson.notes.length - 1].body }}
+                          </span>
+                        </td>
+                        <!-- <td v-else class="twentyTwo">No Updates</td> -->
+                        <td class="text-left" v-else>No Update</td>
+                  
+                      </tr>
+                  </tbody>
                   </table>
                 </div>
                 <div class="ml-auto mb-4 mt-2 font-sm">
@@ -4129,6 +4579,15 @@ export default {
           return this.end;
         });
     },
+    validTaskPrograms(){
+      let name = this.sortedTasks;
+      return [
+        ...new Set(
+         name           
+            .map((item) => item.program_name)
+        ),
+      ];
+    },
     sortedIssues: function () {
       return this.issuesObj.filtered.issues
         .sort((a, b) => {
@@ -4144,6 +4603,15 @@ export default {
           if (index >= start && index < end) return true;
           return this.end;
         });
+    },
+    validIssuePrograms(){
+      let name = this.sortedIssues;
+      return [
+        ...new Set(
+         name           
+            .map((item) => item.program_name)
+        ),
+      ];
     },
     sortedRisks: function () {
       return this.risksObj.filtered.risks
@@ -4161,6 +4629,15 @@ export default {
           return this.end;
         });
     },
+  validRiskPrograms(){
+      let name = this.sortedRisks;
+      return [
+        ...new Set(
+         name           
+            .map((item) => item.program_name)
+        ),
+      ];
+    },
     sortedLessons: function () {
       return this.lessonsObj.filtered.lessons
         .sort((a, b) => {
@@ -4177,6 +4654,15 @@ export default {
           if (index >= start && index < end) return true;
           return this.end;
         });
+    },
+    validLessonPrograms(){
+      let name = this.sortedLessons;
+      return [
+        ...new Set(
+         name           
+            .map((item) => item.program_name)
+        ),
+      ];
     },
     validStages() {
       return this.portfolioTasks.filter((t) => {
