@@ -62,7 +62,7 @@ class Issue < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today 
     if start_date && progress && start_date < Date.today && progress && progress >= 100
       completed = true unless draft
@@ -224,7 +224,7 @@ class Issue < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
     if start_date && progress && start_date < Date.today && progress >= 100
       completed = true unless draft

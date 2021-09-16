@@ -140,7 +140,7 @@ class Task < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today 
     if start_date && progress && start_date < Date.today && progress >= 100
       completed = true unless draft
@@ -273,7 +273,7 @@ class Task < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
     if start_date && start_date < Date.today && progress && progress >= 100
       completed = true unless draft
