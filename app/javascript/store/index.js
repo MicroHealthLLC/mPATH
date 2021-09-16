@@ -925,6 +925,10 @@ export default new Vuex.Store({
 
       var aFilter = getters.getAdvancedFilter
 
+      console.log("aFilter----")
+      console.log(aFilter)
+      console.log(resources)
+
       var myFilter = getters.getMyAssignmentsFilter
 
       let taksIssueNotOnWatch = _.map(aFilter, 'id').includes("notOnWatch")
@@ -1000,18 +1004,28 @@ export default new Vuex.Store({
       let _isOnHolds = []
       _isOnHolds = _.map(resources, 'onHold')
 
+      if(
+        taskIssueRiskDraft == true || taskIssueRiskOnHold == true || 
+        taskIssueRiskPlanned == true || taskIssueRiskInprogress == true ||
+        taskIssueOverdue == true || taskIssueCompletedProgressStatus == true ||
+        taskIssueOnGoing == true || taskIssueOnWatch == true || 
+        taskIssueReportable == true || taskIssueImporant == true
+      ){
+        valid = false
+      }
+
       if(taskIssueRiskDraft == false && taskIssueRiskNotDraft == true){
         valid = valid && _isDrafts.includes(false)
       } 
       if(taskIssueRiskDraft == true && taskIssueRiskNotDraft == false){
-        valid = valid && _isDrafts.includes(true)
+        valid = valid || _isDrafts.includes(true)
       } 
       if(taskIssueRiskOnHold == false && taskIssueRiskNotOnHold == true){
         valid = valid && _isOnHolds.includes(false)
       } 
 
       if(taskIssueRiskOnHold == true && taskIssueRiskNotOnHold == false){
-        valid = valid && _isOnHolds.includes(true)
+        valid = valid || _isOnHolds.includes(true)
       } 
 
       if(taskIssueRiskPlanned == false && taskIssueRiskNotPlanned == true){
@@ -1019,7 +1033,7 @@ export default new Vuex.Store({
       }
 
       if(taskIssueRiskPlanned == true && taskIssueRiskNotPlanned == false){
-        valid = valid && isPlanned.includes(true)
+        valid = valid || isPlanned.includes(true)
       }
       
       if(taskIssueRiskInprogress == false && taskIssueRiskNotInprogress == true){
@@ -1027,11 +1041,11 @@ export default new Vuex.Store({
       }
 
       if(taskIssueRiskInprogress == true && taskIssueRiskNotInprogress == false){
-        valid = valid && isInprogress.includes(true)
+        valid = valid || isInprogress.includes(true)
       }
 
       if(taskIssueOverdue == true && taskIssueNotOverdue == false){
-        valid = valid && _isOverdues.includes(true)
+        valid = valid || _isOverdues.includes(true)
       }
       if(taskIssueOverdue == false && taskIssueNotOverdue == true){
         valid = valid && _isOverdues.includes(false)
@@ -1043,7 +1057,6 @@ export default new Vuex.Store({
       if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false && _progressStatuses.length > 0) {
         valid = valid && _progressStatuses.includes('active')
       }
-
       if(page_name.toLowerCase().includes("lesson")){
         if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.length > 0) {
           valid = valid && _isDrafts.includes(false)
@@ -1083,7 +1096,7 @@ export default new Vuex.Store({
       var watches = _.uniq(_.map(resources, 'watched'))
 
       if(taskIssueOnWatch == true && taksIssueNotOnWatch == false){
-        valid = valid && watches.includes(true)
+        valid = valid || watches.includes(true)
       }
 
       if(taskIssueOnWatch == false && taksIssueNotOnWatch == true){
@@ -1092,7 +1105,7 @@ export default new Vuex.Store({
 
       var importants = _.uniq(_.map(resources, 'important'))
       if(taskIssueImporant == true && taksIssueNotImportant == false){
-        valid = valid && importants.includes(true)
+        valid = valid || importants.includes(true)
       }
   
 
@@ -1102,7 +1115,7 @@ export default new Vuex.Store({
 
       let reportables = _.uniq(_.map(resources, 'reportable'))
       if(taskIssueReportable == true && taksIssueNotReportable == false){
-        valid = valid && reportables.includes(true)
+        valid = valid || reportables.includes(true)
       }
 
       if(taskIssueReportable == false && taksIssueNotReportable == true){
@@ -1116,7 +1129,7 @@ export default new Vuex.Store({
         // console.log("inside ongoing filter")
         var onGoings = _.uniq(_.map(resources, 'ongoing'))
         if(taskIssueOnGoing == true && taksIssueNotOnGoing == false){
-          valid = valid && onGoings.includes(true)
+          valid = valid || onGoings.includes(true)
         }
 
         if(taskIssueOnGoing == false && taksIssueNotOnGoing == true){

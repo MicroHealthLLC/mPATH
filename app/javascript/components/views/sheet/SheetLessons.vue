@@ -119,104 +119,86 @@
       <div style="margin-bottom:50px" data-cy="lessons_table">
         <table
           v-if="filteredLessons.filtered.lessons.length > 0"
-          class="mb-3 w-100"
+          class="table table-sm table-bordered stickyTableHeader mb-3"
           id="lessonsPdf"
           ref="table"
         >
-          <tr class="table-head">
-            <th class="lesson-col" @click="sortLessons('title')">
-              Lesson
-              <span class="float-right"
-                ><div class="d-flex d-inline-flex">
-                  <div class="top-arrow">
-                     <i class="fas fa-sort-up sort-icon-arrow"
-                       :class="{                    
-                        'sort-asc': sortAsc && activeSortValue == 'title',
-                      }"
-                    ></i>
-                  </div>
-                  <div class="down-arrow">
-                      <i class="fas fa-sort-down sort-icon-arrow"
-                       :class="{
-                        'sort-dsc': !sortAsc && activeSortValue == 'title',
-                      }"
-                    ></i>
-                  </div></div
-              ></span>
+          <colgroup>
+          <col class="lessCol" />
+          <col class="dateCol" />
+          <col class="addedByCol" />
+          <col class="descriptionCol" />
+          <col class="flagsCol" />
+          <col class="lastUpdateCol" />             
+          </colgroup>      
+          <tr class="thead" style="background-color:#ededed;">
+            <th class="sort-th" @click="sort('title')" >Lesson
+              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">
+                <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">
+                <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
+                <i class="fas fa-sort-down"></i></span>
             </th>
-            <th class="date-col" @click="sortLessonsByDate">
-              Date
-              <span class="float-right"
-                ><div class="d-flex d-inline-flex">
-                  <div class="top-arrow">
-                     <i class="fas fa-sort-up sort-icon-arrow"
-                       :class="{
-                        'sort-asc': sortAsc && activeSortValue == 'date',
-                      }"
-                     ></i>
-                   </div>
-                  <div class="down-arrow">
-                    <i class="fas fa-sort-down sort-icon-arrow"
-                         :class="{
-                        'sort-dsc': !sortAsc && activeSortValue == 'date',
-                      }"
-                    ></i>
-                  
-                  </div></div
-              ></span>
+            <th class="sort-th" @click="sort('date')" >Date Added
+              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'date'">
+                <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'date'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'date'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'date'">
+                <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'date'">
+                <i class="fas fa-sort-down"></i></span>
             </th>
-            <th
-              class="added-by-col"
-              @click="sortLessonsNested('created_by', 'full_name')"
-            >
-              Added By
-              <span class="float-right"
-                ><div class="d-flex d-inline-flex">
-                  <div class="top-arrow">
-                     <i class="fas fa-sort-up sort-icon-arrow"                
-                      :class="{
-                        'sort-asc': sortAsc && activeSortValue == 'created_by',
-                      }"
-                    ></i>
-                  </div>
-                  <div class="down-arrow">
-                    <i class="fas fa-sort-down sort-icon-arrow"
-                       :class="{
-                        'sort-dsc': !sortAsc && activeSortValue == 'created_by',
-                      }"
-                    ></i>
-                  </div></div
-              ></span>
+            <th class="sort-th" @click="sort('added_by')" >Added By
+              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'added_by'">
+                <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'added_by'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'added_by'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'added_by'">
+                <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'added_by'">
+                <i class="fas fa-sort-down"></i></span>
             </th>
-            <th class="desc-col">
-              Description
+              <th class="sort-th" @click="sort('description')" >Description
+              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'description'">
+                <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'description'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'description'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'description'">
+                <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'description'">
+                <i class="fas fa-sort-down"></i></span>
             </th>
-            <th class="flags-col">
-              Flags
+              <th class="sort-th">Flags
+              
             </th>
-            <th class="update-col" @click="sortUpdates">
-              Last Update
-              <span class="float-right"
-                ><div class="d-flex d-inline-flex">
-                  <div class="top-arrow">
-                     <i class="fas fa-sort-up sort-icon-arrow"
-                       :class="{
-                        'sort-asc': sortAsc && activeSortValue == 'updates',
-                      }"
-                    ></i>
-                  </div>
-                  <div class="down-arrow">
-                   <i class="fas fa-sort-down sort-icon-arrow"
-                       :class="{
-                        'sort-dsc': !sortAsc && activeSortValue == 'updates',
-                      }"
-                    ></i>
-                  </div></div
-              ></span>
+              <th class="sort-th" @click="sort('notes_updated_at')" >Last Update
+              <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notes_updated_at'">
+                <i class="fas fa-sort"></i></span>
+              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notes_updated_at'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notes_updated_at'">
+                <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notes_updated_at'">
+                <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notes_updated_at'">
+                <i class="fas fa-sort-down"></i></span>
             </th>
           </tr>
+          <tbody>
           <tr
-            v-for="lesson in filteredLessons.filtered.lessons"
+            v-for="lesson in  sortedLessonTable"
             :key="lesson.id"
             @click="openLesson(lesson.id)"
             @mouseup.right="openContextMenu($event, lesson)"
@@ -249,25 +231,17 @@
                
               </span>
             </td>
-            <td>
-              <span v-if="lesson.last_update.body"
-                ><div
-                  class="date-chip"
-                  v-tooltip="'By: ' + lesson.last_update.user"
-                >
-                  {{
-                    moment(lesson.last_update.created_at).format(
-                      "DD MMM YYYY, h:mm a"
-                    )
-                  }}
-                </div>
-                <span class="truncate-line-five">
-                  {{ lesson.last_update.body }}
-                </span>
-              </span>
-              <span v-else>No Updates</span>
-            </td>
+             <td v-if="lesson.notes.length > 0">       
+              <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
+              {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
+              </span> 
+              <span>
+                {{lesson.last_update.body}}
+              </span>         
+            </td>  
+            <td v-else >No Updates</td>      
           </tr>
+            </tbody>
         </table>
 
         <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
@@ -302,7 +276,7 @@
           </button>
           <button class="btn btn-sm page-btns" id="page-count">
             {{ currentPage }} of
-            {{ Math.ceil( projectLessons.length / lessonsPerPage.value) }}
+            {{ Math.ceil( this.filteredLessons.filtered.lessons.length / lessonsPerPage.value) }}
           </button>
           <button class="btn btn-sm page-btns" @click="nextPage">
             <i class="fas fa-angle-right"></i>
@@ -338,6 +312,8 @@ export default {
     return {
       activeSortValue: "",
       sortAsc: false,
+      currentSort:'text',
+      currentSortDir:'asc',
       showContextMenu: false,
       clickedLesson: {},
       search: "",
@@ -373,6 +349,13 @@ export default {
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
       );
     },
+    sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
     exportToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
@@ -400,162 +383,17 @@ export default {
         },
       });
     },
-    sortLessons(value) {
-      // Determine whether to sort lessons ascending or descending
-      if (this.activeSortValue !== value || !this.sortAsc) {
-        this.sortAsc = true;
-      } else {
-        this.sortAsc = false;
-      }
-      // Sort ascending
-      if (this.sortAsc) {
-        this.projectLessons.sort((lesson1, lesson2) => {
-          if (lesson1[value].toUpperCase() < lesson2[value].toUpperCase()) {
-            return -1;
-          } else if (
-            lesson1[value].toUpperCase() > lesson2[value].toUpperCase()
-          ) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        // Sort descending
-      } else {
-        this.projectLessons.sort((lesson1, lesson2) => {
-          if (lesson1[value].toUpperCase() < lesson2[value].toUpperCase()) {
-            return 1;
-          } else if (
-            lesson1[value].toUpperCase() > lesson2[value].toUpperCase()
-          ) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
-      }
-      // Store active sort value
-      this.activeSortValue = value;
-    },
+  
     // TODO: Work this logic into sortLessons
-    sortLessonsNested(value1, value2) {
-      // Determine whether to sort lessons ascending or descending
-      if (this.activeSortValue !== value1 || !this.sortAsc) {
-        this.sortAsc = true;
-      } else {
-        this.sortAsc = false;
-      }
-      // Sort ascending
-      if (this.sortAsc) {
-        this.projectLessons.sort((lesson1, lesson2) => {
-          if (
-            lesson1[value1][value2]?.toUpperCase() <
-            lesson2[value1][value2]?.toUpperCase()
-          ) {
-            return -1;
-          } else if (
-            lesson1[value1][value2]?.toUpperCase() >
-            lesson2[value1][value2]?.toUpperCase()
-          ) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        // Sort descending
-      } else {
-        this.projectLessons.sort((lesson1, lesson2) => {
-          if (
-            lesson1[value1][value2]?.toUpperCase() <
-            lesson2[value1][value2]?.toUpperCase()
-          ) {
-            return 1;
-          } else if (
-            lesson1[value1][value2]?.toUpperCase() >
-            lesson2[value1][value2]?.toUpperCase()
-          ) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
-      }
-      // Store active sort value
-      this.activeSortValue = value1;
-    },
     nextPage() {
       if (
         this.currentPage * this.lessonsPerPage.value <
-        this.projectLessons.length
+        this.filteredLessons.filtered.lessons.length
       )
         this.currentPage++;
     },
     prevPage() {
       if (this.currentPage > 1) this.currentPage--;
-    },
-    sortLessonsByDate() {
-      // Determine whether to sort lessons ascending or descending
-      if (this.activeSortValue !== "date" || !this.sortAsc) {
-        this.sortAsc = true;
-      } else {
-        this.sortAsc = false;
-      }
-      // Sort ascending
-      if (this.sortAsc) {
-        this.projectLessons.sort(
-          (lesson1, lesson2) => new Date(lesson2.date) - new Date(lesson1.date)
-        );
-        // Sort descending
-      } else {
-        this.projectLessons.sort(
-          (lesson1, lesson2) => new Date(lesson1.date) - new Date(lesson2.date)
-        );
-      }
-      // Store active sort value
-      this.activeSortValue = "date";
-    },
-    sortUpdates() {
-      // Determine whether to sort lessons ascending or descending
-      if (this.activeSortValue !== "updates" || !this.sortAsc) {
-        this.sortAsc = true;
-      } else {
-        this.sortAsc = false;
-      }
-      // Is used to replace empty values
-      let oldDate = new Date("12-31-1980");
-      // Sort ascending
-      if (this.sortAsc) {
-        this.projectLessons.sort((lesson1, lesson2) => {
-          if (!lesson1.notes_updated_at[0]) {
-            lesson1.notes_updated_at = oldDate;
-          }
-          if (!lesson2.notes_updated_at[0]) {
-            lesson2.notes_updated_at = oldDate;
-          }
-
-          return (
-            new Date(lesson2.notes_updated_at) -
-            new Date(lesson1.notes_updated_at)
-          );
-        });
-        // Sort descending
-      } else {
-        this.projectLessons.sort((lesson1, lesson2) => {
-          if (!lesson1.notes_updated_at[0]) {
-            lesson1.notes_updated_at = oldDate;
-          }
-          if (!lesson2.notes_updated_at[0]) {
-            lesson2.notes_updated_at = oldDate;
-          }
-
-          return (
-            new Date(lesson1.notes_updated_at) -
-            new Date(lesson2.notes_updated_at)
-          );
-        });
-      }
-      // Store active sort value
-      this.activeSortValue = "updates";
     },
     openContextMenu(e, lesson) {
       this.clickedLesson = lesson;
@@ -585,12 +423,6 @@ export default {
     showCounts(){
       this.setShowCount(!this.getShowCount)       
     },
-    // _isallowed(privilege) {
-    //   return (
-    //     
-    //     this.$permissions.lessons[privilege]
-    //   );
-    // },
   },
   computed: {
     ...mapGetters([
@@ -634,7 +466,7 @@ export default {
           this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
         }        
     },
-       filteredLessons() {
+   filteredLessons() {
       // Returns filtered lessons based on search value from input
       let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
       return {
@@ -647,13 +479,8 @@ export default {
         if(milestoneIds.length > 0) {
           return milestoneIds.includes(lesson.task_type_id)
         } else return true;
-        }).filter((lesson, index) => {
-          let start = (this.currentPage - 1) * this.lessonsPerPage.value;
-          let end = this.currentPage * this.lessonsPerPage.value;
-          if (index >= start && index < end) return true;
-          return this.end;
-        }) 
-          },
+        })
+      },
         filtered : {
           lessons: this.projectLessons.filter(lesson => {
         // Filtering 3 Lesson States        
@@ -688,6 +515,20 @@ export default {
       } 
     }
    },
+   sortedLessonTable:function() {
+    return this.filteredLessons.filtered.lessons.sort((a,b) => { 
+    let modifier = 1;
+    if(this.currentSortDir === 'desc') modifier = -1;
+    if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+    if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+    return 0;
+      }).filter((row, index) => {
+    let start = (this.currentPage-1)*this.lessonsPerPage.value;
+    let end = this.currentPage*this.lessonsPerPage.value;
+    if(index >= start && index < end) return true;
+    return this.end
+  });
+  },
    variation() {
      let drafts = _.filter(
      this.filteredLessons.unfiltered.lessons,
@@ -738,18 +579,18 @@ export default {
   },
   mounted() {
     // GET request action to retrieve all lessons for project
-     console.log(this.projectLessons.length)
+     console.log(this.filteredLessons.filtered.lessons)
     this.fetchProjectLessons(this.$route.params);
   },
-  watch: {
-    lessonsLoaded: {
-      handler(loaded1, loaded2) {
-        if (loaded1) {
-          this.sortLessons("title");
-        }
-      },
-    },
-  },
+  // watch: {
+  //   lessonsLoaded: {
+  //     handler(loaded1, loaded2) {
+  //       if (loaded1) {
+  //         this.sortLessons("title");
+  //       }
+  //     },
+  //   },
+  // },
 };
 </script>
 
@@ -758,6 +599,12 @@ export default {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   border: 1px solid #dee2e6;
 }
+  table {
+    table-layout: fixed;
+    width: 100%;
+    position: relative;
+    margin-bottom: 0 !important;
+  }
 .table-head {
   background-color: #ededed;
   text-align: center;
@@ -866,6 +713,25 @@ i, .icons {
   border-radius: 4px; 
   border: .5px solid lightgray;
 
+}
+
+.lessCol {
+  width: 20%;
+}
+.dateCol{
+  width: 10% ;
+}
+.addedByCol{
+  width: 10% ;
+}
+.descriptionCol{
+  width: 20%;
+}
+.flagsCol{
+  width: 10%;
+}
+.lastUpdateCol  {
+  width: 30%;
 }
 .hideLabels {
   font-weight: 600;
