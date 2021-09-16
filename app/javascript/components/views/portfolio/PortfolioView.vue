@@ -2265,7 +2265,8 @@
                 </table>
        <table
         class="table table-bordered w-100"
-        id="portIssues"        
+        id="portIssues"     
+        style="display:none"          
         >
          <thead>      
         <tr style="background-color:#ededed">
@@ -2330,10 +2331,9 @@
                      In Progress
                     </span>
                   </td>
-                    <td
-                    class="text-left"
-                    v-if="issue.notes_updated_at.length > 0"
-                  >
+                    <td>
+                  <span   class="text-left"
+                    v-if="issue.notes_updated_at.length > 0">
                     <span
                       class="toolTip"
                       v-tooltip="
@@ -2351,6 +2351,9 @@
                     <span class="truncate-line-five">
                       {{ issue.notes[issue.notes.length - 1].body }}
                     </span>
+                  </span>
+                  <span v-else>
+                  </span>
                   </td>           
             </tr>
          </tbody>
