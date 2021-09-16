@@ -1,6 +1,11 @@
 class Api::V1::LessonsController < AuthenticatedController 
 # NOTE: uncomment this when we move to token based authentication
 # class Api::V1::LessonsController < Api::ApplicationController
+  before_action :authorize_request!, only: [:index]
+
+  def authorize_request!
+    raise CanCan::AccessDenied unless current_user.has_permission?(resource: 'lessons', program: params[:project_id], project: params[:facility_id], project_privileges_hash: nil, facility_privileges_hash: nil)
+  end
 
   def count 
 
@@ -29,7 +34,7 @@ class Api::V1::LessonsController < AuthenticatedController
   end
 
   def index
-    # authorize!(:read, Lesson.new(project_id: params[:project_id]))
+    # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
     if params[:project_id] && params[:facility_id]
       facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       if facility_project
