@@ -1,7 +1,7 @@
 class Api::V1::LessonsController < AuthenticatedController 
 # NOTE: uncomment this when we move to token based authentication
 # class Api::V1::LessonsController < Api::ApplicationController
-  before_action :authorize_request!, only: [:index]
+  before_action :authorize_request!, only: [:index, :count, :show]
 
   def authorize_request!
     raise CanCan::AccessDenied unless current_user.has_permission?(resource: 'lessons', program: params[:project_id], project: params[:facility_id], project_privileges_hash: nil, facility_privileges_hash: nil)
