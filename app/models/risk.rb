@@ -137,7 +137,7 @@ class Risk < ApplicationRecord
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && progress && start_date < Date.today && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -346,7 +346,7 @@ class Risk < ApplicationRecord
 
     in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && start_date < Date.today && progress && progress >= 100
+    if start_date && start_date <= Date.today && progress && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
