@@ -1554,6 +1554,7 @@ export default {
       }
     },
     toggleWatched() {
+      
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
          this.$message({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
@@ -1576,7 +1577,8 @@ export default {
           });
       }
       this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
-      this.updateWatchedTasks(this.DV_task);
+      this.saveTask()
+      // this.updateWatchedTasks(this.DV_task);
     },
     removeFromWatch() {
       if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
@@ -1627,6 +1629,7 @@ export default {
         formData.append("task[on_hold]", this.DV_task.on_hold);
         formData.append("task[draft]", this.DV_task.draft);
         formData.append("task[ongoing]", this.DV_task.ongoing);
+        formData.append("task[watched]", this.DV_task.watched);
         formData.append(
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
@@ -1790,7 +1793,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioTasks()
+          //  this.fetchPortfolioTasks()
            this.$router.push(
                 `/portfolio`
               );
