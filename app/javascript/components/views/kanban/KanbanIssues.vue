@@ -313,7 +313,7 @@ export default {
       let taskIssueDueDates = this.taskIssueDueDateFilter;
       let taskIssueProgress = this.taskIssueProgressFilter;
       let taskIssueUsers = this.getTaskIssueUserFilter;
-      let issues = _.orderBy(
+      let issues = _.sortBy(
         _.filter(this.facility.issues, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
           if (resource.issueStageId == null) {

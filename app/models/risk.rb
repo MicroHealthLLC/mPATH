@@ -150,7 +150,6 @@ class Risk < ApplicationRecord
      merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
-      risk_stage: risk_stage.try(:name),
       project_id: facility.id, 
       program_id: project.id, 
       category: task_type.name,
@@ -165,6 +164,7 @@ class Risk < ApplicationRecord
       ongoing: self.ongoing,
       risk_approach: risk_approach.humanize,
       risk_stage: risk_stage.try(:name),
+      risk_stage_id: self.risk_stage_id,
       priority_level: priority_level_name,
       completed: completed,
       planned: planned,
@@ -365,6 +365,7 @@ class Risk < ApplicationRecord
       impact_level_name: impact_level_name,
       task_type: task_type.as_json,
       risk_stage: risk_stage.try(:name),
+      risk_stage_id: self.risk_stage_id,
       class_name: self.class.name,
       completed: completed,
       planned: planned,
