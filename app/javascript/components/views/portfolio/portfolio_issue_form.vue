@@ -14,7 +14,7 @@
       data-cy="issue_form"
       :class="{ _disabled: loading }"
     >
-    <div class="mt-2 mx-4 d-flex align-items-center" :load="log(issueStagesSorted)">
+    <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
@@ -369,6 +369,7 @@
                 <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
               </div>    
             <el-steps 
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne mt-3" 
               :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
               :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
@@ -398,6 +399,7 @@
           >
             <label class="font-md">Select Stage</label>
             <el-steps
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne"
               :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
@@ -1306,6 +1308,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
+      programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
@@ -1431,9 +1434,6 @@ export default {
       this.selectedIssueStage = null;
       this.IssueStageId = "";
     },
- log(e){
-      console.log("issue stages sorted: " + JSON.stringify(e))
-    },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -1522,9 +1522,11 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-      this.selectedIssueStage = this.portfolioIssueStages.find(
+    if (this.portfolioIssueStages[this.programId] !== undefined) {
+        this.selectedIssueStage = this.portfolioIssueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
+    }    
       if (this.DV_issue.attach_files)
         this.addFile(this.DV_issue.attach_files, false);
       this.$nextTick(() => {
@@ -2033,14 +2035,13 @@ export default {
       "myActionsFilter",
       "projectUsers",
     ]),
-    // issueStages(){
-    //   return this.portfolioIssueStages
-    // },
-    issueStagesSorted() {
-      var issueStagesSortedReturn = [...this.portfolioIssueStages]; 
-      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
-    readyToSave() {
+     issueStagesSorted() { 
+      if (this.portfolioIssueStages[this.programId] !== undefined) {
+        let stageObj =  [...this.portfolioIssueStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
+     readyToSave() {
       return (
         this.DV_issue &&
         this.exists(this.DV_issue.title) &&
