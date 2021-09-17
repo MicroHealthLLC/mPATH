@@ -66,11 +66,18 @@ class Api::V1::FilterDataController < AuthenticatedController
     stages = []
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     if resource_name == "task"
-      stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
+      # stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
+      # binding.pry
+      stages = ProjectTaskStage.includes(:task_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:task_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
+
     elsif resource_name == "issue"
-      stages = IssueStage.joins(:project_issue_stages).where(project_issue_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
+      # stages = IssueStage.joins(:project_issue_stages).where(project_issue_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
+      stages = ProjectIssueStage.includes(:issue_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:issue_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
+
     elsif resource_name == "risk"
-      stages = RiskStage.joins(:project_risk_stages).where(project_risk_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
+      # stages = RiskStage.joins(:project_risk_stages).where(project_risk_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
+      stages = ProjectRiskStage.includes(:risk_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:risk_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
+      
     elsif resource_name == "lesson"
       stages = LessonStage.joins(:project_lesson_stages).where(project_lesson_stages: {project_id: program_ids }).distinct.select(:id, :name)
     end
