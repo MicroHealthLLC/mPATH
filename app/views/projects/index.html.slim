@@ -9,7 +9,7 @@
   |var project_privilegs = "#{JSON.generate(current_user.facility_privileges_hash)}";
   |var privilege = "#{JSON.generate(current_user.privilege_hash)}";
   |var preferences = "#{JSON.generate(current_user.get_preferences.value )}";
-  |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
+  |var google_api_key = "#{ENV['GOOGLE_MAP_KEY']}";
 
 = javascript_pack_tag "dashboard", async: true
 = stylesheet_pack_tag "dashboard"

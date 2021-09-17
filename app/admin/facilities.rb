@@ -77,7 +77,7 @@ ActiveAdmin.register Facility do
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
-          div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
+          div id: 'gmap-key', "data-key": ENV['GOOGLE_MAP_KEY']
           div id: 'gmaps-tab'
           f.input :point_of_contact
           f.input :phone_number, as: :hidden

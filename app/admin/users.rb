@@ -88,8 +88,8 @@ ActiveAdmin.register User do
           f.input :address, as: :hidden, input_html: {autocomplete: :off}
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
-          div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
-          div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
+          div id: 'gmap-key', "data-key": ENV['GOOGLE_MAP_KEY']
+          div id: 'passwords-key', "data-key": ENV['PASSWORDS_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :organization, input_html: {class: "select2"}, include_blank: true

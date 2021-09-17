@@ -265,7 +265,7 @@ class User < ApplicationRecord
 
   def password_complexity
     return unless self.changes.has_key?("password")
-    pass_settings = JSON.parse(Setting['PASSWORDS_KEY'])
+    pass_settings = JSON.parse(ENV['PASSWORDS_KEY'])
     error_message = []
     if password&.size < pass_settings['range'].to_i
       error_message.push "Length should be at least #{pass_settings['range']} characters"

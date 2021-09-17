@@ -56,14 +56,24 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   # config.active_record.dump_schema_after_migration = false
-  if File.exist?("#{Rails.root}/config/emails.yml")
-    emails = YAML::load(File.open("#{Rails.root}/config/emails.yml"))
-    if emails['email_delivery']
-      config.action_mailer.delivery_method = emails['email_delivery']['delivery_method'] if emails['email_delivery']['delivery_method']
-      config.action_mailer.smtp_settings = emails['email_delivery']['smtp_settings'].symbolize_keys if emails['email_delivery']['smtp_settings']
-    end
-    config.action_mailer.default_url_options = emails['action_mailer_config'].symbolize_keys if emails['action_mailer_config']
-  end
+  # if File.exist?("#{Rails.root}/config/emails.yml")
+  #   emails = YAML::load(File.open("#{Rails.root}/config/emails.yml"))
+  #   if emails['email_delivery']
+  #     config.action_mailer.delivery_method = emails['email_delivery']['delivery_method'] if emails['email_delivery']['delivery_method']
+  #     config.action_mailer.smtp_settings = emails['email_delivery']['smtp_settings'].symbolize_keys if emails['email_delivery']['smtp_settings']
+  #   end
+  #   config.action_mailer.default_url_options = emails['action_mailer_config'].symbolize_keys if emails['action_mailer_config']
+  # end
+  config.action_mailer.default_url_options =  { host: ENV['HOST'], protocol: ENV['PORT'] }
+  config.action_mailer.delivery_method = :letter_opener
+  # config.action_mailer.smtp_settings = {
+  #   :address => ENV['SMTP_ADDRESS'],
+  #   :port => ENV['SMTP_PORT'],
+  #   :domain => ENV['SMTP_DOMAIN'],
+  #   :user_name => ENV['SMTP_USERNAME'],
+  #   :password => ENV['SMTP_PASSWORD'],
+  #   :authentication => ENV['SMTP_AUTHENTICATION']
+  # }
 
   # This will generate copy of log files if log reaches to 500 kb. 2 meaning 1 copy file and 1 current log file.
   config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 2, 500.kilobytes)

@@ -8,8 +8,8 @@
   |var current_user = "#{JSON.generate(current_user.as_json(methods: :full_name))}";
   |var allowed_navigation_tabs = #{raw( current_user.build_navigation_tabs_for_profile.to_json) };
   |var allowed_sub_navigation_tabs = #{raw( current_user.build_sub_navigation_tabs_for_profile.to_json) };
-  |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
-  |var password_key = "#{Setting['PASSWORDS_KEY']}";
+  |var google_api_key = "#{ENV['GOOGLE_MAP_KEY']}";
+  |var password_key = "#{ENV['PASSWORDS_KEY']}";
 
 = javascript_pack_tag "users", async: true
 = stylesheet_pack_tag "users"
