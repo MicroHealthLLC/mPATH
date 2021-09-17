@@ -14,7 +14,7 @@
       data-cy="issue_form"
       :class="{ _disabled: loading }"
     >
-    <div class="mt-2 mx-4 d-flex align-items-center">
+    <div class="mt-2 mx-4 d-flex align-items-center" :load="log(issueStagesSorted)">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
@@ -1431,6 +1431,9 @@ export default {
       this.selectedIssueStage = null;
       this.IssueStageId = "";
     },
+ log(e){
+      console.log("issue stages sorted: " + JSON.stringify(e))
+    },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -1519,7 +1522,7 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-      this.selectedIssueStage = this.issueStages.find(
+      this.selectedIssueStage = this.portfolioIssueStages.find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
       if (this.DV_issue.attach_files)
@@ -2030,11 +2033,11 @@ export default {
       "myActionsFilter",
       "projectUsers",
     ]),
-    issueStages(){
-      return this.portfolioIssueStages
-    },
+    // issueStages(){
+    //   return this.portfolioIssueStages
+    // },
     issueStagesSorted() {
-      var issueStagesSortedReturn = [...this.issueStages]; 
+      var issueStagesSortedReturn = [...this.portfolioIssueStages]; 
       return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
     readyToSave() {

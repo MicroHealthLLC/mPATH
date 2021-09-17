@@ -1506,7 +1506,7 @@ export default {
       // this.selectedTaskType = this.taskTypeIds.find(
       //   (t) => t === this.DV_task.task_type_id
       // );
-      this.selectedTaskStage = this.portfolioTaskStages.find(
+      this.selectedTaskStage = this.portfolioTaskStages.reverse().find(
         (t) => t.id === this.DV_task.task_stage_id
       );
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
@@ -1995,7 +1995,7 @@ export default {
       "taskStages",
        ]),
     taskStagesSorted() {
-      var taskStagesSortedReturn = [...this.portfolioTaskStages]; 
+      var taskStagesSortedReturn = [...this.portfolioTaskStages.reverse()]; 
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
     taskTypes(){

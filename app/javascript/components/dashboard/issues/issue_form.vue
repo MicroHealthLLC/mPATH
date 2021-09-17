@@ -8,7 +8,7 @@
       data-cy="issue_form"
       :class="{ _disabled: loading }"
     >
-    <div class="mt-2 mx-4 d-flex align-items-center">
+    <div class="mt-2 mx-4 d-flex align-items-center" :load="log(issueStagesSorted)">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
@@ -1418,6 +1418,9 @@ export default {
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
       return  fPrivilege.issues.includes(s); 
+    },
+    log(e){
+      console.log("issue stages sorted: " + JSON.stringify(e))
     },
     selectedStage(item) {
       if (this._isallowed("write")) {

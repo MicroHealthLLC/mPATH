@@ -66,11 +66,11 @@ class Api::V1::FilterDataController < AuthenticatedController
     stages = []
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     if resource_name == "task"
-      stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name)
+      stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
     elsif resource_name == "issue"
-      stages = IssueStage.joins(:project_issue_stages).where(project_issue_stages: {project_id: program_ids }).distinct.select(:id, :name)
+      stages = IssueStage.joins(:project_issue_stages).where(project_issue_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
     elsif resource_name == "risk"
-      stages = RiskStage.joins(:project_risk_stages).where(project_risk_stages: {project_id: program_ids }).distinct.select(:id, :name)
+      stages = RiskStage.joins(:project_risk_stages).where(project_risk_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
     elsif resource_name == "lesson"
       stages = LessonStage.joins(:project_lesson_stages).where(project_lesson_stages: {project_id: program_ids }).distinct.select(:id, :name)
     end
