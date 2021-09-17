@@ -2422,7 +2422,7 @@ export default {
         this.toggleWatched();
       }
     },
-    toggleApproved() {
+    toggleApproved(e) {
       if(!this._isallowed("write"))
         return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
@@ -2431,7 +2431,7 @@ export default {
       if (!this.DV_risk.approved) {
         this.DV_risk.approval_time = "";
       }
-      this.updateApprovedRisks(this.DV_risk);
+      //this.updateApprovedRisks(this.DV_risk);
       this.validateThenSave(e);
     },
     selectedStage(item) {
@@ -2469,6 +2469,8 @@ export default {
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.risk_description);
+        formData.append("risk[approved]", this.DV_risk.approved);
+        
         if (!this.DV_risk.explanation) {
           formData.append("risk[explanation]",'')
         } else {
@@ -2508,6 +2510,8 @@ export default {
            formData.append("risk[duration]", null);
         }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
+        console.log("-------------")
+        console.log(this.DV_risk.risk_approach)
         formData.append("risk[risk_approach]", this.DV_risk.risk_approach);
         formData.append(
           "risk[risk_approach_description]",
@@ -2692,7 +2696,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioRisks()
+          //  this.fetchPortfolioRisks()
            this.$router.push(
                 `/portfolio`
               );
