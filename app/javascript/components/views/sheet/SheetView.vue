@@ -91,7 +91,7 @@ export default {
       this.currentFacility = facility;
     },
     changeTab(tab) {
-      console.log(tab);
+      // console.log(tab);
       this.$router.push(tab.path);
     },
   },

@@ -1583,10 +1583,10 @@ export default {
       this.showLess = "Show Less";
     },
     log(e){
-      console.log("this is Lessons" + e)
+      // console.log("this is Lessons" + e)
     },
     handleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
     },
      facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities("active"), "id");
