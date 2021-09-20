@@ -178,7 +178,7 @@
         <el-input
           name="Lesson Name11"
           v-validate="'required'"
-          v-model="lesson.title"
+          v-model.trim="lesson.title"
           type="text"
           data-cy="lesson_name"
           placeholder="Lesson Name"

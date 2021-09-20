@@ -8,7 +8,7 @@
       data-cy="issue_form"
       :class="{ _disabled: loading }"
     >
-    <div class="mt-2 mx-4 d-flex align-items-center" :load="log(issueStagesSorted)">
+    <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
@@ -229,7 +229,7 @@
               name="Issue Name"
               v-validate="'required'"
               type="text"
-              v-model="DV_issue.title"
+              v-model.trim="DV_issue.title"
               placeholder="Issue Name"
               :readonly="!_isallowed('write')"
               :class="{ error: errors.has('Issue Name') }"
@@ -1419,9 +1419,9 @@ export default {
       let s = permissionHash[salut]
       return  fPrivilege.issues.includes(s); 
     },
-    log(e){
-      console.log("issue stages sorted: " + JSON.stringify(e))
-    },
+    // log(e){
+    //   console.log("issue stages sorted: " + JSON.stringify(e))
+    // },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;

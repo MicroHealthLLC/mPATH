@@ -258,7 +258,7 @@
               name="Task Name"
               v-validate="'required'"
               type="text"
-              v-model="DV_task.text"
+              v-model.trim="DV_task.text"
               placeholder="Task Name"
               :readonly="!_isallowed('write')"
               :class="{ error: errors.has('Task Name'), }"

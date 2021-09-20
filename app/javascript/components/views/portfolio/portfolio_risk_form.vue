@@ -266,7 +266,7 @@
                 <el-input
                   v-validate="'required'"
                   placeholder="Risk Name"
-                  v-model="DV_risk.text"
+                  v-model.trim="DV_risk.text"
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
