@@ -229,7 +229,7 @@
               name="Issue Name"
               v-validate="'required'"
               type="text"
-              v-model.trim="DV_issue.title"
+              v-model="DV_issue.title"
               placeholder="Issue Name"
               :readonly="!_isallowed('write')"
               :class="{ error: errors.has('Issue Name') }"
