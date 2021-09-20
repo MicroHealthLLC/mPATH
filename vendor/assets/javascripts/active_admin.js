@@ -37,6 +37,10 @@ function addProjectPrivilegeForm(element){
   $.ajax({
     url: url,
     success: function(res, data){
+      if(res.project_size == 0){
+        alert("No active program found.")
+        return
+      }
       if(!res.projects_avaialble){
         alert("All program privileges are set.")
         return
