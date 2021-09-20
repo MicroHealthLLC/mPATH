@@ -314,7 +314,7 @@ export default new Vuex.Store({
       }
     },
     updateNotesHash: (state, {note, facilityId, action}) => {
-      console.log(JSON.stringify(note))
+      // console.log(JSON.stringify(note))
       let facility_i = state.facilities.findIndex(f => f.id == facilityId)
       if (facility_i > -1) {
         let facility = Object.assign({}, state.facilities[facility_i])
@@ -925,9 +925,9 @@ export default new Vuex.Store({
 
       var aFilter = getters.getAdvancedFilter
 
-      console.log("aFilter----")
-      console.log(aFilter)
-      console.log(resources)
+      // console.log("aFilter----")
+      // console.log(aFilter)
+      // console.log(resources)
 
       var myFilter = getters.getMyAssignmentsFilter
 
