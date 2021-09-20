@@ -713,7 +713,6 @@
         const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
@@ -992,8 +991,8 @@
           return this.filteredTasks.filtered.tasks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
           let start = (this.currentPage-1)*this.C_tasksPerPage.value;

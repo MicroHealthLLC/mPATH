@@ -176,6 +176,7 @@ class Lesson < ApplicationRecord
 
     self.as_json.merge(
       class_name: self.class.name,
+      added_by: user.full_name,
       attach_files: attach_files,
       user_ids: p_users.map(&:id).compact.uniq,
       user_names: p_users.map(&:full_name).compact.join(", "),
@@ -261,6 +262,7 @@ class Lesson < ApplicationRecord
     self.as_json.merge(
       class_name: self.class.name,
       user_ids: p_users.map(&:id).compact.uniq,
+      added_by: user.full_name,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       created_by: {
