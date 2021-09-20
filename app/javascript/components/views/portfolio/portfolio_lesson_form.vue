@@ -267,8 +267,9 @@
         </div>
 
         <el-steps
+          v-if=" portfolioLessonStages[this.programId] && portfolioLessonStages[this.programId].length >= 0"
           :active="
-            portfolioLessonStages.findIndex(
+            portfolioLessonStages[this.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -276,10 +277,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': portfolioLessonStages.length >= 6 }"
+          :class="{ 'over-six-steps': portfolioLessonStages[this.programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in portfolioLessonStages"
+            v-for="stage in portfolioLessonStages[this.programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -803,6 +804,7 @@ export default {
       currentTab: "tab1",
       // projectName: this.$route.params.lesson.project_name, 
       loadedLesson: {},
+      programId: this.$route.params.programId,
       paginate: ["successes", "failures", "best_practices", "updates"],
       tabs: [
         {
