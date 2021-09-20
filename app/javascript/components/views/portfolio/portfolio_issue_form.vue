@@ -1838,7 +1838,7 @@ export default {
               });
             }
           
-          //  this.fetchPortfolioIssues()
+           this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );

@@ -6184,7 +6184,7 @@ export default {
       doc.autoTable({ 
         html: "#portTasks",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
@@ -6216,7 +6216,7 @@ export default {
             doc.autoTable({ 
         html: "#portIssues",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
@@ -6248,7 +6248,7 @@ export default {
       doc.autoTable({ 
         html: "#portRisks",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
@@ -6280,7 +6280,7 @@ export default {
         doc.autoTable({ 
         html: "#portLessons",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
