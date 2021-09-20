@@ -238,7 +238,7 @@
               name="Issue Name"
               v-validate="'required'"
               type="text"
-              v-model="DV_issue.title"
+              v-model.trim="DV_issue.title"
               placeholder="Issue Name"
               :readonly="!_isallowed('write')"
               :class="{ error: errors.has('Issue Name') }"
@@ -1611,7 +1611,7 @@ export default {
         });
       }
       this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
-      this.updateWatchedIssues(this.DV_issue);
+      this.saveIssue();
     },
     toggleImportant() {
       this.DV_issue = { ...this.DV_issue, important: !this.DV_issue.important };
@@ -1660,6 +1660,7 @@ export default {
         formData.append("issue[auto_calculate]", this.DV_issue.auto_calculate);
         formData.append("issue[on_hold]", this.DV_issue.on_hold);
         formData.append("issue[draft]", this.DV_issue.draft);
+        formData.append("issue[watched]", this.DV_issue.watched);
         formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
 
      //Responsible USer Id
