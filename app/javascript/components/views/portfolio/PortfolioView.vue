@@ -4572,15 +4572,14 @@ export default {
       let modifier = 1;
       if (this.currentSortDir === "desc") modifier = -1;
       // console.log(a[this.currentSort])
-      if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
-          if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
-          if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-         } 
-      } else  {
+      // if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
+      //     if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
+      //     if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+      //     if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+      //    } 
+      // } else  {
       if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
       if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-      }    
       return 0;
     })
     .filter((row, index) => {
@@ -4604,15 +4603,8 @@ export default {
         .sort((a, b) => {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
-         if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
-          if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
-          if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-         } 
-      } else  {
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          }    
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;  
           return 0;
         })
         .filter((row, index) => {
@@ -4636,15 +4628,8 @@ export default {
         .sort((a, b) => {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
-         if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
-          if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
-          if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-         } 
-         } else  {
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          }    
           return 0;
         })
         .filter((row, index) => {
@@ -4667,16 +4652,9 @@ export default {
       return this.lessonsObj.filtered.lessons
         .sort((a, b) => {
           let modifier = 1;
-          if (this.currentSortDir === "desc") modifier = -1;
-          if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
-          if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
-          if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-         } 
-          } else  {
+          if (this.currentSortDir === "desc") modifier = -1;        
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          }    
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;            
           return 0;
         })
         .filter((row, index) => {
