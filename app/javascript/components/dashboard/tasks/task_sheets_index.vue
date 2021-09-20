@@ -713,7 +713,6 @@
         const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
@@ -992,10 +991,12 @@
           return this.filteredTasks.filtered.tasks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
-          if (typeof a[this.currentSort] && b[this.currentSort] === 'string'  ){
+          if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
+          if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
           if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
           if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-          } else  {
+         } 
+         } else  {
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           }    
