@@ -2403,7 +2403,7 @@ export default {
         });
       }
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
-      this.updateWatchedRisks(this.DV_risk);
+      this.validateThenSave()
     },
     toggleImportant() {
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
@@ -2533,6 +2533,7 @@ export default {
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
         formData.append("risk[reportable]", this.DV_risk.reportable);
         formData.append("risk[on_hold]", this.DV_risk.on_hold);
+        formData.append("risk[watched]", this.DV_risk.watched);
         formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
           "risk[destroy_file_ids]",
