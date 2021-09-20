@@ -79,7 +79,8 @@ class Api::V1::FilterDataController < AuthenticatedController
       stages = ProjectRiskStage.includes(:risk_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:risk_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
       
     elsif resource_name == "lesson"
-      stages = LessonStage.joins(:project_lesson_stages).where(project_lesson_stages: {project_id: program_ids }).distinct.select(:id, :name)
+      # stages = LessonStage.joins(:project_lesson_stages).where(project_lesson_stages: {project_id: program_ids }).distinct.select(:id, :name)
+      stages = ProjectLessonStage.includes(:lesson_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:lesson_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
     end
     render json: {stages: stages}
   end
