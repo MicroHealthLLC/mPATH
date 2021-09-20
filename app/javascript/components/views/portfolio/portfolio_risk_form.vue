@@ -2462,8 +2462,8 @@ export default {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
-    validateThenSave(e) {
-      e.preventDefault();
+    validateThenSave() {
+      // e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2515,8 +2515,8 @@ export default {
            formData.append("risk[duration]", null);
         }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
-        console.log("-------------")
-        console.log(this.DV_risk.risk_approach)
+        // console.log("-------------")
+        // console.log(this.DV_risk.risk_approach)
         formData.append("risk[risk_approach]", this.DV_risk.risk_approach);
         formData.append(
           "risk[risk_approach_description]",
@@ -2702,7 +2702,7 @@ export default {
               });
             }
             //Route to newly created task form page
-          //  this.fetchPortfolioRisks()
+           this.fetchPortfolioRisks()
            this.$router.push(
                 `/portfolio`
               );
