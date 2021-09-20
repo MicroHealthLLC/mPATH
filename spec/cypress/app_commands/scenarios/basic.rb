@@ -121,6 +121,9 @@ risk_stage = RiskStage.find_or_create_by(name: 'Test Risk Stage', percentage: 40
 new_risk_stage = RiskStage.find_or_create_by(name: 'New Risk Stage', percentage: 60)
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
+lesson_stage = LessonStage.find_or_create_by(name: "Test Lesson Stage")
+lesson_stage2 = LessonStage.find_or_create_by(name: "Test Lesson Stage 2")
+
 
 ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: task_stage.id)
 ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: new_task_stage.id)
@@ -128,6 +131,9 @@ ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: issu
 ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: new_issue_stage.id)
 ProjectRiskStage.find_or_create_by(project_id: project.id, risk_stage_id: risk_stage.id)
 ProjectRiskStage.find_or_create_by(project_id: project.id, risk_stage_id: new_risk_stage.id)
+ProjectLessonStage.find_or_create_by(project_id: project.id, lesson_stage_id: lesson_stage.id)
+ProjectLessonStage.find_or_create_by(project_id: project.id, lesson_stage_id: lesson_stage2.id)
+
 
 project_task_type = ProjectTaskType.create(project_id: project.id, task_type_id: task_type.id)
 project_issue_severities = ProjectIssueSeverity.create(project_id: project.id, issue_severity_id: issue_severity.id)
@@ -266,6 +272,19 @@ new_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_1.id, user_id: client.id)
 
+new_lesson_1 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 1",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_1.id,
+  "reportable"=>false,
+  "draft"=>false
+})
+
 facility_2 = Facility.find_or_create_by(
   facility_name: 'Test Facility 2',
   address: 'Abo Simbel Desert, Aswan Governorate 81514, Egypt',
@@ -393,6 +412,19 @@ new_risk_2.checklists.create(text: "Risk Checklist2", user_id: client.id)
 new_risk_2.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
+
+new_lesson_2 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 2",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_2.id,
+  "reportable"=>false,
+  "draft"=>false
+})
 
 facility_group_2 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 2',
@@ -527,6 +559,19 @@ new_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_3.id, user_id: client.id)
 
+new_lesson_3 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 3",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_3.id,
+  "reportable"=>false,
+  "draft"=>false
+})
+
 facility_4 = Facility.find_or_create_by(
   facility_name: 'Test Facility 4',
   address: 'Axford, Marlborough SN8, UK',
@@ -650,3 +695,16 @@ new_risk_4.checklists.create(text: "Risk Checklist5", user_id: admin.id)
 new_risk_4.checklists.create(text: "Risk Checklist5", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_4.id, user_id: client.id)
+
+new_lesson_3 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 4",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_4.id,
+  "reportable"=>false,
+  "draft"=>false
+})

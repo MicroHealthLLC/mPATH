@@ -1,5 +1,11 @@
 import '@4tw/cypress-drag-drop'
 
+// Open first Project
+Cypress.Commands.add("openPortoflioViewer", () => {
+  cy.visit('/')
+  cy.get('[data-cy=portfolio_btn]').first().click()
+})
+
 // commands.js
 Cypress.Commands.add('preserveAllCookiesOnce', () => {
   cy.getCookies().then(cookies => {

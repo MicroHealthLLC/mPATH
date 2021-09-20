@@ -352,6 +352,7 @@
                     <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
+                  v-if="riskStagesSorted && riskStagesSorted.length >= 0"
                   class="exampleOne mt-3" 
                   :class="{'overSixSteps': riskStagesSorted.length >= 6 }" 
                   :active="riskStagesSorted.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
@@ -383,6 +384,7 @@
                 <label class="font-md">Select Stage</label>
                 <el-steps
                   class="exampleOne"
+                   v-if="riskStagesSorted && riskStagesSorted.length >= 0"
                   :class="{ overSixSteps: riskStagesSorted.length >= 6 }"
                   finish-status="success"
                   :disabled="
@@ -2066,6 +2068,7 @@ export default {
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       now: new Date().toLocaleString(),
+      programId: this.$route.params.programId,
       destroyedFiles: [],
       responsibleUsers: null,
       accountableRiskUsers: null,
@@ -2309,9 +2312,11 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_risk.task_type_id
       );
-      this.selectedRiskStage = this.riskStages.find(
+      if (this.portfolioRiskStages[this.programId]){
+        this.selectedRiskStage = this.portfolioRiskStages[this.programId].find(
         (t) => t.id === this.DV_risk.risk_stage_id
       );
+      }    
       this.selectedRiskPossibility = this.getRiskProbabilityNames.find(
         (t) => t.id === this.DV_risk.probability
       );
@@ -2931,13 +2936,12 @@ export default {
       'riskDispositionDuration',
       "portfolioRiskStages",
      ]),
-    riskStages(){
-      return this.portfolioRiskStages
-    },
-    riskStagesSorted() {
-      var riskStagesSortedReturn = [...this.riskStages]; 
-      return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
+  riskStagesSorted() { 
+      if (this.portfolioRiskStages[this.programId] !== undefined) {
+        let stageObj =  [...this.portfolioRiskStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
     activeProjectUsers(){
       return this.portfolioUsers;
     },
@@ -2959,7 +2963,9 @@ export default {
       );
     },
     riskStagePercentage() {
-      return _.map(this.riskStages, "percentage").toString();
+     if (this.portfolioRiskStages[this.programId]){
+        return _.map(this.portfolioRiskStages[this.programId], "percentage").toString();
+     }    
     },
   taskTypes(){
       return this.portfolioCategories  

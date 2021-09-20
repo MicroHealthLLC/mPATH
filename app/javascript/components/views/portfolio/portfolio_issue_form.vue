@@ -369,6 +369,7 @@
                 <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
               </div>    
             <el-steps 
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne mt-3" 
               :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
               :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
@@ -398,6 +399,7 @@
           >
             <label class="font-md">Select Stage</label>
             <el-steps
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne"
               :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
@@ -1306,6 +1308,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
+      programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
@@ -1519,9 +1522,11 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-      this.selectedIssueStage = this.issueStages.find(
+    if (this.portfolioIssueStages[this.programId] !== undefined) {
+        this.selectedIssueStage = this.portfolioIssueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
+    }    
       if (this.DV_issue.attach_files)
         this.addFile(this.DV_issue.attach_files, false);
       this.$nextTick(() => {
@@ -1832,7 +1837,7 @@ export default {
               });
             }
           
-           this.fetchPortfolioIssues()
+          //  this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
@@ -2030,14 +2035,13 @@ export default {
       "myActionsFilter",
       "projectUsers",
     ]),
-    issueStages(){
-      return this.portfolioIssueStages
-    },
-    issueStagesSorted() {
-      var issueStagesSortedReturn = [...this.issueStages]; 
-      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
-    readyToSave() {
+     issueStagesSorted() { 
+      if (this.portfolioIssueStages[this.programId] !== undefined) {
+        let stageObj =  [...this.portfolioIssueStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
+     readyToSave() {
       return (
         this.DV_issue &&
         this.exists(this.DV_issue.title) &&

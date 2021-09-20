@@ -15,7 +15,7 @@
         ></el-input>
       </div>
 
-      <div class="ninety mr-1">
+      <div class="ninety mr-1" :load="log(filterRiskStages)">
         <label class="font-sm mb-0">Process Area</label>
         <el-select
           v-model="C_taskTypeFilter"
@@ -220,7 +220,10 @@ export default {
       let s = permissionHash[salut]
       return  fPrivilege.risks.includes(s); 
     },
+    log(e){
+      console.log({e})
 
+    },
     handleAddNew(stage) {
       // if (!this.viewPermit(this.currentTab, "write")) return;
       if(!this._isallowed('write')) return;
