@@ -729,19 +729,19 @@
                     ref="table"                   
                   >
                     <thead style="background-color: #ededed">
-                      <th class="sort-th twenty" @click="sortCol1('program_name')">
+                      <th class="sort-th twenty" @click="sort('program_name')">
                         Program Name
                         <span
                           class="inactive-sort-icon scroll"
-                          v-if="currentSortCol1 !== 'program_name'"
+                          v-if="currentSort !== 'program_name'"
                         >
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
                           class="sort-icon scroll"
                           v-if="
-                            currentSortDir1 === 'asc' &&
-                            currentSortCol1 === 'program_name'
+                            currentSortDir === 'asc' &&
+                            currentSort === 'program_name'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -749,8 +749,8 @@
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="
-                            currentSortDir1 !== 'asc' &&
-                            currentSortCol1 === 'program_name'
+                            currentSortDir !== 'asc' &&
+                            currentSort === 'program_name'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -758,8 +758,8 @@
                         <span
                           class="sort-icon scroll"
                           v-if="
-                            currentSortDir1 === 'desc' &&
-                            currentSortCol1 === 'program_name'
+                            currentSortDir === 'desc' &&
+                            currentSort === 'program_name'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -767,26 +767,26 @@
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="
-                            currentSortDir1 !== 'desc' &&
-                            currentSortCol1 === 'program_name'
+                            currentSortDir !== 'desc' &&
+                            currentSort === 'program_name'
                           "
                         >
                           <i class="fas fa-sort-down"></i
                         ></span>
                       </th>
-                      <th class="sort-th twenty" @click="sortCol2('project_name')">
+                      <th class="sort-th twenty" @click="sort('project_name')">
                         Project Name
                         <span
                           class="inactive-sort-icon scroll"
-                          v-if="currentSortCol2 !== ''"
+                          v-if="currentSort !== ''"
                         >
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
                           class="sort-icon scroll"
                           v-if="
-                            currentSortDir2 === 'asc' &&
-                            currentSortCol2 === 'project_name'
+                            currentSortDir === 'asc' &&
+                            currentSort === 'project_name'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -794,8 +794,8 @@
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="
-                            currentSortDir2 !== 'asc' &&
-                            currentSortCol2 === 'project_name'
+                            currentSortDir !== 'asc' &&
+                            currentSort === 'project_name'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -803,8 +803,8 @@
                         <span
                           class="sort-icon scroll"
                           v-if="
-                            currentSortDir2 === 'desc' &&
-                            currentSortCol2 === 'project_name'
+                            currentSortDir === 'desc' &&
+                            currentSort === 'project_name'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -812,8 +812,8 @@
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="
-                            currentSortDir2 !== 'desc' &&
-                            currentSortCol2 === 'project_name'
+                            currentSortDir !== 'desc' &&
+                            currentSort === 'project_name'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -4359,15 +4359,16 @@ export default {
       search_issues: "",
       search_risks: "",
       search_lessons: "",
-      currentSort: "text",
-      currentSortCol1: "program_name",
-      currentSortCol2: "project_name",
-      currentSortCol3: "",
-      currentSortIssueRisk: "title",
+      // currentSort: "text",
+      currentSort: "program_name",
+      // currentSortCol1: "program_name",
+      // currentSortCol2: "project_name",
+      // currentSortCol3: "",
+      // currentSortIssueRisk: "title",
       currentSortDir: "asc",
-      currentSortDir1: "asc",
-      currentSortDir2: "asc",
-      currentSortDir3: "asc",
+      // currentSortDir1: "asc",
+      // currentSortDir2: "asc",
+      // currentSortDir3: "asc",
       loadIssues: false,
       loadRisks: false,
       loadLessons: false,
@@ -4577,28 +4578,33 @@ export default {
   sortedTasks:function() {
       return this.tasksObj.filtered.tasks.sort((a,b) => {
       let modifier = 1;
-    
-      if (this.currentSortDir1 === "desc") modifier = -1;
-      if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
-      if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
-      
-      if (this.currentSortDir2 === "desc") modifier = -1;
-      if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
-      if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
-
-      if (this.currentSortDir === "desc") modifier = -1;
-      if (typeof a[this.currentSort] && b[this.currentSort] === 'string'){
-        if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-        if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-      } else if (typeof a[this.currentSort] || b[this.currentSort] !== 'string'){
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-      
-      }
-       
-     
+      if (this.currentSortDir === "desc") modifier = -1;    
+      if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+      if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
       return 0;
-    })
+     })
+    //   let modifier = 1;
+    
+    //   if (this.currentSortDir1 === "desc") modifier = -1;
+    //   if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
+    //   if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
+      
+    //   if (this.currentSortDir2 === "desc") modifier = -1;
+    //   if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
+    //   if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
+
+    //   if (this.currentSortDir === "desc") modifier = -1;
+    //   if (typeof a[this.currentSort] && b[this.currentSort] === 'string'){
+    //     if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+    //     if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+    //   } else if (typeof a[this.currentSort] || b[this.currentSort] !== 'string'){
+    //     if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+    //     if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+      
+    //   }      
+     
+    //   return 0;
+ 
     .filter((row, index) => {
       let start = (this.currentPage - 1) * this.C_tasksPerPage.value;
       let end = this.currentPage * this.C_tasksPerPage.value;
@@ -6144,27 +6150,27 @@ export default {
       }
       this.currentSort = s; 
     },
-   sortCol1: function (s) {
-     //if s == current sort, reverse
-      if (s === this.currentSortCol1) {
-        this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
-      }
-      this.currentSortCol1 = s; 
-    },
-   sortCol2: function (s) {
-     //if s == current sort, reverse
-      if (s === this.currentSortCol2) {
-        this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
-      }
-       this.currentSortCol2 = s; 
-    },
-   sortCol3: function (s) {
-     //if s == current sort, reverse
-      if (s === this.currentSortCol3) {
-        this.currentSortDir3 = this.currentSortDir3 === "asc" ? "desc" : "asc";
-      }
-      this.currentSortCol3 = s;
-    },
+  //  sortCol1: function (s) {
+  //    //if s == current sort, reverse
+  //     if (s === this.currentSortCol1) {
+  //       this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
+  //     }
+  //     this.currentSortCol1 = s; 
+  //   },
+  //  sortCol2: function (s) {
+  //    //if s == current sort, reverse
+  //     if (s === this.currentSortCol2) {
+  //       this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
+  //     }
+  //      this.currentSortCol2 = s; 
+  //   },
+  //  sortCol3: function (s) {
+  //    //if s == current sort, reverse
+  //     if (s === this.currentSortCol3) {
+  //       this.currentSortDir3 = this.currentSortDir3 === "asc" ? "desc" : "asc";
+  //     }
+  //     this.currentSortCol3 = s;
+  //   },
     nextPage: function () {
       if (this.currentPage * this.C_tasksPerPage.value < this.tasksObj.filtered.tasks.length)
         this.currentPage++;
