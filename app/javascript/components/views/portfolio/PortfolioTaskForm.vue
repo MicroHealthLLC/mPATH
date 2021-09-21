@@ -15,7 +15,7 @@ export default {
   methods:{
     ...mapActions(['fetchPortfolioTask', 'portfolioTaskLoaded', 'fetchPortfolioUsers', 'fetchPortfolioTasks', 'fetchPortfolioCategories', 'fetchPortfolioTaskStages']),
     redirectBack() {
-      this.fetchPortfolioTasks()
+      // this.fetchPortfolioTasks()
       this.$router.push(
         `/portfolio`
       );
