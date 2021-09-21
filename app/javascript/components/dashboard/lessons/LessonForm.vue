@@ -163,7 +163,7 @@
         <el-input
           name="Lesson Name"
           v-validate="'required'"
-          v-model.trim="lesson.title"
+          v-model="lesson.title"
           type="text"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
