@@ -1522,8 +1522,8 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-    if (this.portfolioIssueStages[this.programId] !== undefined) {
-        this.selectedIssueStage = this.portfolioIssueStages[this.programId].find(
+    if (this.issueStages[this.programId] !== undefined) {
+        this.selectedIssueStage = this.issueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
     }    
@@ -2036,9 +2036,14 @@ export default {
       "myActionsFilter",
       "projectUsers",
     ]),
+    issueStages(){
+          if(this.portfolioIssueStages){
+            return this.portfolioIssueStages.program_stages
+          }
+       }, 
      issueStagesSorted() { 
-      if (this.portfolioIssueStages[this.programId] !== undefined) {
-        let stageObj =  [...this.portfolioIssueStages[this.programId]]
+      if (this.issueStages[this.programId] !== undefined) {
+        let stageObj =  [...this.issueStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
       }        
     },   
