@@ -17,7 +17,7 @@
         </el-input>
       </div>
 
-      <div class="mr-1 ninety">
+      <div class="mr-1 ninety" :load="log(filterTaskStages)">
         <label class="font-sm mb-0">Process Area</label>
         <el-select
           v-model="C_taskTypeFilter"
@@ -130,36 +130,15 @@
 
                </span>
 
-                   <div class="d-inline-block mx-0">
-             <!-- <v-app id="app"> -->
-             <v-checkbox     
-           v-model="C_showCountToggle"     
-            class="d-inline-block mt-0 px-2 ml-1"  
-            @click.prevent="showCounts"               
-           v-tooltip="`Show Counts`"
+          <div class="d-inline-block mx-0">          
+            <v-checkbox     
+            v-model="C_showCountToggle"     
+              class="d-inline-block mt-0 px-2 ml-1"  
+              @click.prevent="showCounts"               
+            v-tooltip="`Show Counts`"
           ></v-checkbox>
-             <!-- </v-app> -->
-
           </div>
             </span>
-        <!-- <label class="font-sm mb-0">Flags</label>
-        <el-select
-          v-model="C_kanbanTaskFilter"
-          class="w-100"
-          track-by="name"
-          value-key="id"
-          multiple
-          placeholder="Filter by Flags"
-          collapse-tags
-        >
-          <el-option
-            v-for="item in getAdvancedFilterOptions"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-          >
-          </el-option>
-        </el-select> -->
       </div>
     </div>
   </div>
@@ -236,10 +215,10 @@ export default {
     toggleWatched(){
       this.setHideWatched(!this.getHideWatched)    
     },
-    // log(e){
-    //   console.log(e)
+    log(e){
+      console.log({e})
 
-    // },
+    },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    
     },
@@ -325,7 +304,7 @@ export default {
     filteredTasks() {
       let typeIds = _.map(this.C_taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
-      console.log("these are taskStageIds" + typeIds )
+      // console.log("these are taskStageIds" + typeIds )
       const search_query = this.exists(this.searchTasksQuery.trim())
         ? new RegExp(
             _.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()),
@@ -346,7 +325,7 @@ export default {
       var filterDataForAdvancedFilterFunction = this
         .filterDataForAdvancedFilter;
 
-      let tasks = _.orderBy(
+      let tasks = _.sortBy(
         _.filter(this.facility.tasks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
           if (resource.taskStageId == null) {

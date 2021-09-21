@@ -62,9 +62,9 @@ class Issue < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today 
-    if start_date && progress && start_date < Date.today && progress && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -76,6 +76,7 @@ class Issue < ApplicationRecord
       program_id: project.id, 
       is_overdue: is_overdue,
       issue_stage: issue_stage.try(:name),
+      issue_stage_id: self.issue_stage_id,
       program_progress:  self.project.progress,
       project_group_name: self.facility_group.name,
       project_due_date: self.facility_project.due_date,
@@ -224,9 +225,9 @@ class Issue < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
-    if start_date && progress && start_date < Date.today && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -243,6 +244,7 @@ class Issue < ApplicationRecord
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
+      issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),
       task_type_name: task_type_name,
       due_date_duplicate: due_date.as_json,

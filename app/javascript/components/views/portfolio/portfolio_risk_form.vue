@@ -352,6 +352,7 @@
                     <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
+                  v-if="riskStagesSorted && riskStagesSorted.length >= 0"
                   class="exampleOne mt-3" 
                   :class="{'overSixSteps': riskStagesSorted.length >= 6 }" 
                   :active="riskStagesSorted.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
@@ -383,6 +384,7 @@
                 <label class="font-md">Select Stage</label>
                 <el-steps
                   class="exampleOne"
+                   v-if="riskStagesSorted && riskStagesSorted.length >= 0"
                   :class="{ overSixSteps: riskStagesSorted.length >= 6 }"
                   finish-status="success"
                   :disabled="
@@ -2067,6 +2069,7 @@ export default {
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       now: new Date().toLocaleString(),
+      programId: this.$route.params.programId,
       destroyedFiles: [],
       responsibleUsers: null,
       accountableRiskUsers: null,
@@ -2310,9 +2313,11 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_risk.task_type_id
       );
-      this.selectedRiskStage = this.riskStages.find(
+      if (this.portfolioRiskStages[this.programId]){
+        this.selectedRiskStage = this.portfolioRiskStages[this.programId].find(
         (t) => t.id === this.DV_risk.risk_stage_id
       );
+      }    
       this.selectedRiskPossibility = this.getRiskProbabilityNames.find(
         (t) => t.id === this.DV_risk.probability
       );
@@ -2399,7 +2404,7 @@ export default {
         });
       }
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
-      this.updateWatchedRisks(this.DV_risk);
+      this.validateThenSave()
     },
     toggleImportant() {
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
@@ -2423,7 +2428,7 @@ export default {
         this.toggleWatched();
       }
     },
-    toggleApproved() {
+    toggleApproved(e) {
       if(!this._isallowed("write"))
         return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
@@ -2432,7 +2437,7 @@ export default {
       if (!this.DV_risk.approved) {
         this.DV_risk.approval_time = "";
       }
-      this.updateApprovedRisks(this.DV_risk);
+      //this.updateApprovedRisks(this.DV_risk);
       this.validateThenSave(e);
     },
     selectedStage(item) {
@@ -2458,8 +2463,8 @@ export default {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
-    validateThenSave(e) {
-      e.preventDefault();
+    validateThenSave() {
+      // e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2470,6 +2475,8 @@ export default {
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.risk_description);
+        formData.append("risk[approved]", this.DV_risk.approved);
+        
         if (!this.DV_risk.explanation) {
           formData.append("risk[explanation]",'')
         } else {
@@ -2509,6 +2516,8 @@ export default {
            formData.append("risk[duration]", null);
         }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
+        // console.log("-------------")
+        // console.log(this.DV_risk.risk_approach)
         formData.append("risk[risk_approach]", this.DV_risk.risk_approach);
         formData.append(
           "risk[risk_approach_description]",
@@ -2525,6 +2534,7 @@ export default {
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
         formData.append("risk[reportable]", this.DV_risk.reportable);
         formData.append("risk[on_hold]", this.DV_risk.on_hold);
+        formData.append("risk[watched]", this.DV_risk.watched);
         formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
           "risk[destroy_file_ids]",
@@ -2928,13 +2938,12 @@ export default {
       'riskDispositionDuration',
       "portfolioRiskStages",
      ]),
-    riskStages(){
-      return this.portfolioRiskStages
-    },
-    riskStagesSorted() {
-      var riskStagesSortedReturn = [...this.riskStages]; 
-      return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
+  riskStagesSorted() { 
+      if (this.portfolioRiskStages[this.programId] !== undefined) {
+        let stageObj =  [...this.portfolioRiskStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
     activeProjectUsers(){
       return this.portfolioUsers;
     },
@@ -2956,7 +2965,9 @@ export default {
       );
     },
     riskStagePercentage() {
-      return _.map(this.riskStages, "percentage").toString();
+     if (this.portfolioRiskStages[this.programId]){
+        return _.map(this.portfolioRiskStages[this.programId], "percentage").toString();
+     }    
     },
   taskTypes(){
       return this.portfolioCategories  

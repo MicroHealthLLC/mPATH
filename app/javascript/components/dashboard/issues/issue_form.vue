@@ -1420,6 +1420,9 @@ export default {
       let s = permissionHash[salut]
       return  fPrivilege.issues.includes(s); 
     },
+    // log(e){
+    //   console.log("issue stages sorted: " + JSON.stringify(e))
+    // },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;

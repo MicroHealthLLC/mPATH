@@ -140,9 +140,9 @@ class Task < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today 
-    if start_date && progress && start_date < Date.today && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -168,6 +168,7 @@ class Task < ApplicationRecord
       closed: closed,
       ongoing: self.ongoing,
       task_stage: task_stage.try(:name),
+      task_stage_id: self.task_stage_id,
       completed: completed,
       checklists: checklists.as_json,
       in_progress: in_progress,
@@ -273,9 +274,9 @@ class Task < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && start_date < Date.today && progress && progress >= 100
+    if start_date && start_date <= Date.today && progress && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -293,6 +294,7 @@ class Task < ApplicationRecord
       progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
+      task_stage_id: self.task_stage_id,
       user_ids: p_users.map(&:id).compact.uniq,
       due_date_duplicate: due_date.as_json,
       user_names: p_users.map(&:full_name).compact.join(", "),

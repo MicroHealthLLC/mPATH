@@ -48,6 +48,7 @@
         <button
           v-if="_isallowed('write')"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
+          data-cy="lesson_save_btn"
         >
           Save Lesson
         </button>
@@ -61,6 +62,7 @@
         <button
           class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
+          data-cy="lesson_close_btn"
         >
           Close
         </button>
@@ -174,10 +176,11 @@
         </div>
 
         <el-input
-          name="Lesson Name"
+          name="Lesson Name11"
           v-validate="'required'"
           v-model="lesson.title"
           type="text"
+          data-cy="lesson_name"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
           :readonly="!_isallowed('write')"
@@ -192,7 +195,7 @@
         >
         <el-input
           name="Description"
-
+          data-cy="lesson_description"
           type="textarea"
           v-validate="'required'"
           v-model="lesson.description"
@@ -264,8 +267,9 @@
         </div>
 
         <el-steps
+          v-if=" portfolioLessonStages[this.programId] && portfolioLessonStages[this.programId].length >= 0"
           :active="
-            portfolioLessonStages.findIndex(
+            portfolioLessonStages[this.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -273,10 +277,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': portfolioLessonStages.length >= 6 }"
+          :class="{ 'over-six-steps': portfolioLessonStages[this.programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in portfolioLessonStages"
+            v-for="stage in portfolioLessonStages[this.programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -800,6 +804,7 @@ export default {
       currentTab: "tab1",
       // projectName: this.$route.params.lesson.project_name, 
       loadedLesson: {},
+      programId: this.$route.params.programId,
       paginate: ["successes", "failures", "best_practices", "updates"],
       tabs: [
         {

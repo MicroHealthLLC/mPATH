@@ -135,9 +135,9 @@ class Risk < ApplicationRecord
     in_progress = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && progress && start_date < Date.today && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -150,7 +150,6 @@ class Risk < ApplicationRecord
      merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
-      risk_stage: risk_stage.try(:name),
       project_id: facility.id, 
       program_id: project.id, 
       category: task_type.name,
@@ -165,6 +164,7 @@ class Risk < ApplicationRecord
       ongoing: self.ongoing,
       risk_approach: risk_approach.humanize,
       risk_stage: risk_stage.try(:name),
+      risk_stage_id: self.risk_stage_id,
       priority_level: priority_level_name,
       completed: completed,
       planned: planned,
@@ -344,9 +344,9 @@ class Risk < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && start_date < Date.today && progress && progress >= 100
+    if start_date && start_date <= Date.today && progress && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -365,6 +365,7 @@ class Risk < ApplicationRecord
       impact_level_name: impact_level_name,
       task_type: task_type.as_json,
       risk_stage: risk_stage.try(:name),
+      risk_stage_id: self.risk_stage_id,
       class_name: self.class.name,
       completed: completed,
       planned: planned,
