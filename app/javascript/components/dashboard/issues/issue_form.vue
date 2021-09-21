@@ -106,26 +106,8 @@
             >
 
           <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleWatched"
-              data-cy="issue_on_watch"
-              v-tooltip="`On Watch`" 
-            >
-              <span               
-                v-show="DV_issue.watched" 
-                ><i class="fas fa-eye mr-1"></i
-              ></span>
-              <span 
-                 v-show="!DV_issue.watched" 
-                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-              ></span>
-           
-              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
-                On Watch
-              </small>
-            </span>
+           <span class="statesCol p-1 mr-1">
+
              <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
@@ -147,6 +129,52 @@
                 :class="{'d-none': isMapView }"
                 style="vertical-align:text-top"> On Hold</small>
             </span>
+
+             <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleDraft"
+              data-cy="issue_important"
+              v-tooltip="`Draft`" 
+            >
+              <span              
+                v-show="DV_issue.draft">
+               <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
+              <span 
+               v-show="!DV_issue.draft">
+               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Draft</small>
+            </span>
+
+           </span>
+
+           <span class="tagsCol p-1">
+                 <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleWatched"
+              data-cy="issue_on_watch"
+              v-tooltip="`On Watch`" 
+            >
+              <span               
+                v-show="DV_issue.watched" 
+                ><i class="fas fa-eye mr-1"></i
+              ></span>
+              <span 
+                 v-show="!DV_issue.watched" 
+                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+              ></span>
+           
+              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
+                On Watch
+              </small>
+            </span>
+      
            
 
             <span
@@ -192,26 +220,9 @@
                Briefings
                 </small>
                 </span>
-             <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              data-cy="issue_important"
-              v-tooltip="`Draft`" 
-            >
-              <span              
-                v-show="DV_issue.draft">
-               <i class="fas fa-pencil-alt text-warning"></i>
-              </span>
-              <span 
-               v-show="!DV_issue.draft">
-               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> Draft</small>
-            </span>
+           </span>
+        
+        
           </div>
 
             <el-input
@@ -248,7 +259,7 @@
           <!-- Row begins -->
           <div class="d-flex mb-0 mx-4 form-group">
             <div class="simple-select w-100 form-group">
-              <label class="font-md">Category</label>
+              <label class="font-md">Process Area</label>
               <el-select
                 v-model="selectedTaskType"
                 class="w-100"
@@ -257,8 +268,8 @@
                 value-key="id"
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
-                name="Category"
-                placeholder="Select Category"
+                name="Process Area"
+                placeholder="Select Process Area"
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -350,8 +361,8 @@
               </div>    
             <el-steps 
               class="exampleOne mt-3" 
-              :class="{'overSixSteps': issueStages.length >= 6 }"   
-              :active="issueStages.findIndex(stage => stage.id == selectedIssueStage.id)"                
+              :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
+              :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
               finish-status="success"  
               :disabled="!_isallowed('write') || !!fixedStage"
               v-model="selectedIssueStage"
@@ -359,7 +370,7 @@
               value-key="id"
               >         
               <el-step
-              v-for="item in issueStages"
+              v-for="item in issueStagesSorted"
               :key="item.id"             
               :value="item"
               style="cursor:pointer"
@@ -379,7 +390,7 @@
             <label class="font-md">Select Stage</label>
             <el-steps
               class="exampleOne"
-              :class="{ overSixSteps: issueStages.length >= 6 }"
+              :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
               :disabled="!_isallowed('write') || !!fixedStage"
               v-model="selectedIssueStage"
@@ -387,7 +398,7 @@
               value-key="id"
             >
               <el-step
-                v-for="item in issueStages"
+                v-for="item in issueStagesSorted"
                 :key="item.id"
                 :value="item"
                 style="cursor:pointer"
@@ -426,12 +437,19 @@ Tab 1 Row Begins here -->
               </div>
             </div>
             <div class="form-group w-75 ml-1">
+             <span v-if="DV_issue.onHold ">           
+                <label class="font-md">
+                Estimated Completion Date <span><small class="text-danger">(Not required if Issue is On Hold)</small></span>
+                 </label
+                  ></span>
+                  <span v-else>
               <label class="font-md"
                 >Estimated Completion Date
                 <span style="color: #dc3545">*</span></label
-              >
-              <v2-date-picker
-                v-validate="'required'"
+              ></span>
+             
+              <v2-date-picker           
+                v-validate="{ required: !DV_issue.onHold }"
                 v-model="DV_issue.dueDate"
                 value-type="YYYY-MM-DD"
                 format="DD MMM YYYY"
@@ -517,6 +535,7 @@ Tab 1 Row Begins here -->
                 track-by="id"
                 value-key="id"
                 :multiple="true"
+                clearable
                 placeholder="Search and select Consulted Users"
                 :disabled="!_isallowed('write')"
                 filterable
@@ -541,6 +560,7 @@ Tab 1 Row Begins here -->
                 value-key="id"
                 multiple
                 filterable
+                clearable
                 placeholder="Search and select Informed Users"
                 :disabled="!_isallowed('write')"
               >
@@ -1201,7 +1221,7 @@ Tab 1 Row Begins here -->
                 class="update-card mb-3"
               >
                 <div class="d-flex justify-content-between">
-                  <label class="font-md">Description</label>
+                  <label class="font-md">Update</label>
                   <div class="font-sm">
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
@@ -1309,7 +1329,7 @@ export default {
           form_fields: [
             "Issue Name",
             "Description",
-            "Category",
+            "Process Area",
             "Issue Type",
             "Issue Severity",
             "Stage",
@@ -1390,6 +1410,18 @@ export default {
         notes: [],
       };
     },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.issues.includes(s); 
+    },
+    // log(e){
+    //   console.log("issue stages sorted: " + JSON.stringify(e))
+    // },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
@@ -1581,6 +1613,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_issue = { ...this.DV_issue, onHold: !this.DV_issue.onHold };
+      this.DV_issue.dueDate = '';
     },
     toggleDraft() {
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
@@ -2013,6 +2046,10 @@ export default {
       "projectUsers",
       "taskTypes",
     ]),
+    issueStagesSorted() {
+      var issueStagesSortedReturn = [...this.issueStages]; 
+      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
+    },
     readyToSave() {
       return (
         this.DV_issue &&
@@ -2067,11 +2104,6 @@ export default {
         "desc"
       );
     },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.issues[salut];
-    },
     tab() {
       if (this.$route.path.includes("map")) {
         return "map";
@@ -2083,11 +2115,11 @@ export default {
         return "kanban";
       }
     },
-    projectNameLink() {
-      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`;
+  projectNameLink() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
       } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+        return `/programs/${this.$route.params.programId}/${this.tab}`;
       }
     },
   },
@@ -2458,5 +2490,25 @@ a:hover {
   background-color: #ededed;
   border-color: lightgray;
   border-left: 10px solid #5aaaff;
+}
+
+.tagsCol, .statesCol {  
+  border: .5px solid lightgray;
+}
+
+.statesCol {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tagsCol {
+  background-color: #f8f9fa;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
 }
 </style>

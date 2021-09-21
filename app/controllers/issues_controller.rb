@@ -1,7 +1,21 @@
 class IssuesController < AuthenticatedController
   before_action :set_resources, except: [:show]
   before_action :set_issue, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :check_permission
 
+  def check_permission
+    action = nil
+    if ["index", "show" ].include?(params[:action]) 
+      action = "read"
+    elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
+      action = "write"
+    elsif ["destroy"].include?(params[:action]) 
+      action = "delete"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'issues', program: params[:project_id], project: params[:facility_id])
+
+  end
   def index
 
     all_users = []
@@ -91,7 +105,7 @@ class IssuesController < AuthenticatedController
 
   private
   def set_resources
-    @project = current_user.projects.active.find_by(id: params[:project_id])
+    @project = current_user.authorized_programs.find_by(id: params[:project_id])
     @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
   end
 

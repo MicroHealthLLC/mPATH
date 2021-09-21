@@ -34,6 +34,7 @@
                     filterable
                     value-key="id"
                     multiple                                                                                                                                               
+                    clearable
                     placeholder="Search and select Project Group"
                   >
                   <el-option 
@@ -47,7 +48,7 @@
               </div>
               <label class="font-sm mb-0">Project Names</label>
                   <el-select 
-                    v-model="C_facilityNameFilter"                    
+                    v-model="C_facilityNameFilter" 
                     class="w-100" 
                     track-by="name" 
                     value-key="id"
@@ -55,10 +56,12 @@
                     :loading="isLoading"
                     multiple   
                     filterable                                                                                                                                                        
+                    clearable
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames"                                                     
+                    v-for="item in C_activeProjectNames" 
+                                                           
                     :value="item"   
                     :key="item.id"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
@@ -91,6 +94,7 @@
                     value-key="id"
                     data-cy="project_status"                
                     multiple                                                                                                                                                         
+                    clearable
                     placeholder="Select Project Status"
                     >
                   <el-option 
@@ -119,7 +123,7 @@
           <div class="row mt-3 pb-2">
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div>
-                <label class="font-sm mb-1">Categories</label>
+                <label class="font-sm mb-1">Process Areas</label>
                 <el-select 
                   v-model="C_taskTypeFilter"                    
                   class="w-100" 
@@ -127,7 +131,8 @@
                   value-key="id"                  
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
-                  placeholder="Select Category"
+                  clearable
+                  placeholder="Select Process Areas"
                   >
                 <el-option 
                   v-for="item in taskTypes"                                                     
@@ -148,6 +153,7 @@
                   filterable                 
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Search and select names"
                   >
                 <el-option 
@@ -161,7 +167,30 @@
               </div>
               </div>
               <div class="col-md-4" style="border-right:solid lightgray .8px">
-                <div>
+                <div >
+
+                 <label class="font-sm mb-0">Assignments</label>
+                 <el-select 
+                  v-model="C_myAssignmentsFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id" 
+                  filterable                 
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  clearable
+                  placeholder="Select Option"
+                  >
+                <el-option 
+                  v-for="item in getMyAssignmentsFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+
+                  <!-- Reference for Dropdown with multiple category labels (Do not delete) -->
                 <label class="font-sm mb-0">Flags</label>
                  <el-select 
                   v-model="C_advancedFilter"                   
@@ -171,36 +200,43 @@
                   filterable                 
                   data-cy="task_category"       
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Filter by Flags"
                   >
+                  <el-option-group
+                    v-for="group in getAdvancedFilterOptions"
+                    :key="group.label"
+                    :label="group.label">
                 <el-option 
-                  v-for="item in getAdvancedFilterOptions"                                                     
+                  v-for="item in group.options"                                                     
                   :value="item"   
                   :key="item.id"
-                  :label="item.name"                                                  
+                  :label="item.name"                                                                        
                   >
                 </el-option>
+                  </el-option-group>
               </el-select> 
               </div>
+         
+             </div>
+              <div class="col-md-4">
               <div>
                 <label class="font-sm mb-0">Action % Progress Range</label>
                 <div class="form-row">
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
                   </div>
-                  <div class="form-group col mb-0">
+                  <div class="form-group col pt-0 mb-0">
                     <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
                   </div>
                 </div>
                   <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
               </div> 
-             </div>
-              <div class="col-md-4">
                 <div>
               <label class="font-sm mb-0">Action Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
-            <div>
+            <div class="mt-1">
               <label class="font-sm mb-0">Updates Date Range</label>
               <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
@@ -215,7 +251,7 @@
       <el-tab-pane label="Tasks, Issues, Risks">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
-        <div class="row">
+        <div class="row pt-3 pb-2">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
@@ -227,6 +263,7 @@
                   value-key="id"                  
                   data-cy="task_stage"             
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Task Stage"
                   >
                 <el-option 
@@ -250,6 +287,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Stage"
                   >
                 <el-option 
@@ -271,6 +309,7 @@
                   value-key="id"                  
                   data-cy="issue_type"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Type"
                   >
                 <el-option 
@@ -292,6 +331,7 @@
                   value-key="id"                  
                   data-cy="issue_stage"            
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Issue Severity"
                   >
                 <el-option 
@@ -316,6 +356,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Stage"
                   >
                 <el-option 
@@ -334,6 +375,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Approach"
                   >
                 <el-option 
@@ -352,6 +394,7 @@
                   value-key="id"                  
                   data-cy="risk_stage"           
                   multiple                                                                                                                                                         
+                  clearable
                   placeholder="Select Risk Priority Level"
                   >
                 <el-option 
@@ -412,8 +455,7 @@
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
-               <i class="far fa-save text-light mr-1 clickable"></i>
-             
+               <i class="fas fa-save text-light clickable mr-1"></i>
                 Save to Favorites
               </button>            
               <button 
@@ -455,7 +497,7 @@ export default {
       isLoading: false,
       activeName: 'first',
       exporting: false,
-      showFilters: false,
+      // showFilters: false,
       datePicker: false,
       favoriteFilterData: {id: null, name: null, shared: false},
       favoriteFilterOptions: [],
@@ -479,8 +521,11 @@ export default {
     ...mapGetters([
       'getTaskIssueUserFilter',
       'getTaskIssueProgressStatusFilter',
+      'getMyAssignmentsFilter',
+      'getMyAssignmentsFilterOptions',
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
+      'getShowAdvancedFilter',
       'projectStatusFilter',
 
       'taskTypes',
@@ -516,6 +561,7 @@ export default {
       'activeProjectUsers',
       'statuses',
       'getTaskIssueOverdueOptions',
+      'getShowAdvancedFilter',
       'taskIssueOverdueFilter',
       'activeFacilityGroups',
       'unFilterFacilities',
@@ -529,7 +575,7 @@ export default {
       'getUnfilteredFacilities'
     ]),
     hasAdminAccess() {
-      return salut => this.$currentUser.role == "superadmin" || this.$permissions.admin[salut] || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
+      return salut =>  this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
     },
     C_favoriteFilterSelectModel: {
       get() {
@@ -594,7 +640,7 @@ export default {
         return this.progressFilter.taskIssue
       },
     },
-    C_advancedFilter: {
+    C_myAssignmentsFilter: {
       get() {
         // Note: This code will be useful if want active as default select and never want advanced filter blank
         // if (this.getAdvancedFilter.length == 0) {
@@ -604,13 +650,13 @@ export default {
         // }else{
         //   return this.getAdvancedFilter
         // }
-        return this.getAdvancedFilter
+        return this.getMyAssignmentsFilter
       },
       set(value) {
         if (!value) {
-          this.setAdvancedFilter([])
+          this.setMyAssignmentsFilter([])
         } else {
-          this.setAdvancedFilter(value)
+          this.setMyAssignmentsFilter(value)
         }
       }
     },
@@ -768,9 +814,29 @@ export default {
         return this.progressFilter.facility
       }
     },
+   C_advancedFilter: {
+      get() {
+        // Note: This code will be useful if want active as default select and never want advanced filter blank
+        // if (this.getAdvancedFilter.length == 0) {
+        //   // return [{ id: 'active', name: 'Active' }]
+        //   this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        //   return this.getAdvancedFilter
+        // }else{
+        //   return this.getAdvancedFilter
+        // }
+        return this.getAdvancedFilter
+      },
+      set(value) {
+        if (!value) {
+          this.setAdvancedFilter([])
+        } else {
+          this.setAdvancedFilter(value)
+        }
+      }
+    },
 
     filterBarStyle() {
-      if (this.showFilters) return {}
+      if (this.getShowAdvancedFilter) return {}
       return {
         transform: 'translateX(-685px)'
       }
@@ -792,6 +858,7 @@ export default {
       'setTaskIssueProgressFilter',
       'setAdvancedFilter',
       'updateMapFilters',
+      'setShowAdvancedFilter',
       'setTaskIssueOverdueFilter',
       'setProjectStatusFilter',
       'setTaskTypeFilter',
@@ -806,6 +873,7 @@ export default {
       'setMyActionsFilter',
       'setOnWatchFilter',
       'setMapFilters',
+      'setMyAssignmentsFilter',
       'setTaskUserFilter',
       'setIssueUserFilter',
       'setProgressFilters',
@@ -815,6 +883,7 @@ export default {
       'setRiskStageFilter',
       'setRiskApproachFilter',
       'setRiskPriorityLevelFilter',
+      'setShowAdvancedFilter',
       'setTasksPerPageFilter',
       'setRisksPerPageFilter',
       'setIssuesPerPageFilter',
@@ -835,11 +904,17 @@ export default {
         return str;
       }
     },
+    // log(e){
+    //   console.log("getAdvancedFilterOptions " + e)
+    // },
     handleOutsideClick() {
-      if (this.showFilters && !this.datePicker) this.showFilters = false
+      if (this.getShowAdvancedFilter && !this.datePicker) {
+         this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
+      }
+     
     },
     toggleFilters() {
-      this.showFilters = !this.showFilters
+      this.setShowAdvancedFilter(!this.getShowAdvancedFilter)
     },
     updateProjectQuery(selected, index) {
       window.location.pathname = "/projects/" + selected.id
@@ -1212,9 +1287,9 @@ export default {
       if(this.favoriteFilterData.id){
         this.setAdvancedFilter([])
       }else{
-        this.setAdvancedFilter([])
-        // this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        this.setAdvancedFilter([])        
       }
+      this.setMyAssignmentsFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1251,6 +1326,7 @@ export default {
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
+      this.setMyAssignmentsFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1536,7 +1612,7 @@ export default {
 <style scoped lang="scss">
 #filterbar {
   position: absolute;
-  z-index: 1000;
+  z-index: 1100;
   transition: .4s ease;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }

@@ -19,16 +19,17 @@ ActiveAdmin.register Lesson do
       :facility_project_id,
       :user_id, 
       :lesson_stage_id,
+      file_links: [],
       lesson_files: [],
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
       sub_risk_ids: [],
-      facility_project_attributes: [
-        :id,
-        :project_id,
-        :facility_id
-      ]
+      # facility_project: [
+      #   :id,
+      #   :project_id,
+      #   :facility_id
+      # ]
     ]
     permitted
   end
@@ -36,8 +37,8 @@ ActiveAdmin.register Lesson do
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
-    column :title
-    column "Category", :task_type, nil, sortable: 'task_types.name' do |lesson|
+    column 'Name', :title
+    column :task_type, nil, sortable: 'task_types.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.task_type.name}", "#{edit_admin_task_type_path(lesson.task_type)}" if lesson.task_type.present?
       else
@@ -56,7 +57,7 @@ ActiveAdmin.register Lesson do
       lesson.lesson_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          if file.blob.content_type == "text/plain"
+          if file.blob.content_type == "text/plain" && lesson.valid_url?(file.blob.filename.instance_variable_get("@filename").to_s)
             link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
           else
             link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
@@ -82,21 +83,21 @@ ActiveAdmin.register Lesson do
     end
     column "Added By", :users, sortable: 'users.first_name' do |lesson|
       if current_user.admin_write?
-        lesson.users
+        lesson.user
       else
-        "<span>#{lesson.users.map(&:full_name).join(', ')}</span>".html_safe
+        "<span>#{lesson.user.full_name}</span>".html_safe
       end
     end
     column 'Lesson Details' do |lesson|
       links = []
       if lesson.lesson_details.select{|ld| ld.detail_type == 'success'}.any?
-        links << link_to("Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'success'} ), class: "member_link edit_link")
+        links << link_to("Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_eq: 'success'} ), class: "member_link edit_link")
       end
       if lesson.lesson_details.select{|ld| ld.detail_type == 'failure'}.any?
-        links << link_to("Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'failure'} ), class: "member_link edit_link")
+        links << link_to("Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_eq: 'failure'} ), class: "member_link edit_link")
       end
       if lesson.lesson_details.select{|ld| ld.detail_type == 'best_practices'}.any?
-        links << link_to("Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'best_practices'} ), class: "member_link edit_link")
+        links << link_to("Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_eq: 'best_practices'} ), class: "member_link edit_link")
       end
       links.join(" ").html_safe  
     end
@@ -116,16 +117,32 @@ ActiveAdmin.register Lesson do
       tab 'Lesson Info' do
         f.inputs 'Basic Details' do
           f.input :id, input_html: { value: f.object.id }, as: :hidden
-          f.input :title, label: 'Title'
+          f.input :title, label: 'Name'
           f.input :description
-          div id: 'facility_projects' do
-            f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-              fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-              fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+          f.input :date, label: 'Date', as: :datepicker
+          facility_project_options = []
+          
+          Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+            projects.each do |project|
+              facility_project_options << [project.name, project.id, {disabled: true}]
+              project.facility_projects.each do |fp|
+                facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+              end
             end
           end
-          f.input :task_type, label: 'Category', include_blank: false
+          
+          f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
+
+          # div id: 'facility_projects' do
+          #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+          #     fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+          #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+          #   end
+          # end
+          f.input :task_type,  input_html: {class: "select2"}, include_blank: true
           f.input :lesson_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
+          f.input :user_id, label: 'User', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: "select2"}
+
         end
       end
 
@@ -141,6 +158,8 @@ ActiveAdmin.register Lesson do
         f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :lesson_files
+          div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
+          f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
         end
       end
 
@@ -160,11 +179,13 @@ ActiveAdmin.register Lesson do
     
     def create
       build_resource
+      handle_links
       handle_files
       super
     end
 
     def update
+      handle_links
       handle_files
       super
     end
@@ -172,6 +193,11 @@ ActiveAdmin.register Lesson do
     def handle_files
       resource.manipulate_files(params) if resource.present?
       params[:lesson].delete(:lesson_files)
+    end
+
+    def handle_links
+      resource.manipulate_links(params) if resource.present?
+      params[:lesson].delete(:file_links)
     end
 
     def scoped_collection
@@ -184,16 +210,28 @@ ActiveAdmin.register Lesson do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Lessons"
   end
 
-  filter :title
+  csv do
+    column(:title)
+    column(:task_type) { |lesson| lesson.task_type&.name }
+    column(:lesson_stage) { |lesson| lesson.lesson_stage&.name }
+    column(:description)
+    column(:lesson_files) { |lesson| lesson.lesson_files&.map { |f| f.blob.filename.instance_variable_get('@filename') } }
+    column('Program') { |lesson| lesson.project&.name }
+    column('Project') { |lesson| lesson.facility&.facility_name }
+    column(:users) { |lesson| lesson.users&.map(&:full_name) }
+    column(:lesson_details) { |lesson| lesson.lesson_details&.map(&:detail_type) }
+  end
+
+  filter :title, label: 'Name'
   filter :lesson_details_finding, as: :string, label: 'Finding'
   filter :lesson_details_recommendation, as: :string, label: 'Recommendation'
 
-  filter :task_type, label: 'Category'
+  filter :task_type
   filter :task_stage, label: 'Stage'
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true, id: '__users_filters'}
+  filter :user, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true, id: 'q_user_id'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   
 end

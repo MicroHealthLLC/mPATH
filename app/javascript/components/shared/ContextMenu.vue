@@ -12,10 +12,10 @@
       <hr />
       <el-menu-item
         @click="createDuplicate"
-        :disabled="!$permissions.tasks.write"
+        :disabled="!isAllowed('write', 'tasks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!$permissions.tasks.write">
+      <el-submenu index="1" :disabled="!isAllowed('write', 'tasks')">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -57,7 +57,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!$permissions.tasks.write">
+      <el-submenu index="2" :disabled="!isAllowed('write', 'tasks')">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
@@ -79,7 +79,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-menu-item @click="deleteTask" :disabled="!$permissions.tasks.delete"
+      <el-menu-item @click="deleteTask" :disabled="!isAllowed('delete', 'tasks')"
         >Delete</el-menu-item
       >
     </el-menu>
@@ -157,21 +157,33 @@ export default {
         return this.submitted;
       }
     },
-    isAllowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
-    },
   },
   methods: {
     ...mapActions(["taskDeleted"]),
     ...mapMutations(["updateTasksHash"]),
+    //TODO: change the method name of isAllowed
+    isAllowed(salut, module) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege[module].includes(s); 
+    },
     // closes context menu
     close() {
       this.show = false;
       this.left = 0;
       this.top = 0;
     },
+    // isAllowed(salut) {
+    //   var programId = this.$route.params.programId;
+    //   var projectId = this.$route.params.projectId
+    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let s = permissionHash[salut]
+    //   return  fPrivilege.tasks.includes(s); 
+    // },
     open(evt) {
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
@@ -194,7 +206,7 @@ export default {
       this.close();
     },
     moveTask(task, facilityProjectId) {
-      if (!this.isAllowed("write")) return;
+      if (!this.isAllowed("write", 'tasks')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;

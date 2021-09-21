@@ -70,7 +70,7 @@
       </GmapMap>
     </div>
     <!-- Right panel -->
-    <div class="col-5 right-panel">
+    <div class="col-5 right-panel px-2">
       <div
         v-if="
           currentFacility !== null &&
@@ -174,7 +174,7 @@ export default {
       } else if (url.includes("kanban")) {
         return "/tasks";
       } else {
-        return "";
+        return "/overview";
       }
     },
   },

@@ -2,28 +2,35 @@
   <div id="risks-index" class="my-4 ml-1" data-cy="risk_sheet_index">
   <div v-if="_isallowed('read')">
     <div class="d-flex align-item-center  w-70 float-right filters-wrapper">
-      <div class="ml-2 risk-search-bar w-100">
+      <div class="ml-3 risk-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
           type="search"          
-          placeholder="Search by Risk, Category, or Assigned User"
+          placeholder="Enter Search Criteria"
           aria-label="Search"            
           aria-describedby="search-addon"    
           v-model="risksQuery"     
-          data-cy="search_issues"
+          data-cy="search_risks"
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>
         </div>
+        <div class="ml-2">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h p-2"></i>      
+        </span>    
+         </div>
       <div class="mx-1 w-75">
-        <label class="font-sm my-0">Category</label>
+        <label class="font-sm my-0">Process Area</label>
         <el-select
           v-model="C_taskTypeFilter"
           class="w-100"
           track-by="name"
           value-key="id"
           multiple
-          placeholder="Select Category"
+          clearable
+          placeholder="Select Process Area"
           >
         <el-option
           v-for="item in taskTypes"
@@ -43,7 +50,7 @@
           MORE RISK FILTERS
           </template>
           <div class="mr-1 w-100 d-unset p-2">
-         <label class="mb-0">Flags</label>
+         <!-- <label class="mb-0">Flags</label>
           <el-select
             v-model="C_sheetsRiskFilter"
             class="w-100 mb-1"
@@ -59,7 +66,7 @@
             :label="item.name"
             >
           </el-option>
-          </el-select>
+          </el-select> -->
            <label class="mb-0">Risk Approach</label>
             <el-select
                 v-model="C_riskApproachFilter"
@@ -67,6 +74,7 @@
                 track-by="name"
                 value-key="id"
                 multiple
+                clearable
                 placeholder="Filter by Risk Approach"
                 >
                 <el-option
@@ -84,6 +92,7 @@
                 track-by="name"
                 value-key="id"
                 multiple
+                clearable
                 placeholder="Filter by Risk Priority Levels"
                 >
                 <el-option
@@ -102,14 +111,119 @@
       </div>
     </div>
     <div class="wrapper mt-2 p-3">
+    <div class="d-inline ">
+    <span class="text-center">  
+    <span class="d-inline">  
     <button v-if="_isallowed('write')"
-        class="btn btn-md btn-primary mr-3 addRiskBtn"
+        class="btn btn-md btn-primary mr-5 float-left addRiskBtn"
       @click.prevent="addNewRisk"
       data-cy="add_risk"
     >
     <font-awesome-icon icon="plus-circle" />
       Add Risk
     </button>
+    <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>     
+                
+                <span class="statesCol d-inline-block p-1 mr-2">
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                   <span class="d-block">
+                    <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">COMPLETE</span>
+                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                  </div>
+                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideInprogress == true ? 'light':'']" @click.prevent="toggleInprogress">                              
+                   <span class="d-block">
+                    <i class="far fa-tasks" :class="[getHideInprogress == true ? 'light':'text-primary']"></i>
+                    </span>      
+                  <span class="smallerFont">IN PROGRESS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.inProgress.count }}</h6>
+                  </div>
+                   <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHidePlanned == true ? 'light':'']" @click.prevent="togglePlanned">                              
+                   <span class="d-block">
+                    <i class="fas fa-calendar-check"  :class="[getHidePlanned == true ? 'light':'text-info']"></i>
+                    </span>      
+                  <span class="smallerFont">PLANNED</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.planned.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOverdue == true ? 'light':'']" @click.prevent="toggleOverdue" >                              
+                   <span class="d-block">
+                    <i class="fas fa-calendar" :class="[getHideOverdue == true ? 'light':'text-danger']"></i>
+                    </span>      
+                  <span class="smallerFont">OVERDUE</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.overdue.count }}</h6>
+                  </div>
+                    <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOngoing == true ? 'light':'']" @click.prevent="toggleOngoing" >                              
+                   <span class="d-block">
+                    <i class="fas fa-retweet" :class="[getHideOngoing == true ? 'light':'text-success']"></i>
+                    </span>      
+                  <span class="smallerFont">ONGOING</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.ongoing.count }}
+                   <span
+                       v-tooltip="`Ongoing: Closed`"
+                       v-if="variation.ongoingClosed.count > 0"
+                       style="color:lightgray"
+                       >({{variation.ongoingClosed.count}})
+                    </span>
+                    </h6>
+                  </div>
+  
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideOnhold == true ? 'light':'']"  @click.prevent="toggleOnhold"  >                              
+                   <span class="d-block">
+                    <i class="fas fa-pause-circle" :class="[getHideOnhold == true ? 'light':'text-primary']"></i>
+                    </span>      
+                  <span class="smallerFont">ON HOLD</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.onHold.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                   <span class="d-block">
+                    <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
+                    </span>      
+                  <span class="smallerFont">DRAFT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                  </div>
+                </span>
+  
+            <span class="pl-4 pr-2 font-sm hideLabels">FOCUS</span>
+            <span class="tagCol d-inline-block p-1">
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideWatched == true ? '':'light']" @click.prevent="toggleWatchedTag"  >                              
+                   <span class="d-block">
+                    <i class="fas fa-eye"></i>
+                    </span>      
+                  <span class="smallerFont">ON WATCH</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.watched.count }}</h6>
+                  </div>
+  
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                   <span class="d-block">
+                    <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
+                    </span>      
+                  <span class="smallerFont">IMPORTANT</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                  </div>
+                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                   <span class="d-block">
+                    <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
+                    </span>      
+                  <span class="smallerFont">BRIEFINGS</span>
+                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                  </div>
+              </span>            
+     </span> 
+     </span>
+     
+    </div>
+    <div class="d-inline-block ml-3">
+        <!-- <v-app id="app"> -->
+        <v-checkbox     
+      v-model="C_showCountToggle"     
+      class="d-inline-block"  
+      @click.prevent="showCounts"   
+      :label="`Show Counts`"
+    ></v-checkbox>
+        <!-- </v-app> -->
+
+    </div>
     <div class="float-right">
       <button
         v-tooltip="`Export to PDF`"
@@ -135,10 +249,10 @@
           </span>
         </button>
       <button class="ml-2 btn btn-md btn-info total-table-btns" data-cy="risk_total">
-        Total: {{filteredRisks.length}}
+        Total: {{filteredRisks.filtered.risks.length}}
       </button>
     </div>
-    <div v-if="filteredRisks.length > 0">
+    <div v-if="filteredRisks.filtered.risks.length > 0">
       <div style="margin-bottom:50px" data-cy="risks_table">
         <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
           <colgroup>
@@ -149,8 +263,8 @@
             <col class="eight" />
             <col class="twelve" />
             <col class="eight" />
-            <col class="fort" />         
-            <col class="twenty" />
+            <col class="ten" />         
+            <col class="twentyFour" />
           </colgroup>
           <tr class="thead" style="background-color:#ededed;">
             <th class="sort-th" @click="sort('text')">Risk
@@ -326,7 +440,7 @@
             </div>
             <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
               <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-              <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / this.C_risksPerPage.value) }} </button>
+              <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.filtered.risks.length / this.C_risksPerPage.value) }} </button>
               <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
           </div>
       </div>
@@ -358,7 +472,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(risk, index) in filteredRisks" :key="index">
+        <tr  v-for="(risk, index) in filteredRisks.filtered.risks" :key="index">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
@@ -403,7 +517,8 @@
             <span v-if="risk.draft == true">Draft</span>   
             <span v-if="
                   risk.watched == false &&
-                  risk.ongoing == false && 
+                  risk.ongoing == false &&
+                  risk.important == false &&  
                   risk.isOverdue == false &&
                   risk.onHold == false &&  
                   risk.draft == false && 
@@ -452,7 +567,6 @@
         now: new Date().toISOString(),
         risksQuery: '',
         comma: 'test',
-        currentPage:1,
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
@@ -468,6 +582,7 @@
         'setRiskPriorityLevelFilter',
         'setAdvancedFilter',
         'setRisksPerPageFilter',
+        'setCurrentRiskPage',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -475,10 +590,34 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setRiskApproachFilter',
+        'setShowAdvancedFilter',
         'setRiskForManager',
         'SET_RISK_FORM_OPEN',
-        'SET_SELECTED_RISK'
+        'SET_SELECTED_RISK',
+        'setShowCount',
+        // 7 States
+        'setHideComplete',
+        'setHideInprogress',
+        'setHidePlanned',
+        'setHideOverdue',
+        'setHideOngoing',
+        'setHideOnhold',
+         'setHideDraft',
+        // 3 Tags
+        'setHideWatched',
+        'setHideImportant',
+        'setHideBriefed',
       ]),
+
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return  fPrivilege.risks.includes(s); 
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -490,7 +629,7 @@
       //   console.log(e)
       // },
       nextPage:function() {
-        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
+        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.filtered.risks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -519,6 +658,43 @@
       toggleWatched(risk) {
         this.$emit('toggle-watch-risk', risk)
       },
+      toggleWatchedTag(){
+        this.setHideWatched(!this.getHideWatched)    
+      },
+      toggleImportant(){
+        this.setHideImportant(!this.getHideImportant)    
+      },
+      toggleBriefed(){
+         this.setHideBriefed(!this.getHideBriefed)    
+      },
+      toggleComplete(){
+        this.setHideComplete(!this.getHideComplete)    
+      },
+      toggleDraft(){
+        this.setHideDraft(!this.getHideDraft)    
+      },
+      togglePlanned(){
+         this.setHidePlanned(!this.getHidePlanned)    
+      },
+      toggleInprogress(){
+        this.setHideInprogress(!this.getHideInprogress)    
+      },
+      toggleOngoing(){
+         this.setHideOngoing(!this.getHideOngoing)    
+      },
+      toggleOnhold(){
+         this.setHideOnhold(!this.getHideOnhold)    
+      },
+      toggleOverdue(){
+      //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
+        this.setHideOverdue(!this.getHideOverdue)    
+      },
+      showCounts(){
+        this.setShowCount(!this.getShowCount)       
+      },
+      toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
+      },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -529,16 +705,21 @@
       exportToExcel(table, name){
         if (!table.nodeType) table = this.$refs.table
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
-        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+        var link = document.createElement('a');
+        link.setAttribute('href', this.uri + this.base64(this.format(this.template, ctx)));
+        link.setAttribute('download', 'Risk Register.xls');
+        link.click();
       }
     },
     computed: {
       ...mapGetters([
         'getRiskPriorityLevelFilter',
+        'getShowAdvancedFilter',
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',
-        'getAdvancedFilterOptions',
+        'currentRiskPage',
+        // 'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
@@ -559,10 +740,28 @@
         'riskUserFilter',
         'taskTypes',
         'viewPermit',
-        'getToggleRACI'
+        'getToggleRACI',
+         'getShowCount',
+           // 7 States
+        'getHideComplete',
+        'getHideInprogress',
+        'getHidePlanned',
+        'getHideOngoing',
+        'getHideOnhold',
+        'getHideDraft',
+        'getHideOverdue',
+        // 3 Tags
+        'getHideWatched',
+        'getHideImportant',
+        'getHideBriefed',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
+     currentPage:{
+       get() {
+        return this.currentRiskPage
+      },
+      set(value) {
+        this.setCurrentRiskPage(value);
+       }
       },
       filteredRisks() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
@@ -602,16 +801,161 @@
           valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
-     if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {           
-        return risks
-        
-       } else  {
-        
-        risks  = risks.filter(t => t.draft == false && t.onHold == false)
-        return risks
+
+      return {
+       unfiltered: {
+            risks
+            },
+       filtered: {
+           risks: risks.filter(t => {
+        if (this.getHideOverdue == true) {          
+         return t.isOverdue == false
+       } else return true
+
+      }).filter(t => {
+      if (this.getHideComplete == true) { 
+        return !t.completed
+      } else return true
+
+      }).filter(t => {
+      if (this.getHidePlanned == true) { 
+        return t.planned == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideOnhold == true) { 
+        return t.onHold == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideInprogress == true) { 
+        return t.inProgress == false
+      } else return true
+     
+      }).filter(t => {
+       if (this.getHideDraft == true){
+         return t.draft == false
+       } else return true   
+
+
+       }).filter(t => {
+       if (this.getHideOngoing == true) {
+          return t.ongoing == false
+       } else return true       
+
+
+        }).filter(t => {
+         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+          return t.reportable
+        }
+        if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+           return t.reportable + t.watched
+
+        } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+           return t.reportable + t.watched + t.important
+        } else return true
+
+      }).filter(t => {
+        // This and last 2 filters are for Filtered Tags
+         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
+           return t.watched
+        } if (this.getHideWatched && !this.getHideBriefed && this.getHideImportant) {
+        return t.watched + t.important    
+        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
+           return  t.watched + t.reportable
+        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
+           return  t.watched + t.reportable + t.important
+        } else return true          
+       
+      }).filter(t => {
+         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
+          return t.important
+        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
+          return t.important + t.reportable
+       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
+          return t.important + t.reportable + t.watched
+        } else return true         
+     }),
+      }
+    }  
+  },
+  variation() {
+    let planned = _.filter(
+      this.filteredRisks.unfiltered.risks,
+        (t) => t && t.planned == true
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
       
-       }   
-      },
+     let drafts = _.filter(
+        this.filteredRisks.unfiltered.risks,
+        (t) => t && t.draft 
+      );  
+      let important = _.filter(
+       this.filteredRisks.unfiltered.risks,
+        (t) => t && t.important
+      ); 
+      let briefings = _.filter(
+         this.filteredRisks.unfiltered.risks,
+        (t) => t && t.reportable 
+      );
+      let watched = _.filter(
+       this.filteredRisks.unfiltered.risks,
+        (t) => t && t.watched 
+      );
+              
+      let completed = _.filter(
+        this.filteredRisks.unfiltered.risks,
+        (t) => t && t.completed
+      );
+    let inProgress = _.filter(
+        this.filteredRisks.unfiltered.risks,
+        (t) => t && t.inProgress 
+      );
+     let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
+     let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
+     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.closed == true );
+     let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
+
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        watched: {
+          count: watched.length,          
+        },
+        onHold: {
+          count: onHold.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+         ongoing: {
+          count: ongoing.length
+        },   
+         ongoingClosed: {
+          count: ongoingClosed.length
+        },    
+      };
+    },
       C_riskPriorityLevelFilter: {
         get() {
           return this.getRiskPriorityLevelFilter
@@ -619,6 +963,15 @@
         set(value) {
           this.setRiskPriorityLevelFilter(value)
         }
+      },
+      C_showCountToggle: {                  
+        get() {
+         return this.getShowCount                
+        },
+        set(value) {
+          this.setShowCount(value) ||  this.setShowCount(!this.getShowCount)
+        }
+        
       },
       C_sheetsRiskFilter: {
         get() {
@@ -681,12 +1034,12 @@
         }
      },
       sortedRisks:function() {
-          return this.filteredRisks.sort((a,b) => {
+          return this.filteredRisks.filtered.risks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          return 0;
+          if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;    
            }).filter((row, index) => {
           let start = (this.currentPage-1)*this.C_risksPerPage.value;
           let end = this.currentPage*this.C_risksPerPage.value;
@@ -794,6 +1147,9 @@
   .twenty {
     width: 20%;
   }
+  .twentyFour{
+    width: 24%;
+  }
   .floatRight {
     text-align: right;
     right: 0px;
@@ -843,9 +1199,51 @@
   float: right;
   margin-top: -85px;
 }
+
+.tagCol {
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: .5px solid lightgray;
+}
+  
+i, .icons {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.statesCol {
+  border-radius: 4px; 
+  border: .5px solid lightgray;
+
+}
+.smallerFont {
+  font-size: 10px;
+}
+/deep/.v-input__slot {
+  display: inline;
+  .v-label {
+   font-family: 'FuturaPTBook';
+  //  font-weight: 600;
+   color: #007bff !important;
+  }
+}
+
+.hideLabels {
+  font-weight: 600;
+}
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
     width: 65% !important;
   } 
+}
+
+  @media screen and (max-width: 1550px) {
+  .hideLabels {
+    display: none !important;
+  }
 }
 </style>

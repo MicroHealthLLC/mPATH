@@ -15,21 +15,139 @@ function checkRiskProbabilityImpactNumber(element){
   }
 }
 
+function addFacilityPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  let program_ids = $.map( $(".project_select"), function(e, i){
+    return $(e).val()
+  } )
+  $.ajax({
+    url: url,
+    data: {program_ids: program_ids},
+    success: function(res, data){
+      $("#facility_privilege_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function addProjectPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  $.ajax({
+    url: url,
+    success: function(res, data){
+      if(!res.projects_avaialble){
+        alert("All program privileges are set.")
+        return
+      }
+      $("#project_privileges_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function programSelectChange(element){
+  var project_id = $(element).val()
+  if(project_id == "select_project") return
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  let paramsIndex = $(element).attr("data-index")
+  $.ajax({
+    url: '/facility_privileges/facility_privileges_partial',
+    data: {project_id: project_id, user_id: user_id, index: paramsIndex},
+    success: function(res, data){
+      $("#"+div_id).html(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function initializeProjectPrivilegeSelect2(){
+
+  $.map($(".facility_privileges_project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
+
+    $(element).select2({
+      placeholder: "Search and select Project",
+      allowClear: true,
+      tags: true
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
+}
+
+function initializeProgramPrivilegeSelect2(){
+  $.map($(".project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
+
+    $(element).select2({
+      placeholder: "Search and select Programs",
+      allowClear: true,
+      tags: true
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
+}
+
 jQuery(function($) {
+
+  initializeProjectPrivilegeSelect2()
+  initializeProgramPrivilegeSelect2()
 
   $("#q_lesson_id").select2({
     placeholder: "Search and select Lesson",
     allowClear: true
   });
 
-  $("#q_user_id").select2({
+  $("#q_user_id, #q_checklists_user_id, #q_user_ids").select2({
     placeholder: "Search and select User",
     allowClear: true
   });
-  
+
+  $("#q_detail_type").select2({
+    placeholder: "Search and select Detail Type",
+    allowClear: true
+  });
+
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
-    allowClear: true
+    allowClear: false
+  });
+
+  $(".program_select").select2({
+    placeholder: "Search and select Program",
+    allowClear: false
   });
 
   // Add placeholder to for organization select
@@ -60,13 +178,13 @@ jQuery(function($) {
     this.parentElement.classList.add(`status_${$(this).text()}`);
   });
 
-  //risk probability level labels 
+  //risk probability level labels
   $('#risk_probability_text').append(
-    '<div class="risk_prob_level"><span id="riskText">Probability Levels:</span> <div class="risk_probability">1 - Rare</div><div class="risk_probability bg-danger">2 - Unlikely</div><div class="risk_probability">3 - Possible</div> <div class="risk_probability">4 - Likely</div><div class="risk_probability">5 - Almost Certain</div></div');    
+    '<div class="risk_prob_level"><span id="riskText">Probability Levels:</span> <div class="risk_probability">1 - Rare</div><div class="risk_probability bg-danger">2 - Unlikely</div><div class="risk_probability">3 - Possible</div> <div class="risk_probability">4 - Likely</div><div class="risk_probability">5 - Almost Certain</div></div');
 
   $('#risk_impact_text').append(
       '<div class="risk_prob_level"><span id="riskText">Impact Levels:</span> <div class="risk_probability">1 - Negligible</div><div class="risk_probability">2 - Minor</div><div class="risk_probability">3 - Moderate</div> <div class="risk_probability">4 - Major</div><div class="risk_probability">5 - Catastrophic</div></div')
- 
+
       // direct file-upload for tasks/issues
   $.directFileUpload = (file) => {
     const url = $("#direct-upload-url").data('directUploadUrl');
@@ -506,7 +624,7 @@ jQuery(function($) {
 
   // user role previliges
   //if ($("#user-role_privilege-tab").is(":visible"))
-  if(true)
+  if($("#user-role_privilege-tab").length > 0)
   {
     let role_privilege = new Vue({
       el: "#user-role_privilege-tab",
@@ -1096,7 +1214,7 @@ jQuery(function($) {
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
         <fieldset v-if="!loading" class="inputs">
           <legend><span>Privileges</span></legend>
-          <ol class="choices-group">           
+          <ol class="choices-group">
             <li class="choice d-flex">
             <label>Sheet</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
@@ -1108,7 +1226,7 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
-            </li>               
+            </li>
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
@@ -1415,7 +1533,7 @@ jQuery(function($) {
                 for(var i = 0; i <= task_types.length; i++){
                   $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
                 }
-                
+
                 this.categories = data
                 this.loading = false;
               });
@@ -1427,7 +1545,7 @@ jQuery(function($) {
                 for(var i = 0; i <= task_stages.length; i++){
                   $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
                 }
-                
+
                 this.stages = data
                 this.loading = false;
               });
@@ -1991,6 +2109,56 @@ jQuery(function($) {
     });
 
     // task/issues files handling
+    if($('#uploaded-task-links').length > 0) {
+      let upload_type = $('form').attr('id').split('_').pop();
+      $(`#${upload_type}_file_links`).after("<div id='vue-uploaded-task-links'></div>");
+      $(`#${upload_type}_file_links`).hide()
+      $.Vue_uploadedTaskLinks = new Vue({
+        el: "#vue-uploaded-task-links",
+        data() {
+          return {
+            links: []
+          }
+        },
+        mounted() {
+          let links_data = $('#uploaded-task-links').data('links').length ? $('#uploaded-task-links').data('links').replace(/=>/gi, ':') : "[]";
+          $(`#${upload_type}_file_links`).val('');
+          for (let link of JSON.parse(links_data)) this.addLink(link);
+        },
+        methods: {
+          addLink(link) {
+            this.links.push(link);
+          },
+          destroyLink(link, index) {
+            Vue.set(this.links, index, {...link, _destroy: true})
+          },
+          appendLink() {
+            link_value = this.$refs.linksInput.value
+            if(link_value != '') {
+              this.links.push({name: link_value, uri: link_value, _new: true});
+              this.$refs.linksInput.value = '';
+            }
+          }
+        },
+        watch: {
+          links: {
+            handler(value) {
+              $(`#${upload_type}_file_links`).val(JSON.stringify(this.links));
+            }, deep: true
+          }
+        },
+        template: `<div>
+          <input id='vue_task_task_links' type='text' ref='linksInput'/>
+          <button class='add' @click.prevent="appendLink()" style="display:none;">Add</button>
+          <ul class='ml-20 mt-10'>
+            <li v-for="(link, i) in links" :key="link.id+'_'+i" class='p-5' v-if="!link._destroy">
+              <a :href='link.uri' target='_blank'>{{link.name}}</a>
+              <span class='close-icon' @click.prevent="destroyLink(link, i)"></span>
+            </li>
+          </ul>
+        </div>`
+      });
+    }
 
     //if ($('#uploaded-task-files').is(':visible'))
     if($('#uploaded-task-files').length > 0)
@@ -2086,6 +2254,7 @@ jQuery(function($) {
     }
 
     // user filters
+    // NOTE: this code is unused. Remove if no error found
     if ($("#__users_filters").is(":visible"))
     {
       let select = $("#__users_filters");
@@ -2170,6 +2339,7 @@ jQuery(function($) {
     }
 
     // checklists_user filters
+    // NOTE: this code is unused. Remove if no error found
     if ($("#__checklist_users_filters").is(":visible"))
     {
       let select = $("#__checklist_users_filters");
@@ -2178,7 +2348,7 @@ jQuery(function($) {
       parent.append("<div id='__checklist_users_filters_multiselect'></div>");
       let email_select = $("#__users_filter_emails").siblings()[1];
       email_select.id = "__users_filter_emails_select";
-      
+
       Vue.component('multiselect', VueMultiselect.Multiselect);
       $.Vue_users_filter_select = new Vue({
         el: "#__checklist_users_filters_multiselect",

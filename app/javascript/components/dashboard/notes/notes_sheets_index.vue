@@ -20,7 +20,7 @@
             aria-label="Search"            
             aria-describedby="search-addon"    
              v-model="notesQuery"  
-            data-cy="search_tasks"
+            data-cy="search_notes"
         >
           <el-button slot="prepend" icon="el-icon-search"></el-button>
         </el-input>
@@ -102,6 +102,15 @@
         'setMyActionsFilter',
         'updateFacilityHash'
       ]),
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return  fPrivilege.notes.includes(s); 
+      },
      addNewNote() {
         this.setTaskForManager({key: 'note', value: {}})
         // Route to new task form page
@@ -143,9 +152,6 @@
           if (resp) valid = valid && resp.test(n.body)
           return valid
         })
-      },
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.notes[salut]
       },
       C_myNotes: {
         get() {

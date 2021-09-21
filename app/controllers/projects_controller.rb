@@ -1,5 +1,6 @@
 class ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
+  layout :resolve_layout
 
   def vue_js_route
     view = "map_view"
@@ -13,7 +14,7 @@ class ProjectsController < AuthenticatedController
       view = "kanban_view"
     elsif ["gantt_chart", "gantt"].include?(params[:tab])
       view = "gantt_view"
-    elsif params[:tab] == "member_list"
+    elsif params[:tab] == "members"
       view = "members"
     elsif params[:tab] == "lessons" || params[:lesson_id]
       view = "lessons"
@@ -22,13 +23,17 @@ class ProjectsController < AuthenticatedController
   ##  elsif params[:tab] == "facility_manager"
   ##    view = "facility_manager_view" 
     else
-      raise CanCan::AccessDenied
-    end
-
-    if !current_user.allowed?(view)
-      # raise CanCan::AccessDenied
-      redirect_to "/programs/#{params[:program_id]}/sheet"
+      redirect_to current_user.allowed_redirect_url(params[:program_id])
       return
+    end
+    if current_user.authorized_programs.pluck(:id).include?(params[:program_id].to_i)
+      if !current_user.allowed?(view)
+        # raise CanCan::AccessDenied
+        redirect_to current_user.allowed_redirect_url(params[:program_id])
+        return
+      end
+    else
+      raise CanCan::AccessDenied
     end
     
     respond_to do |format|
@@ -39,26 +44,23 @@ class ProjectsController < AuthenticatedController
 
   def index
     respond_to do |format|
-      format.json {render json: {projects: current_user.projects.includes(:project_type).active.as_json}}
+      format.json {render json: {projects: current_user.authorized_programs.includes(:project_type).as_json}}
       format.html {}
     end
   end
 
   def show
-    @project = current_user.projects.active.find_by(id: params[:id])
+    @project = current_user.authorized_programs.find_by(id: params[:id])
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
         
-        format.json {render json: {project: @project.build_json_response}, status: 200}
+        format.json {render json: {project: @project.build_json_response(current_user)}, status: 200}
         # format.json {render json: {project: @project.as_complete_json}, status: 200}
         format.html {render action: :index}
       end
      else
-      respond_to do |format|
-       format.json {render json: {}, status: :not_found}
-       format.html {render 'layouts/_not_found', locals: {message: "Project with id #{params[:id]} doesn't exists"}}
-      end
+      raise ActiveRecord::RecordNotFound.new("Record Not found!")
     end
   end
 
@@ -161,10 +163,18 @@ class ProjectsController < AuthenticatedController
         issue_types: [],
         issue_severities: []
       }
-    @project = current_user.projects.includes(projects_include_hash).active.find_by(id: params[:id])
+    @project = current_user.authorized_programs.includes(projects_include_hash).find_by(id: params[:id])
   end
 
   def check_permit(view)
     return unless current_user.allowed?(view)
   end
+
+  def resolve_layout
+    case action_name
+    when "index" then "portfolio_viewer"
+    else "application"
+    end
+  end
+
 end

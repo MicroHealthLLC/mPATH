@@ -12,7 +12,7 @@
       <hr />
       <el-menu-item
         @click="deleteSelectedLesson"
-        :disabled="!isAllowed('delete')"
+        :disabled="!_isallowed('delete')"
         >Delete</el-menu-item
       >
     </el-menu>
@@ -98,11 +98,13 @@ export default {
           });
         });
     },
-    isAllowed(privilege) {
-      return (
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.lessons[privilege]
-      );
+     _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return  fPrivilege.lessons.includes(s);      
     },
   },
 };

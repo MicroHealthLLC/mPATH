@@ -1,25 +1,31 @@
 describe('Admin Panel Risk', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openRiskAP()
   })
-
+  beforeEach(() => {
+    cy.get('#tabs').within(() => {
+      cy.get('#risks').contains('Risks').click()
+    })
+    cy.preserveAllCookiesOnce()
+  })
   it('Click on Risks on tabs open Risk information page', function() {
     cy.get('#page_title').contains('Risks').should('be.visible')
     cy.get('#index_table_risks').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Open and close new Risk form', function() {
     cy.get('.action_item > a').contains('New Risk').click()
     cy.get('#page_title').contains('New Risk').should('be.visible')
     cy.get('.cancel > a').contains('Cancel').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
+  // NOTE: already commented
   // it('Create new Risk', function() {
   //   var dayjs = require('dayjs')
   //   const start_date = dayjs().add(1, 'day').format('YYYY-MM-DD')
@@ -35,18 +41,8 @@ describe('Admin Panel Risk', function() {
   //   cy.get('#risk_submit_action').contains('Create Risk').click()
   //   cy.get('.flashes').contains('Risk was successfully created.')
   //   cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
-  //   cy.get('#logout').click()
+  //   // cy.get('#logout').click()
   // })
-
-  it('Delete Risk', function() {
-    cy.get('#index_table_risks').should('be.visible')
-    cy.get('#index_table_risks > tbody > tr').first().within(() => {
-      cy.get('.col-actions').contains('Delete').click()
-    })
-    cy.get('.flashes').contains('Risk was successfully destroyed.').should('be.visible')
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
-    cy.get('#logout').click()
-  })
 
   it('Search Risk contains name', function() {
     cy.get('#q_text').type('Test Risk 1').should('have.value', 'Test Risk 1')
@@ -58,7 +54,7 @@ describe('Admin Panel Risk', function() {
     cy.get('.current_filter').contains('Name contains Test Risk 1').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk identified date', function() {
@@ -71,7 +67,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#index_table_risks > tbody > tr').first().contains(start_date_from).should('be.visible')
     cy.get('.sortable').contains('Identified Date').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(start_date_to).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk Due Date', function() {
@@ -84,7 +80,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#index_table_risks > tbody > tr').first().contains(due_date_from).should('be.visible')
     cy.get('.sortable').contains('Due Date').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(due_date_to).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Progress', function() {
@@ -94,39 +90,39 @@ describe('Admin Panel Risk', function() {
     cy.get('#index_table_risks > tbody > tr').first().contains(10).should('be.visible')
     cy.get('.sortable').contains('Progress').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(100).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Probability', function() {
     cy.get('.sortable').contains('Probability').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(1).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Impact Level', function() {
     cy.get('.sortable').contains('Impact Level').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(1).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Priority Level', function() {
     cy.get('.sortable').contains('Priority Level').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(1).should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Risk Approach', function() {
     cy.get('.sortable').contains('Risk Approach').click()
     cy.get('.sortable').last().scrollIntoView()
-    cy.get('#index_table_risks > tbody > tr').first().contains('Avoid').should('be.visible')
-    cy.get('#logout').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains('avoid').should('be.visible')
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Project', function() {
     cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Project').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Sort Risk according to Project', function() {
@@ -139,7 +135,7 @@ describe('Admin Panel Risk', function() {
     cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk contains name', function() {
@@ -152,7 +148,7 @@ describe('Admin Panel Risk', function() {
     cy.get('.current_filter').contains('Name contains Test Risk 1').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Risk Stage', function() {
@@ -166,7 +162,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_risk_stage_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk contains risk description', function() {
@@ -179,7 +175,7 @@ describe('Admin Panel Risk', function() {
     cy.get('.current_filter').contains('Risk description contains Test Risk 1 description').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk contains risk impact description', function() {
@@ -192,7 +188,7 @@ describe('Admin Panel Risk', function() {
     cy.get('.current_filter').contains('Impact description contains Test Risk 1 impact description').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Risk probability', function() {
@@ -200,7 +196,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_probability').type(1)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Risk Impact level', function() {
@@ -208,7 +204,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_impact_level').type(1)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Approach', function() {
@@ -232,7 +228,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_risk_approach').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk contains risk approach description', function() {
@@ -245,7 +241,7 @@ describe('Admin Panel Risk', function() {
     cy.get('.current_filter').contains('Risk approach description contains Test Risk 1 approach description').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Task Type', function() {
@@ -256,7 +252,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_task_type_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk start date from', function() {
@@ -265,7 +261,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk start date to', function() {
@@ -274,7 +270,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk Due Date from', function() {
@@ -283,7 +279,7 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_due_date_gteq').type(`${due_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 6)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk Due Date to', function() {
@@ -292,54 +288,80 @@ describe('Admin Panel Risk', function() {
     cy.get('#q_due_date_lteq').type(`${due_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Project', function() {
     cy.get('#index_table_risks').should('be.visible')
-    cy.get('#q_facility_project_project_id').select('Test Project')
+    cy.get("#select2-q_facility_project_project_id-container").click().type("Test Facility 1")
+    cy.get("#select2-q_facility_project_project_id-results > li").first().click()
+    // cy.get('#q_facility_project_project_id').select('Test Project')
     cy.get('[type=submit]').first().contains('Filter').click()
+
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#q_facility_project_project_id').select('Any')
-    cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
-  it('Search Task contains Facility', function() {
-    cy.get('#q_facility_project_facility_facility_name').type('Test Facility 1').should('have.value', 'Test Facility 1')
+  it('Search Risk contains Facility', function() {
+
+    cy.get("#select2-q_facility_project_facility_id-container").click().type("Test Facility 1")
+    cy.get("#select2-q_facility_project_facility_id-results > li").first().click()
+
+    // cy.get('#q_facility_project_facility_id').select('Test Facility 1')
+    // cy.get('#q_facility_project_facility_facility_name').type('Test Facility 1').should('have.value', 'Test Facility 1')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 2').should('have.value', 'Test Facility 2')
+    cy.get("#select2-q_facility_project_facility_id-container").click().type("Test Facility 2")
+    cy.get("#select2-q_facility_project_facility_id-results > li").first().click()
+    // cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 2').should('have.value', 'Test Facility 2')
+    // cy.get('#q_facility_project_facility_id').select('Test Facility 2')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 3').should('have.value', 'Test Facility 3')
+    cy.get("#select2-q_facility_project_facility_id-container").click().type("Test Facility 3")
+    cy.get("#select2-q_facility_project_facility_id-results > li").first().click()
+    // cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 3').should('have.value', 'Test Facility 3')
+    // cy.get('#q_facility_project_facility_id').select('Test Facility 3')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 4').should('have.value', 'Test Facility 4')
+    cy.get("#select2-q_facility_project_facility_id-container").click().type("Test Facility 4")
+    cy.get("#select2-q_facility_project_facility_id-results > li").first().click()
+    // cy.get('#q_facility_project_facility_facility_name').clear().type('Test Facility 4').should('have.value', 'Test Facility 4')
+    // cy.get('#q_facility_project_facility_id').select('Test Facility 4')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
 
   it('Search Risk by Owned by', function() {
     cy.get('#index_table_risks').should('be.visible')
-    cy.get('#q_user_id').select('Test1 Admin')
+
+    // cy.get('#q_user_id').select('Test1 Admin')
+    cy.get("[placeholder='Select owned by user']").click().type('Test1 Admin')
+    cy.get("#select2-q_user_id-results > li").first().click()
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 4)
 
-    cy.get('#q_user_id').select('Test2 Client')
-    cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 4)
+    // cy.get(".clear_filters_btn").click()
+    // cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
+    // cy.get('#logout').click()
+  })
 
-    cy.get('#q_user_id').select('Any')
+  it('Search Risk by checklist user', function() {
+    cy.get('#index_table_risks').should('be.visible')
+
+    // cy.get('#q_user_id').select('Test2 Client')
+    cy.get("[placeholder='Select Checklist user']").click().type('Test2 Client')
+    cy.get("#select2-q_checklists_user_id-results > li").first().click()
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#logout').click()
+
+    // cy.get(".clear_filters_btn").click()
+    // cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 8)
+    // cy.get('#logout').click()
   })
 
   it('Search Risk contains Progress', function() {
@@ -367,6 +389,17 @@ describe('Admin Panel Risk', function() {
     cy.get('.current_filter').contains('Progress equals 70').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
 
-    cy.get('#logout').click()
+    // cy.get('#logout').click()
   })
+
+  it('Delete Risk', function() {
+    cy.get('#index_table_risks').should('be.visible')
+    cy.get('#index_table_risks > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Risk was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
+    // cy.get('#logout').click()
+  })
+
 })

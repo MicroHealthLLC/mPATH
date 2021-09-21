@@ -139,6 +139,15 @@
           noteFiles: []
         }
       },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.notes.includes(s); 
+    },
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}     
         this.DV_note.facilityProjectId = this.facility.id       
@@ -273,9 +282,6 @@
       },
       filteredFiles() {
         return _.filter(this.DV_note.noteFiles, f => !f._destroy)
-      },
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.notes[salut]
       }
     },
     watch: {

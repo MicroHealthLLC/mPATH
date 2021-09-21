@@ -78,7 +78,7 @@ task :populate_database => :environment do
     role: "superadmin",
     last_name: 'LN'
   )
-  user.privilege = Privilege.new(overview: "RWD", tasks: "RWD", notes: "RWD", issues: "RWD", admin: "RWD", map_view: "RWD", gantt_view: "RWD", watch_view: "RWD", documents: "RWD", members: "RWD")
+  user.privilege = Privilege.new(lessons: ["R"],calendar_view: ["R"], risks: ["R"],kanban_view: ["R"],sheets_view: ["R"], facility_manager_view: ["R"], overview: ["R", "W", "D"], tasks: ["R", "W", "D"], notes: ["R", "W", "D"], issues: ["R", "W", "D"], admin: ["R", "W", "D"], map_view: ["R", "W", "D"], gantt_view: ["R", "W", "D"], watch_view: ["R", "W", "D"], documents: ["R", "W", "D"], members: ["R", "W", "D"])
   user.save(validate: false)
 
   puts "=> email: #{user_email}\n=> password: changeme"

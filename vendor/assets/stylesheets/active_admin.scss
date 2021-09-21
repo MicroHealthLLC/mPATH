@@ -23,7 +23,23 @@ td.col-issue_type, td.col-issue_severity {
   // color: #932419 !important;
 }
 
+
+.adminPanelBtn, .remove-btn {
+  // For Edit User Privileges
+  margin: 8px;
+}
+.remove-box {
+  margin-left: 8px;
+}
+#project_privileges_list, #facility_privilege_list {
+  margin-top: 10px;
+}
 //User Project Privilege CSS start
+
+#lesson-info fieldset.inputs {
+  padding: 0 10px;
+}
+
 li.has_many_container.facility_privileges {
   a.button.has_many_remove {
     margin: 25px auto;
@@ -31,7 +47,7 @@ li.has_many_container.facility_privileges {
   fieldset.inputs.has_many_fields {
     margin-bottom: 30px;
   }
-  #user_facility_privileges_attributes_0_facility_project_input { 
+  #user_facility_privileges_attributes_0_facility_project_input {
     margin-bottom: 35px;
   }
   legend.label {
@@ -40,7 +56,7 @@ li.has_many_container.facility_privileges {
     }
   }
   ol.choices-group {
-    display: inline-flex;    
+    display: inline-flex;
     li.choice {
       width: 15%;
     }
@@ -105,7 +121,7 @@ li.has_many_container.facility_privileges {
   }
   .risk_prob_level {
     display:inline;
-    margin-left: 20.7%;  
+    margin-left: 20.7%;
     margin-bottom: 10px;
   }
   #riskText {
@@ -360,7 +376,6 @@ li.has_many_container.facility_privileges {
     align-items: center;
   }
   #facility_projects {
-    padding: 0 10px;
     .inputs {
       margin: 0;
       padding: 0;
@@ -369,14 +384,6 @@ li.has_many_container.facility_privileges {
       fieldset {
         box-shadow: none;
       }
-    }
-    #risk_facility_project_attributes_project_id_input,
-    #risk_facility_project_attributes_facility_id_input,
-    #issue_facility_project_attributes_project_id_input,
-    #issue_facility_project_attributes_facility_id_input,
-    #task_facility_project_attributes_project_id_input,
-    #task_facility_project_attributes_facility_id_input {
-      padding: 10px 0;
     }
   }
   #titlebar_right {
@@ -650,8 +657,20 @@ li.has_many_container.facility_privileges {
     color: #08A510;
     margin-left: 5px;
   }
+
+  ol {
+    li.select.input.required {
+      label {
+        text-transform: capitalize;
+      }
+      input {
+        margin-left: 1.25rem;
+        margin-right: .5rem;
+        }
+      }
+    }
+
   .select2-container {
-    width: calc(80% - 22px) !important;
     .select2-selection--single {
       min-height: 28px;
       height: max-content;

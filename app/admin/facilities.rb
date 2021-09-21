@@ -166,7 +166,6 @@ ActiveAdmin.register Facility do
     "Checklists": :text,
     "Task Files": :text
   }} do |ids, inputs|
-    binding.pry
     user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
     file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []
     checklists = JSON.parse(inputs["Checklists"]) rescue []

@@ -1,18 +1,24 @@
 describe('Kanban Risks View', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openKanbanRisk()
   })
-
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+  
+  after(() => {
+    cy.clearCookies()
+  })
   it('Open kanban risks in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_col_title]').contains('Test Risk Stage').should('be.visible')
       })
     })
-    cy.logout()
+    // cy.logout()
   })
 
   it('Open and close risks from kanban view', function() {
@@ -23,7 +29,7 @@ describe('Kanban Risks View', function() {
     })
     cy.get('[data-cy=risk_read_only_btn]').should('be.disabled')
     cy.get('[data-cy=risk_close_btn]').click({force: true})
-    cy.logout()
+    // cy.logout()
   })
 
   it('Cannot open new Risk form and edit/delete existing risk', function() {
@@ -37,7 +43,7 @@ describe('Kanban Risks View', function() {
     cy.get('[data-cy=risk_save_btn]').should('not.exist')
     cy.get('[data-cy=risk_delete_btn]').should('not.exist')
     cy.get('[data-cy=risk_close_btn]').click({force: true})
-    cy.logout()
+    // cy.logout()
   })
 
   it('Search risk by typing title', function() {
@@ -55,6 +61,6 @@ describe('Kanban Risks View', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=risks]').its('length').should('be.eq', 2)
     })
-    cy.logout()
+    // cy.logout()
   })
 })

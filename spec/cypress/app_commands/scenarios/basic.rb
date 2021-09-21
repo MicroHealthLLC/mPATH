@@ -1,5 +1,36 @@
 # You can setup your Rails state here
 # MyModel.create name: 'something'
+
+# Adding sort record used for Admin panel
+sorts = [{"relation"=>"checklists", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"facilities", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"facility_groups", "column"=>"name", "order"=>"asc"},
+ {"relation"=>"facility_projects", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"issue_severities", "column"=>"name", "order"=>"desc"},
+ {"relation"=>"issue_types", "column"=>"name", "order"=>"desc"},
+ {"relation"=>"issue_users", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"issues", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"notes", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"privileges", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"project_types", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"project_users", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"projects", "column"=>"name", "order"=>"desc"},
+ {"relation"=>"region_states", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"statuses", "column"=>"name", "order"=>"desc"},
+ {"relation"=>"task_types", "column"=>"name", "order"=>"asc"},
+ {"relation"=>"tasks", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"users", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"task_stages", "column"=>"name", "order"=>"asc"},
+ {"relation"=>"issue_stages", "column"=>"percentage", "order"=>"desc"},
+ {"relation"=>"risk_milestones", "column"=>"id", "order"=>"asc"},
+ {"relation"=>"risk_stages", "column"=>"percentage", "order"=>"desc"}]
+
+sorts.each do |sort|
+  Sort.find_or_create_by(relation: sort["relation"]) do |s|
+    s.attributes = sort
+  end
+end
+
 organization = Organization.find_or_create_by(title: 'Test Organization')
 admin = User.find_or_initialize_by(email: 'admin@test.com')
 admin.assign_attributes(
@@ -27,7 +58,8 @@ admin.privilege = Privilege.new(
   facility_manager_view: "R",
   sheets_view: "R",
   kanban_view: "R",
-  risks: "R"
+  risks: "R",
+  calendar_view: "R"
 )
 admin.save(validate: false)
 
@@ -57,7 +89,8 @@ client.privilege = Privilege.new(
   facility_manager_view: "R",
   sheets_view: "R",
   kanban_view: "R",
-  risks: "R"
+  risks: "R",
+  calendar_view: "R"
 )
 client.save(validate: false)
 
@@ -72,10 +105,13 @@ project = Project.find_or_create_by(
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
+
 active_status = Status.find_or_create_by(name: 'Active', color: '#0b8e1a')
 inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
+
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: active_status.id)
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: inactive_status.id)
+
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
 task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage', percentage: 40)
 new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage', percentage: 60)
@@ -85,6 +121,9 @@ risk_stage = RiskStage.find_or_create_by(name: 'Test Risk Stage', percentage: 40
 new_risk_stage = RiskStage.find_or_create_by(name: 'New Risk Stage', percentage: 60)
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
+lesson_stage = LessonStage.find_or_create_by(name: "Test Lesson Stage")
+lesson_stage2 = LessonStage.find_or_create_by(name: "Test Lesson Stage 2")
+
 
 ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: task_stage.id)
 ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: new_task_stage.id)
@@ -92,6 +131,9 @@ ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: issu
 ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: new_issue_stage.id)
 ProjectRiskStage.find_or_create_by(project_id: project.id, risk_stage_id: risk_stage.id)
 ProjectRiskStage.find_or_create_by(project_id: project.id, risk_stage_id: new_risk_stage.id)
+ProjectLessonStage.find_or_create_by(project_id: project.id, lesson_stage_id: lesson_stage.id)
+ProjectLessonStage.find_or_create_by(project_id: project.id, lesson_stage_id: lesson_stage2.id)
+
 
 project_task_type = ProjectTaskType.create(project_id: project.id, task_type_id: task_type.id)
 project_issue_severities = ProjectIssueSeverity.create(project_id: project.id, issue_severity_id: issue_severity.id)
@@ -205,6 +247,8 @@ test_risk_1 = Risk.find_or_create_by(
   watched: true,
   progress: 10
 )
+test_risk_1.checklists.create(text: "Risk Checklist1", user_id: admin.id)
+test_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_1.id, user_id: admin.id)
 
@@ -223,8 +267,23 @@ new_risk_1 = Risk.find_or_create_by(
   watched: false,
   progress: 70
 )
+new_risk_1.checklists.create(text: "Risk Checklist1", user_id: admin.id)
+new_risk_1.checklists.create(text: "Risk Checklist1", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_1.id, user_id: client.id)
+
+new_lesson_1 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 1",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_1.id,
+  "reportable"=>false,
+  "draft"=>false
+})
 
 facility_2 = Facility.find_or_create_by(
   facility_name: 'Test Facility 2',
@@ -329,6 +388,8 @@ test_risk_2 = Risk.find_or_create_by(
   watched: true,
   progress: 40
 )
+test_risk_2.checklists.create(text: "Risk Checklist1", user_id: client.id)
+test_risk_2.checklists.create(text: "Risk Checklist1", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_2.id, user_id: admin.id)
 
@@ -347,8 +408,23 @@ new_risk_2 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
+new_risk_2.checklists.create(text: "Risk Checklist2", user_id: client.id)
+new_risk_2.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
+
+new_lesson_2 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 2",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_2.id,
+  "reportable"=>false,
+  "draft"=>false
+})
 
 facility_group_2 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 2',
@@ -458,6 +534,8 @@ test_risk_3 = Risk.find_or_create_by(
   watched: true,
   progress: 70
 )
+test_risk_3.checklists.create(text: "Risk Checklist2", user_id: client.id)
+test_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_3.id, user_id: admin.id)
 
@@ -476,8 +554,23 @@ new_risk_3 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
+new_risk_3.checklists.create(text: "Risk Checklist2", user_id: client.id)
+new_risk_3.checklists.create(text: "Risk Checklist2", user_id: admin.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_3.id, user_id: client.id)
+
+new_lesson_3 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 3",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_3.id,
+  "reportable"=>false,
+  "draft"=>false
+})
 
 facility_4 = Facility.find_or_create_by(
   facility_name: 'Test Facility 4',
@@ -578,6 +671,8 @@ test_risk_4 = Risk.find_or_create_by(
   risk_stage_id: risk_stage.id,
   progress: 100
 )
+test_risk_4.checklists.create(text: "Risk Checklist4", user_id: admin.id)
+test_risk_4.checklists.create(text: "Risk Checklist4", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: test_risk_4.id, user_id: admin.id)
 
@@ -596,5 +691,20 @@ new_risk_4 = Risk.find_or_create_by(
   watched: false,
   progress: 40
 )
+new_risk_4.checklists.create(text: "Risk Checklist5", user_id: admin.id)
+new_risk_4.checklists.create(text: "Risk Checklist5", user_id: client.id)
 
 RiskUser.find_or_create_by(risk_id: new_risk_4.id, user_id: client.id)
+
+new_lesson_3 = Lesson.find_or_create_by({
+  "title" =>"Test Lesson 4",
+  "description"=>"hello",
+  "date"=>DateTime.now,
+  "stage"=>nil,
+  "task_type_id"=>task_type.id,
+  "user_id"=>client.id,
+  "important"=>false,
+  "facility_project_id"=>facility_project_4.id,
+  "reportable"=>false,
+  "draft"=>false
+})

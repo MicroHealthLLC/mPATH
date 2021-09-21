@@ -1,15 +1,19 @@
 .body-wrapper
   .mt-2.container
-    .container.mb-4.text-center.d-inline-block
+    .container.mb-2.text-center.d-inline-block
       h4.mt-1.text-center.mpath-logo
        | Welcome to  
       span.mpathLogo   
         =image_tag "mpath.svg"
     br
+    -if @active_projects.size > 0
+      =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn", "data-cy" => "portfolio_btn" do
+        | PORTFOLIO DATA VIEWER
     .grid-container.program-name
       -if @active_projects.size > 0
+        - preference_url = current_user.preference_url
         - @active_projects.each do |project|
-         - url = @preferences.navigation_menu.present? ? "/programs/#{project.id}/#{@preferences.navigation_menu}" : "/programs/#{project.id}/map"
+         - url = current_user.allowed_redirect_url(project.id) #@preferences.navigation_menu.present? ? "/programs/#{project.id}/#{@preferences.navigation_menu}" : "/programs/#{project.id}/map"
          =link_to(url, data: { cy: "project_list_items" }) do
           li.list-group-item.pb-0.portfolio-page
               
@@ -20,7 +24,7 @@
                       h4
                         ="#{project.name} "
                 hr.hr-program-row
-                 .row.mt-1.justify-content-between data-cy="project_count"
+                 .row.mt-0.justify-content-between data-cy="project_count"
                     .col-6.text-light
                       span.project-count.bg-dark.p-2
                         ="PROJECTS: #{project.facilities.size}"
@@ -69,7 +73,7 @@
                             ="#{percentage} %"
 
 
-                    .row.font-md.mb-2 data-cy="risks"
+                    .row.font-md data-cy="risks"
                      .col-4.py-0
                       span.text-dark.mr-1
                        ="RISKS"
@@ -84,6 +88,22 @@
                       span.w-100.progress.pg-content class=('progress-0' if percentage.to_f <= 0)
                         .progress-bar.bg-info.text-dark.font-weight-light style="width: #{percentage}%"
                           ="#{percentage} %"
+
+                    .row.font-md.mb-1 
+                     .col-4.py-0
+                      span.text-dark.mr-1
+                       ="LESSONS"
+                     .col-2.pl-0.py-0
+                      span.badge.bg-primary.text-light.badge-secondary.badge-pill.font-weight-light.text-left
+                       ="#{project.lessons.size}"
+                     .col-6.py-0
+                      span
+                      / - fl = project.lessons
+                      / -progs = fl.map(&:progress)
+                    /   -percentage = progs.size > 0 ? number_with_precision(progs.sum(0.0) / progs.size, precision: 2) : 0
+                    /   span.w-100.progress.pg-content class=('progress-0' if percentage.to_f <= 0)
+                    /     .progress-bar.bg-info.text-dark.font-weight-light style="width: #{percentage}%"
+                    /       ="#{percentage} %"
 
                     /This block is to display Project Statuses
                     / .row.mb-2.justify-content-between
@@ -113,4 +133,4 @@
 
       -else
         li.list-group-item.text-center data-cy="not_access_projects"
-          | Currently you dont have permissions to access projects
+          | Currently you do not have permissions to access progams

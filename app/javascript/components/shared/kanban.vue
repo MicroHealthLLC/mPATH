@@ -17,7 +17,7 @@
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
-                <span class="font-sm add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
+                <span class="font-sm add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)" v-if="_isallowed(kanbanType, 'write')" data-cy="kanban_add_btn">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
               </div>
@@ -26,7 +26,7 @@
            
           </div>
           <div class="kan-body">
-            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)"  :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
+            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)"  :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed(kanbanType, 'write')">
               <div
                 :is="cardShow"
                 v-for="task in column.tasks"
@@ -88,20 +88,43 @@ export default {
     ...mapActions([
       'updateKanbanTaskIssues'
     ]),   
+    //TODO: change the method name of isAllowed
+    _isallowed(view,salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege[view].includes(s);
+    },
+    viewPermit: () => (view, req) => {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[req]
+      return  fPrivilege[view].includes(s);
+
+      //if (Vue.prototype.$currentUser.role === "superadmin") return true;
+      //return Vue.prototype.$permissions[view][req]
+    },
     setupColumns(cards) {       
       this.stageId = `${this.kanbanType.slice(0, -1)}StageId`    
       this.columns.push({
         stage: {id: null},
         title: "No stage",
-        tasks: []
+        tasks: [],
+        percentage: -1
       })   
       for (let stage of this.stages) {      
         this.columns.push({
           stage: stage,
           title: stage.name,
-          tasks: _.filter(cards, c => c[this.stageId] == stage.id)       
+          tasks: _.filter(cards, c => c[this.stageId] == stage.id),
+          percentage: stage.percentage
         })
       }
+      this.columns.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1)
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key
@@ -148,11 +171,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'viewPermit'
     ]),
-    _isallowed() {
-    return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-    },
     cardShow() {
       return _.upperFirst(`${this.kanbanType.slice(0, -1)}Show`)
     },   

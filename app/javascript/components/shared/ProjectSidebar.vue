@@ -125,7 +125,7 @@ export default {
       } else if (url.includes("calendar")) {
         return "/tasks";
       } else {
-        return "";
+        return "/overview";
       }
     },
   },
@@ -141,7 +141,6 @@ export default {
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
-       
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );

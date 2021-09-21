@@ -132,6 +132,8 @@ you will have to create an nginx service now
 
         yum install mysql-devel
         
+        yum install MariaDB-shared
+        
         systemctl start mariadb
 
         systemctl enable mariadb

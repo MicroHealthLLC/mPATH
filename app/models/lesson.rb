@@ -1,5 +1,4 @@
 class Lesson < ApplicationRecord
-
   belongs_to :user
   belongs_to :task_type, optional: true
 
@@ -26,6 +25,81 @@ class Lesson < ApplicationRecord
 
   validates :title, :description, :date, :facility_project_id, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
+
+  attr_accessor :file_links
+
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
+
+  def portfolio_json
+    resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
+    p_users = users.select(&:active?)
+    
+    all_lesson_details = self.lesson_details.sort{|n| n.updated_at }
+    successes = all_lesson_details.select{|l| l.detail_type == "success"}
+    failures = all_lesson_details.select{|l| l.detail_type == "failure"}
+    best_practices = all_lesson_details.select{|l| l.detail_type == "best_practices"}
+
+    # notes_attributes = t_params.delete(:notes_attributes)
+    # destroy_file_ids = t_params.delete(:destroy_file_ids)&.map(&:to_i)
+
+    users_hash = {} 
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
+
+    # First name values added for improved sorting in datatables
+    users_first_name_hash = {} 
+    p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
+
+    s_notes = notes.sort{|n| n.created_at }
+    latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
+    self.as_json.merge(
+      class_name: self.class.name,
+      user_ids: p_users.map(&:id).compact.uniq,
+      user_names: p_users.map(&:full_name).compact.join(", "),
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      created_by: {
+        id: user.id,
+        full_name: user.full_name
+      },
+      last_update: latest_update,
+     
+      notes: notes.as_json,
+      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: sub_issues.as_json(only: [:title, :id]),
+      sub_risks: sub_risks.as_json(only: [:title, :id]),
+      sub_task_ids: sub_tasks.map(&:id),
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id),
+      # sub_tasks: sub_tasks.map(&:lesson_json),
+      # sub_issues: sub_issues.map(&:lesson_json),
+      # sub_risks: sub_risks.map(&:lesson_json),
+      category: task_type&.name,
+      project_group_name: facility.facility_group.name,
+      added_by: user.full_name,
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      lesson_stage_id: self.lesson_stage_id,
+      lesson_stage: lesson_stage.try(:name),      
+      successes: successes.map(&:to_json),
+      failures: failures.map(&:to_json),
+      best_practices: best_practices.map(&:to_json),
+      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      # project_id: facility_project.facility_id,
+      project_id: facility.id, 
+      program_id: project.id, 
+    ).as_json
+
+  end
 
   def to_json(options = {})
     attach_files = []
@@ -95,11 +169,14 @@ class Lesson < ApplicationRecord
     s_tasks = []
     s_issues = []
     s_risks = []
+    s_notes = notes.sort{|n| n.created_at }
+    latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
     sorted_notes = notes.sort_by(&:created_at).reverse
 
     self.as_json.merge(
       class_name: self.class.name,
+      added_by: user.full_name,
       attach_files: attach_files,
       user_ids: p_users.map(&:id).compact.uniq,
       user_names: p_users.map(&:full_name).compact.join(", "),
@@ -115,6 +192,9 @@ class Lesson < ApplicationRecord
       notes: sorted_notes.as_json,
       notes_updated_at: sorted_notes.map(&:updated_at).uniq,
       project_id: facility_project.facility_id,
+      project_name: facility.facility_name, 
+    
+
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
@@ -177,12 +257,12 @@ class Lesson < ApplicationRecord
     users_first_name_hash = {} 
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
-    # binding.pry
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
     self.as_json.merge(
       class_name: self.class.name,
       user_ids: p_users.map(&:id).compact.uniq,
+      added_by: user.full_name,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       created_by: {
@@ -199,7 +279,7 @@ class Lesson < ApplicationRecord
   end
 
   def self.lesson_preload_array
-    [:task_type, :lesson_details, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, {facility_project: :facility} ]
+    [:user, :task_type, :lesson_details, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, :project, :facility, {facility_project: :facility} ]
   end
 
   def self.params_to_permit
@@ -218,6 +298,7 @@ class Lesson < ApplicationRecord
       sub_issue_ids: [],
       sub_risk_ids: [],
       lesson_files: [],
+      file_links: [],
       user_ids: [],
       destroy_file_ids: [],
       notes_attributes: [
@@ -259,6 +340,7 @@ class Lesson < ApplicationRecord
   end
 
   def create_or_update_lesson(params, user)
+    params[:lesson].delete(:user_id)
 
     lesson_params = params.require(:lesson).permit(Lesson.params_to_permit)
 
@@ -300,8 +382,8 @@ class Lesson < ApplicationRecord
       params_lesson_details = ( params_lesson_details + params_best_practices ).compact
     end
 
-    if params[:project_id] && params[:program_id]
-      fp = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
+    if params[:project_id] && params[:facility_id]
+      fp = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       t_params[:facility_project_id] = fp.id
     end
 
@@ -494,23 +576,40 @@ class Lesson < ApplicationRecord
   end
 
   def files_as_json
-    lesson_files.map do |file|
-      if file.blob.content_type == "text/plain"
+    lesson_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+        link: false
+      }
+    end.as_json
+  end
+
+  def links_as_json
+    lesson_files.reject {|f| !valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
+      if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
         {
           id: file.id,
           name: file.blob.filename.instance_variable_get("@filename"),
           uri: file.blob.filename.instance_variable_get("@filename"),
           link: true
         }
-      else
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-          link: false
-        }
       end
     end.as_json
+  end
+
+  def manipulate_links(params)
+    return unless params[:lesson][:file_links].present?
+    link_params = JSON.parse(params[:lesson][:file_links])
+    link_params.each do |link|
+      next if !link.present? || link.nil? || !valid_url?(link["uri"])
+      if link['_destroy']
+        lesson_files.find_by_id(link['id'])&.purge
+      elsif link['_new']
+        self.lesson_files.attach(io: StringIO.new(link['uri']), filename: link['uri'], content_type: "text/plain")
+      end
+    end
   end
 
   def manipulate_files(params)

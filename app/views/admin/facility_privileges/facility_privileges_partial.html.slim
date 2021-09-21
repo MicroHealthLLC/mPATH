@@ -1,0 +1,29 @@
+- if user_project_privileg
+  - if @facilities.any?
+    ol
+      li(class="select input required")
+        label(class="label") Select Project
+        select(class="new_facility_privileges_project_select" id="project_section_#{index}" name="user[facility_privileges_attributes][#{index}][facility_project_ids][]" multiple="true")
+          - @facilities.each do |f|
+            option{value="#{f.id}" }= f.facility_name
+
+      - FacilityPrivilege::PRIVILEGE_MODULE.each do |m_name|
+        li(class="select input required")
+          label(class="label")= m_name
+          input{type="hidden" value="" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" }
+          - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+            input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if user_project_privileg.send(m_name).include?(permission[1]))}= permission[0]
+
+  - else
+    p All projects are included in one of the project privileges.
+
+- else
+  p No program privilege found, please create program privilege for #{project.name}
+
+javascript:
+  jQuery(function($) {
+    $(".new_facility_privileges_project_select").select2({
+      placeholder: "Search and select Program",
+      allowClear: false
+    });
+  })

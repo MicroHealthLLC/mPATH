@@ -33,7 +33,7 @@
       </div>
       <div class="ml-auto d-flex align-items-center">
         <button
-          v-if="isAllowed('write')"
+          v-if="_isallowed('write')"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Save Lesson
@@ -92,11 +92,11 @@
           >Lesson Name <span style="color: #dc3545">*</span></label
         >
         <div
-          class="toggleWrapper float-right"
+          class="toggleWrapper float-right tagsCol"
           :class="{ 'font-sm': isMapView }"
         >
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleImportant"
             v-tooltip="`Important`"
@@ -116,7 +116,7 @@
           </span>
 
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleReportable"
             v-tooltip="`Briefings`" 
@@ -136,7 +136,7 @@
             </small>
           </span>
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
@@ -167,7 +167,7 @@
           type="text"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
-          :readonly="!isAllowed('write')"
+          :readonly="!_isallowed('write')"
         />
         <div v-show="errors.has('Lesson Name')" class="text-danger">
           {{ errors.first("Name") }}
@@ -187,7 +187,7 @@
           :class="{
             error: errors.has('Description'),
           }"
-          :readonly="!isAllowed('write')"
+          :readonly="!_isallowed('write')"
         ></el-input>
         <div v-show="errors.has('Description')" class="text-danger">
           {{ errors.first("Description") }}
@@ -195,14 +195,14 @@
       </div>
 
       <div class="col-6 pl-0">
-        <label class="font-md w-100">Category</label>
+        <label class="font-md w-100">Process Area</label>
         <el-select
           v-model="lesson.task_type_id"
           class="w-100"
           value-key="id"
-          name="Category"
-          placeholder="Select Category"
-          :disabled="!isAllowed('write')"
+          name="Process Area"
+          placeholder="Select Process Area"
+          :disabled="!_isallowed('write')"
         >
           <!--TODO: Change taskTypes to categoryTypes -->
           <el-option
@@ -228,7 +228,7 @@
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             class="w-100"
-            :disabled="!isAllowed('write')"
+            :disabled="!_isallowed('write')"
           />
         </div>
         <div v-show="errors.has('Date')" class="text-danger">
@@ -243,7 +243,7 @@
             v-show="lesson.lesson_stage_id"
             class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
-            :disabled="!this.isAllowed('write')"
+            :disabled="!this._isallowed('write')"
           >
             Clear Stages
           </button>
@@ -279,7 +279,7 @@
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="clickable"
             @click="openContextMenu($event, 'task')"
           >
@@ -317,7 +317,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Task"
                 @click.prevent="removeRelatedTask(task)"
-                :disabled="!isAllowed('write')"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -325,7 +325,7 @@
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Issues
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="clickable"
             @click="openContextMenu($event, 'issue')"
           >
@@ -363,7 +363,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Issue"
                 @click.prevent="removeRelatedIssue(issue)"
-                :disabled="!isAllowed('write')"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -371,7 +371,7 @@
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Risks
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="clickable"
             @click="openContextMenu($event, 'risk')"
           >
@@ -409,7 +409,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Risk"
                 @click.prevent="removeRelatedRisk(risk)"
-                :disabled="!isAllowed('write')"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -418,14 +418,17 @@
     </div>
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'" class="mt-2">
-      <label>Successes</label>
+      <span>Successes</span>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addSuccess"
       >
         <i class="fas fa-plus-circle"></i>
       </span>
+      <div class="font-sm" style="color: gray;">
+        <label>Successes without findings will be deleted before Lesson is saved</label>
+      </div>
       <paginate-links
         v-if="successes.length"
         for="successes"
@@ -446,7 +449,7 @@
           class="success-card mb-3"
         >
           <div class="d-flex justify-content-between">
-            <label class="font-md">Findings</label>
+            <label class="font-md">Findings <span style="color: #dc3545">*</span></label>
             <div class="font-sm">
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
@@ -461,7 +464,7 @@
               <i
                 class="el-icon-delete clickable ml-3"
                 @click="removeSuccess(index)"
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
               ></i>
             </div>
           </div>
@@ -470,7 +473,7 @@
             v-model="success.finding"
             type="textarea"
             placeholder="Please enter findings here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -478,21 +481,24 @@
             v-model="success.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
     </div>
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'" class="mt-2">
-      <label>Failures</label>
+      <span>Failures</span>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addFailure"
       >
         <i class="fas fa-plus-circle"></i>
       </span>
+      <div class="font-sm" style="color: gray;">
+        <label>Failures without findings will be deleted before Lesson is saved</label>
+      </div>
       <paginate-links
         v-if="failures.length"
         for="failures"
@@ -513,7 +519,7 @@
           class="failure-card mb-3"
         >
           <div class="d-flex justify-content-between">
-            <label class="font-md">Findings</label>
+            <label class="font-md">Findings <span style="color: #dc3545">*</span></label>
             <div class="font-sm">
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
@@ -526,7 +532,7 @@
                 ></el-tag
               >
               <i
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeFailure(index)"
               ></i>
@@ -537,7 +543,7 @@
             v-model="failure.finding"
             type="textarea"
             placeholder="Please enter findings here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -545,7 +551,7 @@
             v-model="failure.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -553,14 +559,17 @@
 
     <!-- Best Practices Tab -->
     <div v-show="currentTab == 'tab5'" class="mt-2">
-      <label>Best Practices</label>
+      <span>Best Practices</span>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addBestPractice"
       >
         <i class="fas fa-plus-circle"></i>
       </span>
+      <div class="font-sm" style="color: gray;">
+        <label>Best Practices without findings will be deleted before Lesson is saved</label>
+      </div>
       <paginate-links
         v-if="bestPractices.length"
         for="bestPractices"
@@ -581,7 +590,7 @@
           class="best-practice-card mb-3"
         >
           <div class="d-flex justify-content-between">
-            <label class="font-md">Findings</label>
+            <label class="font-md">Findings <span style="color: #dc3545">*</span></label>
             <div class="font-sm">
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
@@ -594,7 +603,7 @@
                 ></el-tag
               >
               <i
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeBestPractice(index)"
               ></i>
@@ -605,7 +614,7 @@
             v-model="bestPractice.finding"
             type="textarea"
             placeholder="Please enter findings here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -613,7 +622,7 @@
             v-model="bestPractice.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -623,7 +632,7 @@
     <div v-show="currentTab == 'tab6'" class="row mt-2">
       <div class="col-6">
         <AttachmentInput
-          v-if="isAllowed('write')"
+          v-if="_isallowed('write')"
           @input="addFile"
           :show-label="true"
           class="mb-3"
@@ -633,18 +642,18 @@
             class="clickable file-name d-flex justify-content-between w-100 py-1"
           >
             <div @click.prevent="downloadFile(file)">
-              <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
+              <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="isAllowed('delete')" @click="removeFile(file.id, index)">
+            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
         </div>
       </div>
       <div class="col-6">
-        <span v-if="isAllowed('write')">Add Link</span>
+        <span v-if="_isallowed('write')">Add Link</span>
         <span
-          v-if="isAllowed('write')"
+          v-if="_isallowed('write')"
           class="clickable"
           @click="addFileLink()"
         >
@@ -662,7 +671,7 @@
               </div></a
             >
             <div
-              v-if="isAllowed('delete')"
+              v-if="_isallowed('delete')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>
@@ -685,7 +694,7 @@
     <div v-show="currentTab == 'tab7'" class="mt-2">
       <label>Updates</label>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addUpdate"
       >
@@ -724,7 +733,7 @@
                 ></el-tag
               >
               <i
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeUpdate(index)"
               ></i>
@@ -735,7 +744,7 @@
             v-model="update.body"
             type="textarea"
             placeholder="Please enter Description here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -785,7 +794,7 @@ export default {
             "Description",
             "Submitted By",
             "Date",
-            "Category",
+            "Process Area",
             "Stage",
           ],
         },
@@ -856,7 +865,11 @@ export default {
         if (!success) {
           return;
         }
-
+        //removes empty updates, sucesses, failures, and best practices
+        this.removeEmptyUpdates()
+        this.successes = this.removeEmptySFBP(this.successes)
+        this.failures = this.removeEmptySFBP(this.failures)
+        this.bestPractices = this.removeEmptySFBP(this.bestPractices)
         let lessonData = {
           lesson: {
             title: this.lesson.title,
@@ -899,11 +912,29 @@ export default {
         }
       });
     },
-    isAllowed(privilege) {
-      return (
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.lessons[privilege]
-      );
+    removeEmptyUpdates(){
+      var returnUpdates = [];
+      for (let i in this.updates) {
+        if(!this.updates[i].body && !this.updates[i]._destroy) continue;
+        returnUpdates.push(this.updates[i]);
+      }
+      this.updates = [...returnUpdates];
+    },
+    removeEmptySFBP(sFBP){
+      var returnSFBP = [];
+      for (let i in sFBP) {
+        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) continue;
+        returnSFBP.push(sFBP[i]);        
+      }
+      return [...sFBP];
+    },
+    _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return  fPrivilege.lessons.includes(s);      
     },
     close() {
       this.$router.push(
@@ -915,7 +946,7 @@ export default {
     },
     openContextMenu(e, item) {
       e.preventDefault();
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.$refs.menu.open(e, item);
       }
     },
@@ -947,7 +978,7 @@ export default {
       );
     },
     addSuccess() {
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.successes.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
@@ -969,7 +1000,7 @@ export default {
         .catch(() => {});
     },
     addFailure() {
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.failures.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
@@ -991,7 +1022,7 @@ export default {
         .catch(() => {});
     },
     addBestPractice() {
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.bestPractices.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
@@ -1047,25 +1078,49 @@ export default {
       });
     },
     removeFile(id, index) {
-      this.files.splice(index, 1);
-      if (id) {
-        this.destroyFileIds.push(id);
-      }
+      this.$confirm(
+        `Are you sure you want to delete this file?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.files.splice(index, 1);
+          if (id) {
+            this.destroyFileIds.push(id);
+          }
+        })
+        .catch(() => {});
     },
     removeFileLink(id, index) {
-      this.fileLinks.splice(index, 1);
-      if (id) {
-        this.destroyFileIds.push(id);
-      }
+      this.$confirm(
+        `Are you sure you want to delete this file link?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.fileLinks.splice(index, 1);
+          if (id) {
+            this.destroyFileIds.push(id);
+          }
+        })
+        .catch(() => {});
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      if (this.lesson.id && this.isAllowed("write")) {
+      if (this.lesson.id && this._isallowed("write")) {
         this.lesson.lesson_stage_id = stage.id;
-      } else if (this.isAllowed("write")) {
+      } else if (this._isallowed("write")) {
         this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
       }
     },
@@ -1080,6 +1135,10 @@ export default {
     },
     toggleReportable() {
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
+    },
+    log(e)
+    {
+      // console.log(""+e);
     },
   },
   computed: {
@@ -1099,6 +1158,8 @@ export default {
         return "map";
       } else if (this.$route.path.includes("sheet")) {
         return "sheet";
+     } else if (this.$route.path.includes("calendar")) {
+        return "calendar";
       } else if (this.$route.path.includes("lessons")) {
         return "lessons";
       } else {
@@ -1106,8 +1167,10 @@ export default {
       }
     },
     projectNameLink() {
-      if (this.$route.path.includes("lessons")) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
+      } else {
+        return `/programs/${this.$route.params.programId}/${this.tab}`;
       }
     },
     isMapView() {
@@ -1215,6 +1278,10 @@ export default {
             );
           }
         }
+        this.successes = this.lesson.successes;
+        this.failures = this.lesson.failures;
+        this.bestPractices = this.lesson.best_practices;
+        this.updates = this.lesson.notes;
       },
     },
   },
@@ -1298,6 +1365,11 @@ a:hover {
     line-height: 23px !important;
     margin: 5px !important;
   }
+}
+.tagsCol {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: .5px solid lightgray;
 }
 .btn-shadow {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),

@@ -1,18 +1,27 @@
 describe('Sheets Risks View', function() {
-  beforeEach(() => {
+  before(() => {
     cy.app('clean')
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
+
+    cy.appScenario('provide_risk_privileges')
+
+    cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
     cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
   })
-
+  beforeEach(() => {
+    cy.preserveAllCookiesOnce()
+  })
+  
+  after(() => {
+    cy.clearCookies()
+  })
   it('Open Sheets Risks in a facility', function() {
     cy.get('[data-cy=risk_sheet_index]').within(() => {
       cy.get('[data-cy=risk_total]').contains('Total: 2').should('be.visible')
       cy.get('[data-cy=risks_table]').should('be.visible')
     })
-    cy.logout()
+    // cy.logout()
   })
 
   it('Open and Close risk form sheet view', function() {
@@ -21,7 +30,7 @@ describe('Sheets Risks View', function() {
     })
     cy.get('[data-cy=risk_save_btn]').should('be.exist')
     cy.get('[data-cy=risk_close_btn]').should('be.exist').click({force: true})
-    cy.logout()
+    // cy.logout()
   })
 
   it('Open risk from sheet risk table', function() {
@@ -29,7 +38,7 @@ describe('Sheets Risks View', function() {
       cy.get('[data-cy=risk_row]').first().should('be.exist').click({force: true})
     })
     cy.get('[data-cy=risk_close_btn]').should('be.exist').click({force: true})
-    cy.logout()
+    // cy.logout()
   })
 
   it('Search risk by typing title', function() {
@@ -47,7 +56,7 @@ describe('Sheets Risks View', function() {
     cy.get('[data-cy=risks_table]').within(() => {
       cy.get('[data-cy=risk_row]').its('length').should('be.eq', 2)
     })
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to risk name', function() {
@@ -56,19 +65,19 @@ describe('Sheets Risks View', function() {
     cy.get('[data-cy=risk_row]').first().contains('Test Risk').should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(1)').click()
     cy.get('[data-cy=risk_row]').first().contains('New Risk').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to risk approach', function() {
     cy.get('.mt-3 > tr > :nth-child(2)').click()
     cy.get('[data-cy=risk_row]').first().contains('Avoid').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to priority level', function() {
     cy.get('.mt-3 > tr > :nth-child(3)').click()
     cy.get('[data-cy=risk_row]').first().contains('Very Low').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to Start Date', function() {
@@ -80,7 +89,7 @@ describe('Sheets Risks View', function() {
     cy.get('[data-cy=risk_row]').first().contains(test_start_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(4)').click()
     cy.get('[data-cy=risk_row]').first().contains(new_start_date).should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to Due Date', function() {
@@ -91,7 +100,7 @@ describe('Sheets Risks View', function() {
     cy.get('[data-cy=risk_row]').first().contains(due_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(5)').click()
     cy.get('[data-cy=risk_row]').first().contains(due_date).should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to Assigned User', function() {
@@ -101,7 +110,7 @@ describe('Sheets Risks View', function() {
     cy.get('[data-cy=risk_row]').first().contains('Test2 Client').should('be.visible')
     cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=risk_row]').first().contains('Test1 Admin').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
   it('Sort risk according to Progress', function() {
@@ -111,20 +120,21 @@ describe('Sheets Risks View', function() {
     cy.get('[data-cy=risk_row]').first().contains('70%').should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(7)').click()
     cy.get('[data-cy=risk_row]').first().contains('10%').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 
-  it('Sort risk according to On Watch', function() {
-    cy.get('.mt-3 > tr > :nth-child(9)').click()
-    cy.get('[data-cy=risk_row]').first().should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(9)').click()
-    cy.get('[data-cy=risk_row]').first().contains('x').should('be.visible')
-    cy.logout()
-  })
+  // NOTE: On Watch removed so not doing test.
+  // it('Sort risk according to On Watch', function() {
+  //   cy.get('.mt-3 > tr > :nth-child(9)').click()
+  //   cy.get('[data-cy=risk_row]').first().should('be.visible')
+  //   cy.get('.mt-3 > tr > :nth-child(9)').click()
+  //   // cy.get('[data-cy=risk_row]').first().contains('x').should('be.visible')
+  //   // cy.logout()
+  // })
 
   it('Sort risk according to Last Update', function() {
-    cy.get('.mt-3 > tr > :nth-child(10)').click()
+    cy.get('.mt-3 > tr > :nth-child(9)').click()
     cy.get('[data-cy=risk_row]').first().contains('No Updates').should('be.visible')
-    cy.logout()
+    // cy.logout()
   })
 })
