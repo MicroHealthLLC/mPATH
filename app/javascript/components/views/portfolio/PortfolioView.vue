@@ -4579,12 +4579,6 @@ export default {
   },
   sortedTasks:function() {
       return this.tasksObj.filtered.tasks.sort((a,b) => {
-    //   let modifier = 1;
-    //   if (this.currentSortDir === "desc") modifier = -1;    
-    //   if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-    //   if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-    //   return 0;
-    //  })
       let modifier = 1;
     
       if (this.currentSortDir1 === "desc") modifier = -1;
@@ -4596,14 +4590,14 @@ export default {
       if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
 
       if (this.currentSortDir === "desc") modifier = -1;
-      if (typeof a[this.currentSort] && b[this.currentSort] === 'string'){
-        if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-        if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-      } else if (typeof a[this.currentSort] || b[this.currentSort] !== 'string'){
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-      
-      }         
+      if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+            if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+               if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+            }
+          } else 
+      if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+      if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
       return 0;
     }) 
     .filter((row, index) => {
@@ -4634,16 +4628,16 @@ export default {
           if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
           if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
 
-          if (this.currentSortDir === "desc") modifier = -1;
-          if (typeof a[this.currentSort] && b[this.currentSort] === 'string'){
-            if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-          } else if (typeof a[this.currentSort] || b[this.currentSort] !== 'string'){
+         if (this.currentSortDir === "desc") modifier = -1;
+         if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+          if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+              if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+              if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+          }
+            } else 
             if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-            if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          
-          }         
-          return 0;
+            if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
+        return 0;
         }) 
         .filter((row, index) => {
           let start = (this.currentIssuesPage - 1) * this.C_issuesPerPage.value;
@@ -4674,15 +4668,15 @@ export default {
           if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
 
           if (this.currentSortDir === "desc") modifier = -1;
-          if (typeof a[this.currentSort] && b[this.currentSort] === 'string'){
-            if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-          } else if (typeof a[this.currentSort] || b[this.currentSort] !== 'string'){
-            if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-            if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          
-          }         
-          return 0;
+          if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+            if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+                if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+            }
+              } else 
+              if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+              if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
+        return 0;
         }) 
         .filter((row, index) => {
           let start = (this.currentRisksPage - 1) * this.C_risksPerPage.value;
@@ -4713,16 +4707,16 @@ export default {
           if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
           if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
 
-          if (this.currentSortDir === "desc") modifier = -1;
-          if (typeof a[this.currentSort] && b[this.currentSort] === 'string'){
-            if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-          } else if (typeof a[this.currentSort] || b[this.currentSort] !== 'string'){
+         if (this.currentSortDir === "desc") modifier = -1;
+         if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+          if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+              if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+              if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+          }
+            } else 
             if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-            if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          
-          }         
-          return 0;
+            if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
+        return 0;
         }) 
         .filter((row, index) => {
           let start =
