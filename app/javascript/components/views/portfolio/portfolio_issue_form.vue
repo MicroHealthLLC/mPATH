@@ -1837,7 +1837,6 @@ export default {
               this.portfolioIssues.push(this.DV_issue)
             }
             if (response.status === 200) {
-              // this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",

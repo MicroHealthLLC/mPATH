@@ -23,8 +23,7 @@ export default {
     redirectBack() {
       this.$router.push(
         `/portfolio`
-      );
-        
+      );        
     },
   },
   computed: {
