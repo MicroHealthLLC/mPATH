@@ -726,7 +726,8 @@
                 <div class="px-3 tableFixHead" >
                   <table
                     class="table table-sm table-bordered"
-                    ref="table"                   
+                    ref="table"
+                    id="portTasks"                   
                   >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sortCol1('program_name')">
@@ -1250,7 +1251,7 @@
 <!-- EXPORT (Display:None) -->
         <table
           class="table table-bordered w-100"
-          id="portTasks"
+          id="portTasks1"
           style="display:none"        
         >
          <thead>      
@@ -1702,6 +1703,7 @@
                 <table
                   class="table table-sm table-bordered"
                   ref="issueTable"
+                  id="portIssues"
                   >
                   <thead style="background-color: #ededed">
                     <th class="sort-th twenty" @click="sortCol1('program_name')">
@@ -2265,7 +2267,7 @@
                 </table>
        <table
         class="table table-bordered w-100"
-        id="portIssues"     
+        id="portIssues1"     
         style="display:none"          
         >
          <thead>      
@@ -2721,7 +2723,8 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="riskTable"                   
+                    ref="riskTable" 
+                    id="portRisks"                  
                   >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sortCol1('program_name')">
@@ -3356,7 +3359,7 @@
                   <!-- Export (Display:none) -->
                   <table
                     class="table table-bordered w-100"
-                    id="portRisks"
+                    id="portRisks1"
                     style="display:none"        
                   >
                   <thead>      
@@ -3730,6 +3733,7 @@
                   <table
                     class="table table-sm table-bordered"
                     ref="lessonTable"
+                    id="portLessons"
                     >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sortCol1('program_name')">
@@ -4192,7 +4196,7 @@
                   </table>
                   <table
                     class="table table-bordered w-100"
-                    id="portLessons"
+                    id="portLessons1"
                     style="display:none"        
                   >
                   <thead>      
@@ -4395,6 +4399,8 @@ export default {
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
+      console.log("portfolioViewMounted")
+      console.log(this.currTab)
       $(this.currTab).trigger('click');
       this.fetchPortfolioCounts();
       this.setFacilityProjectIds()

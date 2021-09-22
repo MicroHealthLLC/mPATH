@@ -60,7 +60,13 @@ class IssuesController < AuthenticatedController
     @issue.assign_users(params)
     @issue.add_link_attachment(params)
 
-    render json: {issue: @issue.reload.to_json}
+    if params[:source] == "portfolio_viewer"
+      response = @issue.reload.portfolio_json
+    else
+      response = @issue.reload.to_json
+    end
+
+    render json: {issue: response}
   end
 
   def create_duplicate

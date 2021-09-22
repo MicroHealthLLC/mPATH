@@ -67,10 +67,16 @@ class RisksController < AuthenticatedController
     @risk.assign_users(params)
     @risk.add_link_attachment(params)
 
+    if params[:source] == "portfolio_viewer"
+      response = @risk.reload.portfolio_json
+    else
+      response = @issue.reload.to_json
+    end
+
     if @risk.errors.any?
       render json: {task: @risk.to_json, errors: @risk.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {risk: @risk.reload.to_json}
+      render json: {risk: response}
     end
 
   end

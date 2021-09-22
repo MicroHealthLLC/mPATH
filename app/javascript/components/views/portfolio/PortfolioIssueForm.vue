@@ -23,11 +23,10 @@ export default {
     updateTable() {
       this.fetchPortfolioIssues()  
       },   
-    redirectBack() {     
+    redirectBack() {    
       this.$router.push(
         `/portfolio`
-      );
-        
+      );        
     },
   },
   computed: {

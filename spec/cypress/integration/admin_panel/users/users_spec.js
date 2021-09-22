@@ -11,6 +11,50 @@ describe('Admin Panel Users', function() {
     })
     cy.preserveAllCookiesOnce()
   })
+
+  it('Validate program privileges', function() {
+    cy.get('.action_item > a').contains('New User').click()
+    cy.get('#page_title').contains('New User').should('be.visible')
+    cy.get('#user_first_name').type('New test').should('have.value', 'New test')
+    cy.get('#user_last_name').type('user').should('have.value', 'user')
+    cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
+
+    cy.get('a[href="#advanced"]').click()
+    cy.get("#user_privilege_attributes_sheets_view_r").click()
+    
+    cy.get('a[href="#programs"]').click()
+    cy.get("#addProgramPrivilegeBtn").click()
+
+    cy.get('#project_privileges_list > fieldset > ol > li:nth-child(3)').within(() => {
+      cy.get("input[type='checkbox']").click({ multiple: true })
+    })
+    
+    cy.get('#user_submit_action').contains('Create User').click()
+
+    cy.contains("Please select atleast one program in privilege")
+
+    // cy.get('.flashes').contains('User was successfully created.')
+    // cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 3)
+
+    // cy.get('#tabs').within(() => {
+    //   cy.get('#projects').contains('Programs').click()
+    // })
+    // cy.get('#index_table_projects > tbody > tr').first().within(() => {
+    //   cy.get('.col-actions').contains('Edit').click()
+    // })
+    // cy.get('a[href="#advanced"]').click()
+    // cy.get("span[data-select2-id='1']").click().type('user@test.com')
+    // cy.get("li.select2-results__option--highlighted").click()
+    // cy.get("#project_submit_action").click()
+    // cy.get('#tabs').within(() => {
+    //   cy.get('#users').contains('Users').click()
+    // })
+    // cy.get('#index_table_users > tbody > tr').first().within(() => {
+    //   cy.get('.col-actions').contains('Edit').click()
+    // })
+
+  })
+
   it('Click on Users on tabs open users information page', function() {
     cy.get('#page_title').contains('Users').should('be.visible')
     cy.get('#index_table_users').should('be.visible')
