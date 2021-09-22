@@ -2312,8 +2312,8 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_risk.task_type_id
       );
-      if (this.portfolioRiskStages[this.programId]){
-        this.selectedRiskStage = this.portfolioRiskStages[this.programId].find(
+      if (this.riskStages){
+        this.selectedRiskStage = this.riskStages[this.programId].find(
         (t) => t.id === this.DV_risk.risk_stage_id
       );
       }    
@@ -2710,9 +2710,7 @@ export default {
                 showClose: true,
               });
             }
-            //Route to newly created task form page
-          //  this.fetchPortfolioRisks()
-           this.$router.push(
+        this.$router.push(
                 `/portfolio`
               );
           })
@@ -2947,9 +2945,14 @@ export default {
       'riskDispositionDuration',
       "portfolioRiskStages",
      ]),
+  riskStages(){
+          if(this.portfolioRiskStages){
+            return this.portfolioRiskStages.program_stages
+          }
+       },
   riskStagesSorted() { 
-      if (this.portfolioRiskStages[this.programId] !== undefined) {
-        let stageObj =  [...this.portfolioRiskStages[this.programId]]
+      if (this.riskStages) {
+        let stageObj =  [...this.riskStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
       }        
     },   
@@ -2974,8 +2977,8 @@ export default {
       );
     },
     riskStagePercentage() {
-     if (this.portfolioRiskStages[this.programId]){
-        return _.map(this.portfolioRiskStages[this.programId], "percentage").toString();
+     if (this.riskStages){
+        return _.map(this.riskStages[this.programId], "percentage").toString();
      }    
     },
   taskTypes(){

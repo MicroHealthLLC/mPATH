@@ -256,8 +256,9 @@ const portfolioModule = {
         },
       })
         .then((res) => {
+          // console.log(res.data)
            // Mutate state with response from back end   
-          commit("SET_PORTFOLIO_TASK_STAGES", res.data.stages);
+          commit("SET_PORTFOLIO_TASK_STAGES", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -279,7 +280,7 @@ const portfolioModule = {
       })
         .then((res) => {
           // Mutate state with response from back end    
-        commit("SET_PORTFOLIO_ISSUE_STAGES", res.data.stages);
+        commit("SET_PORTFOLIO_ISSUE_STAGES", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -345,7 +346,7 @@ const portfolioModule = {
       })
         .then((res) => {
         // Mutate state with response from back end    
-          commit("SET_PORTFOLIO_RISK_STAGES", res.data.stages);
+          commit("SET_PORTFOLIO_RISK_STAGES", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -592,7 +593,7 @@ const portfolioModule = {
         })
           .then((res) => {
           // Mutate state with response from back end    
-            commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
+            commit("SET_PORTFOLIO_LESSON_STAGES", res.data);
           })
           .catch((err) => {
             console.log(err);
