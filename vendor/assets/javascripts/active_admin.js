@@ -7,6 +7,61 @@
 //= require 'node_modules/vue-phone-number-input/dist/vue-phone-number-input.umd.js'
 //= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
+
+function validateUserForm(element){
+  let programPrivilegesValid = true
+  let projectPrivilegesValid = true
+  let projectPrivilegesProgramValid = true
+  $.map($(".project_select"), function(element){
+    if($(element).select2({
+      placeholder: "Search and select Programs",
+      allowClear: true,
+      tags: true
+    }).val().length < 1){
+      programPrivilegesValid = false
+    }
+  })
+
+  $.map($(".facility_privileges_program_select"), function(element){
+    if($(element).select2({
+      placeholder: "Search and select Program",
+      allowClear: false,
+    }).val() == ''){
+      projectPrivilegesProgramValid = false
+    }
+  })
+  $.map($(".facility_privileges_project_select"), function(element){
+    if($(element).select2({
+      placeholder: "Search and select Project",
+      allowClear: false
+    }).val().length < 1){
+      projectPrivilegesValid = false
+    }
+  })
+  $.map($(".new_facility_privileges_project_select"), function(element){
+    if($(element).select2({
+      placeholder: "Search and select Project",
+      allowClear: false
+    }).val().length < 1){
+      projectPrivilegesValid = false
+    }
+  })
+
+  if(!programPrivilegesValid){
+    alert(" Please select atlease one program in program privileges.")
+    return false
+  }
+  if(!projectPrivilegesProgramValid){
+    alert(" Please select atlease one program.")
+    return false
+  }
+  if(!projectPrivilegesValid){
+    alert(" Please select atlease one project in project privileges.")
+    return false
+  }
+
+}
+
 function checkRiskProbabilityImpactNumber(element){
   if($(element).val() > 5){
     $(element).val(5)
