@@ -1523,8 +1523,8 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-    if (this.portfolioIssueStages[this.programId] !== undefined) {
-        this.selectedIssueStage = this.portfolioIssueStages[this.programId].find(
+    if (this.issueStages) {
+        this.selectedIssueStage = this.issueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
     }    
@@ -1838,7 +1838,6 @@ export default {
               this.portfolioIssues.push(this.DV_issue)
             }
             if (response.status === 200) {
-              // this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
@@ -1846,7 +1845,6 @@ export default {
               });
             }
           
-          //  this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
@@ -2044,9 +2042,14 @@ export default {
       "myActionsFilter",
       "projectUsers",
     ]),
+    issueStages(){
+          if(this.portfolioIssueStages){
+            return this.portfolioIssueStages.program_stages
+          }
+       }, 
      issueStagesSorted() { 
-      if (this.portfolioIssueStages[this.programId] !== undefined) {
-        let stageObj =  [...this.portfolioIssueStages[this.programId]]
+      if (this.issueStages) {
+        let stageObj =  [...this.issueStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
       }        
     },   

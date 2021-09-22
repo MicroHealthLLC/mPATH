@@ -1358,6 +1358,7 @@ export default {
     }
   },
   mounted() {
+    
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
@@ -1512,8 +1513,8 @@ export default {
       // this.selectedTaskType = this.taskTypeIds.find(
       //   (t) => t === this.DV_task.task_type_id
       // );
-      if (this.portfolioTaskStages[this.programId]) {
-      this.selectedTaskStage = this.portfolioTaskStages[this.programId].find(
+      if (this.taskStages) {
+      this.selectedTaskStage = this.taskStages[this.programId].find(
         (t) => t.id === this.DV_task.task_stage_id
       );
       }   
@@ -1611,7 +1612,7 @@ export default {
       this.DV_task.due_date = '';
     },
     cancelSave() {
-     this.$emit("on-close-form");
+     this.$emit("on-close-form");     
     //  this.setTaskForManager({ key: "task", value: null });
     },
     saveTask() {
@@ -2021,12 +2022,16 @@ export default {
       "getFacilityProjectOptions",
       "managerView",
       "myActionsFilter",
-      "projectUsers",
-      "taskStages",
+      "projectUsers",  
        ]),
+    taskStages(){
+          if(this.portfolioTaskStages){
+            return this.portfolioTaskStages.program_stages
+          }
+       },
     taskStagesSorted() { 
-      if (this.portfolioTaskStages[this.programId] !== undefined) {
-        let stageObj =  [...this.portfolioTaskStages[this.programId]]
+      if (this.taskStages) {
+        let stageObj =  [...this.taskStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
       }        
     },    
