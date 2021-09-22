@@ -267,9 +267,9 @@
         </div>
 
         <el-steps
-          v-if=" portfolioLessonStages[this.programId] && portfolioLessonStages[this.programId].length >= 0"
+          v-if="lessonStages && lessonStages[this.programId].length >= 0"
           :active="
-            portfolioLessonStages[this.programId].findIndex(
+            lessonStages[this.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -277,10 +277,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': portfolioLessonStages[this.programId].length >= 6 }"
+          :class="{ 'over-six-steps': lessonStages[this.programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in portfolioLessonStages[this.programId]"
+            v-for="stage in lessonStages[this.programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -1198,7 +1198,9 @@ export default {
       return this.portfolioUsers
     },
     lessonStages(){
-    return this.portfolioLessonStages
+    if (this.portfolioLessonStages){
+      return this.portfolioLessonStages.program_stages
+    }     
   },
   },
   mounted() {
