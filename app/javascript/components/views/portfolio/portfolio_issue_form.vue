@@ -1522,7 +1522,7 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-    if (this.issueStages[this.programId] !== undefined) {
+    if (this.issueStages) {
         this.selectedIssueStage = this.issueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
@@ -2042,7 +2042,7 @@ export default {
           }
        }, 
      issueStagesSorted() { 
-      if (this.issueStages[this.programId] !== undefined) {
+      if (this.issueStages) {
         let stageObj =  [...this.issueStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
       }        

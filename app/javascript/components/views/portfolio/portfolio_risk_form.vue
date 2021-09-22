@@ -2312,7 +2312,7 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_risk.task_type_id
       );
-      if (this.riskStages[this.programId]){
+      if (this.riskStages){
         this.selectedRiskStage = this.riskStages[this.programId].find(
         (t) => t.id === this.DV_risk.risk_stage_id
       );
@@ -2943,7 +2943,7 @@ export default {
           }
        },
   riskStagesSorted() { 
-      if (this.riskStages[this.programId] !== undefined) {
+      if (this.riskStages) {
         let stageObj =  [...this.riskStages[this.programId]]
         return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
       }        
