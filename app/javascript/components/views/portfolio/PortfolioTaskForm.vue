@@ -1,5 +1,5 @@
 <template>
-  <portfolioTaskForm :task="portfolioTask" @on-close-form="redirectBack"/>
+  <portfolioTaskForm :task="portfolioTask" @on-close-form="redirectBack" @task-updated="updateTable"/>
 </template>
 
 
@@ -14,8 +14,10 @@ export default {
   },
   methods:{
     ...mapActions(['fetchPortfolioTask', 'portfolioTaskLoaded', 'fetchPortfolioUsers', 'fetchPortfolioTasks', 'fetchPortfolioCategories', 'fetchPortfolioTaskStages']),
-    redirectBack() {
+    updateTable() {
       this.fetchPortfolioTasks()
+      },    
+    redirectBack() {     
       this.$router.push(
         `/portfolio`
       );

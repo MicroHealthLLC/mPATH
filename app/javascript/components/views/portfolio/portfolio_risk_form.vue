@@ -2702,7 +2702,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioRisks()
+           this.$emit('risk-updated')
            this.$router.push(
                 `/portfolio`
               );

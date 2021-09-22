@@ -1610,7 +1610,7 @@ export default {
       this.DV_task.due_date = '';
     },
     cancelSave() {
-     this.$emit("on-close-form");
+     this.$emit("on-close-form");     
     //  this.setTaskForManager({ key: "task", value: null });
     },
     saveTask() {
@@ -1800,7 +1800,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioTasks()
+           this.$emit('task-updated')
            this.$router.push(
                 `/portfolio`
               );

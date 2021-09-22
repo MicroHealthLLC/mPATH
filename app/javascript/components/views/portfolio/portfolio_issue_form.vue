@@ -1838,7 +1838,7 @@ export default {
               });
             }
           
-           this.fetchPortfolioIssues()
+           this.$emit('issue-updated')
            this.$router.push(
                 `/portfolio`
               );

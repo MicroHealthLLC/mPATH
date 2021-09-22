@@ -1,5 +1,5 @@
 <template>
-  <portfolioRiskForm :risk="portfolioRisk" @on-close-form="redirectBack"/>
+  <portfolioRiskForm :risk="portfolioRisk" @on-close-form="redirectBack" @risk-updated="updateTable"/>
 </template>
 <script>
 
@@ -12,8 +12,10 @@ export default {
   },
   methods:{
     ...mapActions(['fetchPortfolioRisk', 'portfolioRisksLoaded', 'fetchPortfolioRisks', 'fetchPortfolioUsers','fetchPortfolioCategories', 'fetchPortfolioRiskStages']),
-    redirectBack() {
+   updateTable() {
       this.fetchPortfolioRisks()
+      },    
+   redirectBack() {
       this.$router.push(
         `/portfolio`
       );
