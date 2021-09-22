@@ -1,5 +1,5 @@
 <template>
-  <portfolioIssueForm :issue="portfolioIssue" @on-close-form="redirectBack" @issue-updated="updateTable"/>
+  <portfolioIssueForm :issue="portfolioIssue" @on-close-form="redirectBack" />
 </template>
 <script>
 
@@ -20,10 +20,7 @@ export default {
       'fetchPortfolioIssueSeverities',
       'fetchPortfolioCategories',
       ]),
-    updateTable() {
-      this.fetchPortfolioIssues()  
-      },   
-    redirectBack() {     
+    redirectBack() {
       this.$router.push(
         `/portfolio`
       );

@@ -20,10 +20,17 @@ class ProjectPrivilege < ApplicationRecord
   PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
-  validates :project_ids, presence: true
+  validate :validate_project_ids
+  # validates :project_ids, presence: true
   validates :user_id, presence: true, on: :update
   validate :check_minimum_privilege
-
+  
+  def validate_project_ids
+    if !project_ids.any?
+      self.errors.add(" ", "Please select atleast one program in privilege")
+    end
+  end
+  
   def remove_facility_privileges(pids = [])
     if !pids.any?
       pids = self.project_ids

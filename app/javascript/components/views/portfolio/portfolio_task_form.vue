@@ -1623,6 +1623,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("task[text]", this.DV_task.text);
         formData.append("task[due_date]", this.DV_task.due_date);
         formData.append("task[start_date]", this.DV_task.start_date);
@@ -1791,7 +1792,25 @@ export default {
           .then((response) => {
            
             this.loadTask(response.data.task);
-            this.updateTasksHash({ task: response.data.task });
+            // this.updateTasksHash({ task: response.data.task });
+
+            let task_i = this.portfolioTasks.findIndex((t) => t.id == this.DV_task.id)
+            if (task_i > -1){
+              Vue.set(this.portfolioTasks, task_i, this.DV_task)
+            }else if (task_i == -1){
+              this.portfolioTasks.push(this.DV_task)
+            }
+            // Vue.set(state.facilities, facility_i, facility)
+
+            // updateTasksHash: (state, {task, action}) => {
+            //   let facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
+            //   if (facility_i > -1) {
+            //     let facility = Object.assign({}, state.facilities[facility_i])
+
+            //   }
+            // },
+
+          
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1800,7 +1819,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.$emit('task-updated')
+           //this.fetchPortfolioTasks()
            this.$router.push(
                 `/portfolio`
               );

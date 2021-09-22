@@ -2472,6 +2472,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.risk_description);
         formData.append("risk[approved]", this.DV_risk.approved);
@@ -2693,7 +2694,15 @@ export default {
         })
           .then((response) => {
            this.loadRisk(response.data.risk);
-           this.updateRisksHash({ risk: response.data.risk });
+          //  this.updateRisksHash({ risk: response.data.risk });
+
+            let risk_i = this.portfolioRisks.findIndex((t) => t.id == this.DV_risk.id)
+            if (risk_i > -1){
+              Vue.set(this.portfolioRisks, risk_i, this.DV_risk)
+            }else if (risk_i == -1){
+              this.portfolioRisks.push(this.DV_risk)
+            }
+
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,
@@ -2701,9 +2710,7 @@ export default {
                 showClose: true,
               });
             }
-            //Route to newly created task form page
-           this.$emit('risk-updated')
-           this.$router.push(
+        this.$router.push(
                 `/portfolio`
               );
           })
@@ -2909,6 +2916,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "portfolioRisks",
       "portfolioUsers",
       "currentIssues",
       "portfolioCategories", 
