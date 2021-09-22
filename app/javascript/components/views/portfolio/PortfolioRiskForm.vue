@@ -13,7 +13,7 @@ export default {
   methods:{
     ...mapActions(['fetchPortfolioRisk', 'portfolioRisksLoaded', 'fetchPortfolioRisks', 'fetchPortfolioUsers','fetchPortfolioCategories', 'fetchPortfolioRiskStages']),
     redirectBack() {
-      this.fetchPortfolioRisks()
+      // this.fetchPortfolioRisks()
       this.$router.push(
         `/portfolio`
       );
