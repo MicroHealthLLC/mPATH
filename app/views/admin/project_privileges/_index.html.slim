@@ -3,7 +3,7 @@
 - all_projects = Project.where(id: ( all_project_ids +  user.project_ids ).uniq ).active.distinct 
 - option_array = all_projects.map{|fp| [fp.id, fp.name ] }
 
-a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button adminPanelBtn"}Add Program Privilege
+a{href="javascript:void(0)" id="addProgramPrivilegeBtn" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button adminPanelBtn"}Add Program Privilege
 
 div{id="message_div"}
 
