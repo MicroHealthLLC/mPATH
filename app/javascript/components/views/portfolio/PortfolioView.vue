@@ -4399,9 +4399,7 @@ export default {
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
-      console.log("portfolioViewMounted")
-      console.log(this.currTab)
-      $(this.currTab).trigger('click');
+     $(this.currTab).trigger('click');
       this.fetchPortfolioCounts();
       this.setFacilityProjectIds()
     })
