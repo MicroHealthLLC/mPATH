@@ -1182,6 +1182,7 @@ export default {
       "facilityGroups",
       "lesson",
       "lessonsLoaded",
+      "portfolioLessons",
       'portfolioLessonStages',
       'portfolioTaskStages',
       "lessonStatus",
