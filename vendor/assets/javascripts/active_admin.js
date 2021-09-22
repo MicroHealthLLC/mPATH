@@ -48,15 +48,15 @@ function validateUserForm(element){
   })
 
   if(!programPrivilegesValid){
-    alert(" Please select atlease one program in program privileges.")
+    alert("Please select atlease one program in program privileges.")
     return false
   }
   if(!projectPrivilegesProgramValid){
-    alert(" Please select atlease one program.")
+    alert("Please select atlease one program.")
     return false
   }
   if(!projectPrivilegesValid){
-    alert(" Please select atlease one project in project privileges.")
+    alert("Please select atlease one project in project privileges.")
     return false
   }
 

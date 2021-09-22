@@ -28,10 +28,15 @@ describe('Admin Panel Users', function() {
     cy.get('#project_privileges_list > fieldset > ol > li:nth-child(3)').within(() => {
       cy.get("input[type='checkbox']").click({ multiple: true })
     })
-    
-    cy.get('#user_submit_action').contains('Create User').click()
 
-    cy.contains("Please select atleast one program in privilege")
+    const stub = cy.stub()  
+    cy.on ('window:alert', stub)
+
+    cy.get('#user_submit_action').contains('Create User').click().then(() => {
+      expect(stub.getCall(0)).to.be.calledWith('Please select atlease one program in program privileges.')      
+    })
+
+    // cy.contains("Please select atleast one program in privilege")
 
     // cy.get('.flashes').contains('User was successfully created.')
     // cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 3)
