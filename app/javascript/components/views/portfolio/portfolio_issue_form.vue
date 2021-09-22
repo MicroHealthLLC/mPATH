@@ -369,6 +369,7 @@
                 <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
               </div>    
             <el-steps 
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne mt-3" 
               :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
               :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
@@ -398,6 +399,7 @@
           >
             <label class="font-md">Select Stage</label>
             <el-steps
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne"
               :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
@@ -1306,6 +1308,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
+      programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
@@ -1519,9 +1522,11 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-      this.selectedIssueStage = this.issueStages.find(
+    if (this.portfolioIssueStages[this.programId] !== undefined) {
+        this.selectedIssueStage = this.portfolioIssueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
+    }    
       if (this.DV_issue.attach_files)
         this.addFile(this.DV_issue.attach_files, false);
       this.$nextTick(() => {
@@ -1606,7 +1611,7 @@ export default {
         });
       }
       this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
-      this.updateWatchedIssues(this.DV_issue);
+      this.saveIssue();
     },
     toggleImportant() {
       this.DV_issue = { ...this.DV_issue, important: !this.DV_issue.important };
@@ -1638,6 +1643,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("issue[title]", this.DV_issue.title);
         formData.append("issue[due_date]", this.DV_issue.due_date);
         formData.append("issue[start_date]", this.DV_issue.start_date);
@@ -1655,6 +1661,7 @@ export default {
         formData.append("issue[auto_calculate]", this.DV_issue.auto_calculate);
         formData.append("issue[on_hold]", this.DV_issue.on_hold);
         formData.append("issue[draft]", this.DV_issue.draft);
+        formData.append("issue[watched]", this.DV_issue.watched);
         formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
 
      //Responsible USer Id
@@ -1822,7 +1829,13 @@ export default {
          
             this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: response.data.issue });
+            // this.updateIssuesHash({ issue: response.data.issue });
+            let issue_i = this.portfolioIssues.findIndex((t) => t.id == this.DV_issue.id)
+            if (issue_i > -1){
+              Vue.set(this.portfolioIssues, issue_i, this.DV_issue)
+            }else if (issue_i == -1){
+              this.portfolioIssues.push(this.DV_issue)
+            }
             if (response.status === 200) {
               // this.fetchPortfolioIssues()
               this.$message({
@@ -1832,7 +1845,7 @@ export default {
               });
             }
           
-           this.fetchPortfolioIssues()
+          //  this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
@@ -2030,14 +2043,13 @@ export default {
       "myActionsFilter",
       "projectUsers",
     ]),
-    issueStages(){
-      return this.portfolioIssueStages
-    },
-    issueStagesSorted() {
-      var issueStagesSortedReturn = [...this.issueStages]; 
-      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
-    readyToSave() {
+     issueStagesSorted() { 
+      if (this.portfolioIssueStages[this.programId] !== undefined) {
+        let stageObj =  [...this.portfolioIssueStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
+     readyToSave() {
       return (
         this.DV_issue &&
         this.exists(this.DV_issue.title) &&

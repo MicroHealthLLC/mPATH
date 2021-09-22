@@ -7,7 +7,7 @@
       accept-charset="UTF-8"
       :class="{ _disabled: loading }"
     >
-      <div class="mt-2 mx-4 d-flex align-items-center">
+      <div class="mt-2 mx-4 d-flex align-items-center" :load="log(JSON.stringify(taskStagesSorted))">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
@@ -1419,6 +1419,9 @@ export default {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
       }
+    },
+  log(e){
+      console.log("taskSorted: " + e)
     },
     clearStages() {
       this.selectedTaskStage = null;

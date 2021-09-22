@@ -519,8 +519,8 @@ export default {
     return this.filteredLessons.filtered.lessons.sort((a,b) => { 
     let modifier = 1;
     if(this.currentSortDir === 'desc') modifier = -1;
-    if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-    if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;    
     return 0;
       }).filter((row, index) => {
     let start = (this.currentPage-1)*this.lessonsPerPage.value;
@@ -579,7 +579,7 @@ export default {
   },
   mounted() {
     // GET request action to retrieve all lessons for project
-     console.log(this.filteredLessons.filtered.lessons)
+    //  console.log(this.filteredLessons.filtered.lessons)
     this.fetchProjectLessons(this.$route.params);
   },
   // watch: {

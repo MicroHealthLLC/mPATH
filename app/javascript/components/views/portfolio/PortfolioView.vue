@@ -726,7 +726,8 @@
                 <div class="px-3 tableFixHead" >
                   <table
                     class="table table-sm table-bordered"
-                    ref="table"                   
+                    ref="table"
+                    id="portTasks"                   
                   >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sort('program_name')">
@@ -1250,7 +1251,7 @@
 <!-- EXPORT (Display:None) -->
         <table
           class="table table-bordered w-100"
-          id="portTasks"
+          id="portTasks1"
           style="display:none"        
         >
          <thead>      
@@ -1702,6 +1703,7 @@
                 <table
                   class="table table-sm table-bordered"
                   ref="issueTable"
+                  id="portIssues"
                   >
                   <thead style="background-color: #ededed">
                     <th class="sort-th twenty" @click="sortI('program_name')">
@@ -2265,7 +2267,7 @@
                 </table>
        <table
         class="table table-bordered w-100"
-        id="portIssues"     
+        id="portIssues1"     
         style="display:none"          
         >
          <thead>      
@@ -2721,7 +2723,8 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="riskTable"                   
+                    ref="riskTable" 
+                    id="portRisks"                  
                   >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sort('program_name')">
@@ -3356,7 +3359,7 @@
                   <!-- Export (Display:none) -->
                   <table
                     class="table table-bordered w-100"
-                    id="portRisks"
+                    id="portRisks1"
                     style="display:none"        
                   >
                   <thead>      
@@ -3730,6 +3733,7 @@
                   <table
                     class="table table-sm table-bordered"
                     ref="lessonTable"
+                    id="portLessons"
                     >
                     <thead style="background-color: #ededed">
                       <th class="sort-th twenty" @click="sortL('program_name')">
@@ -4192,7 +4196,7 @@
                   </table>
                   <table
                     class="table table-bordered w-100"
-                    id="portLessons"
+                    id="portLessons1"
                     style="display:none"        
                   >
                   <thead>      
@@ -4389,6 +4393,8 @@ export default {
     this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
+      console.log("portfolioViewMounted")
+      console.log(this.currTab)
       $(this.currTab).trigger('click');
       this.fetchPortfolioCounts();
       this.setFacilityProjectIds()
@@ -4567,20 +4573,27 @@ export default {
         this.setHideImportant(value)
       }
   },
-   sortedTasks:function() {
-          return this.tasksObj.filtered.tasks.sort((a,b) => {
-          let modifier = 1;
-          if (this.currentSortDir === "desc") modifier = -1;
-          if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          return 0;
-        })
-        .filter((row, index) => {
-          let start = (this.currentPage - 1) * this.C_tasksPerPage.value;
-          let end = this.currentPage * this.C_tasksPerPage.value;
-          if (index >= start && index < end) return true;
-          return this.end;
-        });
+  sortedTasks:function() {
+      return this.tasksObj.filtered.tasks.sort((a,b) => {
+      let modifier = 1;
+      if (this.currentSortDir === "desc") modifier = -1;
+      // console.log(a[this.currentSort])
+      // if ((isNaN(a[this.currentSort] && b[this.currentSort]) && Array.isArray(a[this.currentSort] && b[this.currentSort]) == false )) {
+      //     if (typeof a[this.currentSort] || b[this.currentSort] === 'string'){
+      //     if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+      //     if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+      //    } 
+      // } else  {
+      if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+      if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+      return 0;
+    })
+    .filter((row, index) => {
+      let start = (this.currentPage - 1) * this.C_tasksPerPage.value;
+      let end = this.currentPage * this.C_tasksPerPage.value;
+      if (index >= start && index < end) return true;
+      return this.end;
+     });
     },
     validTaskPrograms(){
       let name = this.sortedTasks;
@@ -4597,7 +4610,7 @@ export default {
           let modifier = 1;
           if (this.currentSortDir === "desc") modifier = -1;
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;  
           return 0;
         })
         .filter((row, index) => {
@@ -4645,9 +4658,9 @@ export default {
       return this.lessonsObj.filtered.lessons
         .sort((a, b) => {
           let modifier = 1;
-          if (this.currentSortDir === "desc") modifier = -1;
+          if (this.currentSortDir === "desc") modifier = -1;        
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;            
           return 0;
         })
         .filter((row, index) => {
@@ -6184,7 +6197,7 @@ export default {
       doc.autoTable({ 
         html: "#portTasks",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
@@ -6216,7 +6229,7 @@ export default {
             doc.autoTable({ 
         html: "#portIssues",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
@@ -6248,7 +6261,7 @@ export default {
       doc.autoTable({ 
         html: "#portRisks",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   
@@ -6280,7 +6293,7 @@ export default {
         doc.autoTable({ 
         html: "#portLessons",       
         didParseCell: function(hookData) {  
-          console.log(hookData)      
+          // console.log(hookData)      
           if (hookData.section == 'head')    {
               hookData.cell.styles.fillColor = "383838"; 
               hookData.cell.styles.textColor = [255, 255, 255];   

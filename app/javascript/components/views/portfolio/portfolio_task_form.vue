@@ -324,6 +324,7 @@
          <button  v-if="_isallowed('write')"  @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
             </div>    
           <el-steps 
+            v-if="taskStagesSorted && taskStagesSorted.length >= 0"
             class="exampleOne mt-3" 
             finish-status="success"  
             :class="{'overSixSteps': taskStagesSorted.length >= 6 }" 
@@ -352,6 +353,7 @@
           >
             <label class="font-md">Select Stage</label>
             <el-steps
+               v-if="taskStagesSorted && taskStagesSorted.length >= 0"
               class="exampleOne"
               finish-status="success"
               :class="{ overSixSteps: taskStagesSorted.length >= 6 }"
@@ -1283,6 +1285,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       editTimeLive: "",
+      programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1357,7 +1360,7 @@ export default {
       this.loadTask(this.task);
     } else {
       this.loadTask(this.DV_task);
-    }
+    }    
     this.loading = false;
     this._ismounted = true;
   },
@@ -1372,7 +1375,8 @@ export default {
         facilityProjectId: this.$route.params.projectId,
         checklistDueDate: "",
         taskTypeId: "",
-        taskStageId: "",
+     
+        // programStageId: null,
         important: false,
         reportable: false,
         on_hold: false,
@@ -1393,6 +1397,9 @@ export default {
         notes: [],
       };
     },
+    // log(e){
+    //   console.log("taskSorted: " + e)
+    // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;
@@ -1421,9 +1428,6 @@ export default {
       } else {
         return str;
       }
-    },
-    log(e){
-// console.log("check.dueDate " + e)
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -1506,9 +1510,11 @@ export default {
       // this.selectedTaskType = this.taskTypeIds.find(
       //   (t) => t === this.DV_task.task_type_id
       // );
-      this.selectedTaskStage = this.portfolioTaskStages.find(
+      if (this.portfolioTaskStages[this.programId]) {
+      this.selectedTaskStage = this.portfolioTaskStages[this.programId].find(
         (t) => t.id === this.DV_task.task_stage_id
       );
+      }   
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
         (t) => t.id === this.DV_task.facility_project_id
       );
@@ -1554,6 +1560,7 @@ export default {
       }
     },
     toggleWatched() {
+      
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
          this.$message({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
@@ -1576,7 +1583,8 @@ export default {
           });
       }
       this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
-      this.updateWatchedTasks(this.DV_task);
+      this.saveTask()
+      // this.updateWatchedTasks(this.DV_task);
     },
     removeFromWatch() {
       if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
@@ -1614,6 +1622,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("task[text]", this.DV_task.text);
         formData.append("task[due_date]", this.DV_task.due_date);
         formData.append("task[start_date]", this.DV_task.start_date);
@@ -1627,6 +1636,7 @@ export default {
         formData.append("task[on_hold]", this.DV_task.on_hold);
         formData.append("task[draft]", this.DV_task.draft);
         formData.append("task[ongoing]", this.DV_task.ongoing);
+        formData.append("task[watched]", this.DV_task.watched);
         formData.append(
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
@@ -1781,7 +1791,25 @@ export default {
           .then((response) => {
            
             this.loadTask(response.data.task);
-            this.updateTasksHash({ task: response.data.task });
+            // this.updateTasksHash({ task: response.data.task });
+
+            let task_i = this.portfolioTasks.findIndex((t) => t.id == this.DV_task.id)
+            if (task_i > -1){
+              Vue.set(this.portfolioTasks, task_i, this.DV_task)
+            }else if (task_i == -1){
+              this.portfolioTasks.push(this.DV_task)
+            }
+            // Vue.set(state.facilities, facility_i, facility)
+
+            // updateTasksHash: (state, {task, action}) => {
+            //   let facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
+            //   if (facility_i > -1) {
+            //     let facility = Object.assign({}, state.facilities[facility_i])
+
+            //   }
+            // },
+
+          
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1790,7 +1818,7 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioTasks()
+           //this.fetchPortfolioTasks()
            this.$router.push(
                 `/portfolio`
               );
@@ -1994,10 +2022,12 @@ export default {
       "projectUsers",
       "taskStages",
        ]),
-    taskStagesSorted() {
-      var taskStagesSortedReturn = [...this.portfolioTaskStages]; 
-      return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
+    taskStagesSorted() { 
+      if (this.portfolioTaskStages[this.programId] !== undefined) {
+        let stageObj =  [...this.portfolioTaskStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },    
     taskTypes(){
       return this.portfolioCategories
     },

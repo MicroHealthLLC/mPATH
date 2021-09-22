@@ -21,7 +21,7 @@ export default {
       'fetchPortfolioCategories',
       ]),
     redirectBack() {
-      this.fetchPortfolioIssues()  
+      // this.fetchPortfolioIssues()  
       this.$router.push(
         `/portfolio`
       );
