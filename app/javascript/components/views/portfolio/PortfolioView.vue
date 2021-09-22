@@ -828,7 +828,7 @@
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' && currentSort === 'text'
                           "
@@ -844,7 +844,7 @@
                           <i class="fas fa-sort-up"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' && currentSort === 'text'
                           "
@@ -874,7 +874,7 @@
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
                             currentSort === 'notes_updated_at'
@@ -892,7 +892,7 @@
                           <i class="fas fa-sort-up"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
                             currentSort === 'notes_updated_at'
@@ -924,7 +924,7 @@
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
                             currentSort === 'start_date'
@@ -942,7 +942,7 @@
                           <i class="fas fa-sort-up"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
                             currentSort === 'start_date'
@@ -973,7 +973,7 @@
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
                             currentSort === 'due_date'
@@ -991,7 +991,7 @@
                           <i class="fas fa-sort-up"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
                             currentSort === 'due_date'
@@ -1025,7 +1025,7 @@
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
                             currentSort === 'progress'
@@ -1043,7 +1043,7 @@
                           <i class="fas fa-sort-up"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
                             currentSort === 'progress'
@@ -1073,7 +1073,7 @@
                           <i class="fas fa-sort"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
                             currentSort === 'category'
@@ -1091,7 +1091,7 @@
                           <i class="fas fa-sort-up"></i
                         ></span>
                         <span
-                          class="sort-icon main scroll"
+                          class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
                             currentSort === 'category'
