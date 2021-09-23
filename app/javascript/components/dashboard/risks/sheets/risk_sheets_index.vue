@@ -41,7 +41,7 @@
         </el-option>
         </el-select>
       </div>
-      <div class="w-75" style="position:relative">  
+      <!-- <div class="w-75" style="position:relative">  
          <label class="font-sm my-0">Filters</label>   
         <el-collapse class="risksFilter w-100"  style="position:absolute">
         <el-collapse-item name="1">
@@ -50,23 +50,6 @@
           MORE RISK FILTERS
           </template>
           <div class="mr-1 w-100 d-unset p-2">
-         <!-- <label class="mb-0">Flags</label>
-          <el-select
-            v-model="C_sheetsRiskFilter"
-            class="w-100 mb-1"
-            track-by="name"
-            value-key="id"
-            multiple
-            placeholder="Filter by Flags"
-            >
-          <el-option
-            v-for="item in getAdvancedFilterOptions"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select> -->
            <label class="mb-0">Risk Approach</label>
             <el-select
                 v-model="C_riskApproachFilter"
@@ -108,7 +91,7 @@
             </el-collapse>  
 
             
-      </div>
+      </div> -->
     </div>
     <div class="wrapper mt-2 p-3">
     <div class="d-inline ">

@@ -41,7 +41,7 @@
           </el-option>
           </el-select>
          </div>
-  <div class="w-75" style="position:relative">  
+  <!-- <div class="w-75" style="position:relative">  
   <label class="font-sm my-0">Filters</label>      
   <el-collapse class="issuesFilter w-100"  style="position:absolute">
   <el-collapse-item name="1">
@@ -90,7 +90,7 @@
         </el-collapse-item>
       </el-collapse>  
             
-    </div>
+    </div> -->
       
        </div>
   
