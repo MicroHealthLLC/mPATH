@@ -4587,7 +4587,7 @@ export default {
   sortedTasks:function() {
       return this.tasksObj.filtered.tasks.sort((a,b) => {
       let modifier = 1;
-    
+      
       if (this.currentSortDir1 === "desc") modifier = -1;
       if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
       if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
