@@ -3,7 +3,7 @@
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
-         <div class="ml-3 task-search-bar w-75">
+         <div class="ml-3 task-search-bar w-100">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
             type="search"          
