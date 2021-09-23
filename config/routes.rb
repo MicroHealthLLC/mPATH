@@ -210,14 +210,15 @@ Rails.application.routes.draw do
 
   root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
-  
-  get "*path", to: 'home#index', constraints: -> (req) do
-    !req.xhr? && req.format.html?
-  end
 
   # Strictly matching /portfolio
   get '*all', to: "home#portfolio", constraints: -> (req) do
-    (p = req.path.split("/")[1] ) && p.split("portfolio").size < 2
+    # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/)
+  end
+
+  get "*path", to: 'home#index', constraints: -> (req) do
+    !req.xhr? && req.format.html?
   end
   
   get '*all', to: "not_found#index", constraints: -> (req) do

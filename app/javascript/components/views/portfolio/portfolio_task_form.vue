@@ -1773,11 +1773,11 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `#{API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
         let method = "POST";
         let callback = "task-created";
         if (this.task && this.task.id) {
-          url = `#{API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks/${this.task.id}.json`;
           method = "PUT";
           callback = "task-updated";
         }

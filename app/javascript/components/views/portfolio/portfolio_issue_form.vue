@@ -1802,12 +1802,12 @@ export default {
           }
         }
 
-        let url = `#{API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues.json`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
         let callback = "issue-created";
 
         if (this.issue && this.issue.id) {
-          url = `#{API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
           method = "PUT";
           callback = "issue-updated";
         }
