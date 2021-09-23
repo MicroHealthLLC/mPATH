@@ -49,7 +49,7 @@ class ProjectPrivilege < ApplicationRecord
   def check_minimum_privilege
     fp = self
     if !fp.admin.join.present? && !fp.overview.join.present? && !fp.tasks.join.present? && !fp.issues.join.present? && !fp.risks.join.present? && !fp.notes.join.present? && !fp.lessons.join.present?
-      fp.errors.add(:base, "Program privileges can not be blank")
+      fp.errors.add(" ", "Program privileges can not be blank")
     end
   end
 
