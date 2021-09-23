@@ -1157,6 +1157,7 @@
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
+                          <span v-else-if="task.completed && (task.due_date == null || task.due_date == undefined)"></span>
                           <span
                             v-else-if="task.on_hold && task.due_date == null"
                             v-tooltip="`On Hold (w/no Due Date)`"
@@ -1289,11 +1290,13 @@
                 <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                   ><i class="fas fa-retweet text-success"></i
                 ></span>
+                 <span v-else-if="task.completed && (task.due_date == null || task.due_date == undefined)"></span>
                 <span
                   v-else-if="task.on_hold && task.due_date == null"
                   v-tooltip="`On Hold (w/no Due Date)`"
                   ><i class="fas fa-pause-circle text-primary"></i
                 ></span>
+                
                 <span v-else>{{
                   moment(task.due_date).format("DD MMM YYYY")
                 }}</span>
@@ -2209,6 +2212,7 @@
                           v-tooltip="`On Hold (w/no Due Date)`"
                           ><i class="fas fa-pause-circle text-primary"></i
                         ></span>
+                        <span v-else-if="issue.completed && (issue.due_date == null || issue.due_date == undefined)"></span>
                         <span v-else
                           >{{ moment(issue.due_date).format("DD MMM YYYY") }}
                         </span>
@@ -2301,6 +2305,7 @@
                       v-tooltip="`On Hold (w/no Due Date)`"
                       ><i class="fas fa-pause-circle text-primary"></i
                     ></span>
+                    <span v-else-if="issue.completed && (issue.due_date == null || issue.due_date == undefined)"></span>
                     <span v-else
                       >{{ moment(issue.due_date).format("DD MMM YYYY") }}
                     </span>
@@ -3276,6 +3281,7 @@
                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
+                        <span v-else-if="risk.completed && (risk.due_date == null || risk.due_date == undefined)"></span>
                           <span
                             v-else-if="risk.on_hold && risk.due_date == null"
                             v-tooltip="`On Hold (w/no Due Date)`"
@@ -3430,6 +3436,7 @@
                         <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
                           ><i class="fas fa-retweet text-success"></i
                         ></span>
+                        <span v-else-if="risk.completed && (risk.due_date == null || risk.due_date == undefined)"></span>
                         <span
                           v-else-if="risk.on_hold && risk.due_date == null"
                           v-tooltip="`On Hold (w/no Due Date)`"
@@ -6299,7 +6306,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
       doc.autoTable({ 
-        html: "#portTasks",       
+        html: "#portTasks1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
@@ -6331,7 +6338,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
             doc.autoTable({ 
-        html: "#portIssues",       
+        html: "#portIssues1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
@@ -6363,7 +6370,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
       doc.autoTable({ 
-        html: "#portRisks",       
+        html: "#portRisks1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
@@ -6395,7 +6402,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
         doc.autoTable({ 
-        html: "#portLessons",       
+        html: "#portLessons1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
