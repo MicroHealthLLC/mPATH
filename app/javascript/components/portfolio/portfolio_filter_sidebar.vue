@@ -248,7 +248,7 @@
                   placeholder="Select Task Stage"
                   >
                 <el-option 
-                  v-for="item in portfolioTaskStages"                                                               
+                  v-for="item in portfolioTaskStages.all_stages"                                                               
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -272,7 +272,7 @@
                   placeholder="Select Issue Stage"
                   >
                 <el-option 
-                  v-for="item in portfolioIssueStages"                                                                       
+                  v-for="item in portfolioIssueStages.all_stages"                                                                       
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -341,7 +341,7 @@
                   placeholder="Select Risk Stage"
                   >
                  <el-option 
-                  v-for="item in portfolioRiskStages"                                                                       
+                  v-for="item in portfolioRiskStages.all_stages"                                                                       
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -985,15 +985,15 @@ export default {
         if(this.portfolioStatuses && this.portfolioStatuses.length < 1){
           this.fetchPortfolioStatuses()
         }
-        if(this.portfolioTaskStages && this.portfolioTaskStages.length < 1){
+        // if(this.portfolioTaskStages.all_stages && this.portfolioTaskStages.all_stages.length < 1){
           this.fetchPortfolioTaskStages()
-        }
-        if(this.portfolioRiskStages && this.portfolioRiskStages.length < 1){
+        // }
+        // if(this.portfolioRiskStages.all_stages && this.portfolioRiskStages.all_stages.length < 1){
           this.fetchPortfolioRiskStages()
-        }
-        if(this.portfolioIssueStages && this.portfolioIssueStages.length < 1){
+        // }
+        // if(this.portfolioIssueStages.all_stages && this.portfolioIssueStages.all_stages.length < 1){
           this.fetchPortfolioIssueStages()
-        }
+        // }
         if(this.portfolioIssueTypes && this.portfolioIssueTypes.length < 1){
           this.fetchPortfolioIssueTypes()
         }
