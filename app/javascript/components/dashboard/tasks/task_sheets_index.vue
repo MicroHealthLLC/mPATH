@@ -990,7 +990,15 @@
       sortedTasks:function() {
           return this.filteredTasks.filtered.tasks.sort((a,b) => {
           let modifier = 1;
+
           if(this.currentSortDir === 'desc') modifier = -1;
+
+          if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+            if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+               if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+            }
+          } else 
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
