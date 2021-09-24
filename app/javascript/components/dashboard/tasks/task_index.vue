@@ -15,6 +15,12 @@
             <el-button slot="prepend" icon="el-icon-search"></el-button>
           </el-input>
         </div>
+        <!-- <div class="ml-1 d-flex">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 pt-1 px-2" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h"></i>      
+        </span>    
+         </div> -->
         <div class="ml-1 font-sm w-100">
           <el-select 
            v-model="C_taskTypeFilter"                        
@@ -243,6 +249,7 @@ export default {
       'setOnWatchFilter',
       'setTaskForManager',
       'setShowCount',
+      'setShowAdvancedFilter',
       // 7 States
       'setHideComplete',
       'setHideInprogress',
@@ -265,6 +272,9 @@ export default {
       let s = permissionHash[salut]
       return  fPrivilege.tasks.includes(s); 
     },
+    toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
+      },
     addNewTask() {
       this.setTaskForManager({key: 'task', value: {}})
       // Route to new task form page
@@ -343,6 +353,7 @@ computed: {
     'taskIssueOverdueFilter',
     'taskTypeFilter',
     'noteDateFilter',
+    'getShowAdvancedFilter',
     'taskIssueDueDateFilter',
     'myActionsFilter',
     'onWatchFilter',
