@@ -41,7 +41,7 @@
           </el-option>
           </el-select>
          </div>
-  <div class="w-75" style="position:relative">  
+  <!-- <div class="w-75" style="position:relative">  
   <label class="font-sm my-0">Filters</label>      
   <el-collapse class="issuesFilter w-100"  style="position:absolute">
   <el-collapse-item name="1">
@@ -90,7 +90,7 @@
         </el-collapse-item>
       </el-collapse>  
             
-    </div>
+    </div> -->
       
        </div>
   
@@ -1014,11 +1014,17 @@
      },
       sortedIssues:function() {
           return this.filteredIssues.filtered.issues.sort((a,b) => {
-          let modifier = 1;
+          let modifier = 1;          
           if(this.currentSortDir === 'desc') modifier = -1;
+          if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+            if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+               if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+            }
+          } else 
           if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
           if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          return 0;    
+          return 0;
            }).filter((row, index) => {
           let start = (this.currentPage-1)*this.C_issuesPerPage.value;
           let end = this.currentPage*this.C_issuesPerPage.value;

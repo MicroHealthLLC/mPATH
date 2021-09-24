@@ -1643,6 +1643,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("issue[title]", this.DV_issue.title);
         formData.append("issue[due_date]", this.DV_issue.due_date);
         formData.append("issue[start_date]", this.DV_issue.start_date);
@@ -1828,9 +1829,14 @@ export default {
          
             this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: response.data.issue });
+            // this.updateIssuesHash({ issue: response.data.issue });
+            let issue_i = this.portfolioIssues.findIndex((t) => t.id == this.DV_issue.id)
+            if (issue_i > -1){
+              Vue.set(this.portfolioIssues, issue_i, this.DV_issue)
+            }else if (issue_i == -1){
+              this.portfolioIssues.push(this.DV_issue)
+            }
             if (response.status === 200) {
-              // this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
@@ -1838,7 +1844,6 @@ export default {
               });
             }
           
-           this.fetchPortfolioIssues()
            this.$router.push(
                 `/portfolio`
               );
