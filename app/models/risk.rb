@@ -369,6 +369,7 @@ class Risk < ApplicationRecord
       class_name: self.class.name,
       completed: completed,
       planned: planned,
+      project_group: self.facility_group.name,
       closed: closed,
       in_progress: in_progress,
       attach_files: attach_files,

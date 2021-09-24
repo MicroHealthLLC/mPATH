@@ -243,6 +243,7 @@ class Issue < ApplicationRecord
       planned: planned,
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
+      project_group: self.facility_group.name,
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),
