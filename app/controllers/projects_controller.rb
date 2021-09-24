@@ -42,6 +42,17 @@ class ProjectsController < AuthenticatedController
     end
   end
 
+  def program_dataviewer
+    if !current_user.authorized_programs.pluck(:id).include?(params[:program_id].to_i)
+      raise CanCan::AccessDenied      
+    end
+    
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
   def index
     respond_to do |format|
       format.json {render json: {projects: current_user.authorized_programs.includes(:project_type).as_json}}
