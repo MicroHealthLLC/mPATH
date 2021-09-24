@@ -126,7 +126,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ issueVariation.onHoldT.count }}
+            {{ issueVariation.onHold.count }}
         </h5>
         </div>
         <div
@@ -606,11 +606,11 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <th class="non-sort-th" style="min-width: 145px">
         Flags
         </th>
-        <th class="pl-1 sort-th twenty" @click="sort('category')">
+        <th class="pl-1 sort-th twenty" @click="sort('task_type_name')">
         Process Area
         <span
             class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'category'"
+            v-if="currentSort !== 'task_type_name'"
         >
             <i class="fas fa-sort"></i
         ></span>
@@ -618,7 +618,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="sort-icon scroll"
             v-if="
             currentSortDir === 'asc' &&
-            currentSort === 'category'
+            currentSort === 'task_type_name'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -627,7 +627,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="inactive-sort-icon scroll"
             v-if="
             currentSortDir !== 'asc' &&
-            currentSort === 'category'
+            currentSort === 'task_type_name'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -636,7 +636,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="sort-icon scroll"
             v-if="
             currentSortDir === 'desc' &&
-            currentSort === 'category'
+            currentSort === 'task_type_name'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -645,7 +645,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="inactive-sort-icon scroll"
             v-if="
             currentSortDir !== 'desc' &&
-            currentSort === 'category'
+            currentSort === 'task_type_name'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -667,7 +667,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="toolTip"
             v-tooltip="
                 'By: ' +
-                issue.notes[task.notes.length - 1].user.fullName
+                issue.notes[issue.notes.length - 1].user.fullName
             "
             >
             {{
@@ -754,7 +754,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             ></span>
 
         </td>
-        <td>{{ issue.taskType }}</td>
+        <td>{{ issue.task_type_name }}</td>
         </tr>
     </tbody>
     </table>
@@ -819,7 +819,7 @@ export default {
       showLess: "Show More",
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
-      currentSort: "text",  
+      currentSort: "title",  
       currentSortCol1: "projectGroup",
       currentSortCol2: "facilityName",
       // currentSortIssueRisk: "title",
@@ -832,7 +832,7 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
-    'currentTaskPage',
+    'currentIssuePage',
     "lessonsLoaded",
     "projectLessons",
     "programLessons",
@@ -951,7 +951,7 @@ export default {
     },
  currentPage:{
        get() {
-        return this.currentTaskPage
+        return this.currentIssuePage
       },
       set(value) {
         this.setCurrentPage(value);
@@ -1025,7 +1025,7 @@ export default {
         : this.filteredAllIssues;
 
       let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(issues, (resource) => {
+       _.filter(issues, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
@@ -1048,6 +1048,81 @@ export default {
           valid = valid && stageIds.includes(resource.issueStageId);
         return valid;
       });
+        return {
+       unfiltered: {
+            issues
+            },
+       filtered: {
+         issues:  issues.filter(t => {
+        if (this.getHideOverdue == true) {          
+         return t.isOverdue == false
+       } else return true
+
+      }).filter(t => {
+      if (this.getHideComplete == true) { 
+        return !t.completed
+      } else return true
+
+      }).filter(t => {
+      if (this.getHidePlanned == true) { 
+        return t.planned == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideOnhold == true) { 
+        return t.onHold == false
+      } else return true
+
+      }).filter(t => {
+      if (this.getHideInprogress == true) { 
+        return t.inProgress == false
+      } else return true
+
+      }).filter(t => {
+       if (this.getHideDraft == true){
+         return t.draft == false
+       } else return true   
+
+
+      }).filter(t => {
+      if (this.getHideOngoing == true) {
+        return t.ongoing == false
+      } else return true       
+
+      }).filter(t => {
+        if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
+        return t.reportable
+      }
+      if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
+          return t.reportable + t.watched
+
+      } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
+          return t.reportable + t.watched + t.important
+      } else return true
+
+      }).filter(t => {
+        // This and last 2 filters are for Filtered Tags
+         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
+           return t.watched
+        } if (this.getHideWatched && !this.getHideBriefed && this.getHideImportant) {
+           return t.watched + t.important
+        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
+           return  t.watched + t.reportable
+        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
+           return  t.watched + t.reportable + t.important
+        } else return true          
+       
+      }).filter(t => {
+         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
+          return t.important
+        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
+          return t.important + t.reportable
+       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
+          return t.important + t.reportable + t.watched
+        } else return true           
+       }),  
+        }
+       } 
     },
     issueTaskCATEGORIES() {
       let issues = new Array();
@@ -1062,66 +1137,7 @@ export default {
       }
       return issues;
     },
-    filteredRisks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      let risks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
-          )
-        : this.filteredAllRisks;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(risks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.riskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      });
-    },
-    riskPriorityLevels() {
-      let grey = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Very Low"
-      );
-      let green = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Low"
-      );
-      let yellow = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Moderate"
-      );
-      let orange = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "High"
-      );
-      let red = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Extreme"
-      );
-      return {
-        grey: grey.length,
-        green: green.length,
-        yellow: yellow.length,
-        orange: orange.length,
-        red: red.length,
-      };
-    },
+     
     activeFacilitiesByStatus() {
       return this.facilityGroup
         ? this.facilityGroupFacilities(this.facilityGroup).length
@@ -1195,208 +1211,64 @@ export default {
       }
       return issueTypes;
     },
-    currentRiskTypes() {
-      let names =
-        this.taskTypeFilter &&
-        this.taskTypeFilter.length &&
-        _.map(this.taskTypeFilter, "name");
-      let taskTypes = new Array();
-      for (let type of this.taskTypes) {
-        let risks = _.filter(
-          this.filteredRisks,
-          (t) => t.taskTypeId == type.id
-        );
-        taskTypes.push({
-          name: type.name,
-          _display:
-            risks.length > 0 && (names ? names.includes(type.name) : true),
-          length: risks.length,
-          progress: Number(_.meanBy(risks, "progress").toFixed(0)),
-        });
-      }
-      return taskTypes;
-    },
-    viableTasksForProgressTotal(){
-      return this.filteredIssues.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
-    },
-     viableIssuesForProgressTotal(){
-      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
-    },
-     viableRisksForProgressTotal(){
-      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
-    },
-   allTasksProgress() {
-      let task = new Array();
-      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
-      for (let ids in group) {
-        task.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = task.map(t => t.progress);
-      let count = task.map(t => t).length;
-
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-
-     let roundedSum = Math.round(sum)
-     let final = roundedSum / count
-
-     if (isNaN(final)){
-       final = 0;
-     }
-    //  let allCounts = this.allRisksProgress.count + this.allIssuesProgress.count + count
-    //  let weightedVal = count / allCounts
-     let weighted = count * final 
-    
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted, 
-          roundedSum  
-      }
-    },
-    allRisksProgress() {
-      let risk = new Array();
-      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
-      for (let ids in group) {
-        risk.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = risk.map(r => r.progress);
-      let count = risk.map(r => r).length;
-
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-      let roundedSum = Math.round(sum)
-
-       let final = roundedSum / count
-
-       
-     if (isNaN(final)){
-       final = 0;
-     }
-          let weighted = count * final
-    
-        if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    allIssuesProgress() {
-      let issue = new Array();
-      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
-      for (let ids in group) {
-        issue.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = issue.map(iss => iss.progress);
-      let count = issue.map(iss => iss).length;
-      
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
-
-      let roundedSum = Math.round(sum)
-      let final = roundedSum / count
-      
-     if (isNaN(final)){
-       final = 0;
-     }
-      let weighted = count * final
-
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    projectTotalProgress(){
-     let sum = this.allTasksProgress.weighted + this.allRisksProgress.weighted + this.allIssuesProgress.weighted
-      let denominator = this.allTasksProgress.count + this.allRisksProgress.count + this.allIssuesProgress.count
-        if (isNaN(sum || denominator )) {
-          sum = 0;
-          denominator = 0;
-        }
- 
-      let total = sum / denominator
-      if (isNaN(total)) {
-        return 0
-      } else return Math.round(total)
-    },  
-        // Find sum of all valid Tasks, Issues, and Risks (75)
-    issueVariation() {
-    let planned = _.filter(
-        this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.planned == true
-        // (t) => t && t.startDate && t.startDate > this.today 
-    );     
-    let taskDrafts = _.filter(
-        this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.draft == true
-    );      
-    let completed = _.filter(
-        this.filteredIssues.unfiltered.tasks,
+  
+     issueVariation() {
+     let planned = _.filter(
+        this.filteredIssues.unfiltered.issues,
+        (t) => t && t.planned == true    
+      );     
+      let issueDrafts = _.filter(
+        this.filteredIssues.unfiltered.issues,
+         (t) => t && t.draft == true 
+      );  
+      let important = _.filter(
+      this.filteredIssues.unfiltered.issues,
+          (t) => t && t.important
+      );
+      let briefings = _.filter(
+      this.filteredIssues.unfiltered.issues,
+          (t) => t && t.reportable
+      ); 
+      let watched = _.filter(
+      this.filteredIssues.unfiltered.issues,
+          (t) => t && t.watched 
+      );        
+      let completed = _.filter(
+        this.filteredIssues.unfiltered.issues,
         (t) => t && t.completed == true
-    );
-    let completed_percent = this.getAverage(
+      );
+      let completed_percent = this.getAverage(
         completed.length,
-        this.filteredIssues.unfiltered.tasks.length
-    );
-    let inProgress = _.filter(
-        this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.inProgress == true
-    );
-    let onHoldT = _.filter(
-        this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.onHold == true
-    );
-    let important = _.filter(
-    this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.important
-    );
-    let briefings = _.filter(
-    this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.reportable
-    ); 
-    let watched = _.filter(
-    this.filteredIssues.unfiltered.tasks,
-        (t) => t && t.watched 
-    );             
-    let inProgress_percent = this.getAverage(
+        this.filteredIssues.unfiltered.issues.length
+      ); 
+       let inProgress = _.filter(
+        this.filteredIssues.unfiltered.issues,
+        (t) => t && t.inProgress == true 
+        );
+      let onHold = _.filter(
+        this.filteredIssues.unfiltered.issues,
+        (t) => t && t.onHold == true 
+      );
+      let inProgress_percent = this.getAverage(
         inProgress.length,
-        this.filteredIssues.unfiltered.tasks.length
-    );
-    let overdue = _.filter(this.filteredIssues.unfiltered.tasks, (t) => t && t.isOverdue);
-    let overdue_percent = this.getAverage(
-    overdue.length,
-    this.filteredIssues.unfiltered.tasks.length
-    );
-    let ongoing = _.filter(this.filteredIssues.unfiltered.tasks, (t) => t && t.ongoing );
-    let ongoingClosed = _.filter(this.filteredIssues.unfiltered.tasks, (t) => t && t.closed );
+        this.filteredIssues.unfiltered.issues.length
+      );
+      let overdue = _.filter(this.filteredIssues.unfiltered.issues, (t) => t && t.isOverdue);
+      let overdue_percent = this.getAverage(
+        overdue.length,
+        this.filteredIssues.unfiltered.issues.length
+      );
       return {
         planned: {
-          count: planned.length, 
-          plannedTs: planned            
+          count: planned.length,          
         },
-        onHoldT: {
-          count: onHoldT.length,          
+        onHold: {
+          count: onHold.length,          
         },
-        taskDrafts: {
-          count: taskDrafts.length,          
+        issueDrafts: {
+          count: issueDrafts.length,          
         },
-       watched: {
+        watched: {
           count: watched.length,          
         },
        important: {
@@ -1409,66 +1281,6 @@ export default {
         briefings: {
           count: briefings.length,          
         },
-      
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoingClosed: {
-          count: ongoingClosed.length      
-        },
-        ongoing,       
-    
-      };
-    },
-   issueVariation() {
-     let planned = _.filter(
-        this.filteredIssues,
-        (t) => t && t.planned == true    
-      );     
-      let issueDrafts = _.filter(
-        this.filteredIssues,
-         (t) => t && t.draft == true 
-      );      
-      let completed = _.filter(
-        this.filteredIssues,
-        (t) => t && t.completed == true
-      );
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredIssues.length
-      ); 
-       let inProgress = _.filter(
-        this.filteredIssues,
-        (t) => t && t.inProgress == true 
-        );
-      let onHoldI = _.filter(
-        this.filteredIssues,
-        (t) => t && t.onHold == true 
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredIssues.length
-      );
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredIssues.length
-      );
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldI: {
-          count: onHoldI.length,          
-        },
-        issueDrafts: {
-          count: issueDrafts.length,          
-        },
         completed: {
           count: completed.length,
           percentage: Math.round(completed_percent),
@@ -1483,72 +1295,6 @@ export default {
         },
       };
     },
-    riskVariation() {
-     let planned = _.filter(
-        this.filteredRisks,
-        (t) => t && t.planned == true     
-      );  
-      let riskDrafts = _.filter(
-        this.filteredRisks,
-        (t) => t && t.draft == true 
-      ); 
-      let completed = _.filter(
-        this.filteredRisks,
-        (t) => t && t.completed == true
-      );
-      let inProgress = _.filter(
-        this.filteredRisks,
-        (t) => t && t.inProgress == true
-      );
-      let onHoldR = _.filter(
-        this.filteredRisks,
-        (t) => t && t.onHold == true 
-      );  
- 
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredRisks.length
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredRisks.length
-      );
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredRisks.length
-      );
-      let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
-      let ongoingClosed = _.filter(this.filteredRisks, (t) => t && t.closed);
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldR: {
-          count: onHoldR.length,          
-        },
-        riskDrafts: {
-          count: riskDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoingClosed: {
-          count: ongoingClosed.length,        
-        },
-        ongoing
-      };
-    },
-  
   },
   methods: {
       ...mapActions([
@@ -1568,9 +1314,7 @@ export default {
         'setShowAdvancedFilter',
         'setTaskForManager',
         'setShowCount',
-         'setCurrentPage',
-
-        // Used in Program Viewer
+          // Used in Program Viewer
         'setIssuesPerPageFilter',
         // 7 States
         'setHideComplete',
