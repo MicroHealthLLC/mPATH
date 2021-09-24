@@ -18,6 +18,7 @@ describe('Portoflio Viewer ', function() {
   })
 
   it('Open Task form and Save task', function() {
+    cy.get("#tab-tasks").click()
     cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 8)
     cy.get('#portTasks > tbody > tr').first().contains('Test Project').should('be.visible')
     cy.get('#portTasks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
@@ -39,6 +40,33 @@ describe('Portoflio Viewer ', function() {
     cy.get('[data-cy="task_save_btn"]').click()
     cy.get('[data-cy="task_close_btn"]').click({force: true})
     cy.get('#portTasks > tbody > tr').first().contains('Test Task 1 - Update').should('be.visible')
+
+  })
+
+  it('Search Text', function() {
+    cy.get("#tab-tasks").click()
+    cy.get("input[type='search']").clear().type("Test Task 1")
+    cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 1)
+    cy.get("input[type='search']").clear()
+    cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 8)
+
+    cy.get("#tab-issues").click()
+    cy.get("input[type='search']").clear().type("Test issue 1")
+    cy.get('#portIssues > tbody > tr').its('length').should('be.eq', 1)
+    cy.get("input[type='search']").clear()
+    cy.get('#portIssues > tbody > tr').its('length').should('be.eq', 8)
+
+    cy.get("#tab-risks").click()
+    cy.get("input[type='search']").clear().type("Test Risk 1")
+    cy.get('#portRisks > tbody > tr').its('length').should('be.eq', 1)
+    cy.get("input[type='search']").clear()
+    cy.get('#portRisks > tbody > tr').its('length').should('be.eq', 8)
+
+    cy.get("#tab-lessons").click()
+    cy.get("input[type='search']").clear().type("Test Lesson 1")
+    cy.get('#portLessons > tbody > tr').its('length').should('be.eq', 1)
+    cy.get("input[type='search']").clear()
+    cy.get('#portLessons > tbody > tr').its('length').should('be.eq', 4)
 
   })
 
