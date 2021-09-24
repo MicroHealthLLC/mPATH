@@ -1,5 +1,5 @@
 <template>
-<div class="box-shadow py-2"  style="postion:relative"  >
+<div class="box-shadow py-2"  style="postion:relative" :load="log(filteredIssues.filtered.issues)">
 <div class="row py-1 pr-2">
 <div class="col-10 px-1 pt-2">
     <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -606,11 +606,11 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <th class="non-sort-th" style="min-width: 145px">
         Flags
         </th>
-        <th class="pl-1 sort-th twenty" @click="sort('task_type_name')">
+        <th class="pl-1 sort-th twenty" @click="sort('taskTypeName')">
         Process Area
         <span
             class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'task_type_name'"
+            v-if="currentSort !== 'taskTypeName'"
         >
             <i class="fas fa-sort"></i
         ></span>
@@ -618,7 +618,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="sort-icon scroll"
             v-if="
             currentSortDir === 'asc' &&
-            currentSort === 'task_type_name'
+            currentSort === 'taskTypeName'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -627,7 +627,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="inactive-sort-icon scroll"
             v-if="
             currentSortDir !== 'asc' &&
-            currentSort === 'task_type_name'
+            currentSort === 'taskTypeName'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -636,7 +636,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="sort-icon scroll"
             v-if="
             currentSortDir === 'desc' &&
-            currentSort === 'task_type_name'
+            currentSort === 'taskTypeName'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -645,7 +645,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             class="inactive-sort-icon scroll"
             v-if="
             currentSortDir !== 'desc' &&
-            currentSort === 'task_type_name'
+            currentSort === 'taskTypeName'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -702,7 +702,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             moment(issue.dueDate).format("DD MMM YYYY")
             }}</span>
         </td>
-        <td>{{ issue.users.fullName }}</td>
+        <td>{{ issue.userNames }}</td>
         <td>                          
            
         
@@ -754,7 +754,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             ></span>
 
         </td>
-        <td>{{ issue.task_type_name }}</td>
+        <td>{{ issue.taskTypeName }}</td>
         </tr>
     </tbody>
     </table>
@@ -984,36 +984,6 @@ export default {
     ProgramView() {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
-  sortedIssues:function() {
-        return this.filteredIssues.filtered.issues.sort((a,b) => {
-        let modifier = 1;
-
-        if (this.currentSortDir1 === "desc") modifier = -1;
-        if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
-        if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
-        
-        if (this.currentSortDir2 === "desc") modifier = -1;
-        if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
-        if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
-
-        if (this.currentSortDir === "desc") modifier = -1;
-        if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
-                if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
-                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-                }
-            } else 
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
-        return 0;
-
-           }).filter((row, index) => {
-           let start = (this.currentPage-1)*this.C_issuesPerPage.value;
-          let end = this.currentPage*this.C_issuesPerPage.value;
-          if(index >= start && index < end) return true;
-          return this.end
-        });
-    },
     filteredIssues() {
       let typeIds = _.map(this.issueTypeFilter, "id");
       let stageIds = _.map(this.issueStageFilter, "id");
@@ -1123,6 +1093,36 @@ export default {
        }),  
         }
        } 
+    },
+    sortedIssues:function() {
+        return this.filteredIssues.filtered.issues.sort((a,b) => {
+        let modifier = 1;
+
+        if (this.currentSortDir1 === "desc") modifier = -1;
+        if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
+        if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
+        
+        if (this.currentSortDir2 === "desc") modifier = -1;
+        if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
+        if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
+
+        if (this.currentSortDir === "desc") modifier = -1;
+        if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+                if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+                }
+            } else 
+        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
+        return 0;
+
+           }).filter((row, index) => {
+           let start = (this.currentPage-1)*this.C_issuesPerPage.value;
+          let end = this.currentPage*this.C_issuesPerPage.value;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
     },
     issueTaskCATEGORIES() {
       let issues = new Array();
@@ -1396,12 +1396,18 @@ export default {
     this.setHideOverdue(!this.getHideOverdue)    
     },
     log(e){
-    //   console.log(e)
+      console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);
     },
-  sort: function (s) {
+   nextPage:function() {
+      if((this.currentPage*this.C_issuesPerPage.value) < this.filteredIssues.filtered.issues.length) this.currentPage++;
+    },
+    prevPage:function() {
+      if(this.currentPage > 1) this.currentPage--;
+    },
+    sort: function (s) {
      //if s == current sort, reverse
       if (s === this.currentSort) {
         this.currentSortDir = this.currentSortDir === "asc" ? "desc" : "asc";
@@ -1430,13 +1436,7 @@ export default {
       }
        this.currentSortCol2 = s; 
        this.currentSort = "";
-    },
-    nextPage:function() {
-      if((this.currentPage*this.C_issuesPerPage.value) < this.filteredIssues.filtered.issues.length) this.currentPage++;
-    },
-    prevPage:function() {
-      if(this.currentPage > 1) this.currentPage--;
-    },
+    }, 
 
      facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities("active"), "id");

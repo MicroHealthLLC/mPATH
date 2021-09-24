@@ -33,7 +33,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.completed.count }}
+            {{ riskVariation.completed.count }}
         </h5>
         </div>
 
@@ -56,7 +56,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.inProgress.count }}
+            {{ riskVariation.inProgress.count }}
         </h5>
         </div>
 
@@ -79,7 +79,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.overdue.count }}
+            {{ riskVariation.overdue.count }}
         </h5>
         </div>
 
@@ -118,8 +118,8 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            <span v-if="filteredTasks.filtered.tasks">{{
-            taskVariation.planned.count
+            <span v-if="filteredRisks.filtered.risks">{{
+            riskVariation.planned.count
             }}</span>
         </h5>
         </div>
@@ -143,7 +143,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.onHoldT.count }}
+            {{ riskVariation.onHoldR.count }}
         </h5>
         </div>
         <div
@@ -165,7 +165,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.taskDrafts.count }}
+            {{ riskVariation.riskDrafts.count }}
         </h5>
         </div>
     </span>
@@ -189,7 +189,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.watched.count }}
+            {{ riskVariation.watched.count }}
         </h5>
         </div>
         <div
@@ -212,7 +212,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.important.count }}
+            {{ riskVariation.important.count }}
         </h5>
         </div>
         <div
@@ -235,7 +235,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.briefings.count }}
+            {{ riskVariation.briefings.count }}
         </h5>
         </div>
     </span>
@@ -278,7 +278,7 @@
     <button
         class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
     >
-        RESULTS: {{ filteredTasks.filtered.tasks.length }}
+        RESULTS: {{ filteredRisks.filtered.risks.length }}
     </button></span
     >
 </div>
@@ -287,7 +287,7 @@
 <div
 class="row text-center mt-2 pr-3"
 style="postion:relative" 
-v-if="filteredTasks.filtered.tasks.length > 0"
+v-if="filteredRisks.filtered.risks.length > 0"
 >
 <div class="px-3 tableFixHead" >
     <table
@@ -379,7 +379,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         ></span>
         </th>                 
         <th class="pl-1 sort-th twenty" @click="sort('text')">
-        Issue
+        Risk
         <span
             class="inactive-sort-icon scroll"
             v-if="currentSort !== 'text'"
@@ -670,129 +670,129 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         </th>
     </thead>
     <tbody>
-        <tr v-for="(task, index) in sortedTasks" :key="index" class="portTable taskHover" @click="openTask(task)">
+        <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openTask(task)">
     
     
-        <td>{{ task.projectGroup }}</td>
-        <td>{{ task.facilityName }}</td>
-        <td>{{ task.text }}</td>
+        <td>{{ risk.projectGroup }}</td>
+        <td>{{ risk.facilityName }}</td>
+        <td>{{ risk.text }}</td>
         <td
             class="text-left"
-            v-if="task.notesUpdatedAt.length > 0"
+            v-if="risk.notesUpdatedAt.length > 0"
         >
             <span
             class="toolTip"
             v-tooltip="
                 'By: ' +
-                task.notes[task.notes.length - 1].user.fullName
+                risk.notes[task.notes.length - 1].user.fullName
             "
             >
             {{
-                moment(task.notesUpdatedAt[0]).format(
+                moment(risk.notesUpdatedAt[0]).format(
                 "DD MMM YYYY, h:mm a"
                 )
             }}
             </span>
             <br />
             <span class="truncate-line-five">
-            {{ task.notes[task.notes.length - 1].body }}
+            {{ risk.notes[risk.notes.length - 1].body }}
             </span>
         </td>
         <!-- <td v-else class="twentyTwo">No Updates</td> -->
         <td class="text-left" v-else>No Update</td>
 
         <td>
-            <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
+            <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
             <i class="fas fa-retweet text-success"></i>
             </span>
-            <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
+            <span v-else-if="risk.ongoing && risk.closed && risk.startDate == null || undefined">
             <i class="fas fa-retweet text-secondary"></i>
                 </span>
             <span v-else>{{
-            moment(task.startDate).format("DD MMM YYYY") 
+            moment(risk.startDate).format("DD MMM YYYY") 
             }}</span>
         </td>
         <td>
-            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+            <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
             ></span>
-            <span v-else-if="task.completed && (task.dueDate == null || task.dueDate == undefined)"></span>
+            <span v-else-if="risk.completed && (risk.dueDate == null || risk.dueDate == undefined)"></span>
             <span
-            v-else-if="task.onHold && task.dueDate == null"
+            v-else-if="risk.onHold && risk.dueDate == null"
             v-tooltip="`On Hold (w/no Due Date)`"
             ><i class="fas fa-pause-circle text-primary"></i
             ></span>
             <span v-else>{{
-            moment(task.dueDate).format("DD MMM YYYY")
+            moment(risk.dueDate).format("DD MMM YYYY")
             }}</span>
         </td>
-        <td>{{ task.users.fullName }}</td>
+        <td>{{ risk.users.fullName }}</td>
         <td>                          
-            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+            <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
             ></span>
-            <span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
+            <span v-else-if="risk.closed" v-tooltip="`Ongoing: Closed`"
             ><i class="fas fa-retweet text-secondary"></i
             ></span>
             
             <span v-else>
-            {{ task.progress + "%" }}
+            {{ risk.progress + "%" }}
             </span>
         </td>
         <td class="text-center">
-            <span v-if="task.is_overdue" v-tooltip="`Overdue`">
+            <span v-if="risk.is_overdue" v-tooltip="`Overdue`">
             <i class="fas fa-calendar text-danger mr-1"></i
             ></span>
-            <span v-if="task.completed" v-tooltip="`Completed`"
+            <span v-if="risk.completed" v-tooltip="`Completed`"
             ><i
                 class="fas fa-clipboard-check text-success mr-1"
             ></i
             ></span>
             <span
-            v-if="task.ongoing == true && !task.closed"
+            v-if="risk.ongoing == true && !risk.closed"
             v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet mr-1 text-success"></i
             ></span>
             <span
-            v-if="task.closed"
+            v-if="risk.closed"
             v-tooltip="`Ongoing: Closed`"
             ><i class="fas fa-retweet mr-1 text-secondary"></i
             ></span>
             <span
-            v-if="task.onHold == true"
+            v-if="risk.onHold == true"
             v-tooltip="`On Hold`"
             >
             <i class="fas fa-pause-circle mr-1 text-primary"></i
             ></span>
-            <span v-if="task.draft == true" v-tooltip="`Draft`">
+            <span v-if="risk.draft == true" v-tooltip="`Draft`">
             <i class="fas fa-pencil-alt mr-1 text-warning"></i
             ></span>
             <span
-            v-if="task.watched == true"
+            v-if="risk.watched == true"
             v-tooltip="`On Watch`"
             ><i class="fas fa-eye mr-1"></i
             ></span>
             <span
-            v-if="task.important == true"
+            v-if="risk.important == true"
             v-tooltip="`Important`"
             >
             <i class="fas fa-star text-warning mr-1"></i
             ></span>
-            <span v-if="task.reportable" v-tooltip="`Briefings`">
+            <span v-if="risk.reportable" v-tooltip="`Briefings`">
             <i class="fas fa-presentation mr-1 text-primary"></i
             ></span>
-            <span v-if="task.planned" v-tooltip="`Planned`">
+            <span v-if="risk.planned" v-tooltip="`Planned`">
             <i class="fas fa-calendar-check text-info mr-1"></i
             ></span>
             <span
-            v-if="task.inProgress"
+            v-if="risk.inProgress"
             v-tooltip="`In Progress`"
             >
             <i class="far fa-tasks text-primary mr-1"></i
             ></span>
 
         </td>
-        <td>{{ task.taskType }}</td>
+        <td>{{ risk.taskType }}</td>
         </tr>
     </tbody>
     </table>
@@ -930,13 +930,13 @@ v-if="task.notesUpdatedAt.length > 0"
     <div class="simple-select d-inline-block text-right font-sm">
     <span class="mr-1">Displaying </span>
     <el-select
-        v-model="C_tasksPerPage"
+        v-model="C_risksPerPage"
         class="w-33"
         track-by="value"
         value-key="id"
     >
         <el-option
-        v-for="item in getTasksPerPageFilterOptions"
+        v-for="item in getRisksPerPageFilterOptions"
         :value="item"
         :key="item.id"
         :label="item.name"
@@ -956,7 +956,7 @@ v-if="task.notesUpdatedAt.length > 0"
     {{ currentPage }} of
     {{
         Math.ceil(
-        filteredTasks.filtered.tasks.length / this.C_tasksPerPage.value
+        filteredRisks.filtered.risks.length / this.C_risksPerPage.value
         )
     }}
     </button>
@@ -1015,8 +1015,9 @@ export default {
     "filteredFacilityGroups",
     "getAllFilterNames",
     "getFilterValue",
+    "getRiskIssueUserFilter",
     "getTaskIssueUserFilter",
-    'getTasksPerPageFilterOptions',
+    'getRisksPerPageFilterOptions',
     "getUnfilteredFacilities",
     "issueSeverityFilter",
     "issueStageFilter",
@@ -1036,7 +1037,7 @@ export default {
     'getShowCount',
 
     // USED in PRogram Viewer
-    'getTasksPerPageFilter ',
+    'getRisksPerPageFilter ',
     // 7 States
     'getHideComplete',
     'getHideInprogress',
@@ -1108,18 +1109,18 @@ export default {
     },
  currentPage:{
        get() {
-        return this.currentTaskPage
+        return this.currentRiskPage
       },
       set(value) {
         this.setCurrentPage(value);
       },
     },
-   C_tasksPerPage: {
+   C_risksPerPage: {
       get() {
-        return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
+        return this.getRisksPerPageFilter || {id: 15, name: '15', value: 15}
       },
       set(value) {
-        this.setTasksPerPageFilter(value)
+        this.setRisksPerPageFilter(value)
        }
      },
     C_facilityCount() {         
@@ -1148,16 +1149,30 @@ export default {
     ProgramView() {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
-    filteredTasks() {
+  
+    issueTaskCATEGORIES() {
+      let issues = new Array();
+      let group = _.groupBy(this.filteredIssues, "taskTypeName");
+      for (let type in group) {
+        if (!type || type == "null") continue;
+        issues.push({
+          name: type,
+          count: group[type].length,
+          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
+        });
+      }
+      return issues;
+    },
+    filteredRisks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.facilityGroup
+      let stageIds = _.map(this.riskStageFilter, "id");
+      let risks = this.facilityGroup
         ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "tasks")
+            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
           )
-        : this.filteredAllTasks;
+        : this.filteredAllRisks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
-      _.filter(tasks, (resource) => {
+     _.filter(risks, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
@@ -1173,17 +1188,17 @@ export default {
           valid &&
           this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
         if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.taskStageId);
+          valid = valid && stageIds.includes(resource.riskStageId);
         if (typeIds.length > 0)
           valid = valid && typeIds.includes(resource.taskTypeId);
         return valid;
-      })
-  return {
+      });
+       return {
        unfiltered: {
-            tasks
+            risks
             },
        filtered: {
-         tasks:  tasks.filter(t => {
+        risks:  risks.filter(t => {
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
@@ -1252,10 +1267,10 @@ export default {
         } else return true           
        }),  
         }
-       }     
+       }  
     },
-      sortedTasks:function() {
-        return this.filteredTasks.filtered.tasks.sort((a,b) => {
+     sortedRisks:function() {
+        return this.filteredRisks.filtered.risks.sort((a,b) => {
         let modifier = 1;
 
         if (this.currentSortDir1 === "desc") modifier = -1;
@@ -1278,90 +1293,11 @@ export default {
         return 0;
 
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.C_tasksPerPage.value;
-          let end = this.currentPage*this.C_tasksPerPage.value;
+          let start = (this.currentPage-1)*this.C_risksPerPage.value;
+          let end = this.currentPage*this.C_risksPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });
-    },
-    filteredIssues() {
-      let typeIds = _.map(this.issueTypeFilter, "id");
-      let stageIds = _.map(this.issueStageFilter, "id");
-      let severityIds = _.map(this.issueSeverityFilter, "id");
-      let issues = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "issues")
-          )
-        : this.filteredAllIssues;
-
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(issues, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupIssues");
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.issueTypeId);
-        if (severityIds.length > 0)
-          valid = valid && severityIds.includes(resource.issueSeverityId);
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.issueStageId);
-        return valid;
-      });
-    },
-    issueTaskCATEGORIES() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "taskTypeName");
-      for (let type in group) {
-        if (!type || type == "null") continue;
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return issues;
-    },
-    filteredRisks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      let risks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
-          )
-        : this.filteredAllRisks;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(risks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.riskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      });
     },
     riskPriorityLevels() {
       let grey = _.filter(
@@ -1486,185 +1422,66 @@ export default {
       }
       return taskTypes;
     },
-    viableTasksForProgressTotal(){
-      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
-    },
-     viableIssuesForProgressTotal(){
-      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
-    },
-     viableRisksForProgressTotal(){
-      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
-    },
-   allTasksProgress() {
-      let task = new Array();
-      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
-      for (let ids in group) {
-        task.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = task.map(t => t.progress);
-      let count = task.map(t => t).length;
-
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-
-     let roundedSum = Math.round(sum)
-     let final = roundedSum / count
-
-     if (isNaN(final)){
-       final = 0;
-     }
-    //  let allCounts = this.allRisksProgress.count + this.allIssuesProgress.count + count
-    //  let weightedVal = count / allCounts
-     let weighted = count * final 
-    
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted, 
-          roundedSum  
-      }
-    },
-    allRisksProgress() {
-      let risk = new Array();
-      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
-      for (let ids in group) {
-        risk.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = risk.map(r => r.progress);
-      let count = risk.map(r => r).length;
-
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-      let roundedSum = Math.round(sum)
-
-       let final = roundedSum / count
-
-       
-     if (isNaN(final)){
-       final = 0;
-     }
-          let weighted = count * final
-    
-        if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    allIssuesProgress() {
-      let issue = new Array();
-      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
-      for (let ids in group) {
-        issue.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = issue.map(iss => iss.progress);
-      let count = issue.map(iss => iss).length;
-      
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
-
-      let roundedSum = Math.round(sum)
-      let final = roundedSum / count
-      
-     if (isNaN(final)){
-       final = 0;
-     }
-      let weighted = count * final
-
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    projectTotalProgress(){
-     let sum = this.allTasksProgress.weighted + this.allRisksProgress.weighted + this.allIssuesProgress.weighted
-      let denominator = this.allTasksProgress.count + this.allRisksProgress.count + this.allIssuesProgress.count
-        if (isNaN(sum || denominator )) {
-          sum = 0;
-          denominator = 0;
-        }
- 
-      let total = sum / denominator
-      if (isNaN(total)) {
-        return 0
-      } else return Math.round(total)
-    },  
         // Find sum of all valid Tasks, Issues, and Risks (75)
-    taskVariation() {
+    riskVariation() {
     let planned = _.filter(
-        this.filteredTasks.unfiltered.tasks,
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.planned == true
         // (t) => t && t.startDate && t.startDate > this.today 
     );     
-    let taskDrafts = _.filter(
-        this.filteredTasks.unfiltered.tasks,
+    let riskDrafts = _.filter(
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.draft == true
     );      
     let completed = _.filter(
-        this.filteredTasks.unfiltered.tasks,
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.completed == true
     );
     let completed_percent = this.getAverage(
         completed.length,
-        this.filteredTasks.unfiltered.tasks.length
+        this.filteredRisks.unfiltered.risks.length
     );
     let inProgress = _.filter(
-        this.filteredTasks.unfiltered.tasks,
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.inProgress == true
     );
-    let onHoldT = _.filter(
-        this.filteredTasks.unfiltered.tasks,
+    let onHoldR = _.filter(
+        this.filteredRisks.unfiltered.risks,
         (t) => t && t.onHold == true
     );
     let important = _.filter(
-    this.filteredTasks.unfiltered.tasks,
+    this.filteredRisks.unfiltered.risks,
         (t) => t && t.important
     );
     let briefings = _.filter(
-    this.filteredTasks.unfiltered.tasks,
+    this.filteredRisks.unfiltered.risks,
         (t) => t && t.reportable
     ); 
     let watched = _.filter(
-    this.filteredTasks.unfiltered.tasks,
+    this.filteredRisks.unfiltered.risks,
         (t) => t && t.watched 
     );             
     let inProgress_percent = this.getAverage(
         inProgress.length,
-        this.filteredTasks.unfiltered.tasks.length
+        this.filteredRisks.unfiltered.risks.length
     );
-    let overdue = _.filter(this.filteredTasks.unfiltered.tasks, (t) => t && t.isOverdue);
+    let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.isOverdue);
     let overdue_percent = this.getAverage(
     overdue.length,
-    this.filteredTasks.unfiltered.tasks.length
+    this.filteredRisks.unfiltered.risks.length
     );
-    let ongoing = _.filter(this.filteredTasks.unfiltered.tasks, (t) => t && t.ongoing );
-    let ongoingClosed = _.filter(this.filteredTasks.unfiltered.tasks, (t) => t && t.closed );
+    let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing );
+    let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.closed );
       return {
         planned: {
           count: planned.length, 
           plannedTs: planned            
         },
-        onHoldT: {
-          count: onHoldT.length,          
+        onHoldR: {
+          count: onHoldR.length,          
         },
-        taskDrafts: {
-          count: taskDrafts.length,          
+        riskDrafts: {
+          count: riskDrafts.length,          
         },
        watched: {
           count: watched.length,          
@@ -1695,130 +1512,6 @@ export default {
     
       };
     },
-   issueVariation() {
-     let planned = _.filter(
-        this.filteredIssues,
-        (t) => t && t.planned == true    
-      );     
-      let issueDrafts = _.filter(
-        this.filteredIssues,
-         (t) => t && t.draft == true 
-      );      
-      let completed = _.filter(
-        this.filteredIssues,
-        (t) => t && t.completed == true
-      );
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredIssues.length
-      ); 
-       let inProgress = _.filter(
-        this.filteredIssues,
-        (t) => t && t.inProgress == true 
-        );
-      let onHoldI = _.filter(
-        this.filteredIssues,
-        (t) => t && t.onHold == true 
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredIssues.length
-      );
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredIssues.length
-      );
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldI: {
-          count: onHoldI.length,          
-        },
-        issueDrafts: {
-          count: issueDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-      };
-    },
-    riskVariation() {
-     let planned = _.filter(
-        this.filteredRisks,
-        (t) => t && t.planned == true     
-      );  
-      let riskDrafts = _.filter(
-        this.filteredRisks,
-        (t) => t && t.draft == true 
-      ); 
-      let completed = _.filter(
-        this.filteredRisks,
-        (t) => t && t.completed == true
-      );
-      let inProgress = _.filter(
-        this.filteredRisks,
-        (t) => t && t.inProgress == true
-      );
-      let onHoldR = _.filter(
-        this.filteredRisks,
-        (t) => t && t.onHold == true 
-      );  
- 
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredRisks.length
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredRisks.length
-      );
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredRisks.length
-      );
-      let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
-      let ongoingClosed = _.filter(this.filteredRisks, (t) => t && t.closed);
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldR: {
-          count: onHoldR.length,          
-        },
-        riskDrafts: {
-          count: riskDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoingClosed: {
-          count: ongoingClosed.length,        
-        },
-        ongoing
-      };
-    },
-  
   },
   methods: {
       ...mapActions([
@@ -1958,7 +1651,7 @@ export default {
        this.currentSort = "";
     },
     nextPage:function() {
-        if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
+        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.filtered.risks.length) this.currentPage++;
       },
     prevPage:function() {
        if(this.currentPage > 1) this.currentPage--;

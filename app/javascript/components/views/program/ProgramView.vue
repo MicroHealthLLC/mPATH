@@ -1,5 +1,14 @@
 <template>
-  <div class="container-fluid mt-3 mx-3 portfolioView_main" :load="log(filteredTasks.filtered.tasks)">
+  <div class="container-fluid mx-3 portfolioView_main" :load="log(filteredTasks.filtered.tasks)">
+     <div>     
+      <!-- <span class="mr-4" style="position:absolute; top:25px; right:0">
+          <router-link :to="backBtn" > 
+          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer">
+           <i class="fal fa-arrow-alt-left text-light"></i>
+          </button>  
+          </router-link>
+      </span> -->
+    </div>
   <el-tabs class="mt-1 mr-3" type="border-card">
     <el-tab-pane label="PROGRAM DATA VIEWER" class="p-3"  style="postion:relative" >
         <template slot="label" class="text-right" v-if="contentLoaded">
@@ -762,7 +771,7 @@
                             moment(task.dueDate).format("DD MMM YYYY")
                           }}</span>
                         </td>
-                        <td>{{ task.users.fullName }}</td>
+                        <td>{{ task.userNames }}</td>
                         <td>                          
                            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
@@ -1552,7 +1561,10 @@ export default {
     //     }
     //   } 
     
-  },
+    },
+    backBtn() {      
+      return `/programs/${this.$route.params.programId}/sheet`;
+    },
       showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
