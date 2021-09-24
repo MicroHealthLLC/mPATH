@@ -5,13 +5,24 @@
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-2">
+    <div class="row pt-1 pb-2">
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
         
+       
+      </div>
+      <div class="col-6 py-1 pl-0">
+        <span v-if="contentLoaded" class="float-right mt-1">
+          <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
+              <router-link :to="ProgramView"> 
+                <button class="btn btn-sm mh-orange text-light programViewerBtn">
+                  {{ currentProject.name }} Data Viewer
+                </button>   
+               </router-link>             
+        </span>         
        
       </div>
   
@@ -1026,6 +1037,9 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
+    },
+    ProgramView() {
+     return `/programs/${this.$route.params.programId}/dataviewer`
     },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");

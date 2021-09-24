@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tabsbar></tabsbar>
+    <tabsbar :class="{'d-none': isProgramView }"></tabsbar>
     <filter-sidebar v-if="contentLoaded"></filter-sidebar>
     <router-view></router-view>
   </div>
@@ -33,7 +33,11 @@ export default {
   },
   computed: {
     ...mapGetters(["contentLoaded", "facilities", "getUnfilteredFacilities"]),
+      isProgramView() {
+      return this.$route.name.includes("ProgramView");  
+      },
   },
+
   updated() {
     if (this.contentLoaded && this.getUnfilteredFacilities.length === 0) {
       this.setUnfilteredFacilities(this.facilities);

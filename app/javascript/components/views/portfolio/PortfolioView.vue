@@ -4370,7 +4370,7 @@ export default {
       search_issues: "",
       search_risks: "",
       search_lessons: "",
-      currentSortText: "text" || "title",  
+      currentSort: "text" || "title",  
       currentSortCol1: "program_name",
       currentSortCol2: "project_name",
       // currentSortIssueRisk: "title",
