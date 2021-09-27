@@ -102,7 +102,7 @@ ActiveAdmin.register Issue do
       end
     end
     column :description, sortable: false
-    column "Files" do |issue|
+    column "Files & Links" do |issue|
       issue.issue_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
