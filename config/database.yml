@@ -1,27 +1,31 @@
 production:
   adapter: mysql2
-  database: mgis_prod
-  host: <%= ENV['MGIS_DATABASE_HOST'] %>
-  username: <%= ENV['MGIS_DATABASE_USERNAME'] %>
-  password: <%= ENV['MGIS_DATABASE_PASSWORD'] %>
-  encoding: utf8
-  socket: <%= ENV['MGIS_DATABASE_SOCKET'] %>
-development:
-  adapter: mysql2
-  database: mgis_dev
-  host: <%= ENV['MGIS_DATABASE_HOST'] %>
-  username: <%= ENV['MGIS_DATABASE_USERNAME'] %>
-  password: <%= ENV['MGIS_DATABASE_PASSWORD'] %>
+  database: mpath_prod
+  host: <%= ENV['MPATH_DATABASE_HOST'] %>
+  username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
+  password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  socket: <%= ENV['MGIS_DATABASE_SOCKET'] %>
+  socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  # port: 3306
+development:
+  adapter: mysql2
+  database: mpath_dev
+  host: <%= ENV['MPATH_DATABASE_HOST'] %>
+  username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
+  password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
+  encoding: utf8
+  pool: 25
+  socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  # port: 3306
 
 test:
   adapter: mysql2
-  database: mgis_test
-  host: <%= ENV['MGIS_DATABASE_HOST'] %>
-  username: <%= ENV['MGIS_DATABASE_USERNAME'] %>
-  password: <%= ENV['MGIS_DATABASE_PASSWORD'] %>
+  database: mpath_test
+  host: <%= ENV['MPATH_DATABASE_HOST'] %>
+  username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
+  password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  socket: <%= ENV['MGIS_DATABASE_SOCKET'] %>
+  socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  # port: 3306
