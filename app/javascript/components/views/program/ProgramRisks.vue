@@ -83,22 +83,38 @@
         </h5>
         </div>
 
-        <div
-        class="pr-4 text-center icons"
-        :class="[getHideOngoing == true ? 'light' : '']"
-        @click.prevent="toggleOngoing"
-        >
-        <span class="d-block">
-            <i
-            class="fas fa-retweet"
-            :class="[
-                getHideOngoing == true ? 'light' : 'text-success',
-            ]"
-            ></i>
-        </span>
-           
-        </div>
-
+      <div
+      class="pr-4 text-center icons"
+      :class="[getHideOngoing == true ? 'light' : '']"
+      @click.prevent="toggleOngoing"
+    >
+      <span class="d-block">
+        <i
+          class="fas fa-retweet"
+          :class="[
+            getHideOngoing == true ? 'light' : 'text-success',
+          ]"
+        ></i>
+      </span>
+      <span class="smallerFont">ONGOING </span>
+      <h5
+        :class="[
+          getShowCount == false ? 'd-none' : 'd-block',
+        ]"
+      >
+        <span v-if="filteredRisks.filtered.risks.length">{{
+          riskVariation.ongoing.count
+        }}<span
+          v-tooltip="`Ongoing: Closed`"
+          v-if="riskVariation.ongoingClosed.count > 0"
+          style="color:lightgray"
+          >({{
+            riskVariation.ongoingClosed.count
+            }})
+          </span>
+      </span>
+      </h5>
+      </div>
         <div
         class="pr-4 text-center icons"
         :class="[getHidePlanned == true ? 'light' : '']"
@@ -670,7 +686,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         </th>
     </thead>
     <tbody>
-        <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openTask(task)">
+        <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover">
     
     
         <td>{{ risk.projectGroup }}</td>
@@ -684,7 +700,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             class="toolTip"
             v-tooltip="
                 'By: ' +
-                risk.notes[task.notes.length - 1].user.fullName
+                risk.notes[risk.notes.length - 1].user.fullName
             "
             >
             {{
@@ -792,7 +808,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             ></span>
 
         </td>
-        <td>{{ risk.taskType }}</td>
+        <td>{{ risk.category }}</td>
         </tr>
     </tbody>
     </table>
@@ -936,7 +952,7 @@ v-if="task.notesUpdatedAt.length > 0"
         value-key="id"
     >
         <el-option
-        v-for="item in getRisksPerPageFilterOptions"
+        v-for="item in getRisksPerPageOptions"
         :value="item"
         :key="item.id"
         :label="item.name"
@@ -965,7 +981,7 @@ v-if="task.notesUpdatedAt.length > 0"
     </button>
 </div>
 </div>
-<div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+<!-- <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div> -->
 <div v-else class="mt-5">NO RESULTS TO DISPLAY
 
     
@@ -998,7 +1014,7 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
-    'currentTaskPage',
+    'currRiskPage',
     "lessonsLoaded",
     "projectLessons",
     "programLessons",
@@ -1017,7 +1033,8 @@ export default {
     "getFilterValue",
     "getRiskIssueUserFilter",
     "getTaskIssueUserFilter",
-    'getRisksPerPageFilterOptions',
+    'getRisksPerPageOptions',
+    'getRisksPerPage',
     "getUnfilteredFacilities",
     "issueSeverityFilter",
     "issueStageFilter",
@@ -1035,9 +1052,6 @@ export default {
     "taskUserFilter",
     'getShowAdvancedFilter',
     'getShowCount',
-
-    // USED in PRogram Viewer
-    'getRisksPerPageFilter ',
     // 7 States
     'getHideComplete',
     'getHideInprogress',
@@ -1107,17 +1121,17 @@ export default {
         return _.map(this.onWatchFilter, "value").includes("issues");
       },
     },
- currentPage:{
+  currentPage:{
        get() {
-        return this.currentRiskPage
+        return this.currRiskPage
       },
       set(value) {
-        this.setCurrentPage(value);
+        this.setCurrRiskPage(value);
       },
     },
    C_risksPerPage: {
       get() {
-        return this.getRisksPerPageFilter || {id: 15, name: '15', value: 15}
+        return this.getRisksPerPage || {id: 15, name: '15', value: 15}
       },
       set(value) {
         this.setRisksPerPageFilter(value)
@@ -1508,8 +1522,9 @@ export default {
         ongoingClosed: {
           count: ongoingClosed.length      
         },
-        ongoing,       
-    
+        ongoing:  {
+          count: ongoing.length      
+        },       
       };
     },
   },
@@ -1525,7 +1540,7 @@ export default {
         'setMyActionsFilter',
         'setCurrTab',
         'setPortfolioTab',
-        'setCurrentPage',
+        'setCurrRiskPage',
         'setOnWatchFilter',
         'setToggleRACI',
         'setShowAdvancedFilter',
@@ -1534,7 +1549,7 @@ export default {
          'setCurrentPage',
 
         // Used in Program Viewer
-        'setTasksPerPageFilter',
+        'setRisksPerPageFilter',
         // 7 States
         'setHideComplete',
         'setHideInprogress',

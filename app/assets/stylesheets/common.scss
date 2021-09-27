@@ -24,7 +24,13 @@ body {
     background: lightgray;
     border-radius: 4px;
   }
-}  
+} 
+
+
+.allCaps {
+  text-transform: uppercase;
+}
+
 .portfolio {
   .v-label {
     margin-bottom: 0;
@@ -1113,8 +1119,6 @@ a:hover {
   border: solid #9EC64C 1px;
   border-radius: 0.25rem; 
   }
-
-
 }
 .portfolioView_main {
   .badge-color {
@@ -1497,7 +1501,6 @@ a:hover {
   .el-progress__text {
     color:  #f8f9fa;
   }
-
 
   .el-dialog__headerbtn {
     margin-right: 1.5rem;

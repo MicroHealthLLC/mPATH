@@ -1,5 +1,5 @@
 <template>
-<div class="box-shadow py-2"  style="postion:relative"  >
+<div class="box-shadow py-2"  style="postion:relative" :load="log(programLessons)">
 <div class="row py-1 pr-2">
 <div class="col-10 px-1 pt-2">
     <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -33,119 +33,10 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.completed.count }}
+            {{ lessonVariation.completed.count }}
         </h5>
         </div>
-
-        <div
-        class="pr-4 text-center icons"
-        :class="[getHideInprogress == true ? 'light' : '']"
-        @click.prevent="toggleInprogress"
-        >
-        <span class="d-block">
-            <i
-            class="far fa-tasks"
-            :class="[
-                getHideInprogress == true ? 'light' : 'text-primary',
-            ]"
-            ></i>
-        </span>
-        <span class="smallerFont">IN PROGRESS</span>
-        <h5
-            :class="[
-            getShowCount == false ? 'd-none' : 'd-block',
-            ]"
-        >
-            {{ taskVariation.inProgress.count }}
-        </h5>
-        </div>
-
-        <div
-        class="pr-4 text-center icons"
-        :class="[getHideOverdue == true ? 'light' : '']"
-        @click.prevent="toggleOverdue"
-        >
-        <span class="d-block">
-            <i
-            class="fas fa-calendar"
-            :class="[
-                getHideOverdue == true ? 'light' : 'text-danger',
-            ]"
-            ></i>
-        </span>
-        <span class="smallerFont">OVERDUE </span>
-        <h5
-            :class="[
-            getShowCount == false ? 'd-none' : 'd-block',
-            ]"
-        >
-            {{ taskVariation.overdue.count }}
-        </h5>
-        </div>
-
-        <div
-        class="pr-4 text-center icons"
-        :class="[getHideOngoing == true ? 'light' : '']"
-        @click.prevent="toggleOngoing"
-        >
-        <span class="d-block">
-            <i
-            class="fas fa-retweet"
-            :class="[
-                getHideOngoing == true ? 'light' : 'text-success',
-            ]"
-            ></i>
-        </span>
-           
-        </div>
-
-        <div
-        class="pr-4 text-center icons"
-        :class="[getHidePlanned == true ? 'light' : '']"
-        @click.prevent="togglePlanned"
-        >
-        <span class="d-block">
-            <i
-            class="fas fa-calendar-check"
-            :class="[
-                getHidePlanned == true ? 'light' : 'text-info',
-            ]"
-            ></i>
-        </span>
-        <span class="smallerFont">PLANNED</span>
-        <h5
-            :class="[
-            getShowCount == false ? 'd-none' : 'd-block',
-            ]"
-        >
-            <span v-if="filteredTasks.filtered.tasks">{{
-            taskVariation.planned.count
-            }}</span>
-        </h5>
-        </div>
-
-        <div
-        class="pr-4 text-center icons"
-        :class="[getHideOnhold  == true ? 'light' : '']"
-        @click.prevent="toggleOnhold"
-        >
-        <span class="d-block">
-            <i
-            class="fas fa-pause-circle"
-            :class="[
-                getHideOnhold  == true ? 'light' : 'text-primary',
-            ]"
-            ></i>
-        </span>
-        <span class="smallerFont">ON HOLD</span>
-        <h5
-            :class="[
-            getShowCount == false ? 'd-none' : 'd-block',
-            ]"
-        >
-            {{ taskVariation.onHoldT.count }}
-        </h5>
-        </div>
+  
         <div
         class="text-center icons"
         :class="[getHideDraft == true ? 'light' : '']"
@@ -165,7 +56,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.taskDrafts.count }}
+            {{ lessonVariation.drafts.count }}
         </h5>
         </div>
     </span>
@@ -174,25 +65,7 @@
         ><label class="font-sm mt-4 pr-2"><b>FOCUS</b></label>
     </span>
     <span class="tagsCol d-flex px-3 py-2">
-        <div
-        class="text-center icons"
-        :class="[getHideWatched == true ? '' : 'light']"
-        @click.prevent="toggleWatched"
-        >
-        <span class="d-block">
-            <i class="fas fa-eye"></i>
-        </span>
-        <span class="smallerFont">ON WATCH</span>
-        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
-        <h5
-            :class="[
-            getShowCount == false ? 'd-none' : 'd-block',
-            ]"
-        >
-            {{ taskVariation.watched.count }}
-        </h5>
-        </div>
-        <div
+       <div
         class="px-4 text-center icons"
         :class="[getHideImportant == true ? '' : 'light']"
         @click.prevent="toggleImportant"
@@ -212,7 +85,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.important.count }}
+            {{ lessonVariation.important.count }}
         </h5>
         </div>
         <div
@@ -235,7 +108,7 @@
             getShowCount == false ? 'd-none' : 'd-block',
             ]"
         >
-            {{ taskVariation.briefings.count }}
+            {{ lessonVariation.briefings.count }}
         </h5>
         </div>
     </span>
@@ -278,7 +151,7 @@
     <button
         class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
     >
-        RESULTS: {{ filteredTasks.filtered.tasks.length }}
+        RESULTS: {{ filteredLessons.filtered.lessons.length }}
     </button></span
     >
 </div>
@@ -287,7 +160,7 @@
 <div
 class="row text-center mt-2 pr-3"
 style="postion:relative" 
-v-if="filteredTasks.filtered.tasks.length > 0"
+v-if="filteredLessons.filtered.lessons.length > 0"
 >
 <div class="px-3 tableFixHead" >
     <table
@@ -296,18 +169,18 @@ v-if="filteredTasks.filtered.tasks.length > 0"
     id="portTasks"                   
     >
     <thead style="background-color: #ededed">    
-        <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
+        <th class="pl-1 sort-th twenty" @click="sortCol1('project_group')">
         Project Group
         <span
             class="inactive-sort-icon scroll"
-            v-if="currentSortCol1 !== 'projectGroup'"
+            v-if="currentSortCol1 !== 'project_group'"
         >
             <i class="fas fa-sort"></i
         ></span>
         <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir1 === 'asc' && currentSortCol1 === 'projectGroup'
+            currentSortDir1 === 'asc' && currentSortCol1 === 'project_group'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -315,7 +188,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir1 !== 'asc' && currentSortCol1 === 'projectGroup'
+            currentSortDir1 !== 'asc' && currentSortCol1 === 'project_group'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -323,7 +196,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir1 === 'desc' && currentSortCol1 === 'projectGroup'
+            currentSortDir1 === 'desc' && currentSortCol1 === 'project_group'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -331,13 +204,13 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir1 !== 'desc' && currentSortCol1 === 'projectGroup'
+            currentSortDir1 !== 'desc' && currentSortCol1 === 'project_group'
             "
         >
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-        <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
+        <th class="pl-1 sort-th twenty" @click="sortCol2('project_name')">
         Project 
         <span
             class="inactive-sort-icon scroll"
@@ -348,7 +221,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir2 === 'asc' && currentSortCol2 === 'facilityName'
+            currentSortDir2 === 'asc' && currentSortCol2 === 'project_name'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -356,7 +229,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir2 !== 'asc' && currentSortCol2 === 'facilityName'
+            currentSortDir2 !== 'asc' && currentSortCol2 === 'project_name'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -364,7 +237,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir2 === 'desc' && currentSortCol2 === 'facilityName'
+            currentSortDir2 === 'desc' && currentSortCol2 === 'project_name'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -372,63 +245,62 @@ v-if="filteredTasks.filtered.tasks.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir2 !== 'desc' && currentSortCol2 === 'facilityName'
+            currentSortDir2 !== 'desc' && currentSortCol2 === 'project_name'
             "
         >
             <i class="fas fa-sort-down"></i
         ></span>
         </th>                 
-        <th class="pl-1 sort-th twenty" @click="sort('text')">
-        Issue
-        <span
-            class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'text'"
-        >
-            <i class="fas fa-sort"></i
-        ></span>
-        <span
-            class="sort-icon scroll"
-            v-if="
-            currentSortDir === 'asc' && currentSort === 'text'
-            "
-        >
-            <i class="fas fa-sort-up"></i
-        ></span>
-        <span
-            class="inactive-sort-icon scroll"
-            v-if="
-            currentSortDir !== 'asc' && currentSort === 'text'
-            "
-        >
-            <i class="fas fa-sort-up"></i
-        ></span>
-        <span
-            class="sort-icon scroll"
-            v-if="
-            currentSortDir === 'desc' && currentSort === 'text'
-            "
-        >
-            <i class="fas fa-sort-down"></i
-        ></span>
-        <span
-            class="inactive-sort-icon scroll"
-            v-if="
-            currentSortDir !== 'desc' && currentSort === 'text'
-            "
-        >
-            <i class="fas fa-sort-down"></i
-        ></span>
-        </th>
-
+        <th class="pl-1 sort-th" @click="sort('title')">
+            Lessons Learned
+            <span
+              class="inactive-sort-icon scroll"
+              v-if="currentSort !== 'title'"
+            >
+              <i class="fas fa-sort"></i
+            ></span>
+            <span
+              class="sort-icon scroll"
+              v-if="
+                currentSortDir === 'asc' && currentSort === 'title'
+              "
+            >
+              <i class="fas fa-sort-up"></i
+            ></span>
+            <span
+              class="inactive-sort-icon scroll"
+              v-if="
+                currentSortDir !== 'asc' && currentSort === 'title'
+              "
+            >
+              <i class="fas fa-sort-up"></i
+            ></span>
+            <span
+              class="sort-icon scroll"
+              v-if="
+                currentSortDir === 'desc' && currentSort === 'title'
+              "
+            >
+              <i class="fas fa-sort-down"></i
+            ></span>
+            <span
+              class="inactive-sort-icon scroll"
+              v-if="
+                currentSortDir !== 'desc' && currentSort === 'title'
+              "
+            >
+              <i class="fas fa-sort-down"></i
+            ></span>
+        </th> 
         <th
-        class="sort-th twenty"
-        @click="sort('notesUpdatedAt')"
-        style="min-width: 300px"
+          class="sort-th twenty"
+          @click="sort('notes_updated_at')"
+          style="min-width: 300px"
         >
         Last Update
         <span
             class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'notesUpdatedAt'"
+            v-if="currentSort !== 'notes_updated_at'"
         >
             <i class="fas fa-sort"></i
         ></span>
@@ -436,7 +308,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
             class="sort-icon scroll"
             v-if="
             currentSortDir === 'asc' &&
-            currentSort === 'notesUpdatedAt'
+            currentSort === 'notes_updated_at'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -445,7 +317,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
             class="inactive-sort-icon scroll"
             v-if="
             currentSortDir !== 'asc' &&
-            currentSort === 'notesUpdatedAt'
+            currentSort === 'notes_updated_at'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -454,7 +326,7 @@ v-if="filteredTasks.filtered.tasks.length > 0"
             class="sort-icon scroll"
             v-if="
             currentSortDir === 'desc' &&
-            currentSort === 'notesUpdatedAt'
+            currentSort === 'notes_updated_at'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -463,166 +335,156 @@ v-if="filteredTasks.filtered.tasks.length > 0"
             class="inactive-sort-icon scroll"
             v-if="
             currentSortDir !== 'desc' &&
-            currentSort === 'notesUpdatedAt'
-            "
-        >
-            <i class="fas fa-sort-down"></i
-        ></span>
-        </th>
-
-        <th
-        class="sort-th"
-        style="min-width: 140px"
-        @click="sort('startDate')"
-        >
-        Start Date
-        <span
-            class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'startDate'"
-        >
-            <i class="fas fa-sort"></i
-        ></span>
-        <span
-            class="sort-icon scroll"
-            v-if="
-            currentSortDir === 'asc' &&
-            currentSort === 'startDate'
-            "
-        >
-            <i class="fas fa-sort-up"></i
-        ></span>
-        <span
-            class="inactive-sort-icon scroll"
-            v-if="
-            currentSortDir !== 'asc' &&
-            currentSort === 'startDate'
-            "
-        >
-            <i class="fas fa-sort-up"></i
-        ></span>
-        <span
-            class="sort-icon scroll"
-            v-if="
-            currentSortDir === 'desc' &&
-            currentSort === 'startDate'
-            "
-        >
-            <i class="fas fa-sort-down"></i
-        ></span>
-        <span
-            class="inactive-sort-icon scroll"
-            v-if="
-            currentSortDir !== 'desc' &&
-            currentSort === 'startDate'
+            currentSort === 'notes_updated_at'
             "
         >
             <i class="fas fa-sort-down"></i
         ></span>
         </th>
         <th
-        class="sort-th"
-        style="min-width: 140px"
-        @click="sort('dueDate')"
-        >
-        Due Date
+        class="pl-1 sort-th"
+        style="min-width: 325px"
+        @click="sort('description')"
+      >
+        Description
         <span
-            class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'dueDate'"
+          class="inactive-sort-icon scroll"
+          v-if="currentSort !== 'description'"
         >
-            <i class="fas fa-sort"></i
+          <i class="fas fa-sort"></i
         ></span>
         <span
-            class="sort-icon scroll"
-            v-if="
+          class="sort-icon scroll"
+          v-if="
             currentSortDir === 'asc' &&
-            currentSort === 'dueDate'
-            "
+            currentSort === 'description'
+          "
         >
-            <i class="fas fa-sort-up"></i
+          <i class="fas fa-sort-up"></i
         ></span>
         <span
-            class="inactive-sort-icon scroll"
-            v-if="
+          class="inactive-sort-icon scroll"
+          v-if="
             currentSortDir !== 'asc' &&
-            currentSort === 'dueDate'
-            "
+            currentSort === 'description'
+          "
         >
-            <i class="fas fa-sort-up"></i
+          <i class="fas fa-sort-up"></i
         ></span>
         <span
-            class="sort-icon scroll"
-            v-if="
+          class="sort-icon scroll"
+          v-if="
             currentSortDir === 'desc' &&
-            currentSort === 'dueDate'
-            "
+            currentSort === 'description'
+          "
         >
-            <i class="fas fa-sort-down"></i
+          <i class="fas fa-sort-down"></i
         ></span>
         <span
-            class="inactive-sort-icon scroll"
-            v-if="
+          class="inactive-sort-icon scroll"
+          v-if="
             currentSortDir !== 'desc' &&
-            currentSort === 'dueDate'
-            "
+            currentSort === 'description'
+          "
         >
-            <i class="fas fa-sort-down"></i
+          <i class="fas fa-sort-down"></i
         ></span>
         </th>
-        <th class="sort-th p-1">
-        <span class="py-2 d-inline-block">Assigned Users</span>
+        <th class="sort-th" @click="sort('added_by')">
+          Added By
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'added_by'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon scroll"
+            v-if="
+              currentSortDir === 'asc' &&
+              currentSort === 'added_by'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir !== 'asc' &&
+              currentSort === 'added_by'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon scroll"
+            v-if="
+              currentSortDir === 'desc' &&
+              currentSort === 'added_by'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir !== 'desc' &&
+              currentSort === 'added_by'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
         </th>
         <th
-        class="sort-th"
-        style="min-width: 115px"
-        @click="sort('progress')"
+          class="sort-th"
+          @click="sort('created_at')"
+          style="min-width: 140px"
         >
-        Progress
-        <span
+          Date Added
+          <span
             class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'progress'"
-        >
+            v-if="currentSort !== 'created_at'"
+          >
             <i class="fas fa-sort"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'asc' &&
-            currentSort === 'progress'
+              currentSortDir === 'asc' &&
+              currentSort === 'created_at'
             "
-        >
+          >
             <i class="fas fa-sort-up"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'asc' &&
-            currentSort === 'progress'
+              currentSortDir !== 'asc' &&
+              currentSort === 'created_at'
             "
-        >
+          >
             <i class="fas fa-sort-up"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'desc' &&
-            currentSort === 'progress'
+              currentSortDir === 'desc' &&
+              currentSort === 'created_at'
             "
-        >
+          >
             <i class="fas fa-sort-down"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'desc' &&
-            currentSort === 'progress'
+              currentSortDir !== 'desc' &&
+              currentSort === 'created_at'
             "
-        >
+          >
             <i class="fas fa-sort-down"></i
-        ></span>
-        </th>
-        <th class="non-sort-th" style="min-width: 145px">
-        Flags
-        </th>
+          ></span>
+        </th>  
+        <th style="min-width: 145px">Flags</th>
         <th class="pl-1 sort-th twenty" @click="sort('category')">
         Process Area
         <span
@@ -668,131 +530,91 @@ v-if="filteredTasks.filtered.tasks.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th>
+       
+           
     </thead>
     <tbody>
-        <tr v-for="(task, index) in sortedTasks" :key="index" class="portTable taskHover" @click="openTask(task)">
-    
-    
-        <td>{{ task.projectGroup }}</td>
-        <td>{{ task.facilityName }}</td>
-        <td>{{ task.text }}</td>
-        <td
-            class="text-left"
-            v-if="task.notesUpdatedAt.length > 0"
+        <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openTask(task)">
+     
+          <td>{{ lesson.project_group }}</td>
+          <td>{{ lesson.project_name }}</td>
+          <td>{{ lesson.title }}</td>
+          <td>
+            <span
+              class="text-left"
+              v-if="lesson.notes_updated_at.length > 0"
+            >
+              <span
+                class="toolTip"
+                v-tooltip="
+                  'By: ' +
+                  lesson.notes[lesson.notes.length - 1].user
+                    .full_name
+                "
+              >
+                {{
+                  moment(lesson.notes_updated_at[0]).format(
+                    "DD MMM YYYY, h:mm a"
+                  )
+                }}
+              </span>
+              <br />
+              <span class="truncate-line-five">
+                {{ lesson.notes[lesson.notes.length - 1].body }}
+              </span>
+            </span>
+              <span class="text-left" v-else>No Update</span>
+          </td>
+          <td>
+            <span class="truncate-line-five">{{
+              lesson.description
+            }}</span>
+          </td>
+          <td>{{ lesson.added_by }}</td>
+          <td>
+          {{ moment(lesson.created_at).format("DD MMM YYYY") }}
+        </td>
+       
+      <td class="text-center">
+        <span v-if="lesson.draft == true" v-tooltip="`Draft`">
+          <i class="fas fa-pencil-alt text-warning"></i
+        ></span>
+        <span
+          v-if="lesson.draft == false"
+          v-tooltip="`Completed`"
         >
-            <span
-            class="toolTip"
-            v-tooltip="
-                'By: ' +
-                task.notes[task.notes.length - 1].user.fullName
-            "
-            >
-            {{
-                moment(task.notesUpdatedAt[0]).format(
-                "DD MMM YYYY, h:mm a"
-                )
-            }}
-            </span>
-            <br />
-            <span class="truncate-line-five">
-            {{ task.notes[task.notes.length - 1].body }}
-            </span>
-        </td>
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td class="text-left" v-else>No Update</td>
+          <i class="fas fa-clipboard-check text-success"></i
+        ></span>
+        <span
+          v-if="lesson.important == true"
+          v-tooltip="`Important`"
+        >
+          <i class="fas fa-star text-warning mr-1"></i
+        ></span>
+        <span
+          v-if="lesson.reportable"
+          v-tooltip="`Briefings`"
+        >
+          <i class="fas fa-presentation mr-1 text-primary"></i
+        ></span>
 
-        <td>
-            <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
-            <i class="fas fa-retweet text-success"></i>
-            </span>
-            <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
-            <i class="fas fa-retweet text-secondary"></i>
-                </span>
-            <span v-else>{{
-            moment(task.startDate).format("DD MMM YYYY") 
-            }}</span>
-        </td>
-        <td>
-            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
-            ><i class="fas fa-retweet text-success"></i
-            ></span>
-            <span v-else-if="task.completed && (task.dueDate == null || task.dueDate == undefined)"></span>
-            <span
-            v-else-if="task.onHold && task.dueDate == null"
-            v-tooltip="`On Hold (w/no Due Date)`"
-            ><i class="fas fa-pause-circle text-primary"></i
-            ></span>
-            <span v-else>{{
-            moment(task.dueDate).format("DD MMM YYYY")
-            }}</span>
-        </td>
-        <td>{{ task.users.fullName }}</td>
-        <td>                          
-            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
-            ><i class="fas fa-retweet text-success"></i
-            ></span>
-            <span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
-            ><i class="fas fa-retweet text-secondary"></i
-            ></span>
-            
-            <span v-else>
-            {{ task.progress + "%" }}
-            </span>
-        </td>
-        <td class="text-center">
-            <span v-if="task.is_overdue" v-tooltip="`Overdue`">
-            <i class="fas fa-calendar text-danger mr-1"></i
-            ></span>
-            <span v-if="task.completed" v-tooltip="`Completed`"
-            ><i
-                class="fas fa-clipboard-check text-success mr-1"
-            ></i
-            ></span>
-            <span
-            v-if="task.ongoing == true && !task.closed"
-            v-tooltip="`Ongoing`"
-            ><i class="fas fa-retweet mr-1 text-success"></i
-            ></span>
-            <span
-            v-if="task.closed"
-            v-tooltip="`Ongoing: Closed`"
-            ><i class="fas fa-retweet mr-1 text-secondary"></i
-            ></span>
-            <span
-            v-if="task.onHold == true"
-            v-tooltip="`On Hold`"
-            >
-            <i class="fas fa-pause-circle mr-1 text-primary"></i
-            ></span>
-            <span v-if="task.draft == true" v-tooltip="`Draft`">
-            <i class="fas fa-pencil-alt mr-1 text-warning"></i
-            ></span>
-            <span
-            v-if="task.watched == true"
-            v-tooltip="`On Watch`"
-            ><i class="fas fa-eye mr-1"></i
-            ></span>
-            <span
-            v-if="task.important == true"
-            v-tooltip="`Important`"
-            >
-            <i class="fas fa-star text-warning mr-1"></i
-            ></span>
-            <span v-if="task.reportable" v-tooltip="`Briefings`">
-            <i class="fas fa-presentation mr-1 text-primary"></i
-            ></span>
-            <span v-if="task.planned" v-tooltip="`Planned`">
-            <i class="fas fa-calendar-check text-info mr-1"></i
-            ></span>
-            <span
-            v-if="task.inProgress"
-            v-tooltip="`In Progress`"
-            >
-            <i class="far fa-tasks text-primary mr-1"></i
-            ></span>
+        <span
+          v-if="
+            lesson.important == false &&
+            lesson.reportable == false &&
+            lesson.draft == false
+          "
+        >
+          <!-- No flags at this time          -->
+        </span>
+      </td>
+      <td>
+        <span v-if="lesson.category">{{
+          lesson.category
+        }}</span>
+        <span v-else> --- </span>
+      </td>
 
-        </td>
-        <td>{{ task.taskType }}</td>
         </tr>
     </tbody>
     </table>
@@ -930,13 +752,13 @@ v-if="task.notesUpdatedAt.length > 0"
     <div class="simple-select d-inline-block text-right font-sm">
     <span class="mr-1">Displaying </span>
     <el-select
-        v-model="C_tasksPerPage"
+        v-model="C_lessonsPerPage"
         class="w-33"
         track-by="value"
         value-key="id"
     >
         <el-option
-        v-for="item in getTasksPerPageFilterOptions"
+        v-for="item in getLessonsPerPageOptions"
         :value="item"
         :key="item.id"
         :label="item.name"
@@ -956,7 +778,7 @@ v-if="task.notesUpdatedAt.length > 0"
     {{ currentPage }} of
     {{
         Math.ceil(
-        filteredTasks.filtered.tasks.length / this.C_tasksPerPage.value
+        filteredLessons.filtered.lessons.length / this.C_lessonsPerPage.value
         )
     }}
     </button>
@@ -965,7 +787,7 @@ v-if="task.notesUpdatedAt.length > 0"
     </button>
 </div>
 </div>
-<div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+<!-- <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div> -->
 <div v-else class="mt-5">NO RESULTS TO DISPLAY
 
     
@@ -986,8 +808,8 @@ export default {
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
       currentSort: "text",  
-      currentSortCol1: "projectGroup",
-      currentSortCol2: "facilityName",
+      currentSortCol1: "project_group",
+      currentSortCol2: "project_name",
       // currentSortIssueRisk: "title",
       currentSortDir: "asc",
       currentSortDir1: "asc",
@@ -998,7 +820,7 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
-    'currentTaskPage',
+    'currLessonPage',
     "lessonsLoaded",
     "projectLessons",
     "programLessons",
@@ -1009,14 +831,14 @@ export default {
     "facilityProgress",
     "filterDataForAdvancedFilter",
     "filteredAllIssues",
-    "filteredAllRisks",
+    "filteredAllLessons",
     "filteredAllTasks",
     "filteredFacilities",
     "filteredFacilityGroups",
     "getAllFilterNames",
     "getFilterValue",
     "getTaskIssueUserFilter",
-    'getTasksPerPageFilterOptions',
+    'getLessonsPerPageOptions',
     "getUnfilteredFacilities",
     "issueSeverityFilter",
     "issueStageFilter",
@@ -1036,7 +858,7 @@ export default {
     'getShowCount',
 
     // USED in PRogram Viewer
-    'getTasksPerPageFilter ',
+    'getLessonsPerPage',
     // 7 States
     'getHideComplete',
     'getHideInprogress',
@@ -1050,10 +872,7 @@ export default {
     'getHideImportant',
     'getHideBriefed',
     ]),
-    projectObj() {
-    return this.currentProject.facilities
-    },
-     currentTab: {
+    currentTab: {
       get() {        
         return this.portfolioTab 
       },
@@ -1078,48 +897,21 @@ export default {
         }
         
       },
-    C_taskTypeFilter: {
-      get() {
-        return this.taskTypeFilter;
-      },
-      set(value) {
-        this.setTaskTypeFilter(value);
-      },
-    },
-    C_myTasks: {
-      get() {
-        return _.map(this.myActionsFilter, "value").includes("tasks");
-      },
-    },
-    C_myIssues: {
-      get() {
-        return _.map(this.myActionsFilter, "value").includes("issues");
-      },
-    },
-    C_onWatchTasks: {
-      get() {
-        return _.map(this.onWatchFilter, "value").includes("tasks");
-      },
-    },
-    C_onWatchIssues: {
-      get() {
-        return _.map(this.onWatchFilter, "value").includes("issues");
-      },
-    },
- currentPage:{
+
+  currentPage:{
        get() {
-        return this.currentTaskPage
+        return this.currLessonPage
       },
       set(value) {
-        this.setCurrentPage(value);
+        this.setCurrLessonPage(value);
       },
     },
-   C_tasksPerPage: {
+   C_lessonsPerPage: {
       get() {
-        return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
+        return this.getLessonsPerPage || {id: 15, name: '15', value: 15}
       },
       set(value) {
-        this.setTasksPerPageFilter(value)
+        this.setLessonsPerPageFilter(value)
        }
      },
     C_facilityCount() {         
@@ -1129,25 +921,117 @@ export default {
         : this.facilityCount; 
       
     },
-    C_facilityProgress() {
-      return this.facilityGroup
-        ? Number(
-            _.meanBy(
-              this.facilityGroupFacilities(this.facilityGroup),
-              "progress"
-            ) || 0
-          ).toFixed(0)
-        : this.facilityProgress;
-    },
-    isMapView() {
-      return this.$route.name.includes("Map");
-    },
-    isSheetsView() {
-      return this.$route.name.includes("Sheet");
-    },
     ProgramView() {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
+    filteredLessons() {
+      // Returns filtered lessons based on search value from input
+
+      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+      return {
+      unfiltered: {
+      
+       lessons:  this.programLessons
+        // .filter((lesson) =>
+        //   lesson.title.toLowerCase().match(this.search.toLowerCase())
+        // )
+        .filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+        })
+      },
+        filtered : {
+          lessons: this.programLessons.filter(lesson => {
+        // Filtering 3 Lesson States        
+        if (this.getHideDraft) {
+          return !lesson.draft
+        } else return true
+  
+      }).filter(lesson => {
+         if (this.getHideComplete) {
+          return lesson.draft
+        } else return true
+      }).filter(lesson => {
+        if(milestoneIds.length > 0) {
+          return milestoneIds.includes(lesson.task_type_id)
+        } else return true;
+      // Filtering 3 Task Tags
+      }).filter(lesson => {
+         if (this.getHideBriefed && !this.getHideImportant ) {
+          return lesson.reportable
+        }
+        if (this.getHideBriefed && this.getHideImportant) {          
+           return lesson.reportable + lesson.important
+        } else return true
+         
+      }).filter(lesson => {
+         if (this.getHideImportant && !this.getHideBriefed) {
+          return lesson.important
+        } if (this.getHideImportant && this.getHideBriefed) {
+          return lesson.important + lesson.reportable
+       } else return true              
+        })
+      } 
+    }
+   },
+   sortedLessons:function() {
+    return this.filteredLessons.filtered.lessons.sort((a,b) => { 
+    let modifier = 1;   
+    if(this.currentSortDir === 'desc') modifier = -1;
+    if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+      if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+          if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+    if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+      }
+    } else 
+    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+    return 0;
+      }).filter((row, index) => {
+    let start = (this.currentPage-1)*this.C_lessonsPerPage.value;
+    let end = this.currentPage*this.C_lessonsPerPage.value;
+    if(index >= start && index < end) return true;
+    return this.end
+  });
+  },
+   lessonVariation() {
+     let drafts = _.filter(
+     this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.draft == true
+      );  
+      let important = _.filter(
+      this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.important == true
+      ); 
+     let briefings = _.filter(
+       this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.reportable == true
+      );
+     let completed = _.filter(
+        this.filteredLessons.unfiltered.lessons,
+        (t) => t && t.draft == false 
+      );
+     return {
+       important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        drafts: {
+          count: drafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },  
+        count: {
+         val: completed.length + drafts.length
+          
+        }
+    }
+   },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
@@ -1284,541 +1168,7 @@ export default {
           return this.end
         });
     },
-    filteredIssues() {
-      let typeIds = _.map(this.issueTypeFilter, "id");
-      let stageIds = _.map(this.issueStageFilter, "id");
-      let severityIds = _.map(this.issueSeverityFilter, "id");
-      let issues = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "issues")
-          )
-        : this.filteredAllIssues;
-
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(issues, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupIssues");
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.issueTypeId);
-        if (severityIds.length > 0)
-          valid = valid && severityIds.includes(resource.issueSeverityId);
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.issueStageId);
-        return valid;
-      });
-    },
-    issueTaskCATEGORIES() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "taskTypeName");
-      for (let type in group) {
-        if (!type || type == "null") continue;
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return issues;
-    },
-    filteredRisks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      let risks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
-          )
-        : this.filteredAllRisks;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(risks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.riskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      });
-    },
-    riskPriorityLevels() {
-      let grey = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Very Low"
-      );
-      let green = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Low"
-      );
-      let yellow = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Moderate"
-      );
-      let orange = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "High"
-      );
-      let red = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Extreme"
-      );
-      return {
-        grey: grey.length,
-        green: green.length,
-        yellow: yellow.length,
-        orange: orange.length,
-        red: red.length,
-      };
-    },
-    activeFacilitiesByStatus() {
-      return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup).length
-        : this.filteredFacilities("active").length;
-    },
-    inactiveFacilitiesByStatus() {
-      return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
-        : this.filteredFacilities("inactive").length;
-    },
-    projectStatuses() {
-      let statuses = [];
-
-      if (this.contentLoaded && this.facilities.length > 0) {
-        this.statuses.forEach((status) => {
-          // Find number of facilities with current status
-          let count = this.facilities
-            .filter((facility) => facility.projectStatus === status.name)
-            .reduce((total) => total + 1, 0);
-          // Insert status into projectStatuses for use Project Status card
-          statuses.push({
-            name: status.name,
-            color: status.color,
-            length: count,
-            progress: Math.floor((count / this.facilities.length) * 100),
-          });
-        });
-      }
-
-      return statuses;
-    },
-    currentTaskTypes() {
-      let names =
-        this.taskTypeFilter &&
-        this.taskTypeFilter.length &&
-        _.map(this.taskTypeFilter, "name");
-      let taskTypes = new Array();
-      for (let type of this.taskTypes) {
-        let tasks = _.filter(
-          this.filteredTasks,
-          (t) => t.taskTypeId == type.id
-        );
-        taskTypes.push({
-          name: type.name,
-          _display:
-            tasks.length > 0 && (names ? names.includes(type.name) : true),
-          length: tasks.length,
-          progress: Number(_.meanBy(tasks, "progress").toFixed(0)),
-        });
-      }
-      return taskTypes;
-    },
-    currentIssueTypes() {
-      let names =
-        this.issueTypeFilter &&
-        this.issueTypeFilter.length &&
-        _.map(this.issueTypeFilter, "name");
-      let issueTypes = new Array();
-      for (let type of this.issueTypes) {
-        let issues = _.filter(
-          this.filteredIssues,
-          (t) => t.issueTypeId == type.id
-        );
-        issueTypes.push({
-          name: type.name,
-          _display:
-            (names ? names.includes(type.name) : true) && issues.length > 0,
-          length: issues.length,
-          progress: Number(_.meanBy(issues, "progress").toFixed(0)),
-        });
-      }
-      return issueTypes;
-    },
-    currentRiskTypes() {
-      let names =
-        this.taskTypeFilter &&
-        this.taskTypeFilter.length &&
-        _.map(this.taskTypeFilter, "name");
-      let taskTypes = new Array();
-      for (let type of this.taskTypes) {
-        let risks = _.filter(
-          this.filteredRisks,
-          (t) => t.taskTypeId == type.id
-        );
-        taskTypes.push({
-          name: type.name,
-          _display:
-            risks.length > 0 && (names ? names.includes(type.name) : true),
-          length: risks.length,
-          progress: Number(_.meanBy(risks, "progress").toFixed(0)),
-        });
-      }
-      return taskTypes;
-    },
-    viableTasksForProgressTotal(){
-      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
-    },
-     viableIssuesForProgressTotal(){
-      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
-    },
-     viableRisksForProgressTotal(){
-      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
-    },
-   allTasksProgress() {
-      let task = new Array();
-      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
-      for (let ids in group) {
-        task.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = task.map(t => t.progress);
-      let count = task.map(t => t).length;
-
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-
-     let roundedSum = Math.round(sum)
-     let final = roundedSum / count
-
-     if (isNaN(final)){
-       final = 0;
-     }
-    //  let allCounts = this.allRisksProgress.count + this.allIssuesProgress.count + count
-    //  let weightedVal = count / allCounts
-     let weighted = count * final 
-    
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted, 
-          roundedSum  
-      }
-    },
-    allRisksProgress() {
-      let risk = new Array();
-      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
-      for (let ids in group) {
-        risk.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = risk.map(r => r.progress);
-      let count = risk.map(r => r).length;
-
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-      let roundedSum = Math.round(sum)
-
-       let final = roundedSum / count
-
-       
-     if (isNaN(final)){
-       final = 0;
-     }
-          let weighted = count * final
-    
-        if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    allIssuesProgress() {
-      let issue = new Array();
-      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
-      for (let ids in group) {
-        issue.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = issue.map(iss => iss.progress);
-      let count = issue.map(iss => iss).length;
-      
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
-
-      let roundedSum = Math.round(sum)
-      let final = roundedSum / count
-      
-     if (isNaN(final)){
-       final = 0;
-     }
-      let weighted = count * final
-
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    projectTotalProgress(){
-     let sum = this.allTasksProgress.weighted + this.allRisksProgress.weighted + this.allIssuesProgress.weighted
-      let denominator = this.allTasksProgress.count + this.allRisksProgress.count + this.allIssuesProgress.count
-        if (isNaN(sum || denominator )) {
-          sum = 0;
-          denominator = 0;
-        }
- 
-      let total = sum / denominator
-      if (isNaN(total)) {
-        return 0
-      } else return Math.round(total)
-    },  
-        // Find sum of all valid Tasks, Issues, and Risks (75)
-    taskVariation() {
-    let planned = _.filter(
-        this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.planned == true
-        // (t) => t && t.startDate && t.startDate > this.today 
-    );     
-    let taskDrafts = _.filter(
-        this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.draft == true
-    );      
-    let completed = _.filter(
-        this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.completed == true
-    );
-    let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredTasks.unfiltered.tasks.length
-    );
-    let inProgress = _.filter(
-        this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.inProgress == true
-    );
-    let onHoldT = _.filter(
-        this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.onHold == true
-    );
-    let important = _.filter(
-    this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.important
-    );
-    let briefings = _.filter(
-    this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.reportable
-    ); 
-    let watched = _.filter(
-    this.filteredTasks.unfiltered.tasks,
-        (t) => t && t.watched 
-    );             
-    let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredTasks.unfiltered.tasks.length
-    );
-    let overdue = _.filter(this.filteredTasks.unfiltered.tasks, (t) => t && t.isOverdue);
-    let overdue_percent = this.getAverage(
-    overdue.length,
-    this.filteredTasks.unfiltered.tasks.length
-    );
-    let ongoing = _.filter(this.filteredTasks.unfiltered.tasks, (t) => t && t.ongoing );
-    let ongoingClosed = _.filter(this.filteredTasks.unfiltered.tasks, (t) => t && t.closed );
-      return {
-        planned: {
-          count: planned.length, 
-          plannedTs: planned            
-        },
-        onHoldT: {
-          count: onHoldT.length,          
-        },
-        taskDrafts: {
-          count: taskDrafts.length,          
-        },
-       watched: {
-          count: watched.length,          
-        },
-       important: {
-          count: important.length,             
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        briefings: {
-          count: briefings.length,          
-        },
-      
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoingClosed: {
-          count: ongoingClosed.length      
-        },
-        ongoing,       
-    
-      };
-    },
-   issueVariation() {
-     let planned = _.filter(
-        this.filteredIssues,
-        (t) => t && t.planned == true    
-      );     
-      let issueDrafts = _.filter(
-        this.filteredIssues,
-         (t) => t && t.draft == true 
-      );      
-      let completed = _.filter(
-        this.filteredIssues,
-        (t) => t && t.completed == true
-      );
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredIssues.length
-      ); 
-       let inProgress = _.filter(
-        this.filteredIssues,
-        (t) => t && t.inProgress == true 
-        );
-      let onHoldI = _.filter(
-        this.filteredIssues,
-        (t) => t && t.onHold == true 
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredIssues.length
-      );
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredIssues.length
-      );
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldI: {
-          count: onHoldI.length,          
-        },
-        issueDrafts: {
-          count: issueDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-      };
-    },
-    riskVariation() {
-     let planned = _.filter(
-        this.filteredRisks,
-        (t) => t && t.planned == true     
-      );  
-      let riskDrafts = _.filter(
-        this.filteredRisks,
-        (t) => t && t.draft == true 
-      ); 
-      let completed = _.filter(
-        this.filteredRisks,
-        (t) => t && t.completed == true
-      );
-      let inProgress = _.filter(
-        this.filteredRisks,
-        (t) => t && t.inProgress == true
-      );
-      let onHoldR = _.filter(
-        this.filteredRisks,
-        (t) => t && t.onHold == true 
-      );  
- 
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredRisks.length
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredRisks.length
-      );
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredRisks.length
-      );
-      let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
-      let ongoingClosed = _.filter(this.filteredRisks, (t) => t && t.closed);
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldR: {
-          count: onHoldR.length,          
-        },
-        riskDrafts: {
-          count: riskDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoingClosed: {
-          count: ongoingClosed.length,        
-        },
-        ongoing
-      };
-    },
-  
+   
   },
   methods: {
       ...mapActions([
@@ -1838,7 +1188,7 @@ export default {
         'setShowAdvancedFilter',
         'setTaskForManager',
         'setShowCount',
-         'setCurrentPage',
+        'setCurrLessonPage',
 
         // Used in Program Viewer
         'setTasksPerPageFilter',
@@ -1922,7 +1272,7 @@ export default {
     this.setHideOverdue(!this.getHideOverdue)    
     },
     log(e){
-    //   console.log(e)
+      // console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);

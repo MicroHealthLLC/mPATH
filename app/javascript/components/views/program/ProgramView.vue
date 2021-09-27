@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid mx-3 portfolioView_main" :load="log(filteredTasks.filtered.tasks)">
+  <div class="container-fluid mx-3 portfolioView_main" :load="log(currentTab)">
      <div>     
       <!-- <span class="mr-4" style="position:absolute; top:25px; right:0">
           <router-link :to="backBtn" > 
@@ -14,16 +14,113 @@
         <template slot="label" class="text-right" v-if="contentLoaded">
               {{ currentProject.name }} Data Viewer
             </template>
+                <div class="row pb-4">
+              <div class="col-4 py-2">
+                <div class="w-100 d-flex">
+                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                  <div class="w-100"  v-if="currentTab == '#tab-tasks'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Tasks Search Criteria"
+                    v-model="search_tasks"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                   <div class="w-100" v-if="currentTab == '#tab-issues'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Issues Search Criteria"
+                    v-model="search_issues"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                <div class="w-100" v-if="currentTab == '#tab-risks'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Risks Search Criteria"
+                    v-model="search_risks"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+                   <div class="w-100" v-if="currentTab == '#tab-lessons'">
+                  <el-input
+                    type="search"
+                    placeholder="Enter Lessons Search Criteria"
+                    v-model="search_lessons"
+                  >
+                    <el-button slot="prepend" icon="el-icon-search"></el-button>
+                  </el-input>
+                  </div>
+
+
+                </div>
+              </div>
+
+              <div class="col-4 py-2">
+                <div class="d-flex w-100">          
+                  <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
+                   <template>
+                       <!-- <treeselect  
+                    placeholder="Search and select" 
+                    
+                    valueFormat="object"
+                    />       -->
+                    <!-- <treeselect  
+                    placeholder="Search and select" 
+                    :multiple="true" 
+                    @input="updateProgramFilterValue"
+                    :value="C_portfolioNamesFilter"
+                    :options="portfolioPrograms"
+                    v-model="C_portfolioNamesFilter"
+                    track-by="name"      
+                    :limit="3"              
+                    :maxHeight="200"
+                    :limitText="count => `...`"     
+                    valueFormat="object"
+                    />       -->
+                     <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
+                 </template>              
+                </div>         
+              </div>
+              <div class="col-4 pl-0 py-2">
+                <div class="d-flex w-100">
+                  <div class="font-sm mr-2 mt-2">PROCESS AREA</div>
+                  <template>
+                    <el-select
+                      v-model="C_taskTypeFilter"
+                      class="w-75"
+                      track-by="name"
+                      value-key="id"
+                      multiple
+                      clearable
+                      placeholder="Select Process Area"
+                    >
+                      <el-option
+                      v-for="item in taskTypes"
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
+                      >
+                    </el-option>
+                    </el-select>
+                  </template>
+                </div>
+              </div>
+            </div>
       <el-tabs class="mt-1 mr-3" type="border-card" @tab-click="handleClick">
-        <el-tab-pane class="pt-2" style="postion:relative"                
+        <el-tab-pane class="pt-2" style="postion:relative" name="tasks"               
            >
              <template
                 slot="label"
-                class="text-right"        
+                class="text-right"      
+                v-if="true"  
              >
                 TASKS
                 <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredTasks.filtered.tasks.length }}</span>
+                <span>{{ filteredAllTasks.length }}</span>
                 </span>
             </template>
 
@@ -853,7 +950,7 @@
                       value-key="id"
                     >
                       <el-option
-                        v-for="item in getTasksPerPageFilterOptions"
+                        v-for="item in getTasksPerPageOptions"
                         :value="item"
                         :key="item.id"
                         :label="item.name"
@@ -882,7 +979,7 @@
                   </button>
                 </div>
               </div>
-              <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+              <!-- <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div> -->
               <div v-else class="mt-5">NO RESULTS TO DISPLAY
  
                   
@@ -896,7 +993,7 @@
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredIssues.length }}</span>
+                <span>{{ filteredAllIssues.length }}</span>
               </span>
             </template>
             <ProgramIssues />
@@ -911,7 +1008,7 @@
             >
               RISKS
               <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredRisks.length }}</span>
+                <span>{{ filteredAllRisks.length }}</span>
                </span>
             </template>
             <ProgramRisks />
@@ -922,7 +1019,7 @@
             <template slot="label" class="text-right">
               LESSONS LEARNED
               <span class="badge badge-secondary badge-pill">
-                {{  programLessons.total_count  }}
+                {{  programLessonsCount.total_count  }}
               </span>
             </template>
             <ProgramLessons />
@@ -957,6 +1054,10 @@ export default {
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
       currentSort: "text",  
+      search_tasks: "",
+      search_issues: "",
+      search_risks: "",
+      search_lessons: "",
       currentSortCol1: "projectGroup",
       currentSortCol2: "facilityName",
       // currentSortIssueRisk: "title",
@@ -969,10 +1070,12 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
-    'currentTaskPage',
+    'currTaskPage',
+    'currProgramTab',
+    'portfolioCategoriesFilter',
     "lessonsLoaded",
     "projectLessons",
-    "programLessons",
+    "programLessonsCount",
     'projects',
     "facilities",
     "facilityCount",
@@ -987,7 +1090,8 @@ export default {
     "getAllFilterNames",
     "getFilterValue",
     "getTaskIssueUserFilter",
-    'getTasksPerPageFilterOptions',
+    'getTasksPerPage',
+    'getTasksPerPageOptions',
     "getUnfilteredFacilities",
     "issueSeverityFilter",
     "issueStageFilter",
@@ -1005,9 +1109,6 @@ export default {
     "taskUserFilter",
     'getShowAdvancedFilter',
     'getShowCount',
-
-    // USED in PRogram Viewer
-    'getTasksPerPageFilter ',
     'getIssuesPerPageFilterOptions',
     // 7 States
     'getHideComplete',
@@ -1027,18 +1128,19 @@ export default {
     },
      currentTab: {
       get() {        
-        return this.portfolioTab 
+        return this.currProgramTab
       },
       set(value) {
-        if(value === 'issues') {
-            this.setCurrTab('#tab-issues')
-        } else if (value === 'risks') {
-            this.setCurrTab('#tab-risks')
-        } else if (value === 'lessons') {
-            this.setCurrTab('#tab-lessons')
+        console.log(value)
+        if(value === '#tab-issues') {
+            this.setCurrProgramTab('#tab-issues')
+        } else if (value === '#tab-risks') {
+            this.setCurrProgramTab('#tab-risks')
+        } else if (value === '#tab-lessons') {
+            this.setCurrProgramTab('#tab-lessons')
         } else 
-          this.setCurrTab('#tab-tasks')
-          this.setPortfolioTab(value)
+          this.setCurrProgramTab('#tab-tasks')
+          // this.setPortfolioTab(value)
       }
   },
     C_showCountToggle: {                  
@@ -1078,22 +1180,23 @@ export default {
         return _.map(this.onWatchFilter, "value").includes("issues");
       },
     },
- currentPage:{
-       get() {
-        return this.currentTaskPage
-      },
-      set(value) {
-        this.setCurrentPage(value);
-      },
-    },
+
    C_tasksPerPage: {
       get() {
-        return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
+        return this.getTasksPerPage || {id: 15, name: '15', value: 15}
       },
       set(value) {
         this.setTasksPerPageFilter(value)
        }
      },
+   currentPage:{
+       get() {
+        return this.currTaskPage
+      },
+      set(value) {
+        this.setCurrTaskPage(value);
+      },
+    },
     C_facilityCount() {         
       return this.facilityGroup
       
@@ -1101,6 +1204,15 @@ export default {
         : this.facilityCount; 
       
     },
+  //  C_categoryNameFilter: {
+  //     get() {
+  //       return this.portfolioCategoriesFilter;
+  //     },
+  //     set(value) {
+  //       // console.log(value)
+  //       this.setPortfolioCategoriesFilter(value);
+  //     },
+  //   },
     C_facilityProgress() {
       return this.facilityGroup
         ? Number(
@@ -1123,6 +1235,8 @@ export default {
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
+      const search_query = this.exists(this.search_tasks.trim()) ? new RegExp(_.escapeRegExp(this.search_tasks.trim().toLowerCase()), 'i') : null
+
       let tasks = this.facilityGroup
         ? _.flatten(
             _.map(this.facilityGroupFacilities(this.facilityGroup), "tasks")
@@ -1131,23 +1245,26 @@ export default {
       let taskIssueUsers = this.getTaskIssueUserFilter;
       _.filter(tasks, (resource) => {
         let valid = true;
+        // debugger
         let userIds = [
           ..._.map(resource.checklists, "userId"),
           resource.userIds,
         ];
-        if (taskIssueUsers.length > 0) {
+       if (taskIssueUsers.length > 0) {
           valid =
             valid &&
             userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
         }
         //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.taskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");        
+        if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId);
+        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId);
+        if (search_query) valid = valid && search_query.test(resource.text) ||
+        
+          valid && search_query.test(resource.taskType) ||
+          valid && search_query.test(resource.userNames) ||
+          valid && search_query.test(resource.facilityName) ||
+          valid && search_query.test(resource.projectGroup) 
         return valid;
       })
   return {
@@ -1493,15 +1610,16 @@ export default {
         ongoingClosed: {
           count: ongoingClosed.length      
         },
-        ongoing,       
-    
+        ongoing:  {
+          count: ongoing.length      
+        },   
       };
     },
   
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessons'
+     'fetchProgramLessonCounts'
      ]), 
     ...mapMutations([
         'setAdvancedFilter',
@@ -1511,14 +1629,14 @@ export default {
         'setMyActionsFilter',
         'setCurrTab',
         'setPortfolioTab',
-        'setCurrentPage',
+        'setCurrProgramTab',
+        'setCurrTaskPage',
         'setOnWatchFilter',
+        'setPortfolioCategoriesFilter',
         'setToggleRACI',
         'setShowAdvancedFilter',
         'setTaskForManager',
         'setShowCount',
-         'setCurrentPage',
-
         // Used in Program Viewer
         'setTasksPerPageFilter',
         // 7 States
@@ -1534,33 +1652,17 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
-          handleClick(tab, event) {
-            console.log(tab);
-    //   let tab_id = $(event.target).attr("id")
-    //   if(tab_id == "tab-tasks" || tab.name == 'tasks'){
-    //     this.currentTab = 'tasks'
-    //     if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
-    //       this.fetchPortfolioTasks();
-    //     }
-        
-    //   }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
-    //     this.currentTab = 'issues'
-    //     if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-    //       this.fetchPortfolioIssues();  
-    //     }
-    //   }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
-    //     this.currentTab = 'risks'
-    //     if(this.risksObj.filtered.risks && this.risksObj.filtered.risks.length < 1){
-    //       this.fetchPortfolioRisks();
-    //     }
-        
-    //   }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
-    //     this.currentTab = 'lessons'
-    //     if(this.lessonsObj.filtered.lessons && this.lessonsObj.filtered.lessons.length < 1){
-    //       this.fetchPortfolioLessons();
-    //     }
-    //   } 
-    
+    handleClick(tab, event) {
+       let tab_id = $(event.target).attr("id")          
+      if(tab_id == "tab-tasks" || tab.name == 'tasks'){
+        this.currentTab = '#tab-tasks'  
+      }else if(tab_id == "tab-issues" || tab.name == 'issues'){
+        this.currentTab = '#tab-issues'
+      }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
+        this.currentTab = '#tab-risks'
+      }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
+        this.currentTab = '#tab-lessons'       
+      } 
     },
     backBtn() {      
       return `/programs/${this.$route.params.programId}/sheet`;
@@ -1568,7 +1670,9 @@ export default {
       showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
-
+    setValueNull(val) {
+        this.setTaskTypeFilter('');
+    },
     showLessToggle() {
       this.showLess = "Show Less";
     },
@@ -1604,10 +1708,7 @@ export default {
     this.setHideOverdue(!this.getHideOverdue)    
     },
     log(e){
-    //   console.log(e)
-    },
-    handleClick(tab, event) {
-        // console.log(tab, event);
+      console.log(e)
     },
   sort: function (s) {
      //if s == current sort, reverse
@@ -1662,7 +1763,14 @@ export default {
     },
   },
   mounted() {
-    this.fetchProgramLessons(this.$route.params)  
+    this.fetchProgramLessonCounts(this.$route.params)  
+        this.$nextTick(function () {
+      // Code that will run only after the
+      // entire view has been rendered
+     $(this.currProgramTab).trigger('click');
+      // this.fetchPortfolioCounts();
+      // this.setFacilityProjectIds()
+    })
   },
 };
 </script>

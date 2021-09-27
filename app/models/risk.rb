@@ -364,6 +364,7 @@ class Risk < ApplicationRecord
       probability_name: probability_name,
       impact_level_name: impact_level_name,
       task_type: task_type.as_json,
+      category: task_type.try(:name),
       risk_stage: risk_stage.try(:name),
       risk_stage_id: self.risk_stage_id,
       class_name: self.class.name,

@@ -770,7 +770,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
       value-key="id"
       >
       <el-option
-      v-for="item in getIssuesPerPageFilterOptions"
+      v-for="item in getIssuesPerPageOptions"
       :value="item"
       :key="item.id"
       :label="item.name"
@@ -799,7 +799,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
     </button>
 </div>
 </div>
-<div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-bordeC_issuesPerPager"></div>
+<!-- <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-bordeC_issuesPerPager"></div> -->
 <div v-else class="mt-5">NO RESULTS TO DISPLAY
 
     
@@ -832,7 +832,7 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
-    'currentIssuePage',
+    'currIssuePage',
     "lessonsLoaded",
     "projectLessons",
     "programLessons",
@@ -850,7 +850,8 @@ export default {
     "getAllFilterNames",
     "getFilterValue",
     "getTaskIssueUserFilter",
-     "getIssuesPerPageFilter",
+    "getIssuesPerPage",
+    'getIssuesPerPageOptions',
     "getUnfilteredFacilities",
     "issueSeverityFilter",
     "issueStageFilter",
@@ -868,10 +869,7 @@ export default {
     "taskUserFilter",
     'getShowAdvancedFilter',
     'getShowCount',
-
-    // USED in PRogram Viewer
-    'getIssuesPerPageFilterOptions',
-    'getTasksPerPageFilter ',
+    'getTasksPerPage',
     // 7 States
     'getHideComplete',
     'getHideInprogress',
@@ -906,7 +904,7 @@ export default {
   },
     C_issuesPerPage: {
         get() {
-          return this.getIssuesPerPageFilter || {id: 15, name: '15', value: 15}
+          return this.getIssuesPerPage || {id: 15, name: '15', value: 15}
         },
         set(value) {
           this.setIssuesPerPageFilter(value)
@@ -951,10 +949,10 @@ export default {
     },
  currentPage:{
        get() {
-        return this.currentIssuePage
+        return this.currIssuePage
       },
       set(value) {
-        this.setCurrentPage(value);
+        this.setCurrIssuePage(value);
       },
     },
 
@@ -1308,7 +1306,7 @@ export default {
         'setMyActionsFilter',
         'setCurrTab',
         'setPortfolioTab',
-        'setCurrentPage',
+        'setCurrIssuePage',
         'setOnWatchFilter',
         'setToggleRACI',
         'setShowAdvancedFilter',
@@ -1357,10 +1355,9 @@ export default {
     //   } 
     
   },
-      showCounts(){
-        this.setShowCount(!this.getShowCount)       
-      },
-
+   showCounts(){
+     this.setShowCount(!this.getShowCount)       
+    },
     showLessToggle() {
       this.showLess = "Show Less";
     },
@@ -1396,7 +1393,7 @@ export default {
     this.setHideOverdue(!this.getHideOverdue)    
     },
     log(e){
-      console.log(e)
+      // console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);

@@ -193,9 +193,8 @@ class Lesson < ApplicationRecord
       notes_updated_at: sorted_notes.map(&:updated_at).uniq,
       project_id: facility_project.facility_id,
       project_name: facility.facility_name, 
-    
-
-
+      program_name: project.name,   
+ 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
@@ -268,10 +267,14 @@ class Lesson < ApplicationRecord
       created_by: {
         id: user.id,
         full_name: user.full_name
-      },
+      },     
       last_update: latest_update,
       notes: s_notes.map(&:json_for_lasson),
       lesson_stage_id: self.lesson_stage_id,
+      program_name: project.name,   
+      project_name: facility.facility_name, 
+      project_group: facility.facility_group.name,
+      category: task_type&.name,
       lesson_stage: lesson_stage.try(:name),
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: facility_project.facility_id,

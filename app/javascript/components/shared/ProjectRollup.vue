@@ -1,6 +1,6 @@
 <!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container-fluid m-2" data-cy="facility_rollup">
+  <div class="container-fluid m-2" data-cy="facility_rollup" :load="log(programLessonsCount)">
 
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
@@ -18,8 +18,8 @@
         <span v-if="contentLoaded" class="float-right mt-1">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
               <router-link :to="ProgramView"> 
-                <button class="btn btn-sm mh-orange text-light programViewerBtn">
-                  {{ currentProject.name }} Data Viewer
+                <button class="btn btn-sm mh-orange text-light programViewerBtn allCaps">
+                  {{ currentProject.name }} DATA VIEWER
                 </button>   
                </router-link>             
         </span>         
@@ -706,7 +706,7 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                     <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                      programLessons.total_count 
+                      programLessonsCount.total_count 
                     }}</b>
                   </h5>
                 </div>
@@ -725,12 +725,12 @@
                 <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
-                   programLessons.completed
+                   programLessonsCount.completed
                   }}</h4>         
                 </div>
                 <div class="col-6 pb-0 mb-0">
                   <h4>{{
-                   programLessons.progress
+                   programLessonsCount.progress
                   }}</h4>        
                 </div>                     
                 </div>            
@@ -953,7 +953,7 @@ export default {
       "currentProject",
       "lessonsLoaded",
       "projectLessons",
-      "programLessons",
+      "programLessonsCount",
       'projects',
       "facilities",
       "facilityCount",
@@ -1590,14 +1590,14 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessons'
+     'fetchProgramLessonCounts'
      ]), 
 
     showLessToggle() {
       this.showLess = "Show Less";
     },
     log(e){
-      // console.log("this is Lessons" + e)
+      console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);
@@ -1618,7 +1618,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchProgramLessons(this.$route.params)  
+    this.fetchProgramLessonCounts(this.$route.params)  
   },
 };
 </script>
@@ -1774,7 +1774,6 @@ ul > li {
 }
 .filterLabel {
   position: fixed;
-
 }
 
 .filterCol {
