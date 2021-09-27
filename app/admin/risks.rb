@@ -78,7 +78,7 @@ ActiveAdmin.register Risk do
         "<span>#{risk.risk_stage&.name}</span>".html_safe
       end
     end
-    column "Files" do |risk|
+    column "Files & Links" do |risk|
       risk.risk_files.map do |file|
 
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
