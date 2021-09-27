@@ -64,7 +64,7 @@ ActiveAdmin.register Task do
     column :due_date
     column :progress
     column :description, sortable: false
-    column "Files" do |task|
+    column "Files & Links" do |task|
       task.task_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
