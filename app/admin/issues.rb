@@ -177,7 +177,7 @@ ActiveAdmin.register Issue do
         end
       end
 
-      tab 'Related' doplaceholder
+      tab 'Related' do
         f.inputs 'Releated Items' do
           f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]},  input_html: {class: "select2"}
           f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]},  input_html: {class: "select2"}
