@@ -173,11 +173,11 @@ ActiveAdmin.register Issue do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :issue_files
           div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
-          f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
+          f.input :file_links, label: 'Add Links', placeholder: 'Input link, then "Enter"'
         end
       end
 
-      tab 'Related' do
+      tab 'Related' doplaceholder
         f.inputs 'Releated Items' do
           f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]},  input_html: {class: "select2"}
           f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]},  input_html: {class: "select2"}
