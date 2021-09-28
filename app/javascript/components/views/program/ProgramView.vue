@@ -1,5 +1,11 @@
 <template>
-  <div class="container-fluid mx-3 portfolioView_main" :load="log(currentTab)">
+  <div class="container-fluid mx-3 portfolioView_main" :load="log(currentTab)"
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Program Viewer data. Please wait..."
+    :class="[!contentLoaded ? 'vh100': '']"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)" 
+  >
      <div>     
       <!-- <span class="mr-4" style="position:absolute; top:25px; right:0">
           <router-link :to="backBtn" > 
@@ -68,19 +74,16 @@
                     
                     valueFormat="object"
                     />       -->
-                    <!-- <treeselect  
+                    <treeselect  
                     placeholder="Search and select" 
-                    :multiple="true" 
-                    @input="updateProgramFilterValue"
-                    :value="C_portfolioNamesFilter"
-                    :options="portfolioPrograms"
-                    v-model="C_portfolioNamesFilter"
+                    :multiple="true"                 
+                    :options="programProjectGroups"               
                     track-by="name"      
                     :limit="3"              
                     :maxHeight="200"
                     :limitText="count => `...`"     
                     valueFormat="object"
-                    />       -->
+                    />       
                      <!-- <treeselect-value :value="C_portfolioNamesFilter" />    -->
                  </template>              
                 </div>         
@@ -1040,13 +1043,14 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
 import ProgramLessons from "./ProgramLessons.vue";
+Vue.component('treeselect', VueTreeselect.Treeselect)
 
 export default {
   name: "ProgramView",
    components: {
     ProgramIssues,
     ProgramRisks,
-    ProgramLessons
+    ProgramLessons,
   },
   data() {
     return {
@@ -1073,6 +1077,7 @@ export default {
     'currTaskPage',
     'currProgramTab',
     'portfolioCategoriesFilter',
+    'portfolioPrograms',
     "lessonsLoaded",
     "projectLessons",
     "programLessonsCount",
@@ -1125,6 +1130,12 @@ export default {
     ]),
     projectObj() {
     return this.currentProject.facilities
+    },
+    programProjectGroups(){
+      if (this.portfolioPrograms){
+      let pp = this.portfolioPrograms
+      return pp.filter(p => p.program_id == this.$route.params.programId)
+      }     
     },
      currentTab: {
       get() {        
@@ -1619,7 +1630,8 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessonCounts'
+     'fetchProgramLessonCounts',
+     'fetchPortfolioPrograms'
      ]), 
     ...mapMutations([
         'setAdvancedFilter',
@@ -1763,6 +1775,7 @@ export default {
     },
   },
   mounted() {
+    this.fetchPortfolioPrograms();
     this.fetchProgramLessonCounts(this.$route.params)  
         this.$nextTick(function () {
       // Code that will run only after the
