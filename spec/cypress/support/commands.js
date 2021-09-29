@@ -6,6 +6,12 @@ Cypress.Commands.add("openPortoflioViewer", () => {
   cy.get('[data-cy=portfolio_btn]').first().click()
 })
 
+// Open first Project
+Cypress.Commands.add("openProgramViewer", () => {
+  cy.visit('/')
+  cy.get('[data-cy=program_viewer_btn]').first().click()
+})
+
 // commands.js
 Cypress.Commands.add('preserveAllCookiesOnce', () => {
   cy.getCookies().then(cookies => {
