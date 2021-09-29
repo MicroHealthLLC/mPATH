@@ -592,7 +592,7 @@ jQuery(function($) {
           });
         },
         fetchStatuses(cb) {
-          $.get("/api/statuses.json", (data) => {
+          $.get("/api/v1/filter_data/statuses.json", (data) => {
             this.statuses = data.statuses;
             return cb();
           });
@@ -1584,15 +1584,15 @@ jQuery(function($) {
               this.project_id = $("select[name=Program]").children("option:selected").val();
             },
             fetchProjectUsers() {
-              $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/filter_data/users.json?project_id=${this.project_id}`, (data) => {
                 this.project_users = data.filter(u => u.status == "active");
                 this.loading = false;
               });
             },
             fetchProgramCategories(){
-              $.get(`/api/task_types.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/filter_data/categories.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Category]").html("")
-                let task_types = data.task_types
+                let task_types = data.categories
                 for(var i = 0; i <= task_types.length; i++){
                   $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
                 }
@@ -1602,9 +1602,9 @@ jQuery(function($) {
               });
             },
             fetchProgramStages(){
-              $.get(`/api/task_stages.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/filter_data/stages.json?resource=task&program_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Stage]").html("")
-                let task_stages = data.task_stages
+                let task_stages = data.all_stages
                 for(var i = 0; i <= task_stages.length; i++){
                   $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
                 }
@@ -2038,7 +2038,7 @@ jQuery(function($) {
             this.fetchProjectTaskIssues()
           },
           fetchProjectTaskIssues() {
-            $.get(`/api/projects/${this.project_id}/task_issues.json`, (data) => {
+            $.get(`/api/v1/programs/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
               this.risks = data ? this.type == 'risk' ? data.risks.filter(t => t.id !== this._id) : data.risks : [];
@@ -2211,7 +2211,7 @@ jQuery(function($) {
           }
         },
         template: `<div>
-          <input id='vue_task_task_links' type='text' ref='linksInput'/>
+          <input id='vue_task_task_links' type='text' ref='linksInput' placeholder='Input link then "Enter"' />
           <button class='add' @click.prevent="appendLink()" style="display:none;">Add</button>
           <ul class='ml-20 mt-10'>
             <li v-for="(link, i) in links" :key="link.id+'_'+i" class='p-5' v-if="!link._destroy">
@@ -2344,7 +2344,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/users.json`, (data) => {
+            $.get(`/api/v1/filter_data/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
@@ -2428,7 +2428,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/users.json`, (data) => {
+            $.get(`/api/v1/filter_data/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__checklist_users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
