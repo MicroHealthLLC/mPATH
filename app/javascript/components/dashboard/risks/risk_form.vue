@@ -1619,7 +1619,7 @@
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                      <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                      <span><i class="fal fa-file mr-1"></i></span>
                       <input
                         readonly
                         type="text"
