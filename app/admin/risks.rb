@@ -78,7 +78,7 @@ ActiveAdmin.register Risk do
         "<span>#{risk.risk_stage&.name}</span>".html_safe
       end
     end
-    column "Files" do |risk|
+    column "Files & Links" do |risk|
       risk.risk_files.map do |file|
 
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
@@ -157,7 +157,7 @@ ActiveAdmin.register Risk do
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :risk_files, label: 'Risk Files'
       div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
-      f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
+      f.input :file_links, label: 'Add Links', placeholder: 'Input link, then "Enter"'
       f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
       f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
       f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}

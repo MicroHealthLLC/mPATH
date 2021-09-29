@@ -33,9 +33,9 @@ jobs:
       - name: Start rails server and run e2e test
         env:
           RAILS_ENV: test
-          MGIS_DATABASE_USERNAME: root
-          MGIS_DATABASE_PASSWORD: root
-          MGIS_DATABASE_HOST: 127.0.0.1
+          MPATH_DATABASE_USERNAME: root
+          MPATH_DATABASE_PASSWORD: root
+          MPATH_DATABASE_HOST: 127.0.0.1
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
         run: |
