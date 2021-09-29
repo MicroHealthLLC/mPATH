@@ -16,7 +16,7 @@
               > <i class="fas fa-suitcase mb-1"></i>
               </span>
               <router-link :to="projectNameLink">{{
-                facility.facilityName
+               risk.facilityName
               }}</router-link>
               <el-icon
                 class="el-icon-arrow-right"
@@ -24,7 +24,7 @@
               ></el-icon>
               <router-link
                 :to="
-                  `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/risks`
+                  backToRisks
                 "
                 >Risks</router-link
               >
@@ -32,7 +32,7 @@
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
               ></el-icon>
-              <span v-if="DV_risk.text.length > 0">{{ DV_risk.text }}</span>
+              <span v-if="DV_risk.text">{{ DV_risk.text }}</span>
               <span v-else style="color: gray">(Risk Name)</span>
             </h5>
           </div>
@@ -2172,7 +2172,7 @@ export default {
     INITIAL_RISK_STATE() {
       return {
         text: "",
-        facilityProjectId: this.facility.id,
+        facilityProjectId: this.$route.params.programId,   
         text: "",
         riskDescription: "",
         explanation: "",
@@ -2703,11 +2703,13 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-            } else {
+            } else if (this.$route.path.includes("kanban"))  {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-            }
+            }  else  this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer`
+              );
           })
           .catch((err) => {
             console.log(err);
@@ -3207,11 +3209,20 @@ export default {
         return "kanban";
       }
     },
+  backToRisks() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
   projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
   },
@@ -3232,16 +3243,16 @@ export default {
     "DV_risk.startDate"(value) {
       if (!value) this.DV_risk.dueDate = "";
     },
-    "DV_risk.dueDate"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_risk.dueDate"(value) {
+    //   if (this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_risk.checklists": {
       handler: function(value) {
         if (this.DV_risk.autoCalculate) this.calculateProgress(value);

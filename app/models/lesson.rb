@@ -194,6 +194,7 @@ class Lesson < ApplicationRecord
       project_id: facility_project.facility_id,
       project_name: facility.facility_name, 
       program_name: project.name,   
+      program_id: project.id, 
  
       # Add RACI user names
       # Last name values added for improved sorting in datatables
@@ -271,7 +272,8 @@ class Lesson < ApplicationRecord
       last_update: latest_update,
       notes: s_notes.map(&:json_for_lasson),
       lesson_stage_id: self.lesson_stage_id,
-      program_name: project.name,   
+      program_name: project.name,  
+      program_id: project.id,  
       project_name: facility.facility_name, 
       project_group: facility.facility_group.name,
       category: task_type&.name,

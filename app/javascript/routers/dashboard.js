@@ -2,6 +2,10 @@ import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
 
 import ProgramView from "./../components/views/program/ProgramView";
+import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
+import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
+import ProgramRiskForm from "./../components/views/program/ProgramRiskForm";
+import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
@@ -138,6 +142,74 @@ export default new VueRouter({
       path: "/programs/:programId/dataviewer",
       component: ProgramView,
     },
+    {
+      name: "ProgramTaskForm",
+      path: "/programs/:programId/dataviewer/:projectId/task/:id",
+      component: ProgramTaskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramRiskForm",
+      path: "/programs/:programId/dataviewer/:projectId/risk/:id",
+      component: ProgramRiskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramIssueForm",
+      path: "/programs/:programId/dataviewer/:projectId/issue/:id",
+      component: ProgramIssueForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramLessonForm",
+      path: "/programs/:programId/dataviewer/:projectId/lesson/:id",
+      component: ProgramLessonForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
     {
       name: "SheetView",
       path: "/programs/:programId/sheet",

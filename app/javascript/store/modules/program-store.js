@@ -7,11 +7,21 @@ const programStore = {
 
     curr_program_tab: '#tab-tasks', 
 
+    search_issues: '',
+    search_risks: '',
+    search_lessons: '',
+
     tasks_per_page_filter: null,
     risks_per_page_filter: null,
     lessons_per_page_filter: null,
     issues_per_page_filter: null,
 
+    project_groups_filter: null,
+    project_group_ids: [], 
+
+    program_categories_filter: null,
+
+  
   }),
 
   actions: {},
@@ -21,12 +31,22 @@ const programStore = {
     setCurrRiskPage: (state, value) => state.curr_risk_page = value,
     setCurrLessonPage: (state, value) => state.curr_lesson_page = value,
 
+    setSearchIssues: (state, value) => state.search_issues = value,
+    setSearchRisks: (state, value) => state.search_risks = value,
+    setSearchLessons: (state, value) => state.search_lessons = value,
+
+    setProgramCategoriesFilter: (state, filter) => state.program_categories_filter = filter,
+
+    setProjectGroupIds:  (state, value) => state.project_group_ids = value,
+
     setCurrProgramTab: (state, tab) => state.curr_program_tab = tab, 
 
     setTasksPerPageFilter: (state, filter) => state.tasks_per_page_filter = filter,
     setIssuesPerPageFilter: (state, filter) => state.issues_per_page_filter = filter,
     setRisksPerPageFilter: (state, filter) => state.risks_per_page_filter = filter,
     setLessonsPerPageFilter: (state, filter) => state.lessons_per_page_filter = filter,
+
+    setProjectGroupsFilter: (state, filter) => state.project_groups_filter = filter,
   },
 
   getters: {
@@ -34,6 +54,15 @@ const programStore = {
     currIssuePage: state => state.curr_issue_page, 
     currRiskPage: state => state.curr_risk_page, 
     currLessonPage: state => state.curr_lesson_page, 
+
+    searchIssues: state => state.search_issues,
+    searchRisks: state => state.search_risks, 
+    searchLessons: state => state.search_lessons,  
+
+    programCategoriesFilter: state => state.program_categories_filter, 
+
+    projectGroupsFilter: state => state.project_groups_filter,
+    projectGroupIds: state => state.project_group_ids,
 
     currProgramTab: state => state.curr_program_tab,
 

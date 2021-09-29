@@ -1,6 +1,7 @@
 <template>
   <form
     @submit.prevent="saveLesson"
+
     :class="{ _disabled: !lessonsLoaded }"
     accept-charset="UTF-8"
   >
@@ -12,7 +13,7 @@
             ><i class="fas fa-suitcase"></i
           ></span>
           <router-link v-if="contentLoaded" :to="projectNameLink">{{
-            facility.facilityName
+           lesson.project_name
           }}</router-link>
           <el-icon
             class="el-icon-arrow-right"
@@ -20,7 +21,7 @@
           ></el-icon>
           <router-link
             :to="
-              `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/lessons`
+              backToLessons
             "
             >Lessons</router-link
           >
@@ -937,9 +938,13 @@ export default {
         return  fPrivilege.lessons.includes(s);      
     },
     close() {
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-      );
+        if (this.$route.path.includes("sheet") || this.$route.path.includes("map")) {
+          this.$router.push(
+            `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
+          );
+        } else this.$router.push(
+            `/programs/${this.$route.params.programId}/dataviewer`
+          ); 
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
@@ -1166,11 +1171,20 @@ export default {
         return "kanban";
       }
     },
-    projectNameLink() {
+  backToLessons() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
+  projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
     isMapView() {
@@ -1272,11 +1286,14 @@ export default {
             this.$router.push(
               `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
             );
-          } else {
+          } else if (this.$route.path.includes("map")) {
             this.$router.push(
               `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
             );
-          }
+          } else 
+          this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer`
+            );
         }
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;

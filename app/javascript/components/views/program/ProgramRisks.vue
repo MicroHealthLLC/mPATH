@@ -1,5 +1,233 @@
 <template>
 <div class="box-shadow py-2"  style="postion:relative"  >
+    <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
+        <template slot="title">
+        <div v-if="dynamicObj.length > 0 && dynamicObj[currentRiskSlide] !== undefined" class="container-fluid">
+          <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">RISK</h3>
+            <div v-for="number in [currentRiskSlide]" :key="number" >
+            <div class="row justify-content-center">
+              <div class="col-3 pb-0">
+                  <img
+                    class="mb-0"
+                    style="width: 125px"
+                    :src="require('../../../../assets/images/mpath.png')"
+                  />
+              </div>
+        <div class="col-5 text-center px-3 py-2" v-if="dynamicObj[currentRiskSlide]">       
+              
+          <span v-if="dynamicObj[currentRiskSlide].isOverdue" v-tooltip="`Overdue`">
+            <i class="fas fa-calendar text-danger mr-1" style="font-size:1.8rem"></i
+          ></span>
+          <span  v-if="dynamicObj[currentRiskSlide].completed" v-tooltip="`Completed`"
+            ><i
+              class="fas fa-clipboard-check text-success mr-1" style="font-size:1.8rem"
+            ></i
+          ></span>
+          <span
+              v-if="dynamicObj[currentRiskSlide].ongoing == true && dynamicObj[currentRiskSlide].closed == false"
+            v-tooltip="`Ongoing`"
+            ><i class="fas fa-retweet mr-1 text-success" style="font-size:1.8rem"></i
+          ></span>
+          <span
+              v-if="dynamicObj[currentRiskSlide].closed"
+            v-tooltip="`Ongoing: Closed`"
+            ><i class="fas fa-retweet mr-1 text-secondary" style="font-size:1.8rem"></i
+          ></span>
+         
+          <span
+              v-if="dynamicObj[currentRiskSlide].onHold == true"
+            v-tooltip="`On Hold`"
+          >
+            <i class="fas fa-pause-circle mr-1 text-primary" style="font-size:1.8rem"></i
+          ></span>
+          <span  v-if="dynamicObj[currentRiskSlide].draft == true" v-tooltip="`Draft`">
+            <i class="fas fa-pencil-alt mr-1 text-warning" style="font-size:1.8rem"></i
+          ></span>
+          <span  v-if="dynamicObj[currentRiskSlide].planned" v-tooltip="`Planned`">
+            <i class="fas fa-calendar-check text-info mr-1" style="font-size:1.8rem"></i
+          ></span>
+          <span
+              v-if="dynamicObj[currentRiskSlide].inProgress"
+            v-tooltip="`In Progress`"
+          >
+            <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
+          ></span>
+
+            <span v-if="dynamicObj[currentRiskSlide].text"> 
+              <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentRiskSlide].text }}</h2>
+            </span>
+             
+              </div>
+                  <div class="col-3 mt-3">
+                  <img
+                      style="width: 145px"
+                    :src="require('../../../../assets/images/microhealthllc.png')"
+                  />
+              </div>
+          </div>
+
+                <div class="row pt-3 justify-content-center">
+
+                  <div class="col-3 text-center slideCol leftProgramCol">                                          
+                  
+              
+                    <div class="col py-2">  
+                    
+                    <h6 class="mh-orange leftColLabel text-light">PROGRAM</h6>
+                    <h4>{{dynamicObj[currentRiskSlide].programName}}</h4>
+                  </div>    
+              
+                  <div class="col truncate-line-two">    
+                        <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
+                    <h4> {{dynamicObj[currentRiskSlide].projectGroup}}  </h4>
+                                                  
+                  </div>  
+          
+                    <div class="col py-2">    
+                        <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
+                    <h4>{{ dynamicObj[currentRiskSlide].facilityName}}  </h4>                                                                 
+                  </div>  
+
+                      <div class="col">    
+                        <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
+                    <h4 v-if="dynamicObj[currentRiskSlide].taskType" >{{ dynamicObj[currentRiskSlide].category}}  </h4> 
+                    <h4 v-else> -- </h4>                                                                
+                  </div>  
+
+                </div>    
+                
+                                        
+                <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentRiskSlide] !== undefined">
+                <div class="lastUpdateCol">                                
+                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
+                  <div style="height:300px; overflow-y:auto">
+                  <span  v-if="dynamicObj[currentRiskSlide].notesUpdatedAt.length > 0">                    
+                  <span>
+                    <br>
+                    <h4 class="px-3"> <em>{{ dynamicObj[currentRiskSlide].notes[dynamicObj[currentRiskSlide].notes.length - 1].body }}</em></h4>
+                  </span>
+                    <span
+                    class="px-2"                                                                 
+                    >
+                    <h6 class="mt-2">{{
+                      moment(dynamicObj[currentRiskSlide].notesUpdatedAt[0]).format(
+                        "DD MMM YYYY, h:mm a "
+                      ) + ' By: ' +
+                      dynamicObj[currentRiskSlide].notes[dynamicObj[currentRiskSlide].notes.length - 1].user.fullName
+                    }} 
+                    </h6>
+                  </span>
+                    </span>
+                    <span v-else>
+                      <br>
+                      <h4 class="px-3" style="color:lightgray"><em>NO UPDATES</em></h4>
+                    </span>
+                </div>  
+                </div> 
+                     
+
+                <div class="issueTypes mt-3">
+
+                  <h6 class="bg-secondary text-light py-1 d-block">RISK DESCRIPTION</h6>
+                    <div style="height:100px; overflow-y:auto">
+                      <h4 class="px-3">{{ dynamicObj[currentRiskSlide].riskDescription }}</h4>
+                  </div>
+                </div>
+
+                </div>
+
+
+                    <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentRiskSlide] !== undefined">                                          
+                  
+              
+                    <div class="col pt-2">  
+                      <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
+                    <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentRiskSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
+                    <span v-else> -- </span>
+                    - 
+                      <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].dueDate" class="d-inline-block"> <h5> {{ moment(dynamicObj[currentRiskSlide].dueDate).format("DD MMM YYYY") }}</h5></span>
+                      <span v-else>  </span>
+                    
+                  </div>    
+                      
+                    <div class="col mt-3 truncate-line-two">
+                    <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
+                          <span class="truncate-line-two" v-if="dynamicObj[currentRiskSlide].userNames.length > 0"><h4> {{ dynamicObj[currentRiskSlide].userNames }}</h4></span>
+                          <span v-else> <h4>No Assignments</h4></span>                                        
+                  </div>  
+
+                 <div class="col mt-3">  
+
+                        <h6>RISK APPROACH</h6>                                         
+                        <h4 class="text-light labels px-2 d-inline-block"> {{
+                          dynamicObj[currentRiskSlide].riskApproach.charAt(0).toUpperCase() +
+                          dynamicObj[currentRiskSlide].riskApproach.slice(1)
+                          }}</h4>
+
+                      <h6 class="mt-5">PRIORITY LEVEL</h6>  
+                          <h4
+                          v-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Very Low'"
+                          class="gray2 px-1 riskLabels"
+                          >Very Low</h4
+                        >
+                        <h4
+                          v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Low'"
+                          class="green1 riskLabels px-1"
+                          >Low</h4
+                        >
+                        <h4
+                          v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Moderate'"
+                          class="yellow1 riskLabels px-1"
+                          >Moderate</h4
+                        >
+                        <h4
+                          v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'High'"
+                          class="orange1 riskLabels px-1"
+                          >High</h4
+                        >
+                        <h4
+                          v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Extreme'"
+                          class="red1 riskLabels px-1"
+                          >Extreme</h4
+                        >                                                                  
+          
+                  </div>    
+                </div>   
+
+                </div>   
+                
+            </div>
+        
+        </div>
+        <div slot="footer" class="dialog-footer-left"  v-if="dynamicObj[currentRiskSlide] !== undefined">                       
+            <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">FOCUS FLAGS: </h5>
+              <span
+            v-if="dynamicObj[currentRiskSlide].watched == true"
+            v-tooltip="`On Watch`"
+            ><i class="fas fa-eye mr-1 text-dark" style="font-size:1.5rem"></i
+          ></span> 
+          <span
+            v-if="dynamicObj[currentRiskSlide].important == true"
+            v-tooltip="`Important`"
+          >
+            <i class="fas fa-star text-warning mr-1 " style="font-size:1.5rem"></i
+          ></span> 
+          <span v-if="dynamicObj[currentRiskSlide].reportable" v-tooltip="`Briefings`">
+            <i class="fas fa-presentation mr-1 text-primary" style="font-size:1.5rem"></i
+          ></span>                
+            
+            
+            </el-button>
+          
+        </div>
+
+        <div slot="footer" class="dialog-footer">
+        <el-button class="mh-orange elBtn text-light" @click.prevent="previousRisk"><i class="far fa-chevron-left" style="font-size:1.35rem"></i></el-button>
+        <el-button class="bg-secondary elBtn text-light" ><span style="font-size:1.35rem"><span> RISK </span> {{ currentRiskSlide + 1 }} of {{ dynamicObj.length}}</span></el-button>                      
+        <el-button class="mh-orange elBtn text-light"  @click.prevent="nextRisk"><i class="far fa-chevron-right" style="font-size:1.35rem"></i></el-button>
+        </div>
+        </template>
+  </el-dialog>
 <div class="row py-1 pr-2">
 <div class="col-10 px-1 pt-2">
     <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -268,13 +496,13 @@
 
 <div class="col-2 pl-0 pr-2">
     <span class="btnRow d-flex">
-        <!-- <button
+        <button
         v-tooltip="`Presentation Mode`"
-        @click.prevent="openTpresentation"
+        @click.prevent="openRiskPresentation"
         class="btn btn-md presentBtn mr-1 mh-blue text-light"
     >
         <i class="fas fa-presentation"></i>
-    </button> -->
+    </button>
     <button
         v-tooltip="`Export to PDF`"
         @click.prevent="exportTasksToPdf"
@@ -686,7 +914,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         </th>
     </thead>
     <tbody>
-        <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover">
+        <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openRisk(risk)">
     
     
         <td>{{ risk.projectGroup }}</td>
@@ -1002,12 +1230,16 @@ export default {
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
       currentSort: "text",  
+      dialogVisible: false,
+      currentRiskSlide : 0, 
+      dynamicObj: {},
       currentSortCol1: "projectGroup",
       currentSortCol2: "facilityName",
       // currentSortIssueRisk: "title",
       currentSortDir: "asc",
       currentSortDir1: "asc",
       currentSortDir2: "asc",
+      facility_project_ids: [],
     };
   },
   computed: {
@@ -1015,7 +1247,10 @@ export default {
     "contentLoaded",
     "currentProject",
     'currRiskPage',
+    'programCategoriesFilter',
+    'projectGroupsFilter',
     "lessonsLoaded",
+    'searchRisks',
     "projectLessons",
     "programLessons",
     'projects',
@@ -1083,7 +1318,16 @@ export default {
           this.setCurrTab('#tab-tasks')
           this.setPortfolioTab(value)
       }
-  },
+    },
+    C_projectGroupsFilter: {
+      get() {
+        return this.projectGroupsFilter;
+      },
+      set(value) {
+        this.setProjectGroupsFilter(value);
+        this.setProjectGroupIds()
+      },
+    },
     C_showCountToggle: {                  
         get() {
          return this.getShowCount                
@@ -1178,45 +1422,60 @@ export default {
       return issues;
     },
     filteredRisks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      let risks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
-          )
-        : this.filteredAllRisks;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-     _.filter(risks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
+     let risks = this.filteredAllRisks
+      .filter(r => {
+      if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
+         this.facility_project_ids = [];
+         let val = this.projectGroupsFilter
+         for(let k = 0; k < val.length; k++){
+        if(val[k].program_id){
+        this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_group_id){
+         this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_id){
+        this.facility_project_ids.push(val[k].facility_project_id)
         }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.riskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      });
+      }
+       return this.facility_project_ids.includes(r.facilityProjectId)
+      } else return true
+       }).filter((r) => {
+          if (this.searchRisks !== "") {
+            // console.log(issue)
+            return (
+              r.text.toLowerCase().match(this.searchRisks.toLowerCase()) ||
+              r.riskApproach
+                .toLowerCase()
+                .match(this.searchRisks.toLowerCase()) ||
+              r.projectGroup
+                .toLowerCase()
+                .match(this.searchRisks.toLowerCase()) ||
+              r.programName
+                .toLowerCase()
+                .match(this.searchRisks.toLowerCase()) ||
+              r.facilityName
+                .toLowerCase()
+                .match(this.searchRisks.toLowerCase()) ||
+              r.userNames.toLowerCase().match(this.searchRisks.toLowerCase())
+            );
+          } else return true;
+          // Filtering 7 Task States
+        })
+        .filter((r) => {
+          if (this.programCategoriesFilter.length > 0) {
+            let category = this.programCategoriesFilter.map((t) => t);
+            return category.includes(r.category);
+          } else return true;
+        })
+     
        return {
        unfiltered: {
-            risks
-            },
-       filtered: {
-        risks:  risks.filter(t => {
-        if (this.getHideOverdue == true) {          
-         return t.isOverdue == false
-       } else return true
-
+           risks
+          },
+      filtered: {
+      risks:  risks.filter(t => {
+      if (this.getHideOverdue == true) {          
+        return t.isOverdue == false
+      } else return true
       }).filter(t => {
       if (this.getHideComplete == true) { 
         return !t.completed
@@ -1539,6 +1798,7 @@ export default {
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setCurrTab',
+        'setProjectGroupsFilter',
         'setPortfolioTab',
         'setCurrRiskPage',
         'setOnWatchFilter',
@@ -1563,35 +1823,44 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
-          handleClick(tab, event) {
-            console.log(tab);
-    //   let tab_id = $(event.target).attr("id")
-    //   if(tab_id == "tab-tasks" || tab.name == 'tasks'){
-    //     this.currentTab = 'tasks'
-    //     if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
-    //       this.fetchPortfolioTasks();
-    //     }
-        
-    //   }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
-    //     this.currentTab = 'issues'
-    //     if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-    //       this.fetchPortfolioIssues();  
-    //     }
-    //   }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
-    //     this.currentTab = 'risks'
-    //     if(this.risksObj.filtered.risks && this.risksObj.filtered.risks.length < 1){
-    //       this.fetchPortfolioRisks();
-    //     }
-        
-    //   }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
-    //     this.currentTab = 'lessons'
-    //     if(this.lessonsObj.filtered.lessons && this.lessonsObj.filtered.lessons.length < 1){
-    //       this.fetchPortfolioLessons();
-    //     }
-    //   } 
-    
-  },
-      showCounts(){
+
+    beforeClose(done) {
+    	this.dialogVisible = false;
+      done();
+    },
+   openRisk(risk) {       
+      this.$router.push({
+      name: "ProgramRiskForm",
+      params: {
+        programId: risk.projectId,
+        projectId: risk.facilityId,
+        riskId: risk.id,
+      },
+    });
+    // console.log(this.$route.params)
+    },
+    openRiskPresentation(){
+      this.dialogVisible = true; 
+      this.currentRiskSlide = 0 
+      this.dynamicObj = this.filteredRisks.filtered.risks
+     },
+    nextRisk(){
+      this.isSlidingToPrevious = false
+      if(this.currentRiskSlide == this.dynamicObj.length-1){
+          this.currentRiskSlide = 0;
+      }else{
+          this.currentRiskSlide += 1;
+      }
+    },
+    previousRisk(){ 
+        this.isSlidingToPrevious = true
+        if(this.currentRiskSlide == 0){
+            this.currentRiskSlide=this.dynamicObj.length-1;
+        }else{
+            this.currentRiskSlide-=1;
+        }
+    },
+   showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
 

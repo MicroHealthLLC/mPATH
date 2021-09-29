@@ -1,7 +1,7 @@
 <template>
   <div>
     <tabsbar :class="{'d-none': isProgramView }"></tabsbar>
-    <filter-sidebar v-if="contentLoaded"></filter-sidebar>
+    <filter-sidebar v-if="contentLoaded" :class="{'d-none': isProgramView }"></filter-sidebar>
     <router-view></router-view>
   </div>
 </template>

@@ -241,6 +241,7 @@ class Issue < ApplicationRecord
       attach_files: attach_files,
       completed: completed,
       planned: planned,
+      program_name: project.name, 
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
       project_group: self.facility_group.name,

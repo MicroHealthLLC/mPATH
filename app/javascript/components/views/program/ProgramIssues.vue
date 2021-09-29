@@ -1,5 +1,202 @@
 <template>
-<div class="box-shadow py-2"  style="postion:relative" :load="log(filteredIssues.filtered.issues)">
+<div class="box-shadow py-2"  style="postion:relative">
+   <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
+      <template slot="title">
+      <div v-if="dynamicObj.length > 0 && dynamicObj[currentIssueSlide] !== undefined" class="container-fluid">
+        <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">ISSUE</h3>
+          <div v-for="number in [currentIssueSlide]" :key="number" >
+          <div class="row justify-content-center">
+            <div class="col-3 pb-0">
+                <img
+                  class="mb-0"
+                  style="width: 125px"
+                  :src="require('../../../../assets/images/mpath.png')"
+                />
+            </div>
+      <div class="col-5 text-center px-3 py-2" v-if="dynamicObj[currentIssueSlide]">     
+            
+        <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].isOverdue" v-tooltip="`Overdue`">
+          <i class="fas fa-calendar text-danger mr-1" style="font-size:1.8rem"></i
+        ></span>
+        <span  v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].completed" v-tooltip="`Completed`"
+          ><i
+            class="fas fa-clipboard-check text-success mr-1" style="font-size:1.8rem"
+          ></i
+        ></span>
+          
+        <span
+            v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].onHold == true"
+          v-tooltip="`On Hold`"
+        >
+          <i class="fas fa-pause-circle mr-1 text-primary" style="font-size:1.8rem"></i
+        ></span>
+        <span  v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].draft == true" v-tooltip="`Draft`">
+          <i class="fas fa-pencil-alt mr-1 text-warning" style="font-size:1.8rem"></i
+        ></span>
+        <span  v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].planned" v-tooltip="`Planned`">
+          <i class="fas fa-calendar-check text-info mr-1" style="font-size:1.8rem"></i
+        ></span>
+        <span
+            v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].inProgress"
+          v-tooltip="`In Progress`"
+        >
+          <i class="far fa-tasks text-primary mr-1" style="font-size:1.8rem"></i
+        ></span>
+
+          <span v-if="dynamicObj[currentIssueSlide].title"> 
+            <h2 class="mt-2 d-inline text-truncate breakWord">{{ dynamicObj[currentIssueSlide].title }}</h2>
+          </span>
+          
+            </div>
+                <div class="col-3 mt-3">
+                <img
+                    style="width: 145px"
+                  :src="require('../../../../assets/images/microhealthllc.png')"
+                />
+            </div>
+        </div>
+
+              <div class="row pt-3 justify-content-center">
+
+                <div class="col-3 text-center slideCol leftProgramCol">                                          
+                
+            
+                  <div class="col py-2">  
+                  
+                  <h6 class="mh-orange leftColLabel text-light">PROGRAM</h6>
+                  <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].programName">{{dynamicObj[currentIssueSlide].programName}}</h4>
+                </div>    
+            
+                <div class="col truncate-line-two">    
+                      <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
+                  <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectGroup"> {{dynamicObj[currentIssueSlide].projectGroup}}  </h4>
+                                                
+                </div>  
+        
+                  <div class="col py-2">    
+                      <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
+                  <h4  v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].facilityName">{{ dynamicObj[currentIssueSlide].facilityName}}  </h4>                                                                 
+                </div>  
+
+                    <div class="col">    
+                      <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
+                  <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].taskType" >{{ dynamicObj[currentIssueSlide].category}}  </h4> 
+                  <h4 v-else> -- </h4>                                                                
+                </div>  
+
+              </div>    
+              
+                                      
+              <div class="col-5 text-center  mx-4 p-0" v-if="dynamicObj[currentIssueSlide] !== undefined">
+              <div class="lastUpdateCol">                                
+                <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
+                <div style="height:300px; overflow-y:auto">
+                <span  v-if="dynamicObj[currentIssueSlide].notesUpdatedAt.length > 0">                    
+                <span>
+                  <br>
+                  <h4 class="px-3"> <em>{{ dynamicObj[currentIssueSlide].notes[dynamicObj[currentIssueSlide].notes.length - 1].body }}</em></h4>
+                </span>
+                  <span
+                  class="px-2"                                                                 
+                  >
+                  <h6 class="mt-2">{{
+                    moment(dynamicObj[currentIssueSlide].notesUpdatedAt[0]).format(
+                      "DD MMM YYYY, h:mm a "
+                    ) + ' By: ' +
+                    dynamicObj[currentIssueSlide].notes[dynamicObj[currentIssueSlide].notes.length - 1].user.fullName
+                  }} 
+                  </h6>
+                </span>
+                  </span>
+                  <span v-else>
+                    <br>
+                    <h4 class="px-3" style="color:lightgray"><em>NO UPDATES</em></h4>
+                  </span>
+              </div>  
+              </div> 
+                                      
+            <div class="wrap d-flex">
+              <div class="issueTypes mt-3 px-0 w-50 mr-2 pt-0">
+              <h6 class="bg-secondary text-light py-1 d-block">ISSUE TYPE</h6>
+                <div style="height:45px; overflow-y:auto">
+                  <h4 class="px-3">{{ dynamicObj[currentIssueSlide].issueType }}</h4>
+              </div>
+            </div>
+              <div class="issueTypes mt-3 px-0 pt-0 ml-2 w-50">
+
+              <h6 class="text-light bg-secondary py-1 d-block">ISSUE SEVERITY</h6>
+                <div style="height:45px; overflow-y:auto">
+                  <h4 class="px-3">{{ dynamicObj[currentIssueSlide].issueSeverity }}</h4>
+              </div>
+            </div>
+            </div>
+          </div>
+
+
+                  <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentIssueSlide] !== undefined">                                          
+                      <div class="col pt-2">  
+                    <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
+                  <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentIssueSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
+                  <span v-else> -- </span>
+                  - 
+                    <span v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].dueDate" class="d-inline-block"> <h5> {{ moment(dynamicObj[currentIssueSlide].dueDate).format("DD MMM YYYY") }}</h5></span>
+                    <span v-else>  </span>
+                  
+                </div>    
+                              
+                  <div class="col mt-3 truncate-line-two">
+                  <i class="fas fa-users d-block text-light" style="font-size:2.8rem"></i>
+                        <span class="truncate-line-two" v-if="dynamicObj[currentIssueSlide].users.length > 0"><h4> {{ dynamicObj[currentIssueSlide].userNames }}</h4></span>
+                        <span v-else> <h4>No Assignments</h4></span>                                        
+                </div>  
+
+                  <div class="col" v-if="!dynamicObj[currentIssueSlide].ongoing" >                               
+                                              
+                  <span :class="{ 'text-light': dynamicObj[currentIssueSlide].progress <= 0 }">
+                  <el-progress
+                    type="circle"
+                    class="py-2 text-light"                          
+                    :percentage="Math.round(dynamicObj[currentIssueSlide].progress)"
+                  ></el-progress>
+                  </span>
+                  <h4>ISSUE PROGRESS</h4>
+                </div>     
+              </div>   
+
+              </div>   
+              
+          </div>
+      
+      </div>
+      <div slot="footer" class="dialog-footer-left"  v-if="dynamicObj[currentIssueSlide] !== undefined">                       
+          <el-button class="elBtn tagsBtn py-1 text-light mr-2" > <h5 class="d-inline px-2 text-dark">FOCUS FLAGS: </h5>
+            <span
+          v-if="dynamicObj[currentIssueSlide].watched == true"
+          v-tooltip="`On Watch`"
+          ><i class="fas fa-eye mr-1 text-dark" style="font-size:1.5rem"></i
+        ></span> 
+        <span
+          v-if="dynamicObj[currentIssueSlide].important == true"
+          v-tooltip="`Important`"
+        >
+          <i class="fas fa-star text-warning mr-1 " style="font-size:1.5rem"></i
+        ></span> 
+        <span v-if="dynamicObj[currentIssueSlide].reportable" v-tooltip="`Briefings`">
+          <i class="fas fa-presentation mr-1 text-primary" style="font-size:1.5rem"></i
+        ></span>                
+          
+          
+          </el-button>
+        
+      </div>
+
+      <div slot="footer" class="dialog-footer">
+      <el-button class="mh-orange elBtn text-light" @click.prevent="previousTask"><i class="far fa-chevron-left" style="font-size:1.35rem"></i></el-button>
+      <el-button class="bg-secondary elBtn text-light" ><span style="font-size:1.35rem"><span> ISSUE </span> {{ currentIssueSlide + 1 }} of {{ dynamicObj.length}}</span></el-button>                      
+      <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask"><i class="far fa-chevron-right" style="font-size:1.35rem"></i></el-button>
+      </div>
+      </template>
+  </el-dialog>
 <div class="row py-1 pr-2">
 <div class="col-10 px-1 pt-2">
     <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
@@ -235,13 +432,13 @@
 
 <div class="col-2 pl-0 pr-2">
     <span class="btnRow d-flex">
-        <!-- <button
+      <button
         v-tooltip="`Presentation Mode`"
-        @click.prevent="openTpresentation"
+        @click.prevent="openPresentation"
         class="btn btn-md presentBtn mr-1 mh-blue text-light"
     >
         <i class="fas fa-presentation"></i>
-    </button> -->
+    </button>
     <button
         v-tooltip="`Export to PDF`"
         @click.prevent="exportTasksToPdf"
@@ -653,10 +850,8 @@ v-if="filteredIssues.filtered.issues.length > 0"
         </th>
     </thead>
     <tbody>
-        <tr v-for="(issue, index) in sortedIssues" :key="index" class="portTable taskHover" >
-    
-    
-        <td>{{ issue.projectGroup }}</td>
+        <tr v-for="(issue, index) in sortedIssues" :key="index" class="portTable taskHover" @click="openIssue(issue)">
+         <td>{{ issue.projectGroup }}</td>
         <td>{{ issue.facilityName }}</td>
         <td>{{ issue.title }}</td>
         <td
@@ -818,25 +1013,34 @@ export default {
     return {
       showLess: "Show More",
       showMore: true,
+      search_issues: 'tet',
       today: new Date().toISOString().slice(0, 10),
       currentSort: "title",  
+      dialogVisible: false,
+      currentIssueSlide: 0, 
+      dynamicObj: {},
       currentSortCol1: "projectGroup",
       currentSortCol2: "facilityName",
       // currentSortIssueRisk: "title",
       currentSortDir: "asc",
       currentSortDir1: "asc",
       currentSortDir2: "asc",
+      facility_project_ids:[],
+
     };
   },
   computed: {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
+    'searchIssues',
     'currIssuePage',
     "lessonsLoaded",
     "projectLessons",
+    'programCategoriesFilter',
     "programLessons",
     'projects',
+    'projectGroupsFilter',
     "facilities",
     "facilityCount",
     "facilityGroupFacilities",
@@ -983,39 +1187,52 @@ export default {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
     filteredIssues() {
-      let typeIds = _.map(this.issueTypeFilter, "id");
-      let stageIds = _.map(this.issueStageFilter, "id");
-      let severityIds = _.map(this.issueSeverityFilter, "id");
-      let issues = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "issues")
-          )
-        : this.filteredAllIssues;
-
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-       _.filter(issues, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
+// console.log(this.filteredAllIssues)
+      let issues = this.filteredAllIssues
+      .filter(issue => {
+      if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
+         this.facility_project_ids = [];
+         let val = this.projectGroupsFilter
+         for(let k = 0; k < val.length; k++){
+        if(val[k].program_id){
+        this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_group_id){
+         this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_id){
+        this.facility_project_ids.push(val[k].facility_project_id)
         }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupIssues");
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.issueTypeId);
-        if (severityIds.length > 0)
-          valid = valid && severityIds.includes(resource.issueSeverityId);
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.issueStageId);
-        return valid;
-      });
+      }
+       return this.facility_project_ids.includes(issue.facilityProjectId)
+      } else return true
+       }).filter((issue) => {
+          if (this.searchIssues !== "") {
+            // console.log(issue)
+            return (
+              issue.title.toLowerCase().match(this.searchIssues.toLowerCase()) ||
+              issue.issueType
+                .toLowerCase()
+                .match(this.searchIssues.toLowerCase()) ||
+              issue.projectGroup
+                .toLowerCase()
+                .match(this.searchIssues.toLowerCase()) ||
+              issue.programName
+                .toLowerCase()
+                .match(this.searchIssues.toLowerCase()) ||
+              issue.facilityName
+                .toLowerCase()
+                .match(this.searchIssues.toLowerCase()) ||
+              issue.userNames.toLowerCase().match(this.searchIssues.toLowerCase())
+            );
+          } else return true;
+          // Filtering 7 Task States
+        })
+        .filter((issue) => {
+          if (this.programCategoriesFilter.length > 0) {
+            let category = this.programCategoriesFilter.map((t) => t);
+            return category.includes(issue.taskTypeName);
+          } else return true;
+        })
+     
         return {
        unfiltered: {
             issues
@@ -1029,8 +1246,7 @@ export default {
       }).filter(t => {
       if (this.getHideComplete == true) { 
         return !t.completed
-      } else return true
-
+      } else return true     
       }).filter(t => {
       if (this.getHidePlanned == true) { 
         return t.planned == false
@@ -1327,34 +1543,42 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
-          handleClick(tab, event) {
-            console.log(tab);
-    //   let tab_id = $(event.target).attr("id")
-    //   if(tab_id == "tab-tasks" || tab.name == 'tasks'){
-    //     this.currentTab = 'tasks'
-    //     if(this.tasksObj.filtered.issues && this.tasksObj.filtered.issues.length < 1){
-    //       this.fetchPortfolioTasks();
-    //     }
-        
-    //   }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
-    //     this.currentTab = 'issues'
-    //     if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-    //       this.fetchPortfolioIssues();  
-    //     }
-    //   }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
-    //     this.currentTab = 'risks'
-    //     if(this.risksObj.filtered.risks && this.risksObj.filtered.risks.length < 1){
-    //       this.fetchPortfolioRisks();
-    //     }
-        
-    //   }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
-    //     this.currentTab = 'lessons'
-    //     if(this.lessonsObj.filtered.lessons && this.lessonsObj.filtered.lessons.length < 1){
-    //       this.fetchPortfolioLessons();
-    //     }
-    //   } 
-    
-  },
+    beforeClose(done) {
+    	this.dialogVisible = false;
+      done();
+    },
+    openIssue(issue) {       
+      this.$router.push({
+      name: "ProgramIssueForm",
+      params: {
+        programId: issue.projectId,
+        projectId: issue.facilityId,
+        issueId: issue.id,
+      },
+    });
+    // console.log(this.$route.params)
+    },
+    openPresentation(){
+      this.dialogVisible = true; 
+      this.currentIssueSlide = 0 
+      this.dynamicObj = this.filteredIssues.filtered.issues
+      },
+    nextTask(){
+      this.isSlidingToPrevious = false
+      if(this.currentIssueSlide == this.dynamicObj.length-1){
+          this.currentIssueSlide = 0;
+      }else{
+          this.currentIssueSlide += 1;
+      }
+    },
+    previousTask(){ 
+        this.isSlidingToPrevious = true
+        if(this.currentIssueSlide == 0){
+            this.currentIssueSlide = this.dynamicObj.length-1;
+        }else{
+            this.currentIssueSlide-=1;
+        }
+    },
    showCounts(){
      this.setShowCount(!this.getShowCount)       
     },
