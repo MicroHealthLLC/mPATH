@@ -463,6 +463,7 @@
           <td>{{formatDate(risk.startDate)}}</td>
           <td>
             <span v-if="risk.ongoing">Ongoing</span>
+            <span v-if="risk.onHold && risk.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
             <span v-else>{{formatDate(risk.dueDate)}}</span>
           </td>
           <td>
