@@ -108,11 +108,11 @@ Rails.application.routes.draw do
   ## New Routes for Vue
 
   # get "/programs/:id/"  => "projects#show"
-  get "/programs/:program_id/dataviewer" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/task/:task_id" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/risk/:risk_id" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/issue/:issue_id" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/lesson/:lesson_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/task/:task_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/risk/:risk_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/issue/:issue_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/lesson/:lesson_id" => "projects#program_dataviewer"
 
   # get "/programs/:program_id/:tab" => "projects#vue_js_route"
   # get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
@@ -223,9 +223,19 @@ Rails.application.routes.draw do
   root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
+  # Strictly matching programs/<program_id>/dataviewer
+  get '*all', to: "home#dataviewer", constraints: -> (req) do
+    # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    spath = req.path.split("/")
+    i = spath.index("dataviewer")
+    # TODO: create regex for pattern programs/<program_id>/dataviewer
+    i && (p = spath[i] ) && p.match(/^[dataviewer]+$/)
+  end
+
   # Strictly matching /portfolio
   get '*all', to: "home#portfolio", constraints: -> (req) do
     # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    # TODO: create regex for pattern /portfolio
     (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/)
   end
 
