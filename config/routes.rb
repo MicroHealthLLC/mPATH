@@ -89,6 +89,8 @@ Rails.application.routes.draw do
 
   ## New Routes for Vue
   get "/programs/:id/"  => "projects#show"
+  get "/programs/:program_id/dataviewer" => "projects#program_dataviewer"
+
 
   get "/programs/:program_id/:tab" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/new" => "projects#vue_js_route"

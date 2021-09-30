@@ -302,6 +302,8 @@ class Task < ApplicationRecord
       checklists: checklists.as_json,
       notes: sorted_notes.as_json,
       completed: completed,
+      program_name: project.name, 
+      project_group: self.facility_group.name,
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       important: important,

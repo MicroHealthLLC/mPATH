@@ -1,31 +1,33 @@
 production:
   adapter: mysql2
-  database: mpath_prod
+  database: mgis_prod
   host: <%= ENV['MPATH_DATABASE_HOST'] %>
   username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
   password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  # socket: 3306
   # port: 3306
+
 development:
   adapter: mysql2
-  database: mpath_dev
+  database: mgis_dev
   host: <%= ENV['MPATH_DATABASE_HOST'] %>
   username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
   password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  # socket: 3306
   # port: 3306
 
 test:
   adapter: mysql2
-  database: mpath_test
+  database: mgis_test
   host: <%= ENV['MPATH_DATABASE_HOST'] %>
   username: <%= ENV['MPATH_DATABASE_USERNAME'] %>
   password: <%= ENV['MPATH_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
-  socket: <%= ENV['MPATH_DATABASE_SOCKET'] %>
+  # socket: 3306
   # port: 3306
+

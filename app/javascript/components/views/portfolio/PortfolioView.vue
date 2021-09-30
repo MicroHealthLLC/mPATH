@@ -1,5 +1,5 @@
 <template>
-  <div  class="container-fluid mt-3 mx-3 portfolioView_main">
+  <div  class="container-fluid mt-3 mx-3 portfolioView_main" :load="log(portfolioPrograms.filter(l => l.program_id == 1))">
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -1418,7 +1418,7 @@
                   </button>
                 </div>
               </div>
-              <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+              <!-- <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div> -->
               <div v-else class="mt-5">NO RESULTS TO DISPLAY
  
                   
@@ -4370,7 +4370,7 @@ export default {
       search_issues: "",
       search_risks: "",
       search_lessons: "",
-      currentSortText: "text" || "title",  
+      currentSort: "text" || "title",  
       currentSortCol1: "program_name",
       currentSortCol2: "project_name",
       // currentSortIssueRisk: "title",
@@ -6024,7 +6024,7 @@ export default {
       "fetchPortfolioPrograms",
       ]),
     log(e) {
-      //  console.log("number" + e)
+       console.log(e)
     },
     showCounts(){
       this.setShowCount(!this.getShowCount)       
