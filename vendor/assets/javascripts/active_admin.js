@@ -8,7 +8,8 @@
 //= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
 
-function validateUserForm(element){
+function validateUserForm(form){
+
   let programPrivilegesValid = true
   let projectPrivilegesValid = true
   let projectPrivilegesProgramValid = true
@@ -49,14 +50,17 @@ function validateUserForm(element){
 
   if(!programPrivilegesValid){
     alert("Please select atlease one program in program privileges.")
+    setTimeout(function(){ $(form).find("input[type='submit']").prop("disabled", false) }, 1000);
     return false
   }
   if(!projectPrivilegesProgramValid){
     alert("Please select atlease one program.")
+    setTimeout(function(){ $(form).find("input[type='submit']").prop("disabled", false) }, 1000);
     return false
   }
   if(!projectPrivilegesValid){
     alert("Please select atlease one project in project privileges.")
+    setTimeout(function(){ $(form).find("input[type='submit']").prop("disabled", false) }, 1000);
     return false
   }
 
