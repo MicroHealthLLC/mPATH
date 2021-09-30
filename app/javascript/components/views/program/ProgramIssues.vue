@@ -554,7 +554,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th>                 
-        <th class="pl-1 sort-th twenty" @click="sort('text')">
+        <th class="pl-1 sort-th twenty" @click="sort('title')">
         Issue
         <span
             class="inactive-sort-icon scroll"
@@ -565,7 +565,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'asc' && currentSort === 'text'
+            currentSortDir === 'asc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -573,7 +573,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'asc' && currentSort === 'text'
+            currentSortDir !== 'asc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -581,7 +581,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'desc' && currentSort === 'text'
+            currentSortDir === 'desc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -589,7 +589,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'desc' && currentSort === 'text'
+            currentSortDir !== 'desc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-down"></i

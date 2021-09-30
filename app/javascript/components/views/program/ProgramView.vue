@@ -974,11 +974,11 @@
                       <th class="non-sort-th" style="min-width: 145px">
                         Flags
                       </th>
-                      <th class="pl-1 sort-th twenty" @click="sort('category')">
+                      <th class="pl-1 sort-th twenty" @click="sort('taskType')">
                         Process Area
                         <span
                           class="inactive-sort-icon scroll"
-                          v-if="currentSort !== 'category'"
+                          v-if="currentSort !== 'taskType'"
                         >
                           <i class="fas fa-sort"></i
                         ></span>
@@ -986,7 +986,7 @@
                           class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -995,7 +995,7 @@
                           class="inactive-sort-icon scroll"
                           v-if="
                             currentSortDir !== 'asc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -1004,7 +1004,7 @@
                           class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -1013,7 +1013,7 @@
                           class="inactive-sort-icon scroll"
                           v-if="
                             currentSortDir !== 'desc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-down"></i
