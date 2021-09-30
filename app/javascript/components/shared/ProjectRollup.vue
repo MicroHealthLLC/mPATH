@@ -5,13 +5,25 @@
    <!-- <el-tabs type="border-card" @tab-click="handleClick">
   <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-2">
+    <div class="row pt-1 pb-2">
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
         
+       
+      </div>
+      <div class="col-6 py-1 pl-0">
+        <span v-if="contentLoaded" class="float-right mt-1">
+          <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
+              <router-link :to="ProgramView"> 
+                <button 
+                  class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
+                  {{ currentProject.name }} DATA VIEWER
+                </button>   
+               </router-link>             
+        </span>         
        
       </div>
   
@@ -42,34 +54,48 @@
             <div v-if="contentLoaded">
                <div class="row mt-1 text-center">               
                 <div class="col p-0 mb-0">                                       
-                <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>           
+                <span v-tooltip="`100% Progress achieved`" class="d-block">
+                  <i class="fas fa-clipboard-check text-success grow" id="taskFlags" @click="completedOnly"></i>
+                </span>           
                   <span class="smallerFont d-block">COMPLETE</span>               
                  </div>
                   
                <div class="col p-0 mb-0">
-                <span v-tooltip="`Start date on or before current date`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                <span v-tooltip="`Start date on or before current date`" class="d-block">
+                  <i class="far fa-tasks text-primary grow" id="taskFlags" @click="inprogressOnly"></i>
+                </span>
                      <span class="smallerFont d-block">IN PROGRESS</span>           
                 </div>
 
                   <div class="col p-0  mb-0">                  
-                  <span v-tooltip="`Start date beyond current date (not a Draft)`"  class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                  <span v-tooltip="`Start date beyond current date (not a Draft)`"  class="d-block">
+                    <i class="fas fa-calendar-check text-info font-md grow" id="taskFlags" @click="plannedOnly"></i>
+                  </span>
                       <span class="smallerFont d-block">PLANNED</span>
                 </div>
-                <div class="col p-0 mb-0">
-                 <span v-tooltip="`Due Date has passed`" class="d-block"><i class="fas fa-calendar text-danger"> </i></span>
+                <div class="col p-0 mb-0" >
+                <!-- <div class="col p-0 mb-0">  -->
+                 <span v-tooltip="`Due Date has passed`" class="d-block">
+                   <i class="fas fa-calendar text-danger grow" id="taskFlags" @click="overdueOnly"> </i>
+                  </span>
                      <span class="smallerFont d-block">OVERDUE</span>               
                 </div>
                  <div class="col p-0 mb-0">
-                 <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                 <span v-tooltip="`Temporarily halted`" class="d-block">
+                   <i class="fas fa-pause-circle text-primary font-md grow" id="taskFlags" @click="onholdOnly"></i>
+                   </span>
                       <span class="smallerFont d-block">ON HOLD  </span>           
                 </div>
                   <div class="col p-0 mb-0">
-                 <span  class="d-block" v-tooltip="`Unofficial action`"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                 <span  class="d-block" v-tooltip="`Unofficial action`">
+                   <i class="fas fa-pencil-alt text-warning font-md grow" id="taskFlags" @click="draftsOnly"></i>
+                  </span>
                     <span class="smallerFont d-block">DRAFTS</span>               
                 </div>
                  <div class="col p-0 mb-0">
                    
-               <span  class="d-block" v-tooltip="`Recurring action without Due Date`"><i class="fas fa-retweet text-success"></i></span>
+               <span  class="d-block" v-tooltip="`Recurring action without Due Date`">
+                 <i class="fas fa-retweet text-success grow" id="taskFlags" @click="ongoingOnly"></i></span>
                  <span class="smallerFont d-block">ONGOING </span>    
                 </div>  
              
@@ -234,32 +260,46 @@
           <div v-if="contentLoaded">
               <div class="row mt-1 text-center">
               <div class="col p-0 mb-0">                  
-                <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                <span v-tooltip="`100% Progress achieved`" class="d-block">
+                  <i class="fas fa-clipboard-check text-success grow" id="issueFlags" @click="completedOnly" ></i>
+                </span>
                       <span class="smallerFont d-block">COMPLETE</span>
               </div>
                 <div class="col p-0 mb-0">
-              <span v-tooltip="`Start date on or before current date`"  class="d-block"><i class="far fa-tasks text-primary"></i></span>
+              <span v-tooltip="`Start date on or before current date`" class="d-block">
+                <i class="far fa-tasks text-primary grow" id="issueFlags" @click="inprogressOnly"></i>
+              </span>
                     <span class="smallerFont d-block">IN PROGRESS</span>           
               </div>
                 <div class="col p-0  mb-0">                  
-                <span v-tooltip="`Start date beyond current date (not a Draft)`" class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                <span v-tooltip="`Start date beyond current date (not a Draft)`" class="d-block">
+                  <i class="fas fa-calendar-check text-info font-md grow" id="issueFlags" @click="plannedOnly"></i>
+                </span>
                     <span class="smallerFont d-block">PLANNED</span>
               </div>
                 <div class="col p-0 mb-0">
-                <span v-tooltip="`Due Date has passed`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                <span v-tooltip="`Due Date has passed`" class="d-block">
+                  <i class="fas fa-calendar text-danger grow" id="issueFlags" @click="overdueOnly"> </i>
+                </span>
                     <span class="smallerFont d-block">OVERDUE</span>               
               </div>
               <div class="col p-0 mb-0">
-                <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                <span v-tooltip="`Temporarily halted`" class="d-block">
+                  <i class="fas fa-pause-circle text-primary font-md grow" id="issueFlags" @click="onholdOnly" ></i>
+                </span>
                     <span class="smallerFont d-block">ON HOLD  </span>           
               </div>
                 <div class="col p-0 mb-0">
-                <span  class="d-block" v-tooltip="`Unofficial action`" ><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span  class="d-block" v-tooltip="`Unofficial action`" >
+                  <i class="fas fa-pencil-alt text-warning font-md grow" @click="draftsOnly" id="issueFlags" ></i>
+                </span>
                   <span class="smallerFont d-block">DRAFTS</span>               
               </div>
 <!-- Hidden for aligment purposes -->
                 <div class="col p-0 mb-0">
-                <span class="d-block hide"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span class="d-block hide">
+                  <i class="fas fa-pencil-alt text-warning font-md grow"></i>
+                </span>
                 <span class="d-block smallerFont hide">DRAFTS</span>               
                 </div>   
               
@@ -455,31 +495,45 @@
               <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">
                   
-                  <span v-tooltip="`100% Progress achieved`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span v-tooltip="`100% Progress achieved`" class="d-block">
+                   <i class="fas fa-clipboard-check text-success grow" id="riskFlags" @click="completedOnly"></i>
+                  </span>
                        <span class="smallerFont d-block">COMPLETE</span>
                 </div>
                  <div class="col p-0 mb-0">
-                 <span  v-tooltip="`Start date on or before current date`"  class="d-block"><i class="far fa-tasks text-primary"></i></span>
+                 <span  v-tooltip="`Start date on or before current date`"  class="d-block">
+                   <i class="far fa-tasks text-primary grow" id="riskFlags" @click="inprogressOnly"></i>
+                   </span>
                      <span class="smallerFont d-block"> IN PROGRESS   </span>           
                 </div>
                 <div class="col p-0  mb-0">                    
-                    <span v-tooltip="`Start date beyond current date (not a Draft)`"   class="d-block"><i class="fas fa-calendar-check text-info font-md"></i></span>
+                    <span v-tooltip="`Start date beyond current date (not a Draft)`" class="d-block">
+                      <i class="fas fa-calendar-check text-info font-md grow" id="riskFlags" @click="plannedOnly"></i>
+                    </span>
                         <span class="smallerFont d-block">PLANNED</span>
                   </div>
                  <div class="col p-0 mb-0">
-                 <span  v-tooltip="`Due Date has passed`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                 <span  v-tooltip="`Due Date has passed`" class="d-block">
+                    <i class="fas fa-calendar text-danger grow" id="riskFlags" @click="overdueOnly"> </i>
+                  </span>
                      <span class="smallerFont d-block">OVERDUE </span>               
                 </div>
                 <div class="col p-0 mb-0">
-                   <span v-tooltip="`Temporarily halted`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                   <span v-tooltip="`Temporarily halted`" class="d-block">
+                     <i class="fas fa-pause-circle text-primary font-md grow" id="riskFlags" @click="onholdOnly"></i>
+                     </span>
                       <span class="smallerFont d-block"> ON HOLD  </span>           
                   </div>
                   <div class="col p-0 mb-0">
-                    <span v-tooltip="`Unofficial action`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                    <span v-tooltip="`Unofficial action`" class="d-block">
+                       <i class="fas fa-pencil-alt text-warning font-md grow" id="riskFlags" @click="draftsOnly"></i>
+                    </span>
                         <span class="smallerFont d-block">DRAFTS</span>               
                   </div>
                  <div class="col p-0 mb-0">
-                   <span v-tooltip="`Recurring action without Due Date`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
+                   <span v-tooltip="`Recurring action without Due Date`" class="d-block"> 
+                      <i class="fas fa-retweet text-success grow" id="riskFlags" @click="ongoingOnly"></i>
+                  </span>
                      <span class="smallerFont d-block">ONGOING</span>    
                 </div>       
               </div>
@@ -695,18 +749,22 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                     <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                      programLessons.total_count 
+                      programLessonsCount.total_count 
                     }}</b>
                   </h5>
                 </div>
             </div>      
               <div class="row mt-3 text-center" >
                 <div class="col-6 p-0 mb-0">                  
-                  <span  class="d-block" v-tooltip="`COMPLETE`"><i class="fas fa-clipboard-check text-success font-md"></i></span>
+                  <span  class="d-block" v-tooltip="`COMPLETE`">
+                     <i class="fas fa-clipboard-check text-success grow" id="lessonFlags" @click="completedOnly"></i>
+                  </span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">COMPLETE</span>
                 </div>
                  <div class="col-6 p-0 mb-0">
-                <span class="d-block"  v-tooltip="`DRAFTS`"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                <span class="d-block"  v-tooltip="`DRAFTS`">
+                  <i class="fas fa-pencil-alt text-warning font-md grow" id="lessonFlags" @click="draftsOnly"></i>
+                  </span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="sm">DRAFTS</span>           
                 </div>
                 
@@ -714,12 +772,12 @@
                 <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
-                   programLessons.completed
+                   programLessonsCount.completed
                   }}</h4>         
                 </div>
                 <div class="col-6 pb-0 mb-0">
                   <h4>{{
-                   programLessons.progress
+                   programLessonsCount.progress
                   }}</h4>        
                 </div>                     
                 </div>            
@@ -922,7 +980,7 @@
 
 <script>
 import Loader from "./loader";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
   props: ["from"],
@@ -932,7 +990,7 @@ export default {
   data() {
     return {
       showLess: "Show More",
-      showMore: true,
+      showMore: true,      
       today: new Date().toISOString().slice(0, 10),
     };
   },
@@ -941,8 +999,9 @@ export default {
       "contentLoaded",
       "currentProject",
       "lessonsLoaded",
+      'currProgramTab',
       "projectLessons",
-      "programLessons",
+      "programLessonsCount",
       'projects',
       "facilities",
       "facilityCount",
@@ -972,7 +1031,46 @@ export default {
       "taskTypes",
       "taskTypes",
       "taskUserFilter",
+       'getHideComplete',
+      'getHideInprogress',
+      'getHidePlanned',
+      'getHideOngoing',
+      'getHideOnhold',
+      'getHideDraft',
+      'getHideOverdue',
+
     ]),
+       toggleWatched(){
+    this.setHideWatched(!this.getHideWatched)    
+    },
+    toggleImportant(){
+    this.setHideImportant(!this.getHideImportant)    
+    },
+    toggleBriefed(){
+        this.setHideBriefed(!this.getHideBriefed)    
+    },
+    toggleComplete(){
+    this.setHideComplete(!this.getHideComplete)    
+    },
+    toggleDraft(){
+    this.setHideDraft(!this.getHideDraft)    
+    },
+    togglePlanned(){
+        this.setHidePlanned(!this.getHidePlanned)    
+    },
+    toggleInprogress(){
+    this.setHideInprogress(!this.getHideInprogress)    
+    },
+    toggleOngoing(){
+        this.setHideOngoing(!this.getHideOngoing)    
+    },
+    toggleOnhold(){
+        this.setHideOnhold(!this.getHideOnhold)    
+    },
+    toggleOverdue(){
+    //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
+    this.setHideOverdue(!this.getHideOverdue)    
+    },
      projectObj() {
         return this.currentProject.facilities
       },
@@ -1026,6 +1124,9 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
+    },
+    ProgramView() {
+     return `/programs/${this.$route.params.programId}/dataviewer`
     },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
@@ -1576,17 +1677,169 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessons'
+     'fetchProgramLessonCounts'
      ]), 
+     ...mapMutations([
+        'setHideComplete',
+        'setCurrProgramTab',
+        'setHideInprogress',
+        'setHidePlanned',
+        'setHideOverdue',
+        'setHideOngoing',
+        'setHideOnhold',
+        'setHideDraft',
+      ]),
 
     showLessToggle() {
       this.showLess = "Show Less";
     },
     log(e){
-      // console.log("this is Lessons" + e)
+      // console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);
+    },
+    completedOnly(e){
+      let action = e.currentTarget.id;
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "issueFlags"){
+        this.setCurrProgramTab('#tab-issues')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      } else if (action == "lessonFlags"){
+        this.setCurrProgramTab('#tab-lessons')
+      } 
+      // this.setHideComplete(!this.getHideComplete)    
+      this.setHideDraft(!this.getHideDraft)    
+      this.setHidePlanned(!this.getHidePlanned)    
+      this.setHideInprogress(!this.getHideInprogress)    
+      this.setHideOngoing(!this.getHideOngoing)    
+      this.setHideOnhold(!this.getHideOnhold) 
+      this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
+    },
+    draftsOnly(e){
+      let action = e.currentTarget.id;
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "issueFlags"){
+        this.setCurrProgramTab('#tab-issues')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      } else if (action == "lessonFlags"){
+        this.setCurrProgramTab('#tab-lessons')
+      } 
+      this.setHideComplete(!this.getHideComplete)    
+      // this.setHideDraft(!this.getHideDraft)    
+      this.setHidePlanned(!this.getHidePlanned)    
+      this.setHideInprogress(!this.getHideInprogress)    
+      this.setHideOngoing(!this.getHideOngoing)    
+      this.setHideOnhold(!this.getHideOnhold) 
+      this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
+    },
+    plannedOnly(e){
+      let action = e.currentTarget.id;  
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "issueFlags"){
+        this.setCurrProgramTab('#tab-issues')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      }
+      this.setHideComplete(!this.getHideComplete)    
+      this.setHideDraft(!this.getHideDraft)    
+      // this.setHidePlanned(!this.getHidePlanned)    
+      this.setHideInprogress(!this.getHideInprogress)    
+      this.setHideOngoing(!this.getHideOngoing)    
+      this.setHideOnhold(!this.getHideOnhold) 
+      this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
+    },
+    inprogressOnly(e){
+      let action = e.currentTarget.id;  
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "issueFlags"){
+        this.setCurrProgramTab('#tab-issues')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      } 
+      this.setHideComplete(!this.getHideComplete)    
+      this.setHideDraft(!this.getHideDraft)    
+      this.setHidePlanned(!this.getHidePlanned)    
+      // this.setHideInprogress(!this.getHideInprogress)    
+      this.setHideOngoing(!this.getHideOngoing)    
+      this.setHideOnhold(!this.getHideOnhold) 
+      this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
+    },
+    ongoingOnly(e){
+      let action = e.currentTarget.id;  
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      } 
+      this.setHideComplete(!this.getHideComplete)    
+      this.setHideDraft(!this.getHideDraft)    
+      this.setHidePlanned(!this.getHidePlanned)    
+      this.setHideInprogress(!this.getHideInprogress)    
+      // this.setHideOngoing(!this.getHideOngoing)    
+      this.setHideOnhold(!this.getHideOnhold) 
+      this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
+    },
+    onholdOnly(e){
+     let action = e.currentTarget.id;  
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "issueFlags"){
+        this.setCurrProgramTab('#tab-issues')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      } 
+      this.setHideComplete(!this.getHideComplete)    
+      this.setHideDraft(!this.getHideDraft)    
+      this.setHidePlanned(!this.getHidePlanned)    
+      this.setHideInprogress(!this.getHideInprogress)    
+      this.setHideOngoing(!this.getHideOngoing)    
+      // this.setHideOnhold(!this.getHideOnhold) 
+      this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
+    },
+    overdueOnly(e){   
+      let action = e.currentTarget.id;  
+      if (action == "taskFlags"){
+        this.setCurrProgramTab('#tab-tasks')
+      } else if (action == "issueFlags"){
+        this.setCurrProgramTab('#tab-issues')
+      } else if (action == "riskFlags"){
+        this.setCurrProgramTab('#tab-risks')
+      } 
+      this.setHideComplete(!this.getHideComplete)    
+      this.setHideDraft(!this.getHideDraft)    
+      this.setHidePlanned(!this.getHidePlanned)    
+      this.setHideInprogress(!this.getHideInprogress)    
+      this.setHideOngoing(!this.getHideOngoing)    
+      this.setHideOnhold(!this.getHideOnhold) 
+      // this.setHideOverdue(!this.getHideOverdue) 
+      this.$router.push(
+         `/programs/${this.$route.params.programId}/dataviewer`
+      );
     },
      facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities("active"), "id");
@@ -1604,7 +1857,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchProgramLessons(this.$route.params)  
+    this.fetchProgramLessonCounts(this.$route.params)  
   },
 };
 </script>
@@ -1646,6 +1899,13 @@ ul > li {
 }
 .grey2 {
   background-color: #ededed;
+}
+i.grow {
+    cursor: pointer;
+    transition: all .2s ease-in
+}
+i.grow:hover{
+   transform: scale(1.5); 
 }
 .yellow {
   background-color: yellow;
@@ -1760,7 +2020,6 @@ ul > li {
 }
 .filterLabel {
   position: fixed;
-
 }
 
 .filterCol {

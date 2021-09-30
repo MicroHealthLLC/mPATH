@@ -1,11 +1,17 @@
 <template>
-  <div>
+  <div 
+   v-loading="!contentLoaded"
+    element-loading-text="Fetching Task data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
-      id="tasks-form"
-      @submit.prevent="saveTask"
-      class="mx-auto tasks-form"
-      accept-charset="UTF-8"
-      :class="{ _disabled: loading }"
+    id="tasks-form"
+    @submit.prevent="saveTask"
+    class="mx-auto tasks-form"
+    :class="{ 'vh100' : !contentLoaded}"
+    accept-charset="UTF-8"     
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -14,7 +20,7 @@
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
             <router-link :to="projectNameLink">{{
-              facility.facilityName
+              task.facilityName
             }}</router-link>
             <el-icon
               class="el-icon-arrow-right"
@@ -22,7 +28,7 @@
             ></el-icon>
             <router-link
               :to="
-                `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/tasks`
+                backToTasks
               "
               >Tasks</router-link
             >
@@ -937,7 +943,7 @@
                     :class="{ 'btn-disabled': !file.uri }"
                     @click.prevent="downloadFile(file)"
                   >
-                    <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                    <span> <i class="fal fa-file mr-1"></i></span>
 
                     <input
                       readonly
@@ -1383,7 +1389,7 @@ export default {
         text: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.facility.id,
+        facilityProjectId: this.$route.params.programId,
         checklistDueDate: "",
         taskTypeId: "",
         taskStageId: "",
@@ -1814,15 +1820,18 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
+                   
             } else if (this.$route.path.includes("calendar")) {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else {
+            } else if (this.$route.path.includes("kanban"))  {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            }
+            } else  this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer`
+              );
           })
           .catch((err) => {
             alert(err.response.data.error);
@@ -2005,6 +2014,7 @@ export default {
       "currentRisks",
       "currentTasks",
       "facilities",
+      'contentLoaded',
       "facilityGroups",
       "getFacilityProjectOptions",
       "managerView",
@@ -2025,6 +2035,12 @@ export default {
         this.exists(this.DV_task.dueDate)  &&  
         this.exists(this.DV_task.startDate)
       );
+    },
+   isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
     },
     isMapView() {
       return this.$route.name === "MapTaskForm";
@@ -2081,11 +2097,20 @@ export default {
         return "kanban";
       }
     },
+    backToTasks() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
     projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
   },
@@ -2096,18 +2121,18 @@ export default {
       },
     },
     "DV_task.startDate"(value) {
-      if (this._ismounted && !value) this.DV_task.dueDate = "";
+      if (this._ismounted && !value) this.task.dueDate = "";
     },
-    "DV_task.dueDate"(value) {
-      if (this._ismounted && this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_task.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_task.text} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_task.dueDate"(value) {
+    //   if (this._ismounted && this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.task.text} Due Date is past ${this.task.facilityName} Completion Date!`, `${this.task.text} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_task.checklists": {
       handler: function(value) {
         if (this.DV_task.autoCalculate) this.calculateProgress(value);
@@ -2233,6 +2258,9 @@ export default {
 <style scoped lang="scss">
 // .tasks-form {
 // }
+.line {
+  border-top: solid .25px lightgray;
+}
 td,
 th {
   border: solid 1px #ededed;

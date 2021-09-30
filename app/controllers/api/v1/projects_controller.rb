@@ -3,6 +3,11 @@ class Api::V1::ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
   # before_action :authenticate_request!
 
+  def task_issues
+    collection = Project.find_by(id: params[:id]).as_json(include: {tasks: {only: [:text, :id]}, issues: {only: [:title, :id]}, risks: {only: [:risk_description, :id]}})
+    render json: collection
+  end
+
   def index
     render json: {projects: current_user.authorized_programs.includes(:project_type).as_json}
   end

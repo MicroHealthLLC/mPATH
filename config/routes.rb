@@ -60,6 +60,12 @@ Rails.application.routes.draw do
             delete "reset" => "query_filters#reset"
           end
         end
+        
+        member do
+          # used in Admin
+          get 'task_issues', to: 'projects#task_issues'
+        end
+
         resources :lessons, only: [:index] do
           get :count, on: :collection
         end
@@ -100,7 +106,13 @@ Rails.application.routes.draw do
   get '/project_privileges/load_form' => "project_privileges#load_form", as: :project_privileges_load_form
 
   ## New Routes for Vue
+
   # get "/programs/:id/"  => "projects#show"
+  get "/programs/:program_id/dataviewer" => "projects#program_dataviewer"
+  get "/programs/:program_id/dataviewer/:project_id/task/:task_id" => "projects#program_dataviewer"
+  get "/programs/:program_id/dataviewer/:project_id/risk/:risk_id" => "projects#program_dataviewer"
+  get "/programs/:program_id/dataviewer/:project_id/issue/:issue_id" => "projects#program_dataviewer"
+  get "/programs/:program_id/dataviewer/:project_id/lesson/:lesson_id" => "projects#program_dataviewer"
 
   # get "/programs/:program_id/:tab" => "projects#vue_js_route"
   # get "/programs/:program_id/:tab/new" => "projects#vue_js_route"

@@ -8,7 +8,8 @@
 //= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
 
-function validateUserForm(element){
+function validateUserForm(form){
+
   let programPrivilegesValid = true
   let projectPrivilegesValid = true
   let projectPrivilegesProgramValid = true
@@ -49,14 +50,17 @@ function validateUserForm(element){
 
   if(!programPrivilegesValid){
     alert("Please select atlease one program in program privileges.")
+    setTimeout(function(){ $(form).find("input[type='submit']").prop("disabled", false) }, 1000);
     return false
   }
   if(!projectPrivilegesProgramValid){
     alert("Please select atlease one program.")
+    setTimeout(function(){ $(form).find("input[type='submit']").prop("disabled", false) }, 1000);
     return false
   }
   if(!projectPrivilegesValid){
     alert("Please select atlease one project in project privileges.")
+    setTimeout(function(){ $(form).find("input[type='submit']").prop("disabled", false) }, 1000);
     return false
   }
 
@@ -1588,7 +1592,7 @@ jQuery(function($) {
             fetchProgramCategories(){
               $.get(`/api/v1/admin/task_types.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Category]").html("")
-                let task_types = data.task_types
+                let task_types = data.categories
                 for(var i = 0; i <= task_types.length; i++){
                   $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
                 }
@@ -1600,7 +1604,7 @@ jQuery(function($) {
             fetchProgramStages(){
               $.get(`/api/v1/admin/task_stages.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Stage]").html("")
-                let task_stages = data.task_stages
+                let task_stages = data.all_stages
                 for(var i = 0; i <= task_stages.length; i++){
                   $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
                 }
@@ -2207,7 +2211,7 @@ jQuery(function($) {
           }
         },
         template: `<div>
-          <input id='vue_task_task_links' type='text' ref='linksInput'/>
+          <input id='vue_task_task_links' type='text' ref='linksInput' placeholder='Input link then "Enter"' />
           <button class='add' @click.prevent="appendLink()" style="display:none;">Add</button>
           <ul class='ml-20 mt-10'>
             <li v-for="(link, i) in links" :key="link.id+'_'+i" class='p-5' v-if="!link._destroy">
