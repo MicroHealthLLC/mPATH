@@ -1097,7 +1097,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             </span>
         </td>
         <td class="text-center">
-            <span v-if="risk.is_overdue" v-tooltip="`Overdue`">
+            <span v-if="risk.isOverdue" v-tooltip="`Overdue`">
             <i class="fas fa-calendar text-danger mr-1"></i
             ></span>
             <span v-if="risk.completed" v-tooltip="`Completed`"
