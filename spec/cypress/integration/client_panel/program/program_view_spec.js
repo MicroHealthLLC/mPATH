@@ -19,15 +19,15 @@ describe('Program Viewer ', function() {
 
   it('Open Task form and Save task', function() {
     cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#portTasks > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portTasks > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portTasks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('#portTasks > tbody > tr').first().contains('Test Task 1').should('be.visible')
+    cy.get('#portTasks > tbody > tr').first().contains('New Task 1').should('be.visible')
     cy.get('#portTasks > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portTasks > tbody > tr').first().click()
-    cy.get('[data-cy="task_name"]').should('have.value', 'Test Task 1')
-    cy.get('[data-cy="task_name"]').clear().type('Test Task 1 - Update').should('have.value', 'Test Task 1 - Update')    
-    cy.get('[data-cy="task_description"]').should('have.value', 'Test task 1 description')
+    cy.get('[data-cy="task_name"]').should('have.value', 'New Task 1')
+    cy.get('[data-cy="task_name"]').clear().type('1 Test Task 1 - Update').should('have.value', '1 Test Task 1 - Update')    
+    cy.get('[data-cy="task_description"]').should('have.value', 'New task 1 description')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Assignments').click()
       cy.get('span').contains('Checklist').click()
@@ -38,7 +38,7 @@ describe('Program Viewer ', function() {
 
     cy.get('[data-cy="task_save_btn"]').click()
     cy.get('[data-cy="task_close_btn"]').click({force: true})
-    cy.get('#portTasks > tbody > tr').first().contains('Test Task 1 - Update').should('be.visible')
+    cy.get('#portTasks > tbody > tr').first().contains('1 Test Task 1 - Update').should('be.visible')
 
   })
 
@@ -46,15 +46,15 @@ describe('Program Viewer ', function() {
     cy.get("#tab-issues").click()
 
     cy.get('#portIssues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#portIssues > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portIssues > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portIssues > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('#portIssues > tbody > tr').first().contains('Test Issue 1').should('be.visible')
+    cy.get('#portIssues > tbody > tr').first().contains('New Issue 1').should('be.visible')
     cy.get('#portIssues > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portIssues > tbody > tr').first().click()
-    cy.get('[data-cy="issue_title"]').should('have.value', 'Test Issue 1')
-    cy.get('[data-cy="issue_title"]').clear().type('Test Issue 1 - Update').should('have.value', 'Test Issue 1 - Update')    
-    cy.get('[data-cy="issue_description"]').should('have.value', 'Test issue 1 description')
+    cy.get('[data-cy="issue_title"]').should('have.value', 'New Issue 1')
+    cy.get('[data-cy="issue_title"]').clear().type('1 New Issue 1 - Update').should('have.value', '1 New Issue 1 - Update')    
+    cy.get('[data-cy="issue_description"]').should('have.value', 'New issue 1 description')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Assignments').click()
       cy.get('span').contains('Checklist').click()
@@ -64,7 +64,7 @@ describe('Program Viewer ', function() {
 
     cy.get('[data-cy="issue_save_btn"]').click()
     cy.get('[data-cy="issue_close_btn"]').click({force: true})
-    cy.get('#portIssues > tbody > tr').first().contains('Test Issue 1 - Update').should('be.visible')
+    cy.get('#portIssues > tbody > tr').first().contains('1 New Issue 1 - Update').should('be.visible')
 
   })
 
@@ -72,15 +72,15 @@ describe('Program Viewer ', function() {
     cy.get("#tab-risks").click()
 
     cy.get('#portRisks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#portRisks > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portRisks > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portRisks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('#portRisks > tbody > tr').first().contains('Test Risk 1').should('be.visible')
+    cy.get('#portRisks > tbody > tr').first().contains('New Risk 1').should('be.visible')
     cy.get('#portRisks > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portRisks > tbody > tr').first().click()
-    cy.get('[data-cy="risk_name"]').should('have.value', 'Test Risk 1')
-    cy.get('[data-cy="risk_name"]').clear().type('Test Risk 1 - Update').should('have.value', 'Test Risk 1 - Update')    
-    cy.get('[data-cy="risk_description"]').should('have.value', 'Test Risk 1 description')
+    cy.get('[data-cy="risk_name"]').should('have.value', 'New Risk 1')
+    cy.get('[data-cy="risk_name"]').clear().type('1 New Risk 1 - Update').should('have.value', '1 New Risk 1 - Update')    
+    cy.get('[data-cy="risk_description"]').should('have.value', 'New Risk 1 description')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Assign').click()
       cy.get('span').contains('Prioritize').click()
@@ -92,7 +92,7 @@ describe('Program Viewer ', function() {
 
     cy.get('[data-cy="risk_save_btn"]').click()
     cy.get('[data-cy="risk_close_btn"]').click({force: true})
-    cy.get('#portRisks > tbody > tr').first().contains('Test Risk 1 - Update').should('be.visible')
+    cy.get('#portRisks > tbody > tr').first().contains('1 New Risk 1 - Update').should('be.visible')
 
   })
 
@@ -100,15 +100,15 @@ describe('Program Viewer ', function() {
     cy.get("#tab-lessons").click()
 
     cy.get('#portLessons > tbody > tr').its('length').should('be.eq', 4)
-    cy.get('#portLessons > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portLessons > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portLessons > tbody > tr').first().contains('Test Facility 1').should('be.visible')
     cy.get('#portLessons > tbody > tr').first().contains('Test Lesson 1').should('be.visible')
     cy.get('#portLessons > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portLessons > tbody > tr').first().click()
     cy.get('[data-cy="lesson_name"]').should('have.value', 'Test Lesson 1')
-    cy.get('[data-cy="lesson_name"]').clear().type('Test Lesson 1 - Update').should('have.value', 'Test Lesson 1 - Update')    
-    cy.get('[data-cy="lesson_description"]').clear().type('Test Lesson 1 description - Update').should('have.value', 'Test Lesson 1 description - Update')
+    cy.get('[data-cy="lesson_name"]').clear().type('1 Test Lesson 1 - Update').should('have.value', '1 Test Lesson 1 - Update')    
+    cy.get('[data-cy="lesson_description"]').clear().type('1 Test Lesson 1 description - Update').should('have.value', '1 Test Lesson 1 description - Update')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Lesson Info').click()
       cy.get('span').contains('Successes').click()
@@ -120,7 +120,7 @@ describe('Program Viewer ', function() {
 
     cy.get('[data-cy="lesson_save_btn"]').click()
     cy.get('[data-cy="lesson_close_btn"]').click({force: true})
-    cy.get('#portLessons > tbody > tr').first().contains('Test Lesson 1 - Update').should('be.visible')
+    cy.get('#portLessons > tbody > tr').first().contains('1 Test Lesson 1 - Update').should('be.visible')
 
   })
 

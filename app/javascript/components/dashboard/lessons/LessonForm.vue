@@ -41,6 +41,7 @@
       <div class="ml-auto d-flex align-items-center">
         <button
           v-if="_isallowed('write')"
+          data-cy="lesson_save_btn"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Save Lesson
@@ -53,6 +54,7 @@
           Read Only
         </button>
         <button
+          data-cy="lesson_close_btn"
           class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
         >
@@ -173,6 +175,7 @@
           v-model="lesson.title"
           type="text"
           placeholder="Lesson Name"
+          data-cy="lesson_name"
           :class="{ error: errors.has('Lesson Name') }"
           :readonly="!_isallowed('write')"
         />
@@ -191,6 +194,7 @@
           v-model="lesson.description"
           placeholder="Brief description..."
           rows="4"
+          data-cy="lesson_description"
           :class="{
             error: errors.has('Description'),
           }"
