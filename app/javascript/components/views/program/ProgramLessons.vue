@@ -1,5 +1,5 @@
 <template>
-<div class="box-shadow py-2"  style="postion:relative" :load="log(programLessons)">
+<div class="box-shadow py-2"  style="postion:relative">
   <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
     <template slot="title">
     <div v-if="dynamicObj.length > 0 && dynamicObj[currentLessonSlide] !== undefined" class="container-fluid">
@@ -696,30 +696,15 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           <td>{{ lesson.project_name }}</td>
           <td>{{ lesson.title }}</td>
           <td>
-            <span
-              class="text-left"
-              v-if="lesson.notes_updated_at.length > 0"
-            >
-              <span
-                class="toolTip"
-                v-tooltip="
-                  'By: ' +
-                  lesson.notes[lesson.notes.length - 1].user
-                    .full_name
-                "
-              >
-                {{
-                  moment(lesson.notes_updated_at[0]).format(
-                    "DD MMM YYYY, h:mm a"
-                  )
-                }}
-              </span>
-              <br />
+           <span v-if="lesson.notes.length > 0">       
+              <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
+              {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
+              </span> 
               <span class="truncate-line-five">
-                {{ lesson.notes[lesson.notes.length - 1].body }}
-              </span>
-            </span>
-              <span class="text-left" v-else>No Update</span>
+                {{lesson.last_update.body}}
+              </span>         
+           </span>  
+           <span class="text-left" v-else>No Update</span>
           </td>
           <td>
             <span class="truncate-line-five">{{
@@ -806,42 +791,27 @@ v-if="filteredLessons.filtered.lessons.length > 0"
       }}</span>
     </td> 
       <td class="text-center">
-            <span v-if="lesson.draft == true" v-tooltip="`Draft`">
-              Draft
-            </span>
-            <span
-              v-if="lesson.draft == false"
-                >
-            Completed
-            </span>
-        
-          </td>
-              <td
-            class="text-left"
-            v-if="lesson.notes_updated_at.length > 0"
-          >
-            <span
-              class="toolTip"
-              v-tooltip="
-                'By: ' +
-                lesson.notes[lesson.notes.length - 1].user
-                  .full_name
-              "
+        <span v-if="lesson.draft == true" v-tooltip="`Draft`">
+          Draft
+        </span>
+        <span
+          v-if="lesson.draft == false"
             >
-              {{
-                moment(lesson.notes_updated_at[0]).format(
-                  "DD MMM YYYY, h:mm a"
-                )
-              }}
-            </span>
-            <br />
-            <span class="truncate-line-five">
-              {{ lesson.notes[lesson.notes.length - 1].body }}
-            </span>
-          </td>
-          <!-- <td v-else class="twentyTwo">No Updates</td> -->
-          <td class="text-left" v-else>No Update</td>
-    
+        Completed
+        </span>
+        
+      </td>
+      <td>
+      <span v-if="lesson.notes.length > 0">       
+        <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
+        {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
+        </span> 
+        <span class="truncate-line-five">
+          {{lesson.last_update.body}}
+        </span>         
+      </span>  
+      <span class="text-left" v-else>No Update</span>         
+    </td>   
         </tr>
     </tbody>
   </table>

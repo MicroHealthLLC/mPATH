@@ -1,7 +1,14 @@
 <template>
+  <div 
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Lesson data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
   <form
     @submit.prevent="saveLesson"
-    :class="{ _disabled: !lessonsLoaded, 'line': isProgramView }"
+    :class="{ 'vh100' : !contentLoaded}"
     accept-charset="UTF-8"
   >
     <div class="mt-2  d-flex align-items-center">
@@ -763,6 +770,7 @@
       ref="menu"
     />
   </form>
+  </div>
 </template>
 
 <script>

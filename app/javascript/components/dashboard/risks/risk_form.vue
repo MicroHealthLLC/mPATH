@@ -1,12 +1,16 @@
 <template>
-  <div :class="{ 'line': isProgramView}">
+  <div 
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Risk data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+    >
     <form
       @submit.prevent="validateThenSave"
       class="risks-form mx-auto"
-      :class="{
-        _disabled: loading,
-      }"
       accept-charset="UTF-8"
+      :class="{ 'vh100' : !contentLoaded}"
     >
       <div class="form-group mb-1">
         <div class="mt-2 mx-4 d-flex align-items-center">
@@ -2916,6 +2920,7 @@ export default {
       "currentProject",
       "currentRisks",
       "currentTasks",
+      "contentLoaded",
       "facilityGroups",
       "getFacilityProjectOptions",
       "getRiskImpactLevelNames",

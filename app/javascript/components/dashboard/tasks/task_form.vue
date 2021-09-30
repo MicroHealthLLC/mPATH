@@ -1,11 +1,17 @@
 <template>
-  <div :class="{ 'line': isProgramView}">
+  <div 
+   v-loading="!contentLoaded"
+    element-loading-text="Fetching Task data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
-      id="tasks-form"
-      @submit.prevent="saveTask"
-      class="mx-auto tasks-form"
-      accept-charset="UTF-8"
-      :class="{ _disabled: loading }"
+    id="tasks-form"
+    @submit.prevent="saveTask"
+    class="mx-auto tasks-form"
+    :class="{ 'vh100' : !contentLoaded}"
+    accept-charset="UTF-8"     
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -2007,6 +2013,7 @@ export default {
       "currentRisks",
       "currentTasks",
       "facilities",
+      'contentLoaded',
       "facilityGroups",
       "getFacilityProjectOptions",
       "managerView",

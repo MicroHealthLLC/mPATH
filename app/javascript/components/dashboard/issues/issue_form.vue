@@ -1,12 +1,18 @@
 <template>
-  <div :class="{ 'line': isProgramView}">
+  <div 
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Issue data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
-      id="issues-form"
-      @submit.prevent="saveIssue"
-      class="mx-auto issues-form"
-      accept-charset="UTF-8"
-      data-cy="issue_form"
-      :class="{ _disabled: loading }"
+    id="issues-form"
+    @submit.prevent="saveIssue"
+    class="mx-auto issues-form"
+    :class="{ 'vh100' : !contentLoaded}"
+    accept-charset="UTF-8"
+    data-cy="issue_form"    
     >
     <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -2037,6 +2043,7 @@ export default {
       "currentIssues",
       "currentProject",
       "currentRisks",
+      "contentLoaded",
       "currentTasks",
       "facilities",
       "facilityGroups",

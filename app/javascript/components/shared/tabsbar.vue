@@ -1,6 +1,5 @@
 <template>
-  <div id="tabbar" data-cy="main_tab" :class="{ 'd-none': isProgramView}">
-   
+  <div id="tabbar" data-cy="main_tab" :class="{ 'd-none': isProgramView}">   
     <router-link v-if="permitted('sheets_view')" :to="routeSheetSwap" tag="div">
       <div class="badge" :class="{ active: isSheetsView }" data-cy="sheets_tab">
         Sheet
