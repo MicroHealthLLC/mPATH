@@ -3,7 +3,7 @@
   <div class="backBtn">     
       <span>
           <router-link :to="`/programs/${this.$route.params.programId}/sheet`" > 
-          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer">
+          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
            <i class="fal fa-arrow-alt-left text-light"></i>
           </button>  
           </router-link>
@@ -2031,6 +2031,57 @@ export default {
     showLessToggle() {
       this.showLess = "Show Less";
     },
+    resetFlags(){
+
+  //  if (this.getHideComplete == false) {
+  //   this.setHideComplete(this.getHideComplete)        
+  //   } if  (!this.getHideComplete){
+  //   this.setHideComplete(this.getHideComplete)    
+  //   }
+  //   // this.setHideComplete(this.getHideComplete === false)    
+  //   this.setHideDraft(this.getHideDraft === false) 
+  //   this.setHidePlanned(!this.getHidePlanned)    
+if(this.getHidePlanned){
+this.setHidePlanned(!this.getHidePlanned)   
+} else this.setHidePlanned(this.getHidePlanned)  
+     
+  if(this.getHideOnhold){
+this.setHideOnhold(!this.getHideOnhold)   
+} else this.setHideOnhold(this.getHideOnhold)  
+     
+
+
+if(this.getHideDraft){
+this.setHideDraft(!this.getHideDraft)   
+} else this.setHideDraft(this.getHideDraft)  
+     
+  
+  if(this.getHideComplete){
+this.setHideComplete(!this.getHideComplete)   
+} else this.setHideComplete(this.getHideComplete)  
+       
+    
+if(this.getHideInprogress){
+this.setHideInprogress(!this.getHideInprogress)  
+} else this.setHideInprogress(this.getHideInprogress)  
+       
+      
+  if(this.getHideOngoing){
+this.setHideOngoing(!this.getHideOngoing)   
+} else this.setHideOngoing(this.getHideOngoing)  
+      
+if(this.getHideOverdue){
+this.setHideOverdue(!this.getHideOverdue)   
+} else this.setHideOverdue(this.getHideOverdue) 
+    
+
+  //   this.setHideOngoing(!this.getHideOngoing)    
+
+  //   this.setHideOnhold(!this.getHideOnhold)   
+  //   //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
+  //   this.setHideOverdue(!this.getHideOverdue)    
+    },
+
     toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
     },
