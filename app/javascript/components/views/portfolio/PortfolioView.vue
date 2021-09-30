@@ -1271,7 +1271,7 @@
       </thead>
       <tbody v-for="(p, i) in validTaskPrograms" :key="i">  
         <tr id="program">  <th scope="row"><b>{{ p }}</b></th></tr>
-           <tr v-for="(task, index) in sortedTasks" :key="index" v-if="task.program_name == p">            
+           <tr v-for="(task, index) in tasksObj.filtered.tasks" :key="index" v-if="task.program_name == p">            
               <td>{{ task.text }}</td>
               <td>{{ task.category }}</td>
               <td> {{ task.project_name}} </td>
@@ -2291,7 +2291,7 @@
       </thead>
       <tbody v-for="(p, i) in validIssuePrograms" :key="i">  
         <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
-           <tr v-for="(issue, index) in sortedIssues" :key="index" v-if="issue.program_name == p">            
+           <tr v-for="(issue, index) in issuesObj.filtered.issues" :key="index" v-if="issue.program_name == p">            
               <td>{{ issue.title }}</td>
               <td>{{ issue.issue_type }}</td>
               <td>{{ issue.project_name }}</td>
@@ -3385,7 +3385,7 @@
                 </thead>
                 <tbody v-for="(p, i) in validRiskPrograms" :key="i">  
                   <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
-                  <tr  v-for="(risk, index) in sortedRisks" :key="index" v-if="risk.program_name == p">            
+                  <tr  v-for="(risk, index) in risksObj.filtered.risks" :key="index" v-if="risk.program_name == p">            
                   <td>{{ risk.text }}</td>
                   <td>{{ risk.project_name}} </td>
                   <td>
@@ -4219,7 +4219,7 @@
                 </thead>
                   <tbody v-for="(p, i) in validLessonPrograms" :key="i">  
                     <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
-                    <tr v-for="(lesson, index) in sortedLessons" :key="index"  v-if="lesson.program_name == p">            
+                    <tr v-for="(lesson, index) in lessonsObj.filtered.lessons" :key="index"  v-if="lesson.program_name == p">            
                     <td>{{ lesson.title }}</td>
                     <td>
                     {{ moment(lesson.created_at).format("DD MMM YYYY") }}

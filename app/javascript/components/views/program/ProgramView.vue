@@ -974,11 +974,11 @@
                       <th class="non-sort-th" style="min-width: 145px">
                         Flags
                       </th>
-                      <th class="pl-1 sort-th twenty" @click="sort('category')">
+                      <th class="pl-1 sort-th twenty" @click="sort('taskType')">
                         Process Area
                         <span
                           class="inactive-sort-icon scroll"
-                          v-if="currentSort !== 'category'"
+                          v-if="currentSort !== 'taskType'"
                         >
                           <i class="fas fa-sort"></i
                         ></span>
@@ -986,7 +986,7 @@
                           class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'asc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -995,7 +995,7 @@
                           class="inactive-sort-icon scroll"
                           v-if="
                             currentSortDir !== 'asc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-up"></i
@@ -1004,7 +1004,7 @@
                           class="sort-icon scroll"
                           v-if="
                             currentSortDir === 'desc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -1013,7 +1013,7 @@
                           class="inactive-sort-icon scroll"
                           v-if="
                             currentSortDir !== 'desc' &&
-                            currentSort === 'category'
+                            currentSort === 'taskType'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -1029,24 +1029,24 @@
                         <td>{{ task.text }}</td>
                         <td
                           class="text-left"
-                          v-if="task.notesUpdatedAt.length > 0"
+                          v-if="task.notes.length > 0"
                         >
                           <span
                             class="toolTip"
                             v-tooltip="
                               'By: ' +
-                              task.notes[task.notes.length - 1].user.fullName
+                              task.lastUpdate.user.fullName
                             "
                           >
                             {{
-                              moment(task.notesUpdatedAt[0]).format(
+                              moment(task.lastUpdate.createdAt).format(
                                 "DD MMM YYYY, h:mm a"
                               )
                             }}
                           </span>
                           <br />
                           <span class="truncate-line-five">
-                            {{ task.notes[task.notes.length - 1].body }}
+                            {{ task.lastUpdate.body }}
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
@@ -1248,29 +1248,15 @@
                 In Progress
                  </span>
               </td>
-              <td
-                class="text-left"
-                v-if="task.notesUpdatedAt.length > 0"
-              >
-                <span
-                  class="toolTip"
-                  v-tooltip="
-                    'By: ' +
-                    task.notes[task.notes.length - 1].user.fullName
-                  "
-                >
-                  {{
-                    moment(task.notesUpdatedAt[0]).format(
-                      "DD MMM YYYY, h:mm a"
-                    )
-                  }}
-                </span>
-                <br />
-                <span class="truncate-line-five">
-                  {{ task.notes[task.notes.length - 1].body }}
-                </span>
-              </td>
-              <td class="text-left" v-else>No Update</td> 
+              <td v-if="task.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + task.lastUpdate.user.fullName)" > 
+          {{ moment(task.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{task.lastUpdate.body}}
+          </span>         
+        </td>  
+         <td v-else >No Updates</td>      
             </tr>
          </tbody>
         </table>
@@ -1785,92 +1771,7 @@ export default {
           return this.end
         });
     },
-   issueTaskCATEGORIES() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "taskTypeName");
-      for (let type in group) {
-        if (!type || type == "null") continue;
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return issues;
-    },
-    activeFacilitiesByStatus() {
-      return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup).length
-        : this.filteredFacilities("active").length;
-    },
-    inactiveFacilitiesByStatus() {
-      return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
-        : this.filteredFacilities("inactive").length;
-    },
-    projectStatuses() {
-      let statuses = [];
 
-      if (this.contentLoaded && this.facilities.length > 0) {
-        this.statuses.forEach((status) => {
-          // Find number of facilities with current status
-          let count = this.facilities
-            .filter((facility) => facility.projectStatus === status.name)
-            .reduce((total) => total + 1, 0);
-          // Insert status into projectStatuses for use Project Status card
-          statuses.push({
-            name: status.name,
-            color: status.color,
-            length: count,
-            progress: Math.floor((count / this.facilities.length) * 100),
-          });
-        });
-      }
-
-      return statuses;
-    },
-    currentTaskTypes() {
-      let names =
-        this.taskTypeFilter &&
-        this.taskTypeFilter.length &&
-        _.map(this.taskTypeFilter, "name");
-      let taskTypes = new Array();
-      for (let type of this.taskTypes) {
-        let tasks = _.filter(
-          this.filteredTasks,
-          (t) => t.taskTypeId == type.id
-        );
-        taskTypes.push({
-          name: type.name,
-          _display:
-            tasks.length > 0 && (names ? names.includes(type.name) : true),
-          length: tasks.length,
-          progress: Number(_.meanBy(tasks, "progress").toFixed(0)),
-        });
-      }
-      return taskTypes;
-    },
-    currentIssueTypes() {
-      let names =
-        this.issueTypeFilter &&
-        this.issueTypeFilter.length &&
-        _.map(this.issueTypeFilter, "name");
-      let issueTypes = new Array();
-      for (let type of this.issueTypes) {
-        let issues = _.filter(
-          this.filteredIssues,
-          (t) => t.issueTypeId == type.id
-        );
-        issueTypes.push({
-          name: type.name,
-          _display:
-            (names ? names.includes(type.name) : true) && issues.length > 0,
-          length: issues.length,
-          progress: Number(_.meanBy(issues, "progress").toFixed(0)),
-        });
-      }
-      return issueTypes;
-    },
     taskVariation() {
     let planned = _.filter(
         this.filteredTasks.unfiltered.tasks,

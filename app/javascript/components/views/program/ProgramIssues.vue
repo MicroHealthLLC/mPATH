@@ -199,11 +199,7 @@
   </el-dialog>
 <div class="row py-1 pr-2">
 <div class="col-10 px-1 pt-2">
-    <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
-        <button class="btn btn-info btn-md">Add Task</button> 
-        </div> -->
-
-    <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
+   <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
     <span class=""
         ><label class="font-sm px-2 mt-4 d-block"
         >STATES TO DISPLAY</label
@@ -558,7 +554,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th>                 
-        <th class="pl-1 sort-th twenty" @click="sort('text')">
+        <th class="pl-1 sort-th twenty" @click="sort('title')">
         Issue
         <span
             class="inactive-sort-icon scroll"
@@ -569,7 +565,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'asc' && currentSort === 'text'
+            currentSortDir === 'asc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -577,7 +573,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'asc' && currentSort === 'text'
+            currentSortDir !== 'asc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -585,7 +581,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'desc' && currentSort === 'text'
+            currentSortDir === 'desc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -593,7 +589,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'desc' && currentSort === 'text'
+            currentSortDir !== 'desc' && currentSort === 'title'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -1474,12 +1470,6 @@ export default {
          return t.draft == false
        } else return true   
 
-
-      }).filter(t => {
-      if (this.getHideOngoing == true) {
-        return t.ongoing == false
-      } else return true       
-
       }).filter(t => {
         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
         return t.reportable
@@ -1545,94 +1535,7 @@ export default {
           return this.end
         });
     },
-    issueTaskCATEGORIES() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "taskTypeName");
-      for (let type in group) {
-        if (!type || type == "null") continue;
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return issues;
-    },
-     
-    activeFacilitiesByStatus() {
-      return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup).length
-        : this.filteredFacilities("active").length;
-    },
-    inactiveFacilitiesByStatus() {
-      return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
-        : this.filteredFacilities("inactive").length;
-    },
-    projectStatuses() {
-      let statuses = [];
-
-      if (this.contentLoaded && this.facilities.length > 0) {
-        this.statuses.forEach((status) => {
-          // Find number of facilities with current status
-          let count = this.facilities
-            .filter((facility) => facility.projectStatus === status.name)
-            .reduce((total) => total + 1, 0);
-          // Insert status into projectStatuses for use Project Status card
-          statuses.push({
-            name: status.name,
-            color: status.color,
-            length: count,
-            progress: Math.floor((count / this.facilities.length) * 100),
-          });
-        });
-      }
-
-      return statuses;
-    },
-    currentTaskTypes() {
-      let names =
-        this.taskTypeFilter &&
-        this.taskTypeFilter.length &&
-        _.map(this.taskTypeFilter, "name");
-      let taskTypes = new Array();
-      for (let type of this.taskTypes) {
-        let tasks = _.filter(
-          this.filteredIssues,
-          (t) => t.taskTypeId == type.id
-        );
-        taskTypes.push({
-          name: type.name,
-          _display:
-            tasks.length > 0 && (names ? names.includes(type.name) : true),
-          length: tasks.length,
-          progress: Number(_.meanBy(tasks, "progress").toFixed(0)),
-        });
-      }
-      return taskTypes;
-    },
-    currentIssueTypes() {
-      let names =
-        this.issueTypeFilter &&
-        this.issueTypeFilter.length &&
-        _.map(this.issueTypeFilter, "name");
-      let issueTypes = new Array();
-      for (let type of this.issueTypes) {
-        let issues = _.filter(
-          this.filteredIssues,
-          (t) => t.issueTypeId == type.id
-        );
-        issueTypes.push({
-          name: type.name,
-          _display:
-            (names ? names.includes(type.name) : true) && issues.length > 0,
-          length: issues.length,
-          progress: Number(_.meanBy(issues, "progress").toFixed(0)),
-        });
-      }
-      return issueTypes;
-    },
-  
+    
      issueVariation() {
      let planned = _.filter(
         this.filteredIssues.unfiltered.issues,
