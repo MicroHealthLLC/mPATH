@@ -9,6 +9,7 @@ Cypress.Commands.add("openPortoflioViewer", () => {
 // Open first Project
 Cypress.Commands.add("openProgramViewer", () => {
   cy.visit('/')
+  cy.get('[data-cy=project_list_items]').first().click()
   cy.get('[data-cy=program_viewer_btn]').first().click()
 })
 
