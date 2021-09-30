@@ -290,7 +290,7 @@
     </button>
     <button
         v-tooltip="`Export to PDF`"
-        @click.prevent="exportTasksToPdf"
+        @click.prevent="exportLessonsToPdf"
         class="btn btn-md exportBtns text-light"
     >
         <i class="far fa-file-pdf"></i>
@@ -298,7 +298,7 @@
     <button
         v-tooltip="`Export to Excel`"
         @click.prevent="
-        exportTasksToExcel('table', 'Portfolio Tasks')
+        exportLessonsToExcel('table', 'Program Lessons')
         "
         class="btn btn-md mx-1 exportBtns text-light"
     >
@@ -322,7 +322,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
     <table
     class="table table-sm table-bordered"
     ref="table"
-    id="portTasks"                   
+    id="portLessons"                   
     >
     <thead style="background-color: #ededed">    
         <th class="pl-1 sort-th twenty" @click="sortCol1('project_group')">
@@ -774,134 +774,77 @@ v-if="filteredLessons.filtered.lessons.length > 0"
         </tr>
     </tbody>
     </table>
-<!-- EXPORT (Display:None) -->
-<!-- <table
-class="table table-bordered w-100"
-id="portTasks1"
-style="display:none"        
->
-<thead>      
-<tr style="background-color:#ededed">
-<th>Task</th>
-<th>Process Area</th>
-<th>Project</th>
-<th>Start Date</th>
-<th>Due Date</th>
-<th>Assigned Users</th>
-<th>Progress</th>        
-<th>Flags</th>
-<th>Last Update</th>
-</tr>
-<tr></tr>
-</thead>
-<tbody v-for="(p, i) in validTaskPrograms" :key="i">  
-<tr id="program">  <th scope="row"><b>{{ p }}</b></th></tr>
-<tr v-for="(task, index) in sortedTasks" :key="index" v-if="task.program_name == p">            
-<td>{{ task.text }}</td>
-<td>{{ task.category }}</td>
-<td> {{ task.project_name}} </td>
-<td>
-<span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
-    <i class="fas fa-retweet text-success"></i>
-</span>
-<span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
-    <i class="fas fa-retweet text-secondary"></i>
-    </span>
-<span v-else>{{
-    moment(task.startDate).format("DD MMM YYYY") 
-}}</span>
-</td>
-    <td>
-<span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
-    ><i class="fas fa-retweet text-success"></i
-></span>
-    <span v-else-if="task.completed && (task.dueDate == null || task.dueDate == undefined)"></span>
-<span
-    v-else-if="task.onHold && task.dueDate == null"
-    v-tooltip="`On Hold (w/no Due Date)`"
-    ><i class="fas fa-pause-circle text-primary"></i
-></span>
-
-<span v-else>{{
-    moment(task.dueDate).format("DD MMM YYYY")
-}}</span>
-</td>
-    <td>{{ task.users }}</td>
-
-    <td>                          
-    <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
-    ><i class="fas fa-retweet text-success"></i
-></span>
-<span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
-    ><i class="fas fa-retweet text-secondary"></i
-></span>
-
-    <span v-else>
-{{ task.progress + "%" }}
-    </span>
-</td>
-<td class="text-center">
-<span v-if="task.is_overdue" v-tooltip="`Overdue`">
-    Overdue
-    </span>
-<span v-if="task.completed" v-tooltip="`Completed`"
+    <table
+      class="table table-bordered w-100"
+      id="portLessons1"
+      style="display:none"    
     >
-    Completed
-    </span>
-<span
-    v-if="task.ongoing == true && !task.closed"
-    v-tooltip="`Ongoing`"
-    >Ongoing</span>
-<span
-    v-if="task.closed"
-    v-tooltip="`Ongoing: Closed`"
-    >Ongoing</span>
-<span
-    v-if="task.onHold == true"
-    v-tooltip="`On Hold`"
->
-    On Hold
-    </span>
-<span v-if="task.draft == true" v-tooltip="`Draft`">
-    Draft
-    </span>          
-
-<span v-if="task.planned" v-tooltip="`Planned`">
-    Planned
-    </span>
-<span
-    v-if="task.inProgress"
-    v-tooltip="`In Progress`"
->
-In Progress
-    </span>
-</td>
-<td
-class="text-left"
-v-if="task.notesUpdatedAt.length > 0"
->
-<span
-    class="toolTip"
-    v-tooltip="
-    'By: ' +
-    task.notes[task.notes.length - 1].user.full_name
-    "
->
-    {{
-    moment(task.notesUpdatedAt[0]).format(
-        "DD MMM YYYY, h:mm a"
-    )
-    }}
-</span>
-<br />
-<span class="truncate-line-five">
-    {{ task.notes[task.notes.length - 1].body }}
-</span>
-</td>
-<td class="text-left" v-else>No Update</td> 
-</tr>
-</tbody>
-</table> -->
+    <thead>      
+    <tr style="background-color:#ededed">
+      <th>Lesson</th>
+      <th>Date Added</th>
+      <th>Added By</th>    
+      <th>Description</th>    
+      <th>Flags</th>    
+      <th>Last Update</th>
+    </tr>
+      <tr></tr>
+  </thead>
+    <tbody v-for="(p, i) in validLessonProjectGroups" :key="i">  
+      <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+      <tr v-for="(lesson, index) in sortedLessons" :key="index"  v-if="lesson.project_group == p">            
+      <td>{{ lesson.title }}</td>
+      <td>
+      {{ moment(lesson.created_at).format("DD MMM YYYY") }}
+      </td>
+      <td>
+        {{ lesson.added_by }}
+      </td>
+      <td>
+      <span class="truncate-line-five">{{
+        lesson.description
+      }}</span>
+    </td> 
+      <td class="text-center">
+            <span v-if="lesson.draft == true" v-tooltip="`Draft`">
+              Draft
+            </span>
+            <span
+              v-if="lesson.draft == false"
+                >
+            Completed
+            </span>
+        
+          </td>
+              <td
+            class="text-left"
+            v-if="lesson.notes_updated_at.length > 0"
+          >
+            <span
+              class="toolTip"
+              v-tooltip="
+                'By: ' +
+                lesson.notes[lesson.notes.length - 1].user
+                  .full_name
+              "
+            >
+              {{
+                moment(lesson.notes_updated_at[0]).format(
+                  "DD MMM YYYY, h:mm a"
+                )
+              }}
+            </span>
+            <br />
+            <span class="truncate-line-five">
+              {{ lesson.notes[lesson.notes.length - 1].body }}
+            </span>
+          </td>
+          <!-- <td v-else class="twentyTwo">No Updates</td> -->
+          <td class="text-left" v-else>No Update</td>
+    
+        </tr>
+    </tbody>
+  </table>
 
 </div>
 <div class="ml-auto mb-4 mt-2 font-sm">
@@ -954,6 +897,8 @@ v-if="task.notesUpdatedAt.length > 0"
 <script>
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
@@ -975,6 +920,17 @@ export default {
       currentSortDir1: "asc",
       currentSortDir2: "asc",
       facility_project_ids:[],
+      uri: "data:application/vnd.ms-excel;base64,",
+      template:
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function (s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+      },
+      format: function (s, c) {
+        return s.replace(/{(\w+)}/g, function (m, p) {
+          return c[p];
+        });
+      },
     };
   },
   computed: {
@@ -1052,6 +1008,10 @@ export default {
           this.setPortfolioTab(value)
       }
   },
+  validLessonProjectGroups(){
+      let name = this.programLessons;
+      return _.uniq(name.map(item => item.project_group))      
+    },
     C_showCountToggle: {                  
         get() {
          return this.getShowCount                
@@ -1410,6 +1370,41 @@ export default {
       },
     });
     // console.log(this.$route.params)
+    },
+  exportLessonsToPdf() {
+      const doc = new jsPDF("l");
+      const html = this.$refs.table.innerHTML;
+        doc.autoTable({ 
+        html: "#portLessons1",       
+        didParseCell: function(hookData) {  
+          // console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
+      doc.save("Program_Lessons_List.pdf");
+    },
+    exportLessonsToExcel(table, name) {
+      if (!table.nodeType) table = this.$refs.table;
+      var ctx = {
+        worksheet: name || "Worksheet",
+        table: table.innerHTML,
+      };
+      window.location.href =
+        this.uri + this.base64(this.format(this.template, ctx));
     },
    openPresentation(){
       this.dialogVisible = true; 

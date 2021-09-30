@@ -18,7 +18,8 @@
         <span v-if="contentLoaded" class="float-right mt-1">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
               <router-link :to="ProgramView"> 
-                <button class="btn btn-sm mh-orange text-light programViewerBtn allCaps">
+                <button 
+                  class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
                   {{ currentProject.name }} DATA VIEWER
                 </button>   
                </router-link>             

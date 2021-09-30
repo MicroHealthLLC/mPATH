@@ -1,5 +1,5 @@
 <template>
-  <TaskForm :task="task" @on-close-form="redirectBack" />
+  <TaskForm :task="task" @on-close-form="redirectBack"/>
 </template>
 
 <script>
@@ -47,4 +47,6 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+
+</style>

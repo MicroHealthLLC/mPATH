@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'line': isProgramView}">
    <form
       id="tasks-form"
       @submit.prevent="saveTask"
@@ -2028,6 +2028,12 @@ export default {
         this.exists(this.DV_task.startDate)
       );
     },
+   isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
+    },
     isMapView() {
       return this.$route.name === "MapTaskForm";
     },
@@ -2244,6 +2250,9 @@ export default {
 <style scoped lang="scss">
 // .tasks-form {
 // }
+.line {
+  border-top: solid .25px lightgray;
+}
 td,
 th {
   border: solid 1px #ededed;

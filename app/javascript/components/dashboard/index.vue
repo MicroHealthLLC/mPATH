@@ -34,7 +34,11 @@ export default {
   computed: {
     ...mapGetters(["contentLoaded", "facilities", "getUnfilteredFacilities"]),
       isProgramView() {
-      return this.$route.name.includes("ProgramView");  
+      return this.$route.name.includes("ProgramView") ||
+             this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;;  
       },
   },
 

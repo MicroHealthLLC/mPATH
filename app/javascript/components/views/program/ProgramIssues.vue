@@ -441,7 +441,7 @@
     </button>
     <button
         v-tooltip="`Export to PDF`"
-        @click.prevent="exportTasksToPdf"
+        @click.prevent="exportIssuesToPdf"
         class="btn btn-md exportBtns text-light"
     >
         <i class="far fa-file-pdf"></i>
@@ -449,7 +449,7 @@
     <button
         v-tooltip="`Export to Excel`"
         @click.prevent="
-        exportTasksToExcel('table', 'Portfolio Tasks')
+        exportIssuesToExcel('table', 'Program Issues')
         "
         class="btn btn-md mx-1 exportBtns text-light"
     >
@@ -473,7 +473,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
     <table
     class="table table-sm table-bordered"
     ref="table"
-    id="portTasks"                   
+    id="portIssues"                   
     >
     <thead style="background-color: #ededed">    
         <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
@@ -649,7 +649,104 @@ v-if="filteredIssues.filtered.issues.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th>
-
+   <th
+        class="sort-th twenty"
+        @click="sort('issueType')"
+       style="min-width: 140px"
+        >
+        Issue Type
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'issueType'"
+        >
+            <i class="fas fa-sort"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'asc' &&
+            currentSort === 'issueType'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'asc' &&
+            currentSort === 'issueType'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'desc' &&
+            currentSort === 'issueType'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'desc' &&
+            currentSort === 'issueType'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        </th>
+           <th
+        class="sort-th twenty"
+         style="min-width: 140px"
+        @click="sort('issueSeverity')"
+        >
+       Issue Severity
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'issueSeverity'"
+        >
+            <i class="fas fa-sort"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'asc' &&
+            currentSort === 'issueSeverity'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'asc' &&
+            currentSort === 'issueSeverity'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'desc' &&
+            currentSort === 'issueSeverity'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'desc' &&
+            currentSort === 'issueSeverity'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        </th>
         <th
         class="sort-th"
         style="min-width: 140px"
@@ -878,12 +975,10 @@ v-if="filteredIssues.filtered.issues.length > 0"
         </td>
         <!-- <td v-else class="twentyTwo">No Updates</td> -->
         <td class="text-left" v-else>No Update</td>
-
-        <td>
-           
-            
+        <td>{{ issue.issueType }}</td>
+        <td>{{ issue.issueSeverity }}</td>
+        <td>           
             {{ moment(issue.startDate).format("DD MMM YYYY") }}
-
         </td>
         <td>
            
@@ -953,6 +1048,103 @@ v-if="filteredIssues.filtered.issues.length > 0"
         </tr>
     </tbody>
     </table>
+      
+       <table
+        class="table table-bordered w-100"
+        id="portIssues1"     
+        style="display:none"          
+        >
+         <thead>      
+        <tr style="background-color:#ededed">
+            <th>Issue</th>
+            <th>Issue Type</th>
+            <th>Project</th>
+            <th>Issue Severity</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Assigned Users</th>
+            <th>Progress</th>
+            <th>Flags</th>
+            <th>Last Update</th>
+        </tr>
+          <tr></tr>
+      </thead>
+      <tbody v-for="(p, i) in validIssuesProjectGroups" :key="i">  
+        <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+           <tr v-for="(issue, index) in filteredIssues.filtered.issues" :key="index" v-if="issue.projectGroup == p">            
+              <td>{{ issue.title }}</td>
+              <td>{{ issue.issueType }}</td>
+              <td>{{ issue.facilityName }}</td>
+              <td>{{ issue.issueSeverity }}</td>
+               <td>
+                    {{ moment(issue.startDate).format("DD MMM YYYY") }}
+                  </td>
+                  <td>
+                    <span
+                      v-if="issue.onHold && issue.dueDate == null"
+                      v-tooltip="`On Hold (w/no Due Date)`"
+                      ><i class="fas fa-pause-circle text-primary"></i
+                    ></span>
+                    <span v-else-if="issue.completed && (issue.dueDate == null || issue.dueDate == undefined)"></span>
+                    <span v-else
+                      >{{ moment(issue.dueDate).format("DD MMM YYYY") }}
+                    </span>
+                  </td>
+                  <td>{{ issue.userNames }}</td>
+                  <td>{{ issue.progress + "%" }}</td>
+                  <td class="text-center">
+                    <span v-if="issue.isOverdue" v-tooltip="`Overdue`">
+                      Overdue
+                    </span>
+                    <span v-if="issue.completed" v-tooltip="`Completed`">
+                      Completed</span>
+                    <span
+                      v-if="issue.onHold == true"
+                      v-tooltip="`On Hold`"
+                    >
+                     On Hold
+                    </span>
+                    <span v-if="issue.draft == true" v-tooltip="`Draft`">
+                     Draft
+                     </span>
+                 
+                    <span v-if="issue.planned" v-tooltip="`Planned`">
+                      Planned
+                     </span>
+                    <span
+                      v-if="issue.inProgress"
+                      v-tooltip="`In Progress`"
+                    >
+                     In Progress
+                    </span>
+                  </td>
+                    <td>
+                  <span   class="text-left"
+                    v-if="issue.notesUpdatedAt.length > 0">
+                    <span
+                      class="toolTip"
+                      v-tooltip="
+                        'By: ' +
+                        issue.notes[issue.notes.length - 1].user.fullName
+                      "
+                    >
+                      {{
+                        moment(issue.notesUpdatedAt[0]).format(
+                          "DD MMM YYYY, h:mm a"
+                        )
+                      }}
+                    </span>
+                    <br />
+                    <span class="truncate-line-five">
+                      {{ issue.notes[issue.notes.length - 1].body }}
+                    </span>
+                  </span>
+                  <span v-else>
+                  </span>
+                  </td>           
+            </tr>
+         </tbody>
+        </table>
 
 </div>
 <div class="ml-auto mb-4 mt-2 font-sm">
@@ -1005,7 +1197,8 @@ v-if="filteredIssues.filtered.issues.length > 0"
 <script>
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
-// import LessonForm from "./../../dashboard/lessons/LessonForm";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 export default {
   name: "ProgramIssues",
@@ -1026,7 +1219,17 @@ export default {
       currentSortDir1: "asc",
       currentSortDir2: "asc",
       facility_project_ids:[],
-
+       uri: "data:application/vnd.ms-excel;base64,",
+      template:
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function (s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+      },
+      format: function (s, c) {
+        return s.replace(/{(\w+)}/g, function (m, p) {
+          return c[p];
+        });
+      },
     };
   },
   computed: {
@@ -1106,6 +1309,10 @@ export default {
           this.setPortfolioTab(value)
       }
   },
+  validIssuesProjectGroups(){
+      let name = this.filteredIssues.filtered.issues;
+      return _.uniq(name.map(item => item.projectGroup))      
+    },
     C_issuesPerPage: {
         get() {
           return this.getIssuesPerPage || {id: 15, name: '15', value: 15}
@@ -1245,7 +1452,7 @@ export default {
 
       }).filter(t => {
       if (this.getHideComplete == true) { 
-        return !t.completed
+        return t.completed == false
       } else return true     
       }).filter(t => {
       if (this.getHidePlanned == true) { 
@@ -1495,10 +1702,6 @@ export default {
         briefings: {
           count: briefings.length,          
         },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
         inProgress: {
           count: inProgress.length,
           percentage: Math.round(inProgress_percent),
@@ -1557,6 +1760,40 @@ export default {
       },
     });
     // console.log(this.$route.params)
+    },
+  exportIssuesToPdf() {
+      const doc = new jsPDF("l");
+       console.log( this.$refs.table)
+      const html = this.$refs.table.innerHTML;
+   
+      doc.autoTable({ 
+        html: "#portIssues1",       
+        didParseCell: function(hookData) {  
+          // console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
+      doc.save("Program_Issues_Log.pdf");
+    },
+    exportIssuesToExcel(table, name) {
+      if (!table.nodeType) table = this.$refs.table;
+      var ctx = { worksheet: name || "Worksheet", table: table.innerHTML };
+      window.location.href =
+        this.uri + this.base64(this.format(this.template, ctx));
     },
     openPresentation(){
       this.dialogVisible = true; 

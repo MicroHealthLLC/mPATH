@@ -144,7 +144,7 @@ export default new VueRouter({
     },
     {
       name: "ProgramTaskForm",
-      path: "/programs/:programId/dataviewer/:projectId/task/:id",
+      path: "/programs/:programId/dataviewer/:projectId/task/:taskId",
       component: ProgramTaskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -161,7 +161,7 @@ export default new VueRouter({
      },
      {
       name: "ProgramRiskForm",
-      path: "/programs/:programId/dataviewer/:projectId/risk/:id",
+      path: "/programs/:programId/dataviewer/:projectId/risk/:riskId",
       component: ProgramRiskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -178,7 +178,7 @@ export default new VueRouter({
      },
      {
       name: "ProgramIssueForm",
-      path: "/programs/:programId/dataviewer/:projectId/issue/:id",
+      path: "/programs/:programId/dataviewer/:projectId/issue/:issueId",
       component: ProgramIssueForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -195,7 +195,7 @@ export default new VueRouter({
      },
      {
       name: "ProgramLessonForm",
-      path: "/programs/:programId/dataviewer/:projectId/lesson/:id",
+      path: "/programs/:programId/dataviewer/:projectId/lesson/:lessonId",
       component: ProgramLessonForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;

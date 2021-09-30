@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'line': isProgramView}">
     <form
       @submit.prevent="validateThenSave"
       class="risks-form mx-auto"
@@ -2957,6 +2957,12 @@ export default {
         this.exists(this.DV_risk.dueDate)
       );
     },
+    isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
+    },
     riskStagePercentage() {
       return _.map(this.riskStages, "percentage").toString();
     },
@@ -3393,6 +3399,9 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 275px);
+}
+.line {
+  border-top: solid .25px lightgray;
 }
 .title {
   font-size: 15px;

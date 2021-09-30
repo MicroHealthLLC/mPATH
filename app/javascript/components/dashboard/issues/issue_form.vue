@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'line': isProgramView}">
    <form
       id="issues-form"
       @submit.prevent="saveIssue"
@@ -2063,6 +2063,12 @@ export default {
         this.exists(this.DV_issue.startDate)
       );
     },
+    isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
+    },
     isMapView() {
       return this.$route.name === "MapIssueForm";
     },
@@ -2283,6 +2289,9 @@ export default {
 
 <style lang="scss" scoped>
 .issues-form {
+}
+.line {
+  border-top: solid .25px lightgray;
 }
 .form-control.error {
   border-color: #e84444;

@@ -1,8 +1,7 @@
 <template>
   <form
     @submit.prevent="saveLesson"
-
-    :class="{ _disabled: !lessonsLoaded }"
+    :class="{ _disabled: !lessonsLoaded, 'line': isProgramView }"
     accept-charset="UTF-8"
   >
     <div class="mt-2  d-flex align-items-center">
@@ -1171,6 +1170,12 @@ export default {
         return "kanban";
       }
     },
+ isProgramView() {
+  return this.$route.name.includes("ProgramTaskForm") ||
+          this.$route.name.includes("ProgramRiskForm") ||
+          this.$route.name.includes("ProgramIssueForm") ||
+          this.$route.name.includes("ProgramLessonForm") ;
+    },
   backToLessons() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
@@ -1308,6 +1313,9 @@ export default {
 <style lang="scss" scoped>
 a {
   color: #007bff;
+}
+.line {
+  border-top: solid .25px lightgray;
 }
 a:hover {
   text-decoration: unset;

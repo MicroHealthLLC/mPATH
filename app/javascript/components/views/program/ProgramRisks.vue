@@ -505,7 +505,7 @@
     </button>
     <button
         v-tooltip="`Export to PDF`"
-        @click.prevent="exportTasksToPdf"
+        @click.prevent="exportRisksToPdf"
         class="btn btn-md exportBtns text-light"
     >
         <i class="far fa-file-pdf"></i>
@@ -513,7 +513,7 @@
     <button
         v-tooltip="`Export to Excel`"
         @click.prevent="
-        exportTasksToExcel('table', 'Portfolio Tasks')
+        exportRisksToExcel('table', 'Program Risks')
         "
         class="btn btn-md mx-1 exportBtns text-light"
     >
@@ -536,8 +536,8 @@ v-if="filteredRisks.filtered.risks.length > 0"
 <div class="px-3 tableFixHead" >
     <table
     class="table table-sm table-bordered"
-    ref="table"
-    id="portTasks"                   
+    ref="table" 
+    id="portRisks"                   
     >
     <thead style="background-color: #ededed">    
         <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
@@ -708,6 +708,89 @@ v-if="filteredRisks.filtered.risks.length > 0"
             v-if="
             currentSortDir !== 'desc' &&
             currentSort === 'notesUpdatedAt'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        </th>
+      
+           <th class="pl-1 sort-th twenty" @click="sort('riskApproach')">
+        Risk Approach
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'riskApproach'"
+        >
+            <i class="fas fa-sort"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'asc' && currentSort === 'riskApproach'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'asc' && currentSort === 'riskApproach'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'desc' && currentSort === 'riskApproach'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'desc' && currentSort === 'riskApproach'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        </th>
+               <th class="pl-1 sort-th twenty" @click="sort('priorityLevelName')">
+        Priority Level
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSort !== 'priorityLevelName'"
+        >
+            <i class="fas fa-sort"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'asc' && currentSort === 'priorityLevelName'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'asc' && currentSort === 'priorityLevelName'
+            "
+        >
+            <i class="fas fa-sort-up"></i
+        ></span>
+        <span
+            class="sort-icon scroll"
+            v-if="
+            currentSortDir === 'desc' && currentSort === 'priorityLevelName'
+            "
+        >
+            <i class="fas fa-sort-down"></i
+        ></span>
+        <span
+            class="inactive-sort-icon scroll"
+            v-if="
+            currentSortDir !== 'desc' && currentSort === 'priorityLevelName'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -915,11 +998,9 @@ v-if="filteredRisks.filtered.risks.length > 0"
     </thead>
     <tbody>
         <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openRisk(risk)">
-    
-    
         <td>{{ risk.projectGroup }}</td>
         <td>{{ risk.facilityName }}</td>
-        <td>{{ risk.text }}</td>
+        <td>{{ risk.text }}</td>        
         <td
             class="text-left"
             v-if="risk.notesUpdatedAt.length > 0"
@@ -944,7 +1025,39 @@ v-if="filteredRisks.filtered.risks.length > 0"
         </td>
         <!-- <td v-else class="twentyTwo">No Updates</td> -->
         <td class="text-left" v-else>No Update</td>
-
+   <td>
+            {{
+              risk.riskApproach.charAt(0).toUpperCase() +
+              risk.riskApproach.slice(1)
+            }}
+          </td>
+          <td>
+            <span
+              v-if="risk.priorityLevelName == 'Very Low'"
+              class="gray2"
+              >Very Low</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'Low'"
+              class="green1"
+              >Low</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'Moderate'"
+              class="yellow1"
+              >Moderate</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'High'"
+              class="orange1"
+              >High</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'Extreme'"
+              class="red1"
+              >Extreme</span
+            >
+          </td>
         <td>
             <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
             <i class="fas fa-retweet text-success"></i>
@@ -1040,134 +1153,170 @@ v-if="filteredRisks.filtered.risks.length > 0"
         </tr>
     </tbody>
     </table>
-<!-- EXPORT (Display:None) -->
-<!-- <table
-class="table table-bordered w-100"
-id="portTasks1"
-style="display:none"        
->
-<thead>      
-<tr style="background-color:#ededed">
-<th>Task</th>
-<th>Process Area</th>
-<th>Project</th>
-<th>Start Date</th>
-<th>Due Date</th>
-<th>Assigned Users</th>
-<th>Progress</th>        
-<th>Flags</th>
-<th>Last Update</th>
-</tr>
-<tr></tr>
-</thead>
-<tbody v-for="(p, i) in validTaskPrograms" :key="i">  
-<tr id="program">  <th scope="row"><b>{{ p }}</b></th></tr>
-<tr v-for="(task, index) in sortedTasks" :key="index" v-if="task.program_name == p">            
-<td>{{ task.text }}</td>
-<td>{{ task.category }}</td>
-<td> {{ task.project_name}} </td>
-<td>
-<span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
-    <i class="fas fa-retweet text-success"></i>
-</span>
-<span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
-    <i class="fas fa-retweet text-secondary"></i>
-    </span>
-<span v-else>{{
-    moment(task.startDate).format("DD MMM YYYY") 
-}}</span>
-</td>
-    <td>
-<span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
-    ><i class="fas fa-retweet text-success"></i
-></span>
-    <span v-else-if="task.completed && (task.dueDate == null || task.dueDate == undefined)"></span>
-<span
-    v-else-if="task.onHold && task.dueDate == null"
-    v-tooltip="`On Hold (w/no Due Date)`"
-    ><i class="fas fa-pause-circle text-primary"></i
-></span>
-
-<span v-else>{{
-    moment(task.dueDate).format("DD MMM YYYY")
-}}</span>
-</td>
-    <td>{{ task.users }}</td>
-
-    <td>                          
-    <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
-    ><i class="fas fa-retweet text-success"></i
-></span>
-<span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
-    ><i class="fas fa-retweet text-secondary"></i
-></span>
-
-    <span v-else>
-{{ task.progress + "%" }}
-    </span>
-</td>
-<td class="text-center">
-<span v-if="task.is_overdue" v-tooltip="`Overdue`">
-    Overdue
-    </span>
-<span v-if="task.completed" v-tooltip="`Completed`"
-    >
-    Completed
-    </span>
-<span
-    v-if="task.ongoing == true && !task.closed"
-    v-tooltip="`Ongoing`"
-    >Ongoing</span>
-<span
-    v-if="task.closed"
-    v-tooltip="`Ongoing: Closed`"
-    >Ongoing</span>
-<span
-    v-if="task.onHold == true"
-    v-tooltip="`On Hold`"
->
-    On Hold
-    </span>
-<span v-if="task.draft == true" v-tooltip="`Draft`">
-    Draft
-    </span>          
-
-<span v-if="task.planned" v-tooltip="`Planned`">
-    Planned
-    </span>
-<span
-    v-if="task.inProgress"
-    v-tooltip="`In Progress`"
->
-In Progress
-    </span>
-</td>
-<td
-class="text-left"
-v-if="task.notesUpdatedAt.length > 0"
->
-<span
-    class="toolTip"
-    v-tooltip="
-    'By: ' +
-    task.notes[task.notes.length - 1].user.full_name
-    "
->
-    {{
-    moment(task.notesUpdatedAt[0]).format(
-        "DD MMM YYYY, h:mm a"
-    )
-    }}
-</span>
-<br />
-<span class="truncate-line-five">
-    {{ task.notes[task.notes.length - 1].body }}
-</span>
-</td>
-<td class="text-left" v-else>No Update</td> 
-</tr>
-</tbody>
-</table> -->
+    <table
+      class="table table-bordered w-100"
+      id="portRisks1"
+      style="display:none"        
+       >
+      <thead>      
+        <tr style="background-color:#ededed">
+          <th>Risk</th>
+          <th>Project</th>
+          <th>Risk Approach</th>
+          <th>Priority Level</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>    
+          <th>Flags</th>        
+          <th>Last Update</th>
+        </tr>
+                    <tr></tr>
+        </thead>
+        <tbody v-for="(p, i) in validRiskProjectGroups" :key="i">  
+          <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
+          <tr  v-for="(risk, index) in filteredRisks.filtered.risks" :key="index" v-if="risk.projectGroup == p">            
+          <td>{{ risk.text }}</td>
+          <td>{{ risk.facilityName}} </td>
+          <td>
+            {{
+              risk.riskApproach.charAt(0).toUpperCase() +
+              risk.riskApproach.slice(1)
+            }}
+          </td>
+          <td>
+            <span
+              v-if="risk.priorityLevelName == 'Very Low'"
+              class="gray2"
+              >Very Low</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'Low'"
+              class="green1"
+              >Low</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'Moderate'"
+              class="yellow1"
+              >Moderate</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'High'"
+              class="orange1"
+              >High</span
+            >
+            <span
+              v-else-if="risk.priorityLevelName == 'Extreme'"
+              class="red1"
+              >Extreme</span
+            >
+          </td>
+            <td>
+              <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
+                <i class="fas fa-retweet text-success"></i>
+              </span>
+              <span v-else-if="risk.ongoing && risk.closed && risk.startDate == null || undefined">
+                <i class="fas fa-retweet text-secondary"></i>
+              </span>
+              <span v-else>{{
+                moment(risk.startDate).format("DD MMM YYYY") 
+              }}</span>
+            </td>
+              <td>
+                <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
+                  ><i class="fas fa-retweet text-success"></i
+                ></span>
+                <span v-else-if="risk.completed && (risk.dueDate == null || risk.dueDate == undefined)"></span>
+                <span
+                  v-else-if="risk.onHold && risk.dueDate == null"
+                  v-tooltip="`On Hold (w/no Due Date)`"
+                  ><i class="fas fa-pause-circle text-primary"></i
+                ></span>
+                <span v-else>{{
+                  moment(risk.dueDate).format("DD MMM YYYY")
+                }}</span>
+              </td>
+              <td>{{ risk.userNames }}</td>
+              <td>
+                <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
+                  >
+                  Ongoing
+                  </span>
+                  <span v-else-if="risk.closed" v-tooltip="`Ongoing: Closed`"
+                  >
+                  Ongoing
+                  </span>
+                <span v-else>
+                {{ risk.progress + "%" }}
+                </span>
+              </td>
+                <td class="text-center">
+                <span v-if="risk.isOverdue" v-tooltip="`Overdue`">
+                  Overdue
+                </span>
+                <span v-if="risk.completed" v-tooltip="`Completed`"
+                  >
+                  Completed
+                  </span>
+                <span
+                  v-if="risk.ongoing == true && !risk.closed"
+                  v-tooltip="`Ongoing`"
+                  >
+                  Ongoing
+                  </span>
+                <span
+                  v-if="risk.closed == true"
+                  v-tooltip="`Ongoing: Closed`"
+                  >
+                  Ongoing
+                  </span>
+                <span
+                  v-if="risk.onHold == true"
+                  v-tooltip="`On Hold`"
+                >
+                  On Hold
+                  </span>
+                <span v-if="risk.draft == true" v-tooltip="`Draft`">
+                  Draft
+                </span>
+                      
+                <span v-if="risk.planned" v-tooltip="`Planned`">
+                  Planned
+                </span>
+                <span
+                  v-if="risk.inProgress"
+                  v-tooltip="`In Progress`"
+                >
+                  In Progress
+                  </span>
+                </td>
+                <td
+                  class="text-left"
+                  v-if="risk.notesUpdatedAt.length > 0"
+                  >
+                  <span
+                    class="toolTip"
+                    v-tooltip="
+                      'By: ' +
+                      risk.notes[risk.notes.length - 1].user.fullName
+                    "
+                  >
+                    {{
+                      moment(risk.notesUpdatedAt[0]).format(
+                        "DD MMM YYYY, h:mm a"
+                      )
+                    }}
+                  </span>
+                  <br />
+                  <span class="truncate-line-five">
+                    {{ risk.notes[risk.notes.length - 1].body }}
+                  </span>
+                </td>
+                          <!-- <td v-else class="twentyTwo">No Updates</td> -->
+                <td class="text-left" v-else>No Update</td>
+              </tr>
+          </tbody>
+        </table>
 
 </div>
 <div class="ml-auto mb-4 mt-2 font-sm">
@@ -1220,6 +1369,8 @@ v-if="task.notesUpdatedAt.length > 0"
 <script>
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
@@ -1240,6 +1391,17 @@ export default {
       currentSortDir1: "asc",
       currentSortDir2: "asc",
       facility_project_ids: [],
+      uri: "data:application/vnd.ms-excel;base64,",
+      template:
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function (s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+      },
+      format: function (s, c) {
+        return s.replace(/{(\w+)}/g, function (m, p) {
+          return c[p];
+        });
+      },
     };
   },
   computed: {
@@ -1318,6 +1480,10 @@ export default {
           this.setCurrTab('#tab-tasks')
           this.setPortfolioTab(value)
       }
+    },
+    validRiskProjectGroups(){
+      let name = this.filteredRisks.filtered.risks;
+      return _.uniq(name.map(item => item.projectGroup))      
     },
     C_projectGroupsFilter: {
       get() {
@@ -1838,6 +2004,38 @@ export default {
       },
     });
     // console.log(this.$route.params)
+    },
+  exportRisksToPdf() {
+      const doc = new jsPDF("l");
+      const html = this.$refs.table.innerHTML;
+      doc.autoTable({ 
+        html: "#portRisks1",       
+        didParseCell: function(hookData) {  
+          // console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
+      doc.save("Program_Risk_List.pdf");
+    },
+    exportRisksToExcel(table, name) {
+      if (!table.nodeType) table = this.$refs.table;
+      var ctx = { worksheet: name || "Worksheet", table: table.innerHTML };
+      window.location.href =
+        this.uri + this.base64(this.format(this.template, ctx));
     },
     openRiskPresentation(){
       this.dialogVisible = true; 

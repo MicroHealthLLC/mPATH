@@ -1147,6 +1147,133 @@
                       </tr>
                     </tbody>
                   </table>
+        <table
+          class="table table-bordered w-100"
+          id="portTasks1"
+          style="display:none"        
+        >
+         <thead>      
+        <tr style="background-color:#ededed">
+          <th>Task</th>
+          <th>Process Area</th>
+          <th>Project</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>        
+          <th>Flags</th>
+          <th>Last Update</th>
+        </tr>
+          <tr></tr>
+      </thead>
+      <tbody v-for="(p, i) in validTaskProjectGroups" :key="i">  
+        <tr id="program">  <th scope="row"><b>{{ p }}</b></th></tr>
+           <tr v-for="(task, index) in filteredTasks.filtered.tasks" :key="index" v-if="task.projectGroup == p">            
+              <td>{{ task.text }}</td>
+              <td>{{ task.taskType }}</td>
+              <td> {{ task.facilityName}} </td>
+                <td>
+                <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
+                  <i class="fas fa-retweet text-success"></i>
+                </span>
+                <span v-else-if="task.ongoing && task.closed && task.startDate == null || undefined">
+                  <i class="fas fa-retweet text-secondary"></i>
+                    </span>
+                <span v-else>{{
+                  moment(task.startDate).format("DD MMM YYYY") 
+                }}</span>
+              </td>
+                  <td>
+                <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+                  ><i class="fas fa-retweet text-success"></i
+                ></span>
+                 <span v-else-if="task.completed && (task.dueDate == null || task.dueDate == undefined)"></span>
+                <span
+                  v-else-if="task.onHold && task.dueDate == null"
+                  v-tooltip="`On Hold (w/no Due Date)`"
+                  ><i class="fas fa-pause-circle text-primary"></i
+                ></span>
+                
+                <span v-else>{{
+                  moment(task.dueDate).format("DD MMM YYYY")
+                }}</span>
+              </td>
+                  <td>{{ task.userNames }}</td>
+
+                  <td>                          
+                  <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
+                  ><i class="fas fa-retweet text-success"></i
+                ></span>
+                <span v-else-if="task.closed" v-tooltip="`Ongoing: Closed`"
+                  ><i class="fas fa-retweet text-secondary"></i
+                ></span>
+                
+                  <span v-else>
+                {{ task.progress + "%" }}
+                  </span>
+              </td>
+                <td class="text-center">
+                <span v-if="task.isOverdue" v-tooltip="`Overdue`">
+                 Overdue
+                 </span>
+                <span v-if="task.completed" v-tooltip="`Completed`"
+                  >
+                  Completed
+                  </span>
+                <span
+                  v-if="task.ongoing == true && !task.closed"
+                  v-tooltip="`Ongoing`"
+                  >Ongoing</span>
+                <span
+                  v-if="task.closed"
+                  v-tooltip="`Ongoing: Closed`"
+                  >Ongoing</span>
+                <span
+                  v-if="task.onHold == true"
+                  v-tooltip="`On Hold`"
+                >
+                 On Hold
+                 </span>
+                <span v-if="task.draft == true" v-tooltip="`Draft`">
+                   Draft
+                 </span>          
+               
+                <span v-if="task.planned" v-tooltip="`Planned`">
+                 Planned
+                 </span>
+                <span
+                  v-if="task.inProgress"
+                  v-tooltip="`In Progress`"
+                >
+                In Progress
+                 </span>
+              </td>
+              <td
+                class="text-left"
+                v-if="task.notesUpdatedAt.length > 0"
+              >
+                <span
+                  class="toolTip"
+                  v-tooltip="
+                    'By: ' +
+                    task.notes[task.notes.length - 1].user.fullName
+                  "
+                >
+                  {{
+                    moment(task.notesUpdatedAt[0]).format(
+                      "DD MMM YYYY, h:mm a"
+                    )
+                  }}
+                </span>
+                <br />
+                <span class="truncate-line-five">
+                  {{ task.notes[task.notes.length - 1].body }}
+                </span>
+              </td>
+              <td class="text-left" v-else>No Update</td> 
+            </tr>
+         </tbody>
+        </table>
                
                 </div>
                 <div class="ml-auto mb-4 mt-2 font-sm">
@@ -1250,6 +1377,8 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
 import ProgramLessons from "./ProgramLessons.vue";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 Vue.component('treeselect', VueTreeselect.Treeselect)
 
 export default {
@@ -1277,6 +1406,17 @@ export default {
       currentSortDir1: "asc",
       currentSortDir2: "asc",
       facility_project_ids: [],
+      uri: "data:application/vnd.ms-excel;base64,",
+      template:
+        '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function (s) {
+        return window.btoa(unescape(encodeURIComponent(s)));
+      },
+      format: function (s, c) {
+        return s.replace(/{(\w+)}/g, function (m, p) {
+          return c[p];
+        });
+      },
     };
   },
   computed: {
@@ -1425,6 +1565,10 @@ export default {
     C_categories() {
     let categories = this.filteredAllTasks  
       return _.uniq(categories.map(c => c.taskType))
+    },
+    validTaskProjectGroups(){
+      let name = this.sortedTasks;
+      return _.uniq(name.map(item => item.projectGroup))      
     },
     C_myTasks: {
       get() {
@@ -1860,6 +2004,39 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
+      exportTasksToPdf() {
+      const doc = new jsPDF("l");
+         console.log( this.$refs.table)
+      const html = this.$refs.table.innerHTML;
+      doc.autoTable({ 
+        html: "#portTasks1",       
+        didParseCell: function(hookData) {  
+          // console.log(hookData)      
+          if (hookData.section == 'head')    {
+              hookData.cell.styles.fillColor = "383838"; 
+              hookData.cell.styles.textColor = [255, 255, 255];   
+          }          
+            for (const t of Object.values(hookData.table.body)) {   
+                if (t.raw.length === 1){
+                  // console.log("yes") 
+                   for (const s of Object.values(t.cells)) {
+                           s.styles.fontStyle = 'bold'; 
+                           s.styles.textColor = [255, 255, 255];      
+                           s.styles.fillColor = [2, 117, 216];   
+                   }
+                     
+            }            
+         }
+      }
+    });
+      doc.save("Program_Task_List.pdf");
+    },
+    exportTasksToExcel(table, name) {
+      if (!table.nodeType) table = this.$refs.table;
+      var ctx = { worksheet: name || "Worksheet", table: table.innerHTML };
+      window.location.href =
+        this.uri + this.base64(this.format(this.template, ctx));
+    },
     handleClick(tab, event) {
        let tab_id = $(event.target).attr("id")          
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
@@ -1885,7 +2062,7 @@ export default {
         taskId: task.id,
       },
     });
-    console.log(this.$route.params)
+    // console.log(this.$route.params)
     },
     openTpresentation(){
       this.dialogVisible = true; 
