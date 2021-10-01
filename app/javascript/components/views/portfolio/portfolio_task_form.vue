@@ -1510,9 +1510,6 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_task.task_type_id
       );
-      // this.selectedTaskType = this.taskTypeIds.find(
-      //   (t) => t === this.DV_task.task_type_id
-      // );
       if (this.taskStages) {
       this.selectedTaskStage = this.taskStages[this.programId].find(
         (t) => t.id === this.DV_task.task_stage_id
@@ -1644,9 +1641,7 @@ export default {
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
         );
-        // RACI USERS START HERE Awaiting backend work
-
-        //Responsible USer Id
+       //Responsible User Id
         //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
         if (
           this.DV_task.responsible_user_ids &&
@@ -1822,9 +1817,9 @@ export default {
             }
             //Route to newly created task form page
            //this.fetchPortfolioTasks()
-           this.$router.push(
-                `/portfolio`
-              );
+          //  this.$router.push(
+          //       `/portfolio`
+          //     );
           })
           // .catch((err) => {
           //   alert(err.response.data.error);
@@ -2108,24 +2103,6 @@ export default {
           ? "Edit Task"
           : "Add Task"
         : "Task";
-    },
-    tab() {
-      if (this.$route.path.includes("map")) {
-        return "map";
-      } else if (this.$route.path.includes("sheet")) {
-        return "sheet";
-      } else if (this.$route.path.includes("calendar")) {
-        return "calendar";
-      } else {
-        return "kanban";
-      }
-    },
-    projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      }
     },
   },
   watch: {

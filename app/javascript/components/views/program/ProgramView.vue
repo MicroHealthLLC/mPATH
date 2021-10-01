@@ -1,12 +1,10 @@
 <template>
 <div>
   <div class="backBtn">     
-      <span>
-          <router-link :to="`/programs/${this.$route.params.programId}/sheet`" > 
-          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer">
+      <span class="float-right">
+          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backBtn">
            <i class="fal fa-arrow-alt-left text-light"></i>
           </button>  
-          </router-link>
       </span>
     </div>
   <div class="container-fluid mx-3 portfolioView_main" :load="log(currentTab)"
@@ -125,19 +123,19 @@
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
                                  <div style="height:300px; overflow-y:auto">
-                                 <span  v-if="dynamicObj[currentTaskSlide].notesUpdatedAt.length > 0">                    
+                                 <span  v-if="dynamicObj[currentTaskSlide].notes.length > 0">                    
                                   <span>
                                     <br>
-                                   <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].notes[dynamicObj[currentTaskSlide].notes.length - 1].body }}</em></h4>
+                                   <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].lastUpdate.body }}</em></h4>
                                   </span>
                                    <span
                                     class="px-2"                                                                 
                                    >
                                     <h6 class="mt-2">{{
-                                      moment(dynamicObj[currentTaskSlide].notesUpdatedAt[0]).format(
+                                      moment(dynamicObj[currentTaskSlide].lastUpdate.createdAt).format(
                                         "DD MMM YYYY, h:mm a "
                                       ) + ' By: ' +
-                                     dynamicObj[currentTaskSlide].notes[dynamicObj[currentTaskSlide].notes.length - 1].user.fullName
+                                     dynamicObj[currentTaskSlide].lastUpdate.user.fullName
                                     }} 
                                     </h6>
                                   </span>
@@ -2022,6 +2020,9 @@ export default {
     // backBtn() {      
     //   return `/programs/${this.$route.params.programId}/sheet`;
     // },
+    backBtn() {
+      window.location.pathname = `/programs/${this.$route.params.programId}/sheet`
+    },
       showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
@@ -2031,6 +2032,36 @@ export default {
     showLessToggle() {
       this.showLess = "Show Less";
     },
+    resetFlags(){  
+    if(this.getHidePlanned){
+    this.setHidePlanned(!this.getHidePlanned)   
+    } else this.setHidePlanned(this.getHidePlanned)  
+        
+    if(this.getHideOnhold){
+    this.setHideOnhold(!this.getHideOnhold)   
+    } else this.setHideOnhold(this.getHideOnhold)  
+        
+    if(this.getHideDraft){
+    this.setHideDraft(!this.getHideDraft)   
+    } else this.setHideDraft(this.getHideDraft)          
+      
+    if(this.getHideComplete){
+    this.setHideComplete(!this.getHideComplete)   
+    } else this.setHideComplete(this.getHideComplete)           
+        
+    if(this.getHideInprogress){
+    this.setHideInprogress(!this.getHideInprogress)  
+    } else this.setHideInprogress(this.getHideInprogress)            
+          
+    if(this.getHideOngoing){
+    this.setHideOngoing(!this.getHideOngoing)   
+    } else this.setHideOngoing(this.getHideOngoing)  
+          
+    if(this.getHideOverdue){
+    this.setHideOverdue(!this.getHideOverdue)   
+    } else this.setHideOverdue(this.getHideOverdue) 
+ },
+
     toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
     },
@@ -2117,9 +2148,11 @@ export default {
       return Number(mean.toFixed(0));
     },
   },
+  beforeMount(){
+  this.fetchProgramLessonCounts(this.$route.params)  
+  },
   mounted() {
-    this.fetchPortfolioPrograms();
-    this.fetchProgramLessonCounts(this.$route.params)  
+    this.fetchPortfolioPrograms();    
         this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered

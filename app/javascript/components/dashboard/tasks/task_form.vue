@@ -1829,8 +1829,8 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else  this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer`
+            } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
               );
           })
           .catch((err) => {
