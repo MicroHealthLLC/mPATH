@@ -4124,8 +4124,6 @@
                     </thead>
                     <tbody>
                       <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
-                          <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable"> -->
-                        
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
