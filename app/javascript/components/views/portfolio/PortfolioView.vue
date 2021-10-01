@@ -1,14 +1,20 @@
 <template>
-  <div  class="container-fluid mt-3 mx-3 portfolioView_main" :load="log(portfolioPrograms.filter(l => l.program_id == 1))">
+  <div  class="container-fluid mt-3 mx-3 portfolioView_main"
+    v-loading="!portfolioProgramsLoaded"
+    element-loading-text="Fetching Portfolio data. Please wait..."  
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)" 
+    :class="{ 'vh100' : !portfolioProgramsLoaded}"  
+    >
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
         <img
           class="mb-2"
-          style="width: 40px"
-          :src="require('../../../../assets/images/mpathcircles.JPG')"
+          style="width: 147px"
+          :src="require('../../../../assets/images/microhealthllc.png')"
         />
-        <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
+        <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
       </span>
       <span class="float-right mr-4">
         <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backHomeBtn">
@@ -16,7 +22,7 @@
         </button>  
       </span>
     </div>
-    <el-tabs class="mt-1 mr-3" type="border-card">
+    <el-tabs class="mt-2 mr-3" type="border-card">
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
            
@@ -6218,38 +6224,6 @@ export default {
        this.currentSortCol2 = s; 
        this.currentSort = "";
     },
-  //   sortICol1: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol1) {
-  //       this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
-  //     }
-  //     this.currentSortCol1 = s; 
-  //     this.currentSort = "";
-  //   },
-  //  sortICol2: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol2) {
-  //       this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
-  //     }
-  //      this.currentSortCol2 = s; 
-  //      this.currentSort = "";
-  //   },
-  //   sortRCol1: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol1) {
-  //       this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
-  //     }
-  //     this.currentSortCol1 = s; 
-  //     this.currentSort = "";
-  //   },
-  //   sortRCol2: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol2) {
-  //       this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
-  //     }
-  //      this.currentSortCol2 = s; 
-  //      this.currentSort = "";
-  //   },
     nextPage: function () {
       if (this.currentPage * this.C_tasksPerPage.value < this.tasksObj.filtered.tasks.length)
         this.currentPage++;

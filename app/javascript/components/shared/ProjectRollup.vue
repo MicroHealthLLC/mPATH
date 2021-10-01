@@ -17,12 +17,13 @@
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded" class="float-right mt-1">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
-              <router-link :to="ProgramView"> 
+       
                 <button 
+                  @click.prevent="programView"
                   class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
                   {{ currentProject.name }} DATA VIEWER
                 </button>   
-               </router-link>             
+                        
         </span>         
        
       </div>
@@ -1124,10 +1125,7 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
-    },
-    ProgramView() {
-     return `/programs/${this.$route.params.programId}/dataviewer`
-    },
+    },  
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
@@ -1854,6 +1852,10 @@ export default {
           "progress"
         ) || 0;
       return Number(mean.toFixed(0));
+    },
+    programView() {
+      window.location.pathname = `/programs/${this.$route.params.programId}/dataviewer`
+  
     },
   },
   mounted() {

@@ -755,18 +755,18 @@ v-if="filteredRisks.filtered.risks.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th>
-               <th class="pl-1 sort-th twenty" @click="sort('priorityLevelName')">
+               <th class="pl-1 sort-th twenty" @click="sort('priorityLevel')">
         Priority Level
         <span
             class="inactive-sort-icon scroll"
-            v-if="currentSort !== 'priorityLevelName'"
+            v-if="currentSort !== 'priorityLevel'"
         >
             <i class="fas fa-sort"></i
         ></span>
         <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'asc' && currentSort === 'priorityLevelName'
+            currentSortDir === 'asc' && currentSort === 'priorityLevel'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -774,7 +774,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'asc' && currentSort === 'priorityLevelName'
+            currentSortDir !== 'asc' && currentSort === 'priorityLevel'
             "
         >
             <i class="fas fa-sort-up"></i
@@ -782,7 +782,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         <span
             class="sort-icon scroll"
             v-if="
-            currentSortDir === 'desc' && currentSort === 'priorityLevelName'
+            currentSortDir === 'desc' && currentSort === 'priorityLevel'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -790,7 +790,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir !== 'desc' && currentSort === 'priorityLevelName'
+            currentSortDir !== 'desc' && currentSort === 'priorityLevel'
             "
         >
             <i class="fas fa-sort-down"></i
@@ -1001,31 +1001,18 @@ v-if="filteredRisks.filtered.risks.length > 0"
         <td>{{ risk.projectGroup }}</td>
         <td>{{ risk.facilityName }}</td>
         <td>{{ risk.text }}</td>        
-        <td
-            class="text-left"
-            v-if="risk.notesUpdatedAt.length > 0"
-        >
-            <span
-            class="toolTip"
-            v-tooltip="
-                'By: ' +
-                risk.notes[risk.notes.length - 1].user.fullName
-            "
-            >
-            {{
-                moment(risk.notesUpdatedAt[0]).format(
-                "DD MMM YYYY, h:mm a"
-                )
-            }}
-            </span>
-            <br />
-            <span class="truncate-line-five">
-            {{ risk.notes[risk.notes.length - 1].body }}
-            </span>
-        </td>
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td class="text-left" v-else>No Update</td>
-   <td>
+        <td class="text-left">       
+          <span  v-if="risk.notes.length > 0">
+          <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
+          {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{risk.lastUpdate.body}}
+          </span>   
+          </span>
+          <span v-else></span>      
+        </td>  
+        <td>
             {{
               risk.riskApproach.charAt(0).toUpperCase() +
               risk.riskApproach.slice(1)
@@ -1290,31 +1277,15 @@ v-if="filteredRisks.filtered.risks.length > 0"
                   In Progress
                   </span>
                 </td>
-                <td
-                  class="text-left"
-                  v-if="risk.notesUpdatedAt.length > 0"
-                  >
-                  <span
-                    class="toolTip"
-                    v-tooltip="
-                      'By: ' +
-                      risk.notes[risk.notes.length - 1].user.fullName
-                    "
-                  >
-                    {{
-                      moment(risk.notesUpdatedAt[0]).format(
-                        "DD MMM YYYY, h:mm a"
-                      )
-                    }}
-                  </span>
-                  <br />
-                  <span class="truncate-line-five">
-                    {{ risk.notes[risk.notes.length - 1].body }}
-                  </span>
-                </td>
-                          <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                <td class="text-left" v-else>No Update</td>
-              </tr>
+             <td v-if="risk.notes.length > 0">       
+              <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
+              {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+              </span> 
+              <span>
+                {{risk.lastUpdate.body}}
+              </span>         
+             </td>  
+            </tr>
           </tbody>
         </table>
 

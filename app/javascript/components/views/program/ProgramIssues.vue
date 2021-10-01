@@ -948,29 +948,21 @@ v-if="filteredIssues.filtered.issues.length > 0"
         <td>{{ issue.facilityName }}</td>
         <td>{{ issue.title }}</td>
         <td
-            class="text-left"
-            v-if="issue.notesUpdatedAt.length > 0"
+            class="text-left"           
         >
-            <span
-            class="toolTip"
-            v-tooltip="
-                'By: ' +
-                issue.notes[issue.notes.length - 1].user.fullName
-            "
-            >
-            {{
-                moment(issue.notesUpdatedAt[0]).format(
-                "DD MMM YYYY, h:mm a"
-                )
-            }}
-            </span>
-            <br />
-            <span class="truncate-line-five">
-            {{ issue.notes[issue.notes.length - 1].body }}
-            </span>
+
+         <span v-if="issue.notes.length > 0">       
+          <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
+          {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+          </span> 
+          <span>
+            {{issue.lastUpdate.body}}
+          </span>         
+          </span>  
+          <span class="text-left" v-else>No Update</span>
         </td>
-        <!-- <td v-else class="twentyTwo">No Updates</td> -->
-        <td class="text-left" v-else>No Update</td>
+   
+       
         <td>{{ issue.issueType }}</td>
         <td>{{ issue.issueSeverity }}</td>
         <td>           
@@ -1115,29 +1107,16 @@ v-if="filteredIssues.filtered.issues.length > 0"
                     </span>
                   </td>
                     <td>
-                  <span   class="text-left"
-                    v-if="issue.notesUpdatedAt.length > 0">
-                    <span
-                      class="toolTip"
-                      v-tooltip="
-                        'By: ' +
-                        issue.notes[issue.notes.length - 1].user.fullName
-                      "
-                    >
-                      {{
-                        moment(issue.notesUpdatedAt[0]).format(
-                          "DD MMM YYYY, h:mm a"
-                        )
-                      }}
-                    </span>
-                    <br />
-                    <span class="truncate-line-five">
-                      {{ issue.notes[issue.notes.length - 1].body }}
-                    </span>
-                  </span>
-                  <span v-else>
-                  </span>
-                  </td>           
+                    <span v-if="issue.notes.length > 0">       
+                    <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
+                    {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
+                    </span> 
+                    <span>
+                      {{issue.lastUpdate.body}}
+                    </span>         
+                    </span>  
+                    <span class="text-left" v-else>No Update</span>
+                </td>           
             </tr>
          </tbody>
         </table>

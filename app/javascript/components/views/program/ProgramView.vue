@@ -1,12 +1,10 @@
 <template>
 <div>
   <div class="backBtn">     
-      <span>
-          <router-link :to="`/programs/${this.$route.params.programId}/sheet`" > 
-          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
+      <span class="float-right">
+          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backBtn">
            <i class="fal fa-arrow-alt-left text-light"></i>
           </button>  
-          </router-link>
       </span>
     </div>
   <div class="container-fluid mx-3 portfolioView_main" :load="log(currentTab)"
@@ -2022,6 +2020,9 @@ export default {
     // backBtn() {      
     //   return `/programs/${this.$route.params.programId}/sheet`;
     // },
+    backBtn() {
+      window.location.pathname = `/programs/${this.$route.params.programId}/sheet`
+    },
       showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
@@ -2031,56 +2032,35 @@ export default {
     showLessToggle() {
       this.showLess = "Show Less";
     },
-    resetFlags(){
-
-  //  if (this.getHideComplete == false) {
-  //   this.setHideComplete(this.getHideComplete)        
-  //   } if  (!this.getHideComplete){
-  //   this.setHideComplete(this.getHideComplete)    
-  //   }
-  //   // this.setHideComplete(this.getHideComplete === false)    
-  //   this.setHideDraft(this.getHideDraft === false) 
-  //   this.setHidePlanned(!this.getHidePlanned)    
-if(this.getHidePlanned){
-this.setHidePlanned(!this.getHidePlanned)   
-} else this.setHidePlanned(this.getHidePlanned)  
-     
-  if(this.getHideOnhold){
-this.setHideOnhold(!this.getHideOnhold)   
-} else this.setHideOnhold(this.getHideOnhold)  
-     
-
-
-if(this.getHideDraft){
-this.setHideDraft(!this.getHideDraft)   
-} else this.setHideDraft(this.getHideDraft)  
-     
-  
-  if(this.getHideComplete){
-this.setHideComplete(!this.getHideComplete)   
-} else this.setHideComplete(this.getHideComplete)  
-       
-    
-if(this.getHideInprogress){
-this.setHideInprogress(!this.getHideInprogress)  
-} else this.setHideInprogress(this.getHideInprogress)  
-       
+    resetFlags(){  
+    if(this.getHidePlanned){
+    this.setHidePlanned(!this.getHidePlanned)   
+    } else this.setHidePlanned(this.getHidePlanned)  
+        
+    if(this.getHideOnhold){
+    this.setHideOnhold(!this.getHideOnhold)   
+    } else this.setHideOnhold(this.getHideOnhold)  
+        
+    if(this.getHideDraft){
+    this.setHideDraft(!this.getHideDraft)   
+    } else this.setHideDraft(this.getHideDraft)          
       
-  if(this.getHideOngoing){
-this.setHideOngoing(!this.getHideOngoing)   
-} else this.setHideOngoing(this.getHideOngoing)  
-      
-if(this.getHideOverdue){
-this.setHideOverdue(!this.getHideOverdue)   
-} else this.setHideOverdue(this.getHideOverdue) 
-    
-
-  //   this.setHideOngoing(!this.getHideOngoing)    
-
-  //   this.setHideOnhold(!this.getHideOnhold)   
-  //   //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
-  //   this.setHideOverdue(!this.getHideOverdue)    
-    },
+    if(this.getHideComplete){
+    this.setHideComplete(!this.getHideComplete)   
+    } else this.setHideComplete(this.getHideComplete)           
+        
+    if(this.getHideInprogress){
+    this.setHideInprogress(!this.getHideInprogress)  
+    } else this.setHideInprogress(this.getHideInprogress)            
+          
+    if(this.getHideOngoing){
+    this.setHideOngoing(!this.getHideOngoing)   
+    } else this.setHideOngoing(this.getHideOngoing)  
+          
+    if(this.getHideOverdue){
+    this.setHideOverdue(!this.getHideOverdue)   
+    } else this.setHideOverdue(this.getHideOverdue) 
+ },
 
     toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
@@ -2168,9 +2148,11 @@ this.setHideOverdue(!this.getHideOverdue)
       return Number(mean.toFixed(0));
     },
   },
+  beforeMount(){
+  this.fetchProgramLessonCounts(this.$route.params)  
+  },
   mounted() {
-    this.fetchPortfolioPrograms();
-    this.fetchProgramLessonCounts(this.$route.params)  
+    this.fetchPortfolioPrograms();    
         this.$nextTick(function () {
       // Code that will run only after the
       // entire view has been rendered
