@@ -70,7 +70,7 @@ class RisksController < AuthenticatedController
     if params[:source] == "portfolio_viewer"
       response = @risk.reload.portfolio_json
     else
-      response = @issue.reload.to_json
+      response = @risk.reload.to_json
     end
 
     if @risk.errors.any?

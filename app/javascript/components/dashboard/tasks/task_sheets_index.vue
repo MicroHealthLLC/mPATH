@@ -3,7 +3,7 @@
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
-         <div class="ml-3 task-search-bar w-75">
+         <div class="ml-3 task-search-bar w-100">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
             type="search"          
@@ -717,6 +717,8 @@
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+
+     
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
           if (taskIssueUsers.length > 0) {
@@ -761,7 +763,7 @@
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
           return valid
         }), ['dueDate'])
-
+     console.log(tasks)
     return {
        unfiltered: {
             tasks

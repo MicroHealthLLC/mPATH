@@ -53,7 +53,7 @@ ActiveAdmin.register Lesson do
       end
     end
     column :description, sortable: false
-    column "Files" do |lesson|
+    column "Files & Links" do |lesson|
       lesson.lesson_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
@@ -159,7 +159,7 @@ ActiveAdmin.register Lesson do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :lesson_files
           div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
-          f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
+          f.input :file_links, label: 'Add Links', placeholder: 'Input link, then "Enter"'
         end
       end
 
