@@ -123,19 +123,19 @@
                                 <div class="lastUpdateCol">                                
                                  <h3 class="mh-green text-light d-block">LAST UPDATE</h3>
                                  <div style="height:300px; overflow-y:auto">
-                                 <span  v-if="dynamicObj[currentTaskSlide].notesUpdatedAt.length > 0">                    
+                                 <span  v-if="dynamicObj[currentTaskSlide].notes.length > 0">                    
                                   <span>
                                     <br>
-                                   <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].notes[dynamicObj[currentTaskSlide].notes.length - 1].body }}</em></h4>
+                                   <h4 class="px-3"> <em>{{ dynamicObj[currentTaskSlide].lastUpdate.body }}</em></h4>
                                   </span>
                                    <span
                                     class="px-2"                                                                 
                                    >
                                     <h6 class="mt-2">{{
-                                      moment(dynamicObj[currentTaskSlide].notesUpdatedAt[0]).format(
+                                      moment(dynamicObj[currentTaskSlide].lastUpdate.createdAt).format(
                                         "DD MMM YYYY, h:mm a "
                                       ) + ' By: ' +
-                                     dynamicObj[currentTaskSlide].notes[dynamicObj[currentTaskSlide].notes.length - 1].user.fullName
+                                     dynamicObj[currentTaskSlide].lastUpdate.user.fullName
                                     }} 
                                     </h6>
                                   </span>
