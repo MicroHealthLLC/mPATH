@@ -695,7 +695,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           <td>{{ lesson.project_group }}</td>
           <td>{{ lesson.project_name }}</td>
           <td>{{ lesson.title }}</td>
-          <td>
+          <td class="text-left">
            <span v-if="lesson.notes.length > 0">       
               <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
               {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
