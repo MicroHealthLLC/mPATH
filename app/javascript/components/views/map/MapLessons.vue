@@ -14,7 +14,7 @@
           value-key="id"
           multiple
           clearable
-          placeholder="Select Category"
+          placeholder="Select Process Area"
           >
           <el-option
             v-for="item in taskTypes"

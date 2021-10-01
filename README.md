@@ -128,10 +128,12 @@ you will have to create an nginx service now
         If you still have permission problems be sure to check selinux
         
 # Install Mysql
-        yum install mariadb-server mariadb
+        yum install mariadb-server mariadb  OR follow instructions here https://linuxize.com/post/install-mariadb-on-centos-7/#install-mariadb-103-on-centos-7 for client only install for remote databse connections. You will also need to run this "yum install mariadb-shared" after you follow the instructions in the link above 
 
         yum install mysql-devel
-
+        
+        yum install MariaDB-shared
+        
         systemctl start mariadb
 
         systemctl enable mariadb
@@ -172,6 +174,8 @@ you will have to create an nginx service now
         rake db:seed RAILS_ENV=production
 
         rake assets:precompile RAILS_ENV=production
+        
+        go into your nginx.conf and configure server_name to your server and configure root to serve /var/www/mPATH/public or where ever you installed the website
 
         chown -R nginx:nginx *
         
@@ -190,3 +194,5 @@ Change, configure and customize your instance.  callback uri for socialmedia set
 https://YourliveSiteDomain/users/auth/google_oauth2/callback
 
 https://YourliveSiteDomain/users/auth/office365/callback
+
+After you have it configured in google or office 365 and you have the proper values entered in the system, restart nginx

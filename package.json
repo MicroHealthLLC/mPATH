@@ -7,7 +7,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/vue-fontawesome": "^2.0.0",
     "@rails/webpacker": "4.2.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.20.1",
     "chart.js": "^2.9.3",
@@ -25,7 +25,6 @@
     "moment-range": "^4.0.2",
     "node-sass": "^4.13.0",
     "sweet-modal-vue": "^2.0.0",
-    "tar": "^3.2.3",
     "v-click-outside": "^3.1.2",
     "v-tooltip": "^2.0.3",
     "vee-validate": "2.1.7",
@@ -55,14 +54,16 @@
     "vuetify": "^2.3.21",
     "vuex": "^3.1.2",
     "vuex-persistedstate": "^3.0.1",
-    "xlsx": "^0.16.2"
+    "xlsx": "^0.17.0"
   },
   "resolutions": {
     "postcss-svgo/is-svg": "^4.2.2",
     "serialize-javascript": "^3.1.0",
     "trim-newlines": "^3.0.1",
     "glob-parent": "^5.1.2",
-    "tar": "^3.2.3"
+    "tar": "^4.4.18",
+    "nth-check": "^2.0.1",
+    "set-value": "^4.0.1"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",

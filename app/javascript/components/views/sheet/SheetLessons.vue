@@ -1,5 +1,5 @@
 <template>
-  <div v-if="contentLoaded">
+  <div v-if="contentLoaded" class="mt-1 ml-1">
        <div class="d-flex align-item-center w-70 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
@@ -7,6 +7,12 @@
           <el-button slot="prepend" icon="el-icon-search"></el-button>
         </el-input>
       </div>
+        <div class="ml-2">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
+        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+           <i class="fas fa-sliders-h p-2"></i>      
+        </span>    
+         </div>
       <div class="mx-1 w-75">
         <label class="font-sm my-0">Process Area</label>
         <el-select
@@ -235,7 +241,7 @@
               <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
               {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
               </span> 
-              <span>
+              <span class="truncate-line-five">
                 {{lesson.last_update.body}}
               </span>         
             </td>  
@@ -337,6 +343,7 @@ export default {
       'setShowCount',
       'setTaskTypeFilter',
       'setCurrentLessonPage',
+      'setShowAdvancedFilter',
       // 2 States
       'setHideComplete',
       'setHideDraft',
@@ -420,6 +427,9 @@ export default {
     toggleDraft(){
       this.setHideDraft(!this.getHideDraft)    
     },
+    toggleAdvancedFilter() {
+        this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
+    },
     showCounts(){
       this.setShowCount(!this.getShowCount)       
     },
@@ -433,6 +443,7 @@ export default {
       'getLessonsPerPageFilterOptions',
       'getLessonsPerPageFilter',
       'getShowCount',
+      'getShowAdvancedFilter',
       'taskTypeFilter',
       'taskTypes',
       // 2 States
@@ -781,7 +792,7 @@ i, .icons {
 }
 .filters-wrapper {
     float: right;
-    margin-top: -85px;
+    margin-top: -80px;
 }
 @media screen and (max-width: 1500px) {
   .filters-wrapper {

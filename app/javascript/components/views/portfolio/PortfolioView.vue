@@ -1,14 +1,20 @@
 <template>
-  <div  class="container-fluid mt-3 mx-3 portfolioView_main">
+  <div  class="container-fluid mt-3 mx-3 portfolioView_main"
+    v-loading="!portfolioProgramsLoaded"
+    element-loading-text="Fetching Portfolio data. Please wait..."  
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)" 
+    :class="{ 'vh100' : !portfolioProgramsLoaded}"  
+    >
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
         <img
           class="mb-2"
-          style="width: 40px"
-          :src="require('../../../../assets/images/mpathcircles.JPG')"
+          style="width: 147px"
+          :src="require('../../../../assets/images/microhealthllc.png')"
         />
-        <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3>
+        <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
       </span>
       <span class="float-right mr-4">
         <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click.prevent="backHomeBtn">
@@ -16,7 +22,7 @@
         </button>  
       </span>
     </div>
-    <el-tabs class="mt-1 mr-3" type="border-card">
+    <el-tabs class="mt-2 mr-3" type="border-card">
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
            
@@ -1157,6 +1163,7 @@
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
+                          <span v-else-if="task.completed && (task.due_date == null || task.due_date == undefined)"></span>
                           <span
                             v-else-if="task.on_hold && task.due_date == null"
                             v-tooltip="`On Hold (w/no Due Date)`"
@@ -1270,7 +1277,7 @@
       </thead>
       <tbody v-for="(p, i) in validTaskPrograms" :key="i">  
         <tr id="program">  <th scope="row"><b>{{ p }}</b></th></tr>
-           <tr v-for="(task, index) in sortedTasks" :key="index" v-if="task.program_name == p">            
+           <tr v-for="(task, index) in tasksObj.filtered.tasks" :key="index" v-if="task.program_name == p">            
               <td>{{ task.text }}</td>
               <td>{{ task.category }}</td>
               <td> {{ task.project_name}} </td>
@@ -1289,11 +1296,13 @@
                 <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                   ><i class="fas fa-retweet text-success"></i
                 ></span>
+                 <span v-else-if="task.completed && (task.due_date == null || task.due_date == undefined)"></span>
                 <span
                   v-else-if="task.on_hold && task.due_date == null"
                   v-tooltip="`On Hold (w/no Due Date)`"
                   ><i class="fas fa-pause-circle text-primary"></i
                 ></span>
+                
                 <span v-else>{{
                   moment(task.due_date).format("DD MMM YYYY")
                 }}</span>
@@ -1415,7 +1424,7 @@
                   </button>
                 </div>
               </div>
-              <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div>
+              <!-- <div v-else-if="!portfolioTasksLoaded" class="load-spinner spinner-border"></div> -->
               <div v-else class="mt-5">NO RESULTS TO DISPLAY
  
                   
@@ -2209,6 +2218,7 @@
                           v-tooltip="`On Hold (w/no Due Date)`"
                           ><i class="fas fa-pause-circle text-primary"></i
                         ></span>
+                        <span v-else-if="issue.completed && (issue.due_date == null || issue.due_date == undefined)"></span>
                         <span v-else
                           >{{ moment(issue.due_date).format("DD MMM YYYY") }}
                         </span>
@@ -2287,7 +2297,7 @@
       </thead>
       <tbody v-for="(p, i) in validIssuePrograms" :key="i">  
         <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
-           <tr v-for="(issue, index) in sortedIssues" :key="index" v-if="issue.program_name == p">            
+           <tr v-for="(issue, index) in issuesObj.filtered.issues" :key="index" v-if="issue.program_name == p">            
               <td>{{ issue.title }}</td>
               <td>{{ issue.issue_type }}</td>
               <td>{{ issue.project_name }}</td>
@@ -2301,6 +2311,7 @@
                       v-tooltip="`On Hold (w/no Due Date)`"
                       ><i class="fas fa-pause-circle text-primary"></i
                     ></span>
+                    <span v-else-if="issue.completed && (issue.due_date == null || issue.due_date == undefined)"></span>
                     <span v-else
                       >{{ moment(issue.due_date).format("DD MMM YYYY") }}
                     </span>
@@ -3276,6 +3287,7 @@
                           <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
+                        <span v-else-if="risk.completed && (risk.due_date == null || risk.due_date == undefined)"></span>
                           <span
                             v-else-if="risk.on_hold && risk.due_date == null"
                             v-tooltip="`On Hold (w/no Due Date)`"
@@ -3379,7 +3391,7 @@
                 </thead>
                 <tbody v-for="(p, i) in validRiskPrograms" :key="i">  
                   <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
-                  <tr  v-for="(risk, index) in sortedRisks" :key="index" v-if="risk.program_name == p">            
+                  <tr  v-for="(risk, index) in risksObj.filtered.risks" :key="index" v-if="risk.program_name == p">            
                   <td>{{ risk.text }}</td>
                   <td>{{ risk.project_name}} </td>
                   <td>
@@ -3430,6 +3442,7 @@
                         <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
                           ><i class="fas fa-retweet text-success"></i
                         ></span>
+                        <span v-else-if="risk.completed && (risk.due_date == null || risk.due_date == undefined)"></span>
                         <span
                           v-else-if="risk.on_hold && risk.due_date == null"
                           v-tooltip="`On Hold (w/no Due Date)`"
@@ -4111,8 +4124,6 @@
                     </thead>
                     <tbody>
                       <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
-                          <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable"> -->
-                        
                         <td>{{ lesson.program_name }}</td>
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
@@ -4212,7 +4223,7 @@
                 </thead>
                   <tbody v-for="(p, i) in validLessonPrograms" :key="i">  
                     <tr class="text-center">  <th scope="row">{{ p }}</th></tr>
-                    <tr v-for="(lesson, index) in sortedLessons" :key="index"  v-if="lesson.program_name == p">            
+                    <tr v-for="(lesson, index) in lessonsObj.filtered.lessons" :key="index"  v-if="lesson.program_name == p">            
                     <td>{{ lesson.title }}</td>
                     <td>
                     {{ moment(lesson.created_at).format("DD MMM YYYY") }}
@@ -4363,7 +4374,7 @@ export default {
       search_issues: "",
       search_risks: "",
       search_lessons: "",
-      currentSortText: "text" || "title",  
+      currentSort: "text" || "title",  
       currentSortCol1: "program_name",
       currentSortCol2: "project_name",
       // currentSortIssueRisk: "title",
@@ -4580,7 +4591,7 @@ export default {
   sortedTasks:function() {
       return this.tasksObj.filtered.tasks.sort((a,b) => {
       let modifier = 1;
-    
+      
       if (this.currentSortDir1 === "desc") modifier = -1;
       if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
       if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
@@ -6017,7 +6028,7 @@ export default {
       "fetchPortfolioPrograms",
       ]),
     log(e) {
-      //  console.log("number" + e)
+       console.log(e)
     },
     showCounts(){
       this.setShowCount(!this.getShowCount)       
@@ -6211,38 +6222,6 @@ export default {
        this.currentSortCol2 = s; 
        this.currentSort = "";
     },
-  //   sortICol1: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol1) {
-  //       this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
-  //     }
-  //     this.currentSortCol1 = s; 
-  //     this.currentSort = "";
-  //   },
-  //  sortICol2: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol2) {
-  //       this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
-  //     }
-  //      this.currentSortCol2 = s; 
-  //      this.currentSort = "";
-  //   },
-  //   sortRCol1: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol1) {
-  //       this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
-  //     }
-  //     this.currentSortCol1 = s; 
-  //     this.currentSort = "";
-  //   },
-  //   sortRCol2: function (s) {
-  //    //if s == current sort, reverse
-  //     if (s === this.currentSortCol2) {
-  //       this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
-  //     }
-  //      this.currentSortCol2 = s; 
-  //      this.currentSort = "";
-  //   },
     nextPage: function () {
       if (this.currentPage * this.C_tasksPerPage.value < this.tasksObj.filtered.tasks.length)
         this.currentPage++;
@@ -6299,7 +6278,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
       doc.autoTable({ 
-        html: "#portTasks",       
+        html: "#portTasks1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
@@ -6331,7 +6310,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
             doc.autoTable({ 
-        html: "#portIssues",       
+        html: "#portIssues1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
@@ -6363,7 +6342,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
       doc.autoTable({ 
-        html: "#portRisks",       
+        html: "#portRisks1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
@@ -6395,7 +6374,7 @@ export default {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
         doc.autoTable({ 
-        html: "#portLessons",       
+        html: "#portLessons1",       
         didParseCell: function(hookData) {  
           // console.log(hookData)      
           if (hookData.section == 'head')    {
