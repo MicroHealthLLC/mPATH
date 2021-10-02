@@ -241,7 +241,7 @@
               <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
               {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
               </span> 
-              <span>
+              <span class="truncate-line-five">
                 {{lesson.last_update.body}}
               </span>         
             </td>  
