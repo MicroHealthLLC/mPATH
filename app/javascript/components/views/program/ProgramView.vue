@@ -2170,6 +2170,9 @@ export default {
   top:1rem;
   position:absolute;
   right: 1rem;
+  background-color: #fff;
+  z-index: 1045;
+  width: 350px;
 }
 
 </style>
