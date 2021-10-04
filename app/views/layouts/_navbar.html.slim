@@ -14,7 +14,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
           span.text-info.font-weight-bold
             | #{@project.try(:name)}
 
-    -if  params[:action] != "program_dataviewer"
+    -if  params[:action] != "dataviewer"
       ul.navbar-nav.my-2.my-lg-0
         -if user_signed_in?
           -if current_user.admin?
