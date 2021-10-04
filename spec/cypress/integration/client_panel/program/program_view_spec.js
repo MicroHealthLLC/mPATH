@@ -37,6 +37,7 @@ describe('Program Viewer ', function() {
     })
 
     cy.get('[data-cy="task_save_btn"]').click()
+    cy.wait(3000)
     cy.get('[data-cy="task_close_btn"]').click({force: true})
     cy.get('#portTasks > tbody > tr').first().contains('1 Test Task 1 - Update').should('be.visible')
 
@@ -63,6 +64,7 @@ describe('Program Viewer ', function() {
     })
 
     cy.get('[data-cy="issue_save_btn"]').click()
+      cy.wait(3000)
     cy.get('[data-cy="issue_close_btn"]').click({force: true})
     cy.get('#portIssues > tbody > tr').first().contains('1 New Issue 1 - Update').should('be.visible')
 
@@ -91,6 +93,7 @@ describe('Program Viewer ', function() {
     })
 
     cy.get('[data-cy="risk_save_btn"]').click()
+      cy.wait(3000)
     cy.get('[data-cy="risk_close_btn"]').click({force: true})
     cy.get('#portRisks > tbody > tr').first().contains('1 New Risk 1 - Update').should('be.visible')
 
@@ -119,7 +122,8 @@ describe('Program Viewer ', function() {
     })
 
     cy.get('[data-cy="lesson_save_btn"]').click()
-    cy.get('[data-cy="lesson_close_btn"]').click({force: true})
+    cy.wait(3000)
+    // cy.get('[data-cy="lesson_close_btn"]').click({force: true})
     cy.get('#portLessons > tbody > tr').first().contains('1 Test Lesson 1 - Update').should('be.visible')
 
   })
