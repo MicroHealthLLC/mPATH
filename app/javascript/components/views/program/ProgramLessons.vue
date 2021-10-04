@@ -3,7 +3,7 @@
   <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
     <template slot="title">
     <div v-if="dynamicObj.length > 0 && dynamicObj[currentLessonSlide] !== undefined" class="container-fluid">
-      <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">{{ action }}</h3>
+      <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0"> LESSON </h3>
         <div v-for="number in [currentLessonSlide]" :key="number" >
         <div class="row justify-content-center">
           <div class="col-3 pb-0">
