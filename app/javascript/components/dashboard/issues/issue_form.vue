@@ -20,9 +20,16 @@
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link :to="projectNameLink">{{
-              issue.facilityName
-            }}</router-link>
+            <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
+                facility.facilityName
+                }}
+            </span>
+            <span v-else>{{
+                issue.facilityName
+            }}
+            </span>            
+            </router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"

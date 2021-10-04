@@ -762,8 +762,7 @@
             valid && search_query.test(resource.userNames)
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
           return valid
-        }), ['dueDate'])
-     console.log(tasks)
+        }), ['dueDate']) 
     return {
        unfiltered: {
             tasks
