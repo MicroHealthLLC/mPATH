@@ -1111,7 +1111,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
                     <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
                     {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
                     </span> 
-                    <span>
+                    <span class="truncate-line-five">
                       {{issue.lastUpdate.body}}
                     </span>         
                     </span>  
