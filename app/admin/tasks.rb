@@ -64,7 +64,7 @@ ActiveAdmin.register Task do
     column :due_date
     column :progress
     column :description, sortable: false
-    column "Files" do |task|
+    column "Files & Links" do |task|
       task.task_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
@@ -154,7 +154,7 @@ ActiveAdmin.register Task do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :task_files
           div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
-          f.input :file_links, label: 'Add Links', hint: 'Input link then "Enter"'
+          f.input :file_links, label: 'Add Links'
         end
       end
 

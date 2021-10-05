@@ -1,5 +1,5 @@
 <template>
-  <portfolioTaskForm :task="portfolioTask" @on-close-form="redirectBack" />
+  <portfolioTaskForm :task="portfolioTask" @on-close-form="redirectBack"  />
 </template>
 
 

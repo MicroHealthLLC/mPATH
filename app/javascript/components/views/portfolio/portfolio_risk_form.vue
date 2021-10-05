@@ -2710,10 +2710,7 @@ export default {
                 showClose: true,
               });
             }
-        this.$router.push(
-                `/portfolio`
-              );
-          })
+           })
           .catch((err) => {
             console.log(err);
           })
