@@ -33,7 +33,7 @@ class Api::V1::PortfolioController < AuthenticatedController
         end
 
       end
-      render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page }
+      render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
     else
       program_ids = authorized_program_ids
       all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_projects.project_id" => program_ids )
@@ -49,7 +49,7 @@ class Api::V1::PortfolioController < AuthenticatedController
           end
         end        
       end
-      render json: {lessons: json_response, total_count: json_response.size, next_page: json_response.size }
+      render json: {lessons: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
     end
 
   end
@@ -94,7 +94,7 @@ class Api::V1::PortfolioController < AuthenticatedController
         end
       end
 
-      render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page }
+      render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
 
     else
       program_ids = authorized_program_ids
@@ -113,7 +113,7 @@ class Api::V1::PortfolioController < AuthenticatedController
           end
         end
       end
-      render json: {tasks: json_response, total_count: json_response.size, next_page: json_response.size }
+      render json: {tasks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
     end
 
   end
@@ -136,7 +136,7 @@ class Api::V1::PortfolioController < AuthenticatedController
           json_response << resource.portfolio_json
         end
       end
-      render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page }
+      render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
 
     else
       program_ids = authorized_program_ids
@@ -154,7 +154,7 @@ class Api::V1::PortfolioController < AuthenticatedController
           end
         end
       end
-      render json: {issues: json_response, total_count: json_response.size, next_page: json_response.size }
+      render json: {issues: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
     end
 
   end
@@ -176,7 +176,7 @@ class Api::V1::PortfolioController < AuthenticatedController
           json_response << resource.portfolio_json
         end
       end
-      render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page }
+      render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
     else
       program_ids = authorized_program_ids
 
@@ -194,7 +194,7 @@ class Api::V1::PortfolioController < AuthenticatedController
           end
         end
       end
-      render json: {risks: json_response, total_count: json_response.size, next_page: json_response.size }
+      render json: {risks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
     end
 
   end
