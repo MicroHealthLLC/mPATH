@@ -4374,7 +4374,7 @@ export default {
       search_issues: "",
       search_risks: "",
       search_lessons: "",
-      itemsPerPage: 100, 
+      itemsPerPage: 15, 
       pageNumber: 1, 
       currentSort: "text" || "title",  
       currentSortCol1: "program_name",
@@ -6455,12 +6455,12 @@ export default {
     },
     handleClick(tab, event) {
             // console.log(tab);
+      let size = this.itemsPerPage;
+      let page = this.pageNumber;
       let tab_id = $(event.target).attr("id")
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
-        if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
-          let size = this.itemsPerPage;
-          let page = this.pageNumber;
+        if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){     
           // console.log(params)
           this.fetchPortfolioTasks({size, page});
         }
@@ -6468,18 +6468,18 @@ export default {
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
         if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-          this.fetchPortfolioIssues();  
+          this.fetchPortfolioIssues({size, page});  
         }
       }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'
         if(this.risksObj.filtered.risks && this.risksObj.filtered.risks.length < 1){
-          this.fetchPortfolioRisks();
+          this.fetchPortfolioRisks({size, page});
         }
         
       }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
         this.currentTab = 'lessons'
         if(this.lessonsObj.filtered.lessons && this.lessonsObj.filtered.lessons.length < 1){
-          this.fetchPortfolioLessons();
+          this.fetchPortfolioLessons({size, page});
         }
       } 
     },

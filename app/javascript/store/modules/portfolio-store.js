@@ -445,12 +445,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_TASK_LOADED", true);
           });
       },  
-    fetchPortfolioIssues({commit}) {
+    fetchPortfolioIssues({commit}, { size, page }) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/issues`,
+          url: `/api/v1/portfolio/issues?pagination=true&per_page=${size}&page=${page}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -490,12 +490,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_ISSUE_LOADED", true);
           });
       },  
-      fetchPortfolioRisks({commit}) {
+      fetchPortfolioRisks({commit}, { size, page }) {
         commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/risks`,
+          url: `/api/v1/portfolio/risks?pagination=true&per_page=${size}&page=${page}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -535,12 +535,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_RISK_LOADED", true);
           });
       },  
-       fetchPortfolioLessons({commit}) {
+       fetchPortfolioLessons({commit}, { size, page }) {
         commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/lessons`,
+          url: `/api/v1/portfolio/lessons?pagination=true&per_page=${size}&page=${page}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
