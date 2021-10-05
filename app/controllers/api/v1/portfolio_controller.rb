@@ -24,7 +24,7 @@ class Api::V1::PortfolioController < AuthenticatedController
 
       json_response = []
       all_resources.each do |resource|
-        
+        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
         project_id = facility_project_hash[resource.facility_project_id].first.facility_id
         program_id = facility_project_hash[resource.facility_project_id].first.project_id
 
@@ -41,6 +41,7 @@ class Api::V1::PortfolioController < AuthenticatedController
       json_response = []
       all_resources.in_batches(of: 1000) do |resources|
         resources.find_each do |resource|
+          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
           project_id = facility_project_hash[resource.facility_project_id].first.facility_id
           program_id = facility_project_hash[resource.facility_project_id].first.project_id
 
@@ -86,6 +87,7 @@ class Api::V1::PortfolioController < AuthenticatedController
 
       json_response = []
       all_resources.each do |resource|
+        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
         project_id = facility_project_hash[resource.facility_project_id].first.facility_id
         program_id = facility_project_hash[resource.facility_project_id].first.project_id
   
@@ -105,6 +107,7 @@ class Api::V1::PortfolioController < AuthenticatedController
 
       all_resources.in_batches(of: 1000) do |resources|
         resources.find_each do |resource|
+          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
           project_id = facility_project_hash[resource.facility_project_id].first.facility_id
           program_id = facility_project_hash[resource.facility_project_id].first.project_id
     
@@ -129,6 +132,7 @@ class Api::V1::PortfolioController < AuthenticatedController
 
       json_response = []
       all_resources.each do |resource|
+        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
         project_id = facility_project_hash[resource.facility_project_id].first.facility_id
         program_id = facility_project_hash[resource.facility_project_id].first.project_id
   
@@ -146,6 +150,7 @@ class Api::V1::PortfolioController < AuthenticatedController
       json_response = []
       all_resources.in_batches(of: 1000) do |resources|
         resources.find_each do |resource|
+          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
           project_id = facility_project_hash[resource.facility_project_id].first.facility_id
           program_id = facility_project_hash[resource.facility_project_id].first.project_id
     
@@ -169,6 +174,7 @@ class Api::V1::PortfolioController < AuthenticatedController
 
       json_response = []
       all_resources.each do |resource|
+        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
         project_id = facility_project_hash[resource.facility_project_id].first.facility_id
         program_id = facility_project_hash[resource.facility_project_id].first.project_id
   
@@ -186,6 +192,7 @@ class Api::V1::PortfolioController < AuthenticatedController
       json_response = []
       all_resources.in_batches(of: 1000) do |resources|
         resources.find_each do |resource|
+          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
           project_id = facility_project_hash[resource.facility_project_id].first.facility_id
           program_id = facility_project_hash[resource.facility_project_id].first.project_id
     
