@@ -4374,6 +4374,8 @@ export default {
       search_issues: "",
       search_risks: "",
       search_lessons: "",
+      itemsPerPage: 100, 
+      pageNumber: 1, 
       currentSort: "text" || "title",  
       currentSortCol1: "program_name",
       currentSortCol2: "project_name",
@@ -6457,7 +6459,10 @@ export default {
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
         if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
-          this.fetchPortfolioTasks();
+          let size = this.itemsPerPage;
+          let page = this.pageNumber;
+          // console.log(params)
+          this.fetchPortfolioTasks({size, page});
         }
         
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){

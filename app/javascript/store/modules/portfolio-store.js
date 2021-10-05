@@ -400,12 +400,12 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED", true);
         });
     },
-    fetchPortfolioTasks({commit}) {
+    fetchPortfolioTasks({commit}, { size, page }) {
         commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/tasks`,
+          url: `/api/v1/portfolio/tasks?pagination=true&per_page=${size}&page=${page}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
