@@ -408,7 +408,10 @@
           
           <!-- TASKS -->
           <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
-                
+            v-loading="!portfolioTasksLoaded"
+            element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"            
            >
             <template
               slot="label"
@@ -718,10 +721,22 @@
                     <button
                       class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
                     >
-                      RESULTS: {{ tasksObj.filtered.tasks.length }}
-                    </button></span
+                      RESULTS: {{ tasksObj.filtered.tasks.length }} of {{ portfolioCounts.tasks_count }}
+                    </button>             
+                    
+                    </span
                   >
+                  <span class="loadMoreDiv" v-if="portfolioTasks.length !== portfolioCounts.tasks_count">
+                 <button
+                 @click="loadMoreTasks"
+                  class="btn text-light btn-xs py-0 profile-btns bg-secondary px-1"
+                    >
+                 Load More <i class="far fa-sync-alt"  ></i>
+                 </button>
+                  </span>
+                  
                 </div>
+               
               </div>
 
               <div
@@ -1431,7 +1446,11 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane class="pt-2"  name="issues"             
+          <el-tab-pane class="pt-2"  name="issues"
+            v-loading="!portfolioIssuesLoaded"
+            element-loading-text="Fetching Portfolio Issues. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"             
           >
             <template slot="label" class="text-right">
               ISSUES
@@ -1441,7 +1460,7 @@
             </template>
             <div class="box-shadow pt-2 pb-1">
               <div class="row py-1 pr-2">
-                <div class="col-10 px-1 pt-2">
+                <div class="col-9 px-1 pt-2">
                   <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
                     <span class=""
                       ><label class="font-sm px-2 mt-4 d-block"
@@ -1669,7 +1688,7 @@
                   </template>
                 </div>
 
-                <div class="col-2 pl-0 pr-2">
+                <div class="col-3 pl-0 pr-2">
                   <span class="btnRow d-flex">
                       <button
                       v-tooltip="`Presentation Mode`"
@@ -1699,6 +1718,14 @@
                     >
                       RESULTS: {{ issuesObj.filtered.issues.length }}
                     </button>
+                <span class="loadMoreDiv" v-if="issuesObj.filtered.issues.length !== portfolioCounts.issues_count">
+                 <button
+                 @click="loadMoreIssues"
+                  class="btn text-light btn-xs py-0 profile-btns bg-secondary px-1"
+                    >
+                 Load More <i class="far fa-sync-alt"  ></i>
+                 </button>
+                  </span>
                   </span>
                 </div>
               </div>
@@ -2417,8 +2444,11 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2" name="risks"          
-           
+          <el-tab-pane class="pt-2" name="risks" 
+            v-loading="!portfolioRisksLoaded"
+            element-loading-text="Fetching Portfolio Risks. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"          
           >
             <template
               slot="label"
@@ -3579,7 +3609,11 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2"  name="lessons"          
+          <el-tab-pane class="pt-2"  name="lessons"
+            v-loading="!portfolioLessonsLoaded"
+            element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"                   
           >
             <template slot="label" class="text-right">
               LESSONS LEARNED
@@ -4373,9 +4407,8 @@ export default {
       search_tasks: "",
       search_issues: "",
       search_risks: "",
+      loadMoreItems: 25,
       search_lessons: "",
-      itemsPerPage: 15, 
-      pageNumber: 1, 
       currentSort: "text" || "title",  
       currentSortCol1: "program_name",
       currentSortCol2: "project_name",
@@ -6032,6 +6065,30 @@ export default {
     log(e) {
        console.log(e)
     },
+    loadMoreTasks (){      
+    this.loadMoreItems += 25
+    let size = this.loadMoreItems;
+    let page = 1;
+    this.fetchPortfolioTasks({size, page})
+    },
+    loadMoreIssues (){      
+    this.loadMoreItems += 25
+    let size = this.loadMoreItems;
+    let page = 1;
+    this.fetchPortfolioIssues({size, page})
+    },
+    loadMoreRisks (){      
+    this.loadMoreItems += 25
+    let size = this.loadMoreItems;
+    let page = 1;
+    this.fetchPortfolioRisks({size, page})
+    },
+    loadMoreLessons (){      
+    this.loadMoreItems += 25
+    let size = this.loadMoreItems;
+    let page = 1;
+    this.fetchPortfolioLesson({size, page})
+    },
     showCounts(){
       this.setShowCount(!this.getShowCount)       
     },
@@ -6454,14 +6511,13 @@ export default {
       window.location.pathname = "/"
     },
     handleClick(tab, event) {
+      let size = this.loadMoreItems;
+      let page = 1;
             // console.log(tab);
-      let size = this.itemsPerPage;
-      let page = this.pageNumber;
       let tab_id = $(event.target).attr("id")
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
-        if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){     
-          // console.log(params)
+        if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
           this.fetchPortfolioTasks({size, page});
         }
         

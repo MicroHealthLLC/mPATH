@@ -672,7 +672,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_COUNTS_LOADED: (state, loaded ) => state.portfolio_counts_loaded = loaded,
 
     // PORTFOLIO TASKS
-    SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks.tasks,
+    SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks.tasks, 
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
     SET_PORTFOLIO_TASK: (state, portfolio_task) => state.portfolio_task = portfolio_task,
