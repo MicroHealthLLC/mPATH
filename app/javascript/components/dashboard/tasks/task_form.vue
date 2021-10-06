@@ -1,6 +1,6 @@
 <template>
   <div 
-   v-loading="!contentLoaded"
+   v-loading="!contentLoaded"   
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -19,9 +19,19 @@
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link :to="projectNameLink">{{
-              task.facilityName
-            }}</router-link>
+
+            <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
+                facility.facilityName
+                }}
+            </span>
+            <span v-else>{{
+                task.facilityName
+            }}
+            </span>            
+            </router-link>
+
+           
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"

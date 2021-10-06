@@ -1010,7 +1010,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             {{risk.lastUpdate.body}}
           </span>   
           </span>
-          <span v-else></span>      
+          <span v-else>No Update</span>      
         </td>  
         <td>
             {{
@@ -2126,7 +2126,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchProgramLessons(this.$route.params)  
+    // this.fetchProgramLessons(this.$route.params)  
   },
 };
 </script>

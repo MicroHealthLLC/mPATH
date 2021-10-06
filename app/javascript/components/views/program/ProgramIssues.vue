@@ -80,7 +80,7 @@
 
                     <div class="col">    
                       <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
-                  <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].taskType" >{{ dynamicObj[currentIssueSlide].category}}  </h4> 
+                  <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].taskTypeName" >{{ dynamicObj[currentIssueSlide].taskTypeName}}  </h4> 
                   <h4 v-else> -- </h4>                                                                
                 </div>  
 
@@ -1794,7 +1794,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchProgramLessons(this.$route.params)  
+    // this.fetchProgramLessons(this.$route.params)  
   },
 };
 </script>

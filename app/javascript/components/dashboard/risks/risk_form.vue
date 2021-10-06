@@ -4,7 +4,7 @@
     element-loading-text="Fetching Risk data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"   
+    element-loading-background="rgba(0, 0, 0, 0.8)"  
     >
     <form
       @submit.prevent="validateThenSave"
@@ -19,9 +19,16 @@
                <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
               </span>
-              <router-link :to="projectNameLink">{{
-               risk.facilityName
-              }}</router-link>
+              <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
+                facility.facilityName
+                }}
+            </span>
+            <span v-else>{{
+                risk.facilityName
+            }}
+            </span>            
+            </router-link>
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
@@ -2187,7 +2194,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
-        me: "",
+        // facilityName: this.facility,
         riskStageId: "",
         probability: 1,
         impactLevel: 1,
@@ -2219,7 +2226,7 @@ export default {
       };
     },
       //  log(e){
-      //     console.log("This is the riskDispStatus item: " + e)
+      //     console.log(e)
       // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
