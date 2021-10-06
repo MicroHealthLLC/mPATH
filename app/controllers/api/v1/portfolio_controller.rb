@@ -3,6 +3,117 @@ class Api::V1::PortfolioController < AuthenticatedController
   
   # before_action :authenticate_request!
 
+  def tab_state_counts
+    program_ids = authorized_program_ids
+    planned = 0
+    drafts = 0
+    important = 0
+    briefings = 0
+    watched = 0
+    completed = 0
+    completed = Task.unscoped.joins(:facility_project).where("facility_projects.project_id in (?) and draft = false and DATE(start_date) <= ? and tasks.progress >= 100 and ongoing = false and on_hold = false",program_ids, Date.today).count
+    in_progress = 0
+    on_hold = 0
+    on_hold = Task.unscoped.joins(:facility_project).where("facility_projects.project_id in (?) and on_hold = true and DATE(start_date) <= ? and tasks.progress >= 100 ",program_ids, Date.today).count
+    ongoing = 0
+    ongoing_closed = 0
+    overdue = 0
+
+    
+
+    render json: {
+      planned: planned,
+      drafts: drafts,
+      important: important,
+      briefings: briefings,
+      watched: watched,
+      completed: completed,
+      in_progress: in_progress,
+      on_hold: on_hold,
+      ongoing: ongoing,
+      ongoing_closed: ongoing_closed,
+      overdue: overdue
+    }
+
+    # let planned = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.planned);
+    # let taskDrafts = _.filter(
+    #   this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.draft == true
+    # );
+    # let important = _.filter(
+    #   this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.important == true
+    # );
+    # let briefings = _.filter(
+    #  this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.reportable == true
+    # );
+    # let watched = _.filter(
+    #  this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.watched == true
+    # );
+
+    # let completed = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.completed);
+    # let inProgress = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.in_progress);
+    # let onHoldT = _.filter(
+    #  this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.on_hold == true
+    # );
+    # let ongoing = _.filter(
+    #   this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.ongoing == true
+    # );
+    # let ongoingClosed = _.filter(
+    #  this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.closed == true
+    # );
+    # let overdue = _.filter(
+    #  this.tasksObj.unfiltered.tasks,
+    #   (t) => t && t.is_overdue == true
+    # );
+
+
+    # json_response = {
+    #   planned: {
+    #     count: planned.length,
+    #     plannedTs: planned,
+    #   },
+    #   important: {
+    #     count: important.length,
+    #   },
+    #   briefings: {
+    #     count: briefings.length,
+    #   },
+    #   watched: {
+    #     count: watched.length,
+    #   },
+    #   onHoldT: {
+    #     count: onHoldT.length,
+    #   },
+    #   taskDrafts: {
+    #     count: taskDrafts.length,
+    #   },
+    #   completed: {
+    #     count: completed.length,
+    #     // percentage: Math.round(completed_percent),
+    #   },
+    #   inProgress: {
+    #     count: inProgress.length,
+    #     // percentage: Math.round(inProgress_percent),
+    #   },
+    #   overdue: {
+    #     count: overdue.length,
+    #     // percentage: Math.round(overdue_percent),
+    #   },
+    #   ongoingClosed: {
+    #     count: ongoingClosed.length,
+    #   },
+    #   ongoing: {
+    #     count: ongoing.length,
+    #   },
+    # }
+  end
+
   def tab_counts
     json_response = {tasks_count: 0, issues_count: 0, risks_count: 0, lessons_count: 0}
     program_ids = authorized_program_ids

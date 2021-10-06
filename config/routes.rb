@@ -21,7 +21,8 @@ Rails.application.routes.draw do
       get "/portfolio/issues", to: "portfolio#issues"
       get "/portfolio/tab_counts", to: "portfolio#tab_counts"
       get "/projects/:id", to: "projects#show"
-
+      get "/portfolio/tab_state_counts" , to: "portfolio#tab_state_counts"
+      
       # Filter data
       get "/filter_data/programs", to: "filter_data#programs"
       get "/filter_data/users", to: "filter_data#users"
