@@ -408,7 +408,11 @@
           
           <!-- TASKS -->
           <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
-                
+          v-loading="!portfolioTasksLoaded"
+          element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)" 
+                   
            >
             <template
               slot="label"
@@ -1431,7 +1435,11 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane class="pt-2"  name="issues"             
+          <el-tab-pane class="pt-2"  name="issues"   
+           v-loading="!portfolioIssuesLoaded"
+          element-loading-text="Fetching Portfolio Issues. Please wait..."  
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"            
           >
             <template slot="label" class="text-right">
               ISSUES
@@ -2417,9 +2425,12 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2" name="risks"          
-           
-          >
+          <el-tab-pane class="pt-2" name="risks"   
+           v-loading="!portfolioRisksLoaded"
+          element-loading-text="Fetching Portfolio Risks. Please wait..."  
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)" 
+         >
             <template
               slot="label"
               class="text-right"
@@ -3579,7 +3590,12 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2"  name="lessons"          
+          <el-tab-pane class="pt-2"  name="lessons"   
+           v-loading="!portfolioLessonsLoaded"
+          element-loading-text="Fetching Portfolio Lessons. Please wait..."  
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)" 
+       
           >
             <template slot="label" class="text-right">
               LESSONS LEARNED
@@ -4404,6 +4420,9 @@ export default {
         });
       },
     };
+  },
+  beforeMount(){
+    this.fetchPortfolioTasks();
   },
   mounted() {
     this.fetchPortfolioPrograms();
@@ -6028,7 +6047,7 @@ export default {
       "fetchPortfolioPrograms",
       ]),
     log(e) {
-       console.log(e)
+      //  console.log(e)
     },
     showCounts(){
       this.setShowCount(!this.getShowCount)       
@@ -6456,9 +6475,9 @@ export default {
       let tab_id = $(event.target).attr("id")
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
-        if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
-          this.fetchPortfolioTasks();
-        }
+        // if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
+        //   this.fetchPortfolioTasks();
+        // }
         
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
