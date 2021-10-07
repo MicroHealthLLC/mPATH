@@ -367,7 +367,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
         ></span>
         </th> 
         <th class="pl-1 sort-th twenty" @click="sortCol2('project_name')">
-        Project 
+        Project Name 
         <span
             class="inactive-sort-icon scroll"
             v-if="currentSortCol2 !== 'facilityName'"
