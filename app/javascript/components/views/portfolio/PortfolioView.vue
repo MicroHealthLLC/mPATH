@@ -4400,7 +4400,7 @@ export default {
       search_tasks: "",
       search_issues: "",
       search_risks: "",
-      loadMoreItems: 100,
+      loadMoreItems: 250,
       search_lessons: "",
       currentSort: "text" || "title",  
       currentSortCol1: "program_name",
@@ -6540,7 +6540,7 @@ export default {
       let currCount = this.portfolioIssues.issues.length
       let total = this.portfolioIssues.total_count
      if (currCount < total){
-        let size = this.loadMoreItems+=100
+        let size = this.loadMoreItems+=250
         this.fetchPortfolioIssues({size});
         // console.log("tasks: ", this.portfolioTasks.tasks.length, "total: ", this.portfolioTasks.total_count)
       } else if ( currCount == total ) {
@@ -6558,7 +6558,7 @@ export default {
       let currCount = this.portfolioRisks.risks.length
       let total = this.portfolioRisks.total_count
       if (currCount < total){
-        let size = this.loadMoreItems+=100
+        let size = this.loadMoreItems+=250
         this.fetchPortfolioRisks({size});
         // console.log("tasks: ", this.portfolioTasks.tasks.length, "total: ", this.portfolioTasks.total_count)
       } else if ( currCount == total ) {
@@ -6576,7 +6576,7 @@ export default {
       let currCount = this.portfolioLessons.lessons.length
       let total = this.portfolioLessons.total_count     
       if (currCount < total){
-        let size = this.loadMoreItems+=10
+        let size = this.loadMoreItems+=250
         this.fetchPortfolioLessons({size});
         // console.log("tasks: ", this.portfolioTasks.tasks.length, "total: ", this.portfolioTasks.total_count)
       } else if ( currCount == total ) {
