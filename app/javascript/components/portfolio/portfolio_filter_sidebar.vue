@@ -480,6 +480,7 @@ export default {
     return {
       hasFilterAccess: true,
       isLoading: false,
+      taskArray:[],
       activeName: 'first',
       exporting: false,
       // showFilters: false,
@@ -711,7 +712,7 @@ export default {
       }
     },
      C_categories() {     
-      let category = this.portfolioTasks
+      let category = this.taskArray
       return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
      },
      C_categoryNameFilter: {
@@ -1611,6 +1612,13 @@ export default {
   },
   watch: {
 
+    portfolioTasksLoaded: {
+     handler(){
+      if(this.portfolioTasksLoaded){
+      this.taskArray = this.portfolioTasks.tasks;  
+      }
+     }
+    },
     getRiskApproachFilter(value) {
       this.updateMapFilters({ key: 'riskApproachFilter', filter: value, same: true })
     },
