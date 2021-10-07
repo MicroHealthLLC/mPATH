@@ -50,6 +50,40 @@ class Issue < ApplicationRecord
     }
   end
 
+  # NOTE: this method is used in portfolio_controller#tab_state_counts
+  def all_flags
+    self.on_hold = false if draft & on_hold
+
+    is_overdue = false
+    if !on_hold && !draft
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    in_progress = false
+    completed = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
+    planned = true if !draft && !in_progress && !on_hold && start_date > Date.today 
+    if start_date && progress && start_date <= Date.today && progress && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
+    end
+
+    {
+      planned: planned ? 1 : 0,
+      draft:  draft ? 1 : 0,
+      important: important ? 1 : 0,
+      briefing: reportable ? 1 : 0,
+      watched: watched ? 1 : 0,
+      completed: completed ? 1 : 0,
+      in_progress: in_progress ? 1 : 0,
+      on_hold: on_hold ? 1 : 0,
+      overdue: is_overdue ? 1 : 0
+    }
+
+  end
+
   def portfolio_json
     self.on_hold = false if draft & on_hold
 

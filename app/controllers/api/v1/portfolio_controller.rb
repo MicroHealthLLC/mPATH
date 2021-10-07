@@ -4,114 +4,133 @@ class Api::V1::PortfolioController < AuthenticatedController
   # before_action :authenticate_request!
 
   def tab_state_counts
-    program_ids = authorized_program_ids
+    program_ids = []
+    if params[:program_id]
+      if !authorized_program_ids.include?(params[:program_id].to_i)
+        raise CanCan::AccessDenied
+      else
+        program_ids = [params[:program_id].to_i]
+      end
+    else
+      program_ids = authorized_program_ids
+    end
+
     planned = 0
-    drafts = 0
+    draft = 0
     important = 0
-    briefings = 0
+    briefing = 0
     watched = 0
     completed = 0
-    completed = Task.unscoped.joins(:facility_project).where("facility_projects.project_id in (?) and draft = false and DATE(start_date) <= ? and tasks.progress >= 100 and ongoing = false and on_hold = false",program_ids, Date.today).count
     in_progress = 0
     on_hold = 0
-    on_hold = Task.unscoped.joins(:facility_project).where("facility_projects.project_id in (?) and on_hold = true and DATE(start_date) <= ? and tasks.progress >= 100 ",program_ids, Date.today).count
     ongoing = 0
     ongoing_closed = 0
     overdue = 0
-
     
+    json_response = {}
 
-    render json: {
-      planned: planned,
-      drafts: drafts,
-      important: important,
-      briefings: briefings,
-      watched: watched,
-      completed: completed,
-      in_progress: in_progress,
-      on_hold: on_hold,
-      ongoing: ongoing,
-      ongoing_closed: ongoing_closed,
-      overdue: overdue
-    }
+    if params[:resource] == "tasks"
+      Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).in_batches do |tasks|
+        tasks.find_each do |t|
+          flags = t.all_flags
+          planned += flags[:planned]
+          draft += flags[:draft]
+          important += flags[:important]
+          briefing += flags[:briefing]
+          watched += flags[:watched]
+          completed += flags[:completed]
+          in_progress += flags[:in_progress]
+          on_hold += flags[:on_hold]
+          ongoing += flags[:ongoing]
+          ongoing_closed += flags[:ongoing_closed]
+          overdue += flags[:overdue]
+        end
+      end
+      json_response = {
+        planned: planned,
+        draft: draft,
+        important: important,
+        briefing: briefing,
+        watched: watched,
+        completed: completed,
+        in_progress: in_progress,
+        on_hold: on_hold,
+        ongoing: ongoing,
+        ongoing_closed: ongoing_closed,
+        overdue: overdue
+      }
+    elsif  params[:resource] == "issues"
+      Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).in_batches do |tasks|
+        tasks.find_each do |t|
+          flags = t.all_flags
+          planned += flags[:planned]
+          draft += flags[:draft]
+          important += flags[:important]
+          briefing += flags[:briefing]
+          watched += flags[:watched]
+          completed += flags[:completed]
+          in_progress += flags[:in_progress]
+          on_hold += flags[:on_hold]
+          overdue += flags[:overdue]
+        end
+      end
+      json_response = {
+        planned: planned,
+        draft: draft,
+        important: important,
+        briefing: briefing,
+        watched: watched,
+        completed: completed,
+        in_progress: in_progress,
+        on_hold: on_hold,
+        overdue: overdue
+      }
+    elsif  params[:resource] == "risks"
+      Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).in_batches do |tasks|
+        tasks.find_each do |t|
+          flags = t.all_flags
+          planned += flags[:planned]
+          draft += flags[:draft]
+          important += flags[:important]
+          briefing += flags[:briefing]
+          watched += flags[:watched]
+          completed += flags[:completed]
+          in_progress += flags[:in_progress]
+          on_hold += flags[:on_hold]
+          ongoing += flags[:ongoing]
+          ongoing_closed += flags[:ongoing_closed]
+          overdue += flags[:overdue]
+        end
+      end
+      json_response = {
+        planned: planned,
+        draft: draft,
+        important: important,
+        briefing: briefing,
+        watched: watched,
+        completed: completed,
+        in_progress: in_progress,
+        on_hold: on_hold,
+        ongoing: ongoing,
+        ongoing_closed: ongoing_closed,
+        overdue: overdue
+      }
+    elsif  params[:resource] == "lessons"
+      Lesson.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).in_batches do |tasks|
+        tasks.find_each do |t|
+          flags = t.all_flags
+          draft += flags[:draft]
+          completed += flags[:completed]
+        end
+      end
+      json_response = {
+        draft: draft,
+        completed: completed
+      }
+    end
 
-    # let planned = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.planned);
-    # let taskDrafts = _.filter(
-    #   this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.draft == true
-    # );
-    # let important = _.filter(
-    #   this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.important == true
-    # );
-    # let briefings = _.filter(
-    #  this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.reportable == true
-    # );
-    # let watched = _.filter(
-    #  this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.watched == true
-    # );
+    render json: json_response
 
-    # let completed = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.completed);
-    # let inProgress = _.filter(this.tasksObj.unfiltered.tasks, (t) => t && t.in_progress);
-    # let onHoldT = _.filter(
-    #  this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.on_hold == true
-    # );
-    # let ongoing = _.filter(
-    #   this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.ongoing == true
-    # );
-    # let ongoingClosed = _.filter(
-    #  this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.closed == true
-    # );
-    # let overdue = _.filter(
-    #  this.tasksObj.unfiltered.tasks,
-    #   (t) => t && t.is_overdue == true
-    # );
-
-
-    # json_response = {
-    #   planned: {
-    #     count: planned.length,
-    #     plannedTs: planned,
-    #   },
-    #   important: {
-    #     count: important.length,
-    #   },
-    #   briefings: {
-    #     count: briefings.length,
-    #   },
-    #   watched: {
-    #     count: watched.length,
-    #   },
-    #   onHoldT: {
-    #     count: onHoldT.length,
-    #   },
-    #   taskDrafts: {
-    #     count: taskDrafts.length,
-    #   },
-    #   completed: {
-    #     count: completed.length,
-    #     // percentage: Math.round(completed_percent),
-    #   },
-    #   inProgress: {
-    #     count: inProgress.length,
-    #     // percentage: Math.round(inProgress_percent),
-    #   },
-    #   overdue: {
-    #     count: overdue.length,
-    #     // percentage: Math.round(overdue_percent),
-    #   },
-    #   ongoingClosed: {
-    #     count: ongoingClosed.length,
-    #   },
-    #   ongoing: {
-    #     count: ongoing.length,
-    #   },
-    # }
   end
 
   def tab_counts

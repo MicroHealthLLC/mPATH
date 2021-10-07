@@ -37,6 +37,14 @@ class Lesson < ApplicationRecord
     }
   end
 
+  # NOTE: this method is used in portfolio_controller#tab_state_counts
+  def all_flags
+    {
+      draft:  draft ? 1 : 0,
+      completed: !draft ? 1 : 0,
+    }
+  end
+
   def portfolio_json
     resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
     p_users = users.select(&:active?)

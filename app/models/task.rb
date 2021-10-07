@@ -113,6 +113,62 @@ class Task < ApplicationRecord
     }
   end
 
+  # NOTE: this method is used in portfolio_controller#tab_state_counts
+  def all_flags
+    if draft
+      self.on_hold = false if self.on_hold
+      self.ongoing = false if self.ongoing
+    end
+
+    self.ongoing = false if on_hold && ongoing
+
+    closed = false
+   
+    if ongoing && due_date.present? && !draft && !on_hold
+      closed_date = due_date
+    end
+
+    if closed_date.present? && ongoing && !draft && !on_hold
+       closed = true 
+    end 
+
+    is_overdue = false
+    if !ongoing && !on_hold && !draft
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    in_progress = false
+    completed = false
+    planned = false
+
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
+    planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today 
+    if start_date && progress && start_date <= Date.today && progress >= 100
+      completed = true unless draft
+      self.on_hold = false if self.on_hold && completed
+    end
+
+    if ongoing 
+      progress_status = "active"
+      completed = false
+    end
+
+    {
+      planned: planned ? 1 : 0,
+      draft:  draft ? 1 : 0,
+      important: important ? 1 : 0,
+      briefing: reportable ? 1 : 0,
+      watched: watched ? 1 : 0,
+      completed: completed ? 1 : 0,
+      in_progress: in_progress ? 1 : 0,
+      on_hold: on_hold ? 1 : 0,
+      ongoing: ongoing ? 1 : 0,
+      ongoing_closed: closed ? 1 : 0,
+      overdue: is_overdue ? 1 : 0
+    }
+
+  end
+
   def portfolio_json(facility_groups: [])
     if draft
       self.on_hold = false if self.on_hold
