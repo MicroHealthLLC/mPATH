@@ -6523,7 +6523,7 @@ export default {
       let currCount = this.portfolioTasks.tasks.length
       let total = this.portfolioTasks.total_count
       if (this.portfolioTasks.tasks.length < this.portfolioTasks.total_count){
-        let size = this.loadMoreItems+=100
+        let size = this.loadMoreItems+=250
         this.fetchPortfolioTasks({size});
       } else if ( currCount == total ) {
         return
