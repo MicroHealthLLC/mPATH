@@ -2071,13 +2071,13 @@ export default {
       return _.map(this.myActionsFilter, "value").includes("tasks");
     },
     filteredtProjects(){
-       return _.filter(this.portfolioTasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+       return _.filter(this.portfolioTasks, (t) => t.facility_project_id == this.facilityProjectId);
     },
     filterediProjects(){
-       return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+       return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.facilityProjectId);
     },
     filteredrProjects(){
-       return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+       return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.facilityProjectId);
     },
     filteredTasks() {
       return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
