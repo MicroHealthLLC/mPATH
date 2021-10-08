@@ -687,7 +687,7 @@
                         ></span>
                       </th> 
                        <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
-                        Project 
+                        Project Name 
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="currentSortCol2 !== 'facilityName'"

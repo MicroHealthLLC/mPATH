@@ -125,8 +125,8 @@
 
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
               v-tooltip="`Ongoing`" 
@@ -147,8 +147,8 @@
             </span>
 
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
                v-tooltip="`On Hold`" 
@@ -172,12 +172,12 @@
            
           
               <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              data-cy="task_important"
-              v-tooltip="`Draft`" 
-            >
+                class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
+                @click.prevent.stop="toggleDraft"
+                data-cy="task_important"
+                v-tooltip="`Draft`" 
+              >
               <span               
                  v-show="DV_task.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
@@ -202,8 +202,8 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
                 data-cy="task_on_watch"
@@ -224,12 +224,12 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
-              v-tooltip="`Important`" 
-            >
+                class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
+                @click.prevent.stop="toggleImportant"
+                data-cy="task_important"
+                v-tooltip="`Important`" 
+              >
               <span 
                 v-show="DV_task.important">
                <i class="fas fa-star text-warning"></i>
@@ -245,8 +245,8 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
                 v-tooltip="`Briefings`" 

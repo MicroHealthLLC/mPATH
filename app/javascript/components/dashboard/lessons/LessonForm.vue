@@ -105,8 +105,8 @@
           :class="{ 'font-sm': isMapView }"
         >
           <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
+            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleImportant"
             v-tooltip="`Important`"
           >
@@ -125,8 +125,8 @@
           </span>
 
           <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
+            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleReportable"
             v-tooltip="`Briefings`" 
           >
@@ -145,8 +145,8 @@
             </small>
           </span>
           <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
+            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
           >

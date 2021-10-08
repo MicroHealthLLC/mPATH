@@ -119,8 +119,8 @@
                
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
               v-tooltip="`Ongoing`" 
@@ -140,9 +140,9 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
                v-tooltip="`On Hold`" 
@@ -166,8 +166,8 @@
            
           
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
               v-tooltip="`Draft`" 
@@ -196,8 +196,8 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
                 data-cy="task_on_watch"
@@ -218,8 +218,8 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
               v-tooltip="`Important`" 
@@ -239,8 +239,8 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
                 v-tooltip="`Briefings`" 

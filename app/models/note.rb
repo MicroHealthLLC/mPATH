@@ -37,7 +37,8 @@ class Note < ApplicationRecord
       end
     end
     self.as_json.merge(
-      user: self.user.as_json(only: [:id, :full_name]),
+      # user: self.user.as_json(only: [:id, :full_name]),
+      user: self.user&.checklist_json,
       attach_files: attach_files
     ).as_json
   end
@@ -45,7 +46,8 @@ class Note < ApplicationRecord
   def as_json(options=nil)
     json = super(options)
     json.merge(
-      user: self.user.as_json(only: [:id, :full_name]),
+      # user: self.user.as_json(only: [:id, :full_name]),
+      user: self.user&.checklist_json
     ).as_json
   end
 end
