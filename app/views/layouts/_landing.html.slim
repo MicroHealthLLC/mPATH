@@ -7,8 +7,8 @@
         =image_tag "mpath.svg"
     br
     -if @active_projects.size > 0
-      =link_to "/portfolio", class: "nav-link mb-3 float-right portfolioViewerBtn", "data-cy" => "portfolio_btn" do
-        | PORTFOLIO DATA VIEWER
+      =link_to "/portfolio", class: "nav-link mb-3  float-right portfolioViewerBtn disabled", "data-cy" => "portfolio_btn" do
+        | PORTFOLIO DATA VIEWER (Coming soon)
     .grid-container.program-name
       -if @active_projects.size > 0
         - preference_url = current_user.preference_url

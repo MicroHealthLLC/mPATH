@@ -1278,7 +1278,8 @@ export default {
             showClose: true,
           });
           this.SET_LESSON_STATUS(0);
-          this.fetchPortfolioLessons();
+          let size = 250;
+          this.fetchPortfolioLessons({size});
           //Route to newly created task form page         
         }
         this.successes = this.lesson.successes;
