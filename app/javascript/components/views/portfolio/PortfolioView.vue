@@ -1,11 +1,12 @@
 <template>
-  <div  class="container-fluid mt-3 mx-3 portfolioView_main"
+<div  class="container-fluid mt-3 mx-3 portfolioView_main">
+  <!-- <div  class="container-fluid mt-3 mx-3 portfolioView_main"
     v-loading="!portfolioProgramsLoaded"
     element-loading-text="Fetching Portfolio data. Please wait..."  
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)" 
     :class="{ 'vh100' : !portfolioProgramsLoaded}"  
-    >
+    > -->
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
       <span>
@@ -22,7 +23,12 @@
         </button>  
       </span>
     </div>
-    <el-tabs class="mt-2 mr-3" type="border-card">
+    <el-tabs class="mt-2 mr-3" type="border-card"
+     v-loading="!portfolioTasksLoaded"
+    element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"        
+    >
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
            
@@ -404,14 +410,13 @@
               </div>
             </div>
 
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" >
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" 
+          
+        >
           
           <!-- TASKS -->
           <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
-            v-loading="!portfolioTasksLoaded"
-            element-loading-text="Fetching Portfolio Tasks. Please wait..."  
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"            
+           
            >
             <template
               slot="label"
@@ -3595,7 +3600,7 @@
 
           <el-tab-pane class="pt-2"  name="lessons"
             v-loading="!portfolioLessonsLoaded"
-            element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+            element-loading-text="Fetching Portfolio Lessons. Please wait..."  
             element-loading-spinner="el-icon-loading"
             element-loading-background="rgba(0, 0, 0, 0.8)"                   
           >
@@ -6522,7 +6527,7 @@ export default {
       this.taskCount = this.portfolioTasks.total_count;  
       let currCount = this.portfolioTasks.tasks.length
       let total = this.portfolioTasks.total_count
-      if (this.portfolioTasks.tasks.length < this.portfolioTasks.total_count){
+      if (currCount < total){
         let size = this.loadMoreItems+=250
         this.fetchPortfolioTasks({size});
       } else if ( currCount == total ) {

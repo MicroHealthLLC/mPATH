@@ -504,7 +504,6 @@ export default {
     // this.fetchPortfolioPrograms()
     // this.fetchPortfolioUsers()
     // this.fetchPortfolioStatuses()
-    // this.fetchPortfolioTaskStages()
     // this.fetchPortfolioRiskStages()
     // this.fetchPortfolioIssueStages()
     // this.fetchPortfolioIssueTypes()
@@ -522,6 +521,7 @@ export default {
       'getMyAssignmentsFilterOptions',
       'getShowAdvancedFilter',
       'taskTypes',
+      'portfolioTasksLoaded',
       'taskStages',
       'taskTypeFilter',
       'taskStageFilter',
@@ -711,10 +711,16 @@ export default {
         this.setRiskStageFilter(value)
       }
     },
-     C_categories() {     
-      let category = this.taskArray
-      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
-     },
+    C_categories() {
+      let category = this.taskArray 
+      return [
+        ...new Set(
+          category
+            .filter((item) => item.category != null)
+            .map((item) => item.category)
+        ),
+      ];
+    },
      C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter
