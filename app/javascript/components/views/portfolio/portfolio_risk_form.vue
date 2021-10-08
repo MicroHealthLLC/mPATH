@@ -2696,12 +2696,12 @@ export default {
            this.loadRisk(response.data.risk);
           //  this.updateRisksHash({ risk: response.data.risk });
 
-            let risk_i = this.portfolioRisks.findIndex((t) => t.id == this.DV_risk.id)
-            if (risk_i > -1){
-              Vue.set(this.portfolioRisks, risk_i, this.DV_risk)
-            }else if (risk_i == -1){
-              this.portfolioRisks.push(this.DV_risk)
-            }
+            // let risk_i = this.portfolioRisks.risks.findIndex((t) => t.id == this.DV_risk.id)
+            // if (risk_i > -1){
+            //   Vue.set(this.portfolioRisks.risks, risk_i, this.DV_risk)
+            // }else if (risk_i == -1){
+            //   this.portfolioRisks.risks.push(this.DV_risk)
+            // }
 
             if (response.status === 200) {
               this.$message({
