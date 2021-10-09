@@ -1,18 +1,17 @@
 <template>
-<div  class="container-fluid mt-3 mx-3 portfolioView_main">
-  <!-- <div  class="container-fluid mt-3 mx-3 portfolioView_main"
+  <div  class="container-fluid mt-3 mx-3 portfolioView_main"
     v-loading="!portfolioProgramsLoaded"
     element-loading-text="Fetching Portfolio data. Please wait..."  
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)" 
     :class="{ 'vh100' : !portfolioProgramsLoaded}"  
-    > -->
+    >
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
-      <span>
+      <span @click.prevent="backHomeBtn">
         <img
           class="mb-2"
-          style="width: 147px"
+          style="width: 147px;cursor:pointer"
           :src="require('../../../../assets/images/microhealthllc.png')"
         />
         <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
@@ -24,10 +23,7 @@
       </span>
     </div>
     <el-tabs class="mt-2 mr-3" type="border-card"
-     v-loading="!portfolioTasksLoaded"
-    element-loading-text="Fetching Portfolio Tasks. Please wait..."  
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"        
+       
     >
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
@@ -410,13 +406,15 @@
               </div>
             </div>
 
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" 
-          
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative"          
         >
           
           <!-- TASKS -->
           <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
-           
+            v-loading="!portfolioTasksLoaded"
+            element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"               
            >
             <template
               slot="label"
@@ -428,16 +426,11 @@
                 <span>{{ portfolioCounts.tasks_count }}</span>
               </span>
             </template>
-
          
             <div class="box-shadow py-2"  style="postion:relative"  >
               <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
-                  <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
-                     <button class="btn btn-info btn-md">Add Task</button> 
-                     </div> -->
-
-                  <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
+                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
                     <span class=""
                       ><label class="font-sm px-2 mt-4 d-block"
                         >STATES TO DISPLAY</label
@@ -4405,7 +4398,7 @@ export default {
       search_tasks: "",
       search_issues: "",
       search_risks: "",
-      loadMoreItems: 250,
+      loadMoreItems: 600,
       search_lessons: "",
       currentSort: "text" || "title",  
       currentSortCol1: "program_name",

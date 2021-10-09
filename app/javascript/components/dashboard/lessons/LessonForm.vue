@@ -1299,18 +1299,18 @@ export default {
           });
           this.SET_LESSON_STATUS(0);
           //Route to newly created task form page
-          if (this.$route.path.includes("sheet")) {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          } else if (this.$route.path.includes("map")) {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          } else 
-          this.$router.push(
-              `/programs/${this.$route.params.programId}/dataviewer`
-            );
+        //   if (this.$route.path.includes("sheet")) {
+        //     this.$router.push(
+        //       `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+        //     );
+        //   } else if (this.$route.path.includes("map")) {
+        //     this.$router.push(
+        //       `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+        //     );
+        //   } else 
+        //   this.$router.push(
+        //       `/programs/${this.$route.params.programId}/dataviewer`
+        //     );
         }
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
