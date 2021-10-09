@@ -267,7 +267,7 @@
         </div>
 
         <el-steps
-          v-if="lessonStages && lessonStages[this.programId].length >= 0"
+          v-if="validStages.length > 0 && lessonStages[this.programId].length >= 0"
           :active="
             lessonStages[this.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
@@ -865,6 +865,7 @@ export default {
       relatedTasks: [],
       relatedIssues: [],
       relatedRisks: [],
+      validStages:[], 
       successes: [],
       deleteSuccesses: [],
       failures: [],
@@ -1230,6 +1231,7 @@ export default {
           this.relatedIssues = this.lesson.sub_issues;
           this.important = this.lesson.important;
           this.draft = this.lesson.draft;
+          this.validStages = this.portfolioLessonStages.all_stages
           this.reportable = this.lesson.reportable;
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
