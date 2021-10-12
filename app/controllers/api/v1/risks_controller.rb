@@ -71,7 +71,7 @@ class Api::V1::RisksController < AuthenticatedController
     if params[:source] == "portfolio_viewer"
       response = @risk.reload.portfolio_json
     else
-      response = @issue.reload.to_json
+      response = @risk.reload.to_json
     end
     if @risk.errors.any?
       render json: {task: @risk.to_json, errors: @risk.errors.full_messages.join(", ") }, status: :unprocessable_entity
