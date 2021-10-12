@@ -480,6 +480,7 @@ export default {
     return {
       hasFilterAccess: true,
       isLoading: false,
+      taskArray:[],
       activeName: 'first',
       exporting: false,
       // showFilters: false,
@@ -503,7 +504,6 @@ export default {
     // this.fetchPortfolioPrograms()
     // this.fetchPortfolioUsers()
     // this.fetchPortfolioStatuses()
-    // this.fetchPortfolioTaskStages()
     // this.fetchPortfolioRiskStages()
     // this.fetchPortfolioIssueStages()
     // this.fetchPortfolioIssueTypes()
@@ -521,6 +521,7 @@ export default {
       'getMyAssignmentsFilterOptions',
       'getShowAdvancedFilter',
       'taskTypes',
+      'portfolioTasksLoaded',
       'taskStages',
       'taskTypeFilter',
       'taskStageFilter',
@@ -710,10 +711,16 @@ export default {
         this.setRiskStageFilter(value)
       }
     },
-     C_categories() {     
-      let category = this.portfolioTasks
-      return [...new Set(category.filter(item => item.category != null).map(item => item.category))];
-     },
+    C_categories() {
+      let category = this.taskArray 
+      return [
+        ...new Set(
+          category
+            .filter((item) => item.category != null)
+            .map((item) => item.category)
+        ),
+      ];
+    },
      C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter
@@ -1611,6 +1618,13 @@ export default {
   },
   watch: {
 
+    portfolioTasksLoaded: {
+     handler(){
+      if(this.portfolioTasksLoaded){
+      this.taskArray = this.portfolioTasks.tasks;  
+      }
+     }
+    },
     getRiskApproachFilter(value) {
       this.updateMapFilters({ key: 'riskApproachFilter', filter: value, same: true })
     },

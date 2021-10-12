@@ -122,8 +122,8 @@
            <span class="statesCol p-1 mr-1">
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
               v-tooltip="`On Hold`" 
@@ -144,8 +144,8 @@
             </span>
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
               v-tooltip="`Draft`" 
@@ -167,9 +167,9 @@
            </span>
 
            <span class="tagsCol p-1">
-                 <span
-              v-if="_isallowed('write')"
+             <span
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
               v-tooltip="`On Watch`" 
@@ -191,8 +191,8 @@
            
 
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
               v-tooltip="`Important`" 
@@ -210,8 +210,8 @@
                 style="vertical-align:text-top"> Important</small>
             </span>
              <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
                 v-tooltip="`Briefings`" 

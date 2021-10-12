@@ -582,7 +582,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         ></span>
         </th> 
         <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
-        Project 
+        Project Name 
         <span
             class="inactive-sort-icon scroll"
             v-if="currentSortCol2 !== 'facilityName'"
@@ -1281,7 +1281,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
               <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
               {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
               </span> 
-              <span>
+              <span class="truncate-line-five">
                 {{risk.lastUpdate.body}}
               </span>         
              </td>  

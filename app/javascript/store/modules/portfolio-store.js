@@ -400,12 +400,12 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED", true);
         });
     },
-    fetchPortfolioTasks({commit}) {
+    fetchPortfolioTasks({commit}, {size}) {
         commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/tasks`,
+          url: `/api/v1/portfolio/tasks?pagination=true&per_page=${size}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -445,12 +445,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_TASK_LOADED", true);
           });
       },  
-    fetchPortfolioIssues({commit}) {
+    fetchPortfolioIssues({commit}, { size }) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/issues`,
+          url: `/api/v1/portfolio/issues?pagination=true&per_page=${size}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -490,12 +490,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_ISSUE_LOADED", true);
           });
       },  
-      fetchPortfolioRisks({commit}) {
+      fetchPortfolioRisks({commit}, { size }) {
         commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/risks`,
+          url: `/api/v1/portfolio/risks?pagination=true&per_page=${size}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -535,12 +535,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_RISK_LOADED", true);
           });
       },  
-       fetchPortfolioLessons({commit}) {
+       fetchPortfolioLessons({commit}, { size }) {
         commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/lessons`,
+          url: `/api/v1/portfolio/lessons?pagination=true&per_page=${size}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -672,7 +672,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_COUNTS_LOADED: (state, loaded ) => state.portfolio_counts_loaded = loaded,
 
     // PORTFOLIO TASKS
-    SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks,
+    SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks, 
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
     SET_PORTFOLIO_TASK: (state, portfolio_task) => state.portfolio_task = portfolio_task,
