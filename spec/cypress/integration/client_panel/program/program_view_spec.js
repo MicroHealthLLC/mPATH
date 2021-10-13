@@ -1,15 +1,15 @@
-describe('Portoflio Viewer ', function() {
+describe('Program Viewer ', function() {
   before(() => {
     cy.app('clean')
     cy.appScenario('basic')
     cy.appScenario('provide_all_privileges')
     cy.login('client@test.com', 'T3$tClient')
-    cy.openPortoflioViewer()
+    cy.openProgramViewer()
   })
   beforeEach(() => {
     cy.preserveAllCookiesOnce()
   })
-  it('Open Portoflio viewer', function() {
+  it('Open Program viewer', function() {
     
     cy.get("#tab-tasks").should('contain', 'TASKS')
     cy.get("#tab-issues").should('contain', 'ISSUES')
@@ -18,16 +18,15 @@ describe('Portoflio Viewer ', function() {
   })
 
   it('Open Task form and Save task', function() {
-    cy.get("#tab-tasks").click()
     cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#portTasks > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portTasks > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portTasks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
     cy.get('#portTasks > tbody > tr').first().contains('New Task 1').should('be.visible')
     cy.get('#portTasks > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portTasks > tbody > tr').first().click()
     cy.get('[data-cy="task_name"]').should('have.value', 'New Task 1')
-    cy.get('[data-cy="task_name"]').clear().type('1 New Task 1 - Update').should('have.value', '1 New Task 1 - Update')    
+    cy.get('[data-cy="task_name"]').clear().type('1 Test Task 1 - Update').should('have.value', '1 Test Task 1 - Update')    
     cy.get('[data-cy="task_description"]').should('have.value', 'New task 1 description')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Assignments').click()
@@ -38,35 +37,9 @@ describe('Portoflio Viewer ', function() {
     })
 
     cy.get('[data-cy="task_save_btn"]').click()
+    cy.wait(3000)
     cy.get('[data-cy="task_close_btn"]').click({force: true})
-    cy.get('#portTasks > tbody > tr').first().contains('1 New Task 1 - Update').should('be.visible')
-
-  })
-
-  it('Search Text', function() {
-    cy.get("#tab-tasks").click()
-    cy.get("input[type='search']").clear().type("Test Task 1")
-    cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 1)
-    cy.get("input[type='search']").clear()
-    cy.get('#portTasks > tbody > tr').its('length').should('be.eq', 8)
-
-    cy.get("#tab-issues").click()
-    cy.get("input[type='search']").clear().type("Test issue 1")
-    cy.get('#portIssues > tbody > tr').its('length').should('be.eq', 1)
-    cy.get("input[type='search']").clear()
-    cy.get('#portIssues > tbody > tr').its('length').should('be.eq', 8)
-
-    cy.get("#tab-risks").click()
-    cy.get("input[type='search']").clear().type("Test Risk 1")
-    cy.get('#portRisks > tbody > tr').its('length').should('be.eq', 1)
-    cy.get("input[type='search']").clear()
-    cy.get('#portRisks > tbody > tr').its('length').should('be.eq', 8)
-
-    cy.get("#tab-lessons").click()
-    cy.get("input[type='search']").clear().type("Test Lesson 1")
-    cy.get('#portLessons > tbody > tr').its('length').should('be.eq', 1)
-    cy.get("input[type='search']").clear()
-    cy.get('#portLessons > tbody > tr').its('length').should('be.eq', 4)
+    cy.get('#portTasks > tbody > tr').first().contains('1 Test Task 1 - Update').should('be.visible')
 
   })
 
@@ -74,15 +47,15 @@ describe('Portoflio Viewer ', function() {
     cy.get("#tab-issues").click()
 
     cy.get('#portIssues > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#portIssues > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portIssues > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portIssues > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('#portIssues > tbody > tr').first().contains('Test Issue 1').should('be.visible')
+    cy.get('#portIssues > tbody > tr').first().contains('New Issue 1').should('be.visible')
     cy.get('#portIssues > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portIssues > tbody > tr').first().click()
-    cy.get('[data-cy="issue_title"]').should('have.value', 'Test Issue 1')
-    cy.get('[data-cy="issue_title"]').clear().type('Test Issue 1 - Update').should('have.value', 'Test Issue 1 - Update')    
-    cy.get('[data-cy="issue_description"]').should('have.value', 'Test issue 1 description')
+    cy.get('[data-cy="issue_title"]').should('have.value', 'New Issue 1')
+    cy.get('[data-cy="issue_title"]').clear().type('1 New Issue 1 - Update').should('have.value', '1 New Issue 1 - Update')    
+    cy.get('[data-cy="issue_description"]').should('have.value', 'New issue 1 description')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Assignments').click()
       cy.get('span').contains('Checklist').click()
@@ -91,8 +64,9 @@ describe('Portoflio Viewer ', function() {
     })
 
     cy.get('[data-cy="issue_save_btn"]').click()
+      cy.wait(3000)
     cy.get('[data-cy="issue_close_btn"]').click({force: true})
-    cy.get('#portIssues > tbody > tr').first().contains('Test Issue 1 - Update').should('be.visible')
+    cy.get('#portIssues > tbody > tr').first().contains('1 New Issue 1 - Update').should('be.visible')
 
   })
 
@@ -100,7 +74,7 @@ describe('Portoflio Viewer ', function() {
     cy.get("#tab-risks").click()
 
     cy.get('#portRisks > tbody > tr').its('length').should('be.eq', 8)
-    cy.get('#portRisks > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portRisks > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portRisks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
     cy.get('#portRisks > tbody > tr').first().contains('New Risk 1').should('be.visible')
     cy.get('#portRisks > tbody > tr').first().contains('No Update').should('be.visible')
@@ -119,6 +93,7 @@ describe('Portoflio Viewer ', function() {
     })
 
     cy.get('[data-cy="risk_save_btn"]').click()
+      cy.wait(3000)
     cy.get('[data-cy="risk_close_btn"]').click({force: true})
     cy.get('#portRisks > tbody > tr').first().contains('1 New Risk 1 - Update').should('be.visible')
 
@@ -128,15 +103,15 @@ describe('Portoflio Viewer ', function() {
     cy.get("#tab-lessons").click()
 
     cy.get('#portLessons > tbody > tr').its('length').should('be.eq', 4)
-    cy.get('#portLessons > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#portLessons > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
     cy.get('#portLessons > tbody > tr').first().contains('Test Facility 1').should('be.visible')
     cy.get('#portLessons > tbody > tr').first().contains('Test Lesson 1').should('be.visible')
     cy.get('#portLessons > tbody > tr').first().contains('No Update').should('be.visible')
 
     cy.get('#portLessons > tbody > tr').first().click()
     cy.get('[data-cy="lesson_name"]').should('have.value', 'Test Lesson 1')
-    cy.get('[data-cy="lesson_name"]').clear().type('Test Lesson 1 - Update').should('have.value', 'Test Lesson 1 - Update')    
-    cy.get('[data-cy="lesson_description"]').clear().type('Test Lesson 1 description - Update').should('have.value', 'Test Lesson 1 description - Update')
+    cy.get('[data-cy="lesson_name"]').clear().type('1 Test Lesson 1 - Update').should('have.value', '1 Test Lesson 1 - Update')    
+    cy.get('[data-cy="lesson_description"]').clear().type('1 Test Lesson 1 description - Update').should('have.value', '1 Test Lesson 1 description - Update')
     cy.get('[data-cy="facility_tabs"]').within(() => {
       cy.get('span').contains('Lesson Info').click()
       cy.get('span').contains('Successes').click()
@@ -147,8 +122,9 @@ describe('Portoflio Viewer ', function() {
     })
 
     cy.get('[data-cy="lesson_save_btn"]').click()
-    cy.get('[data-cy="lesson_close_btn"]').click({force: true})
-    cy.get('#portLessons > tbody > tr').first().contains('Test Lesson 1 - Update').should('be.visible')
+    cy.wait(3000)
+    // cy.get('[data-cy="lesson_close_btn"]').click({force: true})
+    cy.get('#portLessons > tbody > tr').first().contains('1 Test Lesson 1 - Update').should('be.visible')
 
   })
 

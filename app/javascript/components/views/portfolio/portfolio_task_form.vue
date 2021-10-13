@@ -1376,7 +1376,7 @@ export default {
         facilityProjectId: this.$route.params.projectId,
         checklistDueDate: "",
         taskTypeId: "",
-     
+        taskArray: [],
         // programStageId: null,
         important: false,
         reportable: false,
@@ -1484,18 +1484,26 @@ export default {
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
-      this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
+      if (this.responsibleUsers) {
+          this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.responsible_user_ids.includes(u.id)
       )[0];
+      }
+     if ( this.accountableTaskUsers){
       this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.accountable_user_ids.includes(u.id)
       )[0];
-      this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
+     }
+      if (this.consultedTaskUsers){
+       this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.consulted_user_ids.includes(u.id)
       );
-      this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
+       }    
+       if ( this.informedTaskUsers){
+       this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.informed_user_ids.includes(u.id)
-      );
+       );
+       }     
       this.relatedIssues = _.filter(this.filteredIssues, (u) =>
         this.DV_task.sub_issue_ids.includes(u.id)
       );
@@ -1508,9 +1516,6 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_task.task_type_id
       );
-      // this.selectedTaskType = this.taskTypeIds.find(
-      //   (t) => t === this.DV_task.task_type_id
-      // );
       if (this.taskStages) {
       this.selectedTaskStage = this.taskStages[this.programId].find(
         (t) => t.id === this.DV_task.task_stage_id
@@ -1642,9 +1647,7 @@ export default {
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
         );
-        // RACI USERS START HERE Awaiting backend work
-
-        //Responsible USer Id
+       //Responsible User Id
         //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
         if (
           this.DV_task.responsible_user_ids &&
@@ -1794,12 +1797,13 @@ export default {
             this.loadTask(response.data.task);
             // this.updateTasksHash({ task: response.data.task });
 
-            let task_i = this.portfolioTasks.findIndex((t) => t.id == this.DV_task.id)
-            if (task_i > -1){
-              Vue.set(this.portfolioTasks, task_i, this.DV_task)
-            }else if (task_i == -1){
-              this.portfolioTasks.push(this.DV_task)
-            }
+            // let task_i = this.taskArray.findIndex((t) => t.id == this.DV_task.id)
+            // console.log(this.taskArray)
+            // if (task_i > -1){
+            //   Vue.set(this.taskArray, task_i, this.DV_task)
+            // }else if (task_i == -1){
+            //   this.taskArray.push(this.DV_task)
+            // }
             // Vue.set(state.facilities, facility_i, facility)
 
             // updateTasksHash: (state, {task, action}) => {
@@ -1820,9 +1824,9 @@ export default {
             }
             //Route to newly created task form page
            //this.fetchPortfolioTasks()
-           this.$router.push(
-                `/portfolio`
-              );
+          //  this.$router.push(
+          //       `/portfolio`
+          //     );
           })
           // .catch((err) => {
           //   alert(err.response.data.error);
@@ -2007,6 +2011,7 @@ export default {
       "currentIssues",
       "currentProject",
       "currentRisks",
+      'portfolioTasksLoaded',
       "currentTasks",
       'portfolioCategories',
       "fetchPortfolioTasks",
@@ -2075,18 +2080,18 @@ export default {
     C_myTasks() {
       return _.map(this.myActionsFilter, "value").includes("tasks");
     },
-    filteredtProjects(){
-       return _.filter(this.portfolioTasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filterediProjects(){
-       return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filteredrProjects(){
-       return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filteredTasks() {
-      return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
-    },
+    // filteredtProjects(){
+    //    return _.filter(this.portfolioTasks.tasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    // },
+    // filterediProjects(){
+    //    return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    // },
+    // filteredrProjects(){
+    //    return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    // },
+    // filteredTasks() {
+    //   return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
+    // },
     filteredRisks() {
       return _.filter(this.filteredrProjects, (t) => t.id !== this.DV_task.id);
     },
@@ -2107,24 +2112,6 @@ export default {
           : "Add Task"
         : "Task";
     },
-    tab() {
-      if (this.$route.path.includes("map")) {
-        return "map";
-      } else if (this.$route.path.includes("sheet")) {
-        return "sheet";
-      } else if (this.$route.path.includes("calendar")) {
-        return "calendar";
-      } else {
-        return "kanban";
-      }
-    },
-    projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      }
-    },
   },
   watch: {
     task: {
@@ -2132,6 +2119,14 @@ export default {
         this.loadTask(this.task);
       },
     },
+   portfolioTasksLoaded: {
+     handler(){
+      if(this.portfolioTasksLoaded){
+      this.taskArray = this.portfolioTasks.tasks;  
+     
+       }
+      }
+   },
     "DV_task.start_date"(value) {
       if (this._ismounted && !value) this.DV_task.due_date = "";
     },

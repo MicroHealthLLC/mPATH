@@ -1,12 +1,18 @@
 <template>
-  <div>
+  <div 
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Issue data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
-      id="issues-form"
-      @submit.prevent="saveIssue"
-      class="mx-auto issues-form"
-      accept-charset="UTF-8"
-      data-cy="issue_form"
-      :class="{ _disabled: loading }"
+    id="issues-form"
+    @submit.prevent="saveIssue"
+    class="mx-auto issues-form"
+    :class="{ 'vh100' : !contentLoaded}"
+    accept-charset="UTF-8"
+    data-cy="issue_form"    
     >
     <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -14,16 +20,23 @@
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link :to="projectNameLink">{{
-              facility.facilityName
-            }}</router-link>
+            <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
+                facility.facilityName
+                }}
+            </span>
+            <span v-else>{{
+                issue.facilityName
+            }}
+            </span>            
+            </router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
             <router-link
               :to="
-                `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/issues`
+                backToIssues
               "
               >Issues</router-link
             >
@@ -109,8 +122,8 @@
            <span class="statesCol p-1 mr-1">
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
               v-tooltip="`On Hold`" 
@@ -131,8 +144,8 @@
             </span>
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
               v-tooltip="`Draft`" 
@@ -154,9 +167,9 @@
            </span>
 
            <span class="tagsCol p-1">
-                 <span
-              v-if="_isallowed('write')"
+             <span
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
               v-tooltip="`On Watch`" 
@@ -178,8 +191,8 @@
            
 
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
               v-tooltip="`Important`" 
@@ -197,8 +210,8 @@
                 style="vertical-align:text-top"> Important</small>
             </span>
              <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
                 v-tooltip="`Briefings`" 
@@ -952,8 +965,9 @@ Tab 1 Row Begins here -->
                     @click.prevent="downloadFile(file)"
                   >
                     <span class="scales"
-                      ><font-awesome-icon icon="file" class="mr-1"
-                    /></span>
+                      >
+                   <i class="fal fa-file mr-1"></i>
+                    </span>
                     <input
                       readonly
                       type="text"
@@ -1386,7 +1400,7 @@ export default {
         title: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.facility.id,       
+        facilityProjectId: this.$route.params.programId,       
         issueTypeId: "",
         taskTypeId: "",
         progress: 0,
@@ -1854,11 +1868,13 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
-            } else {
+            } else if (this.$route.path.includes("kanban"))  {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
-            }
+             } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
+              );
           })
           .catch((err) => {
             console.log(err);
@@ -2034,6 +2050,7 @@ export default {
       "currentIssues",
       "currentProject",
       "currentRisks",
+      "contentLoaded",
       "currentTasks",
       "facilities",
       "facilityGroups",
@@ -2059,6 +2076,12 @@ export default {
         this.exists(this.DV_issue.dueDate) &&
         this.exists(this.DV_issue.startDate)
       );
+    },
+    isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
     },
     isMapView() {
       return this.$route.name === "MapIssueForm";
@@ -2115,11 +2138,20 @@ export default {
         return "kanban";
       }
     },
+  backToIssues() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
   projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
   },
@@ -2134,16 +2166,16 @@ export default {
     "DV_issue.startDate"(value) {
       if (!value) this.DV_issue.dueDate = "";
     },
-    "DV_issue.dueDate"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_issue.dueDate"(value) {
+    //   if (this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_issue.checklists": {
       handler: function(value) {
         if (this.DV_issue.autoCalculate) this.calculateProgress(value);
@@ -2271,6 +2303,9 @@ export default {
 
 <style lang="scss" scoped>
 .issues-form {
+}
+.line {
+  border-top: solid .25px lightgray;
 }
 .form-control.error {
   border-color: #e84444;

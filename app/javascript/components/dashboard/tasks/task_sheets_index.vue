@@ -717,6 +717,8 @@
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+
+     
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
           if (taskIssueUsers.length > 0) {
@@ -760,8 +762,7 @@
             valid && search_query.test(resource.userNames)
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
           return valid
-        }), ['dueDate'])
-
+        }), ['dueDate']) 
     return {
        unfiltered: {
             tasks
