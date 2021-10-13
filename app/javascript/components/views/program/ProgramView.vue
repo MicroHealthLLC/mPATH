@@ -7,7 +7,7 @@
           </button>  
       </span>
     </div>
-  <div class="container-fluid mx-3 portfolioView_main" :load="log(currentTab)"
+  <div class="container-fluid mx-3 portfolioView_main" 
     v-loading="!contentLoaded"
     element-loading-text="Fetching Program Viewer data. Please wait..."
     :class="[!contentLoaded ? 'vh100': '']"
@@ -112,7 +112,7 @@
 
                                      <div class="col">    
                                        <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
-                                    <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].taskType" >{{ dynamicObj[currentTaskSlide].category}}  </h4> 
+                                    <h4 v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].taskType" >{{ dynamicObj[currentTaskSlide].taskType}}  </h4> 
                                     <h4 v-else> -- </h4>                                                                
                                   </div>  
 
@@ -687,7 +687,7 @@
                         ></span>
                       </th> 
                        <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
-                        Project 
+                        Project Name 
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="currentSortCol2 !== 'facilityName'"
@@ -2170,6 +2170,9 @@ export default {
   top:1rem;
   position:absolute;
   right: 1rem;
+  background-color: #fff;
+  z-index: 1045;
+  width: 350px;
 }
 
 </style>

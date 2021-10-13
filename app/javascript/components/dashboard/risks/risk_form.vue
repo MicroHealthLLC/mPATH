@@ -4,7 +4,7 @@
     element-loading-text="Fetching Risk data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"   
+    element-loading-background="rgba(0, 0, 0, 0.8)"  
     >
     <form
       @submit.prevent="validateThenSave"
@@ -19,9 +19,16 @@
                <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
               </span>
-              <router-link :to="projectNameLink">{{
-               risk.facilityName
-              }}</router-link>
+              <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
+                facility.facilityName
+                }}
+            </span>
+            <span v-else>{{
+                risk.facilityName
+            }}
+            </span>            
+            </router-link>
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
@@ -112,8 +119,8 @@
                
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
               v-tooltip="`Ongoing`" 
@@ -133,9 +140,9 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
                v-tooltip="`On Hold`" 
@@ -159,8 +166,8 @@
            
           
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
               v-tooltip="`Draft`" 
@@ -189,8 +196,8 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
                 data-cy="task_on_watch"
@@ -211,8 +218,8 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
               v-tooltip="`Important`" 
@@ -232,8 +239,8 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
+                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
                 v-tooltip="`Briefings`" 
@@ -2186,7 +2193,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
-        me: "",
+        // facilityName: this.facility,
         riskStageId: "",
         probability: 1,
         impactLevel: 1,
@@ -2218,7 +2225,7 @@ export default {
       };
     },
       //  log(e){
-      //     console.log("This is the riskDispStatus item: " + e)
+      //     console.log(e)
       // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {

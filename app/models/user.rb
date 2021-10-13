@@ -62,7 +62,8 @@ class User < ApplicationRecord
   end
 
   def authorized_programs
-    Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
+    Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
   end
 
   def full_name
@@ -292,6 +293,13 @@ class User < ApplicationRecord
     User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
   end
 
+  def checklist_json
+    {
+      id: self.id,
+      full_name: self.full_name
+    }
+  end
+
   def as_json(options=nil)
     json = super(options)
     json.merge(
@@ -448,7 +456,7 @@ class User < ApplicationRecord
 
     pp_hash = user.project_privileges_hash
 
-    facility_project_hash = FacilityProject.includes(:facility, :project).where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
+    facility_project_hash = FacilityProject.where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
 
     facility_project_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])

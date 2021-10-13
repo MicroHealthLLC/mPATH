@@ -1830,12 +1830,12 @@ export default {
             this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
             // this.updateIssuesHash({ issue: response.data.issue });
-            let issue_i = this.portfolioIssues.findIndex((t) => t.id == this.DV_issue.id)
-            if (issue_i > -1){
-              Vue.set(this.portfolioIssues, issue_i, this.DV_issue)
-            }else if (issue_i == -1){
-              this.portfolioIssues.push(this.DV_issue)
-            }
+            // let issue_i = this.portfolioIssues.issues.findIndex((t) => t.id == this.DV_issue.id)
+            // if (issue_i > -1){
+            //   Vue.set(this.portfolioIssues.issues, issue_i, this.DV_issue)
+            // }else if (issue_i == -1){
+            //   this.portfolioIssues.issues.push(this.DV_issue)
+            // }
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,

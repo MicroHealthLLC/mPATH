@@ -105,8 +105,8 @@
           :class="{ 'font-sm': isMapView }"
         >
           <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
+            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleImportant"
             v-tooltip="`Important`"
           >
@@ -125,8 +125,8 @@
           </span>
 
           <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
+            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleReportable"
             v-tooltip="`Briefings`" 
           >
@@ -145,8 +145,8 @@
             </small>
           </span>
           <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
+            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
           >
@@ -1299,18 +1299,18 @@ export default {
           });
           this.SET_LESSON_STATUS(0);
           //Route to newly created task form page
-          if (this.$route.path.includes("sheet")) {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          } else if (this.$route.path.includes("map")) {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          } else 
-          this.$router.push(
-              `/programs/${this.$route.params.programId}/dataviewer`
-            );
+        //   if (this.$route.path.includes("sheet")) {
+        //     this.$router.push(
+        //       `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+        //     );
+        //   } else if (this.$route.path.includes("map")) {
+        //     this.$router.push(
+        //       `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+        //     );
+        //   } else 
+        //   this.$router.push(
+        //       `/programs/${this.$route.params.programId}/dataviewer`
+        //     );
         }
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
