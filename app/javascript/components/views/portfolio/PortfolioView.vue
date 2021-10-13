@@ -8,10 +8,10 @@
     >
     <!-- Actual Portfolio name will be dynamic value of organization name   -->
     <div>
-      <span>
+      <span @click.prevent="backHomeBtn">
         <img
           class="mb-2"
-          style="width: 147px"
+          style="width: 147px;cursor:pointer"
           :src="require('../../../../assets/images/microhealthllc.png')"
         />
         <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
@@ -22,7 +22,9 @@
         </button>  
       </span>
     </div>
-    <el-tabs class="mt-2 mr-3" type="border-card">
+    <el-tabs class="mt-2 mr-3" type="border-card"
+       
+    >
       <el-tab-pane label="PORTFOLIO DATA VIEWER" class="p-3"  style="postion:relative" >
         <!-- El-Dialog is the Presentation.  This component is dynamically populated based on tab.  Thus, it appears just once in the file. -->
            
@@ -310,7 +312,7 @@
                         <el-button class="mh-orange elBtn text-light"  @click.prevent="nextTask"><i class="far fa-chevron-right" style="font-size:1.35rem"></i></el-button>
                         </div>
                         </template>
-                        </el-dialog>
+            </el-dialog>
            <div class="row pb-4">
               <div class="col-4 py-2">
                 <div class="w-100 d-flex">
@@ -404,11 +406,15 @@
               </div>
             </div>
 
-        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative" >
+        <el-tabs class="mt-1" type="border-card" @tab-click="handleClick"  style="postion:relative"          
+        >
           
           <!-- TASKS -->
           <el-tab-pane class="pt-2" name="tasks" style="postion:relative"
-                
+            v-loading="!portfolioTasksLoaded"
+            element-loading-text="Fetching Portfolio Tasks. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"               
            >
             <template
               slot="label"
@@ -420,16 +426,11 @@
                 <span>{{ portfolioCounts.tasks_count }}</span>
               </span>
             </template>
-
          
             <div class="box-shadow py-2"  style="postion:relative"  >
               <div class="row py-1 pr-2">
                 <div class="col-10 px-1 pt-2">
-                  <!-- <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">  
-                     <button class="btn btn-info btn-md">Add Task</button> 
-                     </div> -->
-
-                  <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
+                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">
                     <span class=""
                       ><label class="font-sm px-2 mt-4 d-block"
                         >STATES TO DISPLAY</label
@@ -718,10 +719,14 @@
                     <button
                       class="btn text-light btn-md mh-orange px-1 profile-btns portfolioResultsBtn"
                     >
-                      RESULTS: {{ tasksObj.filtered.tasks.length }}
-                    </button></span
+                      RESULTS: {{ tasksObj.filtered.tasks.length }} 
+                    </button>             
+                    
+                    </span
                   >
+                              
                 </div>
+               
               </div>
 
               <div
@@ -1431,7 +1436,11 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane class="pt-2"  name="issues"             
+          <el-tab-pane class="pt-2"  name="issues"
+            v-loading="!portfolioIssuesLoaded"
+            element-loading-text="Fetching Portfolio Issues. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"             
           >
             <template slot="label" class="text-right">
               ISSUES
@@ -2417,8 +2426,11 @@
 
           <!-- RISKS TAB STARTS HERE -->
 
-          <el-tab-pane class="pt-2" name="risks"          
-           
+          <el-tab-pane class="pt-2" name="risks" 
+            v-loading="!portfolioRisksLoaded"
+            element-loading-text="Fetching Portfolio Risks. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"          
           >
             <template
               slot="label"
@@ -3579,7 +3591,11 @@
             </div>
           </el-tab-pane>
 
-          <el-tab-pane class="pt-2"  name="lessons"          
+          <el-tab-pane class="pt-2"  name="lessons"
+            v-loading="!portfolioLessonsLoaded"
+            element-loading-text="Fetching Portfolio Lessons. Please wait..."  
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"                   
           >
             <template slot="label" class="text-right">
               LESSONS LEARNED
@@ -4365,6 +4381,15 @@ export default {
       activeName: 'tasks',
       dialogVisible: false,
       taskRow: {}, 
+      taskArray: [],
+      taskCount: null,
+      issueArray: [],
+      issueCount: null,
+      riskArray: [],
+      riskCount: null,
+      lessonArray: [],
+      lessoCount: null,
+      taskLastPage: null, 
       action: '',
       dynamicObj: {},
       currentTaskSlide : 0,
@@ -4373,6 +4398,7 @@ export default {
       search_tasks: "",
       search_issues: "",
       search_risks: "",
+      loadMoreItems: 600,
       search_lessons: "",
       currentSort: "text" || "title",  
       currentSortCol1: "program_name",
@@ -4408,9 +4434,11 @@ export default {
   mounted() {
     this.fetchPortfolioPrograms();
     this.$nextTick(function () {
+      //  console.warning("mounted,  ", this.portfolioTasks.tasks.length )
       // Code that will run only after the
       // entire view has been rendered
      $(this.currTab).trigger('click');
+
       this.fetchPortfolioCounts();
       this.setFacilityProjectIds()
     })
@@ -4747,14 +4775,14 @@ export default {
       ];
     },
     validStages() {
-      return this.portfolioTasks.filter((t) => {
+      return this.taskArray.filter((t) => {
         return t.task_stage !== null && t.task_stage !== "";
       });
     },
     tasksObj() {
       // if(this.currentTab != 'tasks')
       //   return []
-    let tasks = this.portfolioTasks
+    let tasks = this.taskArray
         .filter((task) => {
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(task.facility_project_id)
         })
@@ -4956,7 +4984,7 @@ export default {
     issuesObj() {
       // if(this.currentTab != 'issues')
       //   return []
-    let issues =  this.portfolioIssues
+    let issues =  this.issueArray
         .filter((issue) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(issue.facility_project_id)
         })
@@ -5159,7 +5187,7 @@ export default {
     risksObj() {
       // if(this.currentTab != 'risks')
       //   return []
-    let risks = this.portfolioRisks
+    let risks = this.riskArray
         .filter((risk) => {       
           return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(risk.facility_project_id)
         })
@@ -5355,7 +5383,7 @@ export default {
     lessonsObj() {
       // if(this.currentTab != 'lessons')
       //   return []
-     let lessons = this.portfolioLessons
+     let lessons = this.lessonArray
         .filter((lesson) => {
            return this.facility_project_ids.length < 1 ? true : this.facility_project_ids.includes(lesson.facility_project_id)
         })
@@ -5774,7 +5802,7 @@ export default {
     //   return this.portfolioPrograms;
     // },
     C_categories() {
-      let category = this.portfolioTasks;
+      let category = this.taskArray;
       return [
         ...new Set(
           category
@@ -5784,7 +5812,7 @@ export default {
       ];
     },
     C_i_categories() {
-      let category = this.portfolioIssues;
+      let category = this.issueArray;
       return [
         ...new Set(
           category
@@ -5794,7 +5822,7 @@ export default {
       ];
     },
     C_r_categories() {
-      let category = this.portfolioRisks;
+      let category = this.riskArray;
       return [
         ...new Set(
           category
@@ -5804,7 +5832,7 @@ export default {
       ];
     },
     C_l_categories() {
-      let category = this.portfolioLessons;
+      let category = this.lessonArray;
       return [
         ...new Set(
           category
@@ -6452,29 +6480,30 @@ export default {
       window.location.pathname = "/"
     },
     handleClick(tab, event) {
-            // console.log(tab);
+      let size = this.loadMoreItems;
+              // console.log(tab);
       let tab_id = $(event.target).attr("id")
       if(tab_id == "tab-tasks" || tab.name == 'tasks'){
         this.currentTab = 'tasks'
         if(this.tasksObj.filtered.tasks && this.tasksObj.filtered.tasks.length < 1){
-          this.fetchPortfolioTasks();
+          this.fetchPortfolioTasks({size});
         }
         
       }else if(tab_id == "tab-issues"  || tab.name == 'issues'){
         this.currentTab = 'issues'
         if(this.issuesObj.filtered.issues && this.issuesObj.filtered.issues.length < 1){
-          this.fetchPortfolioIssues();  
+          this.fetchPortfolioIssues({size});  
         }
       }else if(tab_id == "tab-risks"  || tab.name == 'risks'){
         this.currentTab = 'risks'
         if(this.risksObj.filtered.risks && this.risksObj.filtered.risks.length < 1){
-          this.fetchPortfolioRisks();
+          this.fetchPortfolioRisks({size});
         }
         
       }else if(tab_id == "tab-lessons"  || tab.name == 'lessons'){
         this.currentTab = 'lessons'
         if(this.lessonsObj.filtered.lessons && this.lessonsObj.filtered.lessons.length < 1){
-          this.fetchPortfolioLessons();
+          this.fetchPortfolioLessons({size});
         }
       } 
     },
@@ -6483,16 +6512,78 @@ export default {
     $route(to, from) {
       this.$store && this.$store.commit("nullifyTasksForManager");
     },
+   portfolioTasksLoaded: {
+     handler(){
+      if(this.portfolioTasksLoaded){
+      this.taskArray = this.portfolioTasks.tasks;  
+      this.taskLastPage = this.portfolioTasks.last_page;  
+      this.taskCount = this.portfolioTasks.total_count;  
+      let currCount = this.portfolioTasks.tasks.length
+      let total = this.portfolioTasks.total_count
+      if (currCount < total){
+        let size = this.loadMoreItems+=250
+        this.fetchPortfolioTasks({size});
+      } else if ( currCount == total ) {
+        return
+       }
+      }
+     }
+   },
+    portfolioIssuesLoaded: {
+     handler(){
+      if(this.portfolioIssuesLoaded){
+      this.issueArray = this.portfolioIssues.issues;  
+      this.issueLastPage = this.portfolioIssues.last_page;  
+      this.issueCount = this.portfolioIssues.total_count;  
+      let currCount = this.portfolioIssues.issues.length
+      let total = this.portfolioIssues.total_count
+     if (currCount < total){
+        let size = this.loadMoreItems+=250
+        this.fetchPortfolioIssues({size});
+        // console.log("tasks: ", this.portfolioTasks.tasks.length, "total: ", this.portfolioTasks.total_count)
+      } else if ( currCount == total ) {
+        return
+       }
+      }
+     }
+   }, 
+   portfolioRisksLoaded: {
+     handler(){
+      if(this.portfolioRisksLoaded){
+       this.riskArray = this.portfolioRisks.risks;  
+      this.riskLastPage = this.portfolioRisks.last_page;  
+      this.riskCount = this.portfolioRisks.total_count;  
+      let currCount = this.portfolioRisks.risks.length
+      let total = this.portfolioRisks.total_count
+      if (currCount < total){
+        let size = this.loadMoreItems+=250
+        this.fetchPortfolioRisks({size});
+        // console.log("tasks: ", this.portfolioTasks.tasks.length, "total: ", this.portfolioTasks.total_count)
+      } else if ( currCount == total ) {
+        return
+       }
+      }
+     }
+   }, 
+   portfolioLessonsLoaded: {
+     handler(){
+      if(this.portfolioLessonsLoaded){
+      this.lessonArray = this.portfolioLessons.lessons;  
+      this.lessonLastPage = this.portfolioLessons.last_page;  
+      this.lessonCount = this.portfolioLessons.total_count;  
+      let currCount = this.portfolioLessons.lessons.length
+      let total = this.portfolioLessons.total_count     
+      if (currCount < total){
+        let size = this.loadMoreItems+=250
+        this.fetchPortfolioLessons({size});
+        // console.log("tasks: ", this.portfolioTasks.tasks.length, "total: ", this.portfolioTasks.total_count)
+      } else if ( currCount == total ) {
+        return
+       }
+      }
+     }
+   }
   },
-    //  "$route.path": {
-    //   handler() {
-    //     if (this.openTask) {
-    //       this.facility = this.portfolioTasks.find(
-    //         (p) => p.facility_project_id == this.openTask.project_id
-    //       );
-    //     }
-    //   },
-    // },
 };
 </script>
 
