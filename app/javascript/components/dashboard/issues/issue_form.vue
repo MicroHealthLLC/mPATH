@@ -119,37 +119,44 @@
             >
 
           <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
-           <span class="statesCol p-1 mr-1">
 
-             <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleOnhold"
-              data-cy="issue_on_hold"
-              v-tooltip="`On Hold`" 
-            >
+           <span class="statesCol p-1 mr-1">
+            <span>
+              <span v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleOnhold"
+                data-cy="issue_on_hold"
+                v-tooltip="`On Hold`"
+              ></span>
+              <span v-else
+                class="watch_action mx-2"
+                data-cy="issue_on_hold"
+                v-tooltip="`On Hold`"
+              ></span>
               <span 
-              
                 v-show="DV_issue.onHold">
                 <i class="fas fa-pause-circle mr-1 text-primary"></i>
               </span>
               <span 
                v-show="!DV_issue.onHold">
               <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
+              </span>            
               <small 
                 :class="{'d-none': isMapView }"
                 style="vertical-align:text-top"> On Hold</small>
-            </span>
-
-             <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleDraft"
-              data-cy="issue_important"
-              v-tooltip="`Draft`" 
-            >
+            </span><!--  On Hold  -->
+            <span>
+              <span v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleDraft"
+                data-cy="issue_important"
+                v-tooltip="`Draft`"
+              ></span>
+              <span v-else
+                class="watch_action mx-2"
+                data-cy="issue_important"
+                v-tooltip="`Draft`"
+              ></span>
               <span              
                 v-show="DV_issue.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
@@ -157,23 +164,26 @@
               <span 
                v-show="!DV_issue.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
+              </span>             
               <small 
                 :class="{'d-none': isMapView }"
                 style="vertical-align:text-top"> Draft</small>
-            </span>
-
-           </span>
+            </span><!--  Draft  -->
+           </span><!-- statesCol   -->
 
            <span class="tagsCol p-1">
-             <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleWatched"
-              data-cy="issue_on_watch"
-              v-tooltip="`On Watch`" 
-            >
+            <span>
+              <span v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                v-tooltip="`On Watch`" 
+                @click.prevent.stop="toggleWatched"
+                data-cy="issue_on_watch"
+              ></span>
+              <span v-else
+                class="watch_action mx-2"
+                v-tooltip="`On Watch`" 
+                data-cy="issue_on_watch"
+              ></span>
               <span               
                 v-show="DV_issue.watched" 
                 ><i class="fas fa-eye mr-1"></i
@@ -181,22 +191,23 @@
               <span 
                  v-show="!DV_issue.watched" 
                 ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-              ></span>
-           
+              ></span>           
               <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
                 On Watch
               </small>
-            </span>
-      
-           
-
-            <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleImportant"
-              data-cy="issue_important"
-              v-tooltip="`Important`" 
-            >
+            </span><!--  On Watch  -->
+            <span>
+              <span v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleImportant"
+                data-cy="issue_important"
+                v-tooltip="`Important`" 
+              ></span>
+              <span v-else
+                class="watch_action mx-2"
+                data-cy="issue_important"
+                v-tooltip="`Important`" 
+              ></span>
                <span               
                 v-show="DV_issue.important">
                <i class="fas fa-star text-warning"></i>
@@ -208,34 +219,35 @@
               <small 
                 :class="{'d-none': isMapView }"
                 style="vertical-align:text-top"> Important</small>
-            </span>
-             <span
+            </span><!--  Important  -->
+            <span>
+              <span v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
-                v-tooltip="`Briefings`" 
-              >
-                <span
-              
-                  v-show="DV_issue.reportable">
-                <i class="fas fa-presentation text-primary"></i>
-                </span>
-                <span 
-               
-                  v-show="!DV_issue.reportable">
-                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-                </span>
-              
-                <small 
-                  :class="{'d-none': isMapView }"
-                  style="vertical-align:text-top"> 
-               Briefings
-                </small>
-                </span>
-           </span>
-        
-        
+                v-tooltip="`Briefings`"
+              ></span>
+              <span v-else
+                class="watch_action mx-2"
+                data-cy="issue_reportable"
+                v-tooltip="`Briefings`"
+              ></span>
+              <span           
+                v-show="DV_issue.reportable">
+              <i class="fas fa-presentation text-primary"></i>
+              </span>
+              <span             
+                v-show="!DV_issue.reportable">
+              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+              </span>           
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+             Briefings
+              </small>
+            </span><!--  Briefings  -->
+           </span><!--  tagsCol  -->        
+
           </div>
 
             <el-input
