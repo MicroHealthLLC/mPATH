@@ -123,155 +123,168 @@
             >
             <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
 
-              <span class="statesCol p-1 mr-1">           
-            <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleOngoing"
-              data-cy="task_ongoing"
-              v-tooltip="`Ongoing`" 
-            >
-              <span              
-                v-show="DV_task.ongoing">
-              <i class="fas fa-retweet text-success"></i>
-              </span>
-              <span              
-                v-show="!DV_task.ongoing">
-              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Ongoing
-              </small>
-            </span>
-
-              <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleOnhold"
-              data-cy="task_on_hold"
-               v-tooltip="`On Hold`" 
-            >
-              <span                
-                v-show="DV_task.onHold">
-                <i class="fas fa-pause-circle mr-1 text-primary"></i>
-              
-              </span>
-              <span
-                v-show="!DV_task.onHold">
-              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>              
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                On Hold
-              </small>
-            </span>
-           
-          
-              <span
-                class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
-                @click.prevent.stop="toggleDraft"
-                data-cy="task_important"
-                v-tooltip="`Draft`" 
-              >
-              <span               
-                 v-show="DV_task.draft">
-               <i class="fas fa-pencil-alt text-warning"></i>
-              </span>
-              <span               
-                v-show="!DV_task.draft">
-               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Draft
-              </small>
-            </span>
-
-
-
-              </span>
-
+              <span class="statesCol p-1 mr-1">
+                <span>
+                  <span v-if="_isallowed('write')"
+                    class="watch_action clickable mx-2"
+                    @click.prevent.stop="toggleOngoing"
+                    data-cy="task_ongoing"
+                    v-tooltip="`Ongoing`"
+                  ></span>
+                  <span v-else
+                    class="watch_action mx-2"
+                    data-cy="task_ongoing"
+                    v-tooltip="`Ongoing`"
+                  ></span>
+                  <span              
+                    v-show="DV_task.ongoing">
+                    <i class="fas fa-retweet text-success"></i>
+                  </span>
+                  <span              
+                    v-show="!DV_task.ongoing">
+                    <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+                  </span>             
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    Ongoing
+                  </small>
+                </span><!--  Ongoing  -->
+                <span>
+                  <span v-if="_isallowed('write')"
+                    class="watch_action clickable mx-2"
+                    @click.prevent.stop="toggleOnhold"
+                    data-cy="task_on_hold"
+                    v-tooltip="`On Hold`"
+                  ></span>
+                  <span v-else
+                    class="watch_action mx-2"
+                    data-cy="task_on_hold"
+                    v-tooltip="`On Hold`"
+                  ></span>
+                  <span                
+                    v-show="DV_task.onHold">
+                    <i class="fas fa-pause-circle mr-1 text-primary"></i>                 
+                  </span>
+                  <span
+                    v-show="!DV_task.onHold">
+                    <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
+                  </span>                 
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    On Hold
+                  </small>
+                </span><!--  On Hold  -->
+                <span>
+                  <span v-if="_isallowed('write')"
+                    class="watch_action clickable mx-2"
+                    @click.prevent.stop="toggleDraft"
+                    data-cy="task_important"
+                    v-tooltip="`Draft`"
+                  ></span>
+                  <span v-else
+                    class="watch_action mx-2"
+                    data-cy="task_important"
+                    v-tooltip="`Draft`"
+                  ></span>
+                  <span               
+                    v-show="DV_task.draft">
+                    <i class="fas fa-pencil-alt text-warning"></i>
+                  </span>
+                  <span               
+                    v-show="!DV_task.draft">
+                    <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+                  </span>            
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    Draft
+                  </small>
+                </span><!--  Draft  -->
+              </span><!-- statesCol   -->
 
               <span class="tagsCol p-1">
-
-              <span
-                class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
-                v-tooltip="`On Watch`" 
-                @click.prevent.stop="toggleWatched"
-                data-cy="task_on_watch"
-              >
-                <span                
-                  v-show="DV_task.watched" 
-                  ><i class="fas fa-eye mr-1"></i
-                ></span>
-                <span 
-                  v-show="!DV_task.watched" 
-                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
-                ></span>           
-                <small 
-                  style="vertical-align:text-top" 
-                  :class="{'d-none': isMapView }"
-                > 
-                  On Watch
-                </small>
-              </span>
-              <span
-                class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
-                @click.prevent.stop="toggleImportant"
-                data-cy="task_important"
-                v-tooltip="`Important`" 
-              >
-              <span 
-                v-show="DV_task.important">
-               <i class="fas fa-star text-warning"></i>
-              </span>
-              <span 
-                v-show="!DV_task.important">
-               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-               :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Important
-              </small>
-              </span>
-              <span
-                class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
-                @click.prevent.stop="toggleReportable"
-                data-cy="task_reportable"
-                v-tooltip="`Briefings`" 
-              >
-                <span               
-                  v-show="DV_task.reportable">
-                <i class="fas fa-presentation text-primary"></i>
-                </span>
-                <span 
-                v-show="!DV_task.reportable">
-                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-                </span>
+                <span>
+                  <span v-if="_isallowed('write')"
+                    class="watch_action clickable mx-2"
+                    v-tooltip="`On Watch`" 
+                    @click.prevent.stop="toggleWatched"
+                    data-cy="task_on_watch"
+                  ></span>
+                  <span v-else
+                    class="watch_action mx-2"
+                    v-tooltip="`On Watch`" 
+                    data-cy="task_on_watch"
+                  ></span>
+                  <span
+                    v-show="DV_task.watched">
+                    <i class="fas fa-eye mr-1"></i>
+                  </span>
+                  <span
+                    v-show="!DV_task.watched">
+                    <i class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i>
+                  </span>           
+                  <small 
+                    style="vertical-align:text-top" 
+                    :class="{'d-none': isMapView }">
+                    On Watch
+                  </small>
+                </span><!--  On Watch  -->
+                <span>
+                  <span v-if="_isallowed('write')"
+                    class="watch_action clickable mx-2"
+                    @click.prevent.stop="toggleImportant"
+                    data-cy="task_important"
+                    v-tooltip="`Important`" 
+                  ></span>
+                  <span v-else
+                    class="watch_action mx-2"
+                    data-cy="task_important"
+                    v-tooltip="`Important`" 
+                  ></span>
+                  <span 
+                    v-show="DV_task.important">
+                    <i class="fas fa-star text-warning"></i>
+                  </span>
+                  <span 
+                    v-show="!DV_task.important">
+                    <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+                  </span>             
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    Important
+                  </small>
+                </span><!--  Important  -->
+                <span>
+                  <span v-if="_isallowed('write')"
+                    class="watch_action clickable mx-2"
+                    @click.prevent.stop="toggleReportable"
+                    data-cy="task_reportable"
+                    v-tooltip="`Briefings`"
+                  ></span>
+                  <span v-else
+                    class="watch_action mx-2"
+                    data-cy="task_reportable"
+                    v-tooltip="`Briefings`"
+                  ></span>
+                  <span               
+                    v-show="DV_task.reportable">
+                    <i class="fas fa-presentation text-primary"></i>
+                  </span>
+                  <span 
+                    v-show="!DV_task.reportable">
+                    <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+                  </span>                
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    Briefings
+                  </small>
+                </span><!--  Briefings  -->
+              </span><!--  tagsCol  -->
               
-                <small 
-                  :class="{'d-none': isMapView }"
-                  style="vertical-align:text-top"> 
-                Briefings
-                </small>
-              </span>                
-              </span>
-
-
-          
-     
-
             </div>
 
             <el-input
