@@ -100,21 +100,15 @@
         <label class="font-md"
           >Lesson Name <span style="color: #dc3545">*</span></label
         >
-
         <div
           class="toggleWrapper float-right tagsCol"
           :class="{ 'font-sm': isMapView }"
         >
-          <span>
-            <span v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              v-tooltip="`Draft`"
-            ></span>
-            <span v-else
-              class="watch_action mx-2"
-              v-tooltip="`Draft`"
-            ></span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleDraft"
+            v-tooltip="`Draft`"
+          >
             <span  v-show="lesson.draft">
               <i class="fas fa-pencil-alt text-warning"></i>
             </span>
@@ -124,23 +118,19 @@
                 style="color:lightgray;cursor:pointer"
               ></i>
             </span>
+
             <small
               :class="{ 'd-none': isMapView }"
               style="vertical-align:text-top"
             >
               Draft
             </small>
-          </span><!--  Draft  -->
-          <span>
-            <span v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              v-tooltip="`Important`" 
-            ></span>
-            <span v-else
-              class="watch_action mx-2"
-              v-tooltip="`Important`" 
-            ></span>
+          </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleImportant"
+            v-tooltip="`Important`"
+          >
             <span v-show="lesson.important">
               <i class="fas fa-star text-warning"></i>
             </span>
@@ -153,33 +143,28 @@
             >
               Important
             </small>
-          </span><!--  Important  -->
-          <span>
-            <span v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleReportable"
-              v-tooltip="`Briefings`"
-            ></span>
-            <span v-else
-              class="watch_action mx-2"
-              v-tooltip="`Briefings`"
-            ></span>
+          </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleReportable"
+            v-tooltip="`Briefings`" 
+          >
             <span v-show="lesson.reportable">
             <i class="fas fa-presentation text-primary"></i>
             </span>
             <span v-show="!lesson.reportable">
               <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
             </span>
+
             <small
               :class="{ 'd-none': isMapView }"
               style="vertical-align:text-top"
             >
               Briefings
             </small>
-          </span><!--  Briefings  -->
-          
+          </span>
         </div>
-        
+
         <el-input
           name="Lesson Name"
           v-validate="'required'"
@@ -1155,12 +1140,21 @@ export default {
       this.lesson.lesson_stage_id = null;
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
     },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
     log(e)
