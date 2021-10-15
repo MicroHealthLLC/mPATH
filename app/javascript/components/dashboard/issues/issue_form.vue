@@ -671,7 +671,7 @@ Tab 1 Row Begins here -->
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarVie || isProgramView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
