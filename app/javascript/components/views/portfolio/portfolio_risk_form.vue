@@ -117,7 +117,6 @@
                
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
@@ -138,8 +137,7 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
@@ -163,8 +161,7 @@
             </span>
            
           
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
@@ -194,7 +191,6 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
@@ -216,7 +212,6 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
@@ -237,7 +232,6 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
@@ -2381,6 +2375,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && !this.DV_risk.watched) {
         this.$message({
           message: `Risks at 100% progress cannot be placed On Watch status.`,
@@ -2406,23 +2403,41 @@ export default {
       this.validateThenSave()
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.due_date = '';
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, on_hold: !this.DV_risk.on_hold };
         this.DV_risk.due_date = '';
       },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
       },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, reportable: !this.DV_risk.reportable };
       },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
       }
