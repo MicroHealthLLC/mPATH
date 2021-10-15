@@ -68,7 +68,7 @@ class TasksController < AuthenticatedController
     # @task.create_or_update_task(params, current_user)
     
     if params[:source] == "portfolio_viewer"
-      response = @task.portfolio_json
+      response = @task.portfolio_json(files: true)
     else
       response = @task.to_json
     end

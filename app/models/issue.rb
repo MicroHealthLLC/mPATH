@@ -50,7 +50,7 @@ class Issue < ApplicationRecord
     }
   end
 
-  def portfolio_json
+  def portfolio_json(facility_groups: [], files: false)
     self.on_hold = false if draft & on_hold
 
     is_overdue = false
@@ -69,7 +69,38 @@ class Issue < ApplicationRecord
       self.on_hold = false if self.on_hold && completed
     end
     
+    attach_files = []
+    if files == true
+      i_files = self.issue_files
+  
+      if i_files.attached?
+        attach_files = i_files.map do |file|
+          next if !file.blob.filename.instance_variable_get("@filename").present?
+          begin
+            if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+              {
+                id: file.id,
+                name: file.blob.filename.instance_variable_get("@filename"),
+                uri: file.blob.filename.instance_variable_get("@filename"),
+                link: true
+              }
+            else
+              {
+                id: file.id,
+                name: file.blob.filename,
+                uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+                link: false
+              }
+            end
+          rescue Exception => e
+            puts "There is an exception"
+          end
+        end.compact.uniq
+      end
+    end
+
     merge_h = { 
+      attach_files: attach_files,
       project_name: facility.facility_name, 
       program_name: project.name, 
       project_id: facility.id, 
