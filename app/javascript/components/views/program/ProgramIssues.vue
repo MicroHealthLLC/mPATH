@@ -955,8 +955,8 @@ v-if="filteredIssues.filtered.issues.length > 0"
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
-            {{issue.lastUpdate.body}}
+          <span class="truncate-line-five">
+            {{ issue.lastUpdate.body }}
           </span>         
           </span>  
           <span class="text-left" v-else>No Update</span>
@@ -1117,7 +1117,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
                     {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
                     </span> 
                     <span class="truncate-line-five">
-                      {{issue.lastUpdate.body}}
+                      {{ issue.lastUpdate.body }}
                     </span>         
                     </span>  
                     <span class="text-left" v-else>No Update</span>
