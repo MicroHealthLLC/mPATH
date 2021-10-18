@@ -1462,7 +1462,7 @@
                             </span>
 
                             <table
-                              v-if="check.progress_lists !== undefined"
+                              v-if="check.progress_lists.length > 0"
                               style="width: 100%"
                               class="mt-1"
                             >
