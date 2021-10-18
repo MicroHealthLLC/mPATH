@@ -406,8 +406,6 @@ class Task < ApplicationRecord
     task.transaction do
       task.save
 
-      task.add_link_attachment(params)
-
       if user_ids && user_ids.present?
         task_users_obj = []
         user_ids.each do |uid|
@@ -488,6 +486,11 @@ class Task < ApplicationRecord
       task.assign_users(params)
 
     end
+
+    # NOTE: This is not working inside the Transaction block.
+    # Reproduce: Create new task with file and link both and it is giving an error
+    # Error performing ActiveStorage::AnalyzeJob ActiveStorage::FileNotFoundError (ActiveStorage::FileNotFoundError):
+    task.add_link_attachment(params)
 
     task.reload
   end
