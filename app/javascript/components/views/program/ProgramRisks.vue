@@ -330,11 +330,11 @@
           getShowCount == false ? 'd-none' : 'd-block',
         ]"
       >
-        <span v-if="filteredRisks.filtered.risks.length">{{
+        <span v-if="filteredRisks.filtered.risks">{{
           riskVariation.ongoing.count
         }}<span
           v-tooltip="`Ongoing: Closed`"
-          v-if="riskVariation.ongoingClosed.count > 0"
+          v-if="riskVariation.ongoingClosed.count"
           style="color:lightgray"
           >({{
             riskVariation.ongoingClosed.count

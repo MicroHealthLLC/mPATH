@@ -194,7 +194,7 @@
                   <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
                 <div class="col p-0  mb-0">                  
-                       NO DATA TO DISPLAY
+                  NO DATA TO DISPLAY
                 </div>             
               </div>        
                   </el-collapse-item>
@@ -492,6 +492,8 @@
                       <!-- <hr /> -->
                     </div>
             </div>
+
+             <div v-if="contentLoaded">
               <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">
                   
@@ -537,6 +539,7 @@
                      <span class="smallerFont d-block">ONGOING</span>    
                 </div>       
               </div>
+            
 
               <div class="row text-center mt-0" :class="[filteredRisks.length > 0 ? '' : '']">
                 <div class="col pb-0 mb-0">
@@ -577,10 +580,11 @@
                   </h4>       
                 </div>
                 </div>
+                 
               
 
               <div v-if="filteredRisks.length > 0">
-                <el-collapse>
+                <el-collapse  id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">             
                    
                     <div class="row">
@@ -694,19 +698,18 @@
                  <el-collapse id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
-                <div class="col p-0  mb-0">
-                  
-                       NO DATA TO DISPLAY
-                </div>  
-              
-              </div>
-
+                  <div class="col p-0  mb-0">                  
+                    NO DATA TO DISPLAY
+                  </div>             
+                 </div>
                   </el-collapse-item>
                 </el-collapse>
               </div>
+              </div>
               <div v-if="!contentLoaded" class="my-4">
                 <loader type="code"></loader>
-              </div>
+              </div>          
+        
             </el-card>
       </div>
           <div class="col-3 pt-0 pl-2" :class="[isMapView ? 'd-none' : '']" data-cy="facility_tasks">
@@ -781,8 +784,7 @@
                   }}</h4>        
                 </div>                     
                 </div>            
-
-                    
+           
     
           </el-card>
       </div> 

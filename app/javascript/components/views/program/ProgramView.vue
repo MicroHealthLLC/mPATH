@@ -2105,20 +2105,13 @@ export default {
       }
       this.currentSort = s; 
     },
-   sortI: function (s) {
-      //if s == current sort, reverse
-      if (s === this.currentSort) {
-        this.currentSortDir = this.currentSortDir === "asc" ? "desc" : "asc";
-      }
-      this.currentSort = s;
-    },
    sortCol1: function (s) {
      //if s == current sort, reverse
       if (s === this.currentSortCol1) {
         this.currentSortDir1 = this.currentSortDir1 === "asc" ? "desc" : "asc";
       }
       this.currentSortCol1 = s; 
-      this.currentSort = "";
+      // this.currentSort = "";
     },
    sortCol2: function (s) {
      //if s == current sort, reverse
@@ -2126,7 +2119,7 @@ export default {
         this.currentSortDir2 = this.currentSortDir2 === "asc" ? "desc" : "asc";
       }
        this.currentSortCol2 = s; 
-       this.currentSort = "";
+      //  this.currentSort = "";
     },
     nextPage:function() {
         if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.filtered.tasks.length) this.currentPage++;
