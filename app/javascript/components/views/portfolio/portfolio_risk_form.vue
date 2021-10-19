@@ -2787,7 +2787,7 @@ export default {
         text: "",
         checked: false,
         position: postion,
-        progressLists: [],
+        progress_lists: [],
       });
     },
     noteBy(note) {
