@@ -113,7 +113,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def portfolio_json(facility_groups: [])
+  def portfolio_json(facility_groups: [], files: false)
     if draft
       self.on_hold = false if self.on_hold
       self.ongoing = false if self.ongoing
@@ -152,7 +152,39 @@ class Task < ApplicationRecord
       completed = false
     end
 
-    merge_h = { 
+    # NOTE: as this condition will only be used when task is updated in portoflio viewer
+    # We don't need to preload task_files.
+    attach_files = []
+    if files == true
+      tf = self.task_files
+      if tf.attached?
+        attach_files = tf.map do |file|
+          next if !file.blob.filename.instance_variable_get("@filename").present?
+          begin
+            if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+              {
+                id: file.id,
+                name: file.blob.filename.instance_variable_get("@filename"),
+                uri: file.blob.filename.instance_variable_get("@filename"),
+                link: true
+              }
+            else
+              {
+                id: file.id,
+                name: file.blob.filename,
+                uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+                link: false
+              }
+            end
+          rescue Exception => e
+            puts "There is an exception"
+          end
+        end.compact.uniq
+      end
+    end
+
+    merge_h = {
+      attach_files: attach_files,
       project_name: facility.facility_name, 
       program_name: project.name, 
       project_id: facility.id, 

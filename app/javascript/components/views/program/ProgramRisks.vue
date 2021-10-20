@@ -330,11 +330,11 @@
           getShowCount == false ? 'd-none' : 'd-block',
         ]"
       >
-        <span v-if="filteredRisks.filtered.risks.length">{{
+        <span v-if="filteredRisks.filtered.risks">{{
           riskVariation.ongoing.count
         }}<span
           v-tooltip="`Ongoing: Closed`"
-          v-if="riskVariation.ongoingClosed.count > 0"
+          v-if="riskVariation.ongoingClosed.count"
           style="color:lightgray"
           >({{
             riskVariation.ongoingClosed.count
@@ -1006,8 +1006,8 @@ v-if="filteredRisks.filtered.risks.length > 0"
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
           </span> 
-          <span>
-            {{risk.lastUpdate.body}}
+          <span class="truncate-line-five">
+            {{ risk.lastUpdate.body }}
           </span>   
           </span>
           <span v-else>No Update</span>      
@@ -1282,7 +1282,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
               {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
               </span> 
               <span class="truncate-line-five">
-                {{risk.lastUpdate.body}}
+                {{ risk.lastUpdate.body }}
               </span>         
              </td>  
             </tr>

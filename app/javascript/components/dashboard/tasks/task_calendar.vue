@@ -309,6 +309,9 @@
                <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
             <i class="far fa-retweet text-success"></i>
                 </span>   
+                  <span v-else-if="selectedEvent.isClosed == true" class="mr-1">
+               <i class="far fa-retweet text-secondary"></i>
+                </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   

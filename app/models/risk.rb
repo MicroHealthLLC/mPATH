@@ -108,7 +108,7 @@ class Risk < ApplicationRecord
     probability_name_hash[probability] || probability_name_hash[1]
   end
 
-  def portfolio_json
+  def portfolio_json(facility_groups: [], files: false)
     if draft
       self.on_hold = false if self.on_hold
       self.ongoing = false if self.ongoing
@@ -147,7 +147,38 @@ class Risk < ApplicationRecord
       completed = false
     end
 
+    attach_files = []
+    if files == true
+      rf = self.risk_files
+  
+      if rf.attached?
+        attach_files = rf.map do |file|
+          next if !file.blob.filename.instance_variable_get("@filename").present?
+          begin
+            if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+              {
+                id: file.id,
+                name: file.blob.filename.instance_variable_get("@filename"),
+                uri: file.blob.filename.instance_variable_get("@filename"),
+                link: true
+              }
+            else
+              {
+                id: file.id,
+                name: file.blob.filename,
+                uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+                link: false
+              }
+            end
+          rescue Exception => e
+            puts "There is an exception"
+          end
+        end.compact.uniq
+      end
+    end
+
      merge_h = { 
+      attach_files: attach_files,
       project_name: facility.facility_name, 
       program_name: project.name, 
       project_id: facility.id, 
