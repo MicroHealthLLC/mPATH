@@ -308,8 +308,11 @@
            <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
                <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
-            <i class="far fa-retweet text-success"></i>
-                </span>   
+               <i class="far fa-retweet text-success"></i>
+                </span>  
+                   <span v-else-if="selectedEvent.isClosed == true" class="mr-1">
+               <i class="far fa-retweet text-secondary"></i>
+                </span>    
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   

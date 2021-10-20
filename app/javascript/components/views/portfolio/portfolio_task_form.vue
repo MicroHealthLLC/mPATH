@@ -666,7 +666,7 @@
                     </div>
 
                     <!-- Collpase section begins here -->
-                    <el-collapse id="roll_up collapse" style="background-color:#fafafa">
+                    <el-collapse id="roll_up" style="background-color:#fafafa">
                       <el-collapse-item
                         title="Details"
                         name="1"
