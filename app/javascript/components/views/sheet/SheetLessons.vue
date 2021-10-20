@@ -9,7 +9,7 @@
       </div>
         <div class="ml-2">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
-        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+        <span class="filterToggleWrapper mr-1 p-1" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
            <i class="fas fa-sliders-h p-2"></i>      
         </span>    
          </div>

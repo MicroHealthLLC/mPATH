@@ -118,7 +118,6 @@
 
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
@@ -139,8 +138,7 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
@@ -162,8 +160,7 @@
               </small>
             </span>   
           
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
@@ -187,7 +184,6 @@
            </span>
               <span class="tagsCol p-1">
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
@@ -208,8 +204,7 @@
                   On Watch
                 </small>
               </span>
-              <span
-              v-if="_isallowed('write')"  
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
@@ -230,7 +225,6 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
@@ -672,7 +666,7 @@
                     </div>
 
                     <!-- Collpase section begins here -->
-                    <el-collapse id="roll_up collapse" style="background-color:#fafafa">
+                    <el-collapse id="roll_up" style="background-color:#fafafa">
                       <el-collapse-item
                         title="Details"
                         name="1"
@@ -766,7 +760,7 @@
                          <table                           
                             style="width:100%"
                             class="mt-1"
-                            v-if="check.progress_lists !== undefined"
+                            v-if="check.progress_lists.length > 0"
                           >
                             <thead>
                               <tr>
@@ -909,7 +903,7 @@
           <div class="container-fluid mx-4 mt-2">
             <div class="row">
               <div class="col-5 pr-4 links-col">
-                <div class="form-group">
+                <div v-if="_isallowed('write')" class="form-group">
                   <attachment-input
                     @input="addFile"
                     :show-label="true"
@@ -937,7 +931,7 @@
                     />
                   </div>
                   <span
-                    :class="{ _disabled: loading}"
+                    :class="{ _disabled: loading || !_isallowed('write') }"
                     class="del-check mt-2 clickable"
                     @click.prevent="deleteFile(file)"
                   >
@@ -947,7 +941,7 @@
               </div>
               <div class="col-6 mb-2 pl-4 links-col">
                 <div class="input-group mb-1">
-                  <div class="d-block mt-1">
+                  <div v-if="_isallowed('write')" class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span class="ml-2 clickable" @click.prevent="addFilesInput">
                       <i class="fas fa-plus-circle"></i>
@@ -976,7 +970,7 @@
                       @input="updateFileLinkItem($event, 'text', file)"
                     />
                     <div
-                      :class="{ _disabled: loading }"
+                      :class="{ _disabled: loading || !_isallowed('write') }"
                       class="del-check clickable"
                       @click.prevent="deleteFile(file)"
                     >
@@ -1411,7 +1405,9 @@ export default {
       return  fPrivilege.tasks.includes(s); 
     },
     selectedStage(item) {     
-        this.selectedTaskStage = item;    
+      if (this._isallowed("write")) {
+        this.selectedTaskStage = item; 
+      }   
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1566,7 +1562,9 @@ export default {
       }
     },
     toggleWatched() {
-      
+      if(!this._isallowed('write')){
+        return
+      }      
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
          this.$message({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
@@ -1593,24 +1591,42 @@ export default {
       // this.updateWatchedTasks(this.DV_task);
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
         this.toggleWatched()     
       }
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, on_hold: !this.DV_task.on_hold };
       this.DV_task.due_date = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
     },
    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.due_date = '';
     },

@@ -68,7 +68,7 @@ class RisksController < AuthenticatedController
     @risk.add_link_attachment(params)
 
     if params[:source] == "portfolio_viewer"
-      response = @risk.reload.portfolio_json
+      response = @risk.reload.portfolio_json(files: true)
     else
       response = @risk.reload.to_json
     end
