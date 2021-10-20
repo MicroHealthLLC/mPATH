@@ -19,9 +19,10 @@ class Task < ApplicationRecord
 
   after_save :update_facility_project
   after_destroy :update_facility_project
+  after_save :broadcast_change
 
   attr_accessor :file_links
-
+  
   amoeba do
     include_association :task_type
     include_association :task_stage
@@ -38,6 +39,10 @@ class Task < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+
+  def broadcast_change
+    DataChangeBroadcastJob.perform_later({resource_id: self.id, resource_type: self.class.name})
   end
 
   def self.params_to_permit

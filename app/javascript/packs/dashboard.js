@@ -26,7 +26,7 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
-
+import { createConsumer } from "@rails/actioncable"
 
 Vue.use(vco)
 Vue.mixin(utils)
@@ -96,3 +96,32 @@ const dashboardApp = new Vue({
   template: '<Dashboard />',
   components: { Dashboard }
 })
+
+const systemChangeChannel = createConsumer().subscriptions.create({
+  channel: "DataChangeChannel",
+  user_id: 123,
+}, {
+  connected: () => {
+    // TODO: Something on new connection
+    console.log("Cable is connected.")
+  },
+  disconnected: () => {
+    // TODO: Something on disconnection
+  },
+  received: ({type, data}) => {
+    console.log("message received")
+    switch (type) {
+      case 'new_message':
+        // this.newMessage(data);
+        console.log(data)
+        break;
+      case 'errors':
+        // this.addErrors(data);
+        console.log(data)
+        break;
+      default:
+        // console.error({type, data});
+        console.log(data)
+    }
+  }
+});

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  
+  mount ActionCable.server => '/cable'
 
   devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
   authenticate :user, lambda {|u| u.admin?} do

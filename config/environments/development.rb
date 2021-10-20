@@ -93,4 +93,7 @@ Rails.application.configure do
 
   # end
 
+  config.action_cable.url = "ws://localhost:3000/cable"
+  config.action_cable.disable_request_forgery_protection = true
+
 end
