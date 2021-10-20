@@ -106,47 +106,6 @@
         >
           <span
             class="watch_action clickable mx-2"
-            :disabled="!_isallowed('write')"
-            @click.prevent.stop="toggleImportant"
-            v-tooltip="`Important`"
-          >
-            <span v-show="lesson.important">
-              <i class="fas fa-star text-warning"></i>
-            </span>
-            <span v-show="!lesson.important">
-              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-            </span>
-            <small
-              :class="{ 'd-none': isMapView }"
-              style="vertical-align:text-top"
-            >
-              Important
-            </small>
-          </span>
-
-          <span
-            class="watch_action clickable mx-2"
-            :disabled="!_isallowed('write')"
-            @click.prevent.stop="toggleReportable"
-            v-tooltip="`Briefings`" 
-          >
-            <span v-show="lesson.reportable">
-            <i class="fas fa-presentation text-primary"></i>
-            </span>
-            <span v-show="!lesson.reportable">
-              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-            </span>
-
-            <small
-              :class="{ 'd-none': isMapView }"
-              style="vertical-align:text-top"
-            >
-              Briefings
-            </small>
-          </span>
-          <span
-            class="watch_action clickable mx-2"
-            :disabled="!_isallowed('write')"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
           >
@@ -165,6 +124,43 @@
               style="vertical-align:text-top"
             >
               Draft
+            </small>
+          </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleImportant"
+            v-tooltip="`Important`"
+          >
+            <span v-show="lesson.important">
+              <i class="fas fa-star text-warning"></i>
+            </span>
+            <span v-show="!lesson.important">
+              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+            </span>
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Important
+            </small>
+          </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleReportable"
+            v-tooltip="`Briefings`" 
+          >
+            <span v-show="lesson.reportable">
+            <i class="fas fa-presentation text-primary"></i>
+            </span>
+            <span v-show="!lesson.reportable">
+              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+            </span>
+
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Briefings
             </small>
           </span>
         </div>
@@ -1144,12 +1140,21 @@ export default {
       this.lesson.lesson_stage_id = null;
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
     },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
     log(e)

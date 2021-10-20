@@ -118,7 +118,6 @@
            <span class="statesCol p-1 mr-1">
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
@@ -140,7 +139,6 @@
             </span>
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
@@ -163,8 +161,7 @@
            </span>
 
            <span class="tagsCol p-1">
-                 <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
@@ -187,7 +184,6 @@
            
 
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
@@ -206,7 +202,6 @@
                 style="vertical-align:text-top"> Important</small>
             </span>
              <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
@@ -794,7 +789,7 @@ Tab 1 Row Begins here -->
                           </span>
 
                           <table
-                            v-if="check.progress_lists !== undefined"
+                            v-if="check.progress_lists.length > 0"
                             style="width:100%"
                             class="mt-1"
                           >
@@ -1589,6 +1584,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_issue.progress == 100 && !this.DV_issue.watched) {
         this.$message({
           message: `Issues at 100% progress cannot be placed On Watch status.`,
@@ -1614,19 +1612,34 @@ export default {
       this.saveIssue();
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, important: !this.DV_issue.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, on_hold: !this.DV_issue.on_hold };
       this.DV_issue.due_date = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
     },
-   toggleReportable() {
+    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, reportable: !this.DV_issue.reportable };
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_issue.progress == 100 && this.DV_issue.watched == true) {
         this.toggleWatched();
       }

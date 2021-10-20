@@ -209,7 +209,7 @@ Rails.application.routes.draw do
 
   # Strictly matching /portfolio
   get '*all', to: "dashboard#portfolio", constraints: -> (req) do
-    (p = req.path.split("/")[1] ) && p.split("portfolio").size < 2
+    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/).present?
   end
   
   get '*all', to: "not_found#index", constraints: -> (req) do

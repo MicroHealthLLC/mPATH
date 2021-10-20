@@ -120,7 +120,6 @@
               <span class="statesCol p-1 mr-1">           
             <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
               v-tooltip="`Ongoing`" 
@@ -142,7 +141,6 @@
 
             <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
                v-tooltip="`On Hold`" 
@@ -167,7 +165,6 @@
           
               <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
               v-tooltip="`Draft`" 
@@ -197,7 +194,6 @@
 
               <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
                 data-cy="task_on_watch"
@@ -219,7 +215,6 @@
               </span>
               <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
               v-tooltip="`Important`" 
@@ -240,7 +235,6 @@
               </span>
               <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
                 v-tooltip="`Briefings`" 
@@ -1325,13 +1319,13 @@
                           />
                         </div>
                         <div
-                          v-if="isSheetsView || isKanbanView || isCalendarView"
+                          v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                           class="col-1 pl-0 pr-0"
                         >
                           <span class="font-sm dueDate">Due Date:</span>
                         </div>
                         <div
-                          v-if="isSheetsView || isKanbanView || isCalendarView"
+                          v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                           class="col-3 pl-0"
                           style="margin-left: -25px"
                         >
@@ -2383,6 +2377,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && !this.DV_risk.watched) {
         this.$message({
           message: `Risks at 100% progress cannot be placed On Watch status.`,
@@ -2408,23 +2405,41 @@ export default {
       this.updateWatchedRisks(this.DV_risk);
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.dueDate = '';
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
         this.DV_risk.dueDate = '';
       },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
       },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, reportable: !this.DV_risk.reportable };
       },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
       }

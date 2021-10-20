@@ -61,7 +61,7 @@ class IssuesController < AuthenticatedController
     @issue.add_link_attachment(params)
 
     if params[:source] == "portfolio_viewer"
-      response = @issue.reload.portfolio_json
+      response = @issue.reload.portfolio_json(files: true)
     else
       response = @issue.reload.to_json
     end

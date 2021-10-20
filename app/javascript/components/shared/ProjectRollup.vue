@@ -17,13 +17,12 @@
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded" class="float-right mt-1">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
-       
-                <button 
-                  @click.prevent="programView"
+          <router-link :to="ProgramView" > 
+               <button                
                   class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
                   {{ currentProject.name }} DATA VIEWER
                 </button>   
-                        
+          </router-link>             
         </span>         
        
       </div>
@@ -195,7 +194,7 @@
                   <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
                 <div class="col p-0  mb-0">                  
-                       NO DATA TO DISPLAY
+                  NO DATA TO DISPLAY
                 </div>             
               </div>        
                   </el-collapse-item>
@@ -493,6 +492,8 @@
                       <!-- <hr /> -->
                     </div>
             </div>
+
+             <div v-if="contentLoaded">
               <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">
                   
@@ -538,6 +539,7 @@
                      <span class="smallerFont d-block">ONGOING</span>    
                 </div>       
               </div>
+            
 
               <div class="row text-center mt-0" :class="[filteredRisks.length > 0 ? '' : '']">
                 <div class="col pb-0 mb-0">
@@ -578,10 +580,11 @@
                   </h4>       
                 </div>
                 </div>
+                 
               
 
               <div v-if="filteredRisks.length > 0">
-                <el-collapse>
+                <el-collapse  id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">             
                    
                     <div class="row">
@@ -695,19 +698,18 @@
                  <el-collapse id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
-                <div class="col p-0  mb-0">
-                  
-                       NO DATA TO DISPLAY
-                </div>  
-              
-              </div>
-
+                  <div class="col p-0  mb-0">                  
+                    NO DATA TO DISPLAY
+                  </div>             
+                 </div>
                   </el-collapse-item>
                 </el-collapse>
               </div>
+              </div>
               <div v-if="!contentLoaded" class="my-4">
                 <loader type="code"></loader>
-              </div>
+              </div>          
+        
             </el-card>
       </div>
           <div class="col-3 pt-0 pl-2" :class="[isMapView ? 'd-none' : '']" data-cy="facility_tasks">
@@ -782,8 +784,7 @@
                   }}</h4>        
                 </div>                     
                 </div>            
-
-                    
+           
     
           </el-card>
       </div> 
@@ -1122,6 +1123,9 @@ export default {
     },
     isMapView() {
       return this.$route.name.includes("Map");
+    },
+    ProgramView() {
+     return `/programs/${this.$route.params.programId}/dataviewer`
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
@@ -1853,10 +1857,10 @@ export default {
         ) || 0;
       return Number(mean.toFixed(0));
     },
-    programView() {
-      window.location.pathname = `/programs/${this.$route.params.programId}/dataviewer`
+    // programView() {
+    //   window.location.pathname = `/programs/${this.$route.params.programId}/dataviewer`
   
-    },
+    // },
   },
   mounted() {
     this.fetchProgramLessonCounts(this.$route.params)  
