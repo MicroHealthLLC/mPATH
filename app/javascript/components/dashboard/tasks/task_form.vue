@@ -124,39 +124,36 @@
             <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
 
               <span class="statesCol p-1 mr-1">           
-            <span
-              class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
-              @click.prevent.stop="toggleOngoing"
-              data-cy="task_ongoing"
-              v-tooltip="`Ongoing`" 
-            >
-              <span              
-                v-show="DV_task.ongoing">
-              <i class="fas fa-retweet text-success"></i>
-              </span>
-              <span              
-                v-show="!DV_task.ongoing">
-              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Ongoing
-              </small>
-            </span>
+                <span
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleOngoing"
+                  data-cy="task_ongoing"
+                  v-tooltip="`Ongoing`" 
+                >
+                  <span              
+                    v-show="DV_task.ongoing">
+                    <i class="fas fa-retweet text-success"></i>
+                  </span>
+                  <span              
+                    v-show="!DV_task.ongoing">
+                  <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+                  </span>             
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    Ongoing
+                  </small>
+                </span>
 
               <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
                v-tooltip="`On Hold`" 
             >
               <span                
                 v-show="DV_task.onHold">
-                <i class="fas fa-pause-circle mr-1 text-primary"></i>
-              
+                <i class="fas fa-pause-circle mr-1 text-primary"></i>              
               </span>
               <span
                 v-show="!DV_task.onHold">
@@ -173,7 +170,6 @@
           
               <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleDraft"
                 data-cy="task_important"
                 v-tooltip="`Draft`" 
@@ -203,7 +199,6 @@
 
               <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
                 data-cy="task_on_watch"
@@ -225,7 +220,6 @@
               </span>
               <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleImportant"
                 data-cy="task_important"
                 v-tooltip="`Important`" 
@@ -246,7 +240,6 @@
               </span>
               <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
                 v-tooltip="`Briefings`" 
@@ -266,7 +259,7 @@
                 Briefings
                 </small>
               </span>                
-              </span>
+            </span>
 
 
           
@@ -666,13 +659,13 @@
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -1583,6 +1576,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
          this.$message({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
@@ -1608,24 +1604,42 @@ export default {
       this.updateWatchedTasks(this.DV_task);
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
         this.toggleWatched()     
       }
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, onHold: !this.DV_task.onHold };
       this.DV_task.dueDate = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
     },
    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.dueDate = '';
     },

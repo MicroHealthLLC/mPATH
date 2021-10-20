@@ -429,7 +429,7 @@ export default new Vuex.Store({
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
         {id: 50, name: '50', value: 50},
-        {id: 100, name: '100+', value: 100},
+        {id: 100, name: '100', value: 100},
       ]
       return options;
     },
@@ -440,7 +440,7 @@ export default new Vuex.Store({
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
         {id: 50, name: '50', value: 50},
-        {id: 100, name: '100+', value: 100},
+        {id: 100, name: '100', value: 100},
       ]
       return options;
     },
@@ -451,7 +451,7 @@ export default new Vuex.Store({
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
         {id: 50, name: '50', value: 50},
-        {id: 100, name: '100+', value: 100},
+        {id: 100, name: '100', value: 100},
       ]
       return options;
     },
@@ -463,7 +463,7 @@ export default new Vuex.Store({
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
         {id: 50, name: '50', value: 50},
-        {id: 100, name: '100+', value: 100},
+        {id: 100, name: '100', value: 100},
       ]
       return options;
     },
@@ -474,7 +474,7 @@ export default new Vuex.Store({
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
         {id: 50, name: '50', value: 50},
-        {id: 100, name: '100+', value: 100},
+        {id: 100, name: '100', value: 100},
       ]
       return options;
     },

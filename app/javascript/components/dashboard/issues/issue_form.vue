@@ -123,7 +123,6 @@
 
              <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
               v-tooltip="`On Hold`" 
@@ -145,7 +144,6 @@
 
              <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
               v-tooltip="`Draft`" 
@@ -169,7 +167,6 @@
            <span class="tagsCol p-1">
              <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
               v-tooltip="`On Watch`" 
@@ -192,7 +189,6 @@
 
             <span
               class="watch_action clickable mx-2"
-              :disabled="!_isallowed('write')"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
               v-tooltip="`Important`" 
@@ -211,7 +207,6 @@
             </span>
              <span
                 class="watch_action clickable mx-2"
-                :disabled="!_isallowed('write')"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
                 v-tooltip="`Briefings`" 
@@ -676,13 +671,13 @@ Tab 1 Row Begins here -->
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -1599,6 +1594,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_issue.progress == 100 && !this.DV_issue.watched) {
         this.$message({
           message: `Issues at 100% progress cannot be placed On Watch status.`,
@@ -1624,19 +1622,34 @@ export default {
       this.updateWatchedIssues(this.DV_issue);
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, important: !this.DV_issue.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, onHold: !this.DV_issue.onHold };
       this.DV_issue.dueDate = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
     },
    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, reportable: !this.DV_issue.reportable };
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_issue.progress == 100 && this.DV_issue.watched == true) {
         this.toggleWatched();
       }
