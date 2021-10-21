@@ -97,10 +97,11 @@ const dashboardApp = new Vue({
   components: { Dashboard }
 })
 
-const systemChangeChannel = createConsumer().subscriptions.create({
+const dataChangeChannel = createConsumer().subscriptions.create({
   channel: "DataChangeChannel",
-  user_id: 123,
-}, {
+  user_id: current_user.id,
+}, 
+{
   connected: () => {
     // TODO: Something on new connection
     console.log("Cable is connected.")
@@ -111,12 +112,14 @@ const systemChangeChannel = createConsumer().subscriptions.create({
   received: ({type, data}) => {
     console.log("message received")
     switch (type) {
-      case 'new_message':
+      case 'broadcast_change':
         // this.newMessage(data);
+        console.log("broadcast_change")
         console.log(data)
         break;
       case 'errors':
         // this.addErrors(data);
+        console.log("errors")
         console.log(data)
         break;
       default:

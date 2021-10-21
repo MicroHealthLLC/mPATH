@@ -17,6 +17,7 @@ class Issue < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
+  after_save :broadcast_change
 
   attr_accessor :file_links
 
@@ -39,6 +40,10 @@ class Issue < ApplicationRecord
     include_association :sub_risks
 
     append :title => " - Copy"
+  end
+
+  def broadcast_change
+    DataChangeBroadcastJob.perform_later({resource_id: self.id, resource_type: self.class.name})
   end
 
   def lesson_json

@@ -25,8 +25,13 @@ class Lesson < ApplicationRecord
 
   validates :title, :description, :date, :facility_project_id, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
+  after_save :broadcast_change
 
   attr_accessor :file_links
+  
+  def broadcast_change
+    DataChangeBroadcastJob.perform_later({resource_id: self.id, resource_type: self.class.name})
+  end
 
   def lesson_json
     {

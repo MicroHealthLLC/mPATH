@@ -23,6 +23,7 @@ class Risk < ApplicationRecord
   before_update :validate_states
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
+  after_save :broadcast_change
 
   attr_accessor :file_links
 
@@ -44,6 +45,10 @@ class Risk < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+
+  def broadcast_change
+    DataChangeBroadcastJob.perform_later({resource_id: self.id, resource_type: self.class.name})
   end
 
   def files_as_json
