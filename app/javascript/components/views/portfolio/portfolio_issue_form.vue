@@ -1283,6 +1283,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+import {API_BASE_PATH} from './../../../mixins/utils'
 import 'vue2-datepicker/index.css'
  Vue.component('v2-date-picker', DatePicker)
  import DatePicker from 'vue2-datepicker'
@@ -1814,12 +1815,12 @@ export default {
           }
         }
 
-        let url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/issues.json`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
         let callback = "issue-created";
 
         if (this.issue && this.issue.id) {
-          url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
           method = "PUT";
           callback = "issue-updated";
         }
