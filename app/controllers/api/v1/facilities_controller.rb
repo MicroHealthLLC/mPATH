@@ -1,4 +1,4 @@
-class FacilitiesController < AuthenticatedController
+class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_project
   before_action :set_facility, only: [:show]
 

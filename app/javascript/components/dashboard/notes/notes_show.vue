@@ -52,6 +52,7 @@
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
   import NotesForm from './notes_form'
+  import {API_BASE_PATH} from './../../../mixins/utils'
 
   export default {
     props: ['facility', 'note', 'from'],
@@ -98,7 +99,7 @@
         if (!confirm) return;
 
         http
-          .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}.json`)
+          .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
           .then((res) => {
             this.loading = false
             this.$emit('note-deleted', this.note)

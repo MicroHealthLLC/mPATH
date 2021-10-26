@@ -1,4 +1,4 @@
-class Api::UsersController < AuthenticatedController
+class Api::V1::UsersController < AuthenticatedController
   before_action :require_admin
 
   def index
