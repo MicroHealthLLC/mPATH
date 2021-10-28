@@ -1,7 +1,7 @@
 <!-- NOTE: This file is used Global filter view in left side -->
 <template>
 
-  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick" data-cy="filter_bar">
+  <div id="filterbar" :style="filterBarStyle" data-cy="filter_bar">
 
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
@@ -907,12 +907,12 @@ export default {
     // log(e){
     //   console.log("getAdvancedFilterOptions " + e)
     // },
-    handleOutsideClick() {
-      if (this.getShowAdvancedFilter && !this.datePicker) {
-         this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
-      }
+    // handleOutsideClick() {
+    //   if (this.getShowAdvancedFilter && !this.datePicker) {
+    //      this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
+    //   }
      
-    },
+    // },
     toggleFilters() {
       this.setShowAdvancedFilter(!this.getShowAdvancedFilter)
     },

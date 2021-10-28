@@ -5,6 +5,7 @@ const moment = extendMoment(Moment)
 import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
 import exampleModule from './modules/example-module-store'
+import adminStore from './modules/admin-store'
 import programStore from './modules/program-store'
 import projectStore from './modules/project-store'
 import taskStore from './modules/task-store'
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     programStore,
     projectStore,
     taskStore,
+    adminStore, 
     issueStore,
     riskStore,
     lessonStore,

@@ -111,7 +111,7 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/projects/:project_id/analytics" => "projects#vue_js_route"  
   get "/programs/:program_id/:tab/projects/:project_id/project" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/contract" => "projects#vue_js_route"
-  get "/programs/:program_id/admin" => "projects#vue_js_route"
+  get "/programs/:program_id/settings" => "projects#vue_js_route"
 
   get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
@@ -144,6 +144,7 @@ Rails.application.routes.draw do
     get :gantt_chart, on: :member
   ##  get :watch_view, on: :member
     get :sheet, on: :member
+    get :settings, on: :member
     get :admin, on: :member
     get :member_list, on: :member
   ##  get :facility_manager, on: :member

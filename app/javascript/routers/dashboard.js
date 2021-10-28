@@ -3,6 +3,8 @@ import MembersView from "./../components/dashboard/members_view";
 
 import ProgramView from "./../components/views/program/ProgramView";
 import AdminView from "./../components/views/admin/AdminView";
+import AdminProjects from "./../components/views/admin/AdminProjects";
+import AdminContracts from "./../components/views/admin/AdminContracts";
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
 import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
@@ -38,6 +40,8 @@ import SheetLessons from "./../components/views/sheet/SheetLessons";
 import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
+
+
 // Kanban Routes Components
 import KanbanView from "./../components/views/kanban/KanbanView";
 import KanbanDefault from "./../components/views/kanban/KanbanDefault";
@@ -142,10 +146,20 @@ export default new VueRouter({
       component: MembersView,
     },
     {
-      name: "AdminView",
-      path: "/programs/:programId/admin",
-      component: AdminView,
+      name: "AdminProjects",
+      path: "/programs/:programId/settings/projects",
+      component: AdminProjects,
     },
+    {
+      name: "AdminContracts",
+      path: "/programs/:programId/settings/contracts",
+      component: AdminContracts,
+    },
+    {
+      name: "AdminView",
+      path: "/programs/:programId/settings",
+      component: AdminView,
+     },   
     {
       name: "ProgramView",
       path: "/programs/:programId/dataviewer",

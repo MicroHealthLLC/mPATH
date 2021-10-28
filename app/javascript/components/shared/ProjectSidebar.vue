@@ -66,11 +66,11 @@
         <loader type="code"></loader>
       </div>
     </div>
-     <router-link :to="`/programs/${this.$route.params.programId}/admin`" > 
-          <button class="btn btn-sm btn-light program-settings-btn" style="cursor: pointer">
-           <i class="far fa-cog"></i> Program Settings 
-            </button>  
-      </router-link>
+     <!-- <router-link  >  -->
+      <button class="btn btn-sm btn-light program-settings-btn"  @click.prevent="toggleAdminView" style="cursor: pointer">
+       <h6> <i class="far fa-cog"></i> Program Settings </h6>
+      </button>  
+      <!-- </router-link> -->
   </div>
 </template>
 
@@ -108,6 +108,7 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      'getShowAdminBtn',
       "currentProject",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
@@ -172,10 +173,20 @@ export default {
     },
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter']), 
+   ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
      expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
     },
+    toggleAdminView() {
+        this.setShowAdminBtn(!this.getShowAdminBtn);
+         this.$router.push(
+        `/programs/${this.$route.params.programId}/settings`
+        );
+
+      },
+      log(e){
+        console.log(e)
+      },
      handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {
@@ -224,7 +235,8 @@ export default {
 .program-settings-btn{
   position: absolute;
   bottom: 25px;
-  left: 60px;
+  left: 25%;
+  z-index: 1140;
 }
 /deep/.el-dialog__title {
   padding: 5px 10px;
