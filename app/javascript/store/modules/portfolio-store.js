@@ -403,10 +403,9 @@ const portfolioModule = {
     fetchPortfolioTasks({commit}, {page}) {
         commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
         // Send GET request for all lessons contained within a project
-        debugger
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=1`,
+          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=600`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,

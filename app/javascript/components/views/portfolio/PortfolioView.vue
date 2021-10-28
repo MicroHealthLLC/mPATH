@@ -7224,7 +7224,6 @@ export default {
           this.tasksObj.filtered.tasks &&
           this.tasksObj.filtered.tasks.length < 1
         ) {
-          debugger;
           this.fetchPortfolioTasks({page});
         }
       } else if (tab_id == "tab-issues" || tab.name == "issues") {
@@ -7267,7 +7266,8 @@ export default {
           let currCount = this.portfolioTasks.tasks.length;
           let total = this.portfolioTasks.total_count;
           if(this.portfolioTasks.next_page && this.portfolioTasks.current_page != this.portfolioTasks.next_page){
-            this.fetchPortfolioTasks(this.portfolioTasks.next_page);
+            let page = this.portfolioTasks.next_page
+            this.fetchPortfolioTasks({page});
           }
           // if (currCount < total) {
           //   let size = (this.loadMoreItems += 250);
@@ -7287,7 +7287,8 @@ export default {
           let currCount = this.portfolioIssues.issues.length;
           let total = this.portfolioIssues.total_count;
           if(this.portfolioIssues.next_page && this.portfolioIssues.current_page != this.portfolioIssues.next_page){
-            this.fetchPortfolioIssues(this.portfolioIssues.next_page);
+            let page = this.portfolioIssues.next_page
+            this.fetchPortfolioIssues({page});
           }
           
           // if (currCount == total) {
@@ -7310,7 +7311,8 @@ export default {
           let currCount = this.portfolioRisks.risks.length;
           let total = this.portfolioRisks.total_count;
           if(this.portfolioRisks.next_page && this.portfolioRisks.current_page != this.portfolioRisks.next_page){
-            this.fetchPortfolioRisks(this.portfolioRisks.next_page);
+            let page = this.portfolioRisks.next_page
+            this.fetchPortfolioRisks({page});
           }
           // if (currCount < total) {
           //   let size = (this.loadMoreItems += 250);
@@ -7331,7 +7333,8 @@ export default {
           let currCount = this.portfolioLessons.lessons.length;
           let total = this.portfolioLessons.total_count;
           if(this.portfolioLessons.next_page && this.portfolioLessons.current_page != this.portfolioLessons.next_page){
-            this.fetchPortfolioLessons(this.portfolioLessons.next_page);
+            let page = this.portfolioLessons.next_page
+            this.fetchPortfolioLessons({page});
           }
           // if (currCount < total) {
           //   let size = (this.loadMoreItems += 250);
