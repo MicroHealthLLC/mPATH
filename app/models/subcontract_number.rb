@@ -1,0 +1,2 @@
+class SubcontractNumber < ApplicationRecord
+end

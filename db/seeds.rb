@@ -55,3 +55,12 @@ sorts.each do |sort|
     s.attributes = sort
   end
 end
+
+
+contract_types = [ "Prime Contract", "Non Prime contract", "Prime vehicles and ID IQs"]
+
+contract_types.each do |name|
+  ContractType.find_or_create_by(name: name) do |s|
+    s.name = name
+  end
+end

@@ -1,0 +1,2 @@
+class ContractStatue < ApplicationRecord
+end

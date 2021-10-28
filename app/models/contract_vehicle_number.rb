@@ -1,0 +1,2 @@
+class ContractVehicleNumber < ApplicationRecord
+end
