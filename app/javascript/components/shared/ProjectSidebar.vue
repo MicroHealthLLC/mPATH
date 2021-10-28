@@ -1,4 +1,9 @@
 <template>
+<!-- TO DO (21OCT2021):
+1. Consolidate all formdata methods into one method
+2. See why not all Project Groups are included in FIlter
+3. Create new route and new views for Program Settings View
+4.  -->
   <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
     <div class="stick">
       <div
@@ -61,11 +66,16 @@
         <loader type="code"></loader>
       </div>
     </div>
+     <router-link :to="`/programs/${this.$route.params.programId}/admin`" > 
+          <button class="btn btn-sm btn-light program-settings-btn" style="cursor: pointer">
+           <i class="far fa-cog"></i> Program Settings 
+            </button>  
+      </router-link>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import Loader from "./loader";
 
 export default {
@@ -74,10 +84,32 @@ export default {
     Loader,
   },
   props: ["title", "currentFacilityGroup", "expanded", "currentFacility"],
+   data() {
+      return {
+        options: [{
+          value: 'Option1',
+          label: 'Option1'
+        }, {
+          value: 'Option2',
+          label: 'Option2'
+        }, {
+          value: 'Option3',
+          label: 'Option3'
+        }, {
+          value: 'Option4',
+          label: 'Option4'
+        }, {
+          value: 'Option5',
+          label: 'Option5'
+        }],
+        value: ''
+      }
+    },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "currentProject",
+      'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
     ]),
@@ -88,6 +120,15 @@ export default {
       ) {
         return this.currentProject.name;
       }
+    },
+   C_projectGroupFilter: {
+      get() {
+        return this.getProjectGroupFilter;
+      },
+      set(value) {
+        // console.log(value)
+        this.setProjectGroupFilter(value);
+      },
     },
     sortedGroups() {
       // Sort groups by name
@@ -109,11 +150,12 @@ export default {
     },
     pathTab() {
       let url = this.$route.path;
-
       if (url.includes("tasks")) {
         return "/tasks";
       } else if (url.includes("issues")) {
         return "/issues";
+      } else if (url.includes("project")) {
+        return "/project";
       } else if (url.includes("risks")) {
         return "/risks";
       } else if (url.includes("lessons")) {
@@ -125,16 +167,21 @@ export default {
       } else if (url.includes("calendar")) {
         return "/tasks";
       } else {
-        return "/overview";
+        return "/analytics";
       }
     },
   },
   methods: {
-    expandFacilityGroup(group) {
+   ...mapMutations(['setProjectGroupFilter']), 
+     expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
     },
-    log(e) {
-      console.log("This is the currentFac: " + e);
+     handleClose(done) {
+        this.$confirm('Are you sure to close this dialog?')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
     },
     showFacility(facility) {
       this.$emit("on-expand-facility", facility);
@@ -174,6 +221,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.program-settings-btn{
+  position: absolute;
+  bottom: 25px;
+  left: 60px;
+}
+/deep/.el-dialog__title {
+  padding: 5px 10px;
+  background-color: #DD9036;
+  color: white;
+  font-size: 16px;
+  font-weight: lighter;
+  border-radius: .25rem;
+
+}
+// /deep/.el-dialog__body {
+//     padding: 10px 20px;
+//  }
+.saveBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+}
 #facility_sidebar {
   background: #ededed;
   max-height: calc(100vh - 94px);
@@ -231,6 +298,7 @@ export default {
       }
     }
   }
+
   .smallCaps {
     font-variant: small-caps;
     // position: sticky;

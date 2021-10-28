@@ -15,15 +15,28 @@
 
 <script>
 import { mapGetters } from "vuex";
+// When routing from any tab back to Analytics, the url is still going to OVerview
 export default {
   name: "ProjectTabs",
   data() {
     return {
       canSeeTab: true,
       tabs: [
+         {
+          label: "Project",
+          key: "project",
+          closable: false,
+          hidden: true,
+        },
+          {
+          label: "Contract",
+          key: "contract",
+          closable: false,
+          hidden: false,
+        },
         {
-          label: "Overview",
-          key: "overview",
+          label: "Analytics",
+          key: "analytics",
           closable: false,
           hidden: false,
         },
@@ -72,6 +85,7 @@ export default {
       for (var i = 0; i < this.tabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
         this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
+      
       }
     }
   },
@@ -82,6 +96,12 @@ export default {
   },
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
+    tabReader() {
+      return this.tabs
+    },
+    routePriv(){
+      return this.$projectPrivileges 
+    },
     currentTab() {
       return this.tabs
         .map((tab) => tab.key)
@@ -118,7 +138,9 @@ export default {
 
           if (privileges) {
             for (var i = 0; i < this.tabs.length; i++) {
+        
               this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
+                  
             }
           }
         }

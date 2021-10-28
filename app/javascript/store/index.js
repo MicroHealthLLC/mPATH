@@ -51,6 +51,8 @@ export default new Vuex.Store({
     advancedFilterOptions: new Array,
     taskIssueOverdueFilter: new Array,
 
+    projectGroupFilter: null, 
+
     taskTypes: new Array,
     taskTypeFilter: null,
     taskStages: new Array,
@@ -151,6 +153,7 @@ export default new Vuex.Store({
 
   mutations: {
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
+    setProjectGroupFilter: (state, filter) => state.projectGroupFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setMyAssignmentsFilter: (state, filter) => state.myAssignmentsFilter = filter,
@@ -864,6 +867,8 @@ export default new Vuex.Store({
     taskStageFilter: state => state.taskStageFilter,
     taskProgressFilter: state => state.taskProgressFilter,
     taskUserFilter: state => state.taskUserFilter,
+
+    getProjectGroupFilter: state => state.projectGroupFilter,
 
     riskStages: state => state.riskStages,
     riskStageFilter: state => state.riskStageFilter,

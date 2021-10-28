@@ -961,7 +961,9 @@ export default {
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.overview.includes(s);      
+        console.log(fPrivilege)
+        return  fPrivilege.overview.includes(s);    
+          
     },
     isBlockedStatus(status) {
       return (

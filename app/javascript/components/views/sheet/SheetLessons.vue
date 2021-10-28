@@ -1,6 +1,6 @@
 <template>
   <div v-if="contentLoaded" class="mt-1 ml-1">
-       <div class="d-flex align-item-center w-70 float-right filters-wrapper">
+       <div class="d-flex align-item-center w-60 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
         <el-input type="search" placeholder="Search Lessons" v-model="search">
