@@ -1,0 +1,2 @@
+class ContractClassification < ApplicationRecord
+end
