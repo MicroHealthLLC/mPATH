@@ -330,6 +330,7 @@
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`">  <i class="fas fa-pause-circle text-primary"></i></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
                 <span v-if="selectedEvent.planned == true" v-tooltip="`Planned`"><i class="fas fa-calendar-check text-info mr-1"></i></span>
+                <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
@@ -339,6 +340,7 @@
                       selectedEvent.isDraft == false && 
                       selectedEvent.progess < 100 &&
                       selectedEvent.planned == false">
+                      selectedEvent.briefing == false">
                       No flags at this time
                 </span> 
             </v-list-item-title>
@@ -630,6 +632,7 @@
         this.onhold = this.filteredCalendar.filtered.tasks.map(task => task.onHold)
         this.draft = this.filteredCalendar.filtered.tasks.map(task => task.draft)
         this.planned = this.filteredCalendar.filtered.tasks.map(task => task.planned)
+        this.briefing = this.filteredCalendar.filtered.tasks.map(task => task.reportable)
 
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
@@ -667,6 +670,7 @@
             isDraft: this.draft[i],
             isOnHold: this.onhold[i],
             planned: this.planned[i],
+            briefing: this.briefing[i],
           })
         }
           // This is the main Events array pushed into Calendar
