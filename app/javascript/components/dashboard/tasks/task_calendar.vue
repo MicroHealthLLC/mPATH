@@ -329,6 +329,7 @@
                <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`">  <i class="fas fa-pause-circle text-primary"></i></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
+                <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
@@ -336,7 +337,8 @@
                       selectedEvent.hasStar == false && 
                       selectedEvent.isOnHold == false && 
                       selectedEvent.isDraft == false && 
-                      selectedEvent.progess < 100">
+                      selectedEvent.progess < 100 &&
+                      selectedEvent.briefing == false">
                       No flags at this time
                 </span> 
             </v-list-item-title>
@@ -627,7 +629,7 @@
         this.percentage = this.filteredCalendar.filtered.tasks.map(task => task.progress)
         this.onhold = this.filteredCalendar.filtered.tasks.map(task => task.onHold)
         this.draft = this.filteredCalendar.filtered.tasks.map(task => task.draft)
-           
+        this.briefing = this.filteredCalendar.filtered.tasks.map(task => task.reportable)
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -662,7 +664,8 @@
             isOngoing: this.ongoing[i], 
             isClosed: this.closed[i], 
             isDraft: this.draft[i],
-            isOnHold: this.onhold[i]           
+            isOnHold: this.onhold[i],
+            briefing: this.briefing[i],
           })
         }
           // This is the main Events array pushed into Calendar
