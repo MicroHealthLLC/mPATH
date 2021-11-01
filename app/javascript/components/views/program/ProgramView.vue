@@ -1,12 +1,10 @@
 <template>
 <div>
   <div class="backBtn">  
-      <span class="float-right">   
-         <router-link :to="`/programs/${this.$route.params.programId}/sheet`" > 
-          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
-           <i class="fal fa-arrow-alt-left text-light"></i>
-            </button>  
-          </router-link>
+      <span class="float-right" @click="goBack">
+        <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
+          <i class="fal fa-arrow-alt-left text-light"></i>
+        </button>
       </span>
     </div>
   <div class="container-fluid mx-3 portfolioView_main" 
@@ -2141,6 +2139,9 @@ export default {
           "progress"
         ) || 0;
       return Number(mean.toFixed(0));
+    },
+    goBack() {
+      return this.$router.go(-1);
     },
   },
   beforeMount(){
