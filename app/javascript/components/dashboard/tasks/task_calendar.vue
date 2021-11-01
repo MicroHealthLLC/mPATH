@@ -329,6 +329,7 @@
                <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`">  <i class="fas fa-pause-circle text-primary"></i></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
+                <span v-if="selectedEvent.inProgress == true" v-tooltip="`In Progress`"><i class="far fa-tasks text-primary mr-1"></i></span>
                 <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                 <span v-if="
                       selectedEvent.watch == false && 
@@ -338,6 +339,7 @@
                       selectedEvent.isOnHold == false && 
                       selectedEvent.isDraft == false && 
                       selectedEvent.progess < 100 &&
+                      selectedEvent.inProgress == false">
                       selectedEvent.briefing == false">
                       No flags at this time
                 </span> 
@@ -629,7 +631,9 @@
         this.percentage = this.filteredCalendar.filtered.tasks.map(task => task.progress)
         this.onhold = this.filteredCalendar.filtered.tasks.map(task => task.onHold)
         this.draft = this.filteredCalendar.filtered.tasks.map(task => task.draft)
+        this.inprogress = this.filteredCalendar.filtered.tasks.map(task => task.inProgress)
         this.briefing = this.filteredCalendar.filtered.tasks.map(task => task.reportable)
+
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -665,6 +669,7 @@
             isClosed: this.closed[i], 
             isDraft: this.draft[i],
             isOnHold: this.onhold[i],
+            inProgress: this.inprogress[i],
             briefing: this.briefing[i],
           })
         }
