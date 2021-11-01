@@ -26,4 +26,7 @@ class Api::V1::ContractDataController < AuthenticatedController
   def contract_current_pop
     render json: ContractCurrentPop.all.as_json(only: [:id, :name] )
   end
+  def contract_classification
+    render json: ContractClassification.all.as_json(only: [:id, :name] )
+  end
 end
