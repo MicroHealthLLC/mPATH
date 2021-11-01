@@ -14,6 +14,15 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       resources :contracts
+      get "/contract_data/contract_types", to: "contract_data#contract_types"
+      get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
+      get "/contract_data/contract_name_customeres", to: "contract_data#contract_name_customeres"
+      get "/contract_data/contract_vehicles", to: "contract_data#contract_vehicles"
+      get "/contract_data/contract_vehicle_number", to: "contract_data#contract_vehicle_number"
+      get "/contract_data/contract_number", to: "contract_data#contract_number"
+      get "/contract_data/subcontract_number", to: "contract_data#subcontract_number"
+      get "/contract_data/contract_prime", to: "contract_data#contract_prime"
+      get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
 
       # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
