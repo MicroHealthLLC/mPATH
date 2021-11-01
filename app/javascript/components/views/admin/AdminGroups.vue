@@ -18,20 +18,20 @@
    <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
-     <el-breadcrumb-item :to="toSettingsLanding">
+     <el-breadcrumb-item :to="backToSettings">
       <span style="cursor:pointer"><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS </span>
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
-       <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>  
-       CONTRACTS
+     <i class="fal fa-network-wired mr-1 mh-orange-text"></i>  GROUPS
       </h4>
-    </el-breadcrumb>   
- <div class="my-1 pb-2 buttonWrapper">
-    <el-button @click.prevent="addProject" class="bg-primary text-light mb-2" style="position:absolute"> 
-    <i class="far fa-plus-circle mr-1"></i> Add Contract
+    </el-breadcrumb>
+
+   
+<div class="my-1 pb-2 buttonWrapper">
+    <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2" style="position:absolute"> 
+    <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
      <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
-       <!-- <label>GROUP</label> -->
         <el-select
           class="w-100 mr-2"
           v-model="C_groupFilter" 
@@ -41,7 +41,7 @@
           filterable
           clearable
           name="Project Group"         
-          placeholder="Filter Contracts By Group"
+          placeholder="Filter Group"
           >
           <el-option
           v-for="item in filteredFacilityGroups"
@@ -53,7 +53,7 @@
           </el-select>
         <el-input
           type="search"          
-          placeholder="Search Projects"
+          placeholder="Search Group"
           aria-label="Search"            
           aria-describedby="search-addon"    
           v-model="search"
@@ -63,73 +63,71 @@
       </el-input>     
       </div>
   </div>
-   <el-table :data="tableData.filter(data => !search || data.facilityName.toLowerCase().includes(search.toLowerCase()))" style="width: 100%"  height="450">
-    <el-table-column prop="facilityName"  sortable  label="Contract"> 
-       <template slot-scope="scope">
-          <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.facilityName" controls-position="right"></el-input>
-       </template>
+  
+   <el-table :data="filteredFacilityGroups.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%"  height="450">
+    <el-table-column type="expand">
+      <template slot-scope="props">
+       <div class="container">
+       <div class="row">
+     
+      <div class="col">
+       <h5 class="mh-orange-text"> Projects 
+         <span 
+          class="badge badge-secondary badge-pill pill"
+          >{{ props.row.facilities.length }}
+        </span>
+        </h5>
+        <ul class="pl-3">
+          <li v-for="item, i in props.row.facilities" :key="i">
+              {{ item.facilityName }}
+          </li>
+
+        </ul>
 
 
-    </el-table-column>
-    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
-          <template slot-scope="scope">
-          <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.facilityGroupName"></el-input>
-       </template>
-    </el-table-column>
+       </div>      
+      
+       <div class="col">
+     <h5 class="mh-orange-text"> Contracts
+         <span 
+          class="badge badge-secondary badge-pill pill"
+          >{{ props.row.facilities.length }}
+        </span>
+        </h5>
+       <ul class="pl-3">
+          <li v-for="item, i in props.row.facilities" :key="i">
+              {{ item.facilityName }}
+          </li>
+        </ul>
 
-     <el-table-column label="Actions">
-      <template slot-scope="scope" >
-        <el-button type="default" @click="saveEdits(scope.$index, scope.row)" class="bg-success text-light">Save</el-button>
-        <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+       </div>
+
+       </div>
+
+       </div>
+      
       </template>
     </el-table-column>
-  
-   </el-table>
+    <el-table-column prop="name" sortable label="Groups"></el-table-column>
+   </el-table>  
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
       accept-charset="UTF-8"    
       >      
        <div class="form-group mx-4">
           <label class="font-md"
-            >New Contract Name <span style="color: #dc3545">*</span></label
+            >New Group Name <span style="color: #dc3545">*</span></label
           >
           <el-input
             type="textarea"
-            v-model="contractNameText"
-            placeholder="Enter new contract name here"          
+            v-model="newGroupName"
+            placeholder="Enter new Group name here"          
             rows="1"          
-            name="Program Name"
+            name="Group Name"
           />
        </div>
-       <div class="form-group mx-4">
-        <label class="font-md"
-        >Group</label
-        >
-         <el-select
-            class="w-100"
-           v-model="C_projectGroupFilter" 
-            track-by="id"
-            value-key="id"
-            clearable
-            filterable
-            name="Project Group"         
-            placeholder="Select Group"
-          >
-          <el-option
-          v-for="item in filteredFacilityGroups"
-          :key="item.id"
-          :label="item.name"
-          :value="item">
-        </el-option>
-          
-          </el-select>
-       </div>
-        <div class="right mr-2">
-        <el-button @click.prevent="saveNewContract" class="bg-primary text-light mr-2">Save</el-button>
+      <div class="right mr-2">
+        <el-button @click.prevent="saveGroup" class="bg-primary text-light mr-2">Save</el-button>
         </div>
     </form>
    </el-dialog>
@@ -152,7 +150,7 @@ import axios from "axios";
 import { mapGetters, mapMutations } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 export default {
-  name: "AdminContracts",
+  name: "AdminGroups",
   components: {
     ProjectSidebar
   },
@@ -161,16 +159,16 @@ export default {
       currentFacility: {},
       dialogVisible: false,
       currentFacilityGroup: {},
-      projectNameText: '',
-      search: '',
-      contractNameText: '',
-      expanded: {
+      newGroupName: null,
+      search:'',
+      selectedProjectGroup: null, 
+       expanded: {
         id: "",
       },
     };
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable', 'setGroupFilter']), 
+   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter']), 
     expandFacilityGroup(group) {
       if (group.id == this.expanded.id) {
         this.expanded.id = "";
@@ -180,20 +178,16 @@ export default {
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
       }
     },
-    saveEdits(index, rows){
-      let updatedProjectName = rows.facilityName;
-      let updatedGroupName = rows.facilityGroupName;
-      let projectId = rows.id;
-// console.log(index)
-// console.log(rows)
-     let formData = new FormData();
-      formData.append("facility[facility_name]", updatedProjectName)
-      // Need one url to support these two data name edits
-      formData.append("facility[facility_group_name]", updatedGroupName)
-      formData.append('commit', 'Update Project')
-        let url = `/admin/facilities/${projectId}`;
-        let method = "PUT";
-          axios({
+   saveGroup(e){
+      e.preventDefault();     
+      let formData = new FormData();
+      if (this.newGroupName !== null){
+      formData.append("facility_group[name]", this.newGroupName); 
+      formData.append("facility_group[status]", "active"); 
+      formData.append("commit", "Create Project Group"); 
+        let url = `/admin/facility_groups`;
+        let method = "POST"; 
+         axios({
           method: method,
           url: url,
           data: formData,
@@ -202,16 +196,24 @@ export default {
               .attributes["content"].value,
           },
         })
-         .then((response) => {
-         if (response.status === 200) {
+          .then((response) => {
+           if (response.status === 200) {
               this.$message({
-                message: `Edits has been saved successfully.`,
+                message: `" ${this.newGroupName} ", has been saved successfully.`,
                 type: "success",
                 showClose: true,
-              })   
-        
-       }
+              }),  
+              this.dialogVisible = false  
+          }
      })
+      }
+      else {
+            this.$message({
+                message: `Please enter new Group name`,
+                type: "warning",
+                showClose: true,
+              })        
+      }      
     },
     showFacility(facility) {
       this.currentFacility = facility;
@@ -219,76 +221,26 @@ export default {
     handleClick(tab, event) {
         console.log(tab, event);
     },    
-    saveNewContract(e){
-      e.preventDefault();     
-      let formData = new FormData();
-      formData.append("facility[facility_name]", this.contractNameText)
-      if(this.C_projectGroupFilter !== null ){
-       formData.append("facility[facility_group_id]", this.C_projectGroupFilter.id)      
-      }        
-      formData.append('facility[address]', '18 Boon Rd, Stow, MA 01775, USA')
-      formData.append('facility[lat]', '42.4114459')
-      formData.append('facility[lng]', '-71.5128223')
-      formData.append('facility[point_of_contact]', 'Juan Rivera')
-      formData.append('facility[phone_number]', '+16789009876')
-      formData.append('facility[country_code]', "US")
-      formData.append('facility[email]', 'test@test.com')
-      formData.append('facility[status]', "active")
-      formData.append('facility[project_ids][]', this.$route.params.programId)
-      formData.append('commit', 'Create Project')
-   
-       let url = `/admin/facilities`;
-        let method = "POST";
-          axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-         .then((response) => {
-           if (response.status === 200) {
-              this.$message({
-                message: `New Contract ${this.contractNameText} has been saved successfully.`,
-                type: "success",
-                showClose: true,
-              })   
-              this.dialogVisible = false;        
-       }
-     })
-    },
-    addContract(){
+    addGroup(){
       this.dialogVisible = true;    
-      this.C_projectGroupFilter = null;
-      this.contractNameText = ""  
+      this.newGroupName = null;
     },
+   
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "facilities",
       'getContractTable',
-      'getProjectGroupFilter',
       'getGroupFilter',
+      'getProjectGroupFilter',
       "facilityGroupFacilities",
       'filteredFacilityGroups',
       'currentProject'
     ]), 
-    toSettingsLanding(){
+   backToSettings(){
      return `/programs/${this.$route.params.programId}/settings`  
-    },
-    tableData(){
-     let projectData = this.currentProject.facilities.map(f => f.facility)
-      .filter((td) => {
-          if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
-            let group = this.C_groupFilter.map((t) => t.name);
-            return group.includes(td.facilityGroupName);
-          } else return true;
-        });
-     return projectData
-   },
+    }, 
       // Filter for Projects Table
     C_groupFilter: {
       get() {
@@ -392,6 +344,9 @@ a {
 /deep/.el-table__row .el-input .el-input__inner{
   border-style:none;
 }
+/deep/.el-table {
+  font-size: 16px;
+}
 /deep/.hover-row .el-input .el-input__inner{
   border-style:solid;   
 }
@@ -399,15 +354,9 @@ a {
   width:30%;
   border-top: solid 5px  #1D336F !important;
 }
-/deep/.el-table {
-  font-size: 16px;
+.container {
+  margin-left: 50px;
 }
-/deep/.el-dialog__close.el-icon.el-icon-close {
-  background-color: #DC3545;
-    border-radius: 50%;
-    color: white;
-    padding: 2px;
-    font-size: .7rem;
-}
+
 
 </style>

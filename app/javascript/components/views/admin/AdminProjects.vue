@@ -17,25 +17,113 @@
     </div>
    <div class="col-md-10">
   <div class="right-panel">  
-  <h5 class="mt-3 mb-5">  <i class="far fa-cog mr-2"></i>PROJECTS</h5>
+    <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
+     <el-breadcrumb-item :to="backToSettings">
+      <span style="cursor:pointer"><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS </span>
+     </el-breadcrumb-item>
+     <h4 class="mt-4 ml-3"> 
+      <i class="fal fa-clipboard-list mr-1 mh-orange-text"></i> PROJECTS
+      </h4>
+    </el-breadcrumb>
    
-      <font-awesome-icon icon="plus-circle" class="mr-1" />
-  
-    <form
-      @submit.prevent="saveNewContract"    
-      accept-charset="UTF-8"    
+  <div class="my-1 pb-2 buttonWrapper">
+    <el-button @click.prevent="addProject" class="bg-primary text-light mb-2" style="position:absolute"> 
+    <i class="far fa-plus-circle mr-1"></i> Add Project
+    </el-button>
+     <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
+        <el-select
+          class="w-100 mr-2"
+          v-model="C_groupFilter" 
+          track-by="id"
+          value-key="id"
+          multiple
+          filterable
+          clearable
+          name="Project Group"         
+          placeholder="Filter Projects By Group"
+          >
+          <el-option
+          v-for="item in filteredFacilityGroups"
+          :key="item.id"
+          :label="item.name"
+          :value="item">
+        </el-option>
+          
+          </el-select>
+        <el-input
+          type="search"          
+          placeholder="Search Projects"
+          aria-label="Search"            
+          aria-describedby="search-addon"    
+          v-model="search"
+          data-cy=""
       >
-    <div class="form-group mx-4">
+        <el-button slot="prepend" icon="el-icon-search"></el-button>
+      </el-input>     
+      </div>
+  </div>
+  
+    <el-table :data="tableData.filter(data => !search || 
+        data.facilityName.toLowerCase().includes(search.toLowerCase()))" 
+        style="width: 100%"  height="450"
+        
+      >
+    <el-table-column prop="facilityName" sortable label="Project" :key="componentKey"> 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"          
+            v-model="scope.row.facilityName" controls-position="right"></el-input>
+       </template>
+
+
+    </el-table-column>
+    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
+          <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+             :key="componentKey"  
+            v-model="scope.row.facilityGroupName"></el-input>
+       </template>
+    </el-table-column>
+    
+
+     <el-table-column label="Actions">
+      <template slot-scope="scope" >
+        <el-button type="default" @click="saveEdits(scope.$index, scope.row)" class="bg-success text-light">Save</el-button>
+        <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+      </template>
+    </el-table-column>
+  
+   </el-table>
+    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
+     <form
+      accept-charset="UTF-8"    
+      >      
+       <div class="form-group mx-4">
+          <label class="font-md"
+            >New Project Name <span style="color: #dc3545">*</span></label
+          >
+          <el-input
+            type="textarea"
+            v-model="newProjectNameText"
+            placeholder="Enter new project name"          
+            rows="1"          
+            name="Project Name"
+          />
+       </div>
+       <div class="form-group mx-4">
         <label class="font-md"
-        >Project Group<span style="color: #dc3545">*</span></label
+        >Group</label
         >
          <el-select
             class="w-100"
-            v-model="value" 
+            v-model="C_projectGroupFilter" 
             track-by="id"
             value-key="id"
+            clearable
+            filterable
             name="Project Group"         
-            placeholder="Select Project Group"
+            placeholder="Select Group"
           >
           <el-option
           v-for="item in filteredFacilityGroups"
@@ -46,23 +134,12 @@
           
           </el-select>
        </div>
-       <div class="form-group mx-4">
-          <label class="font-md"
-            >Program Name <span style="color: #dc3545">*</span></label
-          >
-          <el-input
-            type="textarea"
-            v-model="contractNameText"
-            placeholder="Enter contract name here"          
-            rows="1"          
-            name="Program Name"
-          />
-       </div>
-         
+        <div class="right mr-2">
+        <el-button @click.prevent="saveNewProject" class="bg-primary text-light mr-2">Save</el-button>
+        </div>
+    </form>
+   </el-dialog>
 
-  </form>
-    
-      <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
        <div class="pr-3">   
           <router-view
             :key="$route.path"
@@ -87,13 +164,12 @@ export default {
   data() {
     return {
       currentFacility: {},
+      dialogVisible: false,
+      search: '',
+      componentKey: 0,
       currentFacilityGroup: {},
-        projectNameText: '',
-        selectedProjectGroup: null, 
-        projectName: "",
-        newProjectName: '',
-        newProjectGroupName: '',
-        contractNameText: '',
+      selectedProjectGroup: null, 
+      newProjectNameText: '',
       value:'',
       expanded: {
         id: "",
@@ -101,7 +177,7 @@ export default {
     };
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter']), 
+   ...mapMutations(['setProjectGroupFilter', 'setGroupFilter']), 
     expandFacilityGroup(group) {
       if (group.id == this.expanded.id) {
         this.expanded.id = "";
@@ -110,6 +186,11 @@ export default {
         this.currentFacilityGroup = group;
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
       }
+    },
+    addProject(){
+      this.dialogVisible = true;    
+      this.C_projectGroupFilter= null;
+      this.newProjectNameText = ""  
     },
     showFacility(facility) {
       this.currentFacility = facility;
@@ -120,7 +201,7 @@ export default {
     saveNewProject(e){
       e.preventDefault();     
       let formData = new FormData();
-      formData.append("facility[facility_name]", this.newProjectName)
+      formData.append("facility[facility_name]", this.newProjectNameText)
       if(this.C_projectGroupFilter !== null ){
        formData.append("facility[facility_group_id]", this.C_projectGroupFilter.id)      
       }        
@@ -146,29 +227,30 @@ export default {
           },
         })
          .then((response) => {
-            // var responseRisk = humps.camelizeKeys(response.data.risk);
-            // this.loadRisk(responseRisk);
-            //this.$emit(callback, responseRisk);
-            // this.updateRisksHash({ risk: responseRisk });
-            if (response.status === 200) {
+           if (response.status === 200) {
               this.$message({
                 message: `New Project ${this.newProjectName} has been saved successfully.`,
                 type: "success",
                 showClose: true,
               })   
-        
+            this.dialogVisible = false;  
+            this.componentKey += 1;  
        }
      })
     },
-    saveNewProjectGroup(e){
-      e.preventDefault();     
-      let formData = new FormData();
-      formData.append("facility_group[name]", this.newProjectGroupName); 
-      formData.append("facility_group[status]", "active"); 
-      formData.append("commit", "Create Project Group");  
-      
-        let url = `/admin/facility_groups`;
-        let method = "POST";
+  saveEdits(index, rows){
+      let updatedProjectName = rows.facilityName;
+      let updatedGroupName = rows.facilityGroupName;
+      let projectId = rows.id;
+// console.log(index)
+// console.log(rows)
+     let formData = new FormData();
+      formData.append("facility[facility_name]", updatedProjectName)
+      // Need one url to support these two data name edits
+      formData.append("facility[facility_group_name]", updatedGroupName)
+      formData.append('commit', 'Update Project')
+        let url = `/admin/facilities/${projectId}`;
+        let method = "PUT";
           axios({
           method: method,
           url: url,
@@ -178,27 +260,42 @@ export default {
               .attributes["content"].value,
           },
         })
-          .then((response) => {
-           if (response.status === 200) {
+         .then((response) => {
+         if (response.status === 200) {
               this.$message({
-                message: `New Project Group ${this.newProjectGroupName} has been saved successfully.`,
+                message: `Edits has been saved successfully.`,
                 type: "success",
                 showClose: true,
               })   
         
        }
      })
-    }
+    },
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "facilities",
       'getProjectGroupFilter',
+      'getGroupFilter',
       "facilityGroupFacilities",
-      'filteredFacilityGroups'
-    ]),
-  },
+      'filteredFacilityGroups',
+      'currentProject'
+    ]),  
+    // Filter for Projects Table
+    C_groupFilter: {
+      get() {
+        return this.getGroupFilter;
+      },
+      set(value) {
+        // console.log(value)
+        this.setGroupFilter(value);
+      },
+    },
+    backToSettings(){
+     return `/programs/${this.$route.params.programId}/settings`  
+    },
+    // Filter when adding new Project
      C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -208,6 +305,17 @@ export default {
         this.setProjectGroupFilter(value);
       },
     },
+    tableData(){
+     let projectData = this.currentProject.facilities.map(f => f.facility)
+      .filter((td) => {
+          if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
+            let group = this.C_groupFilter.map((t) => t.name);
+            return group.includes(td.facilityGroupName);
+          } else return true;
+        });
+     return projectData
+   },
+  },
   beforeMount() {
     if (this.contentLoaded && this.$route.params.projectId) {
       this.currentFacility = this.facilities.find(
@@ -216,10 +324,19 @@ export default {
     }
   },
   watch: {
-    contentLoaded: {
+    // contentLoaded: {
+    //   handler() {
+    //     if (this.$route.params.projectId) {
+    //       this.currentFacility = this.facilities.find(
+    //         (facility) => facility.facilityId == this.$route.params.projectId
+    //       );
+    //     }
+    //   },
+    // },
+   contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
-          this.currentFacility = this.facilities.find(
+          this.currentProject = this.facilities.find(
             (facility) => facility.facilityId == this.$route.params.projectId
           );
         }
@@ -246,8 +363,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.buttonWrapper {
+  border-bottom: lightgray solid 1px;
+}
+.right{
+  text-align: right;
+}
 .fa-calendar {
   font-size: x-large; 
+}
+/deep/.el-table th.el-table__cell>.cell {
+  color: #212529;
+  font-size: 1.15rem;
 }
 .tabs {
   background-color: #ededed;
@@ -277,4 +404,26 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+/deep/.el-table__row .el-input .el-input__inner{
+  border-style:none;
+}
+/deep/.hover-row .el-input .el-input__inner{
+  border-style:none;   
+}
+/deep/.el-dialog {
+  width:30%;
+  border-top: solid 5px  #1D336F !important;
+}
+/deep/.el-table {
+  font-size: 16px;
+}
+/deep/.el-dialog__close.el-icon.el-icon-close {
+  background-color: #DC3545;
+    border-radius: 50%;
+    color: white;
+    padding: 2px;
+    font-size: .7rem;
+}
+
+
 </style>

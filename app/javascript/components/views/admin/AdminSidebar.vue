@@ -3,7 +3,12 @@
 
 <div id="filter_bar">
     <h5>
-    <ul class="pt-3">
+    <ul class="pt-3 program-name">
+       <router-link :to="adminGroupsView" > 
+        <li class="p-3 entity">
+          <i class="fal fa-network-wired mr-2"></i>Groups
+        </li>
+    </router-link>
     <router-link :to="adminProjectsView" > 
         <li class="p-3 entity">
           <i class="fal fa-clipboard-list mr-3"></i> Projects
@@ -14,25 +19,13 @@
           <i class="far fa-file-contract mr-3"></i>  Contracts
         </li>
     </router-link>
-       <li class="p-3 entity">
-         <i class="fas fa-tasks mr-3"></i> Tasks
-        </li>
-      <li class="p-3 entity">
-           <i class="far fa-exclamation-triangle mr-3"></i> Issues
-        </li>
-      <li class="p-3 entity">
-        <i class="fal fa-siren-on mr-3"></i> Risks
-        </li>
-     <li class="p-3 entity">
-         <i class="far fa-chalkboard-teacher mr-3"></i> Lessons
-        </li>
-      <li class="p-3 entity">
+     <!-- <li class="p-3 entity">
          <i class="fad fa-layer-group mr-3"></i> Stages
+        </li> -->
+      <!-- <li class="p-3 entity">
+         <i class="far fa-users mr-2"></i> Users
         </li>
-      <li class="p-3 entity">
-         <i class="far fa-users mr-3"></i> Users
-        </li>
-         
+          -->
 
 
         <!-- <li>
@@ -66,6 +59,9 @@ export default {
     },
     adminContractsView() {
      return `/programs/${this.$route.params.programId}/settings/contracts`
+    },
+    adminGroupsView() {
+     return `/programs/${this.$route.params.programId}/settings/groups`
     },
     filterBarStyle() {
       if (this.getShowAdminBtn) return {}
@@ -106,7 +102,11 @@ export default {
 //   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
 ul {
+
   list-style-type: none; /* Remove bullets */
+  li {
+  color: #212529 !important; /* default color of text to replace blue default link color */
+  } 
 }
 
 .entity:hover {

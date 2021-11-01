@@ -5,6 +5,7 @@ import ProgramView from "./../components/views/program/ProgramView";
 import AdminView from "./../components/views/admin/AdminView";
 import AdminProjects from "./../components/views/admin/AdminProjects";
 import AdminContracts from "./../components/views/admin/AdminContracts";
+import AdminGroups from "./../components/views/admin/AdminGroups";
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
 import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
@@ -154,6 +155,11 @@ export default new VueRouter({
       name: "AdminContracts",
       path: "/programs/:programId/settings/contracts",
       component: AdminContracts,
+    },
+    {
+      name: "AdminGroups",
+      path: "/programs/:programId/settings/groups",
+      component: AdminGroups,
     },
     {
       name: "AdminView",

@@ -17,33 +17,32 @@
     </div>
    <div class="col-md-10">
      <div class="right-panel">  
-  <h4 class="mt-4 mb-2">  <i class="far fa-cog"></i>  PROGRAM SETTINGS</h4>
-  
-   <div class="grid-container p-5 program-name">
-     <li class="list-group-item">
-       <i class="far fa-cog"></i> PROJECTS
+  <h4 class="mt-4">  <i class="far fa-cog mh-orange-text"></i>  PROGRAM SETTINGS</h4>  
+   <div class="grid-container px-5">
+      <ul>
+       
+      <li class="m-2 cardWrapper" v-for="item, index of settingsCards" :key="index" style="width:45%" @click.prevent="adminRoute(index)">
+      <el-card :body-style="{ padding: '0px' }">
+        <div class="p-2" style="font-size:3.5rem">
+        <span v-if="item == 'Groups'">   <i class="fal fa-network-wired mr-3"></i></span>
+        <span v-if="item == 'Projects'"> <i class="fal fa-clipboard-list mr-3"></i></span>
+        <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i> </span>
+        <!-- <span v-if="item == 'Users'">   <i class="far fa-users mr-3"></i> </span> -->
+        </div>    
+        <div>
+          <h4>
+            <span v-if="item == 'Groups'"> {{ settingsCards.groups }}</span>
+            <span v-if="item == 'Projects'"> {{ settingsCards.projects }}</span>
+            <span v-if="item == 'Contracts'">{{ settingsCards.contracts }}</span>
+            <!-- <span v-if="item == 'Users'">{{ settingsCards.users }}</span> -->
+            <!-- <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i>   {{item}}</span> -->
+          </h4>    
+        </div>
+      </el-card>
      </li>
-      <li class="list-group-item">
-      <i class="far fa-cog"></i>  CONTRACTS
-     </li>
-      <li class="list-group-item program-name">
-       <i class="far fa-cog"></i> TASKS
-     </li>
-      <li class="list-group-item">
-       <i class="far fa-cog"></i> ISSUES
-     </li>
-      <li class="list-group-item">
-       <i class="far fa-cog"></i> RISKS
-     </li>
-      <li class="list-group-item">
-      <i class="far fa-cog"></i>  LESSONS
-     </li>
-      <li class="list-group-item">
-       <i class="far fa-cog"></i> STAGES
-     </li>
-      <li class="list-group-item">
-       <i class="far fa-cog"></i> USERS
-     </li>
+      
+ </ul>
+
    </div>
          <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
        <div class="pr-3">   
@@ -70,6 +69,12 @@ export default {
   data() {
     return {
       currentFacility: {},
+      settingsCards: {
+        groups: 'Groups', 
+        projects: 'Projects', 
+        contracts: 'Contracts',
+        // users: "Users"
+      },
       currentFacilityGroup: {},
         projectNameText: '',
         selectedProjectGroup: null, 
@@ -92,6 +97,25 @@ export default {
         this.expanded.id = group.id;
         this.currentFacilityGroup = group;
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
+      }
+    },
+    adminRoute(index){
+      
+      // console.log(event, index, "This")
+      if(index == 'groups'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/settings/groups`
+      );
+      }
+     if(index == 'projects'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/settings/projects`
+      );
+      }
+     if(index == 'contracts'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/settings/contracts`
+      );
       }
     },
     showFacility(facility) {
@@ -260,4 +284,17 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+
+li {
+    list-style-type: none; /* Remove bullets */
+  }
+.cardWrapper {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+  transition: all .2s ease-in;
+  cursor: pointer;
+}
+.cardWrapper:hover { 
+  transform: scale(1.015); 
+}
+
 </style>
