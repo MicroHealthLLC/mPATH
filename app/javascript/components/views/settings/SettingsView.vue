@@ -16,53 +16,35 @@
       />
     </div>
    <div class="col-md-10">
-  <div class="right-panel">  
-  <h5 class="mt-3 mb-5">  <i class="far fa-cog mr-2"></i>PROJECTS</h5>
-   
-      <font-awesome-icon icon="plus-circle" class="mr-1" />
-  
-    <form
-      @submit.prevent="saveNewContract"    
-      accept-charset="UTF-8"    
-      >
-    <div class="form-group mx-4">
-        <label class="font-md"
-        >Project Group<span style="color: #dc3545">*</span></label
-        >
-         <el-select
-            class="w-100"
-            v-model="value" 
-            track-by="id"
-            value-key="id"
-            name="Project Group"         
-            placeholder="Select Project Group"
-          >
-          <el-option
-          v-for="item in filteredFacilityGroups"
-          :key="item.id"
-          :label="item.name"
-          :value="item">
-        </el-option>
-          
-          </el-select>
-       </div>
-       <div class="form-group mx-4">
-          <label class="font-md"
-            >Program Name <span style="color: #dc3545">*</span></label
-          >
-          <el-input
-            type="textarea"
-            v-model="contractNameText"
-            placeholder="Enter contract name here"          
-            rows="1"          
-            name="Program Name"
-          />
-       </div>
-         
+     <div class="right-panel">  
+  <h4 class="mt-4">  <i class="far fa-cog mh-orange-text"></i>  PROGRAM SETTINGS</h4>  
+   <div class="grid-container px-5">
+      <ul>
+       
+      <li class="m-2 cardWrapper" v-for="item, index of settingsCards" :key="index" style="width:45%" @click.prevent="adminRoute(index)">
+      <el-card :body-style="{ padding: '0px' }">
+        <div class="p-2" style="font-size:3.5rem">
+        <span v-if="item == 'Groups'">   <i class="fal fa-network-wired mr-3"></i></span>
+        <span v-if="item == 'Projects'"> <i class="fal fa-clipboard-list mr-3"></i></span>
+        <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i> </span>
+        <!-- <span v-if="item == 'Users'">   <i class="far fa-users mr-3"></i> </span> -->
+        </div>    
+        <div>
+          <h4>
+            <span v-if="item == 'Groups'"> {{ settingsCards.groups }}</span>
+            <span v-if="item == 'Projects'"> {{ settingsCards.projects }}</span>
+            <span v-if="item == 'Contracts'">{{ settingsCards.contracts }}</span>
+            <!-- <span v-if="item == 'Users'">{{ settingsCards.users }}</span> -->
+            <!-- <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i>   {{item}}</span> -->
+          </h4>    
+        </div>
+      </el-card>
+     </li>
+      
+ </ul>
 
-  </form>
-    
-      <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
+   </div>
+         <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
        <div class="pr-3">   
           <router-view
             :key="$route.path"
@@ -80,13 +62,19 @@ import axios from "axios";
 import { mapGetters, mapMutations } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 export default {
-  name: "AdminProjects",
+  name: "SettingsView",
   components: {
     ProjectSidebar
   },
   data() {
     return {
       currentFacility: {},
+      settingsCards: {
+        groups: 'Groups', 
+        projects: 'Projects', 
+        contracts: 'Contracts',
+        // users: "Users"
+      },
       currentFacilityGroup: {},
         projectNameText: '',
         selectedProjectGroup: null, 
@@ -109,6 +97,25 @@ export default {
         this.expanded.id = group.id;
         this.currentFacilityGroup = group;
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
+      }
+    },
+    adminRoute(index){
+      
+      // console.log(event, index, "This")
+      if(index == 'groups'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/settings/groups`
+      );
+      }
+     if(index == 'projects'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/settings/projects`
+      );
+      }
+     if(index == 'contracts'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/settings/contracts`
+      );
       }
     },
     showFacility(facility) {
@@ -277,4 +284,17 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+
+li {
+    list-style-type: none; /* Remove bullets */
+  }
+.cardWrapper {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+  transition: all .2s ease-in;
+  cursor: pointer;
+}
+.cardWrapper:hover { 
+  transform: scale(1.015); 
+}
+
 </style>

@@ -2,9 +2,11 @@ import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
 
 import ProgramView from "./../components/views/program/ProgramView";
-import AdminView from "./../components/views/admin/AdminView";
-import AdminProjects from "./../components/views/admin/AdminProjects";
-import AdminContracts from "./../components/views/admin/AdminContracts";
+
+import SettingsView from "./../components/views/settings/SettingsView";
+import SettingsProjects from "./../components/views/settings/SettingsProjects";
+import SettingsContracts from "./../components/views/settings/SettingsContracts";
+import SettingsGroups from "./../components/views/settings/SettingsGroups";
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
 import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
@@ -146,19 +148,24 @@ export default new VueRouter({
       component: MembersView,
     },
     {
-      name: "AdminProjects",
+      name: "SettingsProjects",
       path: "/programs/:programId/settings/projects",
-      component: AdminProjects,
+      component: SettingsProjects,
     },
     {
-      name: "AdminContracts",
+      name: "SettingsContracts",
       path: "/programs/:programId/settings/contracts",
-      component: AdminContracts,
+      component: SettingsContracts,
     },
     {
-      name: "AdminView",
+      name: "SettingsGroups",
+      path: "/programs/:programId/settings/groups",
+      component: SettingsGroups,
+    },
+    {
+      name: "SettingsView",
       path: "/programs/:programId/settings",
-      component: AdminView,
+      component: SettingsView,
      },   
     {
       name: "ProgramView",

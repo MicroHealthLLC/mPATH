@@ -2,7 +2,7 @@
   <div>
     <tabsbar :class="{'d-none': isProgramView }"></tabsbar>
     <filter-sidebar v-if="contentLoaded" :class="{'d-none': isProgramView }"></filter-sidebar>
-    <admin-sidebar v-if="contentLoaded" :class="{'d-none': isProgramView }"></admin-sidebar>
+    <settings-sidebar v-if="contentLoaded" :class="{'d-none': isProgramView }"></settings-sidebar>
     <router-view></router-view>
   </div>
 </template>
@@ -11,14 +11,14 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Tabsbar from "./../shared/tabsbar";
 import FilterSidebar from "./../shared/filter_sidebar";
-import AdminSidebar from "../views/admin/AdminSidebar.vue";
+import SettingsSidebar from "../views/settings/SettingsSidebar.vue";
 
 export default {
   name: "Dashboard",
   components: {
     Tabsbar,
     FilterSidebar,
-    AdminSidebar
+    SettingsSidebar
   },
   mounted() {
     let id = this.$route.params.programId;
