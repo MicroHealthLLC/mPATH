@@ -506,6 +506,8 @@
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
+  import {API_BASE_PATH} from './../../../mixins/utils'
+
   export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from'],
@@ -655,7 +657,7 @@
       },
       toggleWatched(issue) {
         http
-          .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
+          .put(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             this.issueUpdated(res.data.issue, false)
           })

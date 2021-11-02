@@ -61,6 +61,64 @@ class User < ApplicationRecord
 
   end
 
+  def authorized_facility_project_id_hash
+    # create has with allowed facility ids
+    # h = {
+    #   tasks: {read: [], write: [], destroy: []}, 
+    #   risks: {read: [], write: [], destroy: []},
+    #   lessons: {read: [], write: [], destroy: []},
+    #   issues: {read: [], write: [], destroy: []},
+    # }
+    h = {
+      tasks: [], 
+      risks: [],
+      lessons: [],
+      issues: [],
+    }
+    fph = self.facility_privileges_hash
+    program_ids = fph.keys
+    facility_projects = FacilityProject.where(project_id: program_ids).pluck(:id, :project_id, :facility_id)
+
+    fph.each do |program_id, hash|
+      fps = facility_projects.select{|f| f[1] == program_id.to_i}
+      hash.each do |facility_id, permissions|
+        facility_project_id = fps.detect{|ff| ff[2] == facility_id.to_i}[0]
+        next unless facility_project_id
+        if permissions["tasks"] && permissions["tasks"].any?
+          # h[:tasks][:read] << facility_project_id if   permissions["tasks"].include?("R")
+          # h[:tasks][:write] << facility_project_id if   permissions["tasks"].include?("W")
+          # h[:tasks][:destroy] << facility_project_id if   permissions["tasks"].include?("D")
+          h[:tasks] << facility_project_id if (permissions["tasks"] & ["R", "W", "D"]).any?
+        end
+        if permissions["risks"] && permissions["risks"].any?
+          # h[:risks][:read] << facility_project_id if   permissions["risks"].include?("R")
+          # h[:risks][:write] << facility_project_id if   permissions["risks"].include?("W")
+          # h[:risks][:destroy] << facility_project_id if   permissions["risks"].include?("D")
+          h[:risks] << facility_project_id if (permissions["risks"] & ["R", "W", "D"]).any?
+        end
+
+        if permissions["lessons"] && permissions["lessons"].any?
+          # h[:lessons][:read] << facility_project_id if   permissions["lessons"].include?("R")
+          # h[:lessons][:write] << facility_project_id if   permissions["lessons"].include?("W")
+          # h[:lessons][:destroy] << facility_project_id if   permissions["lessons"].include?("D")
+          h[:lessons] << facility_project_id if (permissions["lessons"] & ["R", "W", "D"]).any?
+        end
+        if permissions["issues"] && permissions["issues"].any?
+          # h[:issues][:read] << facility_project_id if   permissions["issues"].include?("R")
+          # h[:issues][:write] << facility_project_id if   permissions["issues"].include?("W")
+          # h[:issues][:destroy] << facility_project_id if   permissions["issues"].include?("D")
+          h[:issues] << facility_project_id if (permissions["issues"] & ["R", "W", "D"]).any?
+
+        end
+      end
+      h[:tasks].uniq!
+      h[:risks].uniq!
+      h[:lessons].uniq!
+      h[:issues].uniq!
+    end
+    h
+  end
+  
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
     Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
@@ -422,15 +480,15 @@ class User < ApplicationRecord
     user_project_ids = user.project_ids.map(&:to_s)
     remaining_project_ids = user_project_ids - project_ids_with_privileges
     
-    if remaining_project_ids.any?
-      user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
-      user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
-      user_privilege_attributes = user_privilege_attributes.reject{|k,v| v.nil? }.transform_values{|v| v.delete(""); v.chars}
+    # if remaining_project_ids.any?
+    #   user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
+    #   user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
+    #   user_privilege_attributes = user_privilege_attributes.reject{|k,v| v.nil? }.transform_values{|v| v.delete(""); v.chars}
 
-      remaining_project_ids.each do |pid|
-        ph[pid.to_s] = user_privilege_attributes
-      end
-    end
+    #   remaining_project_ids.each do |pid|
+    #     ph[pid.to_s] = user_privilege_attributes
+    #   end
+    # end
 
     ph
   end

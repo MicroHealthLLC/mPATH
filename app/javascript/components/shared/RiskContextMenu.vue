@@ -91,6 +91,7 @@ import Vue from "vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import axios from "axios";
 import humps from "humps";
+import {API_BASE_PATH} from './../../mixins/utils'
 
 export default {
   name: "ContextMenu",
@@ -209,7 +210,7 @@ export default {
 
         formData.append("risk[facility_project_id]", facilityProjectId);
 
-        let url = `/projects/${this.currentProject.id}/facilities/${risk.facilityId}/risks/${risk.id}.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
         let method = "PUT";
         let callback = "risk-updated";
 
@@ -270,7 +271,7 @@ export default {
       facilities[facilityIndex].risks.push(risk);
     },
     createDuplicate() {
-      let url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
+      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
       let method = "POST";
       let callback = "risk-created";
 
@@ -333,7 +334,7 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
       let method = "POST";
       let callback = "risk-created";
 

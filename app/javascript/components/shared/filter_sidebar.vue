@@ -489,6 +489,8 @@ import axios from 'axios'
 import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
+import {API_BASE_PATH} from './../../mixins/utils'
+
 export default {
   name: 'FilterSidebar',
   data() {
@@ -1008,7 +1010,7 @@ export default {
       }
     },
     fetchFilters(){
-      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/query_filters.json`
       var method = "GET"
 
       axios({
@@ -1236,7 +1238,7 @@ export default {
         formData.append('query_filters[][filter_value]', dates )        
       }
 
-      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/query_filters.json`
       var method = "POST"
       var callback = "filter-created"
 
@@ -1359,7 +1361,7 @@ export default {
       if(!this.favoriteFilterData.id)
         return
 
-      var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
+      var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/query_filters/reset.json`
       var method = "DELETE"
       var callback = "filter-destroyed"
 

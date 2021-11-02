@@ -101,6 +101,7 @@
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
+  import { API_BASE_PATH } from '../../../mixins/utils'
 
   export default {
     props: ['facility', 'note', 'title', 'from'],
@@ -201,12 +202,12 @@
             }
           }
 
-          var url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/notes.json`
+          var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/notes.json`
           var method = "POST"
           var callback = "note-created"
 
           if (this.note && this.note.id) {
-            url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}.json`
+            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`
             method = "PUT"
             callback = "note-updated"
           }
