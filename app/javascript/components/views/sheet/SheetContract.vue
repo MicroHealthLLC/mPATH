@@ -6,6 +6,7 @@
         <div>
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <form
+             @submit.prevent="saveContract"
             :class="{ 'vh100' : !contentLoaded}"
                 accept-charset="UTF-8"
             >
@@ -66,7 +67,7 @@
     </label> 
         <el-input
         name="Project Code" 
-        v-model="inputText"       
+        v-model="contract.project_code"       
         type="text"
         placeholder="Enter Project Code"
         />          
@@ -77,7 +78,7 @@
         </label>
             <el-input
             name="Contract Nickname"  
-            v-model="inputText"          
+            v-model="contract.contract_nickname"          
             type="text"
             placeholder="Contact Nickname"
             />    <!-- Need to add additional div here for error handling -->           
@@ -394,6 +395,9 @@ export default {
   data() {
     return {
       loading: true,
+      statusId: null, 
+      // contractNickname: '',
+      // projectCode: null, 
       inputText:'',
        options: [{
           value: 'Option1',
@@ -434,12 +438,29 @@ export default {
     };
   },
   mounted() {
-   
+    if (this.$route.params.contractId) {
+      this.fetchContract({
+        id: this.$route.params.contractId,
+        ...this.$route.params,
+      });
+    }
   },
   methods: {
-    ...mapActions([""]),
-    ...mapMutations([""]),
-  
+       ...mapActions(["fetchContract", "updateContract"]),
+    ...mapMutations(["SET_CONTRACT", "SET_CONTRACT_STATUS"]),
+    saveContract() {
+       let contractData = {
+          contract: {
+            contract_nickname: this.contract.contract_nickname,
+            project_code: this.contract.project_code,           
+          },
+        }
+          
+          // this.updateContract({
+          //   ...contractData,
+          //   ...this.$route.params,
+          // })
+    },
     log(e){
       console.log(e)
     },
@@ -462,11 +483,40 @@ export default {
   computed: {
     ...mapGetters(["contentLoaded", "getAllFilterNames", "getFilterValue"]),
   },
-  watch: {
+ watch: {
+    contract: {
+      handler(newValue, oldValue) {
+        if (
+          this.contentLoaded &&
+          Object.keys(oldValue).length === 0 &&
+          this.$route.params.contractId != "new"
+        ) {
+        
+           this.statusId = this.contract_status_id;   
+           // this.nickname = this.contract.contract_nickname;
+          // this.projectCode = this.contract.project_code;  
+        }
+      },
+    },
     contentLoaded: {
       handler() {
-        this.dueDate = this.facility.dueDate;
-        this.statusId = this.facility.statusId;
+        if (this.contract) {
+          this.statusId = this.contract_status_id;
+          // this.nickname = this.contract.contract_nickname;
+          // this.projectCode = this.contract.project_code;        
+        }
+      },
+    },
+    contractStatus: {
+      handler() {
+        if (this.contractStatus == 200) {
+          this.$message({
+            message: `${this.contract.contract_nickname} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACT_STATUS(0);
+       }
       },
     },
   },

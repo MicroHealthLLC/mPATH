@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
+  before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar, :settings]
   layout :resolve_layout
 
   def vue_js_route
@@ -8,6 +8,8 @@ class ProjectsController < AuthenticatedController
       view = "map_view"
     elsif params[:tab] == "sheet"
       view = "sheets_view"
+    elsif params[:tab] == "settings"
+      view = "settings_view"
     elsif params[:tab] == "calendar"
       view = "calendar_view"
     elsif params[:tab] == "kanban"
@@ -42,6 +44,7 @@ class ProjectsController < AuthenticatedController
     end
   end
 
+ 
   def program_dataviewer
     if !current_user.authorized_programs.pluck(:id).include?(params[:program_id].to_i)
       raise CanCan::AccessDenied      
@@ -109,6 +112,14 @@ class ProjectsController < AuthenticatedController
 
   def sheet
     check_permit("sheets_view")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
+  def settings
+    check_permit("settings_view")
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
