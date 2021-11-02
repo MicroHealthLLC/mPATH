@@ -9,9 +9,27 @@ Rails.application.routes.draw do
     end
   end
 
-
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+
+      # For Admin panel
+      namespace :admin do
+        resources :facilities do
+          resources :facility_projects, only: [:index, :update, :show]
+        end
+        get '/settings', to: 'settings#index'
+        post '/settings', to: 'settings#update'
+
+        resources :task_types, only: [:index]
+        resources :facility_groups, only: [:index]
+        # resources :statuses, only: [:index]
+        # resources :issue_severities, only: [:index]
+        # resources :issue_types, only: [:index]
+        # resources :issue_stages, only: [:index]
+        # resources :task_stages, only: [:index]
+        # resources :users, only: [:index]
+        # post '/sort-by', to: 'sorts#update'
+      end
 
       resources :contracts
 
@@ -34,7 +52,7 @@ Rails.application.routes.draw do
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
       get "/portfolio/tab_counts", to: "portfolio#tab_counts"
-      get "/projects/:id", to: "projects#show"
+      # get "/projects/:id", to: "projects#show"
 
       # Filter data
       get "/filter_data/programs", to: "filter_data#programs"
@@ -47,18 +65,15 @@ Rails.application.routes.draw do
       get "/filter_data/risk_approaches", to: "filter_data#risk_approaches"
       get "/filter_data/risk_priority_level", to: "filter_data#risk_priority_level"
 
-      # NOTE: Replace this with resource.
-      # get "/programs/:program_id/lessons" => "lessons#index"
-      # get "/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
-      # get "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
-      # post "/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
-      # patch "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
-      # delete "/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
-
       post '/profile', to: 'profiles#update'
       get '/current_user', to: 'profiles#current_profile'
 
       resources :projects, path: 'programs', only: [:index, :show] do
+        resources :query_filters do
+          collection do
+            delete "reset" => "query_filters#reset"
+          end
+        end
         
         member do
           # used in Admin
@@ -96,54 +111,44 @@ Rails.application.routes.draw do
     end
     post '/login' => 'authentication#login'
     
-    get '/settings', to: 'settings#index'
-    post '/settings', to: 'settings#update'
-    post '/sort-by', to: 'sorts#update'
   end
 
+  # For Admin panel
   get '/facility_privileges/facility_privileges_partial' => "facility_privileges#facility_privileges_partial", as: :facility_privileges_partial
   get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form", as: :add_facility_privilege_form
 
   get '/project_privileges/load_form' => "project_privileges#load_form", as: :project_privileges_load_form
 
-
   ## New Routes for Vue
-  get "/programs/:id/"  => "projects#show"
-  get "/programs/:program_id/dataviewer" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/task/:task_id" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/risk/:risk_id" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/issue/:issue_id" => "projects#program_dataviewer"
-  get "/programs/:program_id/dataviewer/:project_id/lesson/:lesson_id" => "projects#program_dataviewer"
 
+  # get "/programs/:id/"  => "projects#show"
+  # get "/programs/:program_id/dataviewer" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/task/:task_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/risk/:risk_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/issue/:issue_id" => "projects#program_dataviewer"
+  # get "/programs/:program_id/dataviewer/:project_id/lesson/:lesson_id" => "projects#program_dataviewer"
 
-  get "/programs/:program_id/:tab" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
-  get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
+  # get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
 
-  # Juan added these routes from line 111 - 1117
-  get "/programs/:program_id/:tab/projects/:project_id/analytics" => "projects#vue_js_route"  
-  get "/programs/:program_id/:tab/projects/:project_id/project" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/contract" => "projects#vue_js_route"
-  get "/programs/:program_id/settings" => "projects#vue_js_route"
-  get "/programs/:program_id/settings/groups" => "projects#vue_js_route"
-  get "/programs/:program_id/settings/projects" => "projects#vue_js_route"
-  get "/programs/:program_id/settings/contracts" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/overview" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/issues" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/issues/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/issues" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/issues/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/risks" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/risks/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/risks" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/risks/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/notes" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/notes/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/notes" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/notes/:id" => "projects#vue_js_route"
 
-  get "/programs/:program_id/:tab/projects/:project_id/lessons" => "projects#vue_js_route"
-  get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/lessons" => "projects#vue_js_route"
+  # get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
 
   # TODO: Comment this API and Uncomment the one in namespace once front end is working with JWT 
   # get "/api/v1/programs/:program_id/lessons" => "lessons#index"
@@ -156,83 +161,100 @@ Rails.application.routes.draw do
   # patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   # delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
-  resources :dashboard, only: [:index]
-  resources :projects, only: [:index, :show] do
-    get :gantt_chart, on: :member
-  ##  get :watch_view, on: :member
-    get :sheet, on: :member
-    get :settings, on: :member
-    get :admin, on: :member
-    get :member_list, on: :member
-  ##  get :facility_manager, on: :member
-    get :kanban, on: :member
-    get :map, on: :member    
-    get :calendar, on: :member
+  # resources :projects, only: [:index, :show] do
+  #   get :gantt_chart, on: :member
+  #   ##  get :watch_view, on: :member
+  #   get :sheet, on: :member
+  #   get :member_list, on: :member
+  #   ##  get :facility_manager, on: :member
+  #   get :kanban, on: :member
+  #   get :map, on: :member    
+  #   get :calendar, on: :member
 
-    resources :lessons
+  #   resources :lessons
 
-    resources :query_filters do
-      collection do
-        delete "reset" => "query_filters#reset"
-      end
-    end
+  #   resources :query_filters do
+  #     collection do
+  #       delete "reset" => "query_filters#reset"
+  #     end
+  #   end
 
-    resources :facilities do
-      resources :notes #, module: :facilities
-      resources :issues do
-        post :batch_update, on: :collection
-        post :create_duplicate, on: :member
-        post :create_bulk_duplicate, on: :member
-      end
-      resources :risks do
-        post :batch_update, on: :collection
-        post :create_duplicate, on: :member
-        post :create_bulk_duplicate, on: :member
-      end
-      resources :tasks do
-        post :batch_update, on: :collection
-        post :create_duplicate, on: :member
-        post :create_bulk_duplicate, on: :member
-      end
-    end
-  end
-  resources :facilities, only: [] do
-    resources :facility_projects, only: [:index, :update, :show]
-  end
-  resources :facility_projects, only: [:index, :update, :show] do
-    resources :issues do
-      post :batch_update, on: :collection
-      post :create_duplicate, on: :member
-      post :create_bulk_duplicate, on: :member
-    end
-    resources :risks do
-      post :batch_update, on: :collection
-      post :create_duplicate, on: :member
-      post :create_bulk_duplicate, on: :member
-    end
-    resources :tasks do
-      post :batch_update, on: :collection
-      post :create_duplicate, on: :member
-      post :create_bulk_duplicate, on: :member
-    end
-  end
+  #   resources :facilities do
+  #     resources :notes #, module: :facilities
+  #     resources :issues do
+  #       post :batch_update, on: :collection
+  #       post :create_duplicate, on: :member
+  #       post :create_bulk_duplicate, on: :member
+  #     end
+  #     resources :risks do
+  #       post :batch_update, on: :collection
+  #       post :create_duplicate, on: :member
+  #       post :create_bulk_duplicate, on: :member
+  #     end
+  #     resources :tasks do
+  #       post :batch_update, on: :collection
+  #       post :create_duplicate, on: :member
+  #       post :create_bulk_duplicate, on: :member
+  #     end
+  #   end
+  # end
+  # resources :facilities, only: [] do
+  #   resources :facility_projects, only: [:index, :update, :show]
+  # end
+  # resources :facility_projects, only: [:index, :update, :show] do
+  #   resources :issues do
+  #     post :batch_update, on: :collection
+  #     post :create_duplicate, on: :member
+  #     post :create_bulk_duplicate, on: :member
+  #   end
+  #   resources :risks do
+  #     post :batch_update, on: :collection
+  #     post :create_duplicate, on: :member
+  #     post :create_bulk_duplicate, on: :member
+  #   end
+  #   resources :tasks do
+  #     post :batch_update, on: :collection
+  #     post :create_duplicate, on: :member
+  #     post :create_bulk_duplicate, on: :member
+  #   end
+  # end
 
-  get '/profile', to: 'profiles#index'
-  post '/profile', to: 'profiles#update'
-  get '/current_user', to: 'profiles#current_profile'
-  get '/settings', to: 'data#settings'
-  get '/facility_groups', to: 'data#facility_groups'
-  get '/task_types', to: 'data#task_types'
-  get '/statuses', to: 'data#statuses'
+  # resources :dashboard, only: [:index]
 
-  post '/progress_lists', to: 'progress_lists#create'
+  # get '/profile', to: 'profiles#index'
+  # post '/profile', to: 'home#update'
+  # get '/current_user', to: 'profiles#current_profile'
 
-  root 'landing#index'
+  #TODO: remove if no error found
+  # get '/settings', to: 'data#settings'
+  # get '/facility_groups', to: 'data#facility_groups'
+  # get '/task_types', to: 'data#task_types'
+  # get '/statuses', to: 'data#statuses'
+
+  # get "/portfolio" => "home#portfolio"
+  get '/profile' => 'home#profile'
+
+  root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
+  # Strictly matching programs/<program_id>/dataviewer
+  get '*all', to: "home#dataviewer", constraints: -> (req) do
+    # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    spath = req.path.split("/")
+    i = spath.index("dataviewer")
+    # TODO: create regex for pattern programs/<program_id>/dataviewer
+    i && (p = spath[i] ) && p.match(/^[dataviewer]+$/)
+  end
+
   # Strictly matching /portfolio
-  get '*all', to: "dashboard#portfolio", constraints: -> (req) do
-    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/).present?
+  get '*all', to: "home#portfolio", constraints: -> (req) do
+    # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    # TODO: create regex for pattern /portfolio
+    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/)
+  end
+
+  get "*path", to: 'home#index', constraints: -> (req) do
+    !req.xhr? && req.format.html?
   end
   
   get '*all', to: "not_found#index", constraints: -> (req) do
