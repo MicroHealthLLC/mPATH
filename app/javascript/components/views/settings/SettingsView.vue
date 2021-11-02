@@ -62,7 +62,7 @@ import axios from "axios";
 import { mapGetters, mapMutations } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 export default {
-  name: "AdminView",
+  name: "SettingsView",
   components: {
     ProjectSidebar
   },

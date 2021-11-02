@@ -41,7 +41,7 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
-  name: 'AdminSidebar',
+  name: 'SettingsSidebar',
   data() {
     return {
       

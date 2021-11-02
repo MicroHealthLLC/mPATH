@@ -30,6 +30,7 @@ ActiveAdmin.register User do
       privilege_attributes: [
         :id,
         sheets_view: [],
+        settings_view:[],
         map_view: [],                
         gantt_view: [],
         kanban_view: [],
@@ -101,6 +102,7 @@ ActiveAdmin.register User do
         f.inputs 'Access' do
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
+            p.input :settings_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "settings_view")
             p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
             p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
             p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
@@ -150,6 +152,7 @@ ActiveAdmin.register User do
         # f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
         #   p.input :facility_manager_view, as: :hidden
         #   p.input :sheets_view, as: :hidden
+        #   p.input :settings_view, as: :hidden
         #   p.input :calendar_view, as: :hidden
         #   p.input :map_view, as: :hidden
         #   p.input :gantt_view, as: :hidden

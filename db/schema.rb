@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_21_202001) do
+ActiveRecord::Schema.define(version: 2021_11_02_131127) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -90,7 +90,6 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
-    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -115,7 +114,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center"
+    t.string "center", default: "[]"
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
@@ -258,8 +257,8 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "important", default: false
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
@@ -308,6 +307,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "calendar_view"
     t.string "lessons"
     t.string "portfolio_view"
+    t.string "settings_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -553,6 +553,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.string "duration_name"
     t.string "status_name"
     t.boolean "reportable", default: false
+    t.date "closed_date"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -642,6 +643,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
+    t.date "closed_date"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -673,6 +675,7 @@ ActiveRecord::Schema.define(version: 2021_07_21_202001) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
+    t.text "privileges"
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"

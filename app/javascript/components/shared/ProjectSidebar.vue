@@ -1,9 +1,4 @@
 <template>
-<!-- TO DO (21OCT2021):
-1. Consolidate all formdata methods into one method
-2. See why not all Project Groups are included in FIlter
-3. Create new route and new views for Program Settings View
-4.  -->
   <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
     <div class="stick">
       <div
