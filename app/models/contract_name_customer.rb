@@ -1,0 +1,2 @@
+class ContractNameCustomer < ApplicationRecord
+end

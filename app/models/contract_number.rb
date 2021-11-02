@@ -1,0 +1,2 @@
+class ContractNumber < ApplicationRecord
+end

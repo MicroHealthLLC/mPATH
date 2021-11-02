@@ -10,7 +10,7 @@
       ></notes-form> 
     </div>
     <div v-else >
-     <span class="filters-wrapper w-70 pr-2">
+     <span class="filters-wrapper w-60 pr-2">
       <div class="mb-3 row px-3" :class="{'justify-content-center': _isallowed('write')}">
         <div class="col-md-11 px-0">
           <div class="input-group" :class="{'search-tab': _isallowed('write')}">

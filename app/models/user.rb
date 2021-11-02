@@ -42,7 +42,7 @@ class User < ApplicationRecord
     user = self
     return if !user.project_ids.any?
     privilege = user.privilege
-    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view", "admin" ).clone
+    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "settings_view", "sheets_view", "kanban_view", "calendar_view", "admin" ).clone
     privilege_attr.each do |k,v|
       privilege_attr[k] = ["R"]
     end
@@ -193,7 +193,7 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["sheets_view", "map_view", "gantt_view", "kanban_view", "calendar_view", "members"]
+    nagivation_tabs = ["sheets_view", "map_view", "settings_view", "gantt_view", "kanban_view", "calendar_view", "members"]
     nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
   end
 
@@ -201,6 +201,7 @@ class User < ApplicationRecord
     n = []
     allowed_navigation_tabs.each do |t|
       name = "sheet" if t == "sheets_view"
+      name = "settings" if t == "settings_view"
       name = "map" if t == "map_view"
       name = "gantt_chart" if t == "gantt_view"      
       name = "kanban" if t == "kanban_view"
@@ -227,6 +228,7 @@ class User < ApplicationRecord
   def top_navigation_hash
      {
       "sheets_view" => "sheet",  
+      "settings_view" => "settings",
       "map_view" => "map",  
       "gantt_view" => "gantt_chart",  
       "kanban_view" => "kanban",  
@@ -448,6 +450,7 @@ class User < ApplicationRecord
       map_view: p.map_view,
       gantt_view: p.gantt_view,
       members: p.members,
+      settings_view: p.settings_view, 
       sheets_view: p.sheets_view,
       kanban_view: p.kanban_view,
       calendar_view: p.calendar_view,
@@ -518,7 +521,7 @@ class User < ApplicationRecord
 
     facility_project_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
-      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view", "portfolio_view")
+      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
       fids2.each do |ff|
         fph[pid][ff] = p_privilege.clone.merge!({"facility_id" => ff})
       end       

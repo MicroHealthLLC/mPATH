@@ -5,6 +5,7 @@ const moment = extendMoment(Moment)
 import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
 import exampleModule from './modules/example-module-store'
+import adminStore from './modules/admin-store'
 import programStore from './modules/program-store'
 import projectStore from './modules/project-store'
 import taskStore from './modules/task-store'
@@ -30,6 +31,7 @@ export default new Vuex.Store({
     programStore,
     projectStore,
     taskStore,
+    adminStore, 
     issueStore,
     riskStore,
     lessonStore,
@@ -52,6 +54,8 @@ export default new Vuex.Store({
     statuses: new Array,
     advancedFilterOptions: new Array,
     taskIssueOverdueFilter: new Array,
+
+    projectGroupFilter: null, 
 
     taskTypes: new Array,
     taskTypeFilter: null,
@@ -153,6 +157,7 @@ export default new Vuex.Store({
 
   mutations: {
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
+    setProjectGroupFilter: (state, filter) => state.projectGroupFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setMyAssignmentsFilter: (state, filter) => state.myAssignmentsFilter = filter,
@@ -866,6 +871,8 @@ export default new Vuex.Store({
     taskStageFilter: state => state.taskStageFilter,
     taskProgressFilter: state => state.taskProgressFilter,
     taskUserFilter: state => state.taskUserFilter,
+
+    getProjectGroupFilter: state => state.projectGroupFilter,
 
     riskStages: state => state.riskStages,
     riskStageFilter: state => state.riskStageFilter,

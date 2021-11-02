@@ -77,6 +77,9 @@ export default {
     isMapView() {
       return this.$route.name.includes("Map");
     },
+    isProgramSettingsView() {
+      return this.$route.name.includes("settings");
+    },
     isGanttView() {
       return this.$route.name === "GanttChartView";
     },
@@ -101,8 +104,12 @@ export default {
         return route.replace("map", "sheet");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "sheet");
+      } else if (this.isProgramSettingsView) {
+        return route.replace("settings", "sheet");
       } else if (this.isCalendarView) {
         return route.replace("calendar", "sheet");
+      } else if (this.isCalendarView) {
+        return route.replace("settings", "sheet");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "sheet");
       } else if (this.isLessonsView) {
@@ -129,6 +136,8 @@ export default {
         return route.replace("sheet", "map");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "map");
+      } else if (this.isProgramSettingsView) {
+        return route.replace("settings", "map");      
       } else if (this.isCalendarView) {
         return route.replace("calendar", "map");
       } else if (this.isGanttView) {

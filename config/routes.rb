@@ -31,6 +31,20 @@ Rails.application.routes.draw do
         # post '/sort-by', to: 'sorts#update'
       end
 
+      resources :contracts
+
+      # Contract data API
+      get "/contract_data/contract_types", to: "contract_data#contract_types"
+      get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
+      get "/contract_data/contract_name_customeres", to: "contract_data#contract_name_customeres"
+      get "/contract_data/contract_vehicles", to: "contract_data#contract_vehicles"
+      get "/contract_data/contract_vehicle_number", to: "contract_data#contract_vehicle_number"
+      get "/contract_data/contract_number", to: "contract_data#contract_number"
+      get "/contract_data/subcontract_number", to: "contract_data#subcontract_number"
+      get "/contract_data/contract_prime", to: "contract_data#contract_prime"
+      get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
+      get "/contract_data/contract_classification", to: "contract_data#contract_classification"
+      
       # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
       get "/portfolio/lessons", to: "portfolio#lessons"
@@ -120,6 +134,14 @@ Rails.application.routes.draw do
   # get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
 
   # get "/programs/:program_id/:tab/projects/:project_id/overview" => "projects#vue_js_route"
+  # Juan added these routes from line 111 - 1117
+  get "/programs/:program_id/:tab/projects/:project_id/analytics" => "projects#vue_js_route"  
+  get "/programs/:program_id/:tab/projects/:project_id/project" => "projects#vue_js_route"
+  get "/programs/:program_id/:tab/projects/:project_id/contract" => "projects#vue_js_route"
+  get "/programs/:program_id/settings" => "projects#vue_js_route"
+  get "/programs/:program_id/settings/groups" => "projects#vue_js_route"
+  get "/programs/:program_id/settings/projects" => "projects#vue_js_route"
+  get "/programs/:program_id/settings/contracts" => "projects#vue_js_route"
 
   # get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
   # get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
@@ -222,6 +244,26 @@ Rails.application.routes.draw do
 
   root 'home#landing'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
+  resources :dashboard, only: [:index]
+  resources :projects, only: [:index, :show] do
+    get :gantt_chart, on: :member
+  ##  get :watch_view, on: :member
+    get :sheet, on: :member
+    get :settings, on: :member
+    get :admin, on: :member
+    get :member_list, on: :member
+  ##  get :facility_manager, on: :member
+    get :kanban, on: :member
+    get :map, on: :member    
+    get :calendar, on: :member
+
+    resources :lessons
+
+    resources :query_filters do
+      collection do
+        delete "reset" => "query_filters#reset"
+      end
+    end
 
   # Strictly matching programs/<program_id>/dataviewer
   get '*all', to: "home#dataviewer", constraints: -> (req) do

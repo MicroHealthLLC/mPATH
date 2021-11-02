@@ -1,0 +1,2 @@
+class ContractPrime < ApplicationRecord
+end
