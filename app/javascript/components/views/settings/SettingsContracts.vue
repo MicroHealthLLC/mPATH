@@ -27,7 +27,7 @@
       </h4>
     </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper">
-    <el-button @click.prevent="addProject" class="bg-primary text-light mb-2" style="position:absolute"> 
+    <el-button @click.prevent="addContract" class="bg-primary text-light mb-2" style="position:absolute"> 
     <i class="far fa-plus-circle mr-1"></i> Add Contract
     </el-button>
      <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
