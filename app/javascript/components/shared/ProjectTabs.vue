@@ -84,6 +84,9 @@ export default {
     if (fPrivilege) {
       for (var i = 0; i < this.tabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+        if(this.tabs[i].key == 'project'){
+          continue
+        }
         this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
       
       }
@@ -103,11 +106,13 @@ export default {
       return this.$projectPrivileges 
     },
     currentTab() {
+      
       return this.tabs
         .map((tab) => tab.key)
-        .filter((key) =>
-          this.$route.name.toUpperCase().includes(key.toUpperCase())
-        );
+        .filter((key) =>{
+          console.log(key.toUpperCase())
+         this.$route.name.toUpperCase().includes(key.toUpperCase())
+        });
     },
     tab() {
       let url = this.$route.path;
@@ -138,7 +143,9 @@ export default {
 
           if (privileges) {
             for (var i = 0; i < this.tabs.length; i++) {
-        
+              if(this.tabs[i].key == 'project'){
+                continue
+              }
               this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
                   
             }
