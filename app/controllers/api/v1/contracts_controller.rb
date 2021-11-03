@@ -5,6 +5,11 @@ class Api::V1::ContractsController < AuthenticatedController
     render json: {contracts: all_contracts}
   end
 
+  def show
+    @contract = Contract.find(params[:id])
+    render json: @contract.as_json
+  end
+
   def create
     @contract = Contract.new.create_or_update_issue(params, current_user)
     if @contract.errors.any?
