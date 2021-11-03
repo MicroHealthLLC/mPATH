@@ -9,7 +9,7 @@ class ProjectPrivilege < ApplicationRecord
   serialize :risks, Array
   serialize :notes, Array
   serialize :lessons, Array
-
+  serialize :contracts, Array
   serialize :project_ids, Array
 
   before_save :add_read_privilege
@@ -17,7 +17,7 @@ class ProjectPrivilege < ApplicationRecord
   before_save :remove_facility_privileges_on_save
   after_destroy :remove_facility_privileges
 
-  PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
+  PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons", "contracts"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   validate :validate_project_ids

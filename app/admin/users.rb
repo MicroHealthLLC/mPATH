@@ -51,7 +51,8 @@ ActiveAdmin.register User do
         issues: [],
         notes: [],
         admin: [],
-        lessons: []
+        lessons: [],
+        contracts: []
       ],
       facility_privileges_attributes: [
         :id,
