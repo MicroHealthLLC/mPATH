@@ -30,13 +30,13 @@ export default {
         },
           {
           label: "Contract",
-          key: "contract",
+          key: "contracts",
           closable: false,
           hidden: false,
         },
         {
           label: "Analytics",
-          key: "analytics",
+          key: "overview",
           closable: false,
           hidden: false,
         },

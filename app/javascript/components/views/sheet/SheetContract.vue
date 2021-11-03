@@ -438,12 +438,14 @@ export default {
     };
   },
   mounted() {
-    if (this.$route.params.contractId) {
-      this.fetchContract({
-        id: this.$route.params.contractId,
-        ...this.$route.params,
-      });
-    }
+    console.log(this.contract)
+       console.log(this.$route.params)
+    // if (this.$route.params.contractId) {
+    //   this.fetchContract({
+    //     id: this.$route.params.contractId,
+    //     ...this.$route.params,
+    //   });
+    // }
   },
   methods: {
        ...mapActions(["fetchContract", "updateContract"]),
@@ -452,7 +454,8 @@ export default {
        let contractData = {
           contract: {
             contract_nickname: this.contract.contract_nickname,
-            project_code: this.contract.project_code,           
+            project_code: this.contract.project_code,  
+                     
           },
         }
           
@@ -481,7 +484,11 @@ export default {
 
   },
   computed: {
-    ...mapGetters(["contentLoaded", "getAllFilterNames", "getFilterValue"]),
+    ...mapGetters([
+      "contentLoaded",
+      "getAllFilterNames", 
+      "getFilterValue", 
+      "contract"]),
   },
  watch: {
     contract: {
