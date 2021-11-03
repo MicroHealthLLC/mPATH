@@ -105,7 +105,7 @@
             name="Program Name"
           />
        </div>
-       <div class="form-group mx-4">
+       <!-- <div class="form-group mx-4">
         <label class="font-md"
         >Group</label
         >
@@ -127,9 +127,9 @@
         </el-option>
           
           </el-select>
-       </div>
+       </div> -->
         <div class="right mr-2">
-        <el-button @click.prevent="saveNewContract" class="bg-primary text-light mr-2">Save</el-button>
+        <el-button @click.prevent="addNewContract" class="bg-primary text-light mr-2">Save</el-button>
         </div>
     </form>
    </el-dialog>
@@ -149,7 +149,7 @@
 
 <script>
 import axios from "axios";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 export default {
   name: "SettingsContracts",
@@ -171,6 +171,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable', 'setGroupFilter']), 
+   ...mapActions(["createContract"]),
     expandFacilityGroup(group) {
       if (group.id == this.expanded.id) {
         this.expanded.id = "";
@@ -219,46 +220,77 @@ export default {
     handleClick(tab, event) {
         console.log(tab, event);
     },    
-    saveNewContract(e){
-      e.preventDefault();     
-      let formData = new FormData();
-      formData.append("facility[facility_name]", this.contractNameText)
-      if(this.C_projectGroupFilter !== null ){
-       formData.append("facility[facility_group_id]", this.C_projectGroupFilter.id)      
-      }        
-      formData.append('facility[address]', '18 Boon Rd, Stow, MA 01775, USA')
-      formData.append('facility[lat]', '42.4114459')
-      formData.append('facility[lng]', '-71.5128223')
-      formData.append('facility[point_of_contact]', 'Juan Rivera')
-      formData.append('facility[phone_number]', '+16789009876')
-      formData.append('facility[country_code]', "US")
-      formData.append('facility[email]', 'test@test.com')
-      formData.append('facility[status]', "active")
-      formData.append('facility[project_ids][]', this.$route.params.programId)
-      formData.append('commit', 'Create Project')
-   
-       let url = `/admin/facilities`;
-        let method = "POST";
-          axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-         .then((response) => {
-           if (response.status === 200) {
-              this.$message({
-                message: `New Contract ${this.contractNameText} has been saved successfully.`,
-                type: "success",
-                showClose: true,
-              })   
-              this.dialogVisible = false;        
-       }
-     })
+    addNewContract() {
+        let contractData = {
+          contract: {
+            contract_nickname: "Test Contract",
+            project_code: 32,
+            contract_type_id: 1,
+            project_code: "1234",
+            contract_status_id: 1,
+            contract_name_customer_id: 1,
+            contract_vehicle_id: 1,
+            contract_vehicle_number_id: 1,
+            contract_number_id: 1,
+            contract_classification_id: 1,
+            subcontract_number_id: 1,
+            contract_prime_id: 1,
+            contract_current_pop_id: 1,
+            current_pop_start_time: "15-1-2021",
+            current_pop_end_time: "16-1-2021",
+            days_remaining: 0,
+            total_contract_value: 0,
+            current_pop_value: 0,
+            current_pop_funded: 0,
+            total_contract_funded: 0,
+            start_date:"20-1-2021",
+            end_date: "21-1-2021"
+          }
+        }
+         this.createContract({
+            ...contractData,
+          })
     },
+    // saveNewContract(e){
+    //   e.preventDefault();     
+    //   let formData = new FormData();
+    //   formData.append("facility[facility_name]", this.contractNameText)
+    //   if(this.C_projectGroupFilter !== null ){
+    //    formData.append("facility[facility_group_id]", this.C_projectGroupFilter.id)      
+    //   }        
+    //   // formData.append('facility[address]', '18 Boon Rd, Stow, MA 01775, USA')
+    //   // formData.append('facility[lat]', '42.4114459')
+    //   // formData.append('facility[lng]', '-71.5128223')
+    //   // formData.append('facility[point_of_contact]', 'Juan Rivera')
+    //   // formData.append('facility[phone_number]', '+16789009876')
+    //   // formData.append('facility[country_code]', "US")
+    //   // formData.append('facility[email]', 'test@test.com')
+    //   // formData.append('facility[status]', "active")
+    //   // formData.append('facility[project_ids][]', this.$route.params.programId)
+    //   // formData.append('commit', 'Create Project')
+   
+    //    let url = `/admin/facilities`;
+    //     let method = "POST";
+    //       axios({
+    //       method: method,
+    //       url: url,
+    //       data: formData,
+    //       headers: {
+    //         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+    //           .attributes["content"].value,
+    //       },
+    //     })
+    //      .then((response) => {
+    //        if (response.status === 200) {
+    //           this.$message({
+    //             message: `New Contract ${this.contractNameText} has been saved successfully.`,
+    //             type: "success",
+    //             showClose: true,
+    //           })   
+    //           this.dialogVisible = false;        
+    //    }
+    //  })
+    // },
     addContract(){
       this.dialogVisible = true;    
       this.C_projectGroupFilter = null;
