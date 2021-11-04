@@ -318,6 +318,8 @@ class Project < SortableRecord
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
 
+    all_contracts = Contract.includes(:contract_type, :contract_status, :contract_name_customer, :contract_vehicle, :contract_vehicle_number, :contract_number, :subcontract_number, :contract_prime, :contract_current_pop, :contract_classification, ).where(facility_group_id: all_facility_group_ids, project_id: self.id)
+
     facility_projects_hash = []
     facility_projects_hash2 = {}
 
@@ -407,6 +409,8 @@ class Project < SortableRecord
       h2 = fg.attributes
       h2[:facilities] = []
       h2[:project_ids] = []
+      h2[:contracts] = all_contracts.select{|c| c.facility_group_id == fg.id }.map(&:to_json)      
+
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
         # h2[:project_ids] << fp.project_id
