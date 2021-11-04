@@ -91,6 +91,27 @@ function addFacilityPrivilegeForm(element){
   })
 }
 
+function addContractPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  $.ajax({
+    url: url,
+    success: function(res, data){
+      if(res.project_size == 0){
+        alert("No active program found.")
+        return
+      }
+      if(!res.projects_avaialble){
+        alert("All program privileges are set.")
+        return
+      }
+      $("#contract_privileges_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
 function addProjectPrivilegeForm(element){
   let url = $(element).attr("data-url")
   $.ajax({
@@ -128,6 +149,33 @@ function programSelectChange(element){
       alert("Error loading data. Please try again later")
     }
   })
+}
+
+function initializeContractPrivilegeSelect2(){
+
+  $.map($(".contract_privileges_project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
+
+    $(element).select2({
+      placeholder: "Search and select Contract",
+      allowClear: true,
+      tags: true
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
 }
 
 function initializeProjectPrivilegeSelect2(){
@@ -185,6 +233,7 @@ function initializeProgramPrivilegeSelect2(){
 
 jQuery(function($) {
 
+  initializeContractPrivilegeSelect2()
   initializeProjectPrivilegeSelect2()
   initializeProgramPrivilegeSelect2()
 

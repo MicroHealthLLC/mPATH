@@ -117,6 +117,9 @@ Rails.application.routes.draw do
   get '/facility_privileges/facility_privileges_partial' => "facility_privileges#facility_privileges_partial", as: :facility_privileges_partial
   get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form", as: :add_facility_privilege_form
 
+  get '/contract_privileges/contract_privileges_partial' => "contract_privileges#contract_privileges_partial", as: :contract_privileges_partial
+  get '/contract_privileges/add_contract_privilege_form' => "contract_privileges#add_contract_privilege_form", as: :add_contract_privilege_form
+
   get '/project_privileges/load_form' => "project_privileges#load_form", as: :project_privileges_load_form
 
   ## New Routes for Vue
