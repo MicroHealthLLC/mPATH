@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
   has_many :query_filters, dependent: :destroy
+  has_many :contract_privileges, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
   has_many :project_privileges, dependent: :destroy
 
@@ -149,6 +150,18 @@ class User < ApplicationRecord
       options << [project.name, project.id, {disabled: true}]
       fps.each do |f|
         options << ["&nbsp;#{f.facility.facility_name}".html_safe, f.id]
+      end
+    end    
+    options
+  end
+
+  def active_admin_facility_project_select_options
+    cps_hash = Contract.includes(:project).where(project_id: self.projects.active).group_by(&:project)
+    options = []
+    cps_hash.each do |project, cps|
+      options << [project.name, project.id, {disabled: true}]
+      cps.each do |c|
+        options << ["&nbsp;#{c.contract_nickname}".html_safe, c.id]
       end
     end    
     options
