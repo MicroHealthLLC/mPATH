@@ -1,16 +1,16 @@
 class Contract < ApplicationRecord
   belongs_to :contract_type
-  belongs_to :contract_status
-  belongs_to :contract_name_customer
-  belongs_to :contract_vehicle
-  belongs_to :contract_vehicle_number
-  belongs_to :contract_number
-  belongs_to :subcontract_number
-  belongs_to :contract_prime
-  belongs_to :contract_current_pop
-  belongs_to :contract_classification
+  belongs_to :contract_status, optional: true
+  belongs_to :contract_name_customer, optional: true
+  belongs_to :contract_vehicle, optional: true
+  belongs_to :contract_vehicle_number, optional: true
+  belongs_to :contract_number, optional: true
+  belongs_to :subcontract_number, optional: true
+  belongs_to :contract_prime, optional: true
+  belongs_to :contract_current_pop, optional: true
+  belongs_to :contract_classification, optional: true
 
-  validates_presence_of :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :contract_nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
+  # validates_presence_of :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :contract_nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
 
   def self.params_to_permit
     [
