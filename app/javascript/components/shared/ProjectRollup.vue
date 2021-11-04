@@ -20,7 +20,7 @@
           <router-link :to="ProgramView" > 
                <button                
                   class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
-                  {{ currentProject.name }} DATA VIEWER
+                  PROGRAM DATA VIEWER
                 </button>   
           </router-link>             
         </span>         
