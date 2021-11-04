@@ -434,7 +434,17 @@ class Project < SortableRecord
       task_stages: task_stages.as_json,
       issue_stages: issue_stages.as_json,
       risk_stages: risk_stages.as_json,
-      lesson_stages: lesson_stages.as_json
+      lesson_stages: lesson_stages.as_json,
+      contract_types: ContractType.all.as_json,
+      contract_statues: ContractStatus.all.as_json,
+      contract_name_customers: ContractNameCustomer.all.as_json,
+      contract_vehicles: ContractVehicle.all.as_json,
+      contract_vehicle_numbers: ContractVehicleNumber.all.as_json,
+      contract_numbers: ContractNumber.all.as_json,
+      subcontract_numbers: SubcontractNumber.all.as_json,
+      contract_primes: ContractPrime.all.as_json,
+      contract_current_pops: ContractCurrentPop.all.as_json,
+      contract_classifications: ContractClassification.all.as_json
     })
 
     hash
