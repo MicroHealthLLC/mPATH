@@ -911,7 +911,7 @@ export default {
     this.dueDate = this.facility.dueDate;
     this.statusId = this.facility.statusId;
     this.fetchProjectLessons(this.$route.params);
-        console.log(this.$route.params)
+        // console.log(this.$route.params)
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
@@ -963,7 +963,7 @@ export default {
         let fPrivilege = this.$projectPrivileges[programId][projectId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        console.log(fPrivilege)
+        // console.log(fPrivilege)
         return  fPrivilege.overview.includes(s);    
           
     },

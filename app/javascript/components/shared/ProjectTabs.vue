@@ -185,19 +185,20 @@ export default {
     },
     currentTab() {    
       if (this.$route.params.contractId){
-         return this.cTabs
+     return this.cTabs
         .map((tab) => tab.key)
-        .filter((key) =>{
-          console.log(key)
-         this.$route.name.includes(key)
-        });
-      } else {
-        return this.pTabs
+        .filter((key) =>
+          this.$route.name.toUpperCase().includes(key.toUpperCase())
+
+        );
+      } else {      
+      return this.pTabs
         .map((tab) => tab.key)
-        .filter((key) =>{
-       this.$route.name.includes(key)    
-        });
-      }  
+        .filter((key) =>
+          this.$route.name.toUpperCase().includes(key.toUpperCase())
+
+        );
+       }        
     },
     tab() {
       let url = this.$route.path;
