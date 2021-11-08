@@ -148,21 +148,21 @@ export default {
       let url = this.$route.path;
       if (url.includes("tasks")) {
         return "/tasks";
-      } else if (url.includes("issues")) {
+      }  if (url.includes("issues")) {
         return "/issues";
-      } else if (url.includes("project")) {
-        return "/project";
-      } else if (url.includes("analytics")) {
+      }  if (url.includes("analytics")) {
         return "/analytics";
-      } else if (url.includes("risks")) {
+      } if (url.includes("project")) {
+        return "/project";
+      }  if (url.includes("risks")) {
         return "/risks";
-      } else if (url.includes("lessons")) {
+      } if (url.includes("lessons")) {
         return "/lessons";
-      } else if (url.includes("notes")) {
+      } if (url.includes("notes")) {
         return "/notes";
-      } else if (url.includes("kanban")) {
+      } if (url.includes("kanban")) {
         return "/tasks";
-      } else if (url.includes("calendar")) {
+      } if (url.includes("calendar")) {
         return "/tasks";
       } else {
         return "/analytics";
