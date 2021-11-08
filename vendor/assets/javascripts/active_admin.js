@@ -93,18 +93,14 @@ function addFacilityPrivilegeForm(element){
 
 function addContractPrivilegeForm(element){
   let url = $(element).attr("data-url")
+  let program_ids = $.map( $(".project_select"), function(e, i){
+    return $(e).val()
+  } )
   $.ajax({
     url: url,
+    data: {program_ids: program_ids},
     success: function(res, data){
-      if(res.project_size == 0){
-        alert("No active program found.")
-        return
-      }
-      if(!res.projects_avaialble){
-        alert("All program privileges are set.")
-        return
-      }
-      $("#contract_privileges_list").prepend(res.html)
+      $("#contract_privilege_list").prepend(res.html)
     },
     errors: function(data){
       alert("Error loading data. Please try again later")
@@ -141,6 +137,24 @@ function programSelectChange(element){
   let paramsIndex = $(element).attr("data-index")
   $.ajax({
     url: '/facility_privileges/facility_privileges_partial',
+    data: {project_id: project_id, user_id: user_id, index: paramsIndex},
+    success: function(res, data){
+      $("#"+div_id).html(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function programSelectChangeForContract(element){
+  var project_id = $(element).val()
+  if(project_id == "select_project") return
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  let paramsIndex = $(element).attr("data-index")
+  $.ajax({
+    url: '/contract_privileges/contract_privileges_partial',
     data: {project_id: project_id, user_id: user_id, index: paramsIndex},
     success: function(res, data){
       $("#"+div_id).html(res.html)

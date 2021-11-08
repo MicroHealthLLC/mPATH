@@ -26,6 +26,8 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
   accepts_nested_attributes_for :facility_privileges, reject_if: proc { |attributes| attributes['facility_project_ids'].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :contract_privileges, reject_if: proc { |attributes| attributes['contract_ids'].blank? }, allow_destroy: true
+
   accepts_nested_attributes_for :project_privileges, reject_if: :all_blank, allow_destroy: true
 
   PREFERENCES_HASH =  {

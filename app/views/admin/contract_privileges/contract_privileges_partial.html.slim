@@ -5,7 +5,7 @@
         label(class="label") Select Contract
         select(class="new_contract_privileges_contract_select" id="project_section_#{index}" name="user[contract_privileges_attributes][#{index}][contract_ids][]" multiple="true")
           - @contracts.each do |f|
-            option{value="#{f.id}" }= f.facility_name
+            option{value="#{f.id}" }= f.contract_nickname
 
       - ContractPrivilege::PRIVILEGE_MODULE.each do |m_name|
         li(class="select input required")

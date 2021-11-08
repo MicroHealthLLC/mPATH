@@ -39,6 +39,8 @@ class Project < SortableRecord
 
   has_many :project_lesson_stages, dependent: :destroy
   has_many :lesson_stages, through: :project_lesson_stages
+  
+  has_many :contracts, dependent: :destroy
 
   enum status: [:inactive, :active].freeze
 

@@ -22,16 +22,16 @@ div{id="contract_privilege_list"}
             - user_project_privilege = project_privileges.detect{|p| p.project_id == fp.project_id }
         
           label(class="label") Select Program
-          select{class="contract_privileges_program_select" onchange='programSelectChange(this)' data-div-id="project_section_#{index}" data-user-id="#{user.id}"}
+          select{class="contract_privileges_program_select" onchange='programSelectChangeForContract(this)' data-div-id="project_section_#{index}" data-user-id="#{user.id}"}
             option{value="select_project"} Select project
             - active_projects.each do |project|
               option{value=(project.id) selected=("selected" if fp.project_id == project.id) }= project.name
 
         li(class="select input required")
           label(class="label") Select Contract
-          select{id="project_section_#{index}" name="user[contract_privileges_attributes][#{index}][contract_ids][]" class="contract_privileges_project_select" multiple="true" data-selected=(facility_project_ids)}
+          select{id="project_section_#{index}" name="user[contract_privileges_attributes][#{index}][contract_ids][]" class="contract_privileges_project_select" multiple="true" data-selected=(contract_ids)}
             - project.contracts.each do |f|
-              option{value="#{f.id}" select=("selected" if facility_project_ids.include?(f.id.to_s) )}= f.facility_name
+              option{value="#{f.id}" select=("selected" if contract_ids.include?(f.id.to_s) )}= f.contract_nickname
 
         - ContractPrivilege::PRIVILEGE_MODULE.each do |m_name|
           li(class="select input required")

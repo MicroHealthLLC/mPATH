@@ -6,7 +6,7 @@ fieldset(class="inputs has_many_fields" id=(fieldset_id))
   ol
     li(class="select input required")
       label Select Program
-      select{class="contract_privileges_program_select" onchange='programSelectChange(this)' name="user[contract_privileges_attributes][#{index}][project_id]" data-div-id="project_section_#{index}" data-index="#{index}" data-user-id="#{user.id}"}
+      select{class="contract_privileges_program_select" onchange='programSelectChangeForContract(this)' name="user[contract_privileges_attributes][#{index}][project_id]" data-div-id="project_section_#{index}" data-index="#{index}" data-user-id="#{user.id}"}
         option{value=""}
         - @active_projects.each do |project|
           option{value="#{project.id}"}= project.name
