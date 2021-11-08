@@ -1,6 +1,17 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
 
+
+// Duplicate all sheet files for Contract files
+//Conditionally render appropriate object in Project Tabs
+//Ensure all fPrivilege Contract arrays are spelled correctly ("contracts")
+//Enusre all Project urls (path:) precede with Project
+//Ensure all Contract urls precede with Contract
+//Comb through Sheet files to ensure "analytics" key is removed
+//Enusre contracts --not contract-- is the key
+//Rename SheetOverview to SheetAnalytics
+//ENsure all "analytics" privileges are rolled back to "overview"
+
 import ProgramView from "./../components/views/program/ProgramView";
 
 import SettingsView from "./../components/views/settings/SettingsView";
@@ -26,12 +37,27 @@ import MapLessons from "./../components/views/map/MapLessons";
 import MapLessonForm from "./../components/views/map/MapLessonForm";
 import MapNotes from "./../components/views/map/MapNotes";
 import MapNoteForm from "./../components/views/map/MapNoteForm";
+
+
 //Sheet Routes Components
-import SheetContract from "./../components/views/sheet/SheetContract";
-import SheetProject from "./../components/views/sheet/SheetProject";
 import SheetView from "./../components/views/sheet/SheetView";
 import ProjectRollup from "./../components/shared/ProjectRollup";
-import SheetOverview from "./../components/views/sheet/SheetOverview";
+
+import SheetContract from "./../components/views/sheet/contracts/SheetContract";
+import ContractAnalytics from "./../components/views/sheet/contracts/ContractAnalytics";
+import ContractTasks from "./../components/views/sheet/contracts/ContractTasks";
+import ContractTaskForm from "./../components/views/sheet/contracts/ContractTaskForm";
+import ContractIssues from "./../components/views/sheet/contracts/ContractIssues";
+import ContractIssueForm from "./../components/views/sheet/contracts/ContractIssueForm";
+import ContractRisks from "./../components/views/sheet/contracts/ContractRisks";
+import ContractRiskForm from "./../components/views/sheet/contracts/ContractRiskForm";
+import ContractLessons from "./../components/views/sheet/contracts/ContractLessons";
+import ContractLessonForm from "./../components/views/sheet/contracts/ContractLessonForm";
+import ContractNotes from "./../components/views/sheet/contracts/ContractNotes";
+import ContractNoteForm from "./../components/views/sheet/contracts/ContractNoteForm";
+
+import SheetProject from "./../components/views/sheet/SheetProject";
+import SheetAnalytics from "./../components/views/sheet/SheetAnalytics";
 import SheetTasks from "./../components/views/sheet/SheetTasks";
 import SheetTaskForm from "./../components/views/sheet/SheetTaskForm";
 import SheetIssues from "./../components/views/sheet/SheetIssues";
@@ -64,6 +90,7 @@ import CalendarRisks from "./../components/views/calendar/CalendarRisks";
 import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
 
 import PageNotFound from "./../components/views/PageNotFound"
+import { FormSelectPlugin } from "bootstrap-vue";
 
 export default new VueRouter({
   routes: [
@@ -254,14 +281,14 @@ export default new VueRouter({
         },
         {
           name: "SheetContract",
-          path: "projects/:projectId/contract",
+          path: "contracts/:contractId/contract",
           component: SheetContract,
           beforeEnter: (to, from, next) => {
             var programId = to.params.programId;
-            var projectId = to.params.projectId;
+            var contractId = to.params.contractId;
             var fPrivilege = _.filter(
               Vue.prototype.$projectPrivileges,
-              (f) => f.program_id == programId && f.project_id == projectId
+              (f) => f.program_id == programId && f.contract_id == contractId
             )[0];
             if (!fPrivilege) {
               next();
@@ -269,9 +296,8 @@ export default new VueRouter({
             }
 
             if (
-              fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -281,45 +307,511 @@ export default new VueRouter({
                 "You don't have access to see any tabs. Please contact administrator"
               );
             }
-            if (!fPrivilege["contract"].hide) {
+            if (!fPrivilege["contracts"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["project"].hide) {
-              next({
-                name: "SheetProject",
-                params: { programId: programId, projectId: projectId },
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
               });
             } else if (!fPrivilege["tasks"].hide) {
               next({
-                name: "SheetTasks",
-                params: { programId: programId, projectId: projectId },
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
               });
             } else if (!fPrivilege["issues"].hide) {
               next({
-                name: "SheetIssues",
-                params: { programId: programId, projectId: projectId },
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId },
               });
             } else if (!fPrivilege["risks"].hide) {
               next({
-                name: "SheetRisks",
-                params: { programId: programId, projectId: projectId },
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId },
               });
             } else if (!fPrivilege["notes"].hide) {
               next({
-                name: "SheetNotes",
-                params: { programId: programId, projectId: projectId },
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId },
               });
             }
           },
         },
         {
-          name: "SheetOverview",
+          name: "ContractAnalytics",
+          path:  "contracts/:contractId/analytics",
+          component: ContractAnalytics,
+        },
+        {
+          name: "ContractTasks",
+          path: "contracts/:contractId/tasks",
+          component: ContractTasks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["contracts"].hide &&
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId  },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractTaskForm",
+          path: "contracts/:contractId/tasks/:taskId",
+          component: ContractTaskForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractIssues",
+          path: "contracts/:contractId/issues",
+          component: ContractIssues,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractIssueForm",
+          path: "contracts/:contractId/issues/:issueId",
+          component: ContractIssueForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractRisks",
+          path: "contracts/:contractId/risks",
+          component: ContractRisks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractRiskForm",
+          path: "contracts/:contractId/risks/:riskId",
+          component: ContractRiskForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId,  contractId: contractId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId,  contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractLessons",
+          path: "contracts/:contractId/lessons",
+          component: ContractLessons,
+        },
+        {
+          name: "ContractLessonForm",
+          path: "contracts/:contractId/lessons/:lessonId",
+          component: ContractLessonForm,
+        },
+        {
+          name: "ContractNotes",
+          path: "contracts/:contractId/notes",
+          component: ContractNotes,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contact_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["notes"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractNoteForm",
+          path: "contracts/:contractId/notes/:noteId",
+          component: ContractNoteForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["contracts"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["notes"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "ContractAnalytics",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["contracts"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId  },
+              });
+            }
+          },
+        },
+        {
+          name: "SheetAnalytics",
           path:  "projects/:projectId/analytics",
-          component: SheetOverview,
+          component: SheetAnalytics,
         },
         {
           name: "SheetProject",
@@ -339,8 +831,7 @@ export default new VueRouter({
 
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -352,17 +843,12 @@ export default new VueRouter({
             }
             if (!fPrivilege["project"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["tasks"].hide) {
+           } else if (!fPrivilege["tasks"].hide) {
               next({
                 name: "SheetTasks",
                 params: { programId: programId, projectId: projectId },
@@ -461,7 +947,6 @@ export default new VueRouter({
             if (
               fPrivilege["project"].hide &&
               fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -476,11 +961,6 @@ export default new VueRouter({
             } else if (!fPrivilege["analytics"].hide) {
               next({
                 name: "SheetOverview",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
                 params: { programId: programId, projectId: projectId },
               });
             } else if (!fPrivilege["project"].hide) {
@@ -523,7 +1003,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["contract"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
@@ -536,14 +1016,9 @@ export default new VueRouter({
             }
             if (!fPrivilege["tasks"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
             } else if (!fPrivilege["project"].hide) {
@@ -586,8 +1061,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -599,14 +1073,9 @@ export default new VueRouter({
             }
             if (!fPrivilege["issues"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
             } else if (!fPrivilege["project"].hide) {
@@ -649,8 +1118,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -662,17 +1130,12 @@ export default new VueRouter({
             }
             if (!fPrivilege["issues"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["project"].hide) {
+           } else if (!fPrivilege["project"].hide) {
               next({
                 name: "SheetProject",
                 params: { programId: programId, projectId: projectId },
@@ -712,8 +1175,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -725,17 +1187,12 @@ export default new VueRouter({
             }
             if (!fPrivilege["risks"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["project"].hide) {
+           } else if (!fPrivilege["project"].hide) {
               next({
                 name: "SheetProject",
                 params: { programId: programId, projectId: projectId },
@@ -775,8 +1232,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -788,17 +1244,12 @@ export default new VueRouter({
             }
             if (!fPrivilege["risks"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["project"].hide) {
+           } else if (!fPrivilege["project"].hide) {
               next({
                 name: "SheetProject",
                 params: { programId: programId, projectId: projectId },
@@ -848,8 +1299,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -861,14 +1311,9 @@ export default new VueRouter({
             }
             if (!fPrivilege["notes"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
             } else if (!fPrivilege["project"].hide) {
@@ -911,8 +1356,7 @@ export default new VueRouter({
             }
             if (
               fPrivilege["project"].hide &&
-              fPrivilege["analytics"].hide &&
-              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
               fPrivilege["tasks"].hide &&
               fPrivilege["issues"].hide &&
               fPrivilege["risks"].hide &&
@@ -924,14 +1368,9 @@ export default new VueRouter({
             }
             if (!fPrivilege["notes"].hide) {
               next();
-            } else if (!fPrivilege["analytics"].hide) {
+            } else if (!fPrivilege["overview"].hide) {
               next({
-                name: "SheetOverview",
-                params: { programId: programId, projectId: projectId },
-              });
-            } else if (!fPrivilege["contract"].hide) {
-              next({
-                name: "SheetContract",
+                name: "SheetAnalytics",
                 params: { programId: programId, projectId: projectId },
               });
             } else if (!fPrivilege["project"].hide) {

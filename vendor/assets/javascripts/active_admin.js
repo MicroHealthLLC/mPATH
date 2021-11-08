@@ -774,6 +774,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          contracts: {
+            read: false,
+            write: false,
+            delete: false
+          },
           lessons: {
             read: false,
             write: false,
@@ -790,6 +795,7 @@ jQuery(function($) {
       methods: {
         writePrivileges() {
           let overview = $("#user_privilege_attributes_overview").val() || "";
+          let contracts = $("#user_privilege_attributes_contracts").val() || "";
           let tasks = $("#user_privilege_attributes_tasks").val() || "";
           let issues = $("#user_privilege_attributes_issues").val() || "";
           let risks = $("#user_privilege_attributes_risks").val() || "";
@@ -815,6 +821,11 @@ jQuery(function($) {
             read: overview.includes("R"),
             write: overview.includes("W"),
             delete: overview.includes("D")
+          }
+          this.contracts = {
+            read: contracts.includes("R"),
+            write: contracts.includes("W"),
+            delete: contracts.includes("D")
           }
           this.tasks = {
             read: tasks.includes("R"),
@@ -919,6 +930,32 @@ jQuery(function($) {
           v = value ? v + "D" : v.replace("D", "")
           //if (value) this.overview.read = value;
           $("#user_privilege_attributes_overview").val(v);
+        },
+        "contracts.read"(value) {
+          if (this.loading) return;
+          // if (!value) this.overview.read = true;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.contracts.read = false;
+            this.contracts.write = false;
+            this.contracts.delete = false;
+          }
+          $("#user_privilege_attributes_contracts").val(v);
+        },
+        "contracts.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "W" : v.replace("W", "")
+          //if (value) this.overview.read = value;
+          $("#user_privilege_attributes_contracts").val(v);
+        },
+        "contracts.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "D" : v.replace("D", "")
+          //if (value) this.overview.read = value;
+          $("#user_privilege_attributes_contracts").val(v);
         },
         "tasks.read"(value) {
           if (this.loading) return;
@@ -1355,6 +1392,12 @@ jQuery(function($) {
             <label>Members</label>
             <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>
            </li>
+           <li class="choice d-flex">
+           <label>Contracts</label>
+           <label class="d-flex align-center" ><input type="checkbox" v-model="contracts.read">Read</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="contracts.write">Write</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="contracts.delete">Delete</label>
+         </li>
             <li class="choice d-flex">
               <label>Overview</label>
               <label class="d-flex align-center" ><input type="checkbox" v-model="overview.read">Read</label>

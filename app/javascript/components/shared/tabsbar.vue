@@ -1,5 +1,6 @@
 <template>
-  <div id="tabbar" data-cy="main_tab" :class="{ 'd-none': isProgramView}">   
+  <!-- <div id="tabbar" data-cy="main_tab" :class="{ 'd-none': isProgramView}">  -->
+  <div id="tabbar" data-cy="main_tab">   
     <router-link v-if="permitted('sheets_view')" :to="routeSheetSwap" tag="div">
       <div class="badge" :class="{ active: isSheetsView }" data-cy="sheets_tab">
         Sheet
@@ -68,12 +69,12 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-    isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") ||
-             this.$route.name.includes("ProgramRiskForm") ||
-             this.$route.name.includes("ProgramIssueForm") ||
-             this.$route.name.includes("ProgramLessonForm") ;
-    },
+    // isProgramView() {
+    //   return this.$route.name.includes("ProgramTaskForm") ||
+    //          this.$route.name.includes("ProgramRiskForm") ||
+    //          this.$route.name.includes("ProgramIssueForm") ||
+    //          this.$route.name.includes("ProgramLessonForm") ;
+    // },
     isMapView() {
       return this.$route.name.includes("Map");
     },
