@@ -15,7 +15,7 @@
             input{type="checkbox" value="#{permission[1]}" name="user[contract_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if user_project_privileg.send(m_name).include?(permission[1]))}= permission[0]
 
   - else
-    p All projects are included in one of the project privileges.
+    p All contracts are included in one of the contract privileges or there is not contract in this program.
 
 - else
   p No program privilege found, please create program privilege for #{project.name}
