@@ -6,14 +6,8 @@
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="row"
   >
-    <div class="col-md-2">
-      <ProjectSidebar
-        :current-facility-group="currentFacilityGroup"
-        :expanded="expanded"
-        :current-facility="currentFacility"
-        @on-expand-facility-group="expandFacilityGroup"
-        @on-expand-facility="showFacility"
-      />
+     <div class="col-md-2">
+      <SettingsSidebar/>
     </div>
    <div class="col-md-10">
   <div class="right-panel">  
@@ -148,11 +142,11 @@
 <script>
 import axios from "axios";
 import { mapGetters, mapMutations } from "vuex";
-import ProjectSidebar from "../../shared/ProjectSidebar";
+import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
   name: "SettingsGroups",
   components: {
-    ProjectSidebar
+    SettingsSidebar
   },
   data() {
     return {

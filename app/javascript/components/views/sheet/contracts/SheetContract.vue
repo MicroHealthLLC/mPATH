@@ -4,7 +4,8 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
+           <div class="container-fluid px-0 mx-1">
+          <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
             <form
              @submit.prevent="saveContract"
             :class="{ 'vh100' : !contentLoaded}"
@@ -89,28 +90,33 @@
     <label class="font-md"
         >Type <span style="color: #dc3545">*</span>
     </label>
-   <el-select v-model="value" filterable clearable class="w-100" placeholder="Select">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-   </el-select>
-           
+   <!-- <el-input
+    name="Contract Nickname"  
+    v-model="contract.contract_type_id"          
+    type="text"
+    placeholder="Contact Nickname"
+    />  -->
+     <v-app class="contract">
+          <v-combobox
+           :items=" cTypeOptions"
+            v-model="contract.contract_type_id"  
+            persistent-hint  
+            dense
+          ></v-combobox>
+     </v-app>
       </div>
     <div class="col-6 pl-1 pr-0">
     <label class="font-md"
         >Status <span style="color: #dc3545">*</span>
     </label>
-    <el-select v-model="value" filterable clearable class="w-100" placeholder="Select">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-   </el-select>
+    <v-app class="contract">
+    <v-combobox
+      :items=" cStatusOptions"
+      v-model="contract.contract_status_id"  
+      persistent-hint  
+      dense
+    ></v-combobox>
+     </v-app>
     </div>
   </div>
    <div class="row row_2">
@@ -118,31 +124,32 @@
     <label class="font-md"
         >Contract Name Customer (Agency) <span style="color: #dc3545">*</span>
     </label>
-   <el-select v-model="value" class="w-100" filterable clearable placeholder="Select">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-   </el-select>
+    <v-app class="contract">
+    <v-combobox
+      :items="cncOptions"
+      v-model="contract.contract_name_customer_id"  
+      persistent-hint  
+      dense
+    ></v-combobox>
+     </v-app>
            
       </div>
    </div>
  <div class="row row_3">
   <div class="col-6 pl-0 pr-1">
-        <label class="font-md"
-          >Vehicle <span style="color: #dc3545">*</span>
-        </label>
-<el-select v-model="value" class="w-100" filterable clearable placeholder="Select">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-   </el-select>
-  </div>
+    <label class="font-md"
+      >Vehicle <span style="color: #dc3545">*</span>
+    </label>
+    <v-app class="contract">
+    <v-combobox
+      :items="vehicleOptions"
+      v-model="contract.contract_vehicle_id"  
+      persistent-hint  
+      dense
+    ></v-combobox>
+    </v-app>
+
+      </div>
   <div class="col-6 pl-1 pr-0">
         <label class="font-md"
           >Prime IDIQ/Vehicle Contract Number <span style="color: #dc3545">*</span>
@@ -369,9 +376,9 @@
             <!-- Row 2, col-1 for Tasks Card -->
             
           </div>
-          <div v-else class="text-danger mx-2 my-4">
+          <!-- <div v-else class="text-danger mx-2 my-4">
             You don't have permission to read!
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -381,10 +388,10 @@
 </template>
 
 <script>
-import http from "../../../common/http";
+// import http from "../../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import Loader from "../../shared/loader";
-import FormTabs from "../../shared/FormTabs.vue"
+import Loader from "../../../shared/loader";
+import FormTabs from "../../../shared/FormTabs.vue"
 export default {
   name: "SheetContract",
   components: {
@@ -438,18 +445,26 @@ export default {
     };
   },
   mounted() {
+  this.fetchContracts();    
     console.log(this.contract)
        console.log(this.$route.params)
-    // if (this.$route.params.contractId) {
-    //   this.fetchContract({
-    //     id: this.$route.params.contractId,
-    //     ...this.$route.params,
-    //   });
-    // }
+      console.log(this.$projectPrivileges[this.$route.params.programId][this.$route.params.contractId])  
+    if (this.$route.params.contractId) {
+      this.fetchContract({
+        id: this.$route.params.contractId,
+        ...this.$route.params,
+      });
+    }
   },
   methods: {
-       ...mapActions(["fetchContract", "updateContract"]),
-    ...mapMutations(["SET_CONTRACT", "SET_CONTRACT_STATUS"]),
+       ...mapActions(["fetchContract", "updateContract", "fetchContracts"]),
+    ...mapMutations([
+      "SET_CONTRACT", 
+      "SET_CONTRACT_STATUS", 
+      "SET_CONTRACTS",  
+      "SET_CONTRACT_LOADED",
+      "SET_CONTRACTS_LOADED",
+      ]),
     saveContract() {
        let contractData = {
           contract: {
@@ -464,32 +479,51 @@ export default {
           //   ...this.$route.params,
           // })
     },
-    log(e){
-      console.log(e)
-    },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
     },
-     _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.overview.includes(s);      
-    },
-    // log(e){
-    //   console.log("getAllFilterNames" + e)
-    // },
-
+  //    _isallowed(salut) {
+  //       var programId = this.$route.params.programId;
+  //       var contractId = this.$route.params.contractId
+  //       let fPrivilege = this.$projectPrivileges[programId][contractId]
+  //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+  //       let s = permissionHash[salut]
+  //       return  fPrivilege.overview.includes(s);      
+  //   },
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "contractLoaded",
       "getAllFilterNames", 
       "getFilterValue", 
-      "contract"]),
-  },
+      "contract", 
+      "contracts"]),
+      cTypeOptions(){
+        if (this.contracts){
+          let t = this.contracts;
+        return [...new Set(t.map((c) => c.contract_type_id))];
+        }
+      },
+      vehicleOptions(){
+        if (this.contracts){
+          let v = this.contracts;
+        return [...new Set(v.map((c) => c.contract_vehicle_id))];
+        }
+      },
+      cncOptions(){
+        if (this.contracts){
+          let cnc = this.contracts;
+        return [...new Set(cnc.map((c) => c.contract_name_customer_id))];
+        }
+      },
+      cStatusOptions(){
+        if (this.contracts){
+          let s = this.contracts;
+        return [...new Set(s.map((c) => c.contract_status_id))];
+        }
+      },
+    },
  watch: {
     contract: {
       handler(newValue, oldValue) {

@@ -887,10 +887,10 @@
 import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
-import {API_BASE_PATH} from './../../../mixins/utils'
+import {API_BASE_PATH} from '../../../mixins/utils'
 
 export default {
-  name: "SheetOverview",
+  name: "SheetAnalytics",
   components: {
     Loader,
   },
@@ -911,6 +911,7 @@ export default {
     this.dueDate = this.facility.dueDate;
     this.statusId = this.facility.statusId;
     this.fetchProjectLessons(this.$route.params);
+        console.log(this.$route.params)
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
@@ -936,7 +937,7 @@ export default {
 
       http
         .put(
-          `#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}.json`,
+          `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}.json`,
           data
         )
         .then((res) => {

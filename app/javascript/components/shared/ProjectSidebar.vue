@@ -152,6 +152,8 @@ export default {
         return "/issues";
       } else if (url.includes("project")) {
         return "/project";
+      } else if (url.includes("analytics")) {
+        return "/analytics";
       } else if (url.includes("risks")) {
         return "/risks";
       } else if (url.includes("lessons")) {
@@ -173,7 +175,7 @@ export default {
       this.$emit("on-expand-facility-group", group);
     },
     toggleAdminView() {
-        this.setShowAdminBtn(!this.getShowAdminBtn);
+        // this.setShowAdminBtn(!this.getShowAdminBtn);
          this.$router.push(
         `/programs/${this.$route.params.programId}/settings`
         );
