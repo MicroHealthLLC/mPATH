@@ -40,7 +40,7 @@ class HomeController < AuthenticatedController
   def index
 
     # tabs = ["map", "sheet", "calendar", "kanban","gantt_chart", "gantt","members","lessons"]
-    # "/programs/:program_id/:tab/projects/:project_id/overview"
+    # "/programs/:program_id/:tab/projects/:project_id/analytics"
     # Findnig tab from params
     params_split = params[:path].split("/")
     tab = params_split[2] || "map"

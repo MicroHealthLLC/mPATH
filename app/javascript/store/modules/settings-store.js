@@ -6,9 +6,11 @@ const settingsStore = {
     contract_table: [],
     group_filter: null,
     contract: {},
+    contract_loaded: true,
     contracts_loaded: true,
     contract_status: 0,
-
+    contract_type_filter: null, 
+    contracts: [],
   
   }),
   actions: {
@@ -39,7 +41,7 @@ const settingsStore = {
         });
     },
     fetchContract({ commit }, { contractId }) {
-      commit("TOGGLE_CONTRACTS_LOADED", false);
+      commit("TOGGLE_CONTRACT_LOADED", false);
       // Retrieve contract by id
       axios({
         method: "GET",
@@ -56,11 +58,32 @@ const settingsStore = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_CONTRACTS_LOADED", true);
+          commit("TOGGLE_CONTRACT_LOADED", true);
         });
     },
-
+  fetchContracts({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `/api/v1/contracts.json`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACTS", res.data.contracts);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
   },
+
+},
   updateContract({ commit }, { contract, programId, contractId }) {
     // Displays loader on front end
     commit("TOGGLE_CONTRACTS_LOADED", false);
@@ -89,18 +112,33 @@ const settingsStore = {
   },
   mutations: {
     setShowAdminBtn: (state, value) => state.show_admin_btn = value,
+    setContractTypeFilter: (state, value) => state.contract_type_filter = value,
     setContractTable: (state, value) => state.contract_table = value,
     setGroupFilter: (state, value) => state.group_filter = value,
     SET_CONTRACT: (state, contract) => (state.contract = contract),
+    TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) => (state.contracts_loaded = loaded),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
+    SET_CONTRACTS: (state, value) => (state.contracts = value),
   },
 
   getters: {
     contract: (state) => state.contract,
+    contracts: (state) => state.contracts,
     getShowAdminBtn: state => state.show_admin_btn, 
     getContractTable: state => state.contract_table, 
     getGroupFilter: state => state.group_filter, 
+    getContractTypeFilter: state => state.contract_type_filter,
+    getContractTypeFilterFilterOptions: (state, getters) => {
+      var options = [
+        {id: 1, name: '5', value: 1},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100', value: 100},
+      ]
+      return options;
+    },
   },
 };
 

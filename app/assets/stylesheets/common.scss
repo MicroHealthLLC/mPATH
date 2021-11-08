@@ -31,6 +31,11 @@ body {
 .allCaps {
   text-transform: uppercase;
 }
+.contract {
+  .v-application--wrap {
+    min-height: auto !important;
+  }
+}
 
 .portfolio {
   .v-label {
