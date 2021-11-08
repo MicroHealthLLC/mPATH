@@ -11,6 +11,15 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     render json: {facility_groups: collection.as_json}
   end
 
+  def create
+    facility_group = FacilityGroup.new(facility_group_params)
+    if facility_group.save
+      render json: facility_group
+    else
+      render json: {errors: facility_group.errors.full_messages}, status: 406
+    end
+  end
+
   def include_hash
     {
       facility_projects: [:facility, {
@@ -22,5 +31,14 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
         }
       ]
     }
+  end
+
+  private
+
+  def facility_group_params
+    params.require(:facility_group).permit(
+      :name,
+      :project_id
+    )
   end
 end
