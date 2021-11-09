@@ -5,7 +5,14 @@ class FacilityGroup < SortableRecord
 
   validates :name, presence: true, uniqueness: true
 
-  enum status: [:inactive, :active].freeze
+  enum status: [:active, :inactive].freeze
+  before_save :set_status
+
+  def set_status
+    if !status
+      status = :active
+    end
+  end
 
   def as_json(options=nil)
     json = super(options)

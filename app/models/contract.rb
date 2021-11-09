@@ -1,5 +1,5 @@
 class Contract < ApplicationRecord
-  belongs_to :contract_type
+  belongs_to :contract_type, optional: true
   belongs_to :contract_status, optional: true
   belongs_to :contract_name_customer, optional: true
   belongs_to :contract_vehicle, optional: true
@@ -12,7 +12,9 @@ class Contract < ApplicationRecord
   belongs_to :facility_group, optional: true
   belongs_to :project, optional: true
 
-  validates_presence_of :contract_type_id, :contract_nickname
+  before_save :assign_default_contract_type
+
+  validates_presence_of :contract_nickname
 
   # validates_presence_of :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :contract_nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
 
@@ -60,6 +62,12 @@ class Contract < ApplicationRecord
       :project_id
     ]
   end
+  
+  def assign_default_contract_type
+    if !self.contract_type_id.present?
+      self.contract_type_id = ContractType.prime.id
+    end
+  end
 
   def create_or_update_issue(params, user)
     contract_params = params.require(:contract).permit(Contract.params_to_permit)
@@ -68,8 +76,9 @@ class Contract < ApplicationRecord
       contract = Contract.find(c_params[:id])
     else
       contract = self
-    end    
-    contract.attributes = c_params
+    end
+
+    contract.attributes = c_params    
     contract.user_id = user.id
     contract.save
     contract
