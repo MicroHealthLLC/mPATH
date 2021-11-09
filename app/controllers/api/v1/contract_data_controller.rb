@@ -29,4 +29,128 @@ class Api::V1::ContractDataController < AuthenticatedController
   def contract_classification
     render json: ContractClassification.all.as_json(only: [:id, :name] )
   end
+
+  def create_contract_type
+    @contract_type = ContractType.new(contract_type_params)
+    if @contract_type.save
+      render json: @contract_type.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_type.errors.full_messages}
+    end    
+  end
+  def contract_type_params
+    params.require(:contract_type).permit(:id, :name)
+  end
+
+  def create_contract_status
+    @contract_status = ContractStatus.new(contract_status_params)
+    if @contract_status.save
+      render json: @contract_status.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_status.errors.full_messages}
+    end  
+  end
+  def contract_status_params
+    params.require(:contract_status).permit(:id, :name)
+  end
+
+
+  def create_contract_name_customer
+    @contract_name_customer = ContractNameCustomer.new(contract_name_customer_params)
+    if @contract_name_customer.save
+      render json: @contract_name_customer.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_name_customer.errors.full_messages}
+    end
+  end
+  def contract_name_customer_params
+    params.require(:contract_name_customer).permit(:id, :name)
+  end
+  
+
+  def create_contract_vehicle
+    @contract_vehicle = ContractVehicle.new(contract_vehicle_params)
+    if @contract_vehicle.save
+      render json: @contract_vehicle.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_vehicle.errors.full_messages}
+    end
+  end
+  def contract_vehicle_params
+    params.require(:contract_vehicle).permit(:id, :name)
+  end
+
+  def create_contract_vehicle_number
+    @contract_vehicle_number = ContractVehicleNumber.new(contract_vehicle_number_params)
+    if @contract_vehicle_number.save
+      render json: @contract_vehicle_number.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_vehicle_number.errors.full_messages}
+    end
+  end
+  def contract_vehicle_number_params
+    params.require(:contract_vehicle_number).permit(:id, :name)
+  end
+
+  def create_contract_number
+    @contract_number = ContractNumber.new(contract_number_params)
+    if @contract_number.save
+      render json: @contract_number.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_number.errors.full_messages}
+    end
+  end
+  def contract_number_params
+    params.require(:contract_number).permit(:id, :name)
+  end
+
+  def create_subcontract_number
+    @subcontract_number = SubcontractNumber.new(subcontract_number_params)
+    if @subcontract_number.save
+      render json: @subcontract_number.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @subcontract_number.errors.full_messages}
+    end
+  end
+  def subcontract_number_params
+    params.require(:subcontract_number).permit(:id, :name)
+  end
+  
+  def create_contract_prime
+    @contract_prime = ContractPrime.new(contract_prime_params)
+    if @contract_prime.save
+      render json: @contract_prime.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_prime.errors.full_messages}
+    end
+  end
+  def contract_prime_params
+    params.require(:contract_prime).permit(:id, :name)
+  end
+
+  def create_contract_current_pop
+    @contract_current_pop = ContractCurrentPop.new(contract_current_pop_params)
+    if @contract_current_pop.save
+      render json: @contract_current_pop.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_current_pop.errors.full_messages}
+    end
+  end
+  def contract_current_pop_params
+    params.require(:contract_current_pop).permit(:id, :name)
+  end
+
+  def create_contract_classification
+    @contract_classification = ContractClassification.new(contract_classification_params)
+    if @contract_classification.save
+      render json: @contract_classification.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_classification.errors.full_messages}
+    end
+  end
+  def contract_classification_params
+    params.require(:contract_classification).permit(:id, :name)
+  end
+
+
 end

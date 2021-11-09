@@ -46,6 +46,18 @@ Rails.application.routes.draw do
       get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
       get "/contract_data/contract_classification", to: "contract_data#contract_classification"
       
+      post "/contract_data/contract_type", to: "contract_data#create_contract_type"
+      post "/contract_data/contract_status", to: "contract_data#create_contract_status"
+      post "/contract_data/contract_name_customer", to: "contract_data#create_contract_name_customer"
+      post "/contract_data/contract_vehicle", to: "contract_data#create_contract_vehicle"
+      post "/contract_data/contract_vehicle_number", to: "contract_data#create_contract_vehicle_number"
+      post "/contract_data/contract_number", to: "contract_data#create_contract_number"
+      post "/contract_data/subcontract_number", to: "contract_data#create_subcontract_number"
+      post "/contract_data/contract_prime", to: "contract_data#create_contract_prime"
+      post "/contract_data/contract_current_pop", to: "contract_data#create_contract_current_pop"
+      post "/contract_data/contract_classification", to: "contract_data#create_contract_classification"
+      
+
       # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
       get "/portfolio/lessons", to: "portfolio#lessons"
