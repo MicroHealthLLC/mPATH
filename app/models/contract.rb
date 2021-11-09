@@ -29,7 +29,7 @@ class Contract < ApplicationRecord
     #   contract_current_pop: contract_current_pop.as_json(except: [:created_at, :updated_at]),
     #   contract_classification: contract_classification.as_json(except: [:created_at, :updated_at])
     # ).as_json
-    self.as_json(except: [:created_at, :updated_at])
+    self.as_json(except: [:created_at, :updated_at]).merge(facility_group_name: facility_group.name)
   end
 
   def self.params_to_permit
