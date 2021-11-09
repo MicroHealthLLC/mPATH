@@ -25,8 +25,20 @@
     <i class="far fa-plus-circle mr-1"></i> Add Project
     </el-button>
      <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
-        <el-select
-          class="w-100 mr-2"
+       
+        <el-input
+          type="search"          
+          placeholder="Search Projects"
+          aria-label="Search"            
+          aria-describedby="search-addon"    
+          v-model="search"
+          data-cy=""
+      >
+        <el-button slot="prepend" icon="el-icon-search"></el-button>
+      </el-input>  
+
+       <el-select
+          class="w-100 mx-2"
           v-model="C_groupFilter" 
           track-by="id"
           value-key="id"
@@ -43,17 +55,7 @@
           :value="item">
         </el-option>
           
-          </el-select>
-        <el-input
-          type="search"          
-          placeholder="Search Projects"
-          aria-label="Search"            
-          aria-describedby="search-addon"    
-          v-model="search"
-          data-cy=""
-      >
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>     
+          </el-select>   
       </div>
   </div>
   
@@ -409,7 +411,9 @@ a {
   border-top: solid 5px  #1D336F !important;
 }
 /deep/.el-table {
-  font-size: 16px;
+  .el-input__inner { 
+  font-size: 16px !important;
+  }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
   background-color: #DC3545;

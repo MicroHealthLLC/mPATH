@@ -26,8 +26,20 @@
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
      <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
+      
+        <el-input
+          type="search"          
+          placeholder="Search Group"
+          aria-label="Search"            
+          aria-describedby="search-addon"    
+          v-model="search"
+          data-cy=""
+      >
+        <el-button slot="prepend" icon="el-icon-search"></el-button>
+      </el-input>     
+
         <el-select
-          class="w-100 mr-2"
+          class="w-100 mx-2"
           v-model="C_groupFilter" 
           track-by="id"
           value-key="id"
@@ -45,16 +57,6 @@
         </el-option>
           
           </el-select>
-        <el-input
-          type="search"          
-          placeholder="Search Group"
-          aria-label="Search"            
-          aria-describedby="search-addon"    
-          v-model="search"
-          data-cy=""
-      >
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>     
       </div>
   </div>
   
@@ -108,7 +110,7 @@
      <form
       accept-charset="UTF-8"    
       >      
-       <div class="form-group mx-4">
+       <div class="form-group mx-3">
           <label class="font-md"
             >New Group Name <span style="color: #dc3545">*</span></label
           >
@@ -121,7 +123,9 @@
           />
        </div>
       <div class="right mr-2">
-        <el-button @click.prevent="saveGroup" class="bg-primary text-light mr-2">Save</el-button>
+        <el-button @click.prevent="saveGroup" class="bg-primary text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>       
+        <el-button @click.prevent="addAnotherGroup" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Group</el-button>
+        <el-button @click.prevent="closeAddGroupBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
         </div>
     </form>
    </el-dialog>
@@ -140,8 +144,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
   name: "SettingsGroups",
@@ -154,6 +157,7 @@ export default {
       dialogVisible: false,
       currentFacilityGroup: {},
       newGroupName: null,
+      hideSaveBtn: false,
       search:'',
       selectedProjectGroup: null, 
        expanded: {
@@ -162,7 +166,8 @@ export default {
     };
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter']), 
+   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS']), 
+   ...mapActions(["createGroup", "fetchGroups", "updateGroup"]),
     expandFacilityGroup(group) {
       if (group.id == this.expanded.id) {
         this.expanded.id = "";
@@ -172,52 +177,39 @@ export default {
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
       }
     },
-   saveGroup(e){
-      e.preventDefault();     
-      let formData = new FormData();
-      if (this.newGroupName !== null){
-      formData.append("facility_group[name]", this.newGroupName); 
-      formData.append("facility_group[status]", "active"); 
-      formData.append("commit", "Create Project Group"); 
-        let url = `/admin/facility_groups`;
-        let method = "POST"; 
-         axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-          .then((response) => {
-           if (response.status === 200) {
-              this.$message({
-                message: `" ${this.newGroupName} ", has been saved successfully.`,
-                type: "success",
-                showClose: true,
-              }),  
-              this.dialogVisible = false  
+   addAnotherGroup() {
+      this.C_projectGroupFilter = null;
+      this.newGroupName = null;
+      this.hideSaveBtn = false;  
+    },
+    closeAddGroupBtn() {
+      this.dialogVisible = false;
+      this.hideSaveBtn = false;
+    },
+    addGroup(){
+      this.dialogVisible = true;    
+      this.newGroupName = null;
+      this.C_projectGroupFilter = null;     
+    },
+    saveGroup() {
+        let groupData = {
+          group: {
+            name: this.newGroupName,
+            project_id: this.$route.params.programId,
+            status: 'active',
           }
-     })
-      }
-      else {
-            this.$message({
-                message: `Please enter new Group name`,
-                type: "warning",
-                showClose: true,
-              })        
-      }      
+        }
+         this.createGroup({
+            ...groupData,
+          })
+          this.hideSaveBtn = true;
+          console.log(groupData)
     },
     showFacility(facility) {
       this.currentFacility = facility;
     },
     handleClick(tab, event) {
         console.log(tab, event);
-    },    
-    addGroup(){
-      this.dialogVisible = true;    
-      this.newGroupName = null;
     },
    
   },
@@ -225,6 +217,8 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "facilities",
+      "groups",
+      "groupStatus",
       'getContractTable',
       'getGroupFilter',
       'getProjectGroupFilter',
@@ -256,12 +250,8 @@ export default {
       },
     },
   },
-  beforeMount() {
-    if (this.contentLoaded && this.$route.params.projectId) {
-      this.currentFacility = this.facilities.find(
-        (facility) => facility.facilityId == this.$route.params.projectId
-      );
-    }
+mounted() {
+   this.fetchGroups()
   },
   watch: {
     contentLoaded: {
@@ -273,16 +263,20 @@ export default {
         }
       },
     },
-    currentFacility: {
+    groupStatus: {
       handler() {
-        this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facility.facilityGroupId
-        );
-
-        this.expanded.id = this.currentFacilityGroup.id;
+        if (this.groupStatus == 200) {
+          this.$message({
+            message: `${this.newGroupName} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_GROUP_STATUS(0);
+          this.fetchGroups();
+        }
       },
     },
-    facilities: {
+   facilities: {
       handler() {
         this.currentFacility = this.facilities.find(
           (facility) => facility.facilityId == this.$route.params.projectId

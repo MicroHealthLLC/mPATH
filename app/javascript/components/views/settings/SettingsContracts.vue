@@ -26,8 +26,19 @@
     </el-button>
      <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
        <!-- <label>GROUP</label> -->
-        <el-select
-          class="w-100 mr-2"
+     
+        <el-input
+          type="search"          
+          placeholder="Search Projects"
+          aria-label="Search"            
+          aria-describedby="search-addon"    
+          v-model="search"
+          data-cy=""
+      >
+        <el-button slot="prepend" icon="el-icon-search"></el-button>
+      </el-input>     
+         <el-select
+          class="w-100 mx-2"
           v-model="C_groupFilter" 
           track-by="id"
           value-key="id"
@@ -45,39 +56,29 @@
         </el-option>
           
           </el-select>
-        <el-input
-          type="search"          
-          placeholder="Search Projects"
-          aria-label="Search"            
-          aria-describedby="search-addon"    
-          v-model="search"
-          data-cy=""
-      >
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>     
       </div>
   </div>
-   <el-table :data="tableData.filter(data => !search || data.facilityName.toLowerCase().includes(search.toLowerCase()))" style="width: 100%"  height="450">
-    <el-table-column prop="facilityName"  sortable  label="Contract"> 
+   <el-table :data="tableData.filter(data => !search || data.contract_nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+    <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facilityName" controls-position="right"></el-input>
+            v-model="scope.row.contract_nickname" controls-position="right"></el-input>
        </template>
 
 
     </el-table-column>
-    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
+    <el-table-column prop="facility_group_id" sortable filterable label="Group">
           <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facilityGroupName"></el-input>
+            v-model="scope.row.facility_group_id"></el-input>
        </template>
     </el-table-column>
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-        <el-button type="default" @click="saveEdits(scope.$index, scope.row)" class="bg-success text-light">Save</el-button>
+        <el-button type="default" @click="editContract(scope.$index, scope.row)" class="bg-success text-light">Save</el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
     </el-table-column>
@@ -87,7 +88,7 @@
      <form
       accept-charset="UTF-8"    
       >      
-       <div class="form-group mx-4">
+       <div class="form-group mx-3">
           <label class="font-md"
             >New Contract Name <span style="color: #dc3545">*</span></label
           >
@@ -99,13 +100,13 @@
             name="Program Name"
           />
        </div>
-       <!-- <div class="form-group mx-4">
+       <div class="form-group mx-3">
         <label class="font-md"
         >Group</label
         >
          <el-select
             class="w-100"
-           v-model="C_projectGroupFilter" 
+            v-model="C_projectGroupFilter" 
             track-by="id"
             value-key="id"
             clearable
@@ -121,9 +122,14 @@
         </el-option>
           
           </el-select>
-       </div> -->
+       </div>
         <div class="right mr-2">
-        <el-button @click.prevent="addNewContract" class="bg-primary text-light mr-2">Save</el-button>
+        <el-button @click.prevent="saveNewContract" class="bg-success text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>
+       
+        <el-button @click.prevent="addAnotherContract" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Contract</el-button>
+
+        <el-button @click.prevent="closeAddContractBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+
         </div>
     </form>
    </el-dialog>
@@ -157,134 +163,109 @@ export default {
       currentFacilityGroup: {},
       projectNameText: '',
       search: '',
+      hideSaveBtn: false,
       contractNameText: '',
       expanded: {
         id: "",
       },
     };
   },
+    mounted() {
+    this.fetchContracts();   
+  },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable', 'setGroupFilter']), 
-   ...mapActions(["createContract"]),
-    expandFacilityGroup(group) {
-      if (group.id == this.expanded.id) {
-        this.expanded.id = "";
-      } else {
-        this.expanded.id = group.id;
-        this.currentFacilityGroup = group;
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
-      }
-    },
-    saveEdits(index, rows){
-      let updatedProjectName = rows.facilityName;
-      let updatedGroupName = rows.facilityGroupName;
-      let projectId = rows.id;
-// console.log(index)
-// console.log(rows)
-     let formData = new FormData();
-      formData.append("facility[facility_name]", updatedProjectName)
-      // Need one url to support these two data name edits
-      formData.append("facility[facility_group_name]", updatedGroupName)
-      formData.append('commit', 'Update Project')
-        let url = `/admin/facilities/${projectId}`;
-        let method = "PUT";
-          axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-         .then((response) => {
-         if (response.status === 200) {
-              this.$message({
-                message: `Edits has been saved successfully.`,
-                type: "success",
-                showClose: true,
-              })   
+   ...mapMutations(['setProjectGroupFilter', 'setContractTable', 'setGroupFilter', 'SET_CONTRACT_STATUS']), 
+   ...mapActions(["createContract", "fetchContracts", "updateContract"]),
+//     saveEdits(index, rows){
+//       let updatedProjectName = rows.contract_nickname;
+//       let updatedGroupName = rows.facility_group_id;
+//       // let projectId = rows.id;
+// // console.log(index)
+// // console.log(rows)
+//      let formData = new FormData();
+//       formData.append("facility[facility_name]", updatedProjectName)
+//       // Need one url to support these two data name edits
+//       formData.append("facility[facility_group_name]", updatedGroupName)
+//       formData.append('commit', 'Update Project')
+//         let url = `/admin/facilities/${projectId}`;
+//         let method = "PUT";
+//           axios({
+//           method: method,
+//           url: url,
+//           data: formData,
+//           headers: {
+//             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+//               .attributes["content"].value,
+//           },
+//         })
+//          .then((response) => {
+//          if (response.status === 200) {
+//               this.$message({
+//                 message: `Edits has been saved successfully.`,
+//                 type: "success",
+//                 showClose: true,
+//               })   
         
-       }
-     })
-    },
+//        }
+//      })
+//     },
     showFacility(facility) {
       this.currentFacility = facility;
     },
     handleClick(tab, event) {
         console.log(tab, event);
-    },    
-    addNewContract() {
+    }, 
+    goToContract(){
+         if(index == 'groups'){
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/sheet/contracts`
+      );
+      }
+    },
+    saveNewContract() {
         let contractData = {
           contract: {
-            contract_nickname: "Contract 234",
-            project_code: 32,
+            contract_nickname: this.contractNameText,
+            facility_group_id: this.C_projectGroupFilter.id,
+            project_id: this.$route.params.programId,
             contract_type_id: 3,
-            project_code: "35BNB",
-            contract_status_id: 1,
-            contract_name_customer_id: 1,
-            contract_vehicle_id: 1,
-            contract_vehicle_number_id: 1,
-            contract_number_id: 1,
-            contract_classification_id: 1,
-            subcontract_number_id: 1,
-            contract_prime_id: 1,
-            contract_current_pop_id: 1,
-            current_pop_start_time: "15-1-2021",
-            current_pop_end_time: "16-1-2021",
-            days_remaining: 0,
-            total_contract_value: 0,
-            current_pop_value: 0,
-            current_pop_funded: 0,
-            total_contract_funded: 0,
-            start_date:"20-1-2021",
-            end_date: "21-1-2021"
           }
         }
          this.createContract({
             ...contractData,
           })
+          this.hideSaveBtn = true;
+          console.log(contractData)
     },
-    // saveNewContract(e){
-    //   e.preventDefault();     
-    //   let formData = new FormData();
-    //   formData.append("facility[facility_name]", this.contractNameText)
-    //   if(this.C_projectGroupFilter !== null ){
-    //    formData.append("facility[facility_group_id]", this.C_projectGroupFilter.id)      
-    //   }        
-    //   // formData.append('facility[address]', '18 Boon Rd, Stow, MA 01775, USA')
-    //   // formData.append('facility[lat]', '42.4114459')
-    //   // formData.append('facility[lng]', '-71.5128223')
-    //   // formData.append('facility[point_of_contact]', 'Juan Rivera')
-    //   // formData.append('facility[phone_number]', '+16789009876')
-    //   // formData.append('facility[country_code]', "US")
-    //   // formData.append('facility[email]', 'test@test.com')
-    //   // formData.append('facility[status]', "active")
-    //   // formData.append('facility[project_ids][]', this.$route.params.programId)
-    //   // formData.append('commit', 'Create Project')
-   
-    //    let url = `/admin/facilities`;
-    //     let method = "POST";
-    //       axios({
-    //       method: method,
-    //       url: url,
-    //       data: formData,
-    //       headers: {
-    //         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-    //           .attributes["content"].value,
-    //       },
-    //     })
-    //      .then((response) => {
-    //        if (response.status === 200) {
-    //           this.$message({
-    //             message: `New Contract ${this.contractNameText} has been saved successfully.`,
-    //             type: "success",
-    //             showClose: true,
-    //           })   
-    //           this.dialogVisible = false;        
-    //    }
-    //  })
-    // },
+    editContract(index, rows) {
+    //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
+    //  if (rows && rows !== undefined) {
+        let id = rows.id;
+        let contractData = {
+          contract: {
+            contract_nickname: rows.contract_nickname,
+            contract_type_id: rows.contract_type_id,
+            facility_group_id: rows.facility_group_id,  
+            project_id: this.$route.params.programId,
+            id:  id    
+          }
+        }
+         this.updateContract({
+            ...contractData, id
+          })
+          console.log(rows, contractData)
+    //  }
+     
+    },
+    addAnotherContract() {
+         this.C_projectGroupFilter = null;
+         this.contractNameText = "";
+         this.hideSaveBtn = false;  
+    },
+    closeAddContractBtn() {
+        this.dialogVisible = false;
+        this.hideSaveBtn = false;
+    },
     addContract(){
       this.dialogVisible = true;    
       this.C_projectGroupFilter = null;
@@ -294,7 +275,10 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "contractsLoaded",
       "facilities",
+      "contractStatus",
+      "contracts",
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
@@ -306,14 +290,15 @@ export default {
      return `/programs/${this.$route.params.programId}/settings`  
     },
     tableData(){
-     let projectData = this.currentProject.facilities.map(f => f.facility)
+     let contractData = this.contracts.map(c => c)         
       .filter((td) => {
           if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
             let group = this.C_groupFilter.map((t) => t.name);
-            return group.includes(td.facilityGroupName);
+            return group.includes(td.facility_group_id);
           } else return true;
         });
-     return projectData
+     return contractData
+     
    },
       // Filter for Projects Table
     C_groupFilter: {
@@ -353,13 +338,17 @@ export default {
         }
       },
     },
-    currentFacility: {
+    contractStatus: {
       handler() {
-        this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facility.facilityGroupId
-        );
-
-        this.expanded.id = this.currentFacilityGroup.id;
+        if (this.contractStatus == 200) {
+          this.$message({
+            message: `${this.contractNameText} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACT_STATUS(0);
+          this.fetchContracts();
+        }
       },
     },
     facilities: {
@@ -417,6 +406,7 @@ a {
 }
 /deep/.el-table__row .el-input .el-input__inner{
   border-style:none;
+  font-size: 16px !important;
 }
 /deep/.hover-row .el-input .el-input__inner{
   border-style:solid;   
@@ -426,7 +416,9 @@ a {
   border-top: solid 5px  #1D336F !important;
 }
 /deep/.el-table {
-  font-size: 16px;
+  .el-input__inner { 
+  font-size: 16px !important;
+  }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
   background-color: #DC3545;

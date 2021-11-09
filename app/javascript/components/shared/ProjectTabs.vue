@@ -189,14 +189,12 @@ export default {
         .map((tab) => tab.key)
         .filter((key) =>
           this.$route.name.toUpperCase().includes(key.toUpperCase())
-
         );
       } else {      
       return this.pTabs
         .map((tab) => tab.key)
         .filter((key) =>
           this.$route.name.toUpperCase().includes(key.toUpperCase())
-
         );
        }        
     },

@@ -154,14 +154,14 @@
         <label class="font-md"
           >Prime IDIQ/Vehicle Contract Number <span style="color: #dc3545">*</span>
         </label>
- <el-select v-model="value" class="w-100" filterable clearable placeholder="Select">
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-   </el-select>   
+   <v-app class="contract">
+    <v-combobox
+      :items="vehicleOptions"
+      v-model="contract.contract_vehicle_id"  
+      persistent-hint  
+      dense
+    ></v-combobox>
+    </v-app>
   </div>
  </div>
   <div class="row row_4">

@@ -1,5 +1,5 @@
 <template>
-  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list" :load="log(facilityGroupFacilities)">
     <div class="stick">
       <div
         @click="deselectProject"
