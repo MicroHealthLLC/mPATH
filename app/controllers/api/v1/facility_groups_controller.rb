@@ -1,14 +1,16 @@
 class Api::V1::FacilityGroupsController < AuthenticatedController
 
   def index
-    if params[:project_id].present?
+    authorized_program_ids = current_user.authorized_programs.pluck(:id)
+    all_facility_groups = []
+    if params[:project_id].present? && authorized_program_ids.include?(params[:project_id].to_i)
       facility_ids = FacilityProject.where(project_id: params[:project_id]).map(&:facility_id).compact.uniq
-      collection = FacilityGroup.includes(include_hash).where(facility_id: facility_ids)
+      all_facility_groups = FacilityGroup.where(facility_id: facility_ids)
     else
-      collection = FacilityGroup.includes(include_hash).all
+      all_facility_groups = FacilityGroup.where(project_id: authorized_program_ids )
     end
 
-    render json: {facility_groups: collection.as_json}
+    render json: {facility_groups: all_facility_groups.as_json}
   end
 
   def create

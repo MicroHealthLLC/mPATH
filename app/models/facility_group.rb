@@ -14,14 +14,14 @@ class FacilityGroup < SortableRecord
     end
   end
 
-  def as_json(options=nil)
-    json = super(options)
-    fp = self.facility_projects
-    json.merge(
-      facilities: fp.as_json,
-      project_ids: fp.pluck(:project_id).uniq
-    ).as_json
-  end
+  # def as_json(options=nil)
+  #   json = super(options)
+  #   fp = self.facility_projects
+  #   json.merge(
+  #     facilities: fp.as_json,
+  #     project_ids: fp.pluck(:project_id).uniq
+  #   ).as_json
+  # end
 
   def update_progress
     t = self.facility_projects
