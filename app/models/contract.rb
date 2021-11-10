@@ -77,10 +77,44 @@ class Contract < ApplicationRecord
     else
       contract = self
     end
+    contract.transaction do
 
-    contract.attributes = c_params    
-    contract.user_id = user.id
-    contract.save
+      if c_params[:contract_type_id] && !ContractType.exists?(id: c_params[:contract_type_id])
+        c_params[:contract_type_id] = ContractType.create(name: c_params[:contract_type_id]).id
+      end
+      if c_params[:contract_status_id] && !ContractStatus.exists?(id: c_params[:contract_status_id])
+        c_params[:contract_status_id] = ContractStatus.create(name: c_params[:contract_status_id]).id
+      end
+      if c_params[:contract_name_customer_id] && !ContractNameCustomer.exists?(id: c_params[:contract_name_customer_id])
+        c_params[:contract_name_customer_id] = ContractNameCustomer.create(name: c_params[:contract_name_customer_id]).id
+      end
+      if c_params[:contract_vehicle_id] && !ContractVehicle.exists?(id: c_params[:contract_vehicle_id])
+        c_params[:contract_vehicle_id] = ContractVehicle.create(name: c_params[:contract_vehicle_id]).id
+      end
+      if c_params[:contract_vehicle_number_id] && !ContractVehicleNumber.exists?(id: c_params[:contract_vehicle_number_id])
+        c_params[:contract_vehicle_number_id] = ContractVehicleNumber.create(name: c_params[:contract_vehicle_number_id]).id
+      end
+      if c_params[:contract_number_id] && !ContractNumber.exists?(id: c_params[:contract_number_id])
+        c_params[:contract_number_id] = ContractNumber.create(name: c_params[:contract_number_id]).id
+      end
+      if c_params[:subcontract_number_id] && !SubcontractNumber.exists?(id: c_params[:subcontract_number_id])
+        c_params[:subcontract_number_id] = SubcontractNumber.create(name: c_params[:subcontract_number_id]).id
+      end
+      if c_params[:contract_prime_id] && !ContractPrime.exists?(id: c_params[:contract_prime_id])
+        c_params[:contract_prime_id] = ContractPrime.create(name: c_params[:contract_prime_id]).id
+      end
+      if c_params[:contract_current_pop_id] && !ContractCurrentPop.exists?(id: c_params[:contract_current_pop_id])
+        c_params[:contract_current_pop_id] = ContractCurrentPop.create(name: c_params[:contract_current_pop_id]).id
+      end
+      if c_params[:contract_classification_id] && !ContractClassification.exists?(id: c_params[:contract_classification_id])
+        c_params[:contract_classification_id] = ContractClassification.create(name: c_params[:contract_classification_id]).id
+      end
+
+      contract.attributes = c_params
+      contract.user_id = user.id
+      contract.save
+    end
+
     contract
   end
 
