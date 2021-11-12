@@ -1,4 +1,3 @@
-<!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
  <div id="facility-sheets" data-cy="facility_sheets">
     <div v-if="contentLoaded" class="position-sticky">
@@ -21,16 +20,7 @@
                   </div>
                 </div>
             </div>
-        
-              <!-- Row 2, col-2 for Issues Card -->
-        
-        
-           
-
-       
-
-            
-            <div class="row row-1 mt-2">
+                 <div class="row row-1 mt-2">
     
               <div class="col-4">
                 <div class="box-card my-el-card p-3" style="position:relative">
@@ -115,7 +105,6 @@
                       <hr style="background-color: #fff; color:#fff" />
                     </div>
                   </div>
-
                   <div
                     v-for="(filterArray, index) in getAllFilterNames"
                     :key="index"                  
@@ -188,7 +177,6 @@
                       <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
                     </div>
                   </div>
-
                 <div class="row mt-1 text-center">
                 <div class="col p-0 mb-0">
                   
@@ -229,7 +217,6 @@
 import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
-
 export default {
   name: "SheetProject",
   components: {
@@ -274,7 +261,6 @@ export default {
           (status) => status.id === this.statusId
         ).name,
       });
-
       http
         .put(
           `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}.json`,
@@ -404,14 +390,12 @@ export default {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
       let taskIssueUsers = this.getTaskIssueUserFilter;
-
       return _.filter(this.facility.tasks, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
           ...resource.userIds,
         ];
-
         if (taskIssueUsers.length > 0) {
           if (taskIssueUsers.length > 0) {
             valid =
@@ -425,7 +409,6 @@ export default {
         valid =
           valid &&
           this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
-
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.taskStageId);
         if (typeIds.length > 0)
@@ -442,7 +425,6 @@ export default {
      viableRisksForProgressTotal(){
       return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
     },
-
      allTasksProgress() {
       let task = new Array();
       let group = _.groupBy(this.viableTasksForProgressTotal, "id");
@@ -455,12 +437,9 @@ export default {
       }
       let total = task.map(t => t.progress);
       let count = task.map(t => t).length;
-
       let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-
      let roundedSum = Math.round(sum)
      let final = roundedSum / count
-
      if (isNaN(final)){
        final = 0;
      }
@@ -489,12 +468,9 @@ export default {
       }
       let total = risk.map(r => r.progress);
       let count = risk.map(r => r).length;
-
       let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
       let roundedSum = Math.round(sum)
-
        let final = roundedSum / count
-
        
      if (isNaN(final)){
        final = 0;
@@ -523,7 +499,6 @@ export default {
       let count = issue.map(iss => iss).length;
       
       let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
-
       let roundedSum = Math.round(sum)
       let final = roundedSum / count
       
@@ -531,7 +506,6 @@ export default {
        final = 0;
      }
       let weighted = count * final
-
        if (isNaN(final)) {
         return 0
        } else return {
@@ -553,7 +527,6 @@ export default {
         return 0
       } else return Math.round(total)
     }, 
-
     taskStats() {
       let tasks = new Array();
       let group = _.groupBy(this.filteredTasks, "taskType");
@@ -640,14 +613,12 @@ export default {
       let severityIds = _.map(this.issueSeverityFilter, "id");
       let stageIds = _.map(this.issueStageFilter, "id");
       let taskIssueUsers = this.getTaskIssueUserFilter;
-
       return _.filter(this.facility.issues, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
           ...resource.userIds,
         ];
-
         if (taskIssueUsers.length > 0) {
           if (taskIssueUsers.length > 0) {
             valid =
@@ -661,7 +632,6 @@ export default {
         valid =
           valid &&
           this.filterDataForAdvancedFilter([resource], "facilityShowIssues");
-
         if (taskTypeIds.length > 0)
           valid = valid && taskTypeIds.includes(resource.taskTypeId);
         if (typeIds.length > 0)
@@ -763,14 +733,12 @@ export default {
       let stageIds = _.map(this.riskStageFilter, "id");
       let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
       let taskIssueUsers = this.getTaskIssueUserFilter;
-
       return _.filter(this.facility.risks, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
           ...resource.userIds,
         ];
-
         if (taskIssueUsers.length > 0) {
           if (taskIssueUsers.length > 0) {
             valid =
@@ -784,7 +752,6 @@ export default {
         valid =
           valid &&
           this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
-
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.riskStageId);
         if (typeIds.length > 0)
@@ -1010,7 +977,6 @@ export default {
     text-overflow: ellipsis;
   }
 }
-
 .fac-sum {
   border-radius: 2px;
   padding: 8px;
@@ -1064,7 +1030,6 @@ export default {
 /deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
   border-bottom: none !important;
 }
-
 /deep/.el-card__body {
     padding-bottom: 0 !important;
 }
@@ -1075,7 +1040,6 @@ export default {
 /deep/.el-collapse-item__header {
   font-size: 2rem;
   }
-
 /deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
   display: none;
 }
@@ -1105,7 +1069,6 @@ export default {
   top: 10%;
   right: 1%;
 }
-
 .filterDiv {
   position:fixed;
   top: 130px;
@@ -1114,21 +1077,16 @@ export default {
   border-radius: 4px; 
   border: .5px solid #383838;
   overflow-y: auto;
-
 }
 .filterLabel {
   position: fixed;
-
 }
-
 .filterCol {
   height: 70px;
 }
-
 @media screen and (min-width: 1550px) {
   .filterDiv {
     right: 8.5%;
   }
 }
 </style>
-

@@ -72,13 +72,16 @@
           <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facility_group_id"></el-input>
+            v-model="scope.row.facility_group_name"></el-input>
        </template>
     </el-table-column>
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-        <el-button type="default" @click="editContract(scope.$index, scope.row)" class="bg-success text-light">Save</el-button>
+      <el-button type="default" @click="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+       <el-button type="default" @click="goToContract(scope.$index, scope.row)" class="bg-success text-light">
+         Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+        </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
     </el-table-column>
@@ -99,6 +102,27 @@
             rows="1"          
             name="Program Name"
           />
+       </div>
+       <div class="form-group mx-3">
+          <label class="font-md"
+            >Contract Type <span style="color: #dc3545">*</span></label
+          >
+           <el-select
+           v-model="C_typeFilter"
+           class="w-100"
+           track-by="id"
+           value-key="id"         
+           clearable
+           placeholder="Select Contract Type"
+           >
+          <el-option
+            v-for="item in getContractTypeOptions"
+            :value="item.value"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
        </div>
        <div class="form-group mx-3">
         <label class="font-md"
@@ -174,53 +198,25 @@ export default {
     this.fetchContracts();   
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable', 'setGroupFilter', 'SET_CONTRACT_STATUS']), 
+   ...mapMutations([
+     'setProjectGroupFilter', 
+     'setContractTable', 
+     'setGroupFilter', 
+     'SET_CONTRACT_STATUS',
+     'setContractTypeFilter'
+     ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
-//     saveEdits(index, rows){
-//       let updatedProjectName = rows.contract_nickname;
-//       let updatedGroupName = rows.facility_group_id;
-//       // let projectId = rows.id;
-// // console.log(index)
-// // console.log(rows)
-//      let formData = new FormData();
-//       formData.append("facility[facility_name]", updatedProjectName)
-//       // Need one url to support these two data name edits
-//       formData.append("facility[facility_group_name]", updatedGroupName)
-//       formData.append('commit', 'Update Project')
-//         let url = `/admin/facilities/${projectId}`;
-//         let method = "PUT";
-//           axios({
-//           method: method,
-//           url: url,
-//           data: formData,
-//           headers: {
-//             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-//               .attributes["content"].value,
-//           },
-//         })
-//          .then((response) => {
-//          if (response.status === 200) {
-//               this.$message({
-//                 message: `Edits has been saved successfully.`,
-//                 type: "success",
-//                 showClose: true,
-//               })   
-        
-//        }
-//      })
-//     },
+
     showFacility(facility) {
       this.currentFacility = facility;
     },
     handleClick(tab, event) {
         console.log(tab, event);
     }, 
-    goToContract(){
-         if(index == 'groups'){
+    goToContract(index, rows){        
          this.$router.push(
-         `/programs/${this.$route.params.programId}/sheet/contracts`
+         `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/contract`
       );
-      }
     },
     saveNewContract() {
         let contractData = {
@@ -228,7 +224,7 @@ export default {
             contract_nickname: this.contractNameText,
             facility_group_id: this.C_projectGroupFilter.id,
             project_id: this.$route.params.programId,
-            contract_type_id: 3,
+            contract_type_id: this.C_typeFilter,
           }
         }
          this.createContract({
@@ -277,6 +273,8 @@ export default {
       "contentLoaded",
       "contractsLoaded",
       "facilities",
+      "getContractTypeFilter",
+      "getContractTypeOptions",
       "contractStatus",
       "contracts",
       'getContractTable',
@@ -310,6 +308,14 @@ export default {
         this.setGroupFilter(value);
       },
     },
+    C_typeFilter: {
+        get() {
+          return this.getContractTypeFilter
+        },
+        set(value) {
+          this.setContractTypeFilter(value)
+        }
+      },
     // Filter when adding new Project
      C_projectGroupFilter: {
       get() {

@@ -11,8 +11,16 @@ const settingsStore = {
     contract_loaded: true,
     contracts_loaded: true,
     contract_status: 0,
-    contract_type_filter: null, 
-   
+    customer_agencies_filter: null, 
+    contract_statuses_filter: null, 
+    vehicle_filter: null, 
+    vehicle_number: null,
+    contract_number: null, 
+    subcontract_number: null, 
+    prime: null, 
+    current_pop: [],
+    contract_type_filter: 0,
+    contract_group_types:  {},   
     group: {},
     groups: [],
     group_loaded: true,
@@ -21,79 +29,79 @@ const settingsStore = {
   
   }),
   actions: {
-    createContract({ commit }, { contract }) {
-      // Displays loader on front end
-      commit("TOGGLE_CONTRACTS_LOADED", false);
-      // Utilize utility function to prep Lesson form data
-      let formData = contractFormData(contract);
+  createContract({ commit }, { contract }) {
+    // Displays loader on front end
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Utilize utility function to prep Lesson form data
+    let formData = contractFormData(contract);
 
-      axios({
-        method: "POST",
-        url: `${API_BASE_PATH}/contracts`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
+    axios({
+      method: "POST",
+      url: `${API_BASE_PATH}/contracts`,
+      data: formData,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT", res.data.contract);
+        commit("SET_CONTRACT_STATUS", res.status);
       })
-        .then((res) => {
-          commit("SET_CONTRACT", res.data.contract);
-          commit("SET_CONTRACT_STATUS", res.status);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_CONTRACTS_LOADED", true);
-        });
-    },
-    createGroup({ commit }, { group }) {
-      // Displays loader on front end
-      commit("TOGGLE_GROUPS_LOADED", false);
-      // Utilize utility function to prep Lesson form data
-      let formData = groupFormData(group);
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  },
+  createGroup({ commit }, { group }) {
+    // Displays loader on front end
+    commit("TOGGLE_GROUPS_LOADED", false);
+    // Utilize utility function to prep Lesson form data
+    let formData = groupFormData(group);
 
-      axios({
-        method: "POST",
-        url: `${API_BASE_PATH}/facility_groups`,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
+    axios({
+      method: "POST",
+      url: `${API_BASE_PATH}/facility_groups`,
+      data: formData,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_GROUP", res.data.facility_groups);
+        commit("SET_GROUP_STATUS", res.status);
       })
-        .then((res) => {
-          commit("SET_GROUP", res.data.facility_groups);
-          commit("SET_GROUP_STATUS", res.status);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_GROUPS_LOADED", true);
-        });
-    },
-    fetchContract({ commit }, { contractId }) {
-      commit("TOGGLE_CONTRACT_LOADED", false);
-      // Retrieve contract by id
-      axios({
-        method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}.json`,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
+      .catch((err) => {
+        console.log(err);
       })
-        .then((res) => {
-          commit("SET_CONTRACT", res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_CONTRACT_LOADED", true);
-        });
-    },
+      .finally(() => {
+        commit("TOGGLE_GROUPS_LOADED", true);
+      });
+  },
+  fetchContract({ commit }, { contractId }) {
+    commit("TOGGLE_CONTRACT_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contracts/${contractId}.json`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACT_LOADED", true);
+      });
+  },
   fetchContracts({ commit }) {
     commit("TOGGLE_CONTRACTS_LOADED", false);
     // Retrieve contract by id
@@ -115,6 +123,195 @@ const settingsStore = {
         commit("TOGGLE_CONTRACTS_LOADED", true);
       });
   },
+  fetchContractGroupTypes({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_types`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT_GROUP_TYPES", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchCustomerAgencies({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_name_customeres`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CUSTOMER_AGENCIES_FILTER", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchCurrentPop({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_current_pop`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CURRENT_POP", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchPrime({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_prime`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_PRIME", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchVehicles({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_vehicles`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_VEHICLES", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchVehicleNumbers({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_vehicle_number`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_VEHICLE_NUMBERS", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchContractNumber({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_number`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT_NUMBER", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchSubcontractNumbers({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/subcontract_number`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_SUBCONTRACT_NUMBER", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchContractStatuses({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_statuses`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT_STATUSES_FILTER", res.data);
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
   fetchGroups({ commit }) {
     commit("TOGGLE_GROUPS_LOADED", false);
       axios({
@@ -153,7 +350,7 @@ const settingsStore = {
       .then((res) => {
         commit("SET_CONTRACT", res.data.contract);
         commit("SET_CONTRACT_STATUS", res.status);
-        console.log(res)
+        console.log(contract, id )
       })
       .catch((err) => {
         console.log(err);
@@ -162,7 +359,6 @@ const settingsStore = {
         commit("TOGGLE_CONTRACTS_LOADED", true);
       });
   },
-
 },
  
   mutations: {
@@ -176,8 +372,18 @@ const settingsStore = {
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),    
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) => (state.contracts_loaded = loaded),
+
+    SET_CONTRACT_GROUP_TYPES: (state, loaded) => (state.contract_group_types = loaded),
+    SET_CUSTOMER_AGENCIES_FILTER: (state, loaded) => (state.customer_agencies_filter = loaded),
+    SET_CONTRACT_STATUSES_FILTER: (state, loaded) => (state.contract_statuses_filter = loaded),
+    SET_CURRENT_POP: (state, value) => (state.current_pop = value),
+    SET_PRIME: (state, value) => (state.prime = value),
+
+    SET_VEHICLES: (state, value) => (state.vehicle_filter = value),
+    SET_VEHICLE_NUMBERS: (state, value) => (state.vehicle_number = value),
+    SET_SUBCONTRACT_NUMBER: (state, value) => (state. subcontract_number = value),
+    SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
     
-   
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),    
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
@@ -190,6 +396,17 @@ const settingsStore = {
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
 
+    getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
+    getContractStatusesFilter: (state) => state.contract_statuses_filter,
+    getCurrentPop: (state) => state.current_pop,
+    getPrime: (state) => state.prime,
+
+    getVehicles: (state) => state.vehicle_filter,
+    getVehicleNumbers: (state) => state.vehicle_number,
+    getSubcontractNumbers: (state) => state. subcontract_number,
+    getContractNumbers: (state) => state.contract_number,
+    
+    getContractGroupTypes:  (state) => state.contract_group_types,
     group: (state) => state.group,
     groups: (state) => state.groups,  
     groupStatus: (state) => state.group_status,
@@ -198,16 +415,15 @@ const settingsStore = {
     getShowAdminBtn: state => state.show_admin_btn, 
     getContractTable: state => state.contract_table, 
     getGroupFilter: state => state.group_filter, 
-    getContractTypeFilter: state => state.contract_type_filter,
+    contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
-    getContractTypeFilterFilterOptions: (state, getters) => {
+    getContractTypeFilter: state => state.contract_type_filter,
+    getContractTypeOptions: (state, getters) => {
       var options = [
-        {id: 1, name: '5', value: 1},
-        {id: 15, name: '15', value: 15},
-        {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},
-        {id: 100, name: '100', value: 100},
-      ]
+        {id: 0, name: 'Prime Contract', value: 0},
+        {id: 1, name: 'Non-Prime Contract', value: 1},
+        {id: 3, name: 'Prime Vehicles & ID IQsContract', value: 3},
+        ]
       return options;
     },
   },
@@ -216,6 +432,9 @@ const settingsStore = {
 const contractFormData = (contract) => {
   let formData = new FormData();
   // Append all required form data
+  if (contract.id) {
+    formData.append("contract[id]", contract.id)
+  }
   formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
   formData.append("contract[facility_group_id]", contract.facility_group_id); 
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID

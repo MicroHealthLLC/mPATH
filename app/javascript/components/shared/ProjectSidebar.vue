@@ -1,5 +1,5 @@
 <template>
-  <div id="facility_sidebar" class="pl-0" data-cy="facility_list" :load="log(facilityGroupFacilities)">
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
     <div class="stick">
       <div
         @click="deselectProject"
@@ -15,6 +15,7 @@
         <div
           v-for="(group, index) in sortedGroups"
           :key="index"
+         
           class="my-2 px-2"
         >
           <div
@@ -32,9 +33,9 @@
             <h5 class="clickable">{{ group.name }}</h5>
           </div>
           <div v-show="expanded.id == group.id" class="ml-2">
-            <div
-              v-for="(facility, index) in facilityGroupFacilities(group)"
-              :key="index"
+              <div
+              v-for="facility in facilityGroupFacilities(group)"
+              :key="facility.id"
             >
               <router-link
                 :to="
@@ -47,15 +48,34 @@
                   :class="{ active: facility.id == $route.params.projectId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                    {{ facility.facility.facilityName }}
+                      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{ facility.facility.facilityName }}
                   </p>
                 </div>
               </router-link>
-            </div>
+              </div>
+               <div v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
+                 <div v-for="c in object.contracts" :key="c.id">
+                  <router-link               
+                :to="
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}${pathTab}`
+                "
+              >
+                <div
+                  class="d-flex align-items-center expandable fac-name"
+                  @click="showFacility(c)"
+                  :class="{ active: c.id == $route.params.contractId }"
+                >
+                  <p class="facility-header" data-cy="facilities">
+                  <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.contractNickname }}
+                  </p>
+                </div>
+              </router-link>
+              </div> 
+            </div>           
           </div>
         </div>
       </div>
-      <div v-else>
+           <div v-else>
         <loader type="code"></loader>
         <loader type="code"></loader>
         <loader type="code"></loader>
@@ -181,18 +201,15 @@ export default {
         );
 
       },
-      log(e){
-        console.log(e)
-      },
-     handleClose(done) {
+    handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {
             done();
           })
           .catch(_ => {});
     },
-    showFacility(facility) {
-      this.$emit("on-expand-facility", facility);
+    showFacility(c) {
+      this.$emit("on-expand-facility", c);
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
@@ -207,7 +224,7 @@ export default {
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&
-      !this.$route.params.projectId
+      (!this.$route.params.projectId || !this.$route.params.contractId)
     ) {
       this.expandFacilityGroup(this.filteredFacilityGroups[0]);
     }
@@ -218,7 +235,7 @@ export default {
         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
-          !this.$route.params.projectId
+          (!this.$route.params.projectId || !this.$route.params.contractId )
         ) {
           this.expandFacilityGroup(this.filteredFacilityGroups[0]);
         }

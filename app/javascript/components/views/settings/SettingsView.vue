@@ -17,8 +17,8 @@
       <li class="m-2 cardWrapper" v-for="item, index of settingsCards" :key="index" style="width:33%" @click.prevent="adminRoute(index)">
       <el-card :body-style="{ padding: '0px' }">
         <div class="p-2" style="font-size:3.5rem">
-        <span v-if="item == 'Groups'">   <i class="fal fa-network-wired mr-3 mh-orange-text"></i></span>
-        <span v-if="item == 'Projects'"> <i class="fal fa-clipboard-list mr-3 mh-orange-text"></i></span>
+        <span v-if="item == 'Groups'">   <i class="fal fa-network-wired mr-3 mh-blue-text"></i></span>
+        <span v-if="item == 'Projects'"> <i class="fal fa-clipboard-list mr-3 mh-green-text"></i></span>
         <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3 mh-orange-text"></i> </span>
         <!-- <span v-if="item == 'Users'">   <i class="far fa-users mr-3"></i> </span> -->
         </div>    

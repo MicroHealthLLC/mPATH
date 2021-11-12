@@ -4,7 +4,8 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
+          <div class="container-fluid px-0 mx-1">
+               <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
             
             <div class="row filterDiv">      
                <div class="text-center filterLabel underline"><small class="px-2 bg">FILTERS </small></div>        
@@ -714,7 +715,7 @@
                       <p
                         class="badge badge-secondary badge-pill font-weight-light"
                       >
-                        {{ facility.facility.facilityGroupName }}
+                        {{ facility.facilityGroupId }}
                       </p>
                       <div class="simple-select">
                         <v2-date-picker
@@ -810,29 +811,29 @@
                         <span class="fbody-icon"
                           ><i class="far fa-id-badge"></i
                         ></span>
-                        <span>{{
+                        <!-- <span>{{
                           facility.facility.pointOfContact || "N/A"
-                        }}</span>
+                        }}</span> -->
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon"
                           ><i class="fas fa-map-marker"></i
                         ></span>
-                        <span>{{ facility.facility.address || "N/A" }}</span>
+                        <!-- <span>{{ facility.facility.address || "N/A" }}</span> -->
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon"
                           ><i class="fas fa-phone"></i
                         ></span>
-                        <span>{{
+                        <!-- <span>{{
                           facility.facility.phoneNumber || "N/A"
-                        }}</span>
+                        }}</span> -->
                       </p>
                       <p class="mt-1">
                         <span class="fbody-icon"
                           ><i class="far fa-envelope"></i
                         ></span>
-                        <span>{{ facility.facility.email || "N/A" }}</span>
+                        <!-- <span>{{ facility.facility.email || "N/A" }}</span> -->
                       </p>
                     </div>
                   </div>
@@ -871,9 +872,9 @@
             <!-- Row 2, col-1 for Tasks Card -->
             
           </div>
-          <div v-else class="text-danger mx-2 my-4">
+          <!-- <div v-else class="text-danger mx-2 my-4">
             You don't have permission to read!
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -957,11 +958,11 @@ export default {
      _isallowed(salut) {
         var programId = this.$route.params.programId;
         var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        console.log(fPrivilege)
-        return  fPrivilege.overview.includes(s);    
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // console.log(fPrivilege)
+        // return  fPrivilege.overview.includes(s);    
           
     },
     isBlockedStatus(status) {

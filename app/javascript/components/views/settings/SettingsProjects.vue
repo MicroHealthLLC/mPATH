@@ -85,7 +85,10 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-        <el-button type="default" @click="saveEdits(scope.$index, scope.row)" class="bg-success text-light">Save</el-button>
+        <el-button type="default" @click="saveEdits(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+        <el-button type="default" @click="goToProject(scope.$index, scope.row)" class="bg-success text-light">
+         Go To Project  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+        </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
     </el-table-column>
@@ -182,6 +185,11 @@ export default {
         this.currentFacilityGroup = group;
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
       }
+    },
+    goToProject(index, rows){        
+         this.$router.push(
+         `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`
+      );
     },
     addProject(){
       this.dialogVisible = true;    

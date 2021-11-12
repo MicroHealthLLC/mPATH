@@ -11,7 +11,7 @@
         :current-facility-group="currentFacilityGroup"
         :expanded="expanded"
         :current-facility="currentFacility"
-        @on-expand-facility-group="expandFacilityGroup"
+         @on-expand-facility-group="expandFacilityGroup"
         @on-expand-facility="showFacility"
       />
     </div>
@@ -29,7 +29,10 @@
           class="d-flex align-items-center my-1 ml-1"
         >
           <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
-          <h5 class="f-head mb-0">
+          <h5 class="f-head mb-0" v-if=" currentFacility.contractNickname">
+            {{currentFacility.contractNickname || "Loading..." }}
+          </h5>
+           <h5 class="f-head mb-0" v-else>
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
         </div>
@@ -61,7 +64,6 @@
 import { mapGetters } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 import ProjectTabs from "../../shared/ProjectTabs";
-
 export default {
   name: "SheetView",
   components: {
@@ -84,7 +86,7 @@ export default {
       } else {
         this.expanded.id = group.id;
         this.currentFacilityGroup = group;
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
+        this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
       }
     },
     showFacility(facility) {
@@ -105,6 +107,7 @@ export default {
       "getPreviousRoute",
       "getUnfilteredFacilities",
     ]),
+   
   },
   mounted() {
     // Display notification when leaving map view to another page and conditions met
@@ -140,19 +143,22 @@ export default {
     },
     currentFacility: {
       handler() {
-        this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facility.facilityGroupId
-        );
-
+        if(this.currentFacility && this.currentFacility.facility){
+           this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facility.facilityGroupId)
+         } else if (this.currentFacility && this.currentFacility.contractNickname){
+           this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facilityGroupId)
+        }       
         this.expanded.id = this.currentFacilityGroup.id;
+          //  debugger
       },
     },
     "$route.path": {
       handler() {
         if (this.$route.params.projectId) {
-          this.currentFacility = this.facilities.find(
-            (facility) => facility.id == this.$route.params.projectId
-          );
+          this.currentFacility = this.facilities.find(facility => facility.id == this.$route.params.projectId);
+            //  debugger
         }
       },
     },

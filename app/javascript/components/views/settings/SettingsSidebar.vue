@@ -6,17 +6,17 @@
     <ul class="pt-3 program-name">
        <router-link :to="adminGroupsView" > 
         <li class="p-3 entity">
-          <i class="fal fa-network-wired mr-2"></i>Groups
+          <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Groups
         </li>
     </router-link>
     <router-link :to="adminProjectsView" > 
         <li class="p-3 entity">
-          <i class="fal fa-clipboard-list mr-3"></i> Projects
+          <i class="fal fa-clipboard-list mr-3 mh-green-text"></i> Projects
         </li>
     </router-link>
     <router-link :to="adminContractsView" > 
        <li class="p-3 entity">
-          <i class="far fa-file-contract mr-3"></i>  Contracts
+          <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
      <!-- <li class="p-3 entity">
