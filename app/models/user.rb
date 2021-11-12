@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_many :contract_privileges, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
   has_many :project_privileges, dependent: :destroy
+  has_many :contracts
 
   validates :first_name, :last_name, presence: true
   validate :password_complexity
@@ -475,6 +476,42 @@ class User < ApplicationRecord
     }
   end
 
+  #This will build has like this
+  # {<project_id> : { <facility_id>: { <all_perissions> } }
+  def contract_privileges_hash
+    user = self
+    cp = user.contract_privileges
+    
+    cids = user.contract_ids #fp.pluck(:project_id)    
+    
+    fph = Hash.new{|h, (k,v)| h[k] = {} }
+    fph2 = Hash.new{|h, (k,v)| h[k] = [] }
+
+    cp.each do |c|
+      contract_ids = c.contract_ids
+      f_permissions = c.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
+      f_permissions = f_permissions.transform_values{|v| v.delete(""); v}
+
+      contract_ids.each do |fid|
+        fph2[c.project_id.to_s] << fid.to_s 
+        fph[c.project_id.to_s][fid] = f_permissions.merge!({"contract_id" => fid})
+      end
+    end
+
+    pp_hash = user.project_privileges_hash
+
+    project_contract_hash = Contract.where(id: cids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.map(&:id).map(&:to_s).compact.uniq }
+
+    project_contract_hash.each do |pid, fids|
+      fids2 = fids - ( fph2[pid] || [])
+      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
+      fids2.each do |ff|
+        fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
+      end       
+    end
+    fph
+  end
+
   def project_privileges_hash
     user = self
     pv = user.project_privileges
@@ -543,6 +580,37 @@ class User < ApplicationRecord
     end
     fph
   end
+
+  def authorized_contract_ids(project_ids: [])
+    if project_ids.any?
+      self.contract_privileges.where(project_id: project_ids).pluck(:contract_ids).flatten.compact
+    else
+      self.contract_privileges.pluck(:contract_ids).flatten.compact
+    end
+  end
+
+  # def has_contract_permission?(action: "read", resource: , program: nil, contract: nil, project_privileges_hash: {}, contract_privileges_hash: {} )
+  #   begin
+  #     program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
+  #     contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
+  #     action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+  #     pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+  #     result = false
+  #     short_action_code = action_code_hash[action]
+  #     if pph[program_id]
+  #       fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash
+  #       if fph[program_id][contract_id]
+  #         result = fph[program_id][contract_id][resource].include?(short_action_code)
+  #       else
+  #         result = pph[program_id][resource].include?(short_action_code)
+  #       end
+  #     end
+  #   rescue Exception => e
+  #     puts "Exception in  User#has_permission? #{e.message}"
+  #     result = false
+  #   end
+  #   return result
+  # end
 
   def has_permission?(action: "read", resource: , program: nil, project: nil, project_privileges_hash: {}, facility_privileges_hash: {} )
     begin
