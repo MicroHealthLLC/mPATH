@@ -74,7 +74,7 @@ end
 puts "Adding Contract name customers"
 contract_name_customers = ["VA",  "IPO",  "DHA",  "3M",  "DIA",  "SEC",  "Army",  "USCG",  "HHS/HRSA",  "ARNG",  "DHMS/DHA",  "HRSA",  "DOS",  "SBA",  "DOE"]
 contract_name_customers.each do |name|
-  ContractNameCustomer.find_or_create_by(name: name) do |s|
+  ContractCustomer.find_or_create_by(name: name) do |s|
     s.name = name
   end
 end

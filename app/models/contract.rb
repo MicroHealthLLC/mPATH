@@ -1,7 +1,7 @@
 class Contract < ApplicationRecord
   belongs_to :contract_type, optional: true
   belongs_to :contract_status, optional: true
-  belongs_to :contract_name_customer, optional: true
+  belongs_to :contract_customer, optional: true
   belongs_to :contract_vehicle, optional: true
   belongs_to :contract_vehicle_number, optional: true
   belongs_to :contract_number, optional: true
@@ -14,15 +14,15 @@ class Contract < ApplicationRecord
 
   before_save :assign_default_contract_type
 
-  validates_presence_of :contract_nickname
+  validates_presence_of :nickname
 
-  # validates_presence_of :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :contract_nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
+  # validates_presence_of :contract_type_id, :contract_status_id, :contract_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :contract_nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
 
   def to_json
     # self.as_json(except: [:created_at, :updated_at, :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id, :contract_classification_id]).merge(
     #   class_name: self.class.name,
     #   contract_status: contract_status.as_json(except: [:created_at, :updated_at]),
-    #   contract_name_customer: contract_name_customer.as_json(except: [:created_at, :updated_at]),
+    #   contract_customer: contract_customer.as_json(except: [:created_at, :updated_at]),
     #   contract_vehicle: contract_vehicle.as_json(except: [:created_at, :updated_at]),
     #   contract_vehicle_number: contract_vehicle_number.as_json(except: [:created_at, :updated_at]),
     #   contract_number: contract_number.as_json(except: [:created_at, :updated_at]),
@@ -39,9 +39,10 @@ class Contract < ApplicationRecord
       :id,
       :contract_type_id,
       :project_code,
-      :contract_nickname,
+      :nickname,
+      :name,
       :contract_status_id,
-      :contract_name_customer_id,
+      :contract_customer_id,
       :contract_vehicle_id,
       :contract_vehicle_number_id,
       :contract_number_id, 
@@ -85,8 +86,8 @@ class Contract < ApplicationRecord
       if c_params[:contract_status_id] && !ContractStatus.exists?(id: c_params[:contract_status_id])
         c_params[:contract_status_id] = ContractStatus.create(name: c_params[:contract_status_id]).id
       end
-      if c_params[:contract_name_customer_id] && !ContractNameCustomer.exists?(id: c_params[:contract_name_customer_id])
-        c_params[:contract_name_customer_id] = ContractNameCustomer.create(name: c_params[:contract_name_customer_id]).id
+      if c_params[:contract_customer_id] && !ContractCustomer.exists?(id: c_params[:contract_customer_id])
+        c_params[:contract_customer_id] = ContractCustomer.create(name: c_params[:contract_customer_id]).id
       end
       if c_params[:contract_vehicle_id] && !ContractVehicle.exists?(id: c_params[:contract_vehicle_id])
         c_params[:contract_vehicle_id] = ContractVehicle.create(name: c_params[:contract_vehicle_id]).id
