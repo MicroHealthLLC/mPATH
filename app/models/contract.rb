@@ -16,7 +16,7 @@ class Contract < ApplicationRecord
 
   validates_presence_of :nickname
 
-  # validates_presence_of :contract_type_id, :contract_status_id, :contract_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :contract_nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
+  # validates_presence_of :contract_type_id, :contract_status_id, :contract_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id,:project_code, :nickname, :contract_classification_id, :current_pop_start_time, :current_pop_end_time, :days_remaining, :total_contract_value, :current_pop_value, :current_pop_funded, :total_contract_funded, :start_date, :end_date
 
   def to_json
     # self.as_json(except: [:created_at, :updated_at, :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id, :contract_classification_id]).merge(
