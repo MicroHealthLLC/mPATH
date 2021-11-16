@@ -12,6 +12,9 @@
             <form
                :class="{ 'vh100' : !contractLoaded}"
                 accept-charset="UTF-8"
+                element-loading-text="Fetching Contract data. Please wait..."          
+                element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(0, 0, 0, 0.8)"   
             >
    
         <hr class="mb-6 mt-4" />
@@ -536,7 +539,7 @@ export default {
   this.fetchVehicleNumbers()
   this.fetchContractNumber()
   this.fetchSubcontractNumbers()
-   console.log(this.$projectPrivileges[this.$route.params.programId][this.$route.params.contractId])  
+  //  console.log(this.$projectPrivileges[this.$route.params.programId][this.$route.params.contractId])  
 
     if (this.$route.params.contractId) {
       this.fetchContract({
@@ -755,7 +758,7 @@ export default {
             type: "success",
             showClose: true,
           });
-          this.SET_CONTRACT_STATUS(0);       
+           this.SET_CONTRACT_STATUS(0);       
        }
       },
     },
