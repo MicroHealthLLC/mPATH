@@ -5,7 +5,7 @@ class FacilityGroup < SortableRecord
 
   validates :name, presence: true, uniqueness: true
 
-  enum status: [:active, :inactive].freeze
+  enum status: [:inactive, :active].freeze
   before_save :set_status
 
   def set_status

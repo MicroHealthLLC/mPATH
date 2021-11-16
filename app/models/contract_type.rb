@@ -1,4 +1,6 @@
 class ContractType < ApplicationRecord
+  has_many :contracts
+  
   def self.prime
     find_by(name: "Prime Contract")
   end

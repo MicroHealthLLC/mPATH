@@ -164,7 +164,7 @@ class User < ApplicationRecord
     cps_hash.each do |project, cps|
       options << [project.name, project.id, {disabled: true}]
       cps.each do |c|
-        options << ["&nbsp;#{c.contract_nickname}".html_safe, c.id]
+        options << ["&nbsp;#{c.nickname}".html_safe, c.id]
       end
     end    
     options

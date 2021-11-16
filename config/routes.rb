@@ -37,7 +37,7 @@ Rails.application.routes.draw do
       # Contract data API
       get "/contract_data/contract_types", to: "contract_data#contract_types"
       get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
-      get "/contract_data/contract_name_customeres", to: "contract_data#contract_name_customeres"
+      get "/contract_data/contract_customeres", to: "contract_data#contract_customeres"
       get "/contract_data/contract_vehicles", to: "contract_data#contract_vehicles"
       get "/contract_data/contract_vehicle_number", to: "contract_data#contract_vehicle_number"
       get "/contract_data/contract_number", to: "contract_data#contract_number"
@@ -48,7 +48,7 @@ Rails.application.routes.draw do
       
       post "/contract_data/contract_type", to: "contract_data#create_contract_type"
       post "/contract_data/contract_status", to: "contract_data#create_contract_status"
-      post "/contract_data/contract_name_customer", to: "contract_data#create_contract_name_customer"
+      post "/contract_data/contract_customer", to: "contract_data#create_contract_customer"
       post "/contract_data/contract_vehicle", to: "contract_data#create_contract_vehicle"
       post "/contract_data/contract_vehicle_number", to: "contract_data#create_contract_vehicle_number"
       post "/contract_data/contract_number", to: "contract_data#create_contract_number"

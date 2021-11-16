@@ -40,9 +40,15 @@ class Api::V1::ContractsController < AuthenticatedController
 
   def destroy
     @contract = Contract.find(params[:id])
-    if @contract.destroy
-      render json: {contract: @contract.as_json}
+    contract_privileges = ContractPrivilege.where("project_id = ? and user_id = ? and contract_ids like ?", @contract.project_id, current_user.id, "%#{@contract.id}%" ).reject{|cp| !cp.contract_ids.include?(@contract.id.to_s)}.first
+    if contract_privileges && contract_privileges.admin.include?("D")
+      if @contract.destroy
+        render json: {contract: @contract.as_json}
+      end
+    else
+      raise CanCan::AccessDenied
     end
+
   end
 
 end

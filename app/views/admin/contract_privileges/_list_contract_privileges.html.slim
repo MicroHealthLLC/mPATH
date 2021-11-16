@@ -2,7 +2,7 @@
 - contract_privileges = user.contract_privileges.order("created_at DESC")
 - project_privileges = user.project_privileges
 - contracts = Contract.where(project_id: active_projects.map(&:id) )
-- option_array = contracts.map{|fp| [fp.id, fp.contract_nickname ] }
+- option_array = contracts.map{|fp| [fp.id, fp.nickname ] }
 
 a{href="javascript:void(0)" onclick="addContractPrivilegeForm(this)" data-url=(add_contract_privilege_form_path(user_id: user.id)) class="button has_many_add adminPanelBtn"}Add Contract Privilege
 
@@ -31,7 +31,7 @@ div{id="contract_privilege_list"}
           label(class="label") Select Contract
           select{id="project_section_#{index}" name="user[contract_privileges_attributes][#{index}][contract_ids][]" class="contract_privileges_project_select" multiple="true" data-selected=(contract_ids)}
             - project.contracts.each do |f|
-              option{value="#{f.id}" select=("selected" if contract_ids.include?(f.id.to_s) )}= f.contract_nickname
+              option{value="#{f.id}" select=("selected" if contract_ids.include?(f.id.to_s) )}= f.nickname
 
         - ContractPrivilege::PRIVILEGE_MODULE.each do |m_name|
           li(class="select input required")
