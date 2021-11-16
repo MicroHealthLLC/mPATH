@@ -112,7 +112,7 @@
         >Type 
     </label>
      <el-select
-        v-model="contract.contract_type_id"
+        v-model="options"
         class="w-100"
         track-by="id"
         value-key="id"         
@@ -176,10 +176,11 @@
      <v-app class="contract">
     <v-combobox
       :items="cVehicleOptions"
-      v-model="contract.contract_vehicle_id"  
-      item-value="id"
+      v-model="contract.contract_vehicle_id" 
+      @input="vehicleText($event)" 
+      :item-value="cVehicleOptions"
       item-text="name"
-      item-header="name"
+      :item-header="contract.contract_vehicle_id.name"
       persistent-hint  
       dense
     ></v-combobox>
@@ -454,6 +455,8 @@ export default {
     return {
       loading: true,
       statusId: null, 
+      vText:'',
+      vNames: [],
       // contractNickname: '',
       // projectCode: null, 
       inputText:'',
@@ -565,7 +568,10 @@ export default {
          this.updateContract({
             ...contractData, id
           })
-          console.log(id, contractData)     
+          console.log(this.contract.contract_vehicle_id.id)     
+    },
+    vehicleText(e){
+     this.SET_VEHICLES(e)
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
@@ -603,10 +609,32 @@ export default {
         get() {
           return this.getVehicles
         },
-        set(value) {
+        set(value) {        
           this.SET_VEHICLES(value)
         }      
       },
+      vehicleNames(){
+      let cvid = this.contract.contract_vehicle_id
+      return {
+          id:  this.getVehicles.find((v) => v.id == cvid).id,
+          name: this.getVehicles.find((v) => v.id == cvid).name
+        }   
+      },
+    //  vehicleNames:{
+       
+    //     get() {
+    //       if (this.contract && this.getVehicles) {
+    //         let cvid = this.contract.contract_vehicle_id
+    //           return {
+    //           id:  this.getVehicles.find((v) => v.id == cvid).id,
+    //           name: this.getVehicles.find((v) => v.id == cvid).name
+    //          }   
+    //       }        
+    //     },
+    //     set(value) {        
+    //       this.SET_VEHICLES(value)
+    //     }      
+    //   },
      cContractNoOptions:{
         get() {
           return this.getContractNumbers

@@ -1,6 +1,6 @@
 <template>
   <div
-    v-loading="!contentLoaded"
+    v-loading="!contractsLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -29,7 +29,7 @@
      
         <el-input
           type="search"          
-          placeholder="Search Projects"
+          placeholder="Search Contracts"
           aria-label="Search"            
           aria-describedby="search-addon"    
           v-model="search"
@@ -68,7 +68,7 @@
 
 
     </el-table-column>
-    <el-table-column prop="facility_group_id" sortable filterable label="Group">
+    <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
@@ -241,6 +241,7 @@ export default {
           contract: {
             contract_nickname: rows.contract_nickname,
             contract_type_id: rows.contract_type_id,
+            facility_group_name: rows.facility_group_name,  
             facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
             id:  id    
@@ -250,7 +251,6 @@ export default {
             ...contractData, id
           })
           console.log(rows, contractData)
-    //  }
      
     },
     addAnotherContract() {
@@ -288,15 +288,16 @@ export default {
      return `/programs/${this.$route.params.programId}/settings`  
     },
     tableData(){
-     let contractData = this.contracts.map(c => c)         
+      if(this.contracts){
+      let contractData = this.contracts[0]         
       .filter((td) => {
           if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
             let group = this.C_groupFilter.map((t) => t.name);
             return group.includes(td.facility_group_id);
           } else return true;
         });
-     return contractData
-     
+       return contractData
+      }    
    },
       // Filter for Projects Table
     C_groupFilter: {
