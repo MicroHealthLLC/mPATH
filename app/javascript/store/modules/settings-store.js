@@ -13,7 +13,7 @@ const settingsStore = {
     contract_status: 0,
     customer_agencies_filter: null, 
     contract_statuses_filter: null, 
-    vehicle_filter: {}, 
+    vehicle_filter: null, 
     vehicle_number: null,
     contract_number: null, 
     subcontract_number: null, 
@@ -303,7 +303,7 @@ const settingsStore = {
     })
       .then((res) => {
         commit("SET_CONTRACT_STATUSES_FILTER", res.data);
-        console.log(res.data)
+        // console.log(res.data)
       })
       .catch((err) => {
         console.log(err);

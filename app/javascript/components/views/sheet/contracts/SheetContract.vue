@@ -1,6 +1,9 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
- <div id="facility-sheets" data-cy="facility_sheets">
+ <div 
+    id="contract-sheets" 
+    data-cy="contract_sheets"
+ >
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
@@ -22,20 +25,7 @@
         />
     </div>
       <!-- Breadcrumbs and form buttons -->
-       <div class="ml-auto d-flex align-items-center">
-        <button  
-          @click.prevent="saveEdits"    
-          class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
-        >
-          Save
-        </button>
-    <!-- Add Read only button and v-if to Save button for privileges -->
-        <button        
-          class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"         
-        >
-          Close
-        </button>
-      </div>
+     
     </div>
  
     <h6 class=" mt-4 mb-0" style="color: gray; font-size: 13px">
@@ -82,12 +72,22 @@
       </el-option>
       </el-select>   
       </div>  
+        <div class="col-7 text-right">
+        <button  
+          @click.prevent="saveEdits"    
+          class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
+        >
+          Save Edits
+        </button>
+    <!-- Add Read only button and v-if to Save button for privileges -->
+       
+      </div>
    
   </div>
   <div class="row row_1">
      <div class="col-2 pl-0">
     <label class="font-md"
-        >Project Code <span style="color: #dc3545">*</span>
+        >Project Code 
     </label> 
         <el-input
         name="Project Code" 
@@ -98,7 +98,7 @@
     </div>
      <div class="col-7 px-2">
         <label class="font-md"
-            >Contract Nickname <span style="color: #dc3545">*</span>
+            >Contract Nickname 
         </label>
             <el-input
             name="Contract Nickname"  
@@ -132,38 +132,50 @@
   <div class="row row_2">
      <div class="col-6 pl-0 pr-3">
     <label class="font-md"
-        >Customer (Agency) <span style="color: #dc3545">*</span>
+        >Customer (Agency)
     </label>
-    <v-app class="contract">
-    <v-combobox
-      :items="cCustomerAgenciesOptions"
-      item-value="id"
-      item-text="name"
-      item-header="name"
-      v-model="contract.contract_name_customer_id"  
-      persistent-hint  
-      dense
-      ></v-combobox>
-     </v-app>
-           
-      </div>
+
+    <el-select
+      v-model="contract.contract_name_customer_id" 
+      filterable
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cCustomerAgenciesOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+  </el-select>
+  </div>
   
     <div class="col-6 pl-3 pr-0">
     <label class="font-md"
-        >Status <span style="color: #dc3545">*</span>
+        >Status 
     </label>
-    <v-app class="contract">
-    <v-combobox
-      :items="cStatusOptions"
-      item-value="id"
-      item-text="name"
-      item-header="name"
-      v-model="contract.contract_status_id"  
-      persistent-hint  
-      dense
-    ></v-combobox>
-     </v-app>
-    </div>
+    <el-select
+      v-model="contract.contract_status_id" 
+      filterable
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cStatusOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+  </el-select>
+   </div>
   </div>
    <div class="row row_2">
    
@@ -171,37 +183,50 @@
  <div class="row row_3">
   <div class="col-6 pl-0 pr-3">
     <label class="font-md"
-      >Vehicle <span style="color: #dc3545">*</span>
+      >Vehicle
     </label>
-     <v-app class="contract">
-    <v-combobox
-      :items="cVehicleOptions"
+    <el-select
       v-model="contract.contract_vehicle_id" 
-      @input="vehicleText($event)" 
-      :item-value="cVehicleOptions"
-      item-text="name"
-      :item-header="contract.contract_vehicle_id.name"
-      persistent-hint  
-      dense
-    ></v-combobox>
-    </v-app>
+      filterable
+      :key="componentKey"   
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cVehicleOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
 
-      </div>
+  </el-select>
+   </div>
   <div class="col-6 pl-3 pr-0">
     <label class="font-md"
-      >Prime IDIQ/Vehicle Contract Number <span style="color: #dc3545">*</span>
+      >Prime IDIQ/Vehicle Contract Number
     </label>
-    <v-app class="contract">
-    <v-combobox
-      :items="cPrimeIdiqOptions"
-      v-model="contract.contract_vehicle_number_id"  
-      item-value="id"
-      item-text="name"
-      item-header="name"
-      persistent-hint  
-      dense
-    ></v-combobox>
-    </v-app>
+    <el-select
+      v-model="contract.contract_vehicle_number_id" 
+      filterable
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cPrimeIdiqOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+  </el-select>
+   
   </div>
  </div>
   <div class="row row_4">
@@ -209,51 +234,70 @@
         <label class="font-md"
           >Prime Contract Number / Task Order / PO Number <span style="color: #dc3545">*</span>
         </label>
-   <v-app class="contract">
-    <v-combobox
-      :items="cContractNoOptions"
-      v-model="contract.contract_number_id"  
-      item-value="id"
-      item-text="name"
-      item-header="name"
-      persistent-hint  
-      dense
-    ></v-combobox>
-    </v-app>
-      </div>
+
+     <el-select
+      v-model="contract.contract_number_id" 
+      filterable
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cContractNoOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+   </el-select>
+   </div>
        <div class="col-6 pl-3 pr-0" >
         <label class="font-md"
           >Subcontract Number / PO Number *<span style="color: #dc3545">*</span>
-        </label>
-    <v-app class="contract">
-    <v-combobox
-      :items="cSubcontractNoOptions"
-      v-model="contract.subcontract_number_id"  
-      item-value="id"
-      item-text="name"
-      item-header="name"
-      persistent-hint  
-      dense
-    ></v-combobox>
-    </v-app>
-      </div>
+        </label>        
+     <el-select
+      v-model="contract.subcontract_number_id" 
+      filterable
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cSubcontractNoOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+   </el-select>
+   </div>
   </div>
  <div class="row row_5">
    <div class="col-4 pl-0 pr-1" v-if="contract.contract_type_id === 0 || contract.contract_type_id === 1">
     <label class="font-md"
         >Prime <span style="color: #dc3545">*</span>
     </label>
-      <v-app class="contract">
-    <v-combobox
-      :items="cPrimeOptions"
-      v-model="contract.contract_prime_id"  
-      item-value="id"
-      item-text="name"
-      item-header="name"
-      persistent-hint  
-      dense
-    ></v-combobox>
-    </v-app>
+     <el-select
+      v-model="contract.contract_prime_id" 
+      filterable
+      class="w-100"
+      track-by="id"
+      value-key="id"     
+      allow-create
+      default-first-option
+      placeholder="Select Vehicle">
+ 
+    <el-option
+      v-for="item in cPrimeOptions"     
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+   </el-select>
 </div>
  </div>
  </div>
@@ -450,13 +494,12 @@ export default {
     Loader,
     FormTabs
   },
-  props: ["facility"],
+  props: ["contractClass"],
   data() {
     return {
       loading: true,
       statusId: null, 
-      vText:'',
-      vNames: [],
+      componentKey: 0,
       // contractNickname: '',
       // projectCode: null, 
       inputText:'',
@@ -534,6 +577,9 @@ export default {
       "SET_CUSTOMER_AGENCIES_FILTER",
       "setContractTypeFilter"
       ]),
+   reRenderDropdowns() {
+    this.componentKey += 1;
+    },
     saveEdits() {
       let id = this.contract.id
      let contractData = {
@@ -545,7 +591,7 @@ export default {
             project_code: this.contract.project_code,
             contract_type_id: this.contract.contract_type_id,   
             contract_status_id:this.contract.contract_status_id,
-            contract_name_customer_id: this.contract.contract_name_customer_id,
+            contract_name_customer_id: this.contract.contract_name_customer_id,            
             contract_vehicle_id: this.contract.contract_vehicle_id,
             contract_vehicle_number_id: this.contract.contract_vehicle_number_id,
             contract_number_id: this.contract.contract_number_id,
@@ -568,11 +614,16 @@ export default {
          this.updateContract({
             ...contractData, id
           })
-          console.log(this.contract.contract_vehicle_id.id)     
+          this.reRenderDropdowns()
+          // console.log(this.contract.contract_vehicle_id.id)     
     },
     vehicleText(e){
      this.SET_VEHICLES(e)
     },
+   log(e){
+    console.log(e)
+    },
+  
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
     },
@@ -609,32 +660,11 @@ export default {
         get() {
           return this.getVehicles
         },
-        set(value) {        
+        set(value) {     
+          // console.log(value)   
           this.SET_VEHICLES(value)
         }      
       },
-      vehicleNames(){
-      let cvid = this.contract.contract_vehicle_id
-      return {
-          id:  this.getVehicles.find((v) => v.id == cvid).id,
-          name: this.getVehicles.find((v) => v.id == cvid).name
-        }   
-      },
-    //  vehicleNames:{
-       
-    //     get() {
-    //       if (this.contract && this.getVehicles) {
-    //         let cvid = this.contract.contract_vehicle_id
-    //           return {
-    //           id:  this.getVehicles.find((v) => v.id == cvid).id,
-    //           name: this.getVehicles.find((v) => v.id == cvid).name
-    //          }   
-    //       }        
-    //     },
-    //     set(value) {        
-    //       this.SET_VEHICLES(value)
-    //     }      
-    //   },
      cContractNoOptions:{
         get() {
           return this.getContractNumbers
@@ -713,20 +743,19 @@ export default {
       handler() {
         if (this.contract) {
           this.statusId = this.contract_status_id;
-          // this.nickname = this.contract.contract_nickname;
-          // this.projectCode = this.contract.project_code;        
-        }
+       }
       },
     },
     contractStatus: {
       handler() {
         if (this.contractStatus == 200) {
+         this.reRenderDropdowns();
           this.$message({
             message: `${this.contract.contract_nickname} was saved successfully.`,
             type: "success",
             showClose: true,
           });
-          this.SET_CONTRACT_STATUS(0);
+          this.SET_CONTRACT_STATUS(0);       
        }
       },
     },
@@ -814,7 +843,9 @@ export default {
     text-overflow: ellipsis;
   }
 }
-
+.saveBtn {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 .fac-sum {
   border-radius: 2px;
   padding: 8px;

@@ -9,10 +9,15 @@
     <div class="col-md-2">
       <ProjectSidebar
         :current-facility-group="currentFacilityGroup"
+        :current-contract-group="currentContractGroup"
         :expanded="expanded"
+        :cexpanded="c_expanded"
         :current-facility="currentFacility"
-         @on-expand-facility-group="expandFacilityGroup"
+        :current-contract="currentContract"
+        @on-expand-facility-group="expandFacilityGroup"
+        @on-expand-contract-group="expandContractGroup"
         @on-expand-facility="showFacility"
+        @on-expand-contract="showContract"
       />
     </div>
     <div class="col-md-10">
@@ -29,10 +34,10 @@
           class="d-flex align-items-center my-1 ml-1"
         >
           <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
-          <h5 class="f-head mb-0" v-if=" currentFacility.contractNickname">
-            {{currentFacility.contractNickname || "Loading..." }}
+          <h5 class="f-head mb-0" v-if="currentContract && $route.params.contractId">
+            {{ currentContract.contract_nickname || "Loading..." }}
           </h5>
-           <h5 class="f-head mb-0" v-else>
+           <h5 class="f-head mb-0"  v-if="currentFacility && $route.params.projectId">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
         </div>
@@ -52,7 +57,9 @@
           <router-view
             :key="$route.path"
             :facility="currentFacility"
+            :contractClass="currentContract"
             :facilityGroup="currentFacilityGroup"
+             :contractGroup="currentContractGroup"
           ></router-view>
         </div>
       </div>
@@ -61,7 +68,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 import ProjectTabs from "../../shared/ProjectTabs";
 export default {
@@ -73,24 +80,42 @@ export default {
   data() {
     return {
       currentFacility: {},
+      currentContract: {},
+      currentContractGroup: {},
       currentFacilityGroup: {},
       expanded: {
+        id: "",
+      },
+      c_expanded: {
         id: "",
       },
     };
   },
   methods: {
+     ...mapActions(["fetchContracts"]),
     expandFacilityGroup(group) {
       if (group.id == this.expanded.id) {
         this.expanded.id = "";
       } else {
         this.expanded.id = group.id;
         this.currentFacilityGroup = group;
-        this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
+        this.currentFacility = this.facilityGroupFacilities(group)[0] || {};     
+      }
+    },
+     expandContractGroup(group) {
+      if (group.id == this.c_expanded.id) {
+        this.c_expanded.id = "";
+      } else {
+        this.c_expanded.id = group.id;
+       this.currentContractGroup = group;
+       this.currentContract = this.facilityGroupFacilities(group)[0] || {};
       }
     },
     showFacility(facility) {
       this.currentFacility = facility;
+    },
+    showContract(contract) {
+      this.currentContract = contract;
     },
     changeTab(tab) {
       // console.log(tab);
@@ -102,6 +127,7 @@ export default {
       "contentLoaded",
       "currentProject",
       "facilities",
+      "contracts",
       "facilityGroupFacilities",
       "facilityGroups",
       "getPreviousRoute",
@@ -111,6 +137,7 @@ export default {
   },
   mounted() {
     // Display notification when leaving map view to another page and conditions met
+    this.fetchContracts()
     if (
       this.getPreviousRoute.includes("Map") &&
       this.facilities.length !== this.getUnfilteredFacilities.length
@@ -130,6 +157,11 @@ export default {
         (facility) => facility.facilityId == this.$route.params.projectId
       );
     }
+     if (this.contentLoaded && this.$route.params.contractId) {
+      this.currentContract = this.contracts[0].find(
+        (c) => c.id == this.$route.params.contractId
+      );
+    }
   },
   watch: {
     contentLoaded: {
@@ -139,27 +171,41 @@ export default {
             (facility) => facility.id == this.$route.params.projectId
           );
         }
+         else if (this.$route.params.contractId) {
+          this.currentContract = this.contracts[0].find(
+            (c) => c.id == this.$route.params.contractId
+          );
+        }
       },
     },
-    currentFacility: {
+  currentFacility: {
+    handler() {
+        if (this.$route.params.projectId) {
+        this.currentFacilityGroup = this.facilityGroups.find(
+        (group) => group.id == this.currentFacility.facility.facilityGroupId
+      );
+        }      
+      this.expanded.id = this.currentFacilityGroup.id;
+    },
+    },
+    currentContract: {
       handler() {
-        if(this.currentFacility && this.currentFacility.facility){
-           this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facility.facilityGroupId)
-         } else if (this.currentFacility && this.currentFacility.contractNickname){
-           this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facilityGroupId)
-        }       
-        this.expanded.id = this.currentFacilityGroup.id;
-          //  debugger
+      if (this.$route.params.contractId) {
+        this.currentContractGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentContract.facilityGroupId
+        );
+      }
+       this.c_expanded.id =  this.currentFacilityGroup.id;
       },
     },
     "$route.path": {
       handler() {
         if (this.$route.params.projectId) {
           this.currentFacility = this.facilities.find(facility => facility.id == this.$route.params.projectId);
-            //  debugger
-        }
+         }
+         if (this.$route.params.contractId) {
+           this.currentContract = this.contracts[0].find(c => c.id == this.$route.params.contractId);
+       }
       },
     },
   },
