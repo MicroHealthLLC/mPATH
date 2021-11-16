@@ -5,8 +5,8 @@ class Api::V1::ContractDataController < AuthenticatedController
   def contract_statuses
     render json: ContractStatus.all.as_json(only: [:id, :name] )
   end
-  def contract_name_customeres
-    render json: ContractNameCustomer.all.as_json(only: [:id, :name] )
+  def contract_customeres
+    render json: ContractCustomer.all.as_json(only: [:id, :name] )
   end
   def contract_vehicles
     render json: ContractVehicle.all.as_json(only: [:id, :name] )
@@ -55,16 +55,16 @@ class Api::V1::ContractDataController < AuthenticatedController
   end
 
 
-  def create_contract_name_customer
-    @contract_name_customer = ContractNameCustomer.new(contract_name_customer_params)
-    if @contract_name_customer.save
-      render json: @contract_name_customer.as_json(only: [:id, :name] )
+  def create_contract_customer
+    @contract_customer = ContractCustomer.new(contract_customer_params)
+    if @contract_customer.save
+      render json: @contract_customer.as_json(only: [:id, :name] )
     else
-      render json: {errors: @contract_name_customer.errors.full_messages}
+      render json: {errors: @contract_customer.errors.full_messages}
     end
   end
-  def contract_name_customer_params
-    params.require(:contract_name_customer).permit(:id, :name)
+  def contract_customer_params
+    params.require(:contract_customer).permit(:id, :name)
   end
   
 

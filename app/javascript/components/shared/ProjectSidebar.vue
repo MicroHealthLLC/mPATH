@@ -66,7 +66,7 @@
                   :class="{ active: c.id == $route.params.contractId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                  <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.contractNickname }}
+                  <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.nickname }}
                   </p>
                 </div>
               </router-link>

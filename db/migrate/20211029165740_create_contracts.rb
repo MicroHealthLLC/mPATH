@@ -5,7 +5,7 @@ class CreateContracts < ActiveRecord::Migration[6.1]
       t.integer :project_code
       t.string :contract_nickname
       t.bigint :contract_status_id, null: true, foreign_key: true
-      t.bigint :contract_name_customer_id, true: false, foreign_key: true
+      t.bigint :contract_name_customer_id, null: true, foreign_key: true
       t.bigint :contract_vehicle_id, null: true, foreign_key: true
       t.bigint :contract_vehicle_number_id, null: true, foreign_key: true
       t.bigint :contract_number_id, null: true, foreign_key: true
