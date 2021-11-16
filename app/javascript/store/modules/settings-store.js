@@ -13,7 +13,7 @@ const settingsStore = {
     contract_status: 0,
     customer_agencies_filter: null, 
     contract_statuses_filter: null, 
-    vehicle_filter: null, 
+    vehicle_filter: {}, 
     vehicle_number: null,
     contract_number: null, 
     subcontract_number: null, 
@@ -435,8 +435,11 @@ const contractFormData = (contract) => {
   if (contract.id) {
     formData.append("contract[id]", contract.id)
   }
-  formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
+  if (contract.facility_group_name) {
+    formData.append("contract[facility_group_name]", contract.facility_group_name); 
+  }
   formData.append("contract[facility_group_id]", contract.facility_group_id); 
+  formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
   formData.append("contract[project_code]", contract.project_code); 
   formData.append("contract[contract_nickname]", contract.contract_nickname); //Required
