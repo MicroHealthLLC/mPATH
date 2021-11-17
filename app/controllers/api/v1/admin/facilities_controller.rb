@@ -1,4 +1,4 @@
-class Api::V1::FacilitiesController < AuthenticatedController
+class Api::V1::Admin::FacilitiesController < AuthenticatedController
   before_action :set_project
   before_action :set_facility, only: [:show]
 
@@ -18,9 +18,14 @@ class Api::V1::FacilitiesController < AuthenticatedController
 
   def update
     # @facility_project.update(facility_project_params)
-    @facility_project = FacilityProject.where(project_id: @project.id, facility_id: params[:id]).first
-    @facility_project.update(facility_project_params)
-    render json: {facility: @facility_project.as_json}
+    @facility = Facility.find(params[:id])
+    if(params[:facility][:facility_group_name] && params[:facility][:facility_group_name] != 'undfined')
+      @facility.facility_group.update(name: params[:facility][:facility_group_name])
+    end
+    if params[:facility][:facility_name]
+      @facility.update(facility_name: params[:facility][:facility_name])
+    end
+    render json: {facility: @facility.as_json}
   end
 
   def destroy

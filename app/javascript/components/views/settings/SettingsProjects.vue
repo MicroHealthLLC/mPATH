@@ -253,7 +253,7 @@ export default {
       // Need one url to support these two data name edits
       formData.append("facility[facility_group_name]", updatedGroupName)
       formData.append('commit', 'Update Project')
-        let url = `/admin/facilities/${projectId}`;
+        let url = `/api/v1/admin/facilities/${projectId}`;
         let method = "PUT";
           axios({
           method: method,
