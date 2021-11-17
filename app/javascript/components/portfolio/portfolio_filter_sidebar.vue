@@ -229,7 +229,7 @@
  
       </el-tab-pane>
 
-      <el-tab-pane label="Tasks, Issues, Risks">
+      <el-tab-pane label="Tasks, Issues, Risks, Lessons">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
         <div class="row pt-3 pb-2" >
