@@ -35,7 +35,7 @@
         >
           <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
           <h5 class="f-head mb-0" v-if="currentContract && $route.params.contractId">
-            {{ currentContract.contract_nickname || "Loading..." }}
+            {{ currentContract.nickname || "Loading..." }}
           </h5>
            <h5 class="f-head mb-0"  v-if="currentFacility && $route.params.projectId">
             {{ currentFacility.facilityName || "Loading..." }}
@@ -137,7 +137,7 @@ export default {
   },
   mounted() {
     // Display notification when leaving map view to another page and conditions met
-    this.fetchContracts()
+  
     if (
       this.getPreviousRoute.includes("Map") &&
       this.facilities.length !== this.getUnfilteredFacilities.length
@@ -152,12 +152,14 @@ export default {
     }
   },
   beforeMount() {
+   this.fetchContracts()
     if (this.contentLoaded && this.$route.params.projectId) {
       this.currentFacility = this.facilities.find(
         (facility) => facility.facilityId == this.$route.params.projectId
       );
     }
      if (this.contentLoaded && this.$route.params.contractId) {
+ 
       this.currentContract = this.contracts[0].find(
         (c) => c.id == this.$route.params.contractId
       );
@@ -180,7 +182,7 @@ export default {
     },
   currentFacility: {
     handler() {
-        if (this.$route.params.projectId) {
+        if (this.$route.params.projectId && !this.$route.params.contractId) {
         this.currentFacilityGroup = this.facilityGroups.find(
         (group) => group.id == this.currentFacility.facility.facilityGroupId
       );
@@ -190,7 +192,7 @@ export default {
     },
     currentContract: {
       handler() {
-      if (this.$route.params.contractId) {
+      if (!this.$route.params.projectId && this.$route.params.contractId) {
         this.currentContractGroup = this.facilityGroups.find(
           (group) => group.id == this.currentContract.facilityGroupId
         );

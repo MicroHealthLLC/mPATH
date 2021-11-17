@@ -13,6 +13,7 @@ const settingsStore = {
     contract_status: 0,
     customer_agencies_filter: null, 
     contract_statuses_filter: null, 
+    contract_classifications: [],
     vehicle_filter: null, 
     vehicle_number: null,
     contract_number: null, 
@@ -136,6 +137,27 @@ const settingsStore = {
     })
       .then((res) => {
         commit("SET_CONTRACT_GROUP_TYPES", res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACTS_LOADED", true);
+      });
+  }, 
+  fetchClassificationTypes({ commit }) {
+    commit("TOGGLE_CONTRACTS_LOADED", false);
+    // Retrieve contract by id
+    axios({
+      method: "GET",
+      url: `${API_BASE_PATH}/contract_data/contract_classification`,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT_CLASSIFICATIONS", res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -379,6 +401,8 @@ const settingsStore = {
     SET_CURRENT_POP: (state, value) => (state.current_pop = value),
     SET_PRIME: (state, value) => (state.prime = value),
 
+    SET_CONTRACT_CLASSIFICATIONS: (state, value) => (state.contract_classifications = value),
+
     SET_VEHICLES: (state, value) => (state.vehicle_filter = value),
     SET_VEHICLE_NUMBERS: (state, value) => (state.vehicle_number = value),
     SET_SUBCONTRACT_NUMBER: (state, value) => (state. subcontract_number = value),
@@ -398,6 +422,7 @@ const settingsStore = {
 
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
     getContractStatusesFilter: (state) => state.contract_statuses_filter,
+    getContractClassifications: (state) => state.contract_classifications,
     getCurrentPop: (state) => state.current_pop,
     getPrime: (state) => state.prime,
 
@@ -436,15 +461,15 @@ const contractFormData = (contract) => {
     formData.append("contract[id]", contract.id)
   }
   if (contract.facility_group_name) {
-    formData.append("contract[facility_group_name]", contract.facility_group_name); 
-  }
+    formData.append("contract[facility_group_name]", contract.facility_group_name);   }
   formData.append("contract[facility_group_id]", contract.facility_group_id); 
   formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
   formData.append("contract[project_code]", contract.project_code); 
-  formData.append("contract[contract_nickname]", contract.contract_nickname); //Required
+  formData.append("contract[nickname]", contract.nickname); //Required
+  formData.append("contract[name]", contract.name); //Required
   formData.append("contract[contract_status_id]", contract.contract_status_id); 
-  formData.append("contract[contract_name_customer_id]", contract.contract_name_customer_id);
+  formData.append("contract[contract_customer_id]", contract.contract_customer_id);
   formData.append("contract[contract_vehicle_id]", contract.contract_vehicle_id); 
   formData.append("contract[contract_vehicle_number_id]", contract.contract_vehicle_number_id);
   formData.append("contract[contract_number_id]", contract.contract_number_id); 

@@ -58,12 +58,12 @@
           </el-select>
       </div>
   </div>
-   <el-table :data="tableData.filter(data => !search || data.contract_nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
     <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.contract_nickname" controls-position="right"></el-input>
+            v-model="scope.row.nickname" controls-position="right"></el-input>
        </template>
 
 
@@ -163,6 +163,7 @@
           <router-view
             :key="$route.path"
             :facility="currentFacility"
+            :contractClass="currectContract"
             :facilityGroup="currentFacilityGroup"
           ></router-view>
         </div>
@@ -183,6 +184,7 @@ export default {
   data() {
     return {
       currentFacility: {},
+      currentContract: {},
       dialogVisible: false,
       currentFacilityGroup: {},
       projectNameText: '',
@@ -221,7 +223,8 @@ export default {
     saveNewContract() {
         let contractData = {
           contract: {
-            contract_nickname: this.contractNameText,
+            nickname: this.contractNameText,
+            name: this.contractNameText,
             facility_group_id: this.C_projectGroupFilter.id,
             project_id: this.$route.params.programId,
             contract_type_id: this.C_typeFilter,
@@ -239,7 +242,7 @@ export default {
         let id = rows.id;
         let contractData = {
           contract: {
-            contract_nickname: rows.contract_nickname,
+            nickname: rows.nickname,
             contract_type_id: rows.contract_type_id,
             facility_group_name: rows.facility_group_name,  
             facility_group_id: rows.facility_group_id,  
@@ -272,7 +275,6 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "contractsLoaded",
-      "facilities",
       "getContractTypeFilter",
       "getContractTypeOptions",
       "contractStatus",
@@ -329,42 +331,37 @@ export default {
     },
   },
   beforeMount() {
-    if (this.contentLoaded && this.$route.params.projectId) {
-      this.currentFacility = this.facilities.find(
-        (facility) => facility.facilityId == this.$route.params.projectId
+    if (this.contentLoaded && this.$route.params.contractId) {
+      this.currentContract = this.contracts[0].find(
+        (c) => c.id == this.$route.params.contractId
       );
     }
   },
   watch: {
     contentLoaded: {
       handler() {
-        if (this.$route.params.projectId) {
-          this.currentFacility = this.facilities.find(
-            (facility) => facility.facilityId == this.$route.params.projectId
+        if (this.$route.params.contractId) {
+          this.currentContract = this.contracts[0].find(
+             (c) => c.id == this.$route.params.contractId
           );
         }
       },
     },
     contractStatus: {
       handler() {
-        if (this.contractStatus == 200) {
+        if (this.contractStatus == 200 && this.contractNameText) {
           this.$message({
-            message: `${this.contractNameText} was saved successfully.`,
+            message: `Contract saved successfully.`,
             type: "success",
             showClose: true,
           });
+     
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts();
         }
       },
     },
-    facilities: {
-      handler() {
-        this.currentFacility = this.facilities.find(
-          (facility) => facility.facilityId == this.$route.params.projectId
-        );
-      },
-    },
+  
   },
 };
 </script>

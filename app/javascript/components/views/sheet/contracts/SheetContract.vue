@@ -100,29 +100,33 @@
         />          
     </div>
      <div class="col-7 px-2">
+
         <label class="font-md"
             >Contract Nickname 
         </label>
+      
             <el-input
             name="Contract Nickname"  
-            v-model="contract.contract_nickname"          
+            v-model="contract.nickname"          
             type="text"
             placeholder="Contract Nickname"
-            />    <!-- Need to add additional div here for error handling -->           
+            />    <!-- Need to add additional div here for error handling -->       
+ 
+        
     </div>
      <div class="col-3">
     <label class="font-md"
         >Type 
     </label>
      <el-select
-        v-model="options"
+        v-model="contract.contract_classification_id"
         class="w-100"
         track-by="id"
         value-key="id"         
         placeholder="Select Type"
         >
       <el-option
-        v-for="item in cGroupTypeOptions"
+        v-for="item in cClassificationOptions"
         :value="item.id"
         :key="item.id"
         :label="item.name"
@@ -139,7 +143,7 @@
     </label>
 
     <el-select
-      v-model="contract.contract_name_customer_id" 
+      v-model="contract.contract_customer_id" 
       filterable
       class="w-100"
       track-by="id"
@@ -535,6 +539,7 @@ export default {
   this.fetchContractStatuses()
   this.fetchCurrentPop()
   this.fetchPrime()
+  this.fetchClassificationTypes()
   this.fetchVehicles()
   this.fetchVehicleNumbers()
   this.fetchContractNumber()
@@ -560,6 +565,7 @@ export default {
       "fetchVehicles",
       "fetchPrime",
       "fetchVehicleNumbers",
+      "fetchClassificationTypes",
       "fetchContractNumber",
       "fetchSubcontractNumbers",
       ]),
@@ -569,7 +575,7 @@ export default {
       "SET_CONTRACTS",  
       "SET_CONTRACT_GROUP_TYPES",  
       "SET_CONTRACT_LOADED",
-      "SET_CONTRACTS_LOADED",
+      "SET_CONTRACT_CLASSIFICATIONS",
       "SET_CONTRACTS_LOADED",
       "SET_CURRENT_POP",
       "SET_PRIME",
@@ -590,11 +596,11 @@ export default {
             id: this.contract.id,
             project_id: this.contract.project_id,
             facility_group_id: this.contract.facility_group_id,
-            contract_nickname: this.contract.contract_nickname,
+            nickname: this.contract.nickname,
             project_code: this.contract.project_code,
             contract_type_id: this.contract.contract_type_id,   
             contract_status_id:this.contract.contract_status_id,
-            contract_name_customer_id: this.contract.contract_name_customer_id,            
+            contract_customer_id: this.contract.contract_customer_id,            
             contract_vehicle_id: this.contract.contract_vehicle_id,
             contract_vehicle_number_id: this.contract.contract_vehicle_number_id,
             contract_number_id: this.contract.contract_number_id,
@@ -602,7 +608,7 @@ export default {
             subcontract_number_id: this.contract.subcontract_number_id,
             contract_prime_id: this.contract.contract_prime_id,
             contract_current_pop_id: this.contract.contract_current_pop_id,
-            contract_nickname: this.contract.contract_nickname,
+            name: this.contract.name,
             current_pop_start_time: this.contract.current_pop_start_time,
             current_pop_end_time: this.contract.current_pop_end_time,
             days_remaining: this.contract.days_remaining,
@@ -649,6 +655,7 @@ export default {
       "getCustomerAgenciesFilter",
       "getContractGroupTypes",
       "getCurrentPop",
+      "getContractClassifications",
       "getContractStatusesFilter",
       "getFilterValue", 
       "getPrime",
@@ -717,6 +724,14 @@ export default {
           this.SET_CUSTOMER_AGENCIES_FILTER(value)
         }      
       },
+     cClassificationOptions:{
+        get() {
+          return this.getContractClassifications
+        },
+        set(value) {
+          this.SET_CONTRACT_CLASSIFICATIONS(value)
+        }      
+      },
       cGroupTypeOptions:{
         get() {
           return this.getContractGroupTypes
@@ -754,7 +769,7 @@ export default {
         if (this.contractStatus == 200) {
          this.reRenderDropdowns();
           this.$message({
-            message: `${this.contract.contract_nickname} was saved successfully.`,
+            message: `${this.contract.nickname} was saved successfully.`,
             type: "success",
             showClose: true,
           });

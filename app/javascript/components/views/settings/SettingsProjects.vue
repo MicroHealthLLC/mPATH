@@ -60,7 +60,7 @@
   </div>
   
     <el-table :data="tableData.filter(data => !search || 
-        data.facilityName.toLowerCase().includes(search.toLowerCase()))" 
+        data.facilityName.toLowerCase().includes(search.toLowerCase())).reverse()" 
         style="width: 100%"  height="450"
         
       >

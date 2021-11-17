@@ -90,12 +90,12 @@ export default {
           closable: false,
           hidden: false,
         },
-        {
-          label: "Analytics",
-          key: "analytics",
-          closable: false,
-          hidden: false,
-        },
+        // {
+        //   label: "Analytics",
+        //   key: "analytics",
+        //   closable: false,
+        //   hidden: false,
+        // },
         // {
         //   label: "Tasks",
         //   key: "tasks",
