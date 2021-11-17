@@ -67,7 +67,7 @@
         placeholder="Select Contract Group Type"
         >
       <el-option
-        v-for="item in cGroupTypeOptions"
+        v-for="item in getContractGroupOptions"
         :value="item.id"
         :key="item.id"
         :label="item.name"
@@ -145,6 +145,7 @@
     <el-select
       v-model="contract.contract_customer_id" 
       filterable
+      @visible-change="getCAgency"   
       class="w-100"
       track-by="id"
       value-key="id"     
@@ -168,6 +169,7 @@
     <el-select
       v-model="contract.contract_status_id" 
       filterable
+       @visible-change="getStatus"   
       class="w-100"
       track-by="id"
       value-key="id"     
@@ -195,7 +197,8 @@
     <el-select
       v-model="contract.contract_vehicle_id" 
       filterable
-      :key="componentKey"   
+      :key="componentKey"  
+       @visible-change="getVehicle"    
       class="w-100"
       track-by="id"
       value-key="id"     
@@ -220,6 +223,7 @@
       v-model="contract.contract_vehicle_number_id" 
       filterable
       class="w-100"
+       @visible-change="getPrimeIdIqNumber"   
       track-by="id"
       value-key="id"     
       allow-create
@@ -245,15 +249,19 @@
      <el-select
       v-model="contract.contract_number_id" 
       filterable
+      ref="primeContractNumber"
+      name="primeContractNumber"
       class="w-100"
       track-by="id"
+      @visible-change="getCnData"   
       value-key="id"     
       allow-create
       default-first-option
       placeholder="Select Vehicle">
  
     <el-option
-      v-for="item in cContractNoOptions"     
+      v-for="item in cContractNoOptions"   
+   
       :key="item.id"
       :label="item.name"
       :value="item.id">
@@ -268,6 +276,9 @@
       v-model="contract.subcontract_number_id" 
       filterable
       class="w-100"
+      name="subContractNumber"
+      ref="subContractNumber"
+      @visible-change="getScData"   
       track-by="id"
       value-key="id"     
       allow-create
@@ -292,6 +303,7 @@
       v-model="contract.contract_prime_id" 
       filterable
       class="w-100"
+      @visible-change="getPrimeData"   
       track-by="id"
       value-key="id"     
       allow-create
@@ -505,6 +517,7 @@ export default {
   data() {
     return {
       loading: true,
+      da: '',
       statusId: null, 
       componentKey: 0,
       // contractNickname: '',
@@ -534,18 +547,6 @@ export default {
     };
   },
   mounted() {
-  this.fetchCustomerAgencies()
-  this.fetchContractGroupTypes() 
-  this.fetchContractStatuses()
-  this.fetchCurrentPop()
-  this.fetchPrime()
-  this.fetchClassificationTypes()
-  this.fetchVehicles()
-  this.fetchVehicleNumbers()
-  this.fetchContractNumber()
-  this.fetchSubcontractNumbers()
-  //  console.log(this.$projectPrivileges[this.$route.params.programId][this.$route.params.contractId])  
-
     if (this.$route.params.contractId) {
       this.fetchContract({
         id: this.$route.params.contractId,
@@ -561,6 +562,7 @@ export default {
       "fetchCurrentPop",
       "fetchContractGroupTypes",  
       "fetchCustomerAgencies", 
+      
       'fetchContractStatuses',
       "fetchVehicles",
       "fetchPrime",
@@ -631,10 +633,70 @@ export default {
     },
    log(e){
     console.log(e)
+    },  
+     getCAgency(e){
+      if (e && !this.cCustomerAgenciesOptions) {
+          this.fetchCustomerAgencies()
+      }
+      if(e && this.cCustomerAgenciesOptions && this.cCustomerAgenciesOptions.length < 1) {
+           this.fetchCustomerAgencies()
+      }
     },
-  
+    getStatus(e){
+      if (e && !this.cStatusOptions) {
+         this.fetchContractStatuses()
+      }
+      if(e && this.cStatusOptions && this.cStatusOptions.length < 1) {
+         this.fetchContractStatuses()
+      }
+    },
+     getVehicle(e){
+      if (e && !this.cVehicleOptions) {
+           this.fetchVehicles()
+      }
+      if (e && this.cVehicleOptions && this.cVehicleOptions.length < 1) {
+          this.fetchVehicles()
+      }
+    },
+    getPrimeIdIqNumber(e){
+      if (e && !this.cPrimeIdiqOptions) {
+            this.fetchVehicleNumbers()
+      }
+      if (e && this.cPrimeIdiqOptions && this.cPrimeIdiqOptions.length < 1) {
+           this.fetchVehicleNumbers()
+      }
+    },
+    getCnData(e){
+      if (e && !this.cContractNoOptions) {
+          this.fetchContractNumber()
+      }
+      if(e && this.cContractNoOptions && this.cContractNoOptions.length < 1) {
+          this.fetchContractNumber()
+      }
+    },
+    getScData(e){
+      if (e && !this.cSubcontractNoOptions) {
+          this.fetchSubcontractNumbers()
+      }
+      if (e && this.cSubcontractNoOptions && this.cSubcontractNoOptions.length < 1) {
+          this.fetchSubcontractNumbers()
+      }
+    },
+     getPrimeData(e){
+      if (e && !this.cPrimeOptions) {
+          this.fetchPrime()
+      }
+      if (e && this.cPrimeOptions && this.cPrimeOptions.length < 1) {
+          this.fetchPrime()
+      }
+    },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
+      if(tab.key == "tab2") {
+          this.fetchContractGroupTypes()   
+          this.fetchCurrentPop()
+          this.fetchClassificationTypes()
+      }
     },
   //    _isallowed(salut) {
   //       var programId = this.$route.params.programId;
@@ -656,6 +718,7 @@ export default {
       "getContractGroupTypes",
       "getCurrentPop",
       "getContractClassifications",
+      'getContractGroupOptions',
       "getContractStatusesFilter",
       "getFilterValue", 
       "getPrime",

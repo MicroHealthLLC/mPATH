@@ -39,7 +39,7 @@
       </el-input>     
          <el-select
           class="w-100 mx-2"
-          v-model="C_groupFilter" 
+          v-model="C_projectGroupFilter" 
           track-by="id"
           value-key="id"
           multiple
@@ -116,8 +116,8 @@
            placeholder="Select Contract Type"
            >
           <el-option
-            v-for="item in getContractTypeOptions"
-            :value="item.value"
+            v-for="item in getContractGroupOptions"
+            :value="item.id"
             :key="item.id"
             :label="item.name"
             >
@@ -130,7 +130,7 @@
         >
          <el-select
             class="w-100"
-            v-model="C_projectGroupFilter" 
+            v-model="C_newContractGroupFilter" 
             track-by="id"
             value-key="id"
             clearable
@@ -160,12 +160,12 @@
     
       <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
        <div class="pr-3">   
-          <router-view
+          <!-- <router-view
             :key="$route.path"
             :facility="currentFacility"
             :contractClass="currectContract"
             :facilityGroup="currentFacilityGroup"
-          ></router-view>
+          ></router-view> -->
         </div>
       </div>
     </div>
@@ -184,7 +184,7 @@ export default {
   data() {
     return {
       currentFacility: {},
-      currentContract: {},
+      // currentContract: {},
       dialogVisible: false,
       currentFacilityGroup: {},
       projectNameText: '',
@@ -205,13 +205,12 @@ export default {
      'setContractTable', 
      'setGroupFilter', 
      'SET_CONTRACT_STATUS',
-     'setContractTypeFilter'
+     'setContractTypeFilter',
+     'setNewContractGroupFilter',
+     'SET_CONTRACT_GROUP_TYPES'
      ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
 
-    showFacility(facility) {
-      this.currentFacility = facility;
-    },
     handleClick(tab, event) {
         console.log(tab, event);
     }, 
@@ -225,7 +224,7 @@ export default {
           contract: {
             nickname: this.contractNameText,
             name: this.contractNameText,
-            facility_group_id: this.C_projectGroupFilter.id,
+            facility_group_id: this.C_newContractGroupFilter.id,
             project_id: this.$route.params.programId,
             contract_type_id: this.C_typeFilter,
           }
@@ -275,9 +274,10 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "contractsLoaded",
-      "getContractTypeFilter",
-      "getContractTypeOptions",
+      "getContractGroupTypes",
+      'getNewContractGroupFilter',
       "contractStatus",
+      'getContractGroupOptions',
       "contracts",
       'getContractTable',
       'getProjectGroupFilter',
@@ -290,20 +290,31 @@ export default {
      return `/programs/${this.$route.params.programId}/settings`  
     },
     tableData(){
-      if(this.contracts){
-      let contractData = this.contracts[0]         
+      if(this.contracts[0] && this.contracts[0].length > 0 ){
+      let contractData = this.contracts[0].map(t => t)
       .filter((td) => {
-          if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
-            let group = this.C_groupFilter.map((t) => t.name);
+         console.log(td)
+          if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
+            let group = this.C_projectGroupFilter.map((t) => t.id);
             return group.includes(td.facility_group_id);
+           
           } else return true;
         });
        return contractData
       }    
    },
-      // Filter for Projects Table
-    C_groupFilter: {
-      get() {
+
+    C_typeFilter: {
+        get() {
+          return this.getContractGroupTypes
+        },
+        set(value) {
+          this.SET_CONTRACT_GROUP_TYPES(value)
+        }      
+      },
+    // Filter when adding new Project
+     C_projectGroupFilter: {
+       get() {
         return this.getGroupFilter;
       },
       set(value) {
@@ -311,22 +322,14 @@ export default {
         this.setGroupFilter(value);
       },
     },
-    C_typeFilter: {
-        get() {
-          return this.getContractTypeFilter
-        },
-        set(value) {
-          this.setContractTypeFilter(value)
-        }
-      },
-    // Filter when adding new Project
-     C_projectGroupFilter: {
-      get() {
-        return this.getProjectGroupFilter;
+
+     C_newContractGroupFilter: {
+       get() {
+        return this.getNewContractGroupFilter;
       },
       set(value) {
         // console.log(value)
-        this.setProjectGroupFilter(value);
+        this.setNewContractGroupFilter(value);
       },
     },
   },
@@ -338,15 +341,15 @@ export default {
     }
   },
   watch: {
-    contentLoaded: {
-      handler() {
-        if (this.$route.params.contractId) {
-          this.currentContract = this.contracts[0].find(
-             (c) => c.id == this.$route.params.contractId
-          );
-        }
-      },
-    },
+    // contentLoaded: {
+    //   handler() {
+    //     if (this.$route.params.contractId) {
+    //       this.currentContract = this.contracts[0].find(
+    //          (c) => c.id == this.$route.params.contractId
+    //       );
+    //     }
+    //   },
+    // },
     contractStatus: {
       handler() {
         if (this.contractStatus == 200 && this.contractNameText) {
