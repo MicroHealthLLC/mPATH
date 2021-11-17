@@ -715,6 +715,7 @@
                     <div class="col">
                       <p
                         class="badge badge-secondary badge-pill font-weight-light"
+                        v-if="facility && facility.facility"
                       >
                         {{ facility.facility.facilityGroupName }}
                       </p>
@@ -797,6 +798,7 @@
               <div
                 v-show="isSheetsView" 
                 class="col-3"
+                v-if="facility && facility.facility"
                 data-cy="date_set_filter"
               >
                 <el-card class="box-card" style="background-color: #fafafa">

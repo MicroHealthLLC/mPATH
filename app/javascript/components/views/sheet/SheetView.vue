@@ -59,7 +59,7 @@
             :facility="currentFacility"
             :contractClass="currentContract"
             :facilityGroup="currentFacilityGroup"
-             :contractGroup="currentContractGroup"
+            :contractGroup="currentContractGroup"
           ></router-view>
         </div>
       </div>
@@ -81,6 +81,7 @@ export default {
     return {
       currentFacility: {},
       currentContract: {},
+      facGroupId:null,
       currentContractGroup: {},
       currentFacilityGroup: {},
       expanded: {
@@ -111,6 +112,9 @@ export default {
        this.currentContract = this.facilityGroupFacilities(group)[0] || {};
       }
     },
+    // log(e){
+    //   console.log(e)
+    // },
     showFacility(facility) {
       this.currentFacility = facility;
     },
@@ -152,7 +156,7 @@ export default {
     }
   },
   beforeMount() {
-   this.fetchContracts()
+   this.fetchContracts()  
     if (this.contentLoaded && this.$route.params.projectId) {
       this.currentFacility = this.facilities.find(
         (facility) => facility.facilityId == this.$route.params.projectId
@@ -182,11 +186,14 @@ export default {
     },
   currentFacility: {
     handler() {
-        if (this.$route.params.projectId && !this.$route.params.contractId) {
-        this.currentFacilityGroup = this.facilityGroups.find(
-        (group) => group.id == this.currentFacility.facility.facilityGroupId
-      );
-        }      
+     if (this.currentFacility && this.currentFacility.facility) { 
+        this.facGroupId = this.currentFacility.facility.facilityGroupId
+      } else if (this.currentFacility && !this.currentFacility.facility && this.currentFacility.contractTypeId) {
+        this.facGroupId = this.currentFacility.facilityGroupId 
+      } 
+      this.currentFacilityGroup = this.facilityGroups.find(
+        (group) => group.id == this.facGroupId 
+      );        
       this.expanded.id = this.currentFacilityGroup.id;
     },
     },

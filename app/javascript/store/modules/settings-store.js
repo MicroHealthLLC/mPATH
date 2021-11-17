@@ -27,7 +27,8 @@ const settingsStore = {
     group_loaded: true,
     groups_loaded: true,
     group_status: 0,
-  
+    new_contract_group_filter: []
+   
   }),
   actions: {
   createContract({ commit }, { contract }) {
@@ -388,12 +389,13 @@ const settingsStore = {
     setContractTypeFilter: (state, value) => state.contract_type_filter = value,
     setContractTable: (state, value) => state.contract_table = value,
     setGroupFilter: (state, value) => state.group_filter = value,
+    setNewContractGroupFilter: (state, loaded) => (state.new_contract_group_filter = loaded),
 
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),    
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
-    TOGGLE_CONTRACTS_LOADED: (state, loaded) => (state.contracts_loaded = loaded),
+    TOGGLE_CONTRACTS_LOADED: (state, loaded) => (state.contracts_loaded = loaded),  
 
     SET_CONTRACT_GROUP_TYPES: (state, loaded) => (state.contract_group_types = loaded),
     SET_CUSTOMER_AGENCIES_FILTER: (state, loaded) => (state.customer_agencies_filter = loaded),
@@ -419,6 +421,7 @@ const settingsStore = {
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
+    getNewContractGroupFilter: (state) => state.new_contract_group_filter,
 
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
     getContractStatusesFilter: (state) => state.contract_statuses_filter,
@@ -443,12 +446,21 @@ const settingsStore = {
     contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: state => state.contract_type_filter,
-    getContractTypeOptions: (state, getters) => {
+    getContractGroupOptions: (state, getters) => {
       var options = [
-        {id: 0, name: 'Prime Contract', value: 0},
-        {id: 1, name: 'Non-Prime Contract', value: 1},
-        {id: 3, name: 'Prime Vehicles & ID IQsContract', value: 3},
-        ]
+        {
+          "id": 1,
+          "name": "Prime Contract"
+        },
+        {
+          "id": 2,
+          "name": "Non Prime contract"
+        },
+        {
+          "id": 3,
+          "name": "Prime vehicles and ID IQs"
+        },
+       ]
       return options;
     },
   },
@@ -459,9 +471,8 @@ const contractFormData = (contract) => {
   // Append all required form data
   if (contract.id) {
     formData.append("contract[id]", contract.id)
+    formData.append("contract[facility_group_name]", contract.facility_group_name)
   }
-  if (contract.facility_group_name) {
-    formData.append("contract[facility_group_name]", contract.facility_group_name);   }
   formData.append("contract[facility_group_id]", contract.facility_group_id); 
   formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
