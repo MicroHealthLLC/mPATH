@@ -31,7 +31,7 @@ class Contract < ApplicationRecord
     #   contract_current_pop: contract_current_pop.as_json(except: [:created_at, :updated_at]),
     #   contract_classification: contract_classification.as_json(except: [:created_at, :updated_at])
     # ).as_json
-    self.as_json(except: [:created_at, :updated_at]).merge(facility_group_name: facility_group.name)
+    self.as_json(except: [:created_at, :updated_at]).merge(facility_group_name: facility_group&.name)
   end
 
   def self.params_to_permit
@@ -79,6 +79,7 @@ class Contract < ApplicationRecord
       contract = self
     end
     contract.transaction do
+      c_params.reject!{|k,v| v == 'undefined'}
 
       if c_params[:contract_type_id] && !ContractType.exists?(id: c_params[:contract_type_id])
         c_params[:contract_type_id] = ContractType.create(name: c_params[:contract_type_id]).id
@@ -115,7 +116,9 @@ class Contract < ApplicationRecord
       contract.user_id = user.id
       contract.save
     end
-
+    if params[:facility_group_name]
+      contract.facility_group.update(name: params[:facility_group_name])
+    end
     contract
   end
 
