@@ -23,6 +23,7 @@ class Contract < ApplicationRecord
     if options[:include_associated_names]
       self.as_json(except: [:created_at, :updated_at, :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id, :contract_classification_id]).merge(
         class_name: self.class.name,
+        contract_type: contract_type.as_json(except: [:created_at, :updated_at]),
         contract_status: contract_status.as_json(except: [:created_at, :updated_at]),
         contract_customer: contract_customer.as_json(except: [:created_at, :updated_at]),
         contract_vehicle: contract_vehicle.as_json(except: [:created_at, :updated_at]),
