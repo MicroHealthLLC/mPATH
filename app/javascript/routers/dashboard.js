@@ -281,7 +281,7 @@ export default new VueRouter({
         },
         {
           name: "SheetContract",
-          path: "contracts/:contractId/contract",
+          path: "contracts/:contractId",
           component: SheetContract,
         },
         // {

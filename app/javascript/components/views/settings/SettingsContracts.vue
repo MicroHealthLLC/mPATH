@@ -216,7 +216,7 @@ export default {
     }, 
     goToContract(index, rows){        
          this.$router.push(
-         `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/contract`
+         `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}`
       );
     },
     saveNewContract() {

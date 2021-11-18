@@ -17,7 +17,7 @@ class Api::V1::ContractsController < AuthenticatedController
 
   def show
     @contract = Contract.find(params[:id])
-    render json: @contract.to_json
+    render json: @contract.to_json(options: {include_associated_names: true})
   end
 
   def create
