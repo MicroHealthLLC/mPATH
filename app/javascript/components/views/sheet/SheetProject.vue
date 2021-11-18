@@ -45,6 +45,7 @@
 
                     <div class="col">
                       <p
+                       v-if="facility && facility.facility"
                         class="badge badge-secondary badge-pill font-weight-light"
                       >
                         {{ facility.facility.facilityGroupName }}
@@ -127,6 +128,7 @@
 
               <div
                 v-show="isSheetsView" 
+                 v-if="facility && facility.facility"
                 class="col-3"
                 data-cy="date_set_filter"
               >

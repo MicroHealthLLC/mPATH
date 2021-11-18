@@ -25,7 +25,7 @@
     <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2" style="position:absolute"> 
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
-     <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
+     <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%" :load="log(filteredFacilityGroups)">
       
         <el-input
           type="search"          
@@ -87,12 +87,12 @@
      <h5 class="mh-orange-text"> Contracts
          <span 
           class="badge badge-secondary badge-pill pill"
-          >{{ props.row.facilities.length }}
+          >{{ props.row.contracts.length }}
         </span>
         </h5>
        <ul class="pl-3">
-          <li v-for="item, i in props.row.facilities" :key="i">
-              {{ item.facilityName }}
+          <li v-for="item, i in props.row.contracts" :key="i">
+              {{ item.nickname }}
           </li>
         </ul>
 
@@ -104,7 +104,16 @@
       
       </template>
     </el-table-column>
-    <el-table-column prop="name" sortable label="Groups"></el-table-column>
+    <el-table-column prop="name" sortable label="Groups">
+  <template slot-scope="props">
+   {{props.row.name}}  
+    <span class="ml-5 mr-2"><i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} </span> 
+    <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{ props.row.contracts.length }}
+  </template>
+
+    </el-table-column>
+    
+    
    </el-table>  
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
@@ -168,15 +177,6 @@ export default {
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS']), 
    ...mapActions(["createGroup", "fetchGroups", "updateGroup"]),
-    expandFacilityGroup(group) {
-      if (group.id == this.expanded.id) {
-        this.expanded.id = "";
-      } else {
-        this.expanded.id = group.id;
-        this.currentFacilityGroup = group;
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
-      }
-    },
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
@@ -185,6 +185,9 @@ export default {
     closeAddGroupBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
+    },
+    log(e){
+      console.log(e)
     },
     addGroup(){
       this.dialogVisible = true;    
