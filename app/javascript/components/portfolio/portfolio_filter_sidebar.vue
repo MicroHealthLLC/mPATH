@@ -229,7 +229,7 @@
  
       </el-tab-pane>
 
-      <el-tab-pane label="Tasks, Issues, Risks">
+      <el-tab-pane label="Tasks, Issues, Risks, Lessons">
   <!-- Put this top row/section into two tabs: Projects \ Favorites -->
         <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
         <div class="row pt-3 pb-2" >
@@ -389,7 +389,33 @@
               </el-select> 
             </div>             
           </div>
-        </div>        
+        </div>
+        <div class="row pt-3 pb-2">
+          <div class="col-md-4" style="border-right:solid lightgray .8px">
+            <h5 class="mb-0">Lessons</h5>
+            <div>
+              <label class="font-sm mb-0">Lesson Stages</label>
+               <el-select
+                  v-model="C_portfolioLessonStageFilter"
+                  class="w-100"
+                  track-by="name"
+                  value-key="id"
+                  data-cy="lesson_stage"
+                  multiple
+                  clearable
+                  placeholder="Select Lesson Stage"
+                  >
+                <el-option
+                  v-for="item in portfolioLessonStages.all_stages"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.name"
+                  >
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
       </div> 
 
       </el-tab-pane>   
@@ -576,9 +602,11 @@ export default {
       'portfolioTaskStages',
       'portfolioIssueStages',
       'portfolioRiskStages',
+      'portfolioLessonStages',
       'portfolioTaskStagesFilter',
       'portfolioIssueStagesFilter',
       'portfolioRiskStagesFilter',
+      'portfolioLessonStagesFilter',
       'portfolioIssueSeverities',
       'portfolioIssueSeveritiesFilter',
       'portfolioNameFilter',
@@ -778,7 +806,14 @@ export default {
         this.setPortfolioIssueTypesFilter(value)
       }
     },
-
+    C_portfolioLessonStageFilter: {
+      get() {
+        return this.portfolioLessonStagesFilter
+      },
+      set(value) {
+        this.setPortfolioLessonStagesFilter(value)
+      }
+    },
     C_facilityGroupFilter: {
       get() {
         return this.facilityGroupFilter
@@ -891,6 +926,7 @@ export default {
      'fetchPortfolioTaskStages',
      'fetchPortfolioIssueStages',
      'fetchPortfolioRiskStages',
+     'fetchPortfolioLessonStages',
      'fetchPortfolioIssueTypes',
      'fetchPortfolioIssueSeverities',
      'fetchPortfolioRiskPriorities',
@@ -947,6 +983,7 @@ export default {
       'setPortfolioIssueStagesFilter',
       'setPortfolioRiskStages',
       'setPortfolioRiskStagesFilter',
+      'setPortfolioLessonStagesFilter',
       'setPortfolioIssueTypes',
       'setPortfolioIssueTypesFilter',
       'setPortfolioIssueSeveritiesFilter',
@@ -1000,6 +1037,7 @@ export default {
         // }
         // if(this.portfolioIssueStages.all_stages && this.portfolioIssueStages.all_stages.length < 1){
           this.fetchPortfolioIssueStages()
+          this.fetchPortfolioLessonStages()
         // }
         if(this.portfolioIssueTypes && this.portfolioIssueTypes.length < 1){
           this.fetchPortfolioIssueTypes()
@@ -1376,6 +1414,7 @@ export default {
       this.setPortfolioTaskStagesFilter([])
       this.setPortfolioIssueStagesFilter([])
       this.setPortfolioRiskStagesFilter([])
+      this.setPortfolioLessonStagesFilter([])
       this.setPortfolioIssueSeveritiesFilter([])
       this.setPortfolioIssueTypesFilter([])
       this.setPortfolioRiskApproachesFilter([])
@@ -1423,6 +1462,7 @@ export default {
       this.setPortfolioTaskStagesFilter([])
       this.setPortfolioIssueStagesFilter([])
       this.setPortfolioRiskStagesFilter([])
+      this.setPortfolioLessonStagesFilter([])
       this.setPortfolioIssueSeveritiesFilter([])
       this.setPortfolioIssueTypesFilter([])
       this.setPortfolioRiskApproachesFilter([])
