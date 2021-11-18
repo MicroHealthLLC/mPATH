@@ -1,6 +1,5 @@
 <template>
-  <!-- <div id="tabbar" data-cy="main_tab" :class="{ 'd-none': isProgramView}">  -->
-  <div id="tabbar" data-cy="main_tab">   
+  <div id="tabbar" data-cy="main_tab"> 
     <router-link v-if="permitted('sheets_view')" :to="routeSheetSwap" tag="div">
       <div class="badge" :class="{ active: isSheetsView }" data-cy="sheets_tab">
         Sheet
@@ -84,6 +83,12 @@ export default {
     isGanttView() {
       return this.$route.name === "GanttChartView";
     },
+      isSettingsView() {
+      return this.$route.name.includes("SettingsView") ||
+             this.$route.name.includes("SettingsProjects") ||
+             this.$route.name.includes("SettingsContracts") ||
+             this.$route.name.includes("SettingsGroups")
+      },
     isCalendarView() {
       return this.$route.name.includes("Calendar");
     },
@@ -105,7 +110,7 @@ export default {
         return route.replace("map", "sheet");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "sheet");
-      } else if (this.isProgramSettingsView) {
+      } else if (this.isSettingsView) {
         return route.replace("settings", "sheet");
       } else if (this.isCalendarView) {
         return route.replace("calendar", "sheet");
@@ -137,7 +142,7 @@ export default {
         return route.replace("sheet", "map");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "map");
-      } else if (this.isProgramSettingsView) {
+      } else if (this.isSettingsView) {
         return route.replace("settings", "map");      
       } else if (this.isCalendarView) {
         return route.replace("calendar", "map");
@@ -160,6 +165,8 @@ export default {
         return route.replace("sheet", "kanban");
       } else if (this.isSheetsView && this.$route.params.projectId) {
         return `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks`;
+      }  else if (this.isSettingsView) {
+        return route.replace("settings", "kanban");     
       } else if (this.isSheetsView && !route.includes("notes")) {
         return `/programs/${this.$route.params.programId}/kanban`;
       } else if (this.isCalendarView) {
@@ -197,6 +204,8 @@ export default {
         return route.replace("sheet", "calendar");
       } else if (this.isSheetsView && this.$route.params.projectId) {
         return `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks`;
+      } else if (this.isSettingsView) {
+        return route.replace("settings", "calendar");       
       } else if (this.isSheetsView && !route.includes("notes")) {
         return `/programs/${this.$route.params.programId}/calendar`;
       } else if (this.isKanbanView) {
