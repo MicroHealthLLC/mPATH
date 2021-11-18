@@ -552,6 +552,13 @@ export default {
   },
   mounted() {
     if (this.$route.params.contractId) {
+      this.getCAgency()
+      this.getStatus()
+      this.getVehicle()
+      this.getPrimeIdIqNumber()
+      this.getCnData()
+      this.getScData()
+      this.getPrimeData()
       this.fetchContract({
         id: this.$route.params.contractId,
         ...this.$route.params,
@@ -650,46 +657,27 @@ export default {
       }
     },
     getVehicle(e) {
-      if (e && !this.cVehicleOptions) {
-        this.fetchVehicles();
-      }
-      if (e && this.cVehicleOptions && this.cVehicleOptions.length < 1) {
+      if (!this.cVehicleOptions) {
         this.fetchVehicles();
       }
     },
     getPrimeIdIqNumber(e) {
-      if (e && !this.cPrimeIdiqOptions) {
-        this.fetchVehicleNumbers();
-      }
-      if (e && this.cPrimeIdiqOptions && this.cPrimeIdiqOptions.length < 1) {
+      if (!this.cPrimeIdiqOptions) {
         this.fetchVehicleNumbers();
       }
     },
     getCnData(e) {
-      if (e && !this.cContractNoOptions) {
-        this.fetchContractNumber();
-      }
-      if (e && this.cContractNoOptions && this.cContractNoOptions.length < 1) {
+      if (!this.cContractNoOptions) {
         this.fetchContractNumber();
       }
     },
     getScData(e) {
-      if (e && !this.cSubcontractNoOptions) {
-        this.fetchSubcontractNumbers();
-      }
-      if (
-        e &&
-        this.cSubcontractNoOptions &&
-        this.cSubcontractNoOptions.length < 1
-      ) {
+      if (!this.cSubcontractNoOptions) {
         this.fetchSubcontractNumbers();
       }
     },
     getPrimeData(e) {
-      if (e && !this.cPrimeOptions) {
-        this.fetchPrime();
-      }
-      if (e && this.cPrimeOptions && this.cPrimeOptions.length < 1) {
+      if (!this.cPrimeOptions) {
         this.fetchPrime();
       }
     },
