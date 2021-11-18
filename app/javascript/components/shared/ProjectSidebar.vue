@@ -57,7 +57,7 @@
                  <div v-for="c in object.contracts" :key="c.id">
                   <router-link               
                 :to="
-                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}/contract`
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}`
                 "
               >
                 <div
