@@ -1,6 +1,6 @@
 <template>
   <div
-    v-loading="!contentLoaded"
+    v-loading="!projectsLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -20,12 +20,15 @@
       </h4>
     </el-breadcrumb>
    
-  <div class="my-1 pb-2 buttonWrapper">
-    <el-button @click.prevent="addProject" class="bg-primary text-light mb-2" style="position:absolute"> 
-    <i class="far fa-plus-circle mr-1"></i> Add Project
-    </el-button>
-     <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
-       
+  <div class="my-1 pb-2 buttonWrapper container-fluid">
+    <div class="row px-0">
+    <div class="col">
+      <el-button @click.prevent="addProject" class="bg-primary text-light mb-2"> 
+      <i class="far fa-plus-circle mr-1"></i> Add Project
+      </el-button>
+    </div>
+
+     <div class="col">       
         <el-input
           type="search"          
           placeholder="Search Projects"
@@ -36,7 +39,9 @@
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>  
+     </div>
 
+      <div class="col pl-0">
        <el-select
           class="w-100 mx-2"
           v-model="C_groupFilter" 
@@ -57,29 +62,29 @@
           
           </el-select>   
       </div>
+    </div>
   </div>
   
-    <el-table :data="tableData.filter(data => !search || 
-        data.facilityName.toLowerCase().includes(search.toLowerCase())).reverse()" 
-        style="width: 100%"  height="450"
-        
+    <el-table v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || 
+        data.facility_name.toLowerCase().includes(search.toLowerCase())).reverse()" 
+        style="width: 100%"  height="450"        
       >
-    <el-table-column prop="facilityName" sortable label="Project" :key="componentKey"> 
+    <el-table-column prop="facility_name" sortable label="Project"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"          
-            v-model="scope.row.facilityName" controls-position="right"></el-input>
+            v-model="scope.row.facility_name" controls-position="right"></el-input>
        </template>
 
 
     </el-table-column>
-    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
-          <template slot-scope="scope">
+    <el-table-column prop="facility_group_name" sortable filterable label="Group">
+          <!-- <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
              :key="componentKey"  
             v-model="scope.row.facilityGroupName"></el-input>
-       </template>
+       </template> -->
     </el-table-column>
     
 
@@ -137,15 +142,7 @@
         <el-button @click.prevent="saveNewProject" class="bg-primary text-light mr-2">Save</el-button>
         </div>
     </form>
-   </el-dialog>
-
-       <div class="pr-3">   
-          <router-view
-            :key="$route.path"
-            :facility="currentFacility"
-            :facilityGroup="currentFacilityGroup"
-          ></router-view>
-        </div>
+   </el-dialog>       
       </div>
     </div>
   </div>
@@ -153,7 +150,7 @@
 
 <script>
 import axios from "axios";
-import { mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
   name: "SettingsProjects",
@@ -162,11 +159,9 @@ export default {
   },
   data() {
     return {
-      currentFacility: {},
       dialogVisible: false,
+      programId: this.$route.params.programId,
       search: '',
-      componentKey: 0,
-      currentFacilityGroup: {},
       selectedProjectGroup: null, 
       newProjectNameText: '',
       value:'',
@@ -175,17 +170,14 @@ export default {
       },
     };
   },
+  mounted(){
+    if(this.$route.params){
+    this.fetchProjects({ id : this.programId })
+    }   
+  },
   methods: {
+   ...mapActions(["fetchProjects"]),
    ...mapMutations(['setProjectGroupFilter', 'setGroupFilter']), 
-    expandFacilityGroup(group) {
-      if (group.id == this.expanded.id) {
-        this.expanded.id = "";
-      } else {
-        this.expanded.id = group.id;
-        this.currentFacilityGroup = group;
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
-      }
-    },
     goToProject(index, rows){        
          this.$router.push(
          `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`
@@ -196,13 +188,7 @@ export default {
       this.C_projectGroupFilter= null;
       this.newProjectNameText = ""  
     },
-    showFacility(facility) {
-      this.currentFacility = facility;
-    },
-    handleClick(tab, event) {
-        console.log(tab, event);
-    },
-    saveNewProject(e){
+     saveNewProject(e){
       e.preventDefault();     
       let formData = new FormData();
       formData.append("facility[facility_name]", this.newProjectNameText)
@@ -238,13 +224,13 @@ export default {
                 showClose: true,
               })   
             this.dialogVisible = false;  
-            this.componentKey += 1;  
+           this.fetchProjects({ id : this.programId })
        }
      })
     },
   saveEdits(index, rows){
-      let updatedProjectName = rows.facilityName;
-      let updatedGroupName = rows.facilityGroupName;
+      let updatedProjectName = rows.facility_name;
+      let updatedGroupName = rows.facility_group_name;
       let projectId = rows.id;
 // console.log(index)
 // console.log(rows)
@@ -271,6 +257,7 @@ export default {
                 type: "success",
                 showClose: true,
               })   
+              this.fetchProjects({ id : this.programId })
         
        }
      })
@@ -279,12 +266,13 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "projectsLoaded",
       "facilities",
+      "programProjects",
       'getProjectGroupFilter',
       'getGroupFilter',
       "facilityGroupFacilities",
       'filteredFacilityGroups',
-      'currentProject'
     ]),  
     // Filter for Projects Table
     C_groupFilter: {
@@ -310,60 +298,20 @@ export default {
       },
     },
     tableData(){
-     let projectData = this.currentProject.facilities.map(f => f.facility)
+      if (this.projectsLoaded){
+         if (this.programProjects && this.programProjects.length > 0){
+       return  this.programProjects.map(f => f.facility)
       .filter((td) => {
           if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
             let group = this.C_groupFilter.map((t) => t.name);
-            return group.includes(td.facilityGroupName);
+            return group.includes(td.facility_group_name);
           } else return true;
         });
-     return projectData
-   },
+        }   
+      }
+    } 
   },
-  beforeMount() {
-    if (this.contentLoaded && this.$route.params.projectId) {
-      this.currentFacility = this.facilities.find(
-        (facility) => facility.facilityId == this.$route.params.projectId
-      );
-    }
-  },
-  watch: {
-    // contentLoaded: {
-    //   handler() {
-    //     if (this.$route.params.projectId) {
-    //       this.currentFacility = this.facilities.find(
-    //         (facility) => facility.facilityId == this.$route.params.projectId
-    //       );
-    //     }
-    //   },
-    // },
-   contentLoaded: {
-      handler() {
-        if (this.$route.params.projectId) {
-          this.currentProject = this.facilities.find(
-            (facility) => facility.facilityId == this.$route.params.projectId
-          );
-        }
-      },
-    },
-    currentFacility: {
-      handler() {
-        this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facility.facilityGroupId
-        );
-
-        this.expanded.id = this.currentFacilityGroup.id;
-      },
-    },
-    facilities: {
-      handler() {
-        this.currentFacility = this.facilities.find(
-          (facility) => facility.facilityId == this.$route.params.projectId
-        );
-      },
-    },
-  },
-};
+ };
 </script>
 
 <style scoped lang="scss">

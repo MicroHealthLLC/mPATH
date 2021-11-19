@@ -7,11 +7,11 @@
           <div class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
             <form
-              :class="{ vh100: !contractLoaded }"
+              v-loading="!contractLoaded || saving"
               accept-charset="UTF-8"
               element-loading-text="Fetching Contract data. Please wait..."
               element-loading-spinner="el-icon-loading"
-              element-loading-background="rgba(0, 0, 0, 0.8)"
+              element-loading-background="rgba(0, 0, 0, 0.85)"
             >
               <hr class="mb-6 mt-4" />
               <div class="mt-2  d-flex align-items-center">
@@ -518,6 +518,7 @@ export default {
       da: "",
       statusId: null,
       componentKey: 0,
+      saving: false, 
       // contractNickname: '',
       // projectCode: null,
       inputText: "",
@@ -640,6 +641,7 @@ export default {
         id,
       });
       this.reRenderDropdowns();
+      this.saving = true
       // console.log(this.contract.contract_vehicle_id.id)
     },
     vehicleText(e) {
@@ -818,7 +820,10 @@ export default {
             type: "success",
             showClose: true,
           });
+          this.contractLoaded
           this.SET_CONTRACT_STATUS(0);
+          setTimeout(() => this.saving = false, 2000);
+        
         }
       },
     },

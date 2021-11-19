@@ -21,12 +21,14 @@
     </el-breadcrumb>
 
    
-<div class="my-1 pb-2 buttonWrapper">
-    <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2" style="position:absolute"> 
+ <div class="my-1 pb-2 buttonWrapper container-fluid">
+  <div class="row px-0">
+    <div class="col">
+    <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2"> 
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
-     <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%" :load="log(filteredFacilityGroups)">
-      
+     </div>    
+     <div class="col">     
         <el-input
           type="search"          
           placeholder="Search Group"
@@ -36,8 +38,9 @@
           data-cy=""
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>     
-
+      </el-input>  
+      </div> 
+      <div class="col pl-0">   
         <el-select
           class="w-100 mx-2"
           v-model="C_groupFilter" 
@@ -59,6 +62,7 @@
           </el-select>
       </div>
   </div>
+ </div>
   
    <el-table :data="filteredFacilityGroups.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%"  height="450">
     <el-table-column type="expand">

@@ -20,13 +20,14 @@
        CONTRACTS
       </h4>
     </el-breadcrumb>   
- <div class="my-1 pb-2 buttonWrapper">
-    <el-button @click.prevent="addContract" class="bg-primary text-light mb-2" style="position:absolute"> 
-    <i class="far fa-plus-circle mr-1"></i> Add Contract
-    </el-button>
-     <div class="mb-2 mr-2 ml-auto d-flex" style="width:75%">
-       <!-- <label>GROUP</label> -->
-     
+ <div class="my-1 pb-2 buttonWrapper container-fluid">
+  <div class="row px-0">
+    <div class="col">
+      <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
+      <i class="far fa-plus-circle mr-1"></i> Add Contract
+      </el-button>
+     </div>    
+     <div class="col">
         <el-input
           type="search"          
           placeholder="Search Contracts"
@@ -35,8 +36,10 @@
           v-model="search"
           data-cy=""
       >
-        <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>     
+         <el-button slot="prepend" icon="el-icon-search"></el-button>    
+        </el-input>    
+     </div> 
+       <div class="col pl-0">
          <el-select
           class="w-100 mx-2"
           v-model="C_projectGroupFilter" 
@@ -56,9 +59,10 @@
         </el-option>
           
           </el-select>
+       </div>
       </div>
   </div>
-   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table  v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
     <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
@@ -69,11 +73,11 @@
 
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
             v-model="scope.row.facility_group_name"></el-input>
-       </template>
+       </template> -->
     </el-table-column>
 
      <el-table-column label="Actions">
@@ -216,7 +220,7 @@ export default {
     }, 
     goToContract(index, rows){        
          this.$router.push(
-         `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}`
+         `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
       );
     },
     saveNewContract() {
