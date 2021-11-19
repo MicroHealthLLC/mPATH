@@ -172,11 +172,11 @@ export default {
   },
   mounted(){
     if(this.$route.params){
-    this.fetchProjects({ id : this.programId })
+    this.fetchFacilities(this.programId)
     }   
   },
   methods: {
-   ...mapActions(["fetchProjects"]),
+   ...mapActions(["fetchFacilities"]),
    ...mapMutations(['setProjectGroupFilter', 'setGroupFilter']), 
     goToProject(index, rows){        
          this.$router.push(
@@ -224,7 +224,7 @@ export default {
                 showClose: true,
               })   
             this.dialogVisible = false;  
-           this.fetchProjects({ id : this.programId })
+           this.fetchFacilities(this.programId)
        }
      })
     },
@@ -257,7 +257,7 @@ export default {
                 type: "success",
                 showClose: true,
               })   
-              this.fetchProjects({ id : this.programId })
+              this.fetchFacilities(this.programId)
         
        }
      })

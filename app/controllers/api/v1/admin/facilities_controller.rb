@@ -3,8 +3,8 @@ class Api::V1::Admin::FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show]
 
   def index
-    facility_projects = @project.facility_projects.includes(include_hash, :status).order(created_at: :desc).as_json
-    render json: {facilities: facility_projects, project: @project}
+    facility_projects = @project.facilities.includes(:facility_group).as_json
+    render json: {projects: facility_projects, program: @project}
   end
 
   def create

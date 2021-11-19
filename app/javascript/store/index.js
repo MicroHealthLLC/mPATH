@@ -1867,7 +1867,7 @@ export default new Vuex.Store({
     },
     fetchProjects({commit}) {
       return new Promise((resolve, reject) => {
-        http.get('${API_BASE_PATH}/projects.json')
+        http.get(`${API_BASE_PATH}/projects.json`)
           .then((res) => {
             commit('setProjects', res.data.projects)
             resolve()
