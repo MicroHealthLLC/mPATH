@@ -287,12 +287,14 @@
                   <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><i class="fas fa-clipboard-check text-success"></i></span>  
                   <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>   
                   <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>      
+                  <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                   <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.pastDue == false &&     
                       selectedEvent.hasStar == false && 
                       selectedEvent.isOnHold == false && 
                       selectedEvent.isDraft == false && 
+                      selectedEvent.briefing == false &&
                       selectedEvent.progess < 100">
                     
                     No flags at this time
@@ -574,7 +576,8 @@
        this.percentage = this.filteredCalendar.filtered.issues.map(issue => issue.progress)
        this.onhold = this.filteredCalendar.filtered.issues.map(issue => issue.onHold)
        this.draft = this.filteredCalendar.filtered.issues.map(issue => issue.draft)
-                   
+       this.briefing = this.filteredCalendar.filtered.issues.map(task => task.reportable)
+
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -601,7 +604,8 @@
             // color: this.colors.defaultColor,  
             hasStar: this.star[i] , 
             isDraft: this.draft[i],
-            isOnHold: this.onhold[i]              
+            isOnHold: this.onhold[i],
+            briefing: this.briefing[i]
             // timed: !allDay,            
           })
         }       
