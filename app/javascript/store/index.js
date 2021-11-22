@@ -41,6 +41,7 @@ export default new Vuex.Store({
     advancedFilter: [],
     myAssignmentsFilter:[],
     contentLoaded: false,
+    projectsLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
     showAdvancedFilter: false, 
@@ -194,6 +195,7 @@ export default new Vuex.Store({
       // state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
+    setProjectsLoaded: (state, loading) => state.projectsLoaded = loading,
     setToggleRACI: (state, raci) => state.toggleRACI = raci,
     setShowAllEventsToggle: (state, showAll) => state.showAllEventsToggle = showAll,
     setLastFocusFilter: (state, lastFocus) => state.lastCalendarFocus = lastFocus,
@@ -853,6 +855,7 @@ export default new Vuex.Store({
       }
     },
     contentLoaded: state => state.contentLoaded,
+    projectsLoaded: state => state.projectsLoaded,
     getToggleRACI: state => state.toggleRACI,
     getShowAllEventsToggle: state => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
@@ -1811,6 +1814,7 @@ export default new Vuex.Store({
               facilities.push({...facility, ...facility.facility})
             }
             commit('setFacilities', facilities)
+            commit('setProjectsLoaded', true)
             resolve()
           })
           .catch((err) => {
