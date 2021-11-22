@@ -329,6 +329,7 @@
               <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
               <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>  
               <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
+              <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
@@ -336,6 +337,7 @@
                       selectedEvent.isOnHold == false && 
                       selectedEvent.isDraft == false && 
                       selectedEvent.hasStar == false && 
+                      selectedEvent.briefing == false &&
                       selectedEvent.progess < 100">
                  No flags at this time
                 </span>    
@@ -624,6 +626,7 @@
       this.closed = this.filteredCalendar.filtered.risks.map(risk => risk.closed)    
       this.onhold = this.filteredCalendar.filtered.risks.map(risk => risk.onHold)   
       this.draft = this.filteredCalendar.filtered.risks.map(risk => risk.draft)       
+      this.briefing = this.filteredCalendar.filtered.risks.map(task => task.reportable)
 
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
@@ -666,7 +669,7 @@
           isClosed: this.closed[i], 
           isDraft: this.draft[i],
           isOnHold: this.onhold[i], 
-                             
+          briefing: this.briefing[i]
         })
       }
       // This is the main Events array pushed into Calendar
