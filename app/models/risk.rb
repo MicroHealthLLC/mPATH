@@ -108,7 +108,7 @@ class Risk < ApplicationRecord
     probability_name_hash[probability] || probability_name_hash[1]
   end
 
-  def portfolio_json
+  def portfolio_json(facility_groups: [], files: false)
     if draft
       self.on_hold = false if self.on_hold
       self.ongoing = false if self.ongoing
@@ -135,9 +135,9 @@ class Risk < ApplicationRecord
     in_progress = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && progress && start_date < Date.today && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -147,10 +147,40 @@ class Risk < ApplicationRecord
       completed = false
     end
 
+    attach_files = []
+    if files == true
+      rf = self.risk_files
+  
+      if rf.attached?
+        attach_files = rf.map do |file|
+          next if !file.blob.filename.instance_variable_get("@filename").present?
+          begin
+            if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+              {
+                id: file.id,
+                name: file.blob.filename.instance_variable_get("@filename"),
+                uri: file.blob.filename.instance_variable_get("@filename"),
+                link: true
+              }
+            else
+              {
+                id: file.id,
+                name: file.blob.filename,
+                uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+                link: false
+              }
+            end
+          rescue Exception => e
+            puts "There is an exception"
+          end
+        end.compact.uniq
+      end
+    end
+
      merge_h = { 
+      attach_files: attach_files,
       project_name: facility.facility_name, 
       program_name: project.name, 
-      risk_stage: risk_stage.try(:name),
       project_id: facility.id, 
       program_id: project.id, 
       category: task_type.name,
@@ -165,6 +195,7 @@ class Risk < ApplicationRecord
       ongoing: self.ongoing,
       risk_approach: risk_approach.humanize,
       risk_stage: risk_stage.try(:name),
+      risk_stage_id: self.risk_stage_id,
       priority_level: priority_level_name,
       completed: completed,
       planned: planned,
@@ -344,9 +375,9 @@ class Risk < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && !ongoing && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !ongoing && !on_hold && start_date > Date.today
-    if start_date && start_date < Date.today && progress && progress >= 100
+    if start_date && start_date <= Date.today && progress && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -364,10 +395,14 @@ class Risk < ApplicationRecord
       probability_name: probability_name,
       impact_level_name: impact_level_name,
       task_type: task_type.as_json,
+      category: task_type.try(:name),
       risk_stage: risk_stage.try(:name),
+      risk_stage_id: self.risk_stage_id,
       class_name: self.class.name,
       completed: completed,
       planned: planned,
+      project_group: self.facility_group.name,
+      program_name: project.name, 
       closed: closed,
       in_progress: in_progress,
       attach_files: attach_files,

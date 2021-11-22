@@ -309,6 +309,9 @@
                <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
             <i class="far fa-retweet text-success"></i>
                 </span>   
+                  <span v-else-if="selectedEvent.isClosed == true" class="mr-1">
+               <i class="far fa-retweet text-secondary"></i>
+                </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   
@@ -321,11 +324,14 @@
                 <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
                  <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-                <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+                <span v-if="selectedEvent.progess == 100 && !selectedEvent.isDraft && (selectedEvent.isOngoing == true && !selectedEvent.isClosed)" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"/></span>
                 <span v-if="selectedEvent.isOngoing == true && !selectedEvent.isClosed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
                <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`">  <i class="fas fa-pause-circle text-primary"></i></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
+                <span v-if="selectedEvent.planned == true" v-tooltip="`Planned`"><i class="fas fa-calendar-check text-info mr-1"></i></span>
+                <span v-if="selectedEvent.inProgress == true" v-tooltip="`In Progress`"><i class="far fa-tasks text-primary mr-1"></i></span>
+                <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
@@ -333,7 +339,10 @@
                       selectedEvent.hasStar == false && 
                       selectedEvent.isOnHold == false && 
                       selectedEvent.isDraft == false && 
-                      selectedEvent.progess < 100">
+                      selectedEvent.progess < 100 &&
+                      selectedEvent.planned == false &&
+                      selectedEvent.inProgress == false &&
+                      selectedEvent.briefing == false">
                       No flags at this time
                 </span> 
             </v-list-item-title>
@@ -624,7 +633,10 @@
         this.percentage = this.filteredCalendar.filtered.tasks.map(task => task.progress)
         this.onhold = this.filteredCalendar.filtered.tasks.map(task => task.onHold)
         this.draft = this.filteredCalendar.filtered.tasks.map(task => task.draft)
-           
+        this.planned = this.filteredCalendar.filtered.tasks.map(task => task.planned)
+        this.inprogress = this.filteredCalendar.filtered.tasks.map(task => task.inProgress)
+        this.briefing = this.filteredCalendar.filtered.tasks.map(task => task.reportable)
+
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -659,7 +671,10 @@
             isOngoing: this.ongoing[i], 
             isClosed: this.closed[i], 
             isDraft: this.draft[i],
-            isOnHold: this.onhold[i]           
+            isOnHold: this.onhold[i],
+            planned: this.planned[i],
+            inProgress: this.inprogress[i],
+            briefing: this.briefing[i],
           })
         }
           // This is the main Events array pushed into Calendar

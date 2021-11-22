@@ -17,7 +17,7 @@
         </div>
          <div class="ml-2">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
-        <span class="filterToggleWrapper mr-1 p-1" v-if="_isallowed('write')" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+        <span class="filterToggleWrapper mr-1 p-1" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
            <i class="fas fa-sliders-h p-2"></i>      
         </span>    
          </div>
@@ -41,7 +41,7 @@
           </el-option>
           </el-select>
          </div>
-  <div class="w-75" style="position:relative">  
+  <!-- <div class="w-75" style="position:relative">  
   <label class="font-sm my-0">Filters</label>      
   <el-collapse class="issuesFilter w-100"  style="position:absolute">
   <el-collapse-item name="1">
@@ -90,7 +90,7 @@
         </el-collapse-item>
       </el-collapse>  
             
-    </div>
+    </div> -->
       
        </div>
   
@@ -506,6 +506,8 @@
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
+  import {API_BASE_PATH} from './../../../mixins/utils'
+
   export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from'],
@@ -655,7 +657,7 @@
       },
       toggleWatched(issue) {
         http
-          .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
+          .put(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             this.issueUpdated(res.data.issue, false)
           })
@@ -1014,10 +1016,16 @@
      },
       sortedIssues:function() {
           return this.filteredIssues.filtered.issues.sort((a,b) => {
-          let modifier = 1;
+          let modifier = 1;          
           if(this.currentSortDir === 'desc') modifier = -1;
-          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
+            if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
+               if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
+          if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
+            }
+          } else 
+          if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
           let start = (this.currentPage-1)*this.C_issuesPerPage.value;

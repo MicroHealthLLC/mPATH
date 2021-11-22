@@ -50,7 +50,7 @@ class Issue < ApplicationRecord
     }
   end
 
-  def portfolio_json
+  def portfolio_json(facility_groups: [], files: false)
     self.on_hold = false if draft & on_hold
 
     is_overdue = false
@@ -62,20 +62,52 @@ class Issue < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today 
-    if start_date && progress && start_date < Date.today && progress && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
     
+    attach_files = []
+    if files == true
+      i_files = self.issue_files
+  
+      if i_files.attached?
+        attach_files = i_files.map do |file|
+          next if !file.blob.filename.instance_variable_get("@filename").present?
+          begin
+            if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+              {
+                id: file.id,
+                name: file.blob.filename.instance_variable_get("@filename"),
+                uri: file.blob.filename.instance_variable_get("@filename"),
+                link: true
+              }
+            else
+              {
+                id: file.id,
+                name: file.blob.filename,
+                uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+                link: false
+              }
+            end
+          rescue Exception => e
+            puts "There is an exception"
+          end
+        end.compact.uniq
+      end
+    end
+
     merge_h = { 
+      attach_files: attach_files,
       project_name: facility.facility_name, 
       program_name: project.name, 
       project_id: facility.id, 
       program_id: project.id, 
       is_overdue: is_overdue,
       issue_stage: issue_stage.try(:name),
+      issue_stage_id: self.issue_stage_id,
       program_progress:  self.project.progress,
       project_group_name: self.facility_group.name,
       project_due_date: self.facility_project.due_date,
@@ -224,9 +256,9 @@ class Issue < ApplicationRecord
     completed = false
     planned = false
 
-    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date < Date.today && progress < 100
+    in_progress = true if !draft && !on_hold && !planned && !is_overdue && start_date <= Date.today && progress < 100
     planned = true if !draft && !in_progress && !on_hold && start_date > Date.today
-    if start_date && progress && start_date < Date.today && progress >= 100
+    if start_date && progress && start_date <= Date.today && progress >= 100
       completed = true unless draft
       self.on_hold = false if self.on_hold && completed
     end
@@ -240,9 +272,12 @@ class Issue < ApplicationRecord
       attach_files: attach_files,
       completed: completed,
       planned: planned,
+      program_name: project.name, 
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
+      project_group: self.facility_group.name,
       issue_stage: issue_stage.try(:name),
+      issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),
       task_type_name: task_type_name,
       due_date_duplicate: due_date.as_json,

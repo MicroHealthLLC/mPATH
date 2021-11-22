@@ -68,11 +68,15 @@ class Api::V1::TasksController < AuthenticatedController
     @task.add_link_attachment(params)
     @task.reload
     # @task.create_or_update_task(params, current_user)
-
+    if params[:source] == "portfolio_viewer"
+      response = @task.portfolio_json
+    else
+      response = @task.to_json
+    end
     if @task.errors.any?
       render json: {task: @task.to_json, errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {task: @task.to_json}
+      render json: {task: response}
     end
   end
 

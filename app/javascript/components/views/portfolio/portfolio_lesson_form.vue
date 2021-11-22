@@ -48,6 +48,7 @@
         <button
           v-if="_isallowed('write')"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
+          data-cy="lesson_save_btn"
         >
           Save Lesson
         </button>
@@ -61,6 +62,7 @@
         <button
           class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
+          data-cy="lesson_close_btn"
         >
           Close
         </button>
@@ -109,47 +111,6 @@
           :class="{ 'font-sm': isMapView }"
         >
           <span
-            v-if="_isallowed('write')"
-            class="watch_action clickable mx-2"
-            @click.prevent.stop="toggleImportant"
-            v-tooltip="`Important`"
-          >
-            <span v-show="lesson.important">
-              <i class="fas fa-star text-warning"></i>
-            </span>
-            <span v-show="!lesson.important">
-              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-            </span>
-            <small
-              :class="{ 'd-none': isMapView }"
-              style="vertical-align:text-top"
-            >
-              Important
-            </small>
-          </span>
-
-          <span
-            v-if="_isallowed('write')"
-            class="watch_action clickable mx-2"
-            @click.prevent.stop="toggleReportable"
-            v-tooltip="`Briefings`" 
-          >
-            <span v-show="lesson.reportable">
-            <i class="fas fa-presentation text-primary"></i>
-            </span>
-            <span v-show="!lesson.reportable">
-              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-            </span>
-
-            <small
-              :class="{ 'd-none': isMapView }"
-              style="vertical-align:text-top"
-            >
-              Briefings
-            </small>
-          </span>
-          <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
@@ -171,13 +132,51 @@
               Draft
             </small>
           </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleImportant"
+            v-tooltip="`Important`"
+          >
+            <span v-show="lesson.important">
+              <i class="fas fa-star text-warning"></i>
+            </span>
+            <span v-show="!lesson.important">
+              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+            </span>
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Important
+            </small>
+          </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleReportable"
+            v-tooltip="`Briefings`" 
+          >
+            <span v-show="lesson.reportable">
+            <i class="fas fa-presentation text-primary"></i>
+            </span>
+            <span v-show="!lesson.reportable">
+              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+            </span>
+
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Briefings
+            </small>
+          </span>
         </div>
 
         <el-input
-          name="Lesson Name"
+          name="Lesson Name11"
           v-validate="'required'"
           v-model="lesson.title"
           type="text"
+          data-cy="lesson_name"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
           :readonly="!_isallowed('write')"
@@ -192,7 +191,7 @@
         >
         <el-input
           name="Description"
-
+          data-cy="lesson_description"
           type="textarea"
           v-validate="'required'"
           v-model="lesson.description"
@@ -264,8 +263,9 @@
         </div>
 
         <el-steps
+          v-if="validStages.length > 0 && lessonStages[this.programId].length >= 0"
           :active="
-            portfolioLessonStages.findIndex(
+            lessonStages[this.programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -273,10 +273,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': portfolioLessonStages.length >= 6 }"
+          :class="{ 'over-six-steps': lessonStages[this.programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in portfolioLessonStages"
+            v-for="stage in lessonStages[this.programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -658,7 +658,7 @@
             <div @click.prevent="downloadFile(file)">
                <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
+            <div v-if="!_isallowed('write')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -685,7 +685,7 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
+              v-if="!_isallowed('write')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>
@@ -800,6 +800,7 @@ export default {
       currentTab: "tab1",
       // projectName: this.$route.params.lesson.project_name, 
       loadedLesson: {},
+      programId: this.$route.params.programId,
       paginate: ["successes", "failures", "best_practices", "updates"],
       tabs: [
         {
@@ -860,6 +861,7 @@ export default {
       relatedTasks: [],
       relatedIssues: [],
       relatedRisks: [],
+      validStages:[], 
       successes: [],
       deleteSuccesses: [],
       failures: [],
@@ -1159,12 +1161,24 @@ export default {
       this.lesson.lesson_stage_id = null;
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
+        if(!this._isallowed('write')){
+        return
+      }
     },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
   },
@@ -1177,6 +1191,7 @@ export default {
       "facilityGroups",
       "lesson",
       "lessonsLoaded",
+      "portfolioLessons",
       'portfolioLessonStages',
       'portfolioTaskStages',
       "lessonStatus",
@@ -1192,7 +1207,9 @@ export default {
       return this.portfolioUsers
     },
     lessonStages(){
-    return this.portfolioLessonStages
+    if (this.portfolioLessonStages){
+      return this.portfolioLessonStages.program_stages
+    }     
   },
   },
   mounted() {
@@ -1222,6 +1239,7 @@ export default {
           this.relatedIssues = this.lesson.sub_issues;
           this.important = this.lesson.important;
           this.draft = this.lesson.draft;
+          this.validStages = this.portfolioLessonStages.all_stages
           this.reportable = this.lesson.reportable;
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
@@ -1270,7 +1288,8 @@ export default {
             showClose: true,
           });
           this.SET_LESSON_STATUS(0);
-          this.fetchPortfolioLessons();
+          let size = 250;
+          this.fetchPortfolioLessons({size});
           //Route to newly created task form page         
         }
         this.successes = this.lesson.successes;

@@ -1,12 +1,16 @@
 <template>
-  <div>
+  <div 
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Risk data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"  
+    >
     <form
       @submit.prevent="validateThenSave"
       class="risks-form mx-auto"
-      :class="{
-        _disabled: loading,
-      }"
       accept-charset="UTF-8"
+      :class="{ 'vh100' : !contentLoaded}"
     >
       <div class="form-group mb-1">
         <div class="mt-2 mx-4 d-flex align-items-center">
@@ -15,16 +19,23 @@
                <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
               </span>
-              <router-link :to="projectNameLink">{{
+              <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
                 facility.facilityName
-              }}</router-link>
+                }}
+            </span>
+            <span v-else>{{
+                risk.facilityName
+            }}
+            </span>            
+            </router-link>
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
               ></el-icon>
               <router-link
                 :to="
-                  `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/risks`
+                  backToRisks
                 "
                 >Risks</router-link
               >
@@ -32,7 +43,7 @@
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
               ></el-icon>
-              <span v-if="DV_risk.text.length > 0">{{ DV_risk.text }}</span>
+              <span v-if="DV_risk.text">{{ DV_risk.text }}</span>
               <span v-else style="color: gray">(Risk Name)</span>
             </h5>
           </div>
@@ -108,7 +119,6 @@
                
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
@@ -129,8 +139,7 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
@@ -155,7 +164,6 @@
            
           
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
@@ -185,7 +193,6 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
@@ -207,7 +214,6 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
@@ -228,7 +234,6 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
@@ -1314,13 +1319,13 @@
                           />
                         </div>
                         <div
-                          v-if="isSheetsView || isKanbanView || isCalendarView"
+                          v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                           class="col-1 pl-0 pr-0"
                         >
                           <span class="font-sm dueDate">Due Date:</span>
                         </div>
                         <div
-                          v-if="isSheetsView || isKanbanView || isCalendarView"
+                          v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                           class="col-3 pl-0"
                           style="margin-left: -25px"
                         >
@@ -1619,7 +1624,7 @@
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                      <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                      <span><i class="fal fa-file mr-1"></i></span>
                       <input
                         readonly
                         type="text"
@@ -2043,6 +2048,7 @@ import * as Moment from "moment";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
+import { API_BASE_PATH } from '../../../mixins/utils';
 
 export default {
   name: "RiskForm",
@@ -2172,7 +2178,7 @@ export default {
     INITIAL_RISK_STATE() {
       return {
         text: "",
-        facilityProjectId: this.facility.id,
+        facilityProjectId: this.$route.params.programId,   
         text: "",
         riskDescription: "",
         explanation: "",
@@ -2182,7 +2188,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
-        me: "",
+        // facilityName: this.facility,
         riskStageId: "",
         probability: 1,
         impactLevel: 1,
@@ -2214,7 +2220,7 @@ export default {
       };
     },
       //  log(e){
-      //     console.log("This is the riskDispStatus item: " + e)
+      //     console.log(e)
       // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
@@ -2372,6 +2378,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && !this.DV_risk.watched) {
         this.$message({
           message: `Risks at 100% progress cannot be placed On Watch status.`,
@@ -2397,23 +2406,41 @@ export default {
       this.updateWatchedRisks(this.DV_risk);
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.dueDate = '';
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
         this.DV_risk.dueDate = '';
       },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
       },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, reportable: !this.DV_risk.reportable };
       },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
       }
@@ -2660,11 +2687,11 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/risks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
         let method = "POST";
         let callback = "risk-created";
         if (this.risk && this.risk.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
           method = "PUT";
           callback = "risk-updated";
         }
@@ -2703,11 +2730,13 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-            } else {
+            } else if (this.$route.path.includes("kanban"))  {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-            }
+             } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/risk/${response.data.risk.id}`
+              );
           })
           .catch((err) => {
             console.log(err);
@@ -2914,6 +2943,7 @@ export default {
       "currentProject",
       "currentRisks",
       "currentTasks",
+      "contentLoaded",
       "facilityGroups",
       "getFacilityProjectOptions",
       "getRiskImpactLevelNames",
@@ -2954,6 +2984,12 @@ export default {
         this.exists(this.DV_risk.startDate) &&
         this.exists(this.DV_risk.dueDate)
       );
+    },
+    isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
     },
     riskStagePercentage() {
       return _.map(this.riskStages, "percentage").toString();
@@ -3207,11 +3243,20 @@ export default {
         return "kanban";
       }
     },
+  backToRisks() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
   projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
   },
@@ -3232,16 +3277,16 @@ export default {
     "DV_risk.startDate"(value) {
       if (!value) this.DV_risk.dueDate = "";
     },
-    "DV_risk.dueDate"(value) {
-      if (this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_risk.dueDate"(value) {
+    //   if (this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_risk.checklists": {
       handler: function(value) {
         if (this.DV_risk.autoCalculate) this.calculateProgress(value);
@@ -3382,6 +3427,9 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 275px);
+}
+.line {
+  border-top: solid .25px lightgray;
 }
 .title {
   font-size: 15px;

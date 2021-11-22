@@ -118,7 +118,6 @@
 
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
@@ -139,8 +138,7 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
@@ -162,8 +160,7 @@
               </small>
             </span>   
           
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
@@ -187,7 +184,6 @@
            </span>
               <span class="tagsCol p-1">
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
@@ -208,8 +204,7 @@
                   On Watch
                 </small>
               </span>
-              <span
-              v-if="_isallowed('write')"  
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
@@ -230,7 +225,6 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
@@ -324,6 +318,7 @@
          <button  v-if="_isallowed('write')"  @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
             </div>    
           <el-steps 
+            v-if="taskStagesSorted && taskStagesSorted.length >= 0"
             class="exampleOne mt-3" 
             finish-status="success"  
             :class="{'overSixSteps': taskStagesSorted.length >= 6 }" 
@@ -352,6 +347,7 @@
           >
             <label class="font-md">Select Stage</label>
             <el-steps
+               v-if="taskStagesSorted && taskStagesSorted.length >= 0"
               class="exampleOne"
               finish-status="success"
               :class="{ overSixSteps: taskStagesSorted.length >= 6 }"
@@ -670,7 +666,7 @@
                     </div>
 
                     <!-- Collpase section begins here -->
-                    <el-collapse id="roll_up collapse" style="background-color:#fafafa">
+                    <el-collapse id="roll_up" style="background-color:#fafafa">
                       <el-collapse-item
                         title="Details"
                         name="1"
@@ -764,7 +760,7 @@
                          <table                           
                             style="width:100%"
                             class="mt-1"
-                            v-if="check.progress_lists !== undefined"
+                            v-if="check.progress_lists.length > 0"
                           >
                             <thead>
                               <tr>
@@ -907,7 +903,7 @@
           <div class="container-fluid mx-4 mt-2">
             <div class="row">
               <div class="col-5 pr-4 links-col">
-                <div class="form-group">
+                <div v-if="_isallowed('write')" class="form-group">
                   <attachment-input
                     @input="addFile"
                     :show-label="true"
@@ -935,7 +931,7 @@
                     />
                   </div>
                   <span
-                    :class="{ _disabled: loading}"
+                    :class="{ _disabled: loading || !_isallowed('write') }"
                     class="del-check mt-2 clickable"
                     @click.prevent="deleteFile(file)"
                   >
@@ -945,7 +941,7 @@
               </div>
               <div class="col-6 mb-2 pl-4 links-col">
                 <div class="input-group mb-1">
-                  <div class="d-block mt-1">
+                  <div v-if="_isallowed('write')" class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span class="ml-2 clickable" @click.prevent="addFilesInput">
                       <i class="fas fa-plus-circle"></i>
@@ -974,7 +970,7 @@
                       @input="updateFileLinkItem($event, 'text', file)"
                     />
                     <div
-                      :class="{ _disabled: loading }"
+                      :class="{ _disabled: loading || !_isallowed('write') }"
                       class="del-check clickable"
                       @click.prevent="deleteFile(file)"
                     >
@@ -1266,6 +1262,8 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
+import {API_BASE_PATH} from './../../../mixins/utils'
+
 const moment = extendMoment(Moment);
 export default {
   name: "portfolioTaskForm",
@@ -1283,6 +1281,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       editTimeLive: "",
+      programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1353,11 +1352,12 @@ export default {
     }
   },
   mounted() {
+    
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
       this.loadTask(this.DV_task);
-    }
+    }    
     this.loading = false;
     this._ismounted = true;
   },
@@ -1372,7 +1372,8 @@ export default {
         facilityProjectId: this.$route.params.projectId,
         checklistDueDate: "",
         taskTypeId: "",
-        taskStageId: "",
+        taskArray: [],
+        // programStageId: null,
         important: false,
         reportable: false,
         on_hold: false,
@@ -1393,6 +1394,9 @@ export default {
         notes: [],
       };
     },
+    // log(e){
+    //   console.log("taskSorted: " + e)
+    // },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
       var programId = this.$route.params.programId;
@@ -1403,7 +1407,9 @@ export default {
       return  fPrivilege.tasks.includes(s); 
     },
     selectedStage(item) {     
-        this.selectedTaskStage = item;    
+      if (this._isallowed("write")) {
+        this.selectedTaskStage = item; 
+      }   
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1421,9 +1427,6 @@ export default {
       } else {
         return str;
       }
-    },
-    log(e){
-// console.log("check.dueDate " + e)
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -1479,18 +1482,26 @@ export default {
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
-      this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
+      if (this.responsibleUsers) {
+          this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.responsible_user_ids.includes(u.id)
       )[0];
+      }
+     if ( this.accountableTaskUsers){
       this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.accountable_user_ids.includes(u.id)
       )[0];
-      this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
+     }
+      if (this.consultedTaskUsers){
+       this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.consulted_user_ids.includes(u.id)
       );
-      this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
+       }    
+       if ( this.informedTaskUsers){
+       this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.informed_user_ids.includes(u.id)
-      );
+       );
+       }     
       this.relatedIssues = _.filter(this.filteredIssues, (u) =>
         this.DV_task.sub_issue_ids.includes(u.id)
       );
@@ -1503,12 +1514,11 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_task.task_type_id
       );
-      // this.selectedTaskType = this.taskTypeIds.find(
-      //   (t) => t === this.DV_task.task_type_id
-      // );
-      this.selectedTaskStage = this.portfolioTaskStages.find(
+      if (this.taskStages) {
+      this.selectedTaskStage = this.taskStages[this.programId].find(
         (t) => t.id === this.DV_task.task_stage_id
       );
+      }   
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(
         (t) => t.id === this.DV_task.facility_project_id
       );
@@ -1554,6 +1564,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }      
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
          this.$message({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
@@ -1576,32 +1589,51 @@ export default {
           });
       }
       this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
-      this.updateWatchedTasks(this.DV_task);
+      this.saveTask()
+      // this.updateWatchedTasks(this.DV_task);
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
         this.toggleWatched()     
       }
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, on_hold: !this.DV_task.on_hold };
       this.DV_task.due_date = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
     },
    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.due_date = '';
     },
     cancelSave() {
-     this.$emit("on-close-form");
+     this.$emit("on-close-form");     
     //  this.setTaskForManager({ key: "task", value: null });
     },
     saveTask() {
@@ -1614,6 +1646,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("task[text]", this.DV_task.text);
         formData.append("task[due_date]", this.DV_task.due_date);
         formData.append("task[start_date]", this.DV_task.start_date);
@@ -1627,13 +1660,12 @@ export default {
         formData.append("task[on_hold]", this.DV_task.on_hold);
         formData.append("task[draft]", this.DV_task.draft);
         formData.append("task[ongoing]", this.DV_task.ongoing);
+        formData.append("task[watched]", this.DV_task.watched);
         formData.append(
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
         );
-        // RACI USERS START HERE Awaiting backend work
-
-        //Responsible USer Id
+       //Responsible User Id
         //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
         if (
           this.DV_task.responsible_user_ids &&
@@ -1760,11 +1792,11 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
         let method = "POST";
         let callback = "task-created";
         if (this.task && this.task.id) {
-          url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks/${this.task.id}.json`;
           method = "PUT";
           callback = "task-updated";
         }
@@ -1781,7 +1813,26 @@ export default {
           .then((response) => {
            
             this.loadTask(response.data.task);
-            this.updateTasksHash({ task: response.data.task });
+            // this.updateTasksHash({ task: response.data.task });
+
+            // let task_i = this.taskArray.findIndex((t) => t.id == this.DV_task.id)
+            // console.log(this.taskArray)
+            // if (task_i > -1){
+            //   Vue.set(this.taskArray, task_i, this.DV_task)
+            // }else if (task_i == -1){
+            //   this.taskArray.push(this.DV_task)
+            // }
+            // Vue.set(state.facilities, facility_i, facility)
+
+            // updateTasksHash: (state, {task, action}) => {
+            //   let facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
+            //   if (facility_i > -1) {
+            //     let facility = Object.assign({}, state.facilities[facility_i])
+
+            //   }
+            // },
+
+          
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1790,10 +1841,10 @@ export default {
               });
             }
             //Route to newly created task form page
-           this.fetchPortfolioTasks()
-           this.$router.push(
-                `/portfolio`
-              );
+           //this.fetchPortfolioTasks()
+          //  this.$router.push(
+          //       `/portfolio`
+          //     );
           })
           // .catch((err) => {
           //   alert(err.response.data.error);
@@ -1978,6 +2029,7 @@ export default {
       "currentIssues",
       "currentProject",
       "currentRisks",
+      'portfolioTasksLoaded',
       "currentTasks",
       'portfolioCategories',
       "fetchPortfolioTasks",
@@ -1991,13 +2043,19 @@ export default {
       "getFacilityProjectOptions",
       "managerView",
       "myActionsFilter",
-      "projectUsers",
-      "taskStages",
+      "projectUsers",  
        ]),
-    taskStagesSorted() {
-      var taskStagesSortedReturn = [...this.portfolioTaskStages]; 
-      return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
+    taskStages(){
+          if(this.portfolioTaskStages){
+            return this.portfolioTaskStages.program_stages
+          }
+       },
+    taskStagesSorted() { 
+      if (this.taskStages) {
+        let stageObj =  [...this.taskStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },    
     taskTypes(){
       return this.portfolioCategories
     },
@@ -2040,18 +2098,18 @@ export default {
     C_myTasks() {
       return _.map(this.myActionsFilter, "value").includes("tasks");
     },
-    filteredtProjects(){
-       return _.filter(this.portfolioTasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filterediProjects(){
-       return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filteredrProjects(){
-       return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
-    },
-    filteredTasks() {
-      return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
-    },
+    // filteredtProjects(){
+    //    return _.filter(this.portfolioTasks.tasks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    // },
+    // filterediProjects(){
+    //    return _.filter(this.portfolioIssues, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    // },
+    // filteredrProjects(){
+    //    return _.filter(this.portfolioRisks, (t) => t.facility_project_id == this.DV_task.facility_project_id);
+    // },
+    // filteredTasks() {
+    //   return _.filter(this.filteredtProjects, (t) => t.id !== this.DV_task.id);
+    // },
     filteredRisks() {
       return _.filter(this.filteredrProjects, (t) => t.id !== this.DV_task.id);
     },
@@ -2072,24 +2130,6 @@ export default {
           : "Add Task"
         : "Task";
     },
-    tab() {
-      if (this.$route.path.includes("map")) {
-        return "map";
-      } else if (this.$route.path.includes("sheet")) {
-        return "sheet";
-      } else if (this.$route.path.includes("calendar")) {
-        return "calendar";
-      } else {
-        return "kanban";
-      }
-    },
-    projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      }
-    },
   },
   watch: {
     task: {
@@ -2097,6 +2137,14 @@ export default {
         this.loadTask(this.task);
       },
     },
+   portfolioTasksLoaded: {
+     handler(){
+      if(this.portfolioTasksLoaded){
+      this.taskArray = this.portfolioTasks.tasks;  
+     
+       }
+      }
+   },
     "DV_task.start_date"(value) {
       if (this._ismounted && !value) this.DV_task.due_date = "";
     },

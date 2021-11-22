@@ -102,7 +102,7 @@ ActiveAdmin.register Issue do
       end
     end
     column :description, sortable: false
-    column "Files" do |issue|
+    column "Files & Links" do |issue|
       issue.issue_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
@@ -135,8 +135,10 @@ ActiveAdmin.register Issue do
           f.input :description
           div id: 'facility_projects' do
             f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-                fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-                fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+              fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+                                    include_blank: false
+              fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+                                     include_blank: false
             end
           end
           f.input :issue_type, include_blank: false
@@ -173,7 +175,7 @@ ActiveAdmin.register Issue do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :issue_files
           div id: 'uploaded-task-links', 'data-links': "#{f.object.links_as_json}"
-          f.input :file_links, label: 'Add Links', hint: 'Input link, then "Enter"'
+          f.input :file_links, label: 'Add Links', placeholder: 'Input link, then "Enter"'
         end
       end
 
@@ -229,8 +231,10 @@ ActiveAdmin.register Issue do
   filter :progress
   filter :start_date
   filter :due_date, label: 'Estimated Completion Date'
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
+  filter :facility_project_project_id, as: :select, collection: -> { Project.pluck(:name, :id) },
+                                       label: 'Program', input_html: { multiple: true }
+  filter :facility_project_facility_id, as: :select, collection: -> { Facility.pluck(:facility_name, :id) },
+                                        label: 'Project', input_html: { multiple: true }
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true}
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}

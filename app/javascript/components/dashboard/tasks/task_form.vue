@@ -1,11 +1,17 @@
 <template>
-  <div>
+  <div 
+   v-loading="!contentLoaded"   
+    element-loading-text="Fetching Task data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
    <form
-      id="tasks-form"
-      @submit.prevent="saveTask"
-      class="mx-auto tasks-form"
-      accept-charset="UTF-8"
-      :class="{ _disabled: loading }"
+    id="tasks-form"
+    @submit.prevent="saveTask"
+    class="mx-auto tasks-form"
+    :class="{ 'vh100' : !contentLoaded}"
+    accept-charset="UTF-8"     
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -13,16 +19,26 @@
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link :to="projectNameLink">{{
-              facility.facilityName
-            }}</router-link>
+
+            <router-link :to="projectNameLink">
+               <span v-if="!isProgramView">{{
+                facility.facilityName
+                }}
+            </span>
+            <span v-else>{{
+                task.facilityName
+            }}
+            </span>            
+            </router-link>
+
+           
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
             <router-link
               :to="
-                `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/tasks`
+                backToTasks
               "
               >Tasks</router-link
             >
@@ -108,30 +124,28 @@
             <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
 
               <span class="statesCol p-1 mr-1">           
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleOngoing"
-              data-cy="task_ongoing"
-              v-tooltip="`Ongoing`" 
-            >
-              <span              
-                v-show="DV_task.ongoing">
-              <i class="fas fa-retweet text-success"></i>
-              </span>
-              <span              
-                v-show="!DV_task.ongoing">
-              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Ongoing
-              </small>
-            </span>
+                <span
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleOngoing"
+                  data-cy="task_ongoing"
+                  v-tooltip="`Ongoing`" 
+                >
+                  <span              
+                    v-show="DV_task.ongoing">
+                    <i class="fas fa-retweet text-success"></i>
+                  </span>
+                  <span              
+                    v-show="!DV_task.ongoing">
+                  <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+                  </span>             
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                    Ongoing
+                  </small>
+                </span>
 
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
@@ -139,8 +153,7 @@
             >
               <span                
                 v-show="DV_task.onHold">
-                <i class="fas fa-pause-circle mr-1 text-primary"></i>
-              
+                <i class="fas fa-pause-circle mr-1 text-primary"></i>              
               </span>
               <span
                 v-show="!DV_task.onHold">
@@ -156,12 +169,11 @@
            
           
               <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              data-cy="task_important"
-              v-tooltip="`Draft`" 
-            >
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleDraft"
+                data-cy="task_important"
+                v-tooltip="`Draft`" 
+              >
               <span               
                  v-show="DV_task.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
@@ -186,7 +198,6 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
@@ -208,12 +219,11 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
-              v-tooltip="`Important`" 
-            >
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleImportant"
+                data-cy="task_important"
+                v-tooltip="`Important`" 
+              >
               <span 
                 v-show="DV_task.important">
                <i class="fas fa-star text-warning"></i>
@@ -229,7 +239,6 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
@@ -250,7 +259,7 @@
                 Briefings
                 </small>
               </span>                
-              </span>
+            </span>
 
 
           
@@ -427,7 +436,7 @@
               ></span>
           
                 <v2-date-picker
-                  v-validate="{ required: !DV_task.ongoing && !DV_task.onHold }"
+                  v-validate="{ required: DV_task.progress != 100 && !DV_task.ongoing && !DV_task.onHold }"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
@@ -650,13 +659,13 @@
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView || isCalendarView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView || isProgramView"
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -937,7 +946,7 @@
                     :class="{ 'btn-disabled': !file.uri }"
                     @click.prevent="downloadFile(file)"
                   >
-                    <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                    <span> <i class="fal fa-file mr-1"></i></span>
 
                     <input
                       readonly
@@ -1279,6 +1288,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
+import { API_BASE_PATH } from '../../../mixins/utils';
 const moment = extendMoment(Moment);
 export default {
   name: "TaskForm",
@@ -1382,7 +1392,7 @@ export default {
         text: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.facility.id,
+        facilityProjectId: this.$route.params.programId,
         checklistDueDate: "",
         taskTypeId: "",
         taskStageId: "",
@@ -1419,6 +1429,9 @@ export default {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
       }
+    },
+  log(e){
+      // console.log("taskSorted: " + e)
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1563,6 +1576,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
        if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
          this.$message({
             message: `Tasks at 100% progress cannot be placed On Watch status.`,
@@ -1588,24 +1604,42 @@ export default {
       this.updateWatchedTasks(this.DV_task);
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
         this.toggleWatched()     
       }
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, onHold: !this.DV_task.onHold };
       this.DV_task.dueDate = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
     },
    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.dueDate = '';
     },
@@ -1769,11 +1803,11 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
         let method = "POST";
         let callback = "task-created";
         if (this.task && this.task.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
           method = "PUT";
           callback = "task-updated";
         }
@@ -1810,15 +1844,18 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
+                   
             } else if (this.$route.path.includes("calendar")) {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else {
+            } else if (this.$route.path.includes("kanban"))  {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            }
+            } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
+              );
           })
           .catch((err) => {
             alert(err.response.data.error);
@@ -2001,6 +2038,7 @@ export default {
       "currentRisks",
       "currentTasks",
       "facilities",
+      'contentLoaded',
       "facilityGroups",
       "getFacilityProjectOptions",
       "managerView",
@@ -2021,6 +2059,12 @@ export default {
         this.exists(this.DV_task.dueDate)  &&  
         this.exists(this.DV_task.startDate)
       );
+    },
+   isProgramView() {
+      return this.$route.name.includes("ProgramTaskForm") ||
+             this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramIssueForm") ||
+             this.$route.name.includes("ProgramLessonForm") ;
     },
     isMapView() {
       return this.$route.name === "MapTaskForm";
@@ -2077,11 +2121,20 @@ export default {
         return "kanban";
       }
     },
+    backToTasks() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
     projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
   },
@@ -2092,18 +2145,18 @@ export default {
       },
     },
     "DV_task.startDate"(value) {
-      if (this._ismounted && !value) this.DV_task.dueDate = "";
+      if (this._ismounted && !value) this.task.dueDate = "";
     },
-    "DV_task.dueDate"(value) {
-      if (this._ismounted && this.facility.dueDate) {
-        if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          this.$alert(`${this.DV_task.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_task.text} Due Date Warning`, {
-          confirmButtonText: 'Ok',
-          type: 'warning'
-        });
-        }
-      }
-    },
+    // "DV_task.dueDate"(value) {
+    //   if (this._ismounted && this.facility.dueDate) {
+    //     if (moment(value).isAfter(this.facility.dueDate, "day")) {
+    //       this.$alert(`${this.task.text} Due Date is past ${this.task.facilityName} Completion Date!`, `${this.task.text} Due Date Warning`, {
+    //       confirmButtonText: 'Ok',
+    //       type: 'warning'
+    //     });
+    //     }
+    //   }
+    // },
     "DV_task.checklists": {
       handler: function(value) {
         if (this.DV_task.autoCalculate) this.calculateProgress(value);
@@ -2229,6 +2282,9 @@ export default {
 <style scoped lang="scss">
 // .tasks-form {
 // }
+.line {
+  border-top: solid .25px lightgray;
+}
 td,
 th {
   border: solid 1px #ededed;

@@ -69,7 +69,7 @@ ActiveAdmin.register User do
     ]
   end
 
-  form(html: {autocomplete: :off}) do |f|
+  form(html: {autocomplete: :off, onsubmit: "return validateUserForm(this)"}) do |f|
     f.semantic_errors *f.object.errors.attribute_names
 
     tabs do
@@ -197,6 +197,7 @@ ActiveAdmin.register User do
     end
 
     actions
+
   end
 
   index do

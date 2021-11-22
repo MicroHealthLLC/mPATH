@@ -1,6 +1,12 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
 
+import ProgramView from "./../components/views/program/ProgramView";
+import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
+import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
+import ProgramRiskForm from "./../components/views/program/ProgramRiskForm";
+import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
+
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
 import MapOverview from "./../components/views/map/MapOverview";
@@ -46,6 +52,8 @@ import CalendarIssues from "./../components/views/calendar/CalendarIssues";
 import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm";
 import CalendarRisks from "./../components/views/calendar/CalendarRisks";
 import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
+
+import PageNotFound from "./../components/views/PageNotFound"
 
 export default new VueRouter({
   routes: [
@@ -131,6 +139,79 @@ export default new VueRouter({
       path: "/programs/:programId/members",
       component: MembersView,
     },
+    {
+      name: "ProgramView",
+      path: "/programs/:programId/dataviewer",
+      component: ProgramView,
+    },
+    {
+      name: "ProgramTaskForm",
+      path: "/programs/:programId/dataviewer/:projectId/task/:taskId",
+      component: ProgramTaskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramRiskForm",
+      path: "/programs/:programId/dataviewer/:projectId/risk/:riskId",
+      component: ProgramRiskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramIssueForm",
+      path: "/programs/:programId/dataviewer/:projectId/issue/:issueId",
+      component: ProgramIssueForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramLessonForm",
+      path: "/programs/:programId/dataviewer/:projectId/lesson/:lessonId",
+      component: ProgramLessonForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var projectId = to.params.projectId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$projectPrivileges,
+          (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
     {
       name: "SheetView",
       path: "/programs/:programId/sheet",
@@ -926,6 +1007,7 @@ export default new VueRouter({
         },
       ],
     },
+    { path: "*", component: PageNotFound }
   ],
   hashbang: false,
   mode: "history",

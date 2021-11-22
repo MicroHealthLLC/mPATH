@@ -437,6 +437,7 @@
   import RiskSheetsIndex from './../risks/sheets/risk_sheets_index'
   import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
+  import {API_BASE_PATH} from './../mixins/utils'
 
 
 
@@ -554,7 +555,7 @@
         this.DV_updated = false
         let data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
         http
-          .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`, data)
+          .put(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.DV_facility.id}.json`, data)
           .then((res) => {
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
             if (this.from == "manager_view") this.updateFacilityHash(this.DV_facility)

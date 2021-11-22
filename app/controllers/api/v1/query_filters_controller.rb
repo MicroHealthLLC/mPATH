@@ -1,4 +1,4 @@
-class QueryFiltersController < AuthenticatedController
+class Api::V1::QueryFiltersController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])

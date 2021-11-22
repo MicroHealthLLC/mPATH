@@ -1,3 +1,4 @@
+# NOTE: This controller is used for Admin
 class FacilityPrivilegesController < AuthenticatedController
   def facility_privileges_partial
     project = Project.find(params[:project_id])

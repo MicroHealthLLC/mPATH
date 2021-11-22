@@ -1,7 +1,14 @@
 <template>
+  <div 
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching Lesson data. Please wait..."
+    :class="{ 'line' : isProgramView}"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
+  >
   <form
     @submit.prevent="saveLesson"
-    :class="{ _disabled: !lessonsLoaded }"
+    :class="{ 'vh100' : !contentLoaded}"
     accept-charset="UTF-8"
   >
     <div class="mt-2  d-flex align-items-center">
@@ -12,7 +19,7 @@
             ><i class="fas fa-suitcase"></i
           ></span>
           <router-link v-if="contentLoaded" :to="projectNameLink">{{
-            facility.facilityName
+           lesson.project_name
           }}</router-link>
           <el-icon
             class="el-icon-arrow-right"
@@ -20,7 +27,7 @@
           ></el-icon>
           <router-link
             :to="
-              `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/lessons`
+              backToLessons
             "
             >Lessons</router-link
           >
@@ -34,6 +41,7 @@
       <div class="ml-auto d-flex align-items-center">
         <button
           v-if="_isallowed('write')"
+          data-cy="lesson_save_btn"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Save Lesson
@@ -46,6 +54,7 @@
           Read Only
         </button>
         <button
+          data-cy="lesson_close_btn"
           class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
         >
@@ -96,47 +105,6 @@
           :class="{ 'font-sm': isMapView }"
         >
           <span
-            v-if="_isallowed('write')"
-            class="watch_action clickable mx-2"
-            @click.prevent.stop="toggleImportant"
-            v-tooltip="`Important`"
-          >
-            <span v-show="lesson.important">
-              <i class="fas fa-star text-warning"></i>
-            </span>
-            <span v-show="!lesson.important">
-              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-            </span>
-            <small
-              :class="{ 'd-none': isMapView }"
-              style="vertical-align:text-top"
-            >
-              Important
-            </small>
-          </span>
-
-          <span
-            v-if="_isallowed('write')"
-            class="watch_action clickable mx-2"
-            @click.prevent.stop="toggleReportable"
-            v-tooltip="`Briefings`" 
-          >
-            <span v-show="lesson.reportable">
-            <i class="fas fa-presentation text-primary"></i>
-            </span>
-            <span v-show="!lesson.reportable">
-              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
-            </span>
-
-            <small
-              :class="{ 'd-none': isMapView }"
-              style="vertical-align:text-top"
-            >
-              Briefings
-            </small>
-          </span>
-          <span
-            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
@@ -158,6 +126,43 @@
               Draft
             </small>
           </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleImportant"
+            v-tooltip="`Important`"
+          >
+            <span v-show="lesson.important">
+              <i class="fas fa-star text-warning"></i>
+            </span>
+            <span v-show="!lesson.important">
+              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+            </span>
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Important
+            </small>
+          </span>
+          <span
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleReportable"
+            v-tooltip="`Briefings`" 
+          >
+            <span v-show="lesson.reportable">
+            <i class="fas fa-presentation text-primary"></i>
+            </span>
+            <span v-show="!lesson.reportable">
+              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+            </span>
+
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Briefings
+            </small>
+          </span>
         </div>
 
         <el-input
@@ -166,6 +171,7 @@
           v-model="lesson.title"
           type="text"
           placeholder="Lesson Name"
+          data-cy="lesson_name"
           :class="{ error: errors.has('Lesson Name') }"
           :readonly="!_isallowed('write')"
         />
@@ -184,6 +190,7 @@
           v-model="lesson.description"
           placeholder="Brief description..."
           rows="4"
+          data-cy="lesson_description"
           :class="{
             error: errors.has('Description'),
           }"
@@ -644,7 +651,7 @@
             <div @click.prevent="downloadFile(file)">
               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
+            <div v-if="!_isallowed('write')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -671,7 +678,7 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
+              v-if="!_isallowed('write')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>
@@ -763,6 +770,7 @@
       ref="menu"
     />
   </form>
+  </div>
 </template>
 
 <script>
@@ -937,9 +945,13 @@ export default {
         return  fPrivilege.lessons.includes(s);      
     },
     close() {
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-      );
+        if (this.$route.path.includes("sheet") || this.$route.path.includes("map")) {
+          this.$router.push(
+            `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
+          );
+        } else this.$router.push(
+            `/programs/${this.$route.params.programId}/dataviewer`
+          ); 
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
@@ -1128,12 +1140,21 @@ export default {
       this.lesson.lesson_stage_id = null;
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
     },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
     log(e)
@@ -1166,11 +1187,26 @@ export default {
         return "kanban";
       }
     },
-    projectNameLink() {
+ isProgramView() {
+  return this.$route.name.includes("ProgramTaskForm") ||
+          this.$route.name.includes("ProgramRiskForm") ||
+          this.$route.name.includes("ProgramIssueForm") ||
+          this.$route.name.includes("ProgramLessonForm") ;
+    },
+  backToLessons() {
+      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      } else {
+        return `/programs/${this.$route.params.programId}/dataviewer`;
+      }
+    },
+  projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else {
+      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
       }
     },
     isMapView() {
@@ -1268,15 +1304,18 @@ export default {
           });
           this.SET_LESSON_STATUS(0);
           //Route to newly created task form page
-          if (this.$route.path.includes("sheet")) {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          } else {
-            this.$router.push(
-              `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-            );
-          }
+        //   if (this.$route.path.includes("sheet")) {
+        //     this.$router.push(
+        //       `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+        //     );
+        //   } else if (this.$route.path.includes("map")) {
+        //     this.$router.push(
+        //       `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+        //     );
+        //   } else 
+        //   this.$router.push(
+        //       `/programs/${this.$route.params.programId}/dataviewer`
+        //     );
         }
         this.successes = this.lesson.successes;
         this.failures = this.lesson.failures;
@@ -1291,6 +1330,9 @@ export default {
 <style lang="scss" scoped>
 a {
   color: #007bff;
+}
+.line {
+  border-top: solid .25px lightgray;
 }
 a:hover {
   text-decoration: unset;

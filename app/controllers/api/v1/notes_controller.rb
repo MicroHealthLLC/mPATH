@@ -1,4 +1,5 @@
-class Api::V1::NotesController < Api::ApplicationController
+class Api::V1::NotesController < AuthenticatedController 
+# class Api::V1::NotesController < Api::ApplicationController
   before_action :set_noteable
   before_action :set_note, only: [:update, :destroy]
 

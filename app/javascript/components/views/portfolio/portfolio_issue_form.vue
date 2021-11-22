@@ -118,7 +118,6 @@
            <span class="statesCol p-1 mr-1">
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
@@ -140,7 +139,6 @@
             </span>
 
              <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
@@ -163,8 +161,7 @@
            </span>
 
            <span class="tagsCol p-1">
-                 <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
@@ -187,7 +184,6 @@
            
 
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
@@ -206,7 +202,6 @@
                 style="vertical-align:text-top"> Important</small>
             </span>
              <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
@@ -369,6 +364,7 @@
                 <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
               </div>    
             <el-steps 
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne mt-3" 
               :class="{'overSixSteps': issueStagesSorted.length >= 6 }"   
               :active="issueStagesSorted.findIndex(stage => stage.id == selectedIssueStage.id)"                
@@ -398,6 +394,7 @@
           >
             <label class="font-md">Select Stage</label>
             <el-steps
+              v-if="issueStagesSorted && issueStagesSorted.length >= 0"
               class="exampleOne"
               :class="{ overSixSteps: issueStagesSorted.length >= 6 }"
               finish-status="success"
@@ -792,7 +789,7 @@ Tab 1 Row Begins here -->
                           </span>
 
                           <table
-                            v-if="check.progress_lists !== undefined"
+                            v-if="check.progress_lists.length > 0"
                             style="width:100%"
                             class="mt-1"
                           >
@@ -1286,6 +1283,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+import {API_BASE_PATH} from './../../../mixins/utils'
 import 'vue2-datepicker/index.css'
  Vue.component('v2-date-picker', DatePicker)
  import DatePicker from 'vue2-datepicker'
@@ -1306,6 +1304,7 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
+      programId: this.$route.params.programId,
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
@@ -1519,9 +1518,11 @@ export default {
       this.selectedIssueSeverity = this.issueSeverities.find(
         (t) => t.id === this.DV_issue.issue_severity_id
       );
-      this.selectedIssueStage = this.issueStages.find(
+    if (this.issueStages) {
+        this.selectedIssueStage = this.issueStages[this.programId].find(
         (t) => t.id === this.DV_issue.issue_stage_id
       );
+    }    
       if (this.DV_issue.attach_files)
         this.addFile(this.DV_issue.attach_files, false);
       this.$nextTick(() => {
@@ -1584,6 +1585,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_issue.progress == 100 && !this.DV_issue.watched) {
         this.$message({
           message: `Issues at 100% progress cannot be placed On Watch status.`,
@@ -1606,22 +1610,37 @@ export default {
         });
       }
       this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
-      this.updateWatchedIssues(this.DV_issue);
+      this.saveIssue();
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, important: !this.DV_issue.important };
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, on_hold: !this.DV_issue.on_hold };
       this.DV_issue.due_date = '';
     },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
     },
-   toggleReportable() {
+    toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_issue = { ...this.DV_issue, reportable: !this.DV_issue.reportable };
     },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_issue.progress == 100 && this.DV_issue.watched == true) {
         this.toggleWatched();
       }
@@ -1638,6 +1657,7 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("issue[title]", this.DV_issue.title);
         formData.append("issue[due_date]", this.DV_issue.due_date);
         formData.append("issue[start_date]", this.DV_issue.start_date);
@@ -1655,6 +1675,7 @@ export default {
         formData.append("issue[auto_calculate]", this.DV_issue.auto_calculate);
         formData.append("issue[on_hold]", this.DV_issue.on_hold);
         formData.append("issue[draft]", this.DV_issue.draft);
+        formData.append("issue[watched]", this.DV_issue.watched);
         formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
 
      //Responsible USer Id
@@ -1794,12 +1815,12 @@ export default {
           }
         }
 
-        let url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/issues.json`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
         let callback = "issue-created";
 
         if (this.issue && this.issue.id) {
-          url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/issues/${this.issue.id}.json`;
           method = "PUT";
           callback = "issue-updated";
         }
@@ -1822,21 +1843,21 @@ export default {
          
             this.loadIssue(response.data.issue);
             //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: response.data.issue });
+            // this.updateIssuesHash({ issue: response.data.issue });
+            // let issue_i = this.portfolioIssues.issues.findIndex((t) => t.id == this.DV_issue.id)
+            // if (issue_i > -1){
+            //   Vue.set(this.portfolioIssues.issues, issue_i, this.DV_issue)
+            // }else if (issue_i == -1){
+            //   this.portfolioIssues.issues.push(this.DV_issue)
+            // }
             if (response.status === 200) {
-              // this.fetchPortfolioIssues()
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
                 type: "success",
                 showClose: true,
               });
             }
-          
-           this.fetchPortfolioIssues()
-           this.$router.push(
-                `/portfolio`
-              );
-          })
+           })
           // .catch((err) => {
           //   console.log(err);
           // })
@@ -2031,13 +2052,17 @@ export default {
       "projectUsers",
     ]),
     issueStages(){
-      return this.portfolioIssueStages
-    },
-    issueStagesSorted() {
-      var issueStagesSortedReturn = [...this.issueStages]; 
-      return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
-    readyToSave() {
+          if(this.portfolioIssueStages){
+            return this.portfolioIssueStages.program_stages
+          }
+       }, 
+     issueStagesSorted() { 
+      if (this.issueStages) {
+        let stageObj =  [...this.issueStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
+     readyToSave() {
       return (
         this.DV_issue &&
         this.exists(this.DV_issue.title) &&

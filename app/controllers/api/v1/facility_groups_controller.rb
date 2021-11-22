@@ -1,4 +1,5 @@
-class Api::FacilityGroupsController < AuthenticatedController
+class Api::V1::FacilityGroupsController < AuthenticatedController
+
   def index
     if params[:project_id].present?
       facility_ids = FacilityProject.where(project_id: params[:project_id]).map(&:facility_id).compact.uniq

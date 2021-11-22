@@ -117,7 +117,6 @@
                
               <span class="statesCol p-1 mr-1">           
             <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
@@ -138,8 +137,7 @@
               </small>
             </span>
 
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
@@ -163,8 +161,7 @@
             </span>
            
           
-              <span
-              v-if="_isallowed('write')"
+            <span
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
@@ -194,7 +191,6 @@
               <span class="tagsCol p-1">
 
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 v-tooltip="`On Watch`" 
                 @click.prevent.stop="toggleWatched"
@@ -216,7 +212,6 @@
                 </small>
               </span>
               <span
-              v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
@@ -237,7 +232,6 @@
               </small>
               </span>
               <span
-                v-if="_isallowed('write')"
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="task_reportable"
@@ -352,6 +346,7 @@
                     <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
+                  v-if="riskStagesSorted && riskStagesSorted.length >= 0"
                   class="exampleOne mt-3" 
                   :class="{'overSixSteps': riskStagesSorted.length >= 6 }" 
                   :active="riskStagesSorted.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
@@ -383,6 +378,7 @@
                 <label class="font-md">Select Stage</label>
                 <el-steps
                   class="exampleOne"
+                   v-if="riskStagesSorted && riskStagesSorted.length >= 0"
                   :class="{ overSixSteps: riskStagesSorted.length >= 6 }"
                   finish-status="success"
                   :disabled="
@@ -1466,7 +1462,7 @@
                             </span>
 
                             <table
-                              v-if="check.progress_lists !== undefined"
+                              v-if="check.progress_lists.length > 0"
                               style="width: 100%"
                               class="mt-1"
                             >
@@ -2049,6 +2045,7 @@ import * as Moment from "moment";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
+import {API_BASE_PATH} from './../../../mixins/utils'
 
 export default {
   name: "portfolioRiskForm",
@@ -2066,6 +2063,7 @@ export default {
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       now: new Date().toLocaleString(),
+      programId: this.$route.params.programId,
       destroyedFiles: [],
       responsibleUsers: null,
       accountableRiskUsers: null,
@@ -2309,9 +2307,11 @@ export default {
       this.selectedTaskType = this.taskTypes.find(
         (t) => t.id === this.DV_risk.task_type_id
       );
-      this.selectedRiskStage = this.riskStages.find(
+      if (this.riskStages){
+        this.selectedRiskStage = this.riskStages[this.programId].find(
         (t) => t.id === this.DV_risk.risk_stage_id
       );
+      }    
       this.selectedRiskPossibility = this.getRiskProbabilityNames.find(
         (t) => t.id === this.DV_risk.probability
       );
@@ -2376,6 +2376,9 @@ export default {
       }
     },
     toggleWatched() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && !this.DV_risk.watched) {
         this.$message({
           message: `Risks at 100% progress cannot be placed On Watch status.`,
@@ -2398,31 +2401,49 @@ export default {
         });
       }
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
-      this.updateWatchedRisks(this.DV_risk);
+      this.validateThenSave()
     },
     toggleImportant() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
     },
     toggleOngoing() {
+      if(!this._isallowed('write')){
+        return
+      }
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.due_date = '';
     },
     toggleOnhold() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, on_hold: !this.DV_risk.on_hold };
         this.DV_risk.due_date = '';
       },
     toggleDraft() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
       },
     toggleReportable() {
+      if(!this._isallowed('write')){
+        return
+      }
         this.DV_risk = { ...this.DV_risk, reportable: !this.DV_risk.reportable };
       },
     removeFromWatch() {
+      if(!this._isallowed('write')){
+        return
+      }
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
       }
     },
-    toggleApproved() {
+    toggleApproved(e) {
       if(!this._isallowed("write"))
         return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
@@ -2431,7 +2452,7 @@ export default {
       if (!this.DV_risk.approved) {
         this.DV_risk.approval_time = "";
       }
-      this.updateApprovedRisks(this.DV_risk);
+      //this.updateApprovedRisks(this.DV_risk);
       this.validateThenSave(e);
     },
     selectedStage(item) {
@@ -2457,8 +2478,8 @@ export default {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
-    validateThenSave(e) {
-      e.preventDefault();
+    validateThenSave() {
+      // e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2467,8 +2488,11 @@ export default {
         this.editToggle = !this.editToggle;
         this.loading = true;
         let formData = new FormData();
+        formData.append("source", "portfolio_viewer");        
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.risk_description);
+        formData.append("risk[approved]", this.DV_risk.approved);
+        
         if (!this.DV_risk.explanation) {
           formData.append("risk[explanation]",'')
         } else {
@@ -2508,6 +2532,8 @@ export default {
            formData.append("risk[duration]", null);
         }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
+        // console.log("-------------")
+        // console.log(this.DV_risk.risk_approach)
         formData.append("risk[risk_approach]", this.DV_risk.risk_approach);
         formData.append(
           "risk[risk_approach_description]",
@@ -2524,6 +2550,7 @@ export default {
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
         formData.append("risk[reportable]", this.DV_risk.reportable);
         formData.append("risk[on_hold]", this.DV_risk.on_hold);
+        formData.append("risk[watched]", this.DV_risk.watched);
         formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
           "risk[destroy_file_ids]",
@@ -2663,11 +2690,11 @@ export default {
           }
         }
 
-        let url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/risks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/risks.json`;
         let method = "POST";
         let callback = "risk-created";
         if (this.risk && this.risk.id) {
-          url = `/projects/${this.$route.params.programId}/facilities/${this.$route.params.projectId}/risks/${this.risk.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/risks/${this.risk.id}.json`;
           method = "PUT";
           callback = "risk-updated";
         }
@@ -2683,7 +2710,15 @@ export default {
         })
           .then((response) => {
            this.loadRisk(response.data.risk);
-           this.updateRisksHash({ risk: response.data.risk });
+          //  this.updateRisksHash({ risk: response.data.risk });
+
+            // let risk_i = this.portfolioRisks.risks.findIndex((t) => t.id == this.DV_risk.id)
+            // if (risk_i > -1){
+            //   Vue.set(this.portfolioRisks.risks, risk_i, this.DV_risk)
+            // }else if (risk_i == -1){
+            //   this.portfolioRisks.risks.push(this.DV_risk)
+            // }
+
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,
@@ -2691,12 +2726,7 @@ export default {
                 showClose: true,
               });
             }
-            //Route to newly created task form page
-           this.fetchPortfolioRisks()
-           this.$router.push(
-                `/portfolio`
-              );
-          })
+           })
           .catch((err) => {
             console.log(err);
           })
@@ -2758,7 +2788,7 @@ export default {
         text: "",
         checked: false,
         position: postion,
-        progressLists: [],
+        progress_lists: [],
       });
     },
     noteBy(note) {
@@ -2899,6 +2929,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "portfolioRisks",
       "portfolioUsers",
       "currentIssues",
       "portfolioCategories", 
@@ -2927,13 +2958,17 @@ export default {
       'riskDispositionDuration',
       "portfolioRiskStages",
      ]),
-    riskStages(){
-      return this.portfolioRiskStages
-    },
-    riskStagesSorted() {
-      var riskStagesSortedReturn = [...this.riskStages]; 
-      return riskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
-    },
+  riskStages(){
+          if(this.portfolioRiskStages){
+            return this.portfolioRiskStages.program_stages
+          }
+       },
+  riskStagesSorted() { 
+      if (this.riskStages) {
+        let stageObj =  [...this.riskStages[this.programId]]
+        return stageObj.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);  
+      }        
+    },   
     activeProjectUsers(){
       return this.portfolioUsers;
     },
@@ -2955,7 +2990,9 @@ export default {
       );
     },
     riskStagePercentage() {
-      return _.map(this.riskStages, "percentage").toString();
+     if (this.riskStages){
+        return _.map(this.riskStages[this.programId], "percentage").toString();
+     }    
     },
   taskTypes(){
       return this.portfolioCategories  

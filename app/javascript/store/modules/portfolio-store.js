@@ -256,8 +256,9 @@ const portfolioModule = {
         },
       })
         .then((res) => {
+          // console.log(res.data)
            // Mutate state with response from back end   
-          commit("SET_PORTFOLIO_TASK_STAGES", res.data.stages);
+          commit("SET_PORTFOLIO_TASK_STAGES", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -279,7 +280,7 @@ const portfolioModule = {
       })
         .then((res) => {
           // Mutate state with response from back end    
-        commit("SET_PORTFOLIO_ISSUE_STAGES", res.data.stages);
+        commit("SET_PORTFOLIO_ISSUE_STAGES", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -345,7 +346,7 @@ const portfolioModule = {
       })
         .then((res) => {
         // Mutate state with response from back end    
-          commit("SET_PORTFOLIO_RISK_STAGES", res.data.stages);
+          commit("SET_PORTFOLIO_RISK_STAGES", res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -399,12 +400,12 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_RISK_PRIORITIES_LOADED", true);
         });
     },
-    fetchPortfolioTasks({commit}) {
+    fetchPortfolioTasks({commit}, {page}) {
         commit("TOGGLE_PORTFOLIO_TASKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/tasks`,
+          url: `/api/v1/portfolio/tasks?pagination=true&page=${page}&per_page=600`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -444,12 +445,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_TASK_LOADED", true);
           });
       },  
-    fetchPortfolioIssues({commit}) {
+    fetchPortfolioIssues({commit}, { page }) {
         commit("TOGGLE_PORTFOLIO_ISSUES_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/issues`,
+          url: `/api/v1/portfolio/issues?pagination=true&page=${page}&per_page=600`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -489,12 +490,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_ISSUE_LOADED", true);
           });
       },  
-      fetchPortfolioRisks({commit}) {
+      fetchPortfolioRisks({commit}, { page }) {
         commit("TOGGLE_PORTFOLIO_RISKS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/risks`,
+          url: `/api/v1/portfolio/risks?pagination=true&page=${page}&per_page=600`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -534,12 +535,12 @@ const portfolioModule = {
             commit("TOGGLE_PORTFOLIO_RISK_LOADED", true);
           });
       },  
-       fetchPortfolioLessons({commit}) {
+       fetchPortfolioLessons({commit}, { page }) {
         commit("TOGGLE_PORTFOLIO_LESSONS_LOADED", false);
         // Send GET request for all lessons contained within a project
         axios({
           method: "GET",
-          url: `/api/v1/portfolio/lessons`,
+          url: `/api/v1/portfolio/lessons?pagination=true&page=${page}&per_page=600`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -592,7 +593,7 @@ const portfolioModule = {
         })
           .then((res) => {
           // Mutate state with response from back end    
-            commit("SET_PORTFOLIO_LESSON_STAGES", res.data.stages);
+            commit("SET_PORTFOLIO_LESSON_STAGES", res.data);
           })
           .catch((err) => {
             console.log(err);
@@ -671,7 +672,7 @@ const portfolioModule = {
     TOGGLE_PORTFOLIO_COUNTS_LOADED: (state, loaded ) => state.portfolio_counts_loaded = loaded,
 
     // PORTFOLIO TASKS
-    SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks,
+    SET_PORTFOLIO_TASKS: (state, portfolio_tasks) => state.portfolio_tasks = portfolio_tasks, 
     TOGGLE_PORTFOLIO_TASKS_LOADED: (state, loaded ) => state.portfolio_tasks_loaded = loaded,
 
     SET_PORTFOLIO_TASK: (state, portfolio_task) => state.portfolio_task = portfolio_task,
