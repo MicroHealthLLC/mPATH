@@ -1,10 +1,10 @@
-class Api::V1::Admin::FacilitiesController < AuthenticatedController
+class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_project
   before_action :set_facility, only: [:show]
 
   def index
     facility_projects = @project.facilities.includes(:facility_group).as_json
-    render json: {projects: facility_projects, program: @project}
+    render json: {facilities: facility_projects, project: @project}
   end
 
   def create

@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
       # For Admin panel
       namespace :admin do
-        resources :facilities do
+        resources :facilities, path: "projects" do
           resources :facility_projects, only: [:index, :update, :show]
         end
         get '/settings', to: 'settings#index'
