@@ -1,6 +1,6 @@
 <template>
   <div
-    v-loading="!projectsLoaded"
+    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -66,19 +66,19 @@
   </div>
   
     <el-table v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || 
-        data.facility_name.toLowerCase().includes(search.toLowerCase())).reverse()" 
+        data.facilityName.toLowerCase().includes(search.toLowerCase())).reverse()" 
         style="width: 100%"  height="450"        
       >
-    <el-table-column prop="facility_name" sortable label="Project"> 
+    <el-table-column prop="facilityName" sortable label="Project"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"          
-            v-model="scope.row.facility_name" controls-position="right"></el-input>
+            v-model="scope.row.facilityName" controls-position="right"></el-input>
        </template>
 
 
     </el-table-column>
-    <el-table-column prop="facility_group_name" sortable filterable label="Group">
+    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
           <!-- <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
@@ -270,7 +270,6 @@ export default {
       "contentLoaded",
       "projectsLoaded",
       "facilities",
-      "programProjects",
       'getProjectGroupFilter',
       'getGroupFilter',
       "facilityGroupFacilities",
@@ -300,13 +299,13 @@ export default {
       },
     },
     tableData(){
-      if (this.projectsLoaded){
-         if (this.programProjects && this.programProjects.length > 0){
-       return  this.programProjects.map(f => f.facility)
+      if (this.contentLoaded){
+         if (this.facilities && this.facilities.length > 0){
+       return  this.facilities.map(f => f.facility)
       .filter((td) => {
           if (this.C_groupFilter && this.C_groupFilter.length > 0 ) {
             let group = this.C_groupFilter.map((t) => t.name);
-            return group.includes(td.facility_group_name);
+            return group.includes(td.facilityGroupName);
           } else return true;
         });
         }   
