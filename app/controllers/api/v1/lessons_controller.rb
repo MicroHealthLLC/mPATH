@@ -49,9 +49,14 @@ class Api::V1::LessonsController < AuthenticatedController
   end
 
   def index
+    pph = current_user.project_privileges_hash
+    fph = current_user.facility_privileges_hash
+
     # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
-    if params[:project_id] && params[:facility_id]
+    if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["lessons"].present?
+      # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
+      
       if facility_project
         lessons = Lesson.where(facility_project_id: facility_project.id).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
@@ -61,9 +66,15 @@ class Api::V1::LessonsController < AuthenticatedController
         status_code = 404
       end
     elsif params[:project_id]
-      lessons = Lesson.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_project.project_id" => params[:project_id])
-      response_hash = {lessons: lessons.map(&:build_response_for_index)}
-      status_code = 200
+      allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
+
+      fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
+      
+      if fp_ids.any?
+        lessons = Lesson.joins(:facility_project).includes(Lesson.lesson_preload_array).where(facility_project_id: fp_ids)
+        response_hash = {lessons: lessons.map(&:build_response_for_index)}
+        status_code = 200
+      end
     else
       response_hash = {errors: "Program or Project not found"}
       status_code = 404

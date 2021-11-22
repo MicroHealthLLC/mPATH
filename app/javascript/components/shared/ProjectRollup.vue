@@ -20,7 +20,7 @@
           <router-link :to="ProgramView" > 
                <button                
                   class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
-                  {{ currentProject.name }} DATA VIEWER
+                  PROGRAM DATA VIEWER
                 </button>   
           </router-link>             
         </span>         
@@ -784,8 +784,34 @@
                   }}</h4>        
                 </div>                     
                 </div>            
-           
-    
+              <div v-if="lessonStats.length > 0" data-cy="lesson_categories">
+              <el-collapse class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div data-cy="lesson_categories" class="row">
+                    <div class="col-6 pb-0 underline">PROCRESS AREAS</div>
+                    <div class="col-6 pb-0">#</div>
+                  </div>
+
+                  <div class="row" v-for="(lesson, index) in lessonStats" :key="index">
+                    <div class="col-6 pb-0 font-sm pr-0">
+                      <span> {{ lesson.name }}</span>
+                    </div>
+                    <div class="col-6 pb-0">
+                      <span class="badge badge-secondary  font-sm badge-pill">{{ lesson.count }}</span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+            <div v-else>
+              <el-collapse id="roll_up" class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                    <div class="col p-0  mb-0">NO DATA TO DISPLAY</div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
           </el-card>
       </div> 
       <div :class="[isMapView ? 'col-9 pr-0' : 'col p-0']">
@@ -1003,6 +1029,7 @@ export default {
       "lessonsLoaded",
       'currProgramTab',
       "projectLessons",
+      "programLessons",
       "programLessonsCount",
       'projects',
       "facilities",
@@ -1208,6 +1235,18 @@ export default {
         });
       }
       return issues;
+    },
+    lessonStats() {
+      let lessons = new Array();
+      console.log(this.programLessons)
+      let group = _.groupBy(this.programLessons, "category");
+      for (let type in group) {
+        lessons.push({
+          name: type,
+          count: group[type].length,
+        });
+      }
+      return lessons;
     },
     filteredRisks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
@@ -1679,7 +1718,8 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessonCounts'
+     'fetchProgramLessonCounts',
+     'fetchProgramLessons',
      ]), 
      ...mapMutations([
         'setHideComplete',
@@ -1864,6 +1904,7 @@ export default {
   },
   mounted() {
     this.fetchProgramLessonCounts(this.$route.params)  
+    this.fetchProgramLessons(this.$route.params)
   },
 };
 </script>
