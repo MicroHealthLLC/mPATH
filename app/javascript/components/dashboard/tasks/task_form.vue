@@ -436,7 +436,7 @@
               ></span>
           
                 <v2-date-picker
-                  v-validate="{ required: !DV_task.ongoing && !DV_task.onHold }"
+                  v-validate="{ required: DV_task.progress != 100 && !DV_task.ongoing && !DV_task.onHold }"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"

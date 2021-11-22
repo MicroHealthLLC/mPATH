@@ -658,7 +658,7 @@
             <div @click.prevent="downloadFile(file)">
                <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
+            <div v-if="!_isallowed('write')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -685,7 +685,7 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
+              v-if="!_isallowed('write')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>

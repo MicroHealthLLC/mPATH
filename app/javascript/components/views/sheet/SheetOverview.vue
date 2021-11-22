@@ -675,7 +675,7 @@
                 </div>
                 
                   </div>
-                <div class="row text-center mb-4 mt-0">
+                <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
                    lessonVariation.completes.length
@@ -688,7 +688,34 @@
                 </div>                     
                 </div>         
             </div>
-       
+            <div v-if="lessonStats.length > 0" data-cy="lesson_categories">
+              <el-collapse class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div data-cy="lesson_categories" class="row">
+                    <div class="col-6 pb-0 underline">PROCRESS AREAS</div>
+                    <div class="col-6 pb-0">#</div>
+                  </div>
+
+                  <div class="row" v-for="(lesson, index) in lessonStats" :key="index">
+                    <div class="col-6 pb-0 font-sm pr-0">
+                      <span> {{ lesson.name }}</span>
+                    </div>
+                    <div class="col-6 pb-0">
+                      <span class="badge badge-secondary  font-sm badge-pill">{{ lesson.count }}</span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+            <div v-else>
+              <el-collapse id="roll_up" class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                    <div class="col p-0  mb-0">NO DATA TO DISPLAY</div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
           </el-card>
       </div>
               <div class="col-4">
@@ -1555,6 +1582,17 @@ export default {
         completes,
         drafts
       }
+    },
+    lessonStats() {
+      let lessons = new Array();
+      let group = _.groupBy(this.projectLessons, "category");
+      for (let type in group) {
+        lessons.push({
+          name: type,
+          count: group[type].length,
+        });
+      }
+      return lessons;
     },
     currentRiskTypes() {
       let names =

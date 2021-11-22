@@ -5032,9 +5032,11 @@ export default {
       "portfolioTaskStages",
       "portfolioIssueStages",
       "portfolioRiskStages",
+      "portfolioLessonStages",
       "portfolioTaskStagesFilter",
       "portfolioIssueStagesFilter",
       "portfolioRiskStagesFilter",
+      "portfolioLessonStagesFilter",
       "portfolioIssueTypes",
       "portfolioIssueTypesFilter",
       "portfolioIssueSeverities",
@@ -6183,6 +6185,12 @@ export default {
               if (this.hideImportantFlag && this.hideBriefedFlag) {
                 return lesson.important + lesson.reportable;
               } else return true;
+            })
+            .filter((lesson) => {
+              if (this.C_portfolioLessonStageFilter.length > 0) {
+                let stages = this.C_portfolioLessonStageFilter.map((t) => t.name);
+                return stages.includes(lesson.lesson_stage);
+              } else return true;
             }),
         },
       };
@@ -6611,6 +6619,14 @@ export default {
         this.setPortfolioRiskStagesFilter(value);
       },
     },
+     C_portfolioLessonStageFilter: {
+      get() {
+        return this.portfolioLessonStagesFilter;
+      },
+      set(value) {
+        this.setPortfolioLessonStagesFilter(value);
+      },
+    },
     C_categoryNameFilter: {
       get() {
         return this.portfolioCategoriesFilter;
@@ -6749,6 +6765,7 @@ export default {
       "setPortfolioIssueSeveritiesFilter",
       "setPortfolioRiskStages",
       "setPortfolioRiskStagesFilter",
+      "setPortfolioLessonStagesFilter",
       "setPortfolioUsersFilter",
       "setProgramNameFilter",
       "setPortfolioIssueTypes",
