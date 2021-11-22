@@ -752,7 +752,7 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                     <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                      programLessonsCount.total_count 
+                      filteredLessons.length
                     }}</b>
                   </h5>
                 </div>
@@ -775,12 +775,12 @@
                 <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
-                   programLessonsCount.completed
+                    lessonVariation.completes.length
                   }}</h4>         
                 </div>
                 <div class="col-6 pb-0 mb-0">
                   <h4>{{
-                   programLessonsCount.progress
+                    lessonVariation.drafts.length
                   }}</h4>        
                 </div>                     
                 </div>            
@@ -1156,7 +1156,21 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
-    },  
+    },
+    lessonVariation() {
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
+      return {
+        completes,
+        drafts
+      }
+    },
+    filteredLessons() {
+      return _.filter(this.programLessons, (resource) => {
+        let valid = true;
+        return valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+      })
+    },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
