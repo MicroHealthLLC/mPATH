@@ -287,6 +287,7 @@
                   <span v-if="selectedEvent.progess == 100 && !selectedEvent.isDraft" v-tooltip="`Completed Task`"><i class="fas fa-clipboard-check text-success"></i></span>
                   <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>   
                   <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>      
+                  <span v-if="selectedEvent.inProgress == true" v-tooltip="`In Progress`"><i class="far fa-tasks text-primary mr-1"></i></span>
                   <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                   <span v-if="
                       selectedEvent.watch == false && 
@@ -294,6 +295,7 @@
                       selectedEvent.hasStar == false && 
                       selectedEvent.isOnHold == false && 
                       selectedEvent.isDraft == false && 
+                      selectedEvent.inProgress == false &&
                       selectedEvent.briefing == false &&
                       selectedEvent.progess < 100">
                     
@@ -576,6 +578,7 @@
        this.percentage = this.filteredCalendar.filtered.issues.map(issue => issue.progress)
        this.onhold = this.filteredCalendar.filtered.issues.map(issue => issue.onHold)
        this.draft = this.filteredCalendar.filtered.issues.map(issue => issue.draft)
+       this.inprogress = this.filteredCalendar.filtered.issues.map(issue => issue.inProgress)
        this.briefing = this.filteredCalendar.filtered.issues.map(task => task.reportable)
 
         const events = []
@@ -605,6 +608,7 @@
             hasStar: this.star[i] , 
             isDraft: this.draft[i],
             isOnHold: this.onhold[i],
+            inProgress: this.inprogress[i],
             briefing: this.briefing[i]
             // timed: !allDay,            
           })
