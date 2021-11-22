@@ -330,6 +330,7 @@
               <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>  
               <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
               <span v-if="selectedEvent.planned == true" v-tooltip="`Planned`"><i class="fas fa-calendar-check text-info mr-1"></i></span>
+              <span v-if="selectedEvent.inProgress == true" v-tooltip="`In Progress`"><i class="far fa-tasks text-primary mr-1"></i></span>
               <span v-if="selectedEvent.briefing == true" v-tooltip="`Briefing`"><i class="fas fa-presentation text-primary mr-1"></i></span>
                 <span v-if="
                       selectedEvent.watch == false && 
@@ -339,6 +340,7 @@
                       selectedEvent.isDraft == false && 
                       selectedEvent.hasStar == false && 
                       selectedEvent.planned == false &&
+                      selectedEvent.inProgress == false &&
                       selectedEvent.briefing == false &&
                       selectedEvent.progess < 100">
                  No flags at this time
@@ -629,6 +631,7 @@
       this.onhold = this.filteredCalendar.filtered.risks.map(risk => risk.onHold)   
       this.draft = this.filteredCalendar.filtered.risks.map(risk => risk.draft)       
       this.planned = this.filteredCalendar.filtered.risks.map(risk => risk.planned)
+      this.inprogress = this.filteredCalendar.filtered.risks.map(risk => risk.inProgress)
       this.briefing = this.filteredCalendar.filtered.risks.map(task => task.reportable)
 
       const events = []
@@ -673,6 +676,7 @@
           isDraft: this.draft[i],
           isOnHold: this.onhold[i], 
           planned: this.planned[i],
+          inProgress: this.inprogress[i],
           briefing: this.briefing[i]
         })
       }
