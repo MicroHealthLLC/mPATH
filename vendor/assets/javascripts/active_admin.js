@@ -203,12 +203,14 @@ jQuery(function($) {
     allowClear: true
   });
 
-  $(".project_privileges_select, #q_facility_project_facility_id, #issue_facility_project_attributes_project_id").select2({
+  $(".project_privileges_select, #q_facility_project_facility_id, #issue_facility_project_attributes_project_id,\
+     #task_facility_project_attributes_project_id").select2({
     placeholder: "Search and select Project",
     allowClear: false
   });
 
-  $(".program_select, #q_facility_project_project_id, #issue_facility_project_attributes_facility_id").select2({
+  $(".program_select, #q_facility_project_project_id, #issue_facility_project_attributes_facility_id,\
+     #task_facility_project_attributes_facility_id").select2({
     placeholder: "Search and select Program",
     allowClear: false
   });
