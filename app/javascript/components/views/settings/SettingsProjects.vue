@@ -207,7 +207,7 @@ export default {
       formData.append('facility[status]', "active")
       formData.append('facility[project_ids][]', this.$route.params.programId)
       formData.append('commit', 'Create Project')
-       let url = `${API_BASE_PATH}/admin/projects`;
+       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
         let method = "POST";
           axios({
           method: method,
@@ -231,17 +231,15 @@ export default {
      })
     },
   saveEdits(index, rows){
-      let updatedProjectName = rows.facility_name;
-      let updatedGroupName = rows.facility_group_name;
+    debugger
+      let updatedProjectName = rows.facilityName;
+      let updatedGroupName = rows.facilityGroupName;
       let projectId = rows.id;
-// console.log(index)
-// console.log(rows)
-     let formData = new FormData();
+      let formData = new FormData();
       formData.append("facility[facility_name]", updatedProjectName)
       // Need one url to support these two data name edits
       formData.append("facility[facility_group_name]", updatedGroupName)
-      formData.append('commit', 'Update Project')
-        let url = `${API_BASE_PATH}/admin/projects/${projectId}`;
+        let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${projectId}`;
         let method = "PUT";
           axios({
           method: method,

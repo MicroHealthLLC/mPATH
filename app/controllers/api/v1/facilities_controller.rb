@@ -47,6 +47,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
 
   def facility_params
     params.require(:facility).permit(
+      :country_code,
       :facility_name,
       :address,
       :facility_group_id,

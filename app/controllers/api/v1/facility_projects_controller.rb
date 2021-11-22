@@ -1,4 +1,4 @@
-class Api::V1::Admin::FacilityProjectsController < AuthenticatedController
+class Api::V1::FacilityProjectsController < AuthenticatedController
   before_action :require_admin
 
   def index

@@ -137,7 +137,7 @@ export default {
       formData.append('facility[status]', "active")
       formData.append('facility[project_ids][]', this.$route.params.programId)
       formData.append('commit', 'Create Project')
-       let url = `${API_BASE_PATH}/admin/projects`;
+       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
         let method = "POST";
           axios({
           method: method,
@@ -170,7 +170,7 @@ export default {
       formData.append("facility_group[status]", "active"); 
       formData.append("commit", "Create Project Group");  
       
-        let url = `${API_BASE_PATH}/admin/facility_groups`;
+        let url = `${API_BASE_PATH}/facility_groups`;
         let method = "POST";
           axios({
           method: method,
