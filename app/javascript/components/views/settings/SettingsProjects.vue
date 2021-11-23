@@ -89,6 +89,7 @@
               <el-input
                 size="small"
                 style="text-align:center"
+                :load="log(scope.row)"
                 v-model="scope.row.facilityName"
                 controls-position="right"
               ></el-input>
@@ -206,9 +207,9 @@ export default {
     };
   },
   mounted() {
-    if (this.$route.params) {
-      this.fetchFacilities(this.programId);
-    }
+
+      this.fetchFacilities(this.$route.params.programId);
+
   },
   methods: {
     ...mapActions(["fetchFacilities"]),
@@ -217,6 +218,9 @@ export default {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`
       );
+    },
+    log(e){
+      console.log(e)
     },
     addProject() {
       this.dialogVisible = true;
@@ -329,7 +333,6 @@ export default {
       },
     },
     tableData() {
-      if (this.contentLoaded) {
         if (this.facilities && this.facilities.length > 0) {
           return this.facilities
             .map((f) => f.facility)
@@ -341,7 +344,6 @@ export default {
             });
         }
       }
-    },
   },
 };
 </script>

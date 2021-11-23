@@ -125,6 +125,7 @@ export default {
       "contentLoaded",
       'getShowAdminBtn',
       "currentProject",
+      "facilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
