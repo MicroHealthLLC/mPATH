@@ -415,7 +415,7 @@
                       >Days Remaining<span style="color: #dc3545">*</span>
                     </label>
                     <el-input
-                      v-model="contract.days_remaining"
+                      v-model="daysRemaining"
                       name="Contract Nickname"
                       type="text"
                       placeholder="Days Remaining"
@@ -715,6 +715,21 @@ export default {
       "contract",
       "contracts",
     ]),
+    daysRemaining(){
+     let popEnd =  this.contract.current_pop_end_time
+      if(popEnd !== null ){      
+        let date1 = new Date();
+        let date2 = popEnd;
+        let diffTime = Math.abs(date2 - date1);
+        let days_remaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      return date2
+      // return moment(popEnd).format("DD MMM YYYY")
+    }
+    },
+    today(){
+      let date1 = new Date();
+      return date1.toLocaleString()
+    },
     cVehicleOptions: {
       get() {
         return this.getVehicles;

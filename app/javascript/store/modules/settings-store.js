@@ -478,10 +478,7 @@ const contractFormData = (contract) => {
   // Append all required form data
   if (contract.id) {
     formData.append("contract[id]", contract.id);
-    formData.append(
-      "contract[facility_group_name]",
-      contract.facility_group_name
-    );
+    formData.append("facility_group_name", contract.facility_group_name);
   }
   formData.append("contract[facility_group_id]", contract.facility_group_id);
   formData.append("contract[contract_type_id]", contract.contract_type_id); //Required

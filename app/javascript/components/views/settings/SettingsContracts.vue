@@ -73,11 +73,11 @@
 
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
-          <!-- <template slot-scope="scope">
+          <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
             v-model="scope.row.facility_group_name"></el-input>
-       </template> -->
+       </template>
     </el-table-column>
 
      <el-table-column label="Actions">

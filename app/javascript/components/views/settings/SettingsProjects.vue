@@ -88,8 +88,7 @@
             <template slot-scope="scope">
               <el-input
                 size="small"
-                style="text-align:center"
-                :load="log(scope.row)"
+                style="text-align:center"            
                 v-model="scope.row.facilityName"
                 controls-position="right"
               ></el-input>
@@ -101,12 +100,12 @@
             filterable
             label="Group"
           >
-            <!-- <template slot-scope="scope">
+            <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
              :key="componentKey"  
             v-model="scope.row.facilityGroupName"></el-input>
-       </template> -->
+       </template>
           </el-table-column>
 
           <el-table-column label="Actions">
@@ -207,9 +206,9 @@ export default {
     };
   },
   mounted() {
-
+    if (this.$route.params) {
       this.fetchFacilities(this.$route.params.programId);
-
+    }
   },
   methods: {
     ...mapActions(["fetchFacilities"]),
@@ -218,9 +217,6 @@ export default {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`
       );
-    },
-    log(e){
-      console.log(e)
     },
     addProject() {
       this.dialogVisible = true;
