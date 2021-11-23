@@ -88,7 +88,7 @@
             <template slot-scope="scope">
               <el-input
                 size="small"
-                style="text-align:center"            
+                style="text-align:center"
                 v-model="scope.row.facilityName"
                 controls-position="right"
               ></el-input>
@@ -101,11 +101,13 @@
             label="Group"
           >
             <template slot-scope="scope">
-          <el-input size="small"
-            style="text-align:center"
-             :key="componentKey"  
-            v-model="scope.row.facilityGroupName"></el-input>
-       </template>
+              <el-input
+                size="small"
+                style="text-align:center"
+                :key="componentKey"
+                v-model="scope.row.facilityGroupName"
+              ></el-input>
+            </template>
           </el-table-column>
 
           <el-table-column label="Actions">
@@ -328,18 +330,22 @@ export default {
         this.setProjectGroupFilter(value);
       },
     },
-    tableData() {
-        if (this.facilities && this.facilities.length > 0) {
-          return this.facilities
-            .map((f) => f.facility)
-            .filter((td) => {
-              if (this.C_groupFilter && this.C_groupFilter.length > 0) {
-                let group = this.C_groupFilter.map((t) => t.name);
-                return group.includes(td.facilityGroupName);
-              } else return true;
-            });
-        }
+    tableData() {      
+      if (
+        this.projectsLoaded &&
+        this.facilities &&
+        this.facilities.length > 0
+      ) {
+        return this.facilities
+          .map((f) => f.facility)
+          .filter((td) => {
+            if (this.C_groupFilter && this.C_groupFilter.length > 0) {
+              let group = this.C_groupFilter.map((t) => t.name);
+              return group.includes(td.facilityGroupName);
+            } else return true;
+          });
       }
+    },
   },
 };
 </script>
