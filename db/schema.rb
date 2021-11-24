@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_15_181604) do
+ActiveRecord::Schema.define(version: 2021_11_23_210954) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -195,7 +195,7 @@ ActiveRecord::Schema.define(version: 2021_11_15_181604) do
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
-    t.string "email", default: "", null: false
+    t.string "email", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "facility_group_id"
