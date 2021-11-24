@@ -647,9 +647,6 @@ export default {
     vehicleText(e) {
       this.SET_VEHICLES(e);
     },
-    log(e) {
-      console.log(e);
-    },
     getCAgency(e) {
       this.fetchCustomerAgencies();
     },

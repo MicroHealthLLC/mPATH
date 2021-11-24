@@ -237,7 +237,7 @@ export default {
             ...contractData,
           })
           this.hideSaveBtn = true;
-          console.log(contractData)
+          // console.log(contractData)
     },
     editContract(index, rows) {
     //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
@@ -297,7 +297,7 @@ export default {
       if(this.contracts[0] && this.contracts[0].length > 0 ){
       let contractData = this.contracts[0].map(t => t)
       .filter((td) => {
-         console.log(td)
+        //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
             let group = this.C_projectGroupFilter.map((t) => t.id);
             return group.includes(td.facility_group_id);

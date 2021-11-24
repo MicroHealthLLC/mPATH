@@ -104,7 +104,6 @@
               <el-input
                 size="small"
                 style="text-align:center"
-                :key="componentKey"
                 v-model="scope.row.facilityGroupName"
               ></el-input>
             </template>
@@ -235,14 +234,14 @@ export default {
           this.C_projectGroupFilter.id
         );
       }
-      formData.append("facility[address]", "18 Boon Rd, Stow, MA 01775, USA");
-      formData.append("facility[lat]", "42.4114459");
-      formData.append("facility[lng]", "-71.5128223");
-      formData.append("facility[point_of_contact]", "Juan Rivera");
-      formData.append("facility[phone_number]", "+16789009876");
-      formData.append("facility[country_code]", "US");
-      formData.append("facility[email]", "test@test.com");
-      formData.append("facility[status]", "active");
+      // formData.append("facility[address]", "18 Boon Rd, Stow, MA 01775, USA");
+      // formData.append("facility[lat]", "42.4114459");
+      // formData.append("facility[lng]", "-71.5128223");
+      // formData.append("facility[point_of_contact]", "Juan Rivera");
+      // formData.append("facility[phone_number]", "+16789009876");
+      // formData.append("facility[country_code]", "US");
+      // formData.append("facility[email]", "test@test.com");
+      // formData.append("facility[status]", "active");
       formData.append("facility[project_ids][]", this.$route.params.programId);
       formData.append("commit", "Create Project");
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;

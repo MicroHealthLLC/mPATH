@@ -15,7 +15,7 @@
         <div
           v-for="(group, index) in sortedGroups"
           :key="index"
-         
+         :load="log(sortedGroups)"
           class="my-2 px-2"
         >
           <div
@@ -35,6 +35,7 @@
           <div v-show="expanded.id == group.id" class="ml-2">
               <div
               v-for="facility in facilityGroupFacilities(group)"
+              :load="log(groups)"
               :key="facility.id"
             >
               <router-link
@@ -138,6 +139,19 @@ export default {
         return this.currentProject.name;
       }
     },
+    groups(){
+      let group = (array, key ) => {
+        return array.reduce((result, currentValue) => {
+      // If an array already present for key, push it to the array. Else create an array and push the object
+      (result[currentValue[key]] = result[currentValue[key]] || []).push(
+      currentValue
+        );
+        // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
+        return result;
+      }, {}); // empty object is the initial value for result object
+      };
+      return group(this.facilities, "facilityGroupName")
+    },
    C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -195,6 +209,9 @@ export default {
      expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
     },
+     log(e){
+    console.log(e)
+  },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
          this.$router.push(
@@ -220,6 +237,7 @@ export default {
       }
     },
   },
+ 
   mounted() {
     // Expand the project tree if there is only one project group on tab transition
     if (
