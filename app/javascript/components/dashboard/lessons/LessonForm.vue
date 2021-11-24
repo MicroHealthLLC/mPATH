@@ -1195,7 +1195,7 @@ export default {
     },
   backToLessons() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
-        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
