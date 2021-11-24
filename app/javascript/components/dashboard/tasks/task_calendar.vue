@@ -836,7 +836,9 @@
       }).filter(t => {
       if (this.getHideOngoing == true) {
         return t.ongoing == false
-      } else return true       
+      } else {
+        return t.startDate != null
+      }
 
       }).filter(t => {
         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
@@ -905,7 +907,7 @@
         (t) => t && t.inProgress == true
       );
      let onHold = _.filter( this.filteredCalendar.unfiltered.tasks, (t) => t && t.onHold == true );
-     let ongoing = _.filter( this.filteredCalendar.unfiltered.tasks, (t) => t && t.ongoing == true );
+     let ongoing = _.filter( this.filteredCalendar.unfiltered.tasks, (t) => t && t.ongoing == true && t.startDate );
      let overdue = _.filter( this.filteredCalendar.unfiltered.tasks,(t) => t.isOverdue == true);
 
       return {
