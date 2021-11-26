@@ -1892,6 +1892,11 @@ a:hover {
 }
 
 
+.v-calendar-daily__body {
+  display: none !important;
+}
+
+
 .todayBtn, .back-forth-btn {
   border-radius: 4px;
   border-style: solid;
