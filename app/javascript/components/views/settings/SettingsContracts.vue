@@ -91,6 +91,10 @@
     </el-table-column>
   
    </el-table>
+   <span v-else class="mt-5">
+      NO DATA TO DISPLAY   
+   </span>
+   
   </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
@@ -296,7 +300,8 @@ export default {
     },
     tableData(){
       if(this.contracts[0] && this.contracts[0].length > 0 ){
-      let contractData = this.contracts[0].map(t => t)
+      let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
+      let contractData = programContracts.map(t => t)
       .filter((td) => {
         //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
