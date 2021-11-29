@@ -1,11 +1,6 @@
 <template>
-  <div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="row"
-  >
+  <div   
+    class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -69,7 +64,11 @@
             </div>
           </div>
         </div>
-
+  <div v-loading="!projectsLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="">
         <el-table
           v-if="tableData && tableData.length > 0"
           :data="
@@ -119,7 +118,7 @@
               >
               <el-button
                 type="default"
-                @click="goToProject(scope.$index, scope.row)"
+                @click.prevent="goToProject(scope.$index, scope.row)"
                 class="bg-success text-light"
               >
                 Go To Project <i class="fas fa-arrow-alt-circle-right ml-1"></i>
@@ -128,6 +127,7 @@
             </template>
           </el-table-column>
         </el-table>
+   </div>
         <el-dialog
           :visible.sync="dialogVisible"
           append-to-body
@@ -198,6 +198,8 @@ export default {
       dialogVisible: false,
       programId: this.$route.params.programId,
       search: "",
+      projectId: null, 
+      currentFacility:{},
       selectedProjectGroup: null,
       newProjectNameText: "",
       value: "",
@@ -215,9 +217,8 @@ export default {
     ...mapActions(["fetchFacilities"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`
-      );
+     window.location.pathname =  `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`    
+      // this.projectId = rows.id
     },
     addProject() {
       this.dialogVisible = true;
@@ -234,14 +235,7 @@ export default {
           this.C_projectGroupFilter.id
         );
       }
-      // formData.append("facility[address]", "18 Boon Rd, Stow, MA 01775, USA");
-      // formData.append("facility[lat]", "42.4114459");
-      // formData.append("facility[lng]", "-71.5128223");
-      // formData.append("facility[point_of_contact]", "Juan Rivera");
-      // formData.append("facility[phone_number]", "+16789009876");
-      // formData.append("facility[country_code]", "US");
-      // formData.append("facility[email]", "test@test.com");
-      // formData.append("facility[status]", "active");
+      formData.append("facility[status]", "active");
       formData.append("facility[project_ids][]", this.$route.params.programId);
       formData.append("commit", "Create Project");
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
@@ -348,6 +342,13 @@ export default {
       }
     },
   },
+   "$route.path": {
+      handler() {
+        if (this.projectId) {
+          this.currentFacility = this.facilities.find(facility => facility.id == this.projectId);
+         }
+       },
+    },
 };
 </script>
 

@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="row"
-  >
+  <div class="row">
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
@@ -28,7 +22,7 @@
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
      </div>    
-     <div class="col">     
+     <div class="col-5">     
         <el-input
           type="search"          
           placeholder="Search Group"
@@ -40,7 +34,7 @@
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>  
       </div> 
-      <div class="col pl-0">   
+      <!-- <div class="col pl-0">   
         <el-select
           class="w-100 mx-2"
           v-model="C_groupFilter" 
@@ -60,10 +54,16 @@
         </el-option>
           
           </el-select>
-      </div>
+      </div> -->
   </div>
  </div>
-  
+   <div
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class=""
+  >
    <el-table :data="filteredFacilityGroups.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%"  height="450">
     <el-table-column type="expand">
       <template slot-scope="props">
@@ -119,6 +119,7 @@
     
     
    </el-table>  
+   </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
       accept-charset="UTF-8"    

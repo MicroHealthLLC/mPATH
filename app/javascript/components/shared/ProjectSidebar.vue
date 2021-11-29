@@ -54,7 +54,7 @@
                 </div>
               </router-link>
               </div>
-               <div v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
+               <div v-show="isSheetsView" v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
                  <div v-for="c in object.contracts" :key="c.id">
                   <router-link               
                 :to="
@@ -127,6 +127,7 @@ export default {
       'getShowAdminBtn',
       "currentProject",
       "facilities",
+      "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
@@ -139,7 +140,10 @@ export default {
         return this.currentProject.name;
       }
     },
-    groups(){
+    isSheetsView() {
+      return this.$route.name.includes("Sheet");
+    },
+  groups(){
       let group = (array, key ) => {
         return array.reduce((result, currentValue) => {
       // If an array already present for key, push it to the array. Else create an array and push the object
@@ -210,7 +214,7 @@ export default {
       this.$emit("on-expand-facility-group", group);
     },
      log(e){
-    console.log(e)
+    // console.log(e)
   },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
