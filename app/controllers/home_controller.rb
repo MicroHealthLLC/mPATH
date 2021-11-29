@@ -2,6 +2,20 @@ class HomeController < AuthenticatedController
   layout "application"
   layout "portfolio_viewer", only: [:portfolio]
   
+  def contract
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
+  def settings
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
   def dataviewer
     program_id = params[:all].split("/")[1]
     if !current_user.authorized_programs.pluck(:id).include?(program_id.to_i)
@@ -26,7 +40,7 @@ class HomeController < AuthenticatedController
   def index
 
     # tabs = ["map", "sheet", "calendar", "kanban","gantt_chart", "gantt","members","lessons"]
-    # "/programs/:program_id/:tab/projects/:project_id/overview"
+    # "/programs/:program_id/:tab/projects/:project_id/analytics"
     # Findnig tab from params
     params_split = params[:path].split("/")
     tab = params_split[2] || "map"

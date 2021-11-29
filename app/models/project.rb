@@ -39,6 +39,8 @@ class Project < SortableRecord
 
   has_many :project_lesson_stages, dependent: :destroy
   has_many :lesson_stages, through: :project_lesson_stages
+  
+  has_many :contracts, dependent: :destroy
 
   enum status: [:inactive, :active].freeze
 
@@ -289,7 +291,8 @@ class Project < SortableRecord
   end
   
   def build_json_response(user)
-    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
+    project = self
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: project.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
 
@@ -313,18 +316,21 @@ class Project < SortableRecord
     all_users = User.includes(:organization).where(id: all_user_ids ).active
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
-    all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
+    all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
-    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?) or project_id = ?", all_facility_group_ids, project.id)
+
+    all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
 
     facility_projects_hash = []
     facility_projects_hash2 = {}
 
-    project_type_name = self.project_type.try(:name)
+    project_type_name = project.project_type.try(:name)
 
     pph = user.project_privileges_hash
     fph = user.facility_privileges_hash
+    cph = user.contract_privileges_hash[project.id] || {}
 
     all_facility_projects.each do |fp|
 
@@ -407,6 +413,8 @@ class Project < SortableRecord
       h2 = fg.attributes
       h2[:facilities] = []
       h2[:project_ids] = []
+      h2[:contracts] =(all_contracts[fg.id] || []).map(&:to_json)
+
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
         # h2[:project_ids] << fp.project_id
@@ -416,7 +424,7 @@ class Project < SortableRecord
       facility_groups_hash << h2
     end
 
-    hash = self.attributes.merge({project_type: project_type_name})
+    hash = project.attributes.merge({project_type: project_type_name})
 
     hash.merge!({
       #users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
@@ -430,7 +438,17 @@ class Project < SortableRecord
       task_stages: task_stages.as_json,
       issue_stages: issue_stages.as_json,
       risk_stages: risk_stages.as_json,
-      lesson_stages: lesson_stages.as_json
+      lesson_stages: lesson_stages.as_json,
+      contract_types: ContractType.all.as_json,
+      contract_statues: ContractStatus.all.as_json,
+      contract_customers: ContractCustomer.all.as_json,
+      contract_vehicles: ContractVehicle.all.as_json,
+      contract_vehicle_numbers: ContractVehicleNumber.all.as_json,
+      contract_numbers: ContractNumber.all.as_json,
+      subcontract_numbers: SubcontractNumber.all.as_json,
+      contract_primes: ContractPrime.all.as_json,
+      contract_current_pops: ContractCurrentPop.all.as_json,
+      contract_classifications: ContractClassification.all.as_json
     })
 
     hash

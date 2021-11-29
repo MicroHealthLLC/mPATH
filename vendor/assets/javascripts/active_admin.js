@@ -91,6 +91,23 @@ function addFacilityPrivilegeForm(element){
   })
 }
 
+function addContractPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  let program_ids = $.map( $(".project_select"), function(e, i){
+    return $(e).val()
+  } )
+  $.ajax({
+    url: url,
+    data: {program_ids: program_ids},
+    success: function(res, data){
+      $("#contract_privilege_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
 function addProjectPrivilegeForm(element){
   let url = $(element).attr("data-url")
   $.ajax({
@@ -128,6 +145,51 @@ function programSelectChange(element){
       alert("Error loading data. Please try again later")
     }
   })
+}
+
+function programSelectChangeForContract(element){
+  var project_id = $(element).val()
+  if(project_id == "select_project") return
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  let paramsIndex = $(element).attr("data-index")
+  $.ajax({
+    url: '/contract_privileges/contract_privileges_partial',
+    data: {project_id: project_id, user_id: user_id, index: paramsIndex},
+    success: function(res, data){
+      $("#"+div_id).html(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function initializeContractPrivilegeSelect2(){
+
+  $.map($(".contract_privileges_project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
+
+    $(element).select2({
+      placeholder: "Search and select Contract",
+      allowClear: true,
+      tags: true
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
 }
 
 function initializeProjectPrivilegeSelect2(){
@@ -185,6 +247,7 @@ function initializeProgramPrivilegeSelect2(){
 
 jQuery(function($) {
 
+  initializeContractPrivilegeSelect2()
   initializeProjectPrivilegeSelect2()
   initializeProgramPrivilegeSelect2()
 
@@ -706,6 +769,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          settings_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
           calendar_view: {
             read: false,
             write: false,
@@ -771,6 +839,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          contracts: {
+            read: false,
+            write: false,
+            delete: false
+          },
           lessons: {
             read: false,
             write: false,
@@ -787,6 +860,7 @@ jQuery(function($) {
       methods: {
         writePrivileges() {
           let overview = $("#user_privilege_attributes_overview").val() || "";
+          let contracts = $("#user_privilege_attributes_contracts").val() || "";
           let tasks = $("#user_privilege_attributes_tasks").val() || "";
           let issues = $("#user_privilege_attributes_issues").val() || "";
           let risks = $("#user_privilege_attributes_risks").val() || "";
@@ -795,6 +869,7 @@ jQuery(function($) {
           let map_view = $("#user_privilege_attributes_map_view").val() || "";
           let facility_manager_view = $("#user_privilege_attributes_facility_manager_view").val() || "";
           let sheets_view = $("#user_privilege_attributes_sheets_view").val() || "";
+          let settings_view = $("#user_privilege_attributes_settings_view").val() || "";
           let calendar_view = $("#user_privilege_attributes_calendar_view").val() || "";
           let gantt_view = $("#user_privilege_attributes_gantt_view").val() || "";
           let watch_view = $("#user_privilege_attributes_watch_view").val() || "";
@@ -811,6 +886,11 @@ jQuery(function($) {
             read: overview.includes("R"),
             write: overview.includes("W"),
             delete: overview.includes("D")
+          }
+          this.contracts = {
+            read: contracts.includes("R"),
+            write: contracts.includes("W"),
+            delete: contracts.includes("D")
           }
           this.tasks = {
             read: tasks.includes("R"),
@@ -851,6 +931,11 @@ jQuery(function($) {
             read: sheets_view.includes("R"),
             write: sheets_view.includes("W"),
             delete: sheets_view.includes("D")
+          }
+          this.settings_view = {
+            read: settings_view.includes("R"),
+            write: settings_view.includes("W"),
+            delete: settings_view.includes("D")
           }
           this.calendar_view = {
             read: calendar_view.includes("R"),
@@ -910,6 +995,32 @@ jQuery(function($) {
           v = value ? v + "D" : v.replace("D", "")
           //if (value) this.overview.read = value;
           $("#user_privilege_attributes_overview").val(v);
+        },
+        "contracts.read"(value) {
+          if (this.loading) return;
+          // if (!value) this.overview.read = true;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.contracts.read = false;
+            this.contracts.write = false;
+            this.contracts.delete = false;
+          }
+          $("#user_privilege_attributes_contracts").val(v);
+        },
+        "contracts.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "W" : v.replace("W", "")
+          //if (value) this.overview.read = value;
+          $("#user_privilege_attributes_contracts").val(v);
+        },
+        "contracts.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "D" : v.replace("D", "")
+          //if (value) this.overview.read = value;
+          $("#user_privilege_attributes_contracts").val(v);
         },
         "tasks.read"(value) {
           if (this.loading) return;
@@ -1141,6 +1252,40 @@ jQuery(function($) {
           }
           $("#user_privilege_attributes_sheets_view").val(v);
         },
+        "settings_view.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.settings_view.write = false;
+            this.settings_view.delete = false;
+          }
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
+        "settings_view.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.settings_view.read = value;
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
+        "settings_view.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.settings_view.read = value;
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
+        "settings_view.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.settings_view.write = false;
+            this.settings_view.delete = false;
+          }
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
         "calendar_view.write"(value) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_calendar_view").val();
@@ -1284,6 +1429,10 @@ jQuery(function($) {
             <label>Sheet</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
            </li>
+           <li class="choice d-flex">
+           <label>Program Settings</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="settings_view.read">Read</label>
+          </li>
             <li class="choice d-flex">
               <label>Map</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
@@ -1308,6 +1457,12 @@ jQuery(function($) {
             <label>Members</label>
             <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>
            </li>
+           <li class="choice d-flex">
+           <label>Contracts</label>
+           <label class="d-flex align-center" ><input type="checkbox" v-model="contracts.read">Read</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="contracts.write">Write</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="contracts.delete">Delete</label>
+         </li>
             <li class="choice d-flex">
               <label>Overview</label>
               <label class="d-flex align-center" ><input type="checkbox" v-model="overview.read">Read</label>

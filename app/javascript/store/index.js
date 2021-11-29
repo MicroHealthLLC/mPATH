@@ -5,12 +5,13 @@ const moment = extendMoment(Moment)
 import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
 import exampleModule from './modules/example-module-store'
+import settingsStore from './modules/settings-store'
 import programStore from './modules/program-store'
 import projectStore from './modules/project-store'
 import taskStore from './modules/task-store'
 import issueStore from './modules/issue-store'
 import riskStore from './modules/risk-store'
-import lessonStore from "./modules/lesson-store";
+import lessonStore from "./modules/lesson-store"
 import portfolioModule from './modules/portfolio-store'
 import {API_BASE_PATH} from './../mixins/utils'
 
@@ -30,6 +31,7 @@ export default new Vuex.Store({
     programStore,
     projectStore,
     taskStore,
+    settingsStore, 
     issueStore,
     riskStore,
     lessonStore,
@@ -39,6 +41,7 @@ export default new Vuex.Store({
     advancedFilter: [],
     myAssignmentsFilter:[],
     contentLoaded: false,
+    projectsLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
     showAdvancedFilter: false, 
@@ -52,6 +55,8 @@ export default new Vuex.Store({
     statuses: new Array,
     advancedFilterOptions: new Array,
     taskIssueOverdueFilter: new Array,
+
+    projectGroupFilter: null, 
 
     taskTypes: new Array,
     taskTypeFilter: null,
@@ -153,6 +158,7 @@ export default new Vuex.Store({
 
   mutations: {
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
+    setProjectGroupFilter: (state, filter) => state.projectGroupFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setMyAssignmentsFilter: (state, filter) => state.myAssignmentsFilter = filter,
@@ -189,6 +195,7 @@ export default new Vuex.Store({
       // state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
+    setProjectsLoaded: (state, loading) => state.projectsLoaded = loading,
     setToggleRACI: (state, raci) => state.toggleRACI = raci,
     setShowAllEventsToggle: (state, showAll) => state.showAllEventsToggle = showAll,
     setLastFocusFilter: (state, lastFocus) => state.lastCalendarFocus = lastFocus,
@@ -848,6 +855,7 @@ export default new Vuex.Store({
       }
     },
     contentLoaded: state => state.contentLoaded,
+    projectsLoaded: state => state.projectsLoaded,
     getToggleRACI: state => state.toggleRACI,
     getShowAllEventsToggle: state => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
@@ -866,6 +874,8 @@ export default new Vuex.Store({
     taskStageFilter: state => state.taskStageFilter,
     taskProgressFilter: state => state.taskProgressFilter,
     taskUserFilter: state => state.taskUserFilter,
+
+    getProjectGroupFilter: state => state.projectGroupFilter,
 
     riskStages: state => state.riskStages,
     riskStageFilter: state => state.riskStageFilter,
@@ -1804,6 +1814,7 @@ export default new Vuex.Store({
               facilities.push({...facility, ...facility.facility})
             }
             commit('setFacilities', facilities)
+            commit('setProjectsLoaded', true)
             resolve()
           })
           .catch((err) => {
@@ -1860,7 +1871,7 @@ export default new Vuex.Store({
     },
     fetchProjects({commit}) {
       return new Promise((resolve, reject) => {
-        http.get('${API_BASE_PATH}/projects.json')
+        http.get(`${API_BASE_PATH}/projects.json`)
           .then((res) => {
             commit('setProjects', res.data.projects)
             resolve()

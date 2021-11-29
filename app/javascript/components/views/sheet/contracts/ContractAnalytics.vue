@@ -4,7 +4,8 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
+          <div class="container-fluid px-0 mx-1">
+               <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
             
             <div class="row filterDiv">      
                <div class="text-center filterLabel underline"><small class="px-2 bg">FILTERS </small></div>        
@@ -14,10 +15,8 @@
                     v-for="(filterArray, index) in getAllFilterNames"
                     :key="index"  
                   >
-                    <span class="d-inline" v-if="getFilterValue(filterArray[0])">
-                   
-                        <span class="filter-green d-inline font-sm text-light px-2">{{ getFilterValue(filterArray[0]) }}</span>
-                  
+                    <span class="d-inline" v-if="getFilterValue(filterArray[0])">                   
+                        <span class="filter-green d-inline font-sm text-light px-2">{{ getFilterValue(filterArray[0]) }}</span>                  
                     </span>
                   </div>
                 </div>
@@ -675,7 +674,7 @@
                 </div>
                 
                   </div>
-                <div class="row text-center mt-0">
+                <div class="row text-center mb-4 mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
                    lessonVariation.completes.length
@@ -688,105 +687,10 @@
                 </div>                     
                 </div>         
             </div>
-            <div v-if="lessonStats.length > 0" data-cy="lesson_categories">
-              <el-collapse class="lessonCard">
-                <el-collapse-item title="..." name="1">
-                  <div data-cy="lesson_categories" class="row">
-                    <div class="col-6 pb-0 underline">PROCRESS AREAS</div>
-                    <div class="col-6 pb-0">#</div>
-                  </div>
-
-                  <div class="row" v-for="(lesson, index) in lessonStats" :key="index">
-                    <div class="col-6 pb-0 font-sm pr-0">
-                      <span> {{ lesson.name }}</span>
-                    </div>
-                    <div class="col-6 pb-0">
-                      <span class="badge badge-secondary  font-sm badge-pill">{{ lesson.count }}</span>
-                    </div>
-                  </div>
-                </el-collapse-item>
-              </el-collapse>
-            </div>
-            <div v-else>
-              <el-collapse id="roll_up" class="lessonCard">
-                <el-collapse-item title="..." name="1">
-                  <div class="row mt-1 text-center">
-                    <div class="col p-0  mb-0">NO DATA TO DISPLAY</div>
-                  </div>
-                </el-collapse-item>
-              </el-collapse>
-            </div>
+       
           </el-card>
       </div>
-              <div class="col-4">
-                <div class="box-card my-el-card p-3" style="position:relative">
-                  <div class="row">
-                    <div class="col">
-                      <p>PROJECT GROUP:</p>
-                      <p>COMPLETION DATE:</p>
-                      <p>
-                        STATUS:
-                        <span>
-                          <small
-                            v-if="!facility.statusId && _isallowed('write')"
-                            class="ml-2 d-inline text-danger"
-                            style="position:absolute"
-                          >
-                            Must be updated before you can enter a Completion
-                            Date!
-                          </small>
-                        </span>
-                      </p>
-                    </div>
-
-                    <div class="col">
-                      <p
-                        class="badge badge-secondary badge-pill font-weight-light"
-                      >
-                        {{ facility.facility.facilityGroupName }}
-                      </p>
-                      <div class="simple-select">
-                        <v2-date-picker
-                          v-model="dueDate"
-                          value-type="YYYY-MM-DD"
-                          format="DD MMM YYYY"
-                          class="w-100 vue2-datepicker"
-                          @input="onChange"
-                          placeholder="DD MM YYYY"
-                          :disabled="!_isallowed('write') || !facility.statusId"
-                        />
-                      </div>
-
-                      <div class="el-dropdown-wrapper my-2">
-                        <el-select
-                          v-model="statusId"
-                          track-by="id"
-                          class="w-100"
-                          @change="onChange"
-                          :disabled="!_isallowed('write')"
-                          placeholder="Select Project Status"
-                        >
-                          <el-option
-                            v-for="item in statuses"
-                            :label="item.name"
-                            :key="item.id"
-                            :value="item.id"
-                          >
-                          </el-option>
-                        </el-select>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    v-if="_isallowed('write') && DV_updated"
-                    class="btn btn-secondary mt-2 btn-sm apply-btn w-100"
-                    @click="updateFacility"
-                    :disabled="!DV_updated"
-                  >
-                    Apply
-                  </button>
-                </div>
-              </div>
+     
 
         
 
@@ -839,29 +743,29 @@
                         <span class="fbody-icon"
                           ><i class="far fa-id-badge"></i
                         ></span>
-                        <span>{{
+                        <!-- <span>{{
                           facility.facility.pointOfContact || "N/A"
-                        }}</span>
+                        }}</span> -->
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon"
                           ><i class="fas fa-map-marker"></i
                         ></span>
-                        <span>{{ facility.facility.address || "N/A" }}</span>
+                        <!-- <span>{{ facility.facility.address || "N/A" }}</span> -->
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon"
                           ><i class="fas fa-phone"></i
                         ></span>
-                        <span>{{
+                        <!-- <span>{{
                           facility.facility.phoneNumber || "N/A"
-                        }}</span>
+                        }}</span> -->
                       </p>
                       <p class="mt-1">
                         <span class="fbody-icon"
                           ><i class="far fa-envelope"></i
                         ></span>
-                        <span>{{ facility.facility.email || "N/A" }}</span>
+                        <!-- <span>{{ facility.facility.email || "N/A" }}</span> -->
                       </p>
                     </div>
                   </div>
@@ -900,9 +804,9 @@
             <!-- Row 2, col-1 for Tasks Card -->
             
           </div>
-          <div v-else class="text-danger mx-2 my-4">
+          <!-- <div v-else class="text-danger mx-2 my-4">
             You don't have permission to read!
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -911,17 +815,17 @@
 </template>
 
 <script>
-import http from "../../../common/http";
+import http from "../../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import Loader from "../../shared/loader";
-import {API_BASE_PATH} from './../../../mixins/utils'
+import Loader from "../../../shared/loader";
+import {API_BASE_PATH} from '../../../../mixins/utils';
 
 export default {
-  name: "SheetOverview",
+  name: "ContractAnalytics",
   components: {
     Loader,
   },
-  props: ["facility"],
+  props: ["contractClass"],
   data() {
     return {
       dueDate: "",
@@ -935,72 +839,27 @@ export default {
     };
   },
   mounted() {
-    this.dueDate = this.facility.dueDate;
-    this.statusId = this.facility.statusId;
+    // this.dueDate = this.facility.dueDate;
+    // this.statusId = this.facility.statusId;
     this.fetchProjectLessons(this.$route.params);
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
-    updateFacility(e) {
-      if (e.target) e.target.blur();
-      if (!this._isallowed("write") || !this.DV_updated) return;
-      this.DV_updated = false;
-      let data = {
-        facility: {
-          statusId: this.statusId,
-          dueDate: this.dueDate,
-        },
-      };
-      // Used to update state
-      let updatedFacility = Object.assign(this.facility, {
-        statusId: this.statusId,
-        dueDate: this.dueDate,
-        projectStatus: this.statuses.find(
-          (status) => status.id === this.statusId
-        ).name,
-      });
 
-      http
-        .put(
-          `#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}.json`,
-          data
-        )
-        .then((res) => {
-          this.updateFacilityHash(updatedFacility);
-          if (res.status === 200) {
-            this.$message({
-              message: `${res.data.facility.facilityName} was saved successfully.`,
-              type: "success",
-              showClose: true,
-            });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
     log(e){
       console.log(e)
     },
      _isallowed(salut) {
         var programId = this.$route.params.programId;
         var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.overview.includes(s);      
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // console.log(fPrivilege)
+        // return  fPrivilege.overview.includes(s);    
+          
     },
-    isBlockedStatus(status) {
-      return (
-        status &&
-        status.name.toLowerCase().includes("complete") &&
-        this.facility.progress < 100
-      );
-    },
-    // log(e){
-    //   console.log("getAllFilterNames" + e)
-    // },
    onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
@@ -1034,22 +893,6 @@ export default {
       "facilities",
       "getUnfilteredFacilities",
     ]),
-    selectedStatus: {
-      get() {
-        return this.facility.statusId; //this.$data._selected
-      },
-      set(value) {
-        this.$data._selected = value;
-        // this.facility.statusId = value
-        // console.log(value)
-        if (value) {
-          this.$nextTick(() => {
-            this.DV_updated = true;
-          });
-          this.facility.statusId = value;
-        }
-      },
-    },
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter;
@@ -1087,37 +930,38 @@ export default {
     },
   
     filteredTasks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.taskStageFilter, "id");
-      let taskIssueUsers = this.getTaskIssueUserFilter;
+      return []
+      // let typeIds = _.map(this.taskTypeFilter, "id");
+      // let stageIds = _.map(this.taskStageFilter, "id");
+      // let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return _.filter(this.facility.tasks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          ...resource.userIds,
-        ];
+      // return _.filter(this.facility.tasks, (resource) => {
+      //   let valid = true;
+      //   let userIds = [
+      //     ..._.map(resource.checklists, "userId"),
+      //     ...resource.userIds,
+      //   ];
 
-        if (taskIssueUsers.length > 0) {
-          if (taskIssueUsers.length > 0) {
-            valid =
-              valid &&
-              userIds.some(
-                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-              );
-          }
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
+      //   if (taskIssueUsers.length > 0) {
+      //     if (taskIssueUsers.length > 0) {
+      //       valid =
+      //         valid &&
+      //         userIds.some(
+      //           (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
+      //         );
+      //     }
+      //   }
+      //   //TODO: For performance, send the whole tasks array instead of one by one
+      //   valid =
+      //     valid &&
+      //     this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
 
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.taskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      });
+      //   if (stageIds.length > 0)
+      //     valid = valid && stageIds.includes(resource.taskStageId);
+      //   if (typeIds.length > 0)
+      //     valid = valid && typeIds.includes(resource.taskTypeId);
+      //   return valid;
+      // });
     },
     viableTasksForProgressTotal(){
       return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
@@ -1321,43 +1165,44 @@ export default {
       };
     },
     filteredIssues() {
-      let taskTypeIds = _.map(this.taskTypeFilter, "id");
-      let typeIds = _.map(this.issueTypeFilter, "id");
-      let severityIds = _.map(this.issueSeverityFilter, "id");
-      let stageIds = _.map(this.issueStageFilter, "id");
-      let taskIssueUsers = this.getTaskIssueUserFilter;
+      return []
+      // let taskTypeIds = _.map(this.taskTypeFilter, "id");
+      // let typeIds = _.map(this.issueTypeFilter, "id");
+      // let severityIds = _.map(this.issueSeverityFilter, "id");
+      // let stageIds = _.map(this.issueStageFilter, "id");
+      // let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return _.filter(this.facility.issues, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          ...resource.userIds,
-        ];
+      // return _.filter(this.facility.issues, (resource) => {
+      //   let valid = true;
+      //   let userIds = [
+      //     ..._.map(resource.checklists, "userId"),
+      //     ...resource.userIds,
+      //   ];
 
-        if (taskIssueUsers.length > 0) {
-          if (taskIssueUsers.length > 0) {
-            valid =
-              valid &&
-              userIds.some(
-                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-              );
-          }
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityShowIssues");
+      //   if (taskIssueUsers.length > 0) {
+      //     if (taskIssueUsers.length > 0) {
+      //       valid =
+      //         valid &&
+      //         userIds.some(
+      //           (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
+      //         );
+      //     }
+      //   }
+      //   //TODO: For performance, send the whole tasks array instead of one by one
+      //   valid =
+      //     valid &&
+      //     this.filterDataForAdvancedFilter([resource], "facilityShowIssues");
 
-        if (taskTypeIds.length > 0)
-          valid = valid && taskTypeIds.includes(resource.taskTypeId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.issueTypeId);
-        if (severityIds.length > 0)
-          valid = valid && severityIds.includes(resource.issueSeverityId);
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.issueStageId);
-        return valid;
-      });
+      //   if (taskTypeIds.length > 0)
+      //     valid = valid && taskTypeIds.includes(resource.taskTypeId);
+      //   if (typeIds.length > 0)
+      //     valid = valid && typeIds.includes(resource.issueTypeId);
+      //   if (severityIds.length > 0)
+      //     valid = valid && severityIds.includes(resource.issueSeverityId);
+      //   if (stageIds.length > 0)
+      //     valid = valid && stageIds.includes(resource.issueStageId);
+      //   return valid;
+      // });
     },
     issueStats() {
       let issues = new Array();
@@ -1444,41 +1289,43 @@ export default {
       };
     },
     filteredRisks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
-      let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return _.filter(this.facility.risks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          ...resource.userIds,
-        ];
+      return []
+      // let typeIds = _.map(this.taskTypeFilter, "id");
+      // let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, "id");
+      // let stageIds = _.map(this.riskStageFilter, "id");
+      // let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
+      // let taskIssueUsers = this.getTaskIssueUserFilter;
 
-        if (taskIssueUsers.length > 0) {
-          if (taskIssueUsers.length > 0) {
-            valid =
-              valid &&
-              userIds.some(
-                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-              );
-          }
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
+      // return _.filter(this.facility.risks, (resource) => {
+      //   let valid = true;
+      //   let userIds = [
+      //     ..._.map(resource.checklists, "userId"),
+      //     ...resource.userIds,
+      //   ];
 
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.riskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        if (riskApproachIds.length > 0)
-          valid = valid && riskApproachIds.includes(resource.riskApproach);
-        return valid;
-      });
+      //   if (taskIssueUsers.length > 0) {
+      //     if (taskIssueUsers.length > 0) {
+      //       valid =
+      //         valid &&
+      //         userIds.some(
+      //           (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
+      //         );
+      //     }
+      //   }
+      //   //TODO: For performance, send the whole tasks array instead of one by one
+      //   valid =
+      //     valid &&
+      //     this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
+
+      //   if (stageIds.length > 0)
+      //     valid = valid && stageIds.includes(resource.riskStageId);
+      //   if (typeIds.length > 0)
+      //     valid = valid && typeIds.includes(resource.taskTypeId);
+      //   if (riskApproachIds.length > 0)
+      //     valid = valid && riskApproachIds.includes(resource.riskApproach);
+      //   return valid;
+      // });
     },
     riskPriorityLevels() {
       let grey = _.filter(
@@ -1583,17 +1430,6 @@ export default {
         drafts
       }
     },
-    lessonStats() {
-      let lessons = new Array();
-      let group = _.groupBy(this.projectLessons, "category");
-      for (let type in group) {
-        lessons.push({
-          name: type,
-          count: group[type].length,
-        });
-      }
-      return lessons;
-    },
     currentRiskTypes() {
       let names =
         this.taskTypeFilter &&
@@ -1619,8 +1455,8 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.dueDate = this.facility.dueDate;
-        this.statusId = this.facility.statusId;
+        // this.dueDate = this.facility.dueDate;
+        // this.statusId = this.facility.statusId;
       },
     },
   },
