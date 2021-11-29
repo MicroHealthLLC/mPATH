@@ -11,7 +11,7 @@
               accept-charset="UTF-8"
               element-loading-text="Fetching Contract data. Please wait..."
               element-loading-spinner="el-icon-loading"
-              element-loading-background="rgba(0, 0, 0, 0.85)"
+              element-loading-background="rgba(0, 0, 0, 0.8)"
             >
               <hr class="mb-6 mt-4" />
               <div class="mt-2  d-flex align-items-center">
@@ -400,8 +400,8 @@
                     <div>
                       <v2-date-picker
                         name="Date"
-                        v-model="contract.current_pop_end_time"
-                        value-type="YYYY-MM-DD"
+                        v-model="contract.current_pop_end_time"  
+                        value-type="YYYY-MM-DD"                     
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
@@ -415,7 +415,8 @@
                       >Days Remaining<span style="color: #dc3545">*</span>
                     </label>
                     <el-input
-                      v-model="contract.days_remaining"
+                      v-model="daysRemaining"
+                     :disabled="!contract.current_pop_end_time"
                       name="Contract Nickname"
                       type="text"
                       placeholder="Days Remaining"
@@ -505,6 +506,7 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../../shared/loader";
 import FormTabs from "../../../shared/FormTabs.vue";
+import moment from 'moment';
 export default {
   name: "SheetContract",
   components: {
@@ -647,9 +649,6 @@ export default {
     vehicleText(e) {
       this.SET_VEHICLES(e);
     },
-    log(e) {
-      console.log(e);
-    },
     getCAgency(e) {
       this.fetchCustomerAgencies();
     },
@@ -715,7 +714,17 @@ export default {
       "contract",
       "contracts",
     ]),
-    cVehicleOptions: {
+    daysRemaining(){    
+      let popEnd =  this.contract.current_pop_end_time
+      if(popEnd !== null ){      
+        let a =  moment();
+        let b =  moment(popEnd);
+        let diff =  b - a;
+        const diffDuration =  diff / (1000 * 3600 * 24);  
+      return Math.trunc(diffDuration)
+      }      
+    },
+   cVehicleOptions: {
       get() {
         return this.getVehicles;
       },

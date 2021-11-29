@@ -13,22 +13,16 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       # For Admin panel
-      namespace :admin do
-        resources :facilities, path: "projects" do
-          resources :facility_projects, only: [:index, :update, :show]
-        end
-        get '/settings', to: 'settings#index'
-        post '/settings', to: 'settings#update'
-
-        resources :task_types, only: [:index]
-        # resources :statuses, only: [:index]
-        # resources :issue_severities, only: [:index]
-        # resources :issue_types, only: [:index]
-        # resources :issue_stages, only: [:index]
-        # resources :task_stages, only: [:index]
-        # resources :users, only: [:index]
-        # post '/sort-by', to: 'sorts#update'
-      end
+      get '/settings', to: 'settings#index'
+      post '/settings', to: 'settings#update'
+      resources :task_types, only: [:index]
+      resources :statuses, only: [:index]
+      resources :issue_severities, only: [:index]
+      resources :issue_types, only: [:index]
+      resources :issue_stages, only: [:index]
+      resources :task_stages, only: [:index]
+      resources :users, only: [:index]
+      post '/sort-by', to: 'sorts#update'
 
       resources :facility_groups, only: [:index, :create]
 
@@ -98,6 +92,8 @@ Rails.application.routes.draw do
         end
 
         resources :facilities, path: 'projects' do
+          resources :facility_projects, only: [:index, :update, :show]
+
           resources :notes #, module: :facilities
           resources :issues do
             post :batch_update, on: :collection

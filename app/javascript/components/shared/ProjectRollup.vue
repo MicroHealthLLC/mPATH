@@ -1238,7 +1238,7 @@ export default {
     },
     lessonStats() {
       let lessons = new Array();
-      console.log(this.programLessons)
+      // console.log(this.programLessons)
       let group = _.groupBy(this.programLessons, "category");
       for (let type in group) {
         lessons.push({

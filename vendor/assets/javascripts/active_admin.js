@@ -651,13 +651,13 @@ jQuery(function($) {
       },
       methods: {
         fetchFacilityProjects(cb) {
-          $.get(`/api/v1/admin/facilities/${facility_id}/facility_projects.json`, (data) => {
+          $.get(`/api/v1/facilities/${facility_id}/facility_projects.json`, (data) => {
             this.projects = data;
             this.fetchStatuses(cb);
           });
         },
         fetchStatuses(cb) {
-          $.get("/api/v1/admin/statuses.json", (data) => {
+          $.get("/api/v1/statuses.json", (data) => {
             this.statuses = data.statuses;
             return cb();
           });
@@ -1577,12 +1577,12 @@ jQuery(function($) {
         methods: {
           submitSettings() {
             if (!this.permitted) return;
-            $.post("/api/v1/admin/settings.json", {settings: this.settings}, (data) => {
+            $.post("/api/v1/settings.json", {settings: this.settings}, (data) => {
               window.location.href = "/admin/settings";
             });
           },
           fetchSettings() {
-            $.get("/api/v1/admin/settings.json", (data) => {
+            $.get("/api/v1/settings.json", (data) => {
               for (let key in this.settings) {
                 this.settings[key] = data[key] || '';
               }
@@ -1741,13 +1741,13 @@ jQuery(function($) {
               this.project_id = $("select[name=Program]").children("option:selected").val();
             },
             fetchProjectUsers() {
-              $.get(`/api/v1/admin/users.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/users.json?project_id=${this.project_id}`, (data) => {
                 this.project_users = data.filter(u => u.status == "active");
                 this.loading = false;
               });
             },
             fetchProgramCategories(){
-              $.get(`/api/v1/admin/task_types.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/task_types.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Category]").html("")
                 let task_types = data.categories
                 for(var i = 0; i <= task_types.length; i++){
@@ -1759,7 +1759,7 @@ jQuery(function($) {
               });
             },
             fetchProgramStages(){
-              $.get(`/api/v1/admin/task_stages.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/task_stages.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Stage]").html("")
                 let task_stages = data.all_stages
                 for(var i = 0; i <= task_stages.length; i++){
@@ -2020,7 +2020,7 @@ jQuery(function($) {
             this.u_id = $(`#${item.input_id}`).val();
           },
           fetchProjectUsers() {
-            $.get(`/api/v1/admin/users.json?project_id=${this.project_id}`, (data) => {
+            $.get(`/api/v1/users.json?project_id=${this.project_id}`, (data) => {
               this.users = data.filter(u => u.status == "active");
               this.loading = false;
             });
@@ -2091,7 +2091,7 @@ jQuery(function($) {
             this.u_ids = $(`#${this.type}_user_ids`).val().map(Number);
           },
           fetchProjectUsers() {
-            $.get(`/api/v1/admin/users.json?project_id=${this.project_id}`, (data) => {
+            $.get(`/api/v1/users.json?project_id=${this.project_id}`, (data) => {
               this.project_users = data.filter(u => u.status == "active");
               this.task_users = this.project_users.filter(u => this.u_ids.includes(u.id));
               this.loading = false;
@@ -2195,7 +2195,7 @@ jQuery(function($) {
             this.fetchProjectTaskIssues()
           },
           fetchProjectTaskIssues() {
-            $.get(`/api/v1/admin/projects/${this.project_id}/task_issues.json`, (data) => {
+            $.get(`/api/v1/projects/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
               this.risks = data ? this.type == 'risk' ? data.risks.filter(t => t.id !== this._id) : data.risks : [];
@@ -2468,7 +2468,7 @@ jQuery(function($) {
           let order = sort_col.split('_').pop();
           sort_col = sort_col.replace(`_${order}`, '');
           let data = {relation: model, order: order, column: sort_col}
-          $.post("/api/v1/admin/sort-by.json", data, (res) => {/* Noops */});
+          $.post("/api/v1/sort-by.json", data, (res) => {/* Noops */});
         }
       });
     }
@@ -2501,7 +2501,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/v1/admin/users.json`, (data) => {
+            $.get(`/api/v1/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
@@ -2585,7 +2585,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/v1/admin/users.json`, (data) => {
+            $.get(`/api/v1/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__checklist_users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
