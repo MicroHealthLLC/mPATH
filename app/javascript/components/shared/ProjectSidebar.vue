@@ -15,7 +15,7 @@
         <div
           v-for="(group, index) in sortedGroups"
           :key="index"
-         
+         :load="log(sortedGroups)"
           class="my-2 px-2"
         >
           <div
@@ -35,6 +35,7 @@
           <div v-show="expanded.id == group.id" class="ml-2">
               <div
               v-for="facility in facilityGroupFacilities(group)"
+              :load="log(groups)"
               :key="facility.id"
             >
               <router-link
@@ -53,7 +54,7 @@
                 </div>
               </router-link>
               </div>
-               <div v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
+               <div v-show="isSheetsView" v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
                  <div v-for="c in object.contracts" :key="c.id">
                   <router-link               
                 :to="
@@ -126,6 +127,7 @@ export default {
       'getShowAdminBtn',
       "currentProject",
       "facilities",
+      "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
@@ -137,6 +139,22 @@ export default {
       ) {
         return this.currentProject.name;
       }
+    },
+    isSheetsView() {
+      return this.$route.name.includes("Sheet");
+    },
+  groups(){
+      let group = (array, key ) => {
+        return array.reduce((result, currentValue) => {
+      // If an array already present for key, push it to the array. Else create an array and push the object
+      (result[currentValue[key]] = result[currentValue[key]] || []).push(
+      currentValue
+        );
+        // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
+        return result;
+      }, {}); // empty object is the initial value for result object
+      };
+      return group(this.facilities, "facilityGroupName")
     },
    C_projectGroupFilter: {
       get() {
@@ -195,6 +213,9 @@ export default {
      expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
     },
+     log(e){
+    // console.log(e)
+  },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
          this.$router.push(
@@ -220,6 +241,7 @@ export default {
       }
     },
   },
+ 
   mounted() {
     // Expand the project tree if there is only one project group on tab transition
     if (

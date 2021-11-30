@@ -35,11 +35,11 @@
     </h5>
 
 </div>
- <!-- <router-link  >  -->
-      <button class="btn btn-sm btn-light settingsBackBtn"  @click.prevent="backToSheetView" style="cursor: pointer">
+ <!-- <router-link :to="backToSheetView">  -->
+      <button class="btn btn-sm btn-light settingsBackBtn" @click.prevent="backToSheetView" style="cursor: pointer">
        <h6> <i class="far fa-arrow-square-left mr-1"></i> Back To Program</h6>
       </button>  
-      <!-- </router-link> -->
+  <!-- </router-link> -->
 </div>
 </template>
 
@@ -52,18 +52,14 @@ export default {
       
     }
   },
-  mounted() {
-   
-  },
+
   computed: {
     ...mapGetters([
         'getShowAdminBtn',
      ]),
    backToSheetView() {
       // this.setShowAdminBtn(!this.getShowAdminBtn);
-        this.$router.push(
-      `/programs/${this.$route.params.programId}/sheet`
-      );
+      window.location.pathname = `/programs/${this.$route.params.programId}/sheet`
       },
     adminProjectsView() {
      return `/programs/${this.$route.params.programId}/settings/projects`

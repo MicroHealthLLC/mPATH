@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-loading="!contractsLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="row"
-  >
+  <div class="row">
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
@@ -62,6 +56,12 @@
        </div>
       </div>
   </div>
+  <div
+    v-loading="!contractsLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="">
    <el-table  v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
     <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
@@ -82,8 +82,8 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button type="default" @click="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button type="default" @click="goToContract(scope.$index, scope.row)" class="bg-success text-light">
+      <el-button type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+       <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">
          Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -91,6 +91,11 @@
     </el-table-column>
   
    </el-table>
+   <span v-else class="mt-5">
+      NO DATA TO DISPLAY   
+   </span>
+   
+  </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
       accept-charset="UTF-8"    
@@ -219,9 +224,9 @@ export default {
         console.log(tab, event);
     }, 
     goToContract(index, rows){        
-         this.$router.push(
-         `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
-      );
+      //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
+       window.location.pathname =  `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
+    
     },
     saveNewContract() {
         let contractData = {
@@ -237,7 +242,7 @@ export default {
             ...contractData,
           })
           this.hideSaveBtn = true;
-          console.log(contractData)
+          // console.log(contractData)
     },
     editContract(index, rows) {
     //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
@@ -295,9 +300,10 @@ export default {
     },
     tableData(){
       if(this.contracts[0] && this.contracts[0].length > 0 ){
-      let contractData = this.contracts[0].map(t => t)
+      let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
+      let contractData = programContracts.map(t => t)
       .filter((td) => {
-         console.log(td)
+        //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
             let group = this.C_projectGroupFilter.map((t) => t.id);
             return group.includes(td.facility_group_id);
