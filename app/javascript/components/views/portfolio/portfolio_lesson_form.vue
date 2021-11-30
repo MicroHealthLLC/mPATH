@@ -658,7 +658,7 @@
             <div @click.prevent="downloadFile(file)">
                <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="!_isallowed('write')" @click="removeFile(file.id, index)">
+            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -685,7 +685,7 @@
               </div></a
             >
             <div
-              v-if="!_isallowed('write')"
+              v-if="_isallowed('delete')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>
@@ -697,7 +697,7 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div @click="removeFileLink(link.id, index)" class="clickable">
+            <div v-if="_isallowed('delete')" @click="removeFileLink(link.id, index)" class="clickable">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
