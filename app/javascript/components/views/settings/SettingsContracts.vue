@@ -67,6 +67,7 @@
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
+            data-cy="contract_nickname"
             v-model="scope.row.nickname" controls-position="right"></el-input>
        </template>
 
@@ -82,7 +83,7 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+      <el-button data-cy="contract_save_btn" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
        <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">
          Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
         </el-button>
