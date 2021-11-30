@@ -1449,114 +1449,112 @@ export default {
       this.setMembersPerPageFilter(null)
     },
     onClearFilter() {
-      var decision = window.confirm("Are you sure you want to remove this favorite filter?")
-      if(!decision){
-        return
-      }
+      this.$confirm(`Are you sure you want to remove this favorite filter?`, 'Confirm Remove', {
+        confirmButtonText: 'Remove',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.setPortfolioUsersFilter([])
+        this.setPortfolioCategoriesFilter([])
+        this.setTaskIssueUserFilter([])
+        this.setTaskIssueProgressStatusFilter([])
+        this.setPortfolioStatusesFilter([])
+        this.setPortfolioTaskStagesFilter([])
+        this.setPortfolioIssueStagesFilter([])
+        this.setPortfolioRiskStagesFilter([])
+        this.setPortfolioLessonStagesFilter([])
+        this.setPortfolioIssueSeveritiesFilter([])
+        this.setPortfolioIssueTypesFilter([])
+        this.setPortfolioRiskApproachesFilter([])
+        this.setPortfolioRiskPrioritiesFilter([])
+        this.setPortfolioNameFilter([])
+        this.setTaskIssueUserFilter([])
+        this.setTaskIssueProgressStatusFilter([])
+        // this.setAdvancedFilter([])
+        this.setMyAssignmentsFilter([])
+        this.setProjectStatusFilter(null)
+        this.setTaskIssueOverdueFilter([])
+        this.setTaskTypeFilter(null)
+        this.setFacilityGroupFilter(null)
+        this.setFacilityProgressFilter(null)
+        this.setFacilityDueDateFilter([null])
+        this.setNoteDateFilter([null])
+        this.setTaskIssueDueDateFilter([null])
+        this.setFacilityNameFilter(null)
+        this.setIssueTypeFilter(null)
+        this.setIssueSeverityFilter(null)
+        this.setIssueStageFilter(null)
+        this.setTaskStageFilter(null)
+        this.setRiskStageFilter(null)
+        this.setTaskIssueProgressFilter(null)
+        this.setMyActionsFilter([])
+        this.setOnWatchFilter([])
+        this.setMapFilters([])
+        this.clearProgressFilters()
+        this.setIssueUserFilter([])
+        this.setTaskUserFilter(null)
+        this.setRiskApproachFilter([])
+        this.setRiskPriorityLevelFilter([])
+        this.setTasksPerPageFilter(null)
+        this.setRisksPerPageFilter(null)
+        this.setIssuesPerPageFilter(null)
+        this.setMembersPerPageFilter(null)
+        this.setFacilities(this.getUnfilteredFacilities)
 
-      this.setPortfolioUsersFilter([]) 
-      this.setPortfolioCategoriesFilter([])     
-      this.setTaskIssueUserFilter([])
-      this.setTaskIssueProgressStatusFilter([])
-      this.setPortfolioStatusesFilter([])
-      this.setPortfolioTaskStagesFilter([])
-      this.setPortfolioIssueStagesFilter([])
-      this.setPortfolioRiskStagesFilter([])
-      this.setPortfolioLessonStagesFilter([])
-      this.setPortfolioIssueSeveritiesFilter([])
-      this.setPortfolioIssueTypesFilter([])
-      this.setPortfolioRiskApproachesFilter([])
-       this.setPortfolioRiskPrioritiesFilter([])
-       this.setPortfolioNameFilter([])
+        if(!this.favoriteFilterData.id)
+          return
 
-      this.setTaskIssueUserFilter([])
-      this.setTaskIssueProgressStatusFilter([])
-      // this.setAdvancedFilter([])
-      this.setMyAssignmentsFilter([])
-      this.setProjectStatusFilter(null)
-      this.setTaskIssueOverdueFilter([])
-      this.setTaskTypeFilter(null)
-      this.setFacilityGroupFilter(null)
-      this.setFacilityProgressFilter(null)
-      this.setFacilityDueDateFilter([null])
-      this.setNoteDateFilter([null])
-      this.setTaskIssueDueDateFilter([null])
-      this.setFacilityNameFilter(null)
-      this.setIssueTypeFilter(null)
-      this.setIssueSeverityFilter(null)
-      this.setIssueStageFilter(null)
-      this.setTaskStageFilter(null)
-      this.setRiskStageFilter(null)
-      this.setTaskIssueProgressFilter(null)
-      this.setMyActionsFilter([])
-      this.setOnWatchFilter([])
-      this.setMapFilters([])
-      this.clearProgressFilters()
-      this.setIssueUserFilter([])
-      this.setTaskUserFilter(null)
-      this.setRiskApproachFilter([])
-      this.setRiskPriorityLevelFilter([])
-      this.setTasksPerPageFilter(null)
-      this.setRisksPerPageFilter(null)
-      this.setIssuesPerPageFilter(null)
-      this.setMembersPerPageFilter(null)
-      this.setFacilities(this.getUnfilteredFacilities)
+        var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
+        var method = "DELETE"
+        var callback = "filter-destroyed"
 
-      if(!this.favoriteFilterData.id)
-        return
+        let formData = new FormData()
 
-      var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
-      var method = "DELETE"
-      var callback = "filter-destroyed"
+        formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
-      let formData = new FormData()
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          var id = parseInt(response.data.id)
+          this.favoriteFilterOptions = _.filter(this.favoriteFilterOptions, function(currentObject) {
+            return currentObject.id != id;
+          });
+          if(this.favoriteFilterOptions && this.favoriteFilterOptions.length > 0){
+            this.favoriteFilterData = this.favoriteFilterOptions[0]
+            this.loadFavoriteFilter(this.favoriteFilterData)
+          }else{
+            this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
+          }
 
-      formData.append('favorite_filter[id]', this.favoriteFilterData.id)
-
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
-        }
-      })
-      .then((response) => {
-        var id = parseInt(response.data.id)
-        this.favoriteFilterOptions = _.filter(this.favoriteFilterOptions, function(currentObject) {
-          return currentObject.id != id;
-        });
-        if(this.favoriteFilterOptions && this.favoriteFilterOptions.length > 0){
-          this.favoriteFilterData = this.favoriteFilterOptions[0]
-          this.loadFavoriteFilter(this.favoriteFilterData)
-        }else{
-          this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
-        }
-        
-        //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
-        //Vue.set(this.favoriteFilterOptions, i, null)
-        this.$message({
-          message: `Favorite Filter is removed successfully.`,
-          type: "success",
-          showClose: true,
-        });
-      })
-      .catch((err) => {
-        // var errors = err.response.data.errors
-        console.log(err)
-        if(err.response.data.error){
+          //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
+          //Vue.set(this.favoriteFilterOptions, i, null)
           this.$message({
-            message: err.response.data.error,
-            type: "error",
+            message: `Favorite Filter is removed successfully.`,
+            type: "success",
             showClose: true,
           });
-        }
-
-      })
-      .finally(() => {
-        // this.loading = false
-      })
-
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+          if(err.response.data.error){
+            this.$message({
+              message: err.response.data.error,
+              type: "error",
+              showClose: true,
+            });
+          }
+        })
+        .finally(() => {
+          // this.loading = false
+        })
+      });
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;
