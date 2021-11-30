@@ -158,6 +158,26 @@ facility_1 = Facility.find_or_create_by(
   facility_group_id: facility_group_1.id
 )
 
+contract_1 = Contract.find_or_create_by(
+  name: "Contarct 1",
+  contract_type_id: ContractType.first.id,
+  project_code: "Project Code 123",
+  nickname: "Contract 1 Nickname",
+  project_id: project.id,
+  facility_group_id: facility_group_1.id,
+  user_id: admin.id
+)
+
+contract_2 = Contract.find_or_create_by(
+  name: "Contarct 2",
+  contract_type_id: ContractType.first.id,
+  project_code: "Project Code 123",
+  nickname: "Contract 2 Nickname",
+  project_id: project.id,
+  facility_group_id: facility_group_1.id,
+  user_id: client.id
+)
+
 facility_project_1 = FacilityProject.find_or_create_by(
   project_id: project.id,
   facility_id: facility_1.id,

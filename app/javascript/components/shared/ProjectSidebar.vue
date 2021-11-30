@@ -83,7 +83,7 @@
       </div>
     </div>
      <!-- <router-link  >  -->
-      <button class="btn btn-sm btn-light program-settings-btn"  @click.prevent="toggleAdminView" style="cursor: pointer">
+      <button class="btn btn-sm btn-light program-settings-btn"  @click.prevent="toggleAdminView" data-cy="program_setting" style="cursor: pointer">
        <h6> <i class="far fa-cog"></i> Program Settings </h6>
       </button>  
       <!-- </router-link> -->

@@ -44,7 +44,7 @@
                     <span v-if="item == 'Projects'">
                       {{ settingsCards.projects }}</span
                     >
-                    <span v-if="item == 'Contracts'">{{
+                    <span data-cy="contract_card" v-if="item == 'Contracts'">{{
                       settingsCards.contracts
                     }}</span>
                     <!-- <span v-if="item == 'Users'">{{ settingsCards.users }}</span> -->

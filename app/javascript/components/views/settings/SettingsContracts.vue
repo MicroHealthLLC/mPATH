@@ -62,7 +62,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
-   <el-table  v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table data-cy="contracts_table" v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
     <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
