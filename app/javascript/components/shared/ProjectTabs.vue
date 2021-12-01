@@ -135,11 +135,19 @@ export default {
     var contractId = this.$route.params.contractId;
 
 
+    if(contractId){
+       let cPrivilege = this.$projectPrivileges[programId][contractId];
+     if (cPrivilege) {
+      for (var i = 0; i < this.cTabs.length; i++) {
+        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+        if(this.cTabs[i].key == 'contract'){
+          continue
+        }
+        this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;      
+      }
+    }
+    } else {
     let fPrivilege = this.$projectPrivileges[programId][projectId];
-    let cPrivilege = this.$projectPrivileges[programId][contractId];
-
-    // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-
     if (fPrivilege) {
       for (var i = 0; i < this.pTabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
@@ -149,20 +157,9 @@ export default {
 
         if (fPrivilege[this.pTabs[i].key] && fPrivilege[this.pTabs[i].key].length) {
            this.pTabs[i].hidden = fPrivilege[this.pTabs[i].key].length < 1;
-        }
-      
-      
+        }     
       }
     }
-    if (cPrivilege) {
-      for (var i = 0; i < this.cTabs.length; i++) {
-        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        if(this.cTabs[i].key == 'contract'){
-          continue
-        }
-        this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;
-      
-      }
     }
   },
   methods: {

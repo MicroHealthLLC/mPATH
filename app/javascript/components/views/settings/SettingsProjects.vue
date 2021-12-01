@@ -63,15 +63,16 @@
             </div>
           </div>
         </div>
-  <div v-loading="!projectsLoaded"
+  <div v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
         <el-table
-          v-if="tableData && tableData.length > 0"
+          :key="componentKey"   
+          v-if="projectData && projectData.length > 0"
           :data="
-            tableData
+            projectData
               .filter(
                 (data) =>
                   !search ||
@@ -82,7 +83,7 @@
           style="width: 100%"
           height="450"
         >
-          <el-table-column prop="facilityName" sortable label="Project">
+          <el-table-column prop="facilityName"  sortable label="Project">
             <template slot-scope="scope">
               <el-input
                 size="small"
@@ -115,6 +116,7 @@
                 class="bg-primary text-light"
                 >Save</el-button
               >
+          
               <el-button
                 type="default"
                 @click.prevent="goToProject(scope.$index, scope.row)"
@@ -122,6 +124,7 @@
               >
                 Go To Project <i class="fas fa-arrow-alt-circle-right ml-1"></i>
               </el-button>
+       
               <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
             </template>
           </el-table-column>
@@ -190,35 +193,36 @@ import { API_BASE_PATH } from "./../../../mixins/utils";
 export default {
   name: "SettingsProjects",
   components: {
-    SettingsSidebar,
+    SettingsSidebar
   },
+  props: ["currentFacility", "facility"],
   data() {
     return {
       dialogVisible: false,
+      componentKey: 0,
       programId: this.$route.params.programId,
       search: "",
       projectId: null, 
-      currentFacility:{},
       selectedProjectGroup: null,
       newProjectNameText: "",
       value: "",
-      expanded: {
-        id: "",
-      },
-    };
-  },
-  mounted() {
-    if (this.$route.params) {
-      this.fetchFacilities(this.$route.params.programId);
-    }
+     };
   },
   methods: {
-    ...mapActions(["fetchFacilities"]),
+    ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
-    goToProject(index, rows) {
-     window.location.pathname =  `/programs/${this.$route.params.programId}/sheet/projects/${rows.id}/project`    
-      // this.projectId = rows.id
+    goToProject(index, rows) {  
+      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/project`
+      // router.push more efficient but programPrivileges errors persist unless reload
+      // this.$router.push({
+      //   name: "SheetProject",
+      //   params: {
+      //     programId: this.$route.params.programId,
+      //     projectId: rows.id.toString(),          
+      //   },
+      // });
     },
+  
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
@@ -255,7 +259,7 @@ export default {
             showClose: true,
           });
           this.dialogVisible = false;
-          this.fetchFacilities(this.programId);
+          this.fetchCurrentProject(this.programId)
         }
       });
     },
@@ -284,7 +288,7 @@ export default {
             type: "success",
             showClose: true,
           });
-          this.fetchFacilities(this.programId);
+          this.fetchCurrentProject(this.programId)
         }
       });
     },
@@ -292,8 +296,10 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "currentProject",
       "projectsLoaded",
       "facilities",
+      "tableData",
       "getProjectGroupFilter",
       "getGroupFilter",
       "facilityGroupFacilities",
@@ -309,6 +315,7 @@ export default {
         this.setGroupFilter(value);
       },
     },
+
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
@@ -322,9 +329,9 @@ export default {
         this.setProjectGroupFilter(value);
       },
     },
-    tableData() {
+    projectData() {
       if (
-        this.projectsLoaded &&
+        // this.projectsLoaded &&
         this.facilities &&
         this.facilities.length > 0
       ) {
@@ -341,13 +348,7 @@ export default {
       }
     },
   },
-   "$route.path": {
-      handler() {
-        if (this.projectId) {
-          this.currentFacility = this.facilities.find(facility => facility.id == this.projectId);
-         }
-       },
-    },
+ 
 };
 </script>
 

@@ -1,17 +1,5 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
-
-
-// Duplicate all sheet files for Contract files
-//Conditionally render appropriate object in Project Tabs
-//Ensure all fPrivilege Contract arrays are spelled correctly ("contracts")
-//Enusre all Project urls (path:) precede with Project
-//Ensure all Contract urls precede with Contract
-//Comb through Sheet files to ensure "analytics" key is removed
-//Enusre contracts --not contract-- is the key
-//Rename SheetOverview to SheetAnalytics
-//ENsure all "analytics" privileges are rolled back to "overview"
-
 import ProgramView from "./../components/views/program/ProgramView";
 
 import SettingsView from "./../components/views/settings/SettingsView";

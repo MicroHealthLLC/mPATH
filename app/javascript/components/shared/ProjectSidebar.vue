@@ -14,8 +14,7 @@
       <div v-if="contentLoaded">
         <div
           v-for="(group, index) in sortedGroups"
-          :key="index"
-         :load="log(sortedGroups)"
+          :key="index + 'a'"    
           class="my-2 px-2"
         >
           <div
@@ -23,6 +22,7 @@
             @click="expandFacilityGroup(group)"
             :class="{ active: group.id == currentFacilityGroup.id }"
             data-cy="facility_groups"
+            :key="index"
           >
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
@@ -34,8 +34,7 @@
           </div>
           <div v-show="expanded.id == group.id" class="ml-2">
               <div
-              v-for="facility in facilityGroupFacilities(group)"
-              :load="log(groups)"
+              v-for="facility in facilityGroupFacilities(group)"            
               :key="facility.id"
             >
               <router-link
@@ -99,25 +98,9 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacilityGroup", "expanded", "currentFacility"],
+  props: ["title", "currentFacility", "currentFacilityGroup", "expanded", "currentContract"],
    data() {
       return {
-        options: [{
-          value: 'Option1',
-          label: 'Option1'
-        }, {
-          value: 'Option2',
-          label: 'Option2'
-        }, {
-          value: 'Option3',
-          label: 'Option3'
-        }, {
-          value: 'Option4',
-          label: 'Option4'
-        }, {
-          value: 'Option5',
-          label: 'Option5'
-        }],
         value: ''
       }
     },
@@ -127,6 +110,7 @@ export default {
       'getShowAdminBtn',
       "currentProject",
       "facilities",
+      "facilityGroups",
       "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
@@ -167,7 +151,7 @@ export default {
     },
     sortedGroups() {
       // Sort groups by name
-      return this.filteredFacilityGroups.sort((a, b) =>
+      return this.facilityGroups.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
     },
@@ -211,11 +195,11 @@ export default {
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
      expandFacilityGroup(group) {
+       if (this.currentContract && this.currentFacility == {}) {
+         group = this.currentContract.facility_group_id
+       }
       this.$emit("on-expand-facility-group", group);
     },
-     log(e){
-    // console.log(e)
-  },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
          this.$router.push(
@@ -243,7 +227,7 @@ export default {
   },
  
   mounted() {
-    // Expand the project tree if there is only one project group on tab transition
+     // Expand the project tree if there is only one project group on tab transition
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&
@@ -255,6 +239,12 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
+        if (this.currentFacilityGroup){
+          this.expanded.id = this.currentFacilityGroup.id
+        }
+         if (this.currentContract) {
+           this.expanded.id = this.currentContract.facility_group_id
+        }
         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
@@ -264,6 +254,7 @@ export default {
         }
       },
     },
+
   },
 };
 </script>
