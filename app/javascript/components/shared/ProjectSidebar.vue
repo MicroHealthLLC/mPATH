@@ -15,6 +15,7 @@
         <div
           v-for="(group, index) in sortedGroups"
           :key="index"
+         :load="log(sortedGroups)"
           class="my-2 px-2"
         >
           <div
@@ -32,9 +33,10 @@
             <h5 class="clickable">{{ group.name }}</h5>
           </div>
           <div v-show="expanded.id == group.id" class="ml-2">
-            <div
-              v-for="(facility, index) in facilityGroupFacilities(group)"
-              :key="index"
+              <div
+              v-for="facility in facilityGroupFacilities(group)"
+              :load="log(groups)"
+              :key="facility.id"
             >
               <router-link
                 :to="
@@ -47,25 +49,49 @@
                   :class="{ active: facility.id == $route.params.projectId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                    {{ facility.facility.facilityName }}
+                      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{ facility.facility.facilityName }}
                   </p>
                 </div>
               </router-link>
-            </div>
+              </div>
+               <div v-show="isSheetsView" v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
+                 <div v-for="c in object.contracts" :key="c.id">
+                  <router-link               
+                :to="
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}`
+                "
+              >
+                <div
+                  class="d-flex align-items-center expandable fac-name"
+                  @click="showFacility(c)"
+                  :class="{ active: c.id == $route.params.contractId }"
+                >
+                  <p class="facility-header" data-cy="facilities">
+                  <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.nickname }}
+                  </p>
+                </div>
+              </router-link>
+              </div> 
+            </div>           
           </div>
         </div>
       </div>
-      <div v-else>
+           <div v-else>
         <loader type="code"></loader>
         <loader type="code"></loader>
         <loader type="code"></loader>
       </div>
     </div>
+     <!-- <router-link  >  -->
+      <button class="btn btn-sm btn-light program-settings-btn"  @click.prevent="toggleAdminView" style="cursor: pointer">
+       <h6> <i class="far fa-cog"></i> Program Settings </h6>
+      </button>  
+      <!-- </router-link> -->
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import Loader from "./loader";
 
 export default {
@@ -74,10 +100,35 @@ export default {
     Loader,
   },
   props: ["title", "currentFacilityGroup", "expanded", "currentFacility"],
+   data() {
+      return {
+        options: [{
+          value: 'Option1',
+          label: 'Option1'
+        }, {
+          value: 'Option2',
+          label: 'Option2'
+        }, {
+          value: 'Option3',
+          label: 'Option3'
+        }, {
+          value: 'Option4',
+          label: 'Option4'
+        }, {
+          value: 'Option5',
+          label: 'Option5'
+        }],
+        value: ''
+      }
+    },
   computed: {
     ...mapGetters([
       "contentLoaded",
+      'getShowAdminBtn',
       "currentProject",
+      "facilities",
+      "filteredFacilities",
+      'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
     ]),
@@ -88,6 +139,31 @@ export default {
       ) {
         return this.currentProject.name;
       }
+    },
+    isSheetsView() {
+      return this.$route.name.includes("Sheet");
+    },
+  groups(){
+      let group = (array, key ) => {
+        return array.reduce((result, currentValue) => {
+      // If an array already present for key, push it to the array. Else create an array and push the object
+      (result[currentValue[key]] = result[currentValue[key]] || []).push(
+      currentValue
+        );
+        // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
+        return result;
+      }, {}); // empty object is the initial value for result object
+      };
+      return group(this.facilities, "facilityGroupName")
+    },
+   C_projectGroupFilter: {
+      get() {
+        return this.getProjectGroupFilter;
+      },
+      set(value) {
+        // console.log(value)
+        this.setProjectGroupFilter(value);
+      },
     },
     sortedGroups() {
       // Sort groups by name
@@ -109,35 +185,53 @@ export default {
     },
     pathTab() {
       let url = this.$route.path;
-
       if (url.includes("tasks")) {
         return "/tasks";
-      } else if (url.includes("issues")) {
+      }  if (url.includes("issues")) {
         return "/issues";
-      } else if (url.includes("risks")) {
+      }  if (url.includes("analytics")) {
+        return "/analytics";
+      } if (url.includes("project")) {
+        return "/project";
+      }  if (url.includes("risks")) {
         return "/risks";
-      } else if (url.includes("lessons")) {
+      } if (url.includes("lessons")) {
         return "/lessons";
-      } else if (url.includes("notes")) {
+      } if (url.includes("notes")) {
         return "/notes";
-      } else if (url.includes("kanban")) {
+      } if (url.includes("kanban")) {
         return "/tasks";
-      } else if (url.includes("calendar")) {
+      } if (url.includes("calendar")) {
         return "/tasks";
       } else {
-        return "/overview";
+        return "/analytics";
       }
     },
   },
   methods: {
-    expandFacilityGroup(group) {
+   ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
+     expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
     },
-    log(e) {
-      console.log("This is the currentFac: " + e);
+     log(e){
+    // console.log(e)
+  },
+    toggleAdminView() {
+        // this.setShowAdminBtn(!this.getShowAdminBtn);
+         this.$router.push(
+        `/programs/${this.$route.params.programId}/settings`
+        );
+
+      },
+    handleClose(done) {
+        this.$confirm('Are you sure to close this dialog?')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
     },
-    showFacility(facility) {
-      this.$emit("on-expand-facility", facility);
+    showFacility(c) {
+      this.$emit("on-expand-facility", c);
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
@@ -147,12 +241,13 @@ export default {
       }
     },
   },
+ 
   mounted() {
     // Expand the project tree if there is only one project group on tab transition
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&
-      !this.$route.params.projectId
+      (!this.$route.params.projectId || !this.$route.params.contractId)
     ) {
       this.expandFacilityGroup(this.filteredFacilityGroups[0]);
     }
@@ -163,7 +258,7 @@ export default {
         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
-          !this.$route.params.projectId
+          (!this.$route.params.projectId || !this.$route.params.contractId )
         ) {
           this.expandFacilityGroup(this.filteredFacilityGroups[0]);
         }
@@ -174,6 +269,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.program-settings-btn{
+  position: absolute;
+  bottom: 25px;
+  left: 25%;
+  z-index: 1140;
+}
+/deep/.el-dialog__title {
+  padding: 5px 10px;
+  background-color: #DD9036;
+  color: white;
+  font-size: 16px;
+  font-weight: lighter;
+  border-radius: .25rem;
+
+}
+// /deep/.el-dialog__body {
+//     padding: 10px 20px;
+//  }
+.saveBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+}
 #facility_sidebar {
   background: #ededed;
   max-height: calc(100vh - 94px);
@@ -231,6 +347,7 @@ export default {
       }
     }
   }
+
   .smallCaps {
     font-variant: small-caps;
     // position: sticky;

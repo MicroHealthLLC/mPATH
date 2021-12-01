@@ -658,7 +658,7 @@
             <div @click.prevent="downloadFile(file)">
                <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="!_isallowed('write')" @click="removeFile(file.id, index)">
+            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -685,7 +685,7 @@
               </div></a
             >
             <div
-              v-if="!_isallowed('write')"
+              v-if="_isallowed('delete')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>
@@ -697,7 +697,7 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div @click="removeFileLink(link.id, index)" class="clickable">
+            <div v-if="_isallowed('delete')" @click="removeFileLink(link.id, index)" class="clickable">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
@@ -983,28 +983,46 @@ export default {
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedTasks.splice(
+            this.relatedTasks.findIndex((task) => task.id == id),
+            1
+          );
+        });
     },
     addRelatedIssues(issues) {
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedIssues.splice(
+            this.relatedIssues.findIndex((issue) => issue.id == id),
+            1
+          );
+        });
     },
     addRelatedRisks(risks) {
       risks.forEach((risk) => this.relatedRisks.push(risk));
     },
     removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedRisks.splice(
+            this.relatedRisks.findIndex((risk) => risk.id == id),
+            1
+          );
+        });
     },
     addSuccess() {
       if (this._isallowed("write")) {

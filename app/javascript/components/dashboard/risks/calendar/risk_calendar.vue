@@ -324,7 +324,7 @@
               <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
               <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-              <span v-if="selectedEvent.progess == 100 && (selectedEvent.isOngoing == true && !selectedEvent.isClosed) && !selectedEvent.isDraft" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"/></span>
+              <span v-if="selectedEvent.progess == 100 && !(selectedEvent.isOngoing == true && !selectedEvent.isClosed) && !selectedEvent.isDraft" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"/></span>
               <span v-if="selectedEvent.isOngoing == true && !selectedEvent.isClosed" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
               <span v-if="selectedEvent.isClosed" v-tooltip="`Ongoing:Closed`"><i class="far fa-retweet text-secondary"></i></span>    
               <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>  
@@ -830,7 +830,9 @@
        }).filter(t => {
        if (this.getHideOngoing == true) {
           return t.ongoing == false
-       } else return true       
+       } else {
+         return t.startDate != null
+       }
 
 
         }).filter(t => {
@@ -901,7 +903,7 @@
         (t) => t && t.inProgress == true
       );
      let onHold = _.filter( this.filteredCalendar.unfiltered.risks, (t) => t && t.onHold == true );
-     let ongoing = _.filter( this.filteredCalendar.unfiltered.risks, (t) => t && t.ongoing == true );
+     let ongoing = _.filter( this.filteredCalendar.unfiltered.risks, (t) => t && t.ongoing == true && t.startDate);
      let overdue = _.filter( this.filteredCalendar.unfiltered.risks,(t) => t.isOverdue == true);
 
       return {

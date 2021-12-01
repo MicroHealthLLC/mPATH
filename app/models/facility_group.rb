@@ -6,15 +6,22 @@ class FacilityGroup < SortableRecord
   validates :name, presence: true, uniqueness: true
 
   enum status: [:inactive, :active].freeze
+  before_save :set_status
 
-  def as_json(options=nil)
-    json = super(options)
-    fp = self.facility_projects
-    json.merge(
-      facilities: fp.as_json,
-      project_ids: fp.pluck(:project_id).uniq
-    ).as_json
+  def set_status
+    if !status
+      status = :active
+    end
   end
+
+  # def as_json(options=nil)
+  #   json = super(options)
+  #   fp = self.facility_projects
+  #   json.merge(
+  #     facilities: fp.as_json,
+  #     project_ids: fp.pluck(:project_id).uniq
+  #   ).as_json
+  # end
 
   def update_progress
     t = self.facility_projects

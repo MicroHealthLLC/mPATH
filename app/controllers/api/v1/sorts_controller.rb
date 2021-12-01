@@ -1,4 +1,4 @@
-class Api::V1::Admin::SortsController < AuthenticatedController
+class Api::V1::SortsController < AuthenticatedController
   before_action :require_admin
 
   def update

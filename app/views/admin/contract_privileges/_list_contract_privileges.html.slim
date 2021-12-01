@@ -1,0 +1,50 @@
+- active_projects = user.projects.active
+- contract_privileges = user.contract_privileges.order("created_at DESC")
+- project_privileges = user.project_privileges
+- contracts = Contract.where(project_id: active_projects.map(&:id) )
+- option_array = contracts.map{|fp| [fp.id, fp.nickname ] }
+
+a{href="javascript:void(0)" onclick="addContractPrivilegeForm(this)" data-url=(add_contract_privilege_form_path(user_id: user.id)) class="button has_many_add adminPanelBtn"}Add Contract Privilege
+
+div{id="contract_privilege_list"}
+  - contract_privileges.each do |fp|
+    - index = SecureRandom.random_number(10000000)
+    - contract_ids = fp.contract_ids
+    - project = active_projects.detect{|p| p.id == fp.project_id}
+    - next if !project
+    fieldset(class="inputs has_many_fields")
+      input(type="checkbox" value="true" name="user[contract_privileges_attributes][#{index}][_destroy]") Remove
+      ol
+        li(class="select input required")
+          div{id="contract_privilege#{index}"}
+            input(type='hidden' value=(fp.id) name="user[contract_privileges_attributes][#{index}][id]" )
+            
+            - user_project_privilege = project_privileges.detect{|p| p.project_id == fp.project_id }
+        
+          label(class="label") Select Program
+          select{class="contract_privileges_program_select" onchange='programSelectChangeForContract(this)' data-div-id="project_section_#{index}" data-user-id="#{user.id}"}
+            option{value="select_project"} Select project
+            - active_projects.each do |project|
+              option{value=(project.id) selected=("selected" if fp.project_id == project.id) }= project.name
+
+        li(class="select input required")
+          label(class="label") Select Contract
+          select{id="project_section_#{index}" name="user[contract_privileges_attributes][#{index}][contract_ids][]" class="contract_privileges_project_select" multiple="true" data-selected=(contract_ids)}
+            - project.contracts.each do |f|
+              option{value="#{f.id}" select=("selected" if contract_ids.include?(f.id.to_s) )}= f.nickname
+
+        - ContractPrivilege::PRIVILEGE_MODULE.each do |m_name|
+          li(class="select input required")
+            label(class="label")= m_name
+            input{type="hidden" value="" name="user[contract_privileges_attributes][#{index}][#{m_name}][]" }
+
+            - ContractPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+              input{type="checkbox" value="#{permission[1]}" name="user[contract_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]
+
+javascript:
+  jQuery(function($) {
+    $(".contract_privileges_program_select").select2({
+      placeholder: "Search and select Program",
+      allowClear: false
+    });
+  })

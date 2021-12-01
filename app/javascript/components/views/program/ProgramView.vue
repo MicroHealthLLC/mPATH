@@ -18,7 +18,7 @@
   <el-tabs class="mt-1 mr-3" type="border-card">
     <el-tab-pane class="p-3"  style="postion:relative" >
         <template slot="label" class="text-right" v-if="contentLoaded">
-              <span class="allCaps">Program Data Viewer</span>
+              <span class="allCaps">{{ currentProject.name }} Data Viewer</span>
             </template>
                <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
                         <template slot="title">

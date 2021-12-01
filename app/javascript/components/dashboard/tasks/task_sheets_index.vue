@@ -2,7 +2,7 @@
   <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index">
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-60 filters-wrapper">
          <div class="ml-3 task-search-bar w-100">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
@@ -683,7 +683,6 @@
         'viewPermit',
         'getToggleRACI',
         'getShowAdvancedFilter',
-
         'getShowCount',
         // 7 States
         'getHideComplete',
@@ -717,7 +716,6 @@
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
-
      
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -726,7 +724,6 @@
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-
       
           // //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
@@ -772,49 +769,39 @@
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
-
       }).filter(t => {
       if (this.getHideComplete == true) { 
         return !t.completed
       } else return true
-
       }).filter(t => {
       if (this.getHidePlanned == true) { 
         return t.planned == false
       } else return true
-
       }).filter(t => {
       if (this.getHideOnhold == true) { 
         return t.onHold == false
       } else return true
-
       }).filter(t => {
       if (this.getHideInprogress == true) { 
         return t.inProgress == false
       } else return true
-
       }).filter(t => {
        if (this.getHideDraft == true){
          return t.draft == false
        } else return true   
-
-
       }).filter(t => {
       if (this.getHideOngoing == true) {
         return t.ongoing == false
       } else return true       
-
       }).filter(t => {
         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
         return t.reportable
       }
       if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
           return t.reportable + t.watched
-
       } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
           return t.reportable + t.watched + t.important
       } else return true
-
       }).filter(t => {
         // This and last 2 filters are for Filtered Tags
          if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
@@ -877,7 +864,6 @@
      let onHold = _.filter( this.filteredTasks.unfiltered.tasks, (t) => t && t.onHold == true );
      let ongoing = _.filter(  this.filteredTasks.unfiltered.tasks, (t) => t && t.ongoing == true );
      let overdue = _.filter(  this.filteredTasks.unfiltered.tasks, (t) => t.isOverdue == true);
-
       return {
         planned: {
           count: planned.length, 
@@ -991,9 +977,7 @@
       sortedTasks:function() {
           return this.filteredTasks.filtered.tasks.sort((a,b) => {
           let modifier = 1;
-
           if(this.currentSortDir === 'desc') modifier = -1;
-
           if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
             if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
@@ -1081,7 +1065,6 @@
     border-radius: 4px;
     padding: 4px;
   }
-
   .taskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
@@ -1139,7 +1122,6 @@
  .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
 .btn-group-btns {
   border: solid 1px lightgray;
-
   line-height: 1 !important;
 }
 .activeLastName, .activeFirstName, .activeResponsible, .activeAccountable {
@@ -1175,7 +1157,6 @@
   background-color: #f8f9fa;
   border: .5px solid lightgray;
 }
-
 i, .icons {
   cursor: pointer;
   -webkit-touch-callout: none;
@@ -1188,9 +1169,7 @@ i, .icons {
 .statesCol {
   border-radius: 4px; 
   border: .5px solid lightgray;
-
 }
-
 /deep/.v-input__slot {
   display: inline;
   .v-label {
@@ -1199,17 +1178,14 @@ i, .icons {
    color: #007bff !important;
   }
 }
-
 .hideLabels {
   font-weight: 600;
 }
-
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
     width: 65% !important;
   } 
 }
-
 .fiterLi {
   white-space: nowrap; 
 }
@@ -1235,4 +1211,6 @@ i, .icons {
     display: none !important;
   }
 }
+
+
 </style>
