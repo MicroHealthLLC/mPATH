@@ -17,7 +17,7 @@
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
     <div class="col">
-      <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
+      <el-button data-cy="add_contract_btn" @click.prevent="addContract" class="bg-primary text-light mb-2"> 
       <i class="far fa-plus-circle mr-1"></i> Add Contract
       </el-button>
      </div>    
@@ -77,6 +77,7 @@
           <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
+            data-cy="contract_facility_group_name"
             v-model="scope.row.facility_group_name"></el-input>
        </template>
     </el-table-column>
@@ -108,7 +109,8 @@
           <el-input
             type="textarea"
             v-model="contractNameText"
-            placeholder="Enter new contract name here"          
+            placeholder="Enter new contract name here" 
+            data-cy="contract_name"         
             rows="1"          
             name="Program Name"
           />
@@ -143,6 +145,7 @@
             v-model="C_newContractGroupFilter" 
             track-by="id"
             value-key="id"
+            data-cy="contract_facility_group_select"
             clearable
             filterable
             name="Project Group"         
@@ -158,11 +161,11 @@
           </el-select>
        </div>
         <div class="right mr-2">
-        <el-button @click.prevent="saveNewContract" class="bg-success text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>
+        <el-button data-cy="save_contract_btn" @click.prevent="saveNewContract" class="bg-success text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>
        
         <el-button @click.prevent="addAnotherContract" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Contract</el-button>
 
-        <el-button @click.prevent="closeAddContractBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+        <el-button data-cy="close_contract_btn" @click.prevent="closeAddContractBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
 
         </div>
     </form>
