@@ -95,19 +95,22 @@
         this.$emit('note-updated', note)
       },
       deleteNote() {
-        var confirm = window.confirm(`Are you sure, you want to delete this note?`)
-        if (!confirm) return;
-
-        http
-          .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
-          .then((res) => {
-            this.loading = false
-            this.$emit('note-deleted', this.note)
-          })
-          .catch((err) => {
-            this.loading = false
-            console.error(err)
-          })
+        this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          http
+            .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
+            .then((res) => {
+              this.loading = false
+              this.$emit('note-deleted', this.note)
+            })
+            .catch((err) => {
+              this.loading = false
+              console.error(err)
+            })
+        });
       },
       downloadFile(file) {
         if (this._isallowed('write')) {

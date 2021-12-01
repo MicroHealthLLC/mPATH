@@ -2341,39 +2341,41 @@ export default {
       this.DV_risk.risk_files = _files;
     },
     deleteRisk() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this risk?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.riskDeleted(this.DV_risk);
-      this.cancelRiskSave();
+      this.$confirm(`Are you sure you want to delete this risk?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.riskDeleted(this.DV_risk);
+        this.cancelRiskSave();
+      });
     },
     deleteFile(file) {
       if (!file) return;
-      let confirm = window.confirm(
-        `Are you sure you want to delete attachment?`
-      );
-      if (!confirm) return;
-      if (file.uri || file.link) {
-        let index = this.DV_risk.risk_files.findIndex(
-          (f) => f.guid === file.guid
-        );
-        if (file.id) {
-          Vue.set(this.DV_risk.risk_files, index, { ...file, _destroy: true });
-          this.destroyedFiles.push(file);
+      this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        if (file.uri || file.link) {
+          let index = this.DV_risk.risk_files.findIndex(
+            (f) => f.guid === file.guid
+          );
+          if (file.id) {
+            Vue.set(this.DV_risk.risk_files, index, { ...file, _destroy: true });
+            this.destroyedFiles.push(file);
+          }
+          this.DV_risk.risk_files.splice(
+            this.DV_risk.risk_files.findIndex((f) => f.guid === file.guid),
+            1
+          );
+        } else if (file.name) {
+          this.DV_risk.risk_files.splice(
+            this.DV_risk.risk_files.findIndex((f) => f.guid === file.guid),
+            1
+          );
         }
-        this.DV_risk.risk_files.splice(
-          this.DV_risk.risk_files.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      } else if (file.name) {
-        this.DV_risk.risk_files.splice(
-          this.DV_risk.risk_files.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      }
+      });
     },
     toggleWatched() {
       if(!this._isallowed('write')){
@@ -2751,15 +2753,17 @@ export default {
       }
     },
     destroyProgressList(check, progress_list, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this Progress List item?`
-      );
-      if (!confirm) return;
-      let i = progress_list.id
-        ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
-        : index;
-      Vue.set(check.progress_lists, i, { ...progress_list, _destroy: true });
-      this.validateThenSave();
+      this.$confirm(`Are you sure you want to delete this Program list item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = progress_list.id
+          ? check.progress_lists.findIndex((c) => c.id === progress_list.id)
+          : index;
+        Vue.set(check.progress_lists, i, { ...progress_list, _destroy: true });
+        this.validateThenSave();
+      });
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
@@ -2773,14 +2777,16 @@ export default {
       return date < startDate;
     },
     destroyNote(note) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this update note?`
-      );
-      if (!confirm) return;
-      let i = note.id
-        ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
-        : this.DV_risk.notes.findIndex((n) => n.guid === note.guid);
-      Vue.set(this.DV_risk.notes, i, { ...note, _destroy: true });
+      this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = note.id
+          ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
+          : this.DV_risk.notes.findIndex((n) => n.guid === note.guid);
+        Vue.set(this.DV_risk.notes, i, { ...note, _destroy: true });
+      });
     },
     addChecks() {
       var postion = this.DV_risk.checklists.length;
@@ -2802,15 +2808,17 @@ export default {
       this.DV_risk.notes.unshift({ body: "", user_id: "", guid: this.guid() });
     },
     destroyCheck(check, index) {
-      let confirm = window.confirm(
-        `Are you sure, you want to delete this checklist item?`
-      );
-      if (!confirm) return;
-      let i = check.id
-        ? this.DV_risk.checklists.findIndex((c) => c.id === check.id)
-        : index;
-      Vue.set(this.DV_risk.checklists, i, { ...check, _destroy: true });
-      this.validateThenSave();
+      this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = check.id
+          ? this.DV_risk.checklists.findIndex((c) => c.id === check.id)
+          : index;
+        Vue.set(this.DV_risk.checklists, i, { ...check, _destroy: true });
+        this.validateThenSave();
+      });
     },
     calculateProgress(checks = null) {
       try {
