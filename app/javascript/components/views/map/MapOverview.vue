@@ -1003,7 +1003,7 @@ export default {
         this.filteredTasks.length
       );
       let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
-      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.ongoingClosed );
+      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.closed );
       return {
         planned: {
           count: planned.length, 
