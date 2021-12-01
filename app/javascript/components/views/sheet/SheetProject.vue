@@ -32,7 +32,7 @@
                         STATUS:
                         <span>
                           <small
-                            v-if="!facility.statusId && _isallowed('write')"
+                            v-if="!fac.statusId && _isallowed('write')"
                             class="ml-2 d-inline text-danger"
                             style="position:absolute"
                           >
@@ -45,10 +45,10 @@
 
                     <div class="col">
                       <p
-                       v-if="facility && facility.facility"
+                       v-if="fac && fac.facility"
                         class="badge badge-secondary badge-pill font-weight-light"
                       >
-                        {{ facility.facility.facilityGroupName }}
+                        {{ fac.facility.facilityGroupName }}
                       </p>
                       <div class="simple-select">
                         <v2-date-picker
@@ -58,7 +58,7 @@
                           class="w-100 vue2-datepicker"
                           @input="onChange"
                           placeholder="DD MM YYYY"
-                          :disabled="!_isallowed('write') || !facility.statusId"
+                          :disabled="!_isallowed('write') || !fac.statusId"
                         />
                       </div>
 
@@ -128,7 +128,7 @@
 
               <div
                 v-show="isSheetsView" 
-                 v-if="facility && facility.facility"
+                 v-if="fac && fac.facility"
                 class="col-3"
                 data-cy="date_set_filter"
               >
@@ -145,28 +145,28 @@
                           ><i class="far fa-id-badge"></i
                         ></span>
                         <span>{{
-                          facility.facility.pointOfContact || "N/A"
+                          fac.facility.pointOfContact || "N/A"
                         }}</span>
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon"
                           ><i class="fas fa-map-marker"></i
                         ></span>
-                        <span>{{ facility.facility.address || "N/A" }}</span>
+                        <span>{{ fac.facility.address || "N/A" }}</span>
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon"
                           ><i class="fas fa-phone"></i
                         ></span>
                         <span>{{
-                          facility.facility.phoneNumber || "N/A"
+                          fac.facility.phoneNumber || "N/A"
                         }}</span>
                       </p>
                       <p class="mt-1">
                         <span class="fbody-icon"
                           ><i class="far fa-envelope"></i
                         ></span>
-                        <span>{{ facility.facility.email || "N/A" }}</span>
+                        <span>{{ fac.facility.email || "N/A" }}</span>
                       </p>
                     </div>
                   </div>
@@ -224,22 +224,27 @@ export default {
   components: {
     Loader,
   },
-  props: ["facility"],
+  props: ["currentFacility", "facility"],
   data() {
     return {
       dueDate: "",
       statusId: 0,
       today:  new Date().toISOString().slice(0, 10),
       loading: true,
+      fac: {},
       DV_updated: false,
       notesQuery: "",
       _selected: null,
       _categories: null,
+
     };
   },
+  beforeMount(){
+     
+  },
   mounted() {
-    this.dueDate = this.facility.dueDate;
-    this.statusId = this.facility.statusId;
+    this.dueDate = this.fac.dueDate;
+    this.statusId = this.fac.statusId;
     this.fetchProjectLessons(this.$route.params);
   },
   methods: {
@@ -352,6 +357,7 @@ export default {
         }
       },
     },
+
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter;
@@ -887,15 +893,33 @@ export default {
       }
       return taskTypes;
     },
+    // hthth(){
+    //   return this.currentProject.facilities.find(
+    //         (facility) => facility.facilityId == this.$route.params.projectId
+    // );
+    // },
   },
   watch: {
     contentLoaded: {
       handler() {
         this.dueDate = this.facility.dueDate;
         this.statusId = this.facility.statusId;
+         this.fac = this.currentProject.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+         );
       },
     },
-  },
+     facility: {
+      handler() {
+      if(this.$route.params.projectId){
+        this.facility = this.currentProject.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+         );
+      }
+      },
+    },
+   },
+ 
 };
 </script>
 

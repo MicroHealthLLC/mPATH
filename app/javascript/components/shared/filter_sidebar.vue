@@ -40,7 +40,7 @@
                   <el-option 
                     v-for="item in C_activeFacilityGroups"                                                     
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'i'"
                     :label="item.name"                                                  
                     >
                   </el-option>
@@ -60,10 +60,9 @@
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames" 
-                                                           
+                    v-for="item in C_activeProjectNames"                                                            
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'j'"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
                     >
                   </el-option>
@@ -100,7 +99,7 @@
                   <el-option 
                     v-for="item in statuses"                                                     
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'k'"
                     :label="item.name"                                                  
                     >
                   </el-option>
@@ -137,7 +136,7 @@
                 <el-option 
                   v-for="item in taskTypes"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'l'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -159,7 +158,7 @@
                 <el-option 
                   v-for="item in activeProjectUsers"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'm'"
                   :label="item.fullName"                                                  
                   >
                 </el-option>
@@ -184,7 +183,7 @@
                 <el-option 
                   v-for="item in getMyAssignmentsFilterOptions"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'n'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -210,7 +209,7 @@
                 <el-option 
                   v-for="item in group.options"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'o'"
                   :label="item.name"                                                                        
                   >
                 </el-option>
@@ -269,7 +268,7 @@
                 <el-option 
                   v-for="item in taskStages"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'a'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -293,7 +292,7 @@
                 <el-option 
                   v-for="item in issueStages"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'b'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -315,7 +314,7 @@
                 <el-option 
                   v-for="item in issueTypes"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'c'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -337,7 +336,7 @@
                 <el-option 
                   v-for="item in issueSeverities"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'd'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -362,7 +361,7 @@
                 <el-option 
                   v-for="item in riskStages"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'e'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -381,7 +380,7 @@
                 <el-option 
                   v-for="item in getRiskApproachFilterOptions"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'f'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -400,7 +399,7 @@
                 <el-option 
                   v-for="item in getRiskPriorityLevelFilterOptions"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'g'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -435,7 +434,7 @@
                   <el-option 
                     v-for="item in C_favoriteFilterSelectOptions"                                                     
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'h'"
                     :label="item.name"                                                  
                     >
                   </el-option>
