@@ -657,8 +657,7 @@ class User < ApplicationRecord
           result = fph[program_id][contract_id][resource].include?(short_action_code)
         else
           result = pph[program_id][resource].include?(short_action_code)
-        end 
-        binding.pry       
+        end       
       end
     rescue Exception => e
       puts "Exception in  User#has_permission? #{e.message}"
