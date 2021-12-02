@@ -46,7 +46,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in filteredFacilityGroups"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -136,7 +136,7 @@
        </div>
        <div class="form-group mx-3">
         <label class="font-md"
-        >Group</label
+        >Group<span style="color: #dc3545">*</span></label
         >
          <el-select
             class="w-100"
@@ -149,7 +149,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in filteredFacilityGroups"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -158,11 +158,25 @@
           </el-select>
        </div>
         <div class="right mr-2">
-        <el-button @click.prevent="saveNewContract" class="bg-success text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>
-       
-        <el-button @click.prevent="addAnotherContract" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Contract</el-button>
-
-        <el-button @click.prevent="closeAddContractBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+        <el-button 
+          @click.prevent="saveNewContract"
+          :disabled="!C_newContractGroupFilter && contractNameText" 
+          class="bg-success text-light mr-2" 
+          :class="[hideSaveBtn ? 'd-none': '']">
+          Save
+        </el-button>       
+        <el-button 
+          @click.prevent="addAnotherContract" 
+          :class="[!hideSaveBtn ? 'd-none': '']" 
+          class="bg-primary text-light mr-2">
+          <i class="far fa-plus-circle mr-1"></i> Add Another Contract
+        </el-button>
+        <el-button 
+          @click.prevent="closeAddContractBtn" 
+          class="bg-danger text-light mr-2"  
+          :class="[!hideSaveBtn ? 'd-none': '']">
+          Close
+        </el-button>
 
         </div>
     </form>
@@ -299,7 +313,7 @@ export default {
       'getProjectGroupFilter',
       'getGroupFilter',
       "facilityGroupFacilities",
-      'filteredFacilityGroups',
+      'facilityGroups',
       'currentProject'
     ]), 
      backToSettings() {

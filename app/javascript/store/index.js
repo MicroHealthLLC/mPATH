@@ -114,6 +114,11 @@ export default new Vuex.Store({
     taskIssueProgressFilter: null,
     // This filter is used to check status e.g. active or completed
     taskIssueProgressStatusFilter: new Array(),
+    contactInfoForm: {
+      poc: '',
+      phoneNo: '',
+      email: '',
+     },
     progressFilter: {
       facility: {
         min: "",
@@ -432,6 +437,8 @@ export default new Vuex.Store({
         state.managerView[k] = k == key ? value : null;
       }
     },
+    setContactInfoForm: (state, { key, value }) =>
+    (state.contactInfoForm[key] = value),
     setMapZoomFilter: (state, filteredIds) =>
       (state.mapZoomFilter = filteredIds),
     setPreviousRoute: (state, route) => (state.previousRoute = route),
@@ -1117,6 +1124,7 @@ export default new Vuex.Store({
     mapFilters: (state) => state.mapFilters,
     progressFilter: (state) => state.progressFilter,
     managerView: (state) => state.managerView,
+    contactInfoForm: (state) => state.contactInfoForm,
     // NOTE: This function will be used in many pages to filter data based on advanced filter
     // selected by user.
     filterDataForAdvancedFilter: (state, getters) => (

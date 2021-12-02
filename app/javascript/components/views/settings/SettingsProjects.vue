@@ -53,7 +53,7 @@
                 placeholder="Filter Projects By Group"
               >
                 <el-option
-                  v-for="item in filteredFacilityGroups"
+                  v-for="item in facilityGroups"
                   :key="item.id"
                   :label="item.name"
                   :value="item"
@@ -150,7 +150,7 @@
               />
             </div>
             <div class="form-group mx-4">
-              <label class="font-md">Group</label>
+              <label class="font-md">Group<span style="color: #dc3545">*</span></label>
               <el-select
                 class="w-100"
                 v-model="C_projectGroupFilter"
@@ -162,7 +162,7 @@
                 placeholder="Select Group"
               >
                 <el-option
-                  v-for="item in filteredFacilityGroups"
+                  v-for="item in facilityGroups"
                   :key="item.id"
                   :label="item.name"
                   :value="item"
@@ -173,6 +173,7 @@
             <div class="right mr-2">
               <el-button
                 @click.prevent="saveNewProject"
+                :disabled="!C_projectGroupFilter && newProjectNameText"
                 class="bg-primary text-light mr-2"
                 >Save</el-button
               >
@@ -299,6 +300,7 @@ export default {
       "currentProject",
       "projectsLoaded",
       "facilities",
+      "facilityGroups",
       "tableData",
       "getProjectGroupFilter",
       "getGroupFilter",

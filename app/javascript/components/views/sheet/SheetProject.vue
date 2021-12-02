@@ -32,7 +32,7 @@
                         STATUS:
                         <span>
                           <small
-                            v-if="!fac.statusId && _isallowed('write')"
+                            v-if="!facility.statusId && _isallowed('write')"
                             class="ml-2 d-inline text-danger"
                             style="position:absolute"
                           >
@@ -45,10 +45,10 @@
 
                     <div class="col">
                       <p
-                       v-if="fac && fac.facility"
+                       v-if="facility && facility.facility"
                         class="badge badge-secondary badge-pill font-weight-light"
                       >
-                        {{ fac.facility.facilityGroupName }}
+                        {{ facility.facility.facilityGroupName }}
                       </p>
                       <div class="simple-select">
                         <v2-date-picker
@@ -58,7 +58,7 @@
                           class="w-100 vue2-datepicker"
                           @input="onChange"
                           placeholder="DD MM YYYY"
-                          :disabled="!_isallowed('write') || !fac.statusId"
+                          :disabled="!_isallowed('write') || !facility.statusId"
                         />
                       </div>
 
@@ -128,7 +128,7 @@
 
               <div
                 v-show="isSheetsView" 
-                 v-if="fac && fac.facility"
+                v-if="facility && facility.facility"
                 class="col-3"
                 data-cy="date_set_filter"
               >
@@ -141,34 +141,70 @@
                   <div class="row">
                     <div class="col font-sm">
                       <p class="mt-1 mb-0">
-                        <span class="fbody-icon"
+                        <span class="fbody-icon mr-2"
                           ><i class="far fa-id-badge"></i
                         ></span>
-                        <span>{{
-                          fac.facility.pointOfContact || "N/A"
-                        }}</span>
+                        <span v-if="facility && facility.facility.pointOfContact">
+                          {{ facility.facility.pointOfContact }}
+                        </span>
+                        <span v-else class="d-inline">
+                          <el-input
+                            v-model="C_contactInfo.poc"
+                            placeholder="Enter Point of Contact name"
+                            name="Poc"
+                            class="w-75"
+                          />
+                        </span>
                       </p>
-                      <p class="mt-1 mb-0">
+                      <p class="mt-1 mb-0" v-if="facility && facility.facility.address">
                         <span class="fbody-icon"
                           ><i class="fas fa-map-marker"></i
                         ></span>
-                        <span>{{ fac.facility.address || "N/A" }}</span>
+                        <span>{{ facility.facility.address || "N/A" }}</span>
                       </p>
                       <p class="mt-1 mb-0">
-                        <span class="fbody-icon"
+                        <span class="fbody-icon mr-1"
                           ><i class="fas fa-phone"></i
                         ></span>
-                        <span>{{
-                          fac.facility.phoneNumber || "N/A"
-                        }}</span>
+                        <span v-if="facility && facility.facility.phoneNumber !== null">
+                          {{ facility.facility.phoneNumber }}
+                        </span>
+                         <span v-else class="d-inline">
+                          <el-input
+                            v-model="C_contactInfo.phoneNo"
+                            placeholder="Enter Point of Contact phone number"
+                            name="phoneNo"
+                            class="w-75"
+                          />
+                        </span>
                       </p>
                       <p class="mt-1">
                         <span class="fbody-icon"
                           ><i class="far fa-envelope"></i
                         ></span>
-                        <span>{{ fac.facility.email || "N/A" }}</span>
+                        <span  v-if=" facility && facility.facility.email">
+                          {{ facility.facility.email  }}
+                        </span>
+                         <span v-else class="d-inline">
+                          <el-input
+                            v-model="C_contactInfo.email"
+                            placeholder="Enter Point of Contact email"
+                            name="email"
+                            class="w-75"
+                          />
+                        </span>
+
+
                       </p>
                     </div>
+                  </div>
+                  <div 
+                    :class="{ 'd-none' : facility && facility.facility.email && 
+                    facility.facility.phoneNumber && 
+                    facility.facility.pointOfContact }"
+                  >
+                    <button class="btn btn-sm mh-blue text-light px-2 py-0 updateBtn" @click.prevent="updateContactInfo">Save</button>
+                    <!-- <button class="btn btn-sm mh-blue text-light px-2 py-0 updateBtn" @click.prevent="updateContactInfo">Edit</button> -->
                   </div>
                 </el-card>
               </div>
@@ -216,9 +252,12 @@
 </template>
 
 <script>
+import axios from "axios";
 import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
+import { API_BASE_PATH } from "./../../../mixins/utils";
+
 export default {
   name: "SheetProject",
   components: {
@@ -229,9 +268,11 @@ export default {
     return {
       dueDate: "",
       statusId: 0,
+      poc: null, 
+      email: null, 
+      phoneNo: null, 
       today:  new Date().toISOString().slice(0, 10),
       loading: true,
-      fac: {},
       DV_updated: false,
       notesQuery: "",
       _selected: null,
@@ -243,13 +284,47 @@ export default {
      
   },
   mounted() {
-    this.dueDate = this.fac.dueDate;
-    this.statusId = this.fac.statusId;
+    this.dueDate = this.facility.dueDate;
+    this.statusId = this.facility.statusId;
     this.fetchProjectLessons(this.$route.params);
   },
   methods: {
-    ...mapActions(["fetchProjectLessons"]),
-    ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
+    ...mapActions(["fetchProjectLessons", "fetchCurrentProject"]),
+    ...mapMutations(["setTaskTypeFilter", "updateFacilityHash", "setContactInfoForm"]),
+    updateContactInfo() {
+      let formData = new FormData();
+      if (this.C_contactInfo.poc){
+         formData.append("facility[point_of_contact]", this.C_contactInfo.poc);
+      }  
+      if (this.C_contactInfo.phoneNo){
+         formData.append("facility[phone_number]",this.C_contactInfo.phoneNo);
+      }
+      if (this.C_contactInfo.email) {
+         formData.append("facility[email]",this.C_contactInfo.email);
+      }    
+      // formData.append("commit", "Update Project");
+      // let url = `/admin/facilities/${this.$route.params.projectId}`;
+       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}`; 
+      let method = "PUT";
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      }).then((response) => {
+        if (response.status === 200) {
+          this.$message({
+            message: `Edits has been saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.fetchCurrentProject(this.$route.params.programId)
+        }
+      });
+    },
     updateFacility(e) {
       if (e.target) e.target.blur();
       if (!this._isallowed("write") || !this.DV_updated) return;
@@ -323,6 +398,7 @@ export default {
       "getAllFilterNames",
       "getFilterValue",
       "projectLessons",
+      "contactInfoForm",
       "contentLoaded",
       "currentProject",
       "taskTypeFilter",
@@ -365,6 +441,15 @@ export default {
       set(value) {
         //  console.log(" C_taskTypeFilter set value: " + value)
         this.setTaskTypeFilter(value);
+      },
+    },
+    C_contactInfo: {
+      get() {
+        return this.contactInfoForm;
+      },
+      set(value) {
+        //  console.log(" C_taskTypeFilter set value: " + value)
+        this.setContactInfoForm(value);
       },
     },
     C_myTasks: {
@@ -904,7 +989,7 @@ export default {
       handler() {
         this.dueDate = this.facility.dueDate;
         this.statusId = this.facility.statusId;
-         this.fac = this.currentProject.facilities.find(
+         this.facility = this.currentProject.facilities.find(
             (facility) => facility.facilityId == this.$route.params.projectId
          );
       },
@@ -980,6 +1065,11 @@ export default {
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
+}
+.updateBtn{
+  position: absolute;
+  right: 25px;
+  bottom: 25px
 }
 .close-sidebar-btn {
   z-index: 800;
