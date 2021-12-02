@@ -12,6 +12,8 @@ class Contract < ApplicationRecord
   belongs_to :facility_group, optional: true
   belongs_to :project, optional: true
 
+  has_many :tasks
+
   before_save :assign_default_contract_type
 
   validates_presence_of :nickname

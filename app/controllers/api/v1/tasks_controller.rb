@@ -15,15 +15,23 @@ class Api::V1::TasksController < AuthenticatedController
       action = "delete"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
-
+    if params[:contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'tasks', contract: params[:contract_id])
+    else
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
+    end
   end
 
   def index
     all_users = []
     all_user_ids = []
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    if params[:contract_id]
+      all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(contract_id: @contract.id).paginate(:page => params[:page], :per_page => 15)
+    else
+      all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    end
+
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
     all_user_ids = all_user_ids.compact.uniq
@@ -119,8 +127,12 @@ class Api::V1::TasksController < AuthenticatedController
 
   private
   def set_resources
-    @project = current_user.authorized_programs.find_by(id: params[:project_id])
-    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    if params[:contract_id]
+      @contract = current_user.authorized_contracts.find_by(id: params[:contract_id] )
+    else
+      @project = current_user.authorized_programs.find_by(id: params[:project_id])
+      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    end
   end
 
   def set_task
