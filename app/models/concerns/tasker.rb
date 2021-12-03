@@ -13,8 +13,10 @@ module Tasker
     belongs_to :contract, optional: true
 
     has_one :facility, through: :facility_project
-    # has_one :project, through: :facility_project
-    # has_one :facility_group, through: :facility
+    has_one :project, through: :facility_project
+    has_one :facility_group, through: :facility
+    has_one :contract_project, class_name: "Project", through: :contract
+    has_one :contract_facility_group, class_name: "FacilityGroup", through: :contract
 
     has_many :checklists, as: :listable, dependent: :destroy
 
@@ -34,22 +36,6 @@ module Tasker
     after_save :remove_on_watch
     after_save :handle_related_taskers
     after_validation :setup_facility_project
-
-    def facility_group
-      if self.contract_id.present?
-        contract.facility_group
-      else
-        facility_project.facility_group
-      end
-    end
-
-    def project
-      if self.contract_id.present?
-        contract.project
-      else
-        facility_project.project
-      end
-    end
 
     def valid_url?(url)
       uri = URI.parse(url)

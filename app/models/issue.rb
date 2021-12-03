@@ -265,6 +265,9 @@ class Issue < ApplicationRecord
 
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse
+    
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -275,7 +278,7 @@ class Issue < ApplicationRecord
       program_name: project.name, 
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
-      project_group: self.facility_group.name,
+      project_group: facility_group.name,
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),
