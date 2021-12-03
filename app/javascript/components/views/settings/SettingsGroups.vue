@@ -161,9 +161,25 @@
           />
        </div>
       <div class="right mr-2">
-        <el-button @click.prevent="saveGroup" class="bg-primary text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>       
-        <el-button @click.prevent="addAnotherGroup" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Group</el-button>
-        <el-button @click.prevent="closeAddGroupBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+        <el-button 
+          @click.prevent="saveGroup"
+          :disabled="!newGroupName"  
+          class="bg-primary text-light mr-2" 
+          :class="[hideSaveBtn ? 'd-none': '']">
+          Save
+       </el-button>       
+        <el-button 
+          @click.prevent="addAnotherGroup" 
+          :class="[!hideSaveBtn ? 'd-none': '']" 
+          class="bg-primary text-light mr-2">
+          <i class="far fa-plus-circle mr-1"></i> Add Another Group
+        </el-button>
+        <el-button 
+          @click.prevent="closeAddGroupBtn" 
+          class="bg-danger text-light mr-2" 
+          :class="[!hideSaveBtn ? 'd-none': '']">
+          Close
+        </el-button>
         </div>
     </form>
    </el-dialog>
