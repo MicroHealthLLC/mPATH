@@ -51,6 +51,7 @@ export default new Vuex.Store({
     mapLoading: true,
     sideLoading: true,
     projects: new Array(),
+    tableData: new Array(),
     facilities: new Array(),
     facilityGroups: new Array(),
     statuses: new Array(),
@@ -113,6 +114,11 @@ export default new Vuex.Store({
     taskIssueProgressFilter: null,
     // This filter is used to check status e.g. active or completed
     taskIssueProgressStatusFilter: new Array(),
+    contactInfoForm: {
+      poc: '',
+      phoneNo: '',
+      email: '',
+     },
     progressFilter: {
       facility: {
         min: "",
@@ -211,6 +217,7 @@ export default new Vuex.Store({
     setSideLoading: (state, loading) => (state.sideLoading = loading),
     setProjects: (state, projects) => (state.projects = projects),
     setFacilities: (state, facilities) => (state.facilities = facilities),
+    setTableData: (state, tableData) => (state.tableData = tableData),
     setUnfilteredFacilities: (state, facilities) =>
       (state.unfilteredFacilities = facilities),
     setFacilityGroups: (state, facilityGroups) =>
@@ -430,6 +437,8 @@ export default new Vuex.Store({
         state.managerView[k] = k == key ? value : null;
       }
     },
+    setContactInfoForm: (state, { key, value }) =>
+    (state.contactInfoForm[key] = value),
     setMapZoomFilter: (state, filteredIds) =>
       (state.mapZoomFilter = filteredIds),
     setPreviousRoute: (state, route) => (state.previousRoute = route),
@@ -1046,6 +1055,7 @@ export default new Vuex.Store({
     sideLoading: (state) => state.sideLoading,
     projects: (state) => state.projects,
     facilities: (state) => state.facilities,
+    tableData: (state) => state.tableData, 
     facilityGroups: (state) => state.facilityGroups,
     statuses: (state) => state.statuses,
 
@@ -1114,6 +1124,7 @@ export default new Vuex.Store({
     mapFilters: (state) => state.mapFilters,
     progressFilter: (state) => state.progressFilter,
     managerView: (state) => state.managerView,
+    contactInfoForm: (state) => state.contactInfoForm,
     // NOTE: This function will be used in many pages to filter data based on advanced filter
     // selected by user.
     filterDataForAdvancedFilter: (state, getters) => (
@@ -1756,7 +1767,7 @@ export default new Vuex.Store({
       });
     },
     filteredFacilityGroups: (state, getters) => {
-      let ids = _.map(getters.filteredFacilities("active"), "facilityGroupId");
+      let ids = _.map(getters.facilities, "facilityGroupId");
       return _.filter(
         getters.facilityGroups,
         (fg) => ids.includes(fg.id) && fg.status == "active"
@@ -2377,6 +2388,30 @@ export default new Vuex.Store({
           });
       });
     },
+    fetchProjectNames({ commit, dispatch }, id) {
+      return new Promise((resolve, reject) => {
+        http
+          .get(`${API_BASE_PATH}/programs/${id}.json`)
+          .then((res) => {
+            let facilities = [];
+            for (let facility of res.data.project.facilities) {
+              facilities.push({ ...facility, ...facility.facility });
+            }
+            commit("setTableData", facilities);
+           
+            // console.log(facilities)
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          }) .finally(() => {
+            commit("setContentLoaded", true);
+          });
+      });
+    },
+    
+
     fetchFacility({ commit, dispatch, getters }, { projectId, facilityId }) {
       return new Promise((resolve, reject) => {
         http
@@ -2415,13 +2450,14 @@ export default new Vuex.Store({
       });
     },
     fetchFacilityGroups({ commit }, id) {
-      let url = "${API_BASE_PATH}/facility_groups.json";
+      let url = `${API_BASE_PATH}/facility_groups.json`;
       if (id !== undefined) url = url + `?=project_id=${id}`;
       return new Promise((resolve, reject) => {
         http
           .get(url)
           .then((res) => {
             commit("setFacilityGroups", res.data.facilityGroups);
+            console.log(res.data.facilityGroups)
             resolve();
           })
           .catch((err) => {

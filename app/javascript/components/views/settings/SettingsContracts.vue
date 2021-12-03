@@ -6,7 +6,7 @@
    <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
-     <el-breadcrumb-item :to="toSettingsLanding">
+     <el-breadcrumb-item :to="backToSettings">
       <span style="cursor:pointer"><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS </span>
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
@@ -46,7 +46,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in filteredFacilityGroups"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -57,12 +57,13 @@
       </div>
   </div>
   <div
+    v-if="tableData && tableData.length > 0"
     v-loading="!contractsLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
-   <el-table  v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
     <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
@@ -90,12 +91,12 @@
       </template>
     </el-table-column>
   
-   </el-table>
+   </el-table>  
+   
+  </div>
    <span v-else class="mt-5">
       NO DATA TO DISPLAY   
    </span>
-   
-  </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
       accept-charset="UTF-8"    
@@ -135,7 +136,7 @@
        </div>
        <div class="form-group mx-3">
         <label class="font-md"
-        >Group</label
+        >Group<span style="color: #dc3545">*</span></label
         >
          <el-select
             class="w-100"
@@ -148,7 +149,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in filteredFacilityGroups"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -157,11 +158,25 @@
           </el-select>
        </div>
         <div class="right mr-2">
-        <el-button @click.prevent="saveNewContract" class="bg-success text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>
-       
-        <el-button @click.prevent="addAnotherContract" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Contract</el-button>
-
-        <el-button @click.prevent="closeAddContractBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+        <el-button 
+          @click.prevent="saveNewContract"
+          :disabled="!C_newContractGroupFilter && contractNameText" 
+          class="bg-success text-light mr-2" 
+          :class="[hideSaveBtn ? 'd-none': '']">
+          Save
+        </el-button>       
+        <el-button 
+          @click.prevent="addAnotherContract" 
+          :class="[!hideSaveBtn ? 'd-none': '']" 
+          class="bg-primary text-light mr-2">
+          <i class="far fa-plus-circle mr-1"></i> Add Another Contract
+        </el-button>
+        <el-button 
+          @click.prevent="closeAddContractBtn" 
+          class="bg-danger text-light mr-2"  
+          :class="[!hideSaveBtn ? 'd-none': '']">
+          Close
+        </el-button>
 
         </div>
     </form>
@@ -205,7 +220,7 @@ export default {
       },
     };
   },
-    mounted() {
+  mounted() {
     this.fetchContracts();   
   },
   methods: {
@@ -225,7 +240,13 @@ export default {
     }, 
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-       window.location.pathname =  `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
+      this.$router.push({
+        name: "SheetContract",
+        params: {
+          programId: this.$route.params.programId,
+          contractId: rows.id.toString(),          
+        },
+      });
     
     },
     saveNewContract() {
@@ -292,11 +313,11 @@ export default {
       'getProjectGroupFilter',
       'getGroupFilter',
       "facilityGroupFacilities",
-      'filteredFacilityGroups',
+      'facilityGroups',
       'currentProject'
     ]), 
-    toSettingsLanding(){
-     return `/programs/${this.$route.params.programId}/settings`  
+     backToSettings() {
+      return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData(){
       if(this.contracts[0] && this.contracts[0].length > 0 ){
@@ -351,15 +372,6 @@ export default {
     }
   },
   watch: {
-    // contentLoaded: {
-    //   handler() {
-    //     if (this.$route.params.contractId) {
-    //       this.currentContract = this.contracts[0].find(
-    //          (c) => c.id == this.$route.params.contractId
-    //       );
-    //     }
-    //   },
-    // },
     contractStatus: {
       handler() {
         if (this.contractStatus == 200 && this.contractNameText) {

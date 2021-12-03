@@ -68,12 +68,6 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-    // isProgramView() {
-    //   return this.$route.name.includes("ProgramTaskForm") ||
-    //          this.$route.name.includes("ProgramRiskForm") ||
-    //          this.$route.name.includes("ProgramIssueForm") ||
-    //          this.$route.name.includes("ProgramLessonForm") ;
-    // },
     isMapView() {
       return this.$route.name.includes("Map");
     },
@@ -85,7 +79,7 @@ export default {
     },
     isSettingsView() {
     return this.$route.name.includes("SettingsView") ||
-            this.$route.name ===  "SettingsProjects"||
+            this.$route.name.includes("SettingsProjects") ||
             this.$route.name.includes("SettingsContracts") ||
             this.$route.name.includes("SettingsGroups")
     },

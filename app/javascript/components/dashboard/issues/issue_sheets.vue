@@ -134,9 +134,13 @@
           this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`)
       },
       deleteIssue() {
-        let confirm = window.confirm(`Are you sure, you want to delete this issue?`)
-        if (!confirm) {return}
-        this.issueDeleted(this.DV_issue)
+        this.$confirm(`Are you sure you want to delete this issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(this.DV_issue)
+        });
       },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)
@@ -160,11 +164,15 @@
       },
       toggleWatched() {
         if (this.DV_issue.watched) {
-          var confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
-          if (!confirm) {return}
+          this.$confirm(`Are you sure you want to remove this issue from on-watch?`, 'Confirm Remove', {
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
+            this.updateWatchedIssues(this.DV_issue)
+          });
         }
-        this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
-        this.updateWatchedIssues(this.DV_issue)
       },
       updateRelatedTaskIssue(task) {
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
