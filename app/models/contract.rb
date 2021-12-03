@@ -11,6 +11,8 @@ class Contract < ApplicationRecord
   belongs_to :contract_classification, optional: true
   belongs_to :facility_group, optional: true
   belongs_to :project, optional: true
+  belongs_to :contract_project, class_name: "Project", foreign_key: :project_id
+  belongs_to :contract_facility_group, class_name: "FacilityGroup", foreign_key: :facility_group_id
 
   has_many :tasks
 

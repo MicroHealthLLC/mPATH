@@ -169,11 +169,15 @@ export default {
     },
     toggleWatched() {
         if (this.DV_task.watched) {
-          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
-          if (!confirm) {return}
+          this.$confirm(`Are you sure you want to remove this task from on-watch?`, 'Confirm Remove', {
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
+            this.updateWatchedTasks(this.DV_task)
+          });
         }
-        this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
-        this.updateWatchedTasks(this.DV_task)
     },
     updateRelatedTaskIssue(task) {
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})  
@@ -189,9 +193,13 @@ export default {
       this.$refs.menu.open(e);
     },
     deleteTask() {
-      let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
-      if (!confirm) {return}
-      this.taskDeleted(this.DV_task)
+      this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.taskDeleted(this.DV_task)
+      });
     }
   },
   computed: {

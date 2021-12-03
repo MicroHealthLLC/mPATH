@@ -26,11 +26,7 @@ class Api::V1::TasksController < AuthenticatedController
     all_users = []
     all_user_ids = []
 
-    if params[:contract_id]
-      all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(contract_id: @contract.id).paginate(:page => params[:page], :per_page => 15)
-    else
-      all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
-    end
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks,:contract_facility_group, :contract_project, {facility_project: :facility} ]).where("tasks.facility_project_id in (?) or tasks.contract_id in (?)", [@facility_project.id], [@contract.id]).paginate(:page => params[:page], :per_page => 15)
 
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)

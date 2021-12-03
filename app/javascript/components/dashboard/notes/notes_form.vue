@@ -170,18 +170,20 @@
       },
       deleteFile(file) {
         if (!file) return;
-
-        var confirm = window.confirm(`Are you sure you want to delete attachment?`)
-        if (!confirm) return;
-
-        if (file.uri) {
-          var index = this.DV_note.noteFiles.findIndex(f => f.guid === file.guid)
-          Vue.set(this.DV_note.noteFiles, index, {...file, _destroy: true})
-          this.destroyedFiles.push(file)
-        }
-        else if (file.name) {
-          this.DV_note.noteFiles.splice(this.DV_note.noteFiles.findIndex(f => f.guid === file.guid), 1)
-        }
+        this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          if (file.uri) {
+            var index = this.DV_note.noteFiles.findIndex(f => f.guid === file.guid)
+            Vue.set(this.DV_note.noteFiles, index, {...file, _destroy: true})
+            this.destroyedFiles.push(file)
+          }
+          else if (file.name) {
+            this.DV_note.noteFiles.splice(this.DV_note.noteFiles.findIndex(f => f.guid === file.guid), 1)
+          }
+        });
       },
       saveNote() {
         this.$validator.validate().then((success) =>
@@ -247,9 +249,13 @@
         })
       },
       deleteNote() {
-        var confirm = window.confirm(`Are you sure, you want to delete this note?`)
-        if (!confirm) return;
-        this.noteDeleted({note: this.DV_note, facilityId: this.facility.id, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
+        this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.noteDeleted({note: this.DV_note, facilityId: this.facility.id, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
+        });
       },
       cancelNoteSave() {
         this.$emit('close-note-input')

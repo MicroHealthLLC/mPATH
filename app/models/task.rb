@@ -324,6 +324,9 @@ class Task < ApplicationRecord
     sorted_notes = notes.sort_by(&:created_at).reverse
     fp = self.facility_project
 
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -339,7 +342,7 @@ class Task < ApplicationRecord
       notes: sorted_notes.as_json,
       completed: completed,
       program_name: project.name, 
-      project_group: self.facility_group.name,
+      project_group: facility_group.name,
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       important: important,
