@@ -11,28 +11,39 @@
     </div>
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 ml-2" style="margin-top:1.8rem">
-      <div v-if="contentLoaded">
+      <div v-if="contentLoaded" >
         <div
           v-for="(group, index) in sortedGroups"
           :key="index + 'a'"    
-          class="my-2 px-2"
+          class="my-2 px-2 container"
         >
           <div
-            class="d-flex expandable"
+            class="d-flex row expandable"
             @click="expandFacilityGroup(group)"
             :class="{ active: group.id == currentFacilityGroup.id }"
             data-cy="facility_groups"
             :key="index"
           >
+
+          <div class="col-8 py-0 pr-0">
+           <span class="d-flex">
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
             </span>
             <span v-show="expanded.id == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
-            <h5 class="clickable">{{ group.name }}</h5>
+           <p class="clickable groupName">{{ group.name }}</p>
+           </span>
+         </div>
+
+           <div class="col py-0 text-right">
+           <span class="badge badge-secondary badge-pill pill">{{ group.facilities.length}}</span>
+         
+         </div>
+             
           </div>
-          <div v-show="expanded.id == group.id" class="ml-2">
+         <div v-show="expanded.id == group.id" class="ml-2">
               <div
               v-for="facility in facilityGroupFacilities(group)"            
               :key="facility.id"
@@ -53,11 +64,11 @@
                 </div>
               </router-link>
               </div>
-               <div v-show="isSheetsView" v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
+               <div v-show="isSheetsView" v-for="object in facilityGroups.filter(t => t.id == group.id)" :key="object.id">
                  <div v-for="c in object.contracts" :key="c.id">
                   <router-link               
                 :to="
-                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}`
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}/contract`
                 "
               >
                 <div
@@ -309,6 +320,12 @@ export default {
     border-radius: 2px;
     margin: 1px;
     cursor: pointer;
+  }
+  .groupName{
+    overflow: hidden;
+    white-space: nowrap; /* Don't forget this one */
+    text-overflow: ellipsis;
+    font-size: 1.15rem;
   }
   .programNameBtn {
     &.active {

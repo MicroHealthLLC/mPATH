@@ -512,7 +512,20 @@
         now: new Date().toISOString(),
         tasksQuery: '',
         // currentPage:1,
+        defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        },        
         showFilters: false,
+        contractRoute: this.$route.params.contractId,
+        id: this.$route.params.projectId,
         datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
@@ -551,14 +564,29 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-      //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+
+      // _isallowed(salut) {
+      //   let programId = this.$route.params.programId;
+      //   if (this.$route.params.contractId) {
+      //   this.id = this.$route.params.contractId            
+      //   }      
+      //   let fPrivilege = this.$projectPrivileges[programId][this.id]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.tasks.includes(s); 
+        
+      // },
+      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
+       _isallowed(salut) {
+        let programId = this.$route.params.programId;
+        if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.tasks.includes(s); 
+        return fPrivilege.tasks.includes(s); 
+        }         
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -627,6 +655,11 @@
       addNewTask() {
         this.setTaskForManager({key: 'task', value: {}})
         // Route to new task form page
+        if(this.contractRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
@@ -940,6 +973,9 @@
         set(value) {
           this.setTaskIssueProgressStatusFilter(value)
         }
+      },
+      priv(){
+        return this.$projectPrivileges[this.$route.params.programId][this.$route.params.contratId]  
       },
       C_taskIssueOverdueFilter: {
         get() {

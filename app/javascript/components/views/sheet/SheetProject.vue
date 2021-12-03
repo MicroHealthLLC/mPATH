@@ -91,45 +91,11 @@
                     Apply
                   </button>
                 </div>
-              </div>
-
-        
-
-              <!-- <div class="col-md-3 col-lg-3 col-sm-6" v-show="isSheetsView"  data-cy="date_set_filter">
-                <el-card
-                  class="box-card"
-                  style="background-color: #41b883; color:#fff"
-                >
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="d-inline">Filters</h5>
-                      <hr style="background-color: #fff; color:#fff" />
-                    </div>
-                  </div>
-                  <div
-                    v-for="(filterArray, index) in getAllFilterNames"
-                    :key="index"                  
-                  >
-                    <span v-if="getFilterValue(filterArray[0])">
-                      <span
-                        ><b class="mr-1">{{ filterArray[1] }}:</b>
-                        {{ getFilterValue(filterArray[0]) }}
-                      </span>
-                    </span>
-                  </div>
-                  <span
-                    v-show="
-                      facilities.length !== getUnfilteredFacilities.length
-                    "
-                    >Map Boundary Filter: Active</span
-                  >
-                </el-card>
-              </div> -->
-
+              </div>  
               <div
                 v-show="isSheetsView" 
-                v-if="facility && facility.facility"
-                class="col-3"
+                v-if="project"
+                class="col-4"
                 data-cy="date_set_filter"
               >
                 <el-card class="box-card" style="background-color: #fafafa">
@@ -144,34 +110,34 @@
                         <span class="fbody-icon mr-2"
                           ><i class="far fa-id-badge"></i
                         ></span>
-                        <span v-if="facility && facility.facility.pointOfContact">
+                        <!-- <span v-if="facility && facility.facility.pointOfContact">
                           {{ facility.facility.pointOfContact }}
-                        </span>
-                        <span v-else class="d-inline">
+                        </span> -->
+                        <span class="d-inline">
                           <el-input
-                            v-model="C_contactInfo.poc"
+                            v-model="project.pointOfContact"
                             placeholder="Enter Point of Contact name"
                             name="Poc"
                             class="w-75"
                           />
                         </span>
                       </p>
-                      <p class="mt-1 mb-0" v-if="facility && facility.facility.address">
+                      <p class="mt-1 mb-0" v-if="project && project.address">
                         <span class="fbody-icon"
                           ><i class="fas fa-map-marker"></i
                         ></span>
-                        <span>{{ facility.facility.address || "N/A" }}</span>
+                        <span>{{ project.address || "N/A" }}</span>
                       </p>
                       <p class="mt-1 mb-0">
                         <span class="fbody-icon mr-1"
                           ><i class="fas fa-phone"></i
                         ></span>
-                        <span v-if="facility && facility.facility.phoneNumber !== null">
+                        <!-- <span v-if="facility && facility.facility.phoneNumber !== null">
                           {{ facility.facility.phoneNumber }}
-                        </span>
-                         <span v-else class="d-inline">
+                        </span> -->
+                         <span class="d-inline">
                           <el-input
-                            v-model="C_contactInfo.phoneNo"
+                            v-model="project.phoneNumber"
                             placeholder="Enter Point of Contact phone number"
                             name="phoneNo"
                             class="w-75"
@@ -182,12 +148,12 @@
                         <span class="fbody-icon"
                           ><i class="far fa-envelope"></i
                         ></span>
-                        <span  v-if=" facility && facility.facility.email">
+                        <!-- <span  v-if=" facility && facility.facility.email">
                           {{ facility.facility.email  }}
-                        </span>
-                         <span v-else class="d-inline">
+                        </span> -->
+                         <span class="d-inline">
                           <el-input
-                            v-model="C_contactInfo.email"
+                            v-model="project.email"
                             placeholder="Enter Point of Contact email"
                             name="email"
                             class="w-75"
@@ -197,48 +163,22 @@
 
                       </p>
                     </div>
-                  </div>
-                  <div 
-                    :class="{ 'd-none' : facility && facility.facility.email && 
-                    facility.facility.phoneNumber && 
-                    facility.facility.pointOfContact }"
-                  >
-                    <button class="btn btn-sm mh-blue text-light px-2 py-0 updateBtn" @click.prevent="updateContactInfo">Save</button>
+                  </div>                
+                    <button 
+                      :disabled="!project.pointOfContact"
+                      :class="{'d-none': edit}"
+                     class="btn btn-sm bg-primary text-light px-2 py-0 updateBtn"
+                     @click.prevent="updateContactInfo">Save</button>
+                     <button 
+                      :class="{'d-none': !edit}"
+                     class="btn btn-sm bg-dark text-light px-2 py-0 updateBtn"
+                     @click.prevent="editBtn">Update</button>
                     <!-- <button class="btn btn-sm mh-blue text-light px-2 py-0 updateBtn" @click.prevent="updateContactInfo">Edit</button> -->
-                  </div>
+                
                 </el-card>
               </div>
-                <!-- <div class="col-2 pl-2">
-                <el-card class="box-card" style="background-color:#fff">
-                  <div class="row">
-                    <div class="col text-center bg-secondary py-0">
-                      <h6 class="d-block mb-0 text-center text-light">OVERALL PROGRESS</h6>                  
-                    </div>
-                  </div>
-                <div class="row mt-1 text-center">
-                <div class="col p-0 mb-0">
-                  
-               <h4 class="text-center">
-                        <span :class="{ 'progress-0': projectTotalProgress <= 0 }">
-                          <el-progress
-                            type="circle"
-                            class="pt-4 pb-3"                          
-                            :percentage="Math.round(projectTotalProgress)"
-                          ></el-progress>
-                        </span>
-                      </h4>
-                </div>
-                </div>
-           
-                <div>
-              </div>
-          </el-card>
-              </div> -->
-            </div>
-            <!-- SECOND ROW WITH TASKS ISSUES & RISKS -->
-
-            <!-- Row 2, col-1 for Tasks Card -->
-            
+             </div>
+                     
           </div>
           <div v-else class="text-danger mx-2 my-4">
             You don't have permission to read!
@@ -268,9 +208,7 @@ export default {
     return {
       dueDate: "",
       statusId: 0,
-      poc: null, 
-      email: null, 
-      phoneNo: null, 
+      edit: true,
       today:  new Date().toISOString().slice(0, 10),
       loading: true,
       DV_updated: false,
@@ -291,20 +229,18 @@ export default {
   methods: {
     ...mapActions(["fetchProjectLessons", "fetchCurrentProject"]),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash", "setContactInfoForm"]),
+    editBtn(){
+      this.edit = false
+    },
     updateContactInfo() {
       let formData = new FormData();
-      if (this.C_contactInfo.poc){
-         formData.append("facility[point_of_contact]", this.C_contactInfo.poc);
-      }  
-      if (this.C_contactInfo.phoneNo){
-         formData.append("facility[phone_number]",this.C_contactInfo.phoneNo);
-      }
-      if (this.C_contactInfo.email) {
-         formData.append("facility[email]",this.C_contactInfo.email);
-      }    
+          formData.append("facility[point_of_contact]", this.project.pointOfContact);  
+          formData.append("facility[phone_number]", this.project.phoneNumber);
+          formData.append("facility[email]",this.project.email);
+    
       // formData.append("commit", "Update Project");
       // let url = `/admin/facilities/${this.$route.params.projectId}`;
-       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}`; 
+      let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}`; 
       let method = "PUT";
       axios({
         method: method,
@@ -322,6 +258,7 @@ export default {
             showClose: true,
           });
           this.fetchCurrentProject(this.$route.params.programId)
+          this.edit = true
         }
       });
     },
@@ -391,29 +328,13 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getTaskIssueUserFilter",
-      "filterDataForAdvancedFilter",
-      "facilityGroupFacilities",
-      "taskTypes",
+      "facilityGroupFacilities",    
       "getAllFilterNames",
-      "getFilterValue",
-      "projectLessons",
       "contactInfoForm",
+      "getFilterValue",
       "contentLoaded",
-      "currentProject",
-      "taskTypeFilter",
-      "issueTypeFilter",
-      "riskStageFilter",
-      "issueSeverityFilter",
-      "getRiskPriorityLevelFilter",
-      "taskUserFilter",
-      "taskStageFilter",
-      "issueStageFilter",
-      "riskStageFilter",
-      "issueUserFilter",
-      "statuses",
-      "myActionsFilter",
-      "onWatchFilter",
+      "currentProject",     
+      "statuses",    
       "facilities",
       "getUnfilteredFacilities",
     ]),
@@ -452,25 +373,10 @@ export default {
         this.setContactInfoForm(value);
       },
     },
-    C_myTasks: {
-      get() {
-        return _.map(this.myActionsFilter, "value").includes("tasks");
-      },
-    },
-    C_myIssues: {
-      get() {
-        return _.map(this.myActionsFilter, "value").includes("issues");
-      },
-    },
-    C_onWatchTasks: {
-      get() {
-        return _.map(this.onWatchFilter, "value").includes("tasks");
-      },
-    },
-    C_onWatchIssues: {
-      get() {
-        return _.map(this.onWatchFilter, "value").includes("issues");
-      },
+    project(){
+      if (this.facility){
+        return this.facility.facility
+      }
     },
     isMapView() {
       return this.$route.name.includes("Map");
@@ -478,511 +384,6 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-  
-    filteredTasks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.taskStageFilter, "id");
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(this.facility.tasks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          ...resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          if (taskIssueUsers.length > 0) {
-            valid =
-              valid &&
-              userIds.some(
-                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-              );
-          }
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.taskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      });
-    },
-    viableTasksForProgressTotal(){
-      return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
-    },
-     viableIssuesForProgressTotal(){
-      return this.filteredIssues.filter(issue => issue.draft == false && issue.onHold == false)
-    },
-     viableRisksForProgressTotal(){
-      return this.filteredRisks.filter(r => r.draft == false && r.onHold == false  && r.ongoing == false )
-    },
-     allTasksProgress() {
-      let task = new Array();
-      let group = _.groupBy(this.viableTasksForProgressTotal, "id");
-      for (let ids in group) {
-        task.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = task.map(t => t.progress);
-      let count = task.map(t => t).length;
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-     let roundedSum = Math.round(sum)
-     let final = roundedSum / count
-     if (isNaN(final)){
-       final = 0;
-     }
-    //  let allCounts = this.allRisksProgress.count + this.allIssuesProgress.count + count
-    //  let weightedVal = count / allCounts
-     let weighted = count * final 
-    
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted, 
-          roundedSum  
-      }
-    },
-    allRisksProgress() {
-      let risk = new Array();
-      let group = _.groupBy(this.viableRisksForProgressTotal, "id");
-      for (let ids in group) {
-        risk.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = risk.map(r => r.progress);
-      let count = risk.map(r => r).length;
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)
-      let roundedSum = Math.round(sum)
-       let final = roundedSum / count
-       
-     if (isNaN(final)){
-       final = 0;
-     }
-          let weighted = count * final
-    
-        if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    allIssuesProgress() {
-      let issue = new Array();
-      let group = _.groupBy(this.viableIssuesForProgressTotal, "id");
-      for (let ids in group) {
-        issue.push({
-          id: ids,  
-          // text: text,      
-          progress: Number((_.meanBy(group[ids], "progress") || 0).toFixed(0)),
-        });
-      }
-      let total = issue.map(iss => iss.progress);
-      let count = issue.map(iss => iss).length;
-      
-      let sum = total.reduce(( accumulator, currentValue ) => accumulator + currentValue, 0)     
-      let roundedSum = Math.round(sum)
-      let final = roundedSum / count
-      
-     if (isNaN(final)){
-       final = 0;
-     }
-      let weighted = count * final
-       if (isNaN(final)) {
-        return 0
-       } else return {
-          final, 
-          count, 
-          weighted    
-      }
-    },
-    projectTotalProgress(){
-     let sum = this.allTasksProgress.weighted + this.allRisksProgress.weighted + this.allIssuesProgress.weighted
-      let denominator = this.allTasksProgress.count + this.allRisksProgress.count + this.allIssuesProgress.count
-        if (isNaN(sum || denominator )) {
-          sum = 0;
-          denominator = 0;
-        }
- 
-      let total = sum / denominator
-      if (isNaN(total)) {
-        return 0
-      } else return Math.round(total)
-    }, 
-    taskStats() {
-      let tasks = new Array();
-      let group = _.groupBy(this.filteredTasks, "taskType");
-      for (let type in group) {
-        tasks.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return tasks;
-    },
-    // TODO: Move this calculation to back-end so that statistics can be available for other devices
-    taskVariation() {
-      let planned = _.filter(
-        this.filteredTasks,
-        (t) => t && t.planned 
-          // (t) => t && t.startDate && t.startDate > this.today 
-      );     
-     let taskDrafts = _.filter(
-        this.filteredTasks,
-        (t) => t && t.draft == true   
-      );      
-      let completed = _.filter(
-        this.filteredTasks,
-        (t) => t && t.completed == true
-      );
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredTasks.length
-      );
-      let inProgress = _.filter(
-        this.filteredTasks,
-        (t) => t && t.inProgress
-      );
-     let onHoldT = _.filter(
-        this.filteredTasks,
-        (t) => t && t.onHold == true 
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredTasks.length
-      );
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredTasks.length
-      );
-      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
-      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.closed );
-      return {
-        planned: {
-          count: planned.length, 
-          plannedTs: planned            
-        },
-        onHoldT: {
-          count: onHoldT.length,          
-        },
-        taskDrafts: {
-          count: taskDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },      
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },             
-        ongoingClosed: {
-          count:  ongoingClosed.length,         
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoing,       
-    
-      };
-    },
-    filteredIssues() {
-      let taskTypeIds = _.map(this.taskTypeFilter, "id");
-      let typeIds = _.map(this.issueTypeFilter, "id");
-      let severityIds = _.map(this.issueSeverityFilter, "id");
-      let stageIds = _.map(this.issueStageFilter, "id");
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(this.facility.issues, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          ...resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          if (taskIssueUsers.length > 0) {
-            valid =
-              valid &&
-              userIds.some(
-                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-              );
-          }
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityShowIssues");
-        if (taskTypeIds.length > 0)
-          valid = valid && taskTypeIds.includes(resource.taskTypeId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.issueTypeId);
-        if (severityIds.length > 0)
-          valid = valid && severityIds.includes(resource.issueSeverityId);
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.issueStageId);
-        return valid;
-      });
-    },
-    issueStats() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "issueType");
-      for (let type in group) {
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return issues;
-    },
-    issueTaskCATEGORIES() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "taskTypeName");
-      for (let type in group) {
-        if (!type || type == "null") continue;
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
-        });
-      }
-      return issues;
-    },
-    // TODO: Move this calculation to back-end so that statistics can be available for other devices
-  issueVariation() {
-     let planned = _.filter(
-        this.filteredIssues,
-        (t) => t.planned == true  
-      );     
-      let issueDrafts = _.filter(
-        this.filteredIssues,
-         (t) => t && t.draft == true 
-      );      
-      let completed = _.filter(
-        this.filteredIssues,
-        (t) => t && t.completed == true
-      );
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredIssues.length
-      ); 
-       let inProgress = _.filter(
-        this.filteredIssues,
-        (t) => t && t.inProgress == true 
-        );
-      let onHoldI = _.filter(
-        this.filteredIssues,
-        (t) => t && t.onHold == true 
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredIssues.length
-      );
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredIssues.length
-      );
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldI: {
-          count: onHoldI.length,          
-        },
-        issueDrafts: {
-          count: issueDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-      };
-    },
-    filteredRisks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      return _.filter(this.facility.risks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          ...resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          if (taskIssueUsers.length > 0) {
-            valid =
-              valid &&
-              userIds.some(
-                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-              );
-          }
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.riskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        if (riskApproachIds.length > 0)
-          valid = valid && riskApproachIds.includes(resource.riskApproach);
-        return valid;
-      });
-    },
-    riskPriorityLevels() {
-      let grey = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Very Low"
-      );
-      let green = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Low"
-      );
-      let yellow = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Moderate"
-      );
-      let orange = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "High"
-      );
-      let red = _.filter(
-        this.filteredRisks,
-        (t) => t && t.priorityLevelName && t.priorityLevelName == "Extreme"
-      );
-      return {
-        grey: grey.length,
-        green: green.length,
-        yellow: yellow.length,
-        orange: orange.length,
-        red: red.length,
-      };
-    },
-    // TODO: Move this calculation to back-end so that statistics can be available for other devices
-    riskVariation() {
-     let planned = _.filter(
-        this.filteredRisks,
-        (t) => t && t.planned == true     
-      );  
-      let riskDrafts = _.filter(
-        this.filteredRisks,
-        (t) => t && t.draft == true  
-      ); 
-      let completed = _.filter(
-        this.filteredRisks,
-        (t) => t && t.completed == true
-      );
-      let inProgress = _.filter(
-        this.filteredRisks,
-        (t) => t && t.inProgress == true 
-      );
-      let onHoldR = _.filter(
-        this.filteredRisks,
-        (t) => t && t.onHold == true 
-      );  
- 
-      let completed_percent = this.getAverage(
-        completed.length,
-        this.filteredRisks.length
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredRisks.length
-      );
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
-      let overdue_percent = this.getAverage(
-        overdue.length,
-        this.filteredRisks.length
-      );
-      let ongoingClosed = _.filter(this.filteredRisks, (t) => t && t.closed);
-      let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
-      return {
-        planned: {
-          count: planned.length,          
-        },
-        onHoldR: {
-          count: onHoldR.length,          
-        },
-        riskDrafts: {
-          count: riskDrafts.length,          
-        },
-        completed: {
-          count: completed.length,
-          percentage: Math.round(completed_percent),
-        },
-        inProgress: {
-          count: inProgress.length,
-          percentage: Math.round(inProgress_percent),
-        },
-        overdue: {
-          count: overdue.length,
-          percentage: Math.round(overdue_percent),
-        },
-        ongoingClosed: {
-          count:  ongoingClosed.length,         
-        },
-        ongoing
-      };
-    },
-    lessonVariation() {
-      let completes = this.projectLessons.filter(l => !l.draft )
-       let drafts = this.projectLessons.filter(l => l.draft)
-      return {
-        completes,
-        drafts
-      }
-    },
-    currentRiskTypes() {
-      let names =
-        this.taskTypeFilter &&
-        this.taskTypeFilter.length &&
-        _.map(this.taskTypeFilter, "name");
-      let taskTypes = new Array();
-      for (let type of this.taskTypes) {
-        let risks = _.filter(
-          this.filteredRisks,
-          (t) => t.taskTypeId == type.id
-        );
-        taskTypes.push({
-          name: type.name,
-          _display:
-            risks.length > 0 && (names ? names.includes(type.name) : true),
-          length: risks.length,
-          progress: Number(_.meanBy(risks, "progress").toFixed(0)),
-        });
-      }
-      return taskTypes;
-    },
-    // hthth(){
-    //   return this.currentProject.facilities.find(
-    //         (facility) => facility.facilityId == this.$route.params.projectId
-    // );
-    // },
   },
   watch: {
     contentLoaded: {
@@ -1068,8 +469,8 @@ export default {
 }
 .updateBtn{
   position: absolute;
-  right: 25px;
-  bottom: 25px
+  right: 24px;
+  bottom: 20px
 }
 .close-sidebar-btn {
   z-index: 800;

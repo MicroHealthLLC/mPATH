@@ -25,6 +25,11 @@
                 facility.facilityName
                 }}
             </span>
+            <span v-if="contract">{{
+                contract.nickname || contract.name
+                }}
+            </span>
+
             <span v-else>{{
                 task.facilityName
             }}
@@ -1292,7 +1297,7 @@ import { API_BASE_PATH } from '../../../mixins/utils';
 const moment = extendMoment(Moment);
 export default {
   name: "TaskForm",
-  props: ["facility", "task", "title", "fixedStage"],
+  props: ["facility", "task", "title", "fixedStage", "contract"],
   components: {
     AttachmentInput,
     Draggable,
@@ -1306,6 +1311,19 @@ export default {
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       editTimeLive: "",
+      contractRoute: this.$route.params.contractId,  
+      projectRoute: this.$route.params.projectId,  
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        }, 
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1392,7 +1410,7 @@ export default {
         text: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.$route.params.programId,
+        programId: this.$route.params.programId,       
         checklistDueDate: "",
         taskTypeId: "",
         taskStageId: "",
@@ -1417,14 +1435,22 @@ export default {
       };
     },
     //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
-    },
+    // _isallowed(salut) {
+    //     let fPrivilege = this.$projectPrivileges[this.programId][this.id]
+    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //     let s = permissionHash[salut]
+    //       return  fPrivilege.tasks.includes(s); 
+    // },
+     _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[this.programId][this.id]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.tasks.includes(s); 
+        }         
+      },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
@@ -1804,11 +1830,11 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.id}/tasks.json`;
         let method = "POST";
         let callback = "task-created";
         if (this.task && this.task.id) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
           method = "PUT";
           callback = "task-updated";
         }
@@ -1839,7 +1865,7 @@ export default {
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.id}/tasks/${response.data.task.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -2076,6 +2102,16 @@ export default {
       var taskStagesSortedReturn = [...this.taskStages]; 
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
+    id(){
+       if(this.contractRoute){
+        return this.contractRoute 
+       } else return this.projectRoute
+    },
+    object(){
+       if(this.contractRoute){
+        return 'contract'
+       } else return 'projects'
+    },
     readyToSave() {
       return (
         this.DV_task &&
@@ -2147,6 +2183,9 @@ export default {
       }
     },
     backToTasks() {
+      if (this.contractRoute) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.contractRoute}/tasks`
+      }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
       } else {
@@ -2154,6 +2193,9 @@ export default {
       }
     },
     projectNameLink() {
+       if (this.contractRoute && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.contractRoute}/contract`;
+       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
@@ -2167,6 +2209,13 @@ export default {
     task: {
       handler: function(value) {
         this.loadTask(this.task);
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
       },
     },
     "DV_task.startDate"(value) {
