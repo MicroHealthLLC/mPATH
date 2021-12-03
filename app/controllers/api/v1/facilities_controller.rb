@@ -22,8 +22,8 @@ class Api::V1::FacilitiesController < AuthenticatedController
     if(params[:facility][:facility_group_name] && params[:facility][:facility_group_name] != 'undfined')
       @facility.facility_group.update(name: params[:facility][:facility_group_name])
     end
-    if params[:facility][:facility_name]
-      @facility.update(facility_name: params[:facility][:facility_name])
+    if params[:facility]
+      @facility.update(facility_params)
     end
     render json: {facility: @facility.as_json}
   end
