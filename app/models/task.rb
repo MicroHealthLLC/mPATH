@@ -4,6 +4,7 @@ class Task < ApplicationRecord
 
   belongs_to :task_type
   belongs_to :task_stage, optional: true
+
   has_many :task_users, dependent: :destroy
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
@@ -18,8 +19,8 @@ class Task < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
-  after_save :update_facility_project
-  after_destroy :update_facility_project
+  after_save :update_facility_project, if: Proc.new {|task| task.contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|task| task.contract_id.nil?}
 
   attr_accessor :file_links
 
@@ -60,6 +61,7 @@ class Task < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
+      :contract_id,
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -250,7 +252,6 @@ class Task < ApplicationRecord
         end
       end.compact.uniq
     end
-    fp = self.facility_project
 
     t_users = options[:all_task_users] || []
     all_users = options[:all_users] || []
@@ -321,6 +322,8 @@ class Task < ApplicationRecord
 
     
     sorted_notes = notes.sort_by(&:created_at).reverse
+    fp = self.facility_project
+
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -368,7 +371,7 @@ class Task < ApplicationRecord
       informed_user_ids: informed_user_ids,
 
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility).facility_name,
+      facility_name: fp.try(:facility)&.facility_name,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -394,11 +397,12 @@ class Task < ApplicationRecord
     checklists_attributes = t_params.delete(:checklists_attributes)
     notes_attributes = t_params.delete(:notes_attributes)
 
-    task.attributes = t_params
-    if !task.facility_project_id.present?
+    task.attributes = t_params 
+    if params[:contract_id]
+      task.contract_id = params[:contract_id]
+    elsif !task.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
-
       task.facility_project_id = facility_project.id
     end
 

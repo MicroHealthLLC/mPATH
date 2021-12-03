@@ -26,7 +26,28 @@ Rails.application.routes.draw do
 
       resources :facility_groups, only: [:index, :create]
 
-      resources :contracts
+      resources :contracts do
+        resources :notes #, module: :facilities
+        resources :issues do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :risks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :tasks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+
+        resources :lessons do
+          get :count, on: :collection
+        end
+      end
 
       # Contract data API
       get "/contract_data/contract_types", to: "contract_data#contract_types"

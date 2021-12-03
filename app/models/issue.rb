@@ -312,7 +312,7 @@ class Issue < ApplicationRecord
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility).facility_name,
+      facility_name: fp.try(:facility)&.facility_name,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -362,13 +362,15 @@ class Issue < ApplicationRecord
     notes_attributes = i_params.delete(:notes_attributes)
 
     issue.attributes = i_params
-    if !issue.facility_project_id.present?
+
+    if params[:contract_id]
+      issue.contract_id = params[:contract_id]
+    elsif !task.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
       issue.facility_project_id = facility_project.id
     end
-
 
     issue.transaction do
 
