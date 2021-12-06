@@ -104,16 +104,7 @@ export default {
   },
   methods: {
     ...mapMutations(["setProjectGroupFilter"]),
-    expandFacilityGroup(group) {
-      if (group.id == this.expanded.id) {
-        this.expanded.id = "";
-      } else {
-        this.expanded.id = group.id;
-        this.currentFacilityGroup = group;
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
-      }
-    },
-    adminRoute(index) {
+     adminRoute(index) {
       // console.log(event, index, "This")
       if (index == "groups") {
         this.$router.push(

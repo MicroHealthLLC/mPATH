@@ -19,27 +19,15 @@
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
-     <!-- <li class="p-3 entity">
-         <i class="fad fa-layer-group mr-3"></i> Stages
-        </li> -->
-      <!-- <li class="p-3 entity">
-         <i class="far fa-users mr-2"></i> Users
-        </li>
-          -->
-
-
-        <!-- <li>
-        
-        </li> -->
-    </ul>
+     </ul>
     </h5>
 
 </div>
- <!-- <router-link :to="backToSheetView">  -->
-      <button class="btn btn-sm btn-light settingsBackBtn" @click.prevent="backToSheetView" style="cursor: pointer">
+ <router-link :to="backToSheetView"> 
+      <button class="btn btn-sm btn-light settingsBackBtn" style="cursor: pointer">
        <h6> <i class="far fa-arrow-square-left mr-1"></i> Back To Program</h6>
       </button>  
-  <!-- </router-link> -->
+  </router-link>
 </div>
 </template>
 
@@ -58,8 +46,7 @@ export default {
         'getShowAdminBtn',
      ]),
    backToSheetView() {
-      // this.setShowAdminBtn(!this.getShowAdminBtn);
-      window.location.pathname = `/programs/${this.$route.params.programId}/sheet`
+    return `/programs/${this.$route.params.programId}/sheet`
       },
     adminProjectsView() {
      return `/programs/${this.$route.params.programId}/settings/projects`
@@ -70,12 +57,6 @@ export default {
     adminGroupsView() {
      return `/programs/${this.$route.params.programId}/settings/groups`
     },
-    // filterBarStyle() {
-    //   if (this.getShowAdminBtn) return {}
-    //   return {
-    //     transform: 'translateX(-685px)'
-    //   }
-    // },
   },
   methods: {
     ...mapMutations([
@@ -85,7 +66,7 @@ export default {
       this.setShowAdminBtn(!this.getShowAdminBtn)
     },
     log(e){
-        console.log(e);  
+        // console.log(e);  
     },
   }
 }

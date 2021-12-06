@@ -159,9 +159,13 @@
       return  fPrivilege.tasks.includes(s); 
     },
       deleteTask() {
-        let confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
-        if (!confirm) {return}
-        this.taskDeleted(this.DV_task)
+        this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.taskDeleted(this.DV_task)
+        });
       },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)

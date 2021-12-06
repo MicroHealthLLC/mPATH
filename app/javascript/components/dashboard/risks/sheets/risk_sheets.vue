@@ -139,9 +139,13 @@
       return  fPrivilege.risks.includes(s); 
     },
       deleteRisk() {
-        var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
-        if (!confirm) {return}
-        this.riskDeleted(this.DV_risk)
+        this.$confirm(`Are you sure you want to delete "${this.DV_risk.text}"?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.riskDeleted(this.DV_risk)
+        });
       },  
       openSubRisk(subRisk) {
         let risk = this.currentRisks.find(t => t.id == subRisk.id)
@@ -169,11 +173,15 @@
       },
       toggleWatched() {
         if (this.DV_risk.watched) {
-          var confirm = window.confirm(`Are you sure, you want to remove this risk from on-watch?`)
-          if (!confirm) {return}
+          this.$confirm(`Are you sure you want to remove this risk from on-watch?`, 'Confirm Remove', {
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
+            this.updateWatchedRisks(this.DV_risk)
+          });
         }
-        this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
-        this.updateWatchedRisks(this.DV_risk)
       },    
       updateRelatedTaskIssue(task) {     
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
