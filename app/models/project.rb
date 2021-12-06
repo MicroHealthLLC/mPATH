@@ -415,7 +415,40 @@ class Project < SortableRecord
       h2 = fg.attributes
       h2[:facilities] = []
       h2[:project_ids] = []
-      h2[:contracts] =(all_contracts[fg.id] || []).map(&:to_json)
+      h2[:contracts] = []
+
+      contracts = (all_contracts[fg.id] || [])      
+      contracts.each do |c|
+        c_hash = c.to_json
+
+        if user.has_contract_permission?(resource: 'tasks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+          tasks = all_tasks.select{|t| t.contract_id == c.id }.compact.uniq
+          c_hash[:tasks] = []
+          tasks.each do |t| 
+            c_hash[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
+          end
+        end
+
+        if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+          issues = all_issues.select{|t| t.contract_id == c.id }.compact.uniq
+          c_hash[:issues] = []
+          issues.each do |i| 
+            c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
+          end
+        end
+
+        if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+          risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq
+          c_hash[:risks] = []
+          risks.each do |r| 
+            c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+          end
+        end
+
+
+        h2[:contracts] << c_hash
+      end
+      # h2[:contracts] = (all_contracts[fg.id] || []).map(&:to_json)
 
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]

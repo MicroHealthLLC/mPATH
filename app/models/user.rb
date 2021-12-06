@@ -641,8 +641,6 @@ class User < ApplicationRecord
 
   def has_contract_permission?(action: "read", resource: , contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
     begin
-
-
       contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
       contract_id = contract.id.to_s
       program_id = contract.project_id.to_s
