@@ -157,9 +157,10 @@ export default {
       this.$refs.taskFormModal && this.$refs.taskFormModal.open();
     },  
     editTask() {
-        this.DV_edit_task = this.DV_task;
-        
-        this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
+        this.DV_edit_task = this.DV_task;   
+        if (this.$route.params.contractId)  {
+           return this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/${this.DV_edit_task.id}`)
+        } else return this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
     },
     onCloseForm() {
       this.$refs.taskFormModal && this.$refs.taskFormModal.close();

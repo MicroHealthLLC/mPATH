@@ -504,7 +504,7 @@
     components: {
       TaskSheets
     },
-    props: ['facility', 'from'],
+    props: ['facility', 'from', "contract"],
     data() {
       return {
         tasks: Object,

@@ -1310,9 +1310,7 @@ export default {
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
-      editTimeLive: "",
-      contractRoute: this.$route.params.contractId,  
-      projectRoute: this.$route.params.projectId,  
+      editTimeLive: "",          
       defaultPrivileges:{
         admin: ['R', 'W', 'D'],
         contracts: ['R', 'W', 'D'],
@@ -1410,6 +1408,7 @@ export default {
         text: "",
         startDate: "",
         dueDate: "",
+      
         programId: this.$route.params.programId,       
         checklistDueDate: "",
         taskTypeId: "",
@@ -1445,7 +1444,7 @@ export default {
        if (this.$route.params.contractId) {
           return this.defaultPrivileges      
         } else {
-        let fPrivilege = this.$projectPrivileges[this.programId][this.id]    
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         return fPrivilege.tasks.includes(s); 
@@ -1830,7 +1829,14 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.id}/tasks.json`;
+       
+
+
+
+        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
+        if (this.contract) {
+            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks.json`
+         }
         let method = "POST";
         let callback = "task-created";
         if (this.task && this.task.id) {
@@ -1838,10 +1844,15 @@ export default {
           method = "PUT";
           callback = "task-updated";
         }
+        if (this.task && this.task.id && this.contract) {
+          url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+          method = "PUT";
+          callback = "task-updated";
+        }
         // var beforeSaveTask = this.task
         axios({
           method: method,
-          url: url,
+          url:  url,
           data: formData,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1865,7 +1876,11 @@ export default {
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.id}/tasks/${response.data.task.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.$route.path.projectId}/tasks/${response.data.task.id}`
+              );
+            } else if (this.$route.path.includes("sheet") && this.$route.path.contractId) {
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.$route.params.contractId}/tasks/${response.data.task.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -2103,13 +2118,18 @@ export default {
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
     id(){
-       if(this.contractRoute){
-        return this.contractRoute 
-       } else return this.projectRoute
+      if(this.$route.params.contractId){
+        return this.$route.params.contractId
+      } else return this.$route.params.projectId
+    },
+    projectRoute(){
+      if(this.$route.params.projectId){
+        return this.$route.params.projectId
+      }
     },
     object(){
-       if(this.contractRoute){
-        return 'contract'
+       if(this.$route.params.contractId){
+        return 'contracts'
        } else return 'projects'
     },
     readyToSave() {
@@ -2183,8 +2203,8 @@ export default {
       }
     },
     backToTasks() {
-      if (this.contractRoute) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.contractRoute}/tasks`
+      if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
@@ -2193,8 +2213,8 @@ export default {
       }
     },
     projectNameLink() {
-       if (this.contractRoute && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.contractRoute}/contract`;
+       if (this.$route.params.contractId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/contract`;
        }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
