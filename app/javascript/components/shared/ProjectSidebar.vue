@@ -64,9 +64,9 @@
                 </div>
               </router-link>
               </div>
-               <div v-show="isSheetsView" v-for="object in facilityGroups.filter(t => t.id == group.id)" :key="object.id">
-                 <div v-for="c in object.contracts" :key="c.id">
-                  <router-link               
+               <div v-show="isSheetsView" v-for="c in currentProject.contracts.filter(t => t.facilityGroupId == group.id)" :key="c.id + 'a'">
+              
+              <router-link               
                 :to="
                   `/programs/${$route.params.programId}/${tab}/contracts/${c.id}/contract`
                 "
@@ -81,7 +81,7 @@
                   </p>
                 </div>
               </router-link>
-              </div> 
+         
             </div>           
           </div>
         </div>

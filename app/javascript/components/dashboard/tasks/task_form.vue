@@ -21,7 +21,7 @@
             </span>
 
             <router-link :to="projectNameLink">
-               <span v-if="!isProgramView">{{
+               <span v-if="!isProgramView && !contract">{{
                 facility.facilityName
                 }}
             </span>
@@ -1295,6 +1295,7 @@ import * as Moment from "moment";
 import { extendMoment } from "moment-range";
 import { API_BASE_PATH } from '../../../mixins/utils';
 const moment = extendMoment(Moment);
+
 export default {
   name: "TaskForm",
   props: ["facility", "task", "title", "fixedStage", "contract"],
@@ -1310,7 +1311,8 @@ export default {
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
-      editTimeLive: "",          
+      editTimeLive: "",   
+      programId: this.$route.params.programId,         
       defaultPrivileges:{
         admin: ['R', 'W', 'D'],
         contracts: ['R', 'W', 'D'],
@@ -1401,15 +1403,13 @@ export default {
     this._ismounted = true;
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateTasksHash"]),
+    ...mapMutations(["setTaskForManager", "updateTasksHash", "updateContractTasks"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
     INITIAL_TASK_STATE() {
       return {
         text: "",
         startDate: "",
-        dueDate: "",
-      
-        programId: this.$route.params.programId,       
+        dueDate: "",      
         checklistDueDate: "",
         taskTypeId: "",
         taskStageId: "",
@@ -1440,6 +1440,8 @@ export default {
     //     let s = permissionHash[salut]
     //       return  fPrivilege.tasks.includes(s); 
     // },
+  
+  // Temporary _isallowed method until contract projectPrivileges is fixed
      _isallowed(salut) {
        if (this.$route.params.contractId) {
           return this.defaultPrivileges      
@@ -1839,15 +1841,16 @@ export default {
          }
         let method = "POST";
         let callback = "task-created";
-        if (this.task && this.task.id) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
+
+        if (this.task && this.task.id) {        
           method = "PUT";
           callback = "task-updated";
         }
+        if (this.task && this.task.id && this.facility) {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
+         }
         if (this.task && this.task.id && this.contract) {
           url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
-          method = "PUT";
-          callback = "task-updated";
         }
         // var beforeSaveTask = this.task
         axios({
@@ -1865,7 +1868,11 @@ export default {
             var responseTask = humps.camelizeKeys(response.data.task);
             this.loadTask(responseTask);
             //this.$emit(callback, responseTask)
-            this.updateTasksHash({ task: responseTask });
+            if (this.$route.params.contractId){
+               this.updateContractTasks({ task: responseTask });
+            } else {
+                this.updateTasksHash({ task: responseTask });
+            }           
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1876,11 +1883,7 @@ export default {
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.$route.path.projectId}/tasks/${response.data.task.id}`
-              );
-            } else if (this.$route.path.includes("sheet") && this.$route.path.contractId) {
-              this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.$route.params.contractId}/tasks/${response.data.task.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/tasks/${response.data.task.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -2103,6 +2106,7 @@ export default {
       "currentProject",
       "currentRisks",
       "currentTasks",
+      "getContracts",
       "facilities",
       'contentLoaded',
       "facilityGroups",
@@ -2122,10 +2126,10 @@ export default {
         return this.$route.params.contractId
       } else return this.$route.params.projectId
     },
-    projectRoute(){
+    route(){
       if(this.$route.params.projectId){
         return this.$route.params.projectId
-      }
+      } else return this.$route.params.contractId
     },
     object(){
        if(this.$route.params.contractId){

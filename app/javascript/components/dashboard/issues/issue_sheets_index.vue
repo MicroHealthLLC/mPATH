@@ -510,7 +510,7 @@
 
   export default {
     name: 'IssueSheetsIndex',
-    props: ['facility', 'from'],
+    props: ['facility', 'from', 'contract'],
     components: {
       IssueForm,
       IssueSheets
@@ -520,6 +520,17 @@
         listOptions: ['active','all', 'completed'],
         loading: true,
         newIssue: false,
+        defaultPrivileges:{
+          admin: ['R', 'W', 'D'],
+          contracts: ['R', 'W', 'D'],
+          facility_id: this.$route.params.contractId,
+          issues: ['R', 'W', 'D'],
+          lessons: ['R', 'W', 'D'],
+          notes: ['R', 'W', 'D'],
+          overview: ['R', 'W', 'D'],
+          risks: ['R', 'W', 'D'],
+          tasks: ['R', 'W', 'D'],
+        },
         viewList: 'active',
         currentIssue: null,
         now: new Date().toISOString(),
@@ -569,13 +580,24 @@
         'setHideBriefed',
       ]),
       //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // _isallowed(salut) {
+      //   var programId = this.$route.params.programId;
+      //   var projectId = this.$route.params.projectId
+      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return  fPrivilege.issues.includes(s); 
+      // },
+       _isallowed(salut) {
+        let programId = this.$route.params.programId;
+        if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.issues.includes(s); 
+        return fPrivilege.issues.includes(s); 
+        }         
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -680,6 +702,11 @@
       addNewIssue() {
         this.setTaskForManager({key: 'issue', value: {}})
         // Route to new issue form page
+       if(this.contractRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/issues/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/new`
         );
@@ -738,6 +765,14 @@
         this.setCurrentIssuePage(value);
       },
     },
+    contractRoute(){
+      return this.$route.params.contractId
+    },
+     object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
@@ -749,7 +784,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
+        let issues = _.sortBy(_.filter(this.object.issues, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
           if (taskIssueUsers.length > 0) {

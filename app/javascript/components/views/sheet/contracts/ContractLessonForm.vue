@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LessonForm class="mx-4" :facility="facility" />
+    <LessonForm class="mx-4" :contract="contract" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import LessonForm from "../../../dashboard/lessons/LessonForm";
 
 export default {
   name: "SheetLessonForm",
-  props: ["facility"],
+  props: ["contract"],
   components: {
     LessonForm,
   },
