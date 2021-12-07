@@ -323,7 +323,8 @@ class Project < SortableRecord
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?) or project_id = ?", all_facility_group_ids, project.id)
 
-    all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
+    # all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
+    all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) )
 
     facility_projects_hash = []
     facility_projects_hash2 = {}
@@ -410,44 +411,45 @@ class Project < SortableRecord
       facility_projects_hash << h
     end
 
+    contract_hash = []
+    all_contracts.each do |c|
+
+      c_hash = c.to_json
+
+      if user.has_contract_permission?(resource: 'tasks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+        tasks = all_tasks.select{|t| t.contract_id == c.id }.compact.uniq
+        c_hash[:tasks] = []
+        tasks.each do |t| 
+          c_hash[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
+        end
+      end
+
+      if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+        issues = all_issues.select{|t| t.contract_id == c.id }.compact.uniq
+        c_hash[:issues] = []
+        issues.each do |i| 
+          c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
+        end
+      end
+
+      if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+        risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq
+        c_hash[:risks] = []
+        risks.each do |r| 
+          c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+        end
+      end
+
+
+      contract_hash << c_hash
+    end
+
     facility_groups_hash = []
     all_facility_groups.each do |fg|
       h2 = fg.attributes
       h2[:facilities] = []
       h2[:project_ids] = []
-      h2[:contracts] = []
 
-      contracts = (all_contracts[fg.id] || [])      
-      contracts.each do |c|
-        c_hash = c.to_json
-
-        if user.has_contract_permission?(resource: 'tasks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
-          tasks = all_tasks.select{|t| t.contract_id == c.id }.compact.uniq
-          c_hash[:tasks] = []
-          tasks.each do |t| 
-            c_hash[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
-          end
-        end
-
-        if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
-          issues = all_issues.select{|t| t.contract_id == c.id }.compact.uniq
-          c_hash[:issues] = []
-          issues.each do |i| 
-            c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
-          end
-        end
-
-        if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
-          risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq
-          c_hash[:risks] = []
-          risks.each do |r| 
-            c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
-          end
-        end
-
-
-        h2[:contracts] << c_hash
-      end
       # h2[:contracts] = (all_contracts[fg.id] || []).map(&:to_json)
 
       fg.facility_projects.each do |fp|
@@ -465,6 +467,7 @@ class Project < SortableRecord
       #users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
       users: users.as_json({only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ], all_organizations: all_organizations}),
       facilities: facility_projects_hash,
+      contracts: contract_hash,
       facility_groups: facility_groups_hash,
       statuses: statuses.as_json(except: [:created_at, :updated_at]),
       task_types: task_types.as_json,
