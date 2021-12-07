@@ -112,7 +112,12 @@ class Api::V1::RisksController < AuthenticatedController
   end
 
   def show
-    @risk = @facility_project.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+
+    if params[:contract_id]
+      @risk = @contract.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+    else
+      @risk = @facility_project.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+    end
     render json: {risk: @risk.to_json}
   end
 
@@ -140,7 +145,11 @@ class Api::V1::RisksController < AuthenticatedController
   
 
   def set_risk
-    @risk = @facility_project.risks.find_by(id: params[:id])
+    if params[:contract_id]
+      @risk = @contract.risks.find(params[:id])
+    else
+      @risk = @facility_project.risks.find_by(id: params[:id])
+    end
   end
 
   def risk_params

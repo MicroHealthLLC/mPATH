@@ -103,7 +103,13 @@ class Api::V1::IssuesController < AuthenticatedController
   end
 
   def show
-    @issue = @facility_project.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
+  
+    if params[:contract_id]
+      @issue = @contract.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
+    else
+      @issue = @facility_project.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
+    end
+
     render json: {issue: @issue.to_json}
   end
 
@@ -130,7 +136,11 @@ class Api::V1::IssuesController < AuthenticatedController
   end
 
   def set_issue
-    @issue = @facility_project.issues.find_by(id: params[:id])
+    if params[:contract_id]
+      @issue = @contract.issues.find(params[:id])
+    else
+      @issue = @facility_project.issues.find_by(id: params[:id])
+    end
   end
 
   def issue_params
