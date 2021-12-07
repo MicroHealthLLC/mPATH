@@ -9,10 +9,14 @@ module Tasker
     scope :complete, -> {where("progress = ?", 100)}
     scope :incomplete, -> {where("progress < ?", 100)}
 
-    belongs_to :facility_project
+    belongs_to :facility_project, optional: true #since now we can create task under contract
+    belongs_to :contract, optional: true
+
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project
     has_one :facility_group, through: :facility
+    has_one :contract_project, class_name: "Project", through: :contract
+    has_one :contract_facility_group, class_name: "FacilityGroup", through: :contract
 
     has_many :checklists, as: :listable, dependent: :destroy
 
@@ -32,7 +36,6 @@ module Tasker
     after_save :remove_on_watch
     after_save :handle_related_taskers
     after_validation :setup_facility_project
-
 
     def valid_url?(url)
       uri = URI.parse(url)

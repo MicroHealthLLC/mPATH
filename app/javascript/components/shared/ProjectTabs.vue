@@ -96,12 +96,12 @@ export default {
         //   closable: false,
         //   hidden: false,
         // },
-        // {
-        //   label: "Tasks",
-        //   key: "tasks",
-        //   closable: false,
-        //   hidden: false,
-        // },
+        {
+          label: "Tasks",
+          key: "tasks",
+          closable: false,
+          hidden: false,
+        },
         // {
         //   label: "Issues",
         //   key: "issues",

@@ -9,7 +9,7 @@ class Lesson < ApplicationRecord
   
   belongs_to :facility_project
   has_one :facility, through: :facility_project
-  has_one :project, through: :facility_project
+  # has_one :project, through: :facility_project
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -27,6 +27,22 @@ class Lesson < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   attr_accessor :file_links
+
+  def facility_group
+    if self.contract_id.present?
+      contract.facility_group
+    else
+      facility_project.facility_group
+    end
+  end
+
+  def project
+    if self.contract_id.present?
+      contract.project
+    else
+      facility_project.project
+    end
+  end
 
   def lesson_json
     {
@@ -394,7 +410,11 @@ class Lesson < ApplicationRecord
 
     lesson.attributes = t_params
     lesson.date ||= Date.today
-     
+
+    if params[:contract_id]
+      lesson.contract_id = params[:contract_id]
+    end
+
     lesson.transaction do
       lesson.save
       lesson.add_link_attachment(params)

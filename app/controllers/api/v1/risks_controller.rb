@@ -14,8 +14,11 @@ class Api::V1::RisksController < AuthenticatedController
     elsif ["destroy"].include?(params[:action]) 
       action = "delete"
     end
-
-    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'risks', program: params[:project_id], project: params[:facility_id])
+    if params[:contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'risks', contract: params[:contract_id])
+    else
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'risks', program: params[:project_id], project: params[:facility_id])
+    end
 
   end
   def index
@@ -23,7 +26,12 @@ class Api::V1::RisksController < AuthenticatedController
     all_users = []
     all_user_ids = []
 
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    if params[:contract_id]
+      all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @contract.id).paginate(:page => params[:page], :per_page => 15)
+    else
+      all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    end
+
     all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
     all_user_ids += all_risk_users.values.flatten.map(&:user_id)
     all_user_ids = all_user_ids.compact.uniq
@@ -122,8 +130,12 @@ class Api::V1::RisksController < AuthenticatedController
 
   private
   def set_resources
-    @project = current_user.authorized_programs.find_by(id: params[:project_id])
-    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    if params[:contract_id]
+      @contract = current_user.authorized_contracts.find_by(id: params[:contract_id] )
+    else
+      @project = current_user.authorized_programs.find_by(id: params[:project_id])
+      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    end
   end
   
 

@@ -11,7 +11,12 @@
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
        <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>  
-       CONTRACTS
+       CONTRACTS  
+       <span 
+          v-show="tableData"
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ tableData.length }}
+        </span>
       </h4>
     </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper container-fluid">
@@ -162,27 +167,27 @@
           </el-select>
        </div>
         <div class="right mr-2">
-        <el-button 
-          data-cy="save_contract_btn"
+        <button 
           @click.prevent="saveNewContract"
+          data-cy="save_contract_btn"
           :disabled="!C_newContractGroupFilter && contractNameText" 
-          class="bg-success text-light mr-2" 
+          class="btn btn-sm bg-primary text-light mr-2" 
           :class="[hideSaveBtn ? 'd-none': '']">
           Save
-        </el-button>       
-        <el-button 
+        </button>       
+        <button 
           @click.prevent="addAnotherContract" 
           :class="[!hideSaveBtn ? 'd-none': '']" 
-          class="bg-primary text-light mr-2">
+          class="btn btn-sm bg-primary text-light mr-2">
           <i class="far fa-plus-circle mr-1"></i> Add Another Contract
-        </el-button>
-        <el-button 
+        </button>
+        <button 
           data-cy="close_contract_btn"
           @click.prevent="closeAddContractBtn" 
-          class="bg-danger text-light mr-2"  
+          class="btn btn-sm bg-danger text-light mr-2"  
           :class="[!hideSaveBtn ? 'd-none': '']">
           Close
-        </el-button>
+        </button>
 
         </div>
     </form>

@@ -58,7 +58,7 @@
           <router-view
             :key="$route.path"
             :facility="currentFacility"
-            :contractClass="currentContract"
+            :contract="currentContract"
             :facilityGroup="currentFacilityGroup"
             :contractGroup="currentContractGroup"
           ></router-view>
