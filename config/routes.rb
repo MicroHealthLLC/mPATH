@@ -26,7 +26,28 @@ Rails.application.routes.draw do
 
       resources :facility_groups, only: [:index, :create]
 
-      resources :contracts
+      resources :contracts do
+        resources :notes #, module: :facilities
+        resources :issues do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :risks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :tasks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+
+        resources :lessons do
+          get :count, on: :collection
+        end
+      end
 
       # Contract data API
       get "/contract_data/contract_types", to: "contract_data#contract_types"
@@ -280,7 +301,7 @@ Rails.application.routes.draw do
   get '*all', to: "home#portfolio", constraints: -> (req) do
     # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
     # TODO: create regex for pattern /portfolio
-    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/)
+    (p = req.path.split("/")[1] ) && p.downcase == "portfolio".downcase #&& p.match(/^[portoflio]+$/)
   end
 
   get "*path", to: 'home#index', constraints: -> (req) do
@@ -288,6 +309,6 @@ Rails.application.routes.draw do
   end
   
   get '*all', to: "not_found#index", constraints: -> (req) do
-    req.path.exclude? 'rails/active_storage'
+    req.path.exclude?('rails/active_storage')
   end
 end
