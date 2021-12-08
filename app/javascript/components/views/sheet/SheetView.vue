@@ -54,18 +54,7 @@
                 $route.name !== 'SheetLessonForm'
             "
           />
-          <!-- <ContractTabs
-            v-if="
-              this.$route.params.contractId &&
-              $route.name !== 'SheetRollup' &&
-                $route.name !== 'SheetTaskForm' &&
-                $route.name !== 'SheetIssueForm' &&
-                $route.name !== 'SheetRiskForm' &&
-                $route.name !== 'SheetNoteForm' &&
-                $route.name !== 'SheetLessonForm'
-            "
-          /> -->
-        </div>
+         </div>
         <div class="pr-3">
           <router-view
             :key="$route.path"
@@ -84,13 +73,11 @@
 import { mapGetters, mapActions } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 import ProjectTabs from "../../shared/ProjectTabs";
-import ContractTabs from "../../shared/ContractTabs";
 export default {
   name: "SheetView",
   components: {
     ProjectSidebar,
-    ProjectTabs,
-    ContractTabs
+    ProjectTabs
   },
   data() {
     return {
