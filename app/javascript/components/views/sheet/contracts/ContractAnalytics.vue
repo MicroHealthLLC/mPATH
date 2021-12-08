@@ -825,7 +825,7 @@ export default {
   components: {
     Loader,
   },
-  props: ["contractClass"],
+  props: ["contractClass", 'contract'],
   data() {
     return {
       dueDate: "",
@@ -841,25 +841,11 @@ export default {
   mounted() {
     // this.dueDate = this.facility.dueDate;
     // this.statusId = this.facility.statusId;
-    this.fetchProjectLessons(this.$route.params);
+    // this.fetchProjectLessons(this.$route.params);
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
-
-    log(e){
-      console.log(e)
-    },
-     _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        // let fPrivilege = this.$projectPrivileges[programId][projectId]
-        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        // let s = permissionHash[salut]
-        // console.log(fPrivilege)
-        // return  fPrivilege.overview.includes(s);    
-          
-    },
    onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
@@ -930,38 +916,37 @@ export default {
     },
   
     filteredTasks() {
-      return []
-      // let typeIds = _.map(this.taskTypeFilter, "id");
-      // let stageIds = _.map(this.taskStageFilter, "id");
-      // let taskIssueUsers = this.getTaskIssueUserFilter;
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      let stageIds = _.map(this.taskStageFilter, "id");
+      let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      // return _.filter(this.facility.tasks, (resource) => {
-      //   let valid = true;
-      //   let userIds = [
-      //     ..._.map(resource.checklists, "userId"),
-      //     ...resource.userIds,
-      //   ];
+      return _.filter(this.contract.tasks, (resource) => {
+        let valid = true;
+        let userIds = [
+          ..._.map(resource.checklists, "userId"),
+          ...resource.userIds,
+        ];
 
-      //   if (taskIssueUsers.length > 0) {
-      //     if (taskIssueUsers.length > 0) {
-      //       valid =
-      //         valid &&
-      //         userIds.some(
-      //           (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-      //         );
-      //     }
-      //   }
-      //   //TODO: For performance, send the whole tasks array instead of one by one
-      //   valid =
-      //     valid &&
-      //     this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
+        if (taskIssueUsers.length > 0) {
+          if (taskIssueUsers.length > 0) {
+            valid =
+              valid &&
+              userIds.some(
+                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
+              );
+          }
+        }
+        //TODO: For performance, send the whole tasks array instead of one by one
+        valid =
+          valid &&
+          this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
 
-      //   if (stageIds.length > 0)
-      //     valid = valid && stageIds.includes(resource.taskStageId);
-      //   if (typeIds.length > 0)
-      //     valid = valid && typeIds.includes(resource.taskTypeId);
-      //   return valid;
-      // });
+        if (stageIds.length > 0)
+          valid = valid && stageIds.includes(resource.taskStageId);
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.taskTypeId);
+        return valid;
+      });
     },
     viableTasksForProgressTotal(){
       return this.filteredTasks.filter(t => t.draft == false && t.onHold == false  && t.ongoing == false )
@@ -1165,44 +1150,43 @@ export default {
       };
     },
     filteredIssues() {
-      return []
-      // let taskTypeIds = _.map(this.taskTypeFilter, "id");
-      // let typeIds = _.map(this.issueTypeFilter, "id");
-      // let severityIds = _.map(this.issueSeverityFilter, "id");
-      // let stageIds = _.map(this.issueStageFilter, "id");
-      // let taskIssueUsers = this.getTaskIssueUserFilter;
+      let taskTypeIds = _.map(this.taskTypeFilter, "id");
+      let typeIds = _.map(this.issueTypeFilter, "id");
+      let severityIds = _.map(this.issueSeverityFilter, "id");
+      let stageIds = _.map(this.issueStageFilter, "id");
+      let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      // return _.filter(this.facility.issues, (resource) => {
-      //   let valid = true;
-      //   let userIds = [
-      //     ..._.map(resource.checklists, "userId"),
-      //     ...resource.userIds,
-      //   ];
+      return _.filter(this.contract.issues, (resource) => {
+        let valid = true;
+        let userIds = [
+          ..._.map(resource.checklists, "userId"),
+          ...resource.userIds,
+        ];
 
-      //   if (taskIssueUsers.length > 0) {
-      //     if (taskIssueUsers.length > 0) {
-      //       valid =
-      //         valid &&
-      //         userIds.some(
-      //           (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-      //         );
-      //     }
-      //   }
-      //   //TODO: For performance, send the whole tasks array instead of one by one
-      //   valid =
-      //     valid &&
-      //     this.filterDataForAdvancedFilter([resource], "facilityShowIssues");
+        if (taskIssueUsers.length > 0) {
+          if (taskIssueUsers.length > 0) {
+            valid =
+              valid &&
+              userIds.some(
+                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
+              );
+          }
+        }
+        //TODO: For performance, send the whole tasks array instead of one by one
+        valid =
+          valid &&
+          this.filterDataForAdvancedFilter([resource], "facilityShowIssues");
 
-      //   if (taskTypeIds.length > 0)
-      //     valid = valid && taskTypeIds.includes(resource.taskTypeId);
-      //   if (typeIds.length > 0)
-      //     valid = valid && typeIds.includes(resource.issueTypeId);
-      //   if (severityIds.length > 0)
-      //     valid = valid && severityIds.includes(resource.issueSeverityId);
-      //   if (stageIds.length > 0)
-      //     valid = valid && stageIds.includes(resource.issueStageId);
-      //   return valid;
-      // });
+        if (taskTypeIds.length > 0)
+          valid = valid && taskTypeIds.includes(resource.taskTypeId);
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.issueTypeId);
+        if (severityIds.length > 0)
+          valid = valid && severityIds.includes(resource.issueSeverityId);
+        if (stageIds.length > 0)
+          valid = valid && stageIds.includes(resource.issueStageId);
+        return valid;
+      });
     },
     issueStats() {
       let issues = new Array();
@@ -1289,43 +1273,41 @@ export default {
       };
     },
     filteredRisks() {
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, "id");
+      let stageIds = _.map(this.riskStageFilter, "id");
+      let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
+      let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return []
-      // let typeIds = _.map(this.taskTypeFilter, "id");
-      // let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, "id");
-      // let stageIds = _.map(this.riskStageFilter, "id");
-      // let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
-      // let taskIssueUsers = this.getTaskIssueUserFilter;
+      return _.filter(this.contract.risks, (resource) => {
+        let valid = true;
+        let userIds = [
+          ..._.map(resource.checklists, "userId"),
+          ...resource.userIds,
+        ];
 
-      // return _.filter(this.facility.risks, (resource) => {
-      //   let valid = true;
-      //   let userIds = [
-      //     ..._.map(resource.checklists, "userId"),
-      //     ...resource.userIds,
-      //   ];
+        if (taskIssueUsers.length > 0) {
+          if (taskIssueUsers.length > 0) {
+            valid =
+              valid &&
+              userIds.some(
+                (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
+              );
+          }
+        }
+        //TODO: For performance, send the whole tasks array instead of one by one
+        valid =
+          valid &&
+          this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
 
-      //   if (taskIssueUsers.length > 0) {
-      //     if (taskIssueUsers.length > 0) {
-      //       valid =
-      //         valid &&
-      //         userIds.some(
-      //           (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-      //         );
-      //     }
-      //   }
-      //   //TODO: For performance, send the whole tasks array instead of one by one
-      //   valid =
-      //     valid &&
-      //     this.filterDataForAdvancedFilter([resource], "facilityShowTasks");
-
-      //   if (stageIds.length > 0)
-      //     valid = valid && stageIds.includes(resource.riskStageId);
-      //   if (typeIds.length > 0)
-      //     valid = valid && typeIds.includes(resource.taskTypeId);
-      //   if (riskApproachIds.length > 0)
-      //     valid = valid && riskApproachIds.includes(resource.riskApproach);
-      //   return valid;
-      // });
+        if (stageIds.length > 0)
+          valid = valid && stageIds.includes(resource.riskStageId);
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.taskTypeId);
+        if (riskApproachIds.length > 0)
+          valid = valid && riskApproachIds.includes(resource.riskApproach);
+        return valid;
+      });
     },
     riskPriorityLevels() {
       let grey = _.filter(

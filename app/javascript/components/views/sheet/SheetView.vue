@@ -8,6 +8,7 @@
   >
     <div class="col-md-2">
       <ProjectSidebar
+
         :current-facility-group="currentFacilityGroup"
         :current-contract-group="currentContractGroup"
         :expanded="expanded"
@@ -44,8 +45,8 @@
         </div>
         <div class="pr-3 ml-1">
           <ProjectTabs
-            v-if="
-              $route.name !== 'SheetRollup' &&
+            v-if="            
+                $route.name !== 'SheetRollup' &&
                 $route.name !== 'SheetTaskForm' &&
                 $route.name !== 'SheetIssueForm' &&
                 $route.name !== 'SheetRiskForm' &&
@@ -53,12 +54,12 @@
                 $route.name !== 'SheetLessonForm'
             "
           />
-        </div>
+         </div>
         <div class="pr-3">
           <router-view
             :key="$route.path"
             :facility="currentFacility"
-            :contractClass="currentContract"
+            :contract="currentContract"
             :facilityGroup="currentFacilityGroup"
             :contractGroup="currentContractGroup"
           ></router-view>
@@ -76,7 +77,7 @@ export default {
   name: "SheetView",
   components: {
     ProjectSidebar,
-    ProjectTabs,
+    ProjectTabs
   },
   data() {
     return {
@@ -135,8 +136,7 @@ export default {
       "getPreviousRoute",
       "getUnfilteredFacilities",
     ]),
-   
-  },
+ },
   mounted() {    
     // Display notification when leaving map view to another page and conditions met
    if (
@@ -152,6 +152,7 @@ export default {
       });
     }
   },
+
   beforeMount() {
   this.fetchContracts()  
     if (this.contentLoaded && this.$route.params.projectId) {
@@ -161,9 +162,7 @@ export default {
     }
      if (this.contentLoaded && this.$route.params.contractId) {
  
-      this.currentContract = this.contracts[0].find(
-        (c) => c.id == this.$route.params.contractId
-      );
+      this.currentContract = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId)
     }
   },
   watch: {
@@ -175,9 +174,7 @@ export default {
           );
         }
          else if (this.$route.params.contractId) {
-          this.currentContract = this.contracts[0].find(
-            (c) => c.id == this.$route.params.contractId
-          );
+          this.currentContract = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId);
           this.expanded.id = this.currentContract.facility_group_id
         }
 
@@ -191,16 +188,17 @@ export default {
          
           this.expanded.id = this.currentFacilityGroup.id; //expanded.id value not coming from here
         } else if(this.$route.params.contractId) {       
-            this.currentFacility = this.currentProject.facilities.find((facility) => facility.facilityId == this.$route.params.contractId)
+            this.currentFacility = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId)
              this.expanded.id = this.currentFacilityGroup.id;
          }
      
       },
     },
+
     currentContract: {
       handler() {
       if (this.$route.params.contractId && this.currentContract) {  
-        this.expanded.id = this.currentContract.facility_group_id;   
+        this.expanded.id = this.currentContract.facilityGroupId;   
       }
         console.log(this.expanded.id)
        
@@ -212,8 +210,8 @@ export default {
           this.currentFacility = this.facilities.find(facility => facility.id == this.$route.params.projectId);
          }
          if (this.$route.params.contractId) {
-           this.currentContract = this.contracts[0].find(c => c.id == this.$route.params.contractId);
-           this.expanded.id = this.currentContract.facility_group_id;   
+           this.currentContract = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId)
+           this.expanded.id = this.currentContract.facilityGroupId;   
 
        }
 

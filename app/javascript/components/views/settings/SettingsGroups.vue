@@ -11,6 +11,11 @@
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
      <i class="fal fa-network-wired mr-1 mh-orange-text"></i>  GROUPS
+      <span 
+        v-show="tableData"
+        class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+        >{{ tableData.length }}
+      </span>
       </h4>
     </el-breadcrumb>
 
@@ -161,25 +166,25 @@
           />
        </div>
       <div class="right mr-2">
-        <el-button 
+        <button 
           @click.prevent="saveGroup"
           :disabled="!newGroupName"  
-          class="bg-primary text-light mr-2" 
+          class="btn btn-sm bg-primary text-light mr-2" 
           :class="[hideSaveBtn ? 'd-none': '']">
           Save
-       </el-button>       
-        <el-button 
+       </button>       
+        <button 
           @click.prevent="addAnotherGroup" 
           :class="[!hideSaveBtn ? 'd-none': '']" 
-          class="bg-primary text-light mr-2">
+          class="btn btn-sm bg-primary text-light mr-2">
           <i class="far fa-plus-circle mr-1"></i> Add Another Group
-        </el-button>
-        <el-button 
+        </button>
+        <button 
           @click.prevent="closeAddGroupBtn" 
-          class="bg-danger text-light mr-2" 
+          class="btn btn-sm bg-danger text-light mr-2" 
           :class="[!hideSaveBtn ? 'd-none': '']">
           Close
-        </el-button>
+        </button>
         </div>
     </form>
    </el-dialog>

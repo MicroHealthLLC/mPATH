@@ -53,6 +53,7 @@ export default new Vuex.Store({
     projects: new Array(),
     tableData: new Array(),
     facilities: new Array(),
+    contracts: new Array(),
     facilityGroups: new Array(),
     statuses: new Array(),
     advancedFilterOptions: new Array(),
@@ -217,6 +218,7 @@ export default new Vuex.Store({
     setSideLoading: (state, loading) => (state.sideLoading = loading),
     setProjects: (state, projects) => (state.projects = projects),
     setFacilities: (state, facilities) => (state.facilities = facilities),
+    setContracts: (state, contracts) => (state.contracts = contracts),
     setTableData: (state, tableData) => (state.tableData = tableData),
     setUnfilteredFacilities: (state, facilities) =>
       (state.unfilteredFacilities = facilities),
@@ -326,6 +328,46 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility);
       }
     },
+    updateContractTasks: (state, { task, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == task.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let task_i = contract.tasks.findIndex((t) => t.id == task.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "tasks"))) {
+            _.remove(t.subTaskIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.tasks, task_i);
+        } else if (task_i > -1) {
+          Vue.set(contract.tasks, task_i, task);
+        } else if (task_i == -1) {
+          contract.tasks.push(task);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateContractIssues: (state, { issue, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == issue.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let issue_i = contract.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(contract.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          contract.issues.push(issue);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
     updateIssuesHash: (state, { issue, action }) => {
       let facility_i = state.facilities.findIndex(
         (f) => f.id == issue.facilityId
@@ -346,6 +388,7 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility);
       }
     },
+
     updateRisksHash: (state, { risk, action }) => {
       let facility_i = state.facilities.findIndex(
         (f) => f.id == risk.facilityId
@@ -364,6 +407,26 @@ export default new Vuex.Store({
           facility.risks.push(risk);
         }
         Vue.set(state.facilities, facility_i, facility);
+      }
+    },
+    updateContractRisks: (state, { risk, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == risk.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let risk_i = contract.risks.findIndex((t) => t.id == risk.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "risks"))) {
+            _.remove(t.subRiskIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.risks, risk_i);
+        } else if (risk_i > -1) {
+          Vue.set(contract.risks, risk_i, risk);
+        } else if (risk_i == -1) {
+          contract.risks.push(risk);
+        }
+        Vue.set(state.contracts, contract_i, contract);
       }
     },
     updateNotesHash: (state, { note, facilityId, action }) => {
@@ -1055,6 +1118,7 @@ export default new Vuex.Store({
     sideLoading: (state) => state.sideLoading,
     projects: (state) => state.projects,
     facilities: (state) => state.facilities,
+    getContracts: (state) => state.contracts,
     tableData: (state) => state.tableData, 
     facilityGroups: (state) => state.facilityGroups,
     statuses: (state) => state.statuses,
@@ -2365,7 +2429,12 @@ export default new Vuex.Store({
             for (let facility of res.data.project.facilities) {
               facilities.push({ ...facility, ...facility.facility });
             }
+            let contracts = [];
+            for (let c of res.data.project.contracts) {
+              contracts.push({ ...c, ...c });
+            }
             commit("setFacilities", facilities);
+            commit("setContracts", contracts);
             commit("setCurrentProject", res.data.project);
             commit("setFacilityGroups", res.data.project.facilityGroups);
             commit("setProjectUsers", res.data.project.users);

@@ -13,6 +13,11 @@
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
             <i class="fal fa-clipboard-list mr-1 mh-orange-text"></i> PROJECTS
+             <span 
+              v-show="projectData"
+              class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+              >{{ projectData.length }}
+        </span>
           </h4>
         </el-breadcrumb>
 
@@ -63,7 +68,8 @@
             </div>
           </div>
         </div>
-  <div v-loading="!contentLoaded"
+  <div  
+    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -171,11 +177,11 @@
               </el-select>
             </div>
             <div class="right mr-2">
-              <el-button
+              <button
                 @click.prevent="saveNewProject"
                 :disabled="!C_projectGroupFilter && newProjectNameText"
-                class="bg-primary text-light mr-2"
-                >Save</el-button
+                class="btn btn-sm bg-primary text-light mr-2"
+                >Save</button
               >
             </div>
           </form>
@@ -213,7 +219,7 @@ export default {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
-      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/project`
+      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
       // router.push more efficient but programPrivileges errors persist unless reload
       // this.$router.push({
       //   name: "SheetProject",

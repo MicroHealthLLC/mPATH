@@ -174,7 +174,7 @@ export default {
       } else if (url.includes("kanban")) {
         return "/tasks";
       } else {
-        return "/overview";
+        return "/";
       }
     },
   },

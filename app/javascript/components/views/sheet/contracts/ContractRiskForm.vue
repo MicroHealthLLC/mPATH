@@ -1,5 +1,5 @@
 <template>
-  <RiskForm :facility="facility" :risk="risk" @on-close-form="redirectBack" />
+  <RiskForm :contract="contract" :risk="risk" @on-close-form="redirectBack" />
 </template>
 
 <script>
@@ -7,7 +7,7 @@ import { mapGetters } from "vuex";
 
 import RiskForm from "../../../dashboard/risks/risk_form.vue";
 export default {
-  props: ["facility"],
+  props: ["contract"],
   components: { RiskForm },
   data() {
     return {
@@ -17,7 +17,7 @@ export default {
   methods: {
     redirectBack() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks`
+        `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks`
       );
     },
   },
@@ -25,8 +25,8 @@ export default {
     ...mapGetters(["contentLoaded"]),
   },
   mounted() {
-    if (this.contentLoaded) {
-      this.risk = this.facility.risks.find(
+    if (this.contentLoaded && this.$route.params.riskId !== "new") {
+      this.risk = this.contract.risks.find(
         (risk) => risk.id == this.$route.params.riskId
       );
     }
@@ -34,9 +34,11 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.risk = this.facility.risks.find(
+         if (this.$route.params.riskId !== "new"){
+            this.risk = this.contract.risks.find(
           (risk) => risk.id == this.$route.params.riskId
         );
+        }
       },
     },
   },

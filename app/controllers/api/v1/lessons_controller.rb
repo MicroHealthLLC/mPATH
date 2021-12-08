@@ -4,7 +4,12 @@ class Api::V1::LessonsController < AuthenticatedController
   before_action :authorize_request!, only: [:index, :count, :show]
 
   def authorize_request!
-    raise CanCan::AccessDenied unless current_user.has_permission?(resource: 'lessons', program: params[:project_id], project: params[:facility_id], project_privileges_hash: nil, facility_privileges_hash: nil)
+    if params[:contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(resource: 'lessons', contract: params[:contract_id])
+    else
+      raise CanCan::AccessDenied unless current_user.has_permission?(resource: 'lessons', program: params[:project_id], project: params[:facility_id], project_privileges_hash: nil, facility_privileges_hash: nil)
+    end
+
   end
 
   def count
@@ -49,8 +54,6 @@ class Api::V1::LessonsController < AuthenticatedController
   end
 
   def index
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
 
     # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
     if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["lessons"].present?

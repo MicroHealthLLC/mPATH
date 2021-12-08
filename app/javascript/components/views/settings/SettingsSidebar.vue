@@ -23,11 +23,9 @@
     </h5>
 
 </div>
- <router-link :to="backToSheetView"> 
-      <button class="btn btn-sm btn-light settingsBackBtn" style="cursor: pointer">
+      <button class="btn btn-sm btn-light settingsBackBtn" @click.prevent="backToSheetView" style="cursor: pointer">
        <h6> <i class="far fa-arrow-square-left mr-1"></i> Back To Program</h6>
       </button>  
-  </router-link>
 </div>
 </template>
 
@@ -46,7 +44,7 @@ export default {
         'getShowAdminBtn',
      ]),
    backToSheetView() {
-    return `/programs/${this.$route.params.programId}/sheet`
+     window.location.pathname = `/programs/${this.$route.params.programId}/sheet`
       },
     adminProjectsView() {
      return `/programs/${this.$route.params.programId}/settings/projects`

@@ -226,7 +226,7 @@ export default {
   components: {
     TaskShow
   },
-  props: ['facility', 'from'],
+  props: ['facility', 'from', "contract"],
   data() {
     return {
       viewList: 'active',
@@ -387,7 +387,7 @@ computed: {
     let taskIssueUsers = this.getTaskIssueUserFilter
     var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
     
-    let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+    let tasks = _.sortBy(_.filter(this.object.tasks, (resource) => {
       let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
       let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -593,6 +593,11 @@ computed: {
         },      
       };
     },
+   object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
   C_facilityManagerTaskFilter: {
     get() {
       return this.getAdvancedFilter

@@ -21,8 +21,12 @@
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
             <router-link :to="projectNameLink">
-               <span v-if="!isProgramView">{{
+               <span v-if="!isProgramView && !contract">{{
                 facility.facilityName
+                }}
+            </span>
+            <span v-if="contract">{{
+                contract.nickname || contract.name
                 }}
             </span>
             <span v-else>{{
@@ -1301,7 +1305,7 @@ import { API_BASE_PATH } from '../../../mixins/utils'
 
 export default {
   name: "IssueForm",
-  props: ["facility", "issue", "task", "fixedStage"],
+  props: ["facility", "issue", "task", "fixedStage", "contract"],
   components: {
     AttachmentInput,
     Draggable,
@@ -1318,6 +1322,17 @@ export default {
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+      }, 
       selectedIssueStage: null,
       issueUsers: [],
       responsibleUsers: null,
@@ -1389,7 +1404,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateIssuesHash"]),
+    ...mapMutations(["setTaskForManager", "updateIssuesHash", "updateContractIssues"]),
     ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues"]),
     INITIAL_ISSUE_STATE() {
       return {
@@ -1420,15 +1435,25 @@ export default {
         notes: [],
       };
     },
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.issues.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.issues.includes(s); 
+        }         
+     },
+    //TODO: change the method name of isAllowed
+    // _isallowed(salut) {
+    //   var programId = this.$route.params.programId;
+    //   var projectId = this.$route.params.projectId
+    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let s = permissionHash[salut]
+    //   return  fPrivilege.issues.includes(s); 
+    // },
     // log(e){
     //   console.log("issue stages sorted: " + JSON.stringify(e))
     // },
@@ -1835,18 +1860,24 @@ export default {
           }
         }
 
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/issues.json`;
+       let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/issues.json`;
+       if (this.contract) {
+            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/issues.json`
+         }       
         let method = "POST";
         let callback = "issue-created";
 
-        if (this.issue && this.issue.id) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.issue.facilityId}/issues/${this.issue.id}.json`;
+        if (this.issue && this.issue.id) {       
           method = "PUT";
           callback = "issue-updated";
+        }        
+        if (this.issue && this.issue.id && this.facility) {       
+           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.issue.facilityId}/issues/${this.issue.id}.json`;
         }
-        // var beforeIssue = this.issue
-
-        axios({
+        if (this.issue && this.issue.id && this.contract) {
+          url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
+        }
+       axios({
           method: method,
           url: url,
           data: formData,
@@ -1862,8 +1893,12 @@ export default {
 
             var responseIssue = humps.camelizeKeys(response.data.issue);
             this.loadIssue(responseIssue);
-            //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: responseIssue });
+          if (this.$route.params.contractId){
+               this.updateContractIssues({ issue: responseIssue });
+            } else {
+             this.updateIssuesHash({ issue: responseIssue });
+            }  
+           
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
@@ -1871,9 +1906,9 @@ export default {
                 showClose: true,
               });
             }
-            if (this.$route.path.includes("sheet")) {
+            if (this.$route.path.includes("sheet"))  {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/issues/${response.data.issue.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -2104,6 +2139,16 @@ export default {
       var issueStagesSortedReturn = [...this.issueStages]; 
       return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
+   object(){
+       if(this.$route.params.contractId){
+        return 'contracts'
+       } else return 'projects'
+    },
+   route(){
+       if(this.$route.params.contractId){
+        return this.$route.params.contractId
+       } else return this.$route.params.projectId
+    },
     readyToSave() {
       return (
         this.DV_issue &&
@@ -2176,6 +2221,9 @@ export default {
       }
     },
   backToIssues() {
+     if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/issues`
+      }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`
       } else {
@@ -2183,6 +2231,9 @@ export default {
       }
     },
   projectNameLink() {
+     if (this.$route.params.contractId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/contract`;
+       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
