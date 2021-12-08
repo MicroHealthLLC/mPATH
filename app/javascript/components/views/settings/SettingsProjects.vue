@@ -219,7 +219,7 @@ export default {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
-      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/project`
+      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
       // router.push more efficient but programPrivileges errors persist unless reload
       // this.$router.push({
       //   name: "SheetProject",
