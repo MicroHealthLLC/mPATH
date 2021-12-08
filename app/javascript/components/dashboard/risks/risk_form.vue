@@ -20,8 +20,12 @@
               > <i class="fas fa-suitcase mb-1"></i>
               </span>
               <router-link :to="projectNameLink">
-               <span v-if="!isProgramView">{{
+               <span v-if="!isProgramView && !contract">{{
                 facility.facilityName
+                }}
+            </span>
+            <span v-if="contract">{{
+                contract.nickname || contract.name
                 }}
             </span>
             <span v-else>{{
@@ -2178,7 +2182,7 @@ export default {
       "setRiskImpactLevelOptions",
       'setRiskDispositionStatus',
       'setRiskDispositionDuration',
-
+      'updateContractRisks',
       "updateRisksHash",
     ]),
     ...mapActions([
@@ -2743,7 +2747,12 @@ export default {
             var responseRisk = humps.camelizeKeys(response.data.risk);
             this.loadRisk(responseRisk);
             //this.$emit(callback, responseRisk);
-            this.updateRisksHash({ risk: responseRisk });
+            if (this.$route.params.contractId){
+               this.updateContractRisks({ risk: responseRisk });
+            } else {
+              this.updateRisksHash({ risk: responseRisk });
+            }  
+          
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,
@@ -2751,8 +2760,8 @@ export default {
                 showClose: true,
               });
             }
-            //Route to newly created task form page
-            if (this.$route.path.includes("sheet") && this.$route.path.projectId) {
+            //Route to newly created risk form page
+            if (this.$route.path.includes("sheet")) {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/risks/${response.data.risk.id}`
               );

@@ -1837,7 +1837,7 @@ export default {
 
         let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
-            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks.json`
+            url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
          }
         let method = "POST";
         let callback = "task-created";
@@ -1850,7 +1850,7 @@ export default {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
         if (this.task && this.task.id && this.contract) {
-          url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
         // var beforeSaveTask = this.task
         axios({
