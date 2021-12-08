@@ -513,15 +513,15 @@
         tasksQuery: '',
         // currentPage:1,
         defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
+          admin: ['R', 'W', 'D'],
+          contracts: ['R', 'W', 'D'],
+          facility_id: this.$route.params.contractId,
+          issues: ['R', 'W', 'D'],
+          lessons: ['R', 'W', 'D'],
+          notes: ['R', 'W', 'D'],
+          overview: ['R', 'W', 'D'],
+          risks: ['R', 'W', 'D'],
+          tasks: ['R', 'W', 'D'],
         },        
         showFilters: false,
         contractRoute: this.$route.params.contractId,
@@ -667,13 +667,10 @@
     showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
-      // log(e){
-      //   console.log(e)
-      // },
-      showAllToggle() {
+    showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
-         exportToPdf() {
+    exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#taskSheetsList1"})
@@ -730,7 +727,7 @@
         'getHideImportant',
         'getHideBriefed',
       ]),
-          currentPage:{
+      currentPage:{
        get() {
         return this.currentTaskPage
       },
@@ -748,7 +745,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+        let tasks = _.sortBy(_.filter(this.object.tasks, (resource) => {
      
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -937,6 +934,11 @@
         },     
       };
     },
+    object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
       C_sheetsTaskFilter: {
         get() {
           return this.getAdvancedFilter

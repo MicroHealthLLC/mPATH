@@ -129,15 +129,6 @@
         'taskUpdated',
         'updateWatchedRisks'
       ]),
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
-    },
       deleteRisk() {
         this.$confirm(`Are you sure you want to delete "${this.DV_risk.text}"?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
@@ -163,7 +154,9 @@
       },
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
-        this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
+        if (this.$route.params.contractId){
+          this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/${this.DV_edit_risk.id}`);
+        } else this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);        
       },
       onCloseForm() {
         this.$refs.riskFormModal && this.$refs.riskFormModal.close()
@@ -183,9 +176,6 @@
           });
         }
       },    
-      updateRelatedTaskIssue(task) {     
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
-      },
       getRisk(risk) {
         return this.currentRisks.find(t => t.id == risk.id) || {}
       },

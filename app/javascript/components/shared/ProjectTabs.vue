@@ -90,30 +90,30 @@ export default {
           closable: false,
           hidden: false,
         },
-        // {
-        //   label: "Analytics",
-        //   key: "analytics",
-        //   closable: false,
-        //   hidden: false,
-        // },
+        {
+          label: "Analytics",
+          key: "analytics",
+          closable: false,
+          hidden: false,
+        },
         {
           label: "Tasks",
           key: "tasks",
           closable: false,
           hidden: false,
         },
-        // {
-        //   label: "Issues",
-        //   key: "issues",
-        //   closable: false,
-        //   hidden: false,
-        // },
-        // {
-        //   label: "Risks",
-        //   key: "risks",
-        //   closable: false,
-        //   hidden: false,
-        // },
+        {
+          label: "Issues",
+          key: "issues",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Risks",
+          key: "risks",
+          closable: false,
+          hidden: false,
+        },
         // {
         //   label: "Lessons",
         //   key: "lessons",

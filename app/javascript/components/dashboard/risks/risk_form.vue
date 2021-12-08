@@ -2052,7 +2052,7 @@ import { API_BASE_PATH } from '../../../mixins/utils';
 
 export default {
   name: "RiskForm",
-  props: ["facility", "risk", "facilities", "fixedStage"],
+  props: ["facility", "risk", "facilities", "fixedStage", "contract"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -2072,6 +2072,18 @@ export default {
       consultedRiskUsers: [],
       informedRiskUsers: [],
       probability: [],
+      facilityProjectId: this.$route.params.programId,   
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        }, 
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
       selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
       selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
@@ -2178,8 +2190,6 @@ export default {
     INITIAL_RISK_STATE() {
       return {
         text: "",
-        facilityProjectId: this.$route.params.programId,   
-        text: "",
         riskDescription: "",
         explanation: "",
         impactDescription: "",
@@ -2223,14 +2233,25 @@ export default {
       //     console.log(e)
       // },
     //TODO: change the method name of isAllowed
+    // _isallowed(salut) {
+    //   var programId = this.$route.params.programId;
+    //   var projectId = this.$route.params.projectId
+    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let s = permissionHash[salut]
+    //   return  fPrivilege.risks.includes(s); 
+    // },
+    // Temporary _isallowed method until contract projectPrivileges is fixed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.risks.includes(s); 
+        }         
+      },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2689,13 +2710,24 @@ export default {
           }
         }
 
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
+       let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
+        if (this.contract) {
+            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks.json`
+         }
+     
         let method = "POST";
         let callback = "risk-created";
-        if (this.risk && this.risk.id) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
+       
+       if (this.risk && this.risk.id) {        
           method = "PUT";
           callback = "risk-updated";
+        }
+
+        if (this.risk && this.risk.id && this.facility) {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
+        }
+        if (this.risk && this.risk.id && this.contract) {
+          url = `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
         }
         // var beforeRisk = this.risk
         axios({
@@ -2720,9 +2752,9 @@ export default {
               });
             }
             //Route to newly created task form page
-            if (this.$route.path.includes("sheet")) {
+            if (this.$route.path.includes("sheet") && this.$route.path.projectId) {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/risks/${response.data.risk.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -3011,6 +3043,16 @@ export default {
         this.exists(this.DV_risk.dueDate)
       );
     },
+    object(){
+      if(this.$route.params.contractId){
+      return 'contracts'
+      } else return 'projects'
+    },
+    route(){
+     if(this.$route.params.contractId){
+        return this.$route.params.contractId
+      } else return this.$route.params.projectId
+    },
     isProgramView() {
       return this.$route.name.includes("ProgramTaskForm") ||
              this.$route.name.includes("ProgramRiskForm") ||
@@ -3270,6 +3312,9 @@ export default {
       }
     },
   backToRisks() {
+     if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/risks`
+      }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
       } else {
@@ -3277,7 +3322,10 @@ export default {
       }
     },
   projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+      if (this.$route.params.contractId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/contract`;
+       }
+      if (this.$route.params.projectId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;

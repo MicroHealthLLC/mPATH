@@ -1,6 +1,6 @@
 <template>
   <IssueForm
-    :facility="facility"
+    :contract="contract"
     :issue="issue"
     @on-close-form="redirectBack"
   />
@@ -10,7 +10,7 @@
 import { mapGetters } from "vuex";
 import IssueForm from "../../../dashboard/issues/issue_form.vue";
 export default {
-  props: ["facility"],
+  props: ["contract"],
   name: "ContractIssueForm",
   components: { IssueForm },
   data() {
@@ -21,7 +21,7 @@ export default {
   methods: {
     redirectBack() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues`
+        `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/issues`
       );
     },
   },
@@ -29,8 +29,8 @@ export default {
     ...mapGetters(["contentLoaded"]),
   },
   mounted() {
-    if (this.contentLoaded) {
-      this.issue = this.facility.issues.find(
+    if (this.contentLoaded && this.$route.params.issueId !== "new") {
+      this.issue = this.contract.issues.find(
         (issue) => issue.id == this.$route.params.issueId
       );
     }
@@ -38,9 +38,11 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.issue = this.facility.issues.find(
+       if (this.$route.params.issueId !== "new"){
+        this.issue = this.contract.issues.find(
           (issue) => issue.id == this.$route.params.issueId
         );
+       }
       },
     },
   },
