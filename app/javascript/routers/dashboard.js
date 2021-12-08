@@ -14,7 +14,8 @@ import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
-import MapOverview from "./../components/views/map/MapOverview";
+import MapAnalytics from "./../components/views/map/MapAnalytics";
+import MapProject from "./../components/views/map/MapProject";
 import MapTasks from "./../components/views/map/MapTasks";
 import MapTaskForm from "./../components/views/map/MapTaskForm";
 import MapIssues from "./../components/views/map/MapIssues";
@@ -98,9 +99,14 @@ export default new VueRouter({
           component: ProjectRollup,
         },
         {
-          name: "MapOverview",
-          path: "projects/:projectId/overview",
-          component: MapOverview,
+          name: "MapProject",
+          path: "projects/:projectId/",
+          component: MapProject,
+        },
+        {
+          name: "MapAnalytics",
+          path: "projects/:projectId/analytics",
+          component: MapAnalytics,
         },
         {
           name: "MapTasks",

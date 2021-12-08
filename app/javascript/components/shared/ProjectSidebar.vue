@@ -186,25 +186,16 @@ export default {
     },
     pathTab() {
       let url = this.$route.path;
-      console.log(url)
       if (url.includes("tasks")) {
         return "/tasks";    
-      } 
-  
-      if (url.includes("issues")) {
+      } if (url.includes("issues")) {
         return "/issues";
-      }  
-        if (url.includes("analytics")) {
+      } if (url.includes("analytics")) {
         return "/analytics";
-      } 
-      //  if ((this.$route.name === "SheetProject") && url.includes("projects")) {
-      //   return "/project";
-      if (this.$route.name === "ContractRisks") {
+      } if (this.$route.name === "ContractRisks") {
         return "/risks";
       } if (this.$route.name === "SheetRisks") {
         return "/risks";
-      // } if ((this.$route.name === "SheetContract") && (this.$route.name !== "SheetProject")) {
-      //   return "/contract";    
       } if (url.includes("lessons")) {
         return "/lessons";
       } if (url.includes("notes")) {
