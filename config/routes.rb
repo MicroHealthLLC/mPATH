@@ -301,7 +301,7 @@ Rails.application.routes.draw do
   get '*all', to: "home#portfolio", constraints: -> (req) do
     # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
     # TODO: create regex for pattern /portfolio
-    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/)
+    (p = req.path.split("/")[1] ) && p.downcase == "portfolio".downcase #&& p.match(/^[portoflio]+$/)
   end
 
   get "*path", to: 'home#index', constraints: -> (req) do
@@ -309,6 +309,6 @@ Rails.application.routes.draw do
   end
   
   get '*all', to: "not_found#index", constraints: -> (req) do
-    req.path.exclude? 'rails/active_storage'
+    req.path.exclude?('rails/active_storage')
   end
 end
