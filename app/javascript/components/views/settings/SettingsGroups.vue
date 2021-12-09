@@ -11,11 +11,16 @@
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
      <i class="fal fa-network-wired mr-1 mh-orange-text"></i>  GROUPS
-      <span 
-        v-show="tableData"
-        class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-        >{{ tableData.length }}
-      </span>
+       <span 
+          v-if="tableData && tableData.length"
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ tableData.length }}
+        </span>
+         <span 
+          v-else
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ 0 }}
+        </span>
       </h4>
     </el-breadcrumb>
 
@@ -39,27 +44,6 @@
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>  
       </div> 
-      <!-- <div class="col pl-0">   
-        <el-select
-          class="w-100 mx-2"
-          v-model="C_groupFilter" 
-          track-by="id"
-          value-key="id"
-          multiple
-          filterable
-          clearable
-          name="Project Group"         
-          placeholder="Filter Group"
-          >
-          <el-option
-          v-for="item in filteredFacilityGroups"
-          :key="item.id"
-          :label="item.name"
-          :value="item">
-        </el-option>
-          
-          </el-select>
-      </div> -->
   </div>
  </div>
    <div

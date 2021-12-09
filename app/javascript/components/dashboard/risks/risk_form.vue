@@ -19,20 +19,19 @@
                <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
               </span>
-              <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && !contract">{{
-                facility.facilityName
-                }}
-            </span>
-            <span v-if="contract">{{
-                contract.nickname || contract.name
-                }}
-            </span>
-            <span v-else>{{
-                risk.facilityName
-            }}
-            </span>            
-            </router-link>
+             <router-link :to="projectNameLink">
+               <span v-if="!isProgramView && !contract">
+                 {{ facility.facilityName }}
+               </span>
+               <span v-if="isProgramView && !contract">
+                    {{ risk.facilityName }}
+               </span>
+             </router-link>
+             <router-link :to="backToContract">
+              <span v-if="contract">               
+                {{ contract.nickname || contract.name }}
+              </span>
+             </router-link>          
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
@@ -2472,7 +2471,7 @@ export default {
         this.toggleWatched();
       }
     },
-    toggleApproved() {
+    toggleApproved(e) {
       if(!this._isallowed("write"))
         return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
@@ -3321,21 +3320,27 @@ export default {
       }
     },
   backToRisks() {
-     if (this.$route.params.contractId) {
+     if (this.contract && !this.facility) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/risks`
       }
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+      if (
+          this.$route.path.includes("map") || 
+          this.$route.path.includes("sheet") ||  
+          this.$route.path.includes("kanban") || 
+          this.$route.path.includes("calendar") && 
+          !this.contract
+          ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
-  projectNameLink() {
-      if (this.$route.params.contractId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/contract`;
-       }
-      if (this.$route.params.projectId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
+    backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+    },
+    projectNameLink() {     
+      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
       } else {

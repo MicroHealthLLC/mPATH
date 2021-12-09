@@ -55,26 +55,14 @@
             </li>
           </ul>
         </div>
-        <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
-        <div class="pr-3">
-          <router-view
-            :key="$route.path"
-            :facility="currentFacility"
-            :facilityGroup="currentFacilityGroup"
-          ></router-view>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import { mapGetters, mapMutations } from "vuex";
-// import ProjectSidebar from "../../shared/ProjectSidebar";
 import SettingsSidebar from "./SettingsSidebar.vue";
-import { API_BASE_PATH } from "./../../../mixins/utils";
-
 export default {
   name: "SettingsView",
   components: {
@@ -82,14 +70,12 @@ export default {
   },
   data() {
     return {
-      currentFacility: {},
       settingsCards: {
         groups: "Groups",
         projects: "Projects",
         contracts: "Contracts",
         // users: "Users"
       },
-      currentFacilityGroup: {},
       projectNameText: "",
       selectedProjectGroup: null,
       projectName: "",
@@ -122,84 +108,7 @@ export default {
         );
       }
     },
-    showFacility(facility) {
-      this.currentFacility = facility;
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    saveNewProject(e) {
-      e.preventDefault();
-      let formData = new FormData();
-      formData.append("facility[facility_name]", this.newProjectName);
-      if (this.C_projectGroupFilter !== null) {
-        formData.append(
-          "facility[facility_group_id]",
-          this.C_projectGroupFilter.id
-        );
-      }
-      formData.append("facility[address]", "18 Boon Rd, Stow, MA 01775, USA");
-      formData.append("facility[lat]", "42.4114459");
-      formData.append("facility[lng]", "-71.5128223");
-      formData.append("facility[point_of_contact]", "Juan Rivera");
-      formData.append("facility[phone_number]", "+16789009876");
-      formData.append("facility[country_code]", "US");
-      formData.append("facility[email]", "test@test.com");
-      formData.append("facility[status]", "active");
-      formData.append("facility[project_ids][]", this.$route.params.programId);
-      formData.append("commit", "Create Project");
-      let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
-      let method = "POST";
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      }).then((response) => {
-        // var responseRisk = humps.camelizeKeys(response.data.risk);
-        // this.loadRisk(responseRisk);
-        //this.$emit(callback, responseRisk);
-        // this.updateRisksHash({ risk: responseRisk });
-        if (response.status === 200) {
-          this.$message({
-            message: `New Project ${this.newProjectName} has been saved successfully.`,
-            type: "success",
-            showClose: true,
-          });
-        }
-      });
-    },
-    saveNewProjectGroup(e) {
-      e.preventDefault();
-      let formData = new FormData();
-      formData.append("facility_group[name]", this.newProjectGroupName);
-      formData.append("facility_group[status]", "active");
-      formData.append("commit", "Create Project Group");
-
-      let url = `${API_BASE_PATH}/facility_groups`;
-      let method = "POST";
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      }).then((response) => {
-        if (response.status === 200) {
-          this.$message({
-            message: `New Project Group ${this.newProjectGroupName} has been saved successfully.`,
-            type: "success",
-            showClose: true,
-          });
-        }
-      });
-    },
-  },
+   },
   computed: {
     ...mapGetters([
       "contentLoaded",
@@ -216,40 +125,6 @@ export default {
     set(value) {
       // console.log(value)
       this.setProjectGroupFilter(value);
-    },
-  },
-  beforeMount() {
-    if (this.contentLoaded && this.$route.params.projectId) {
-      this.currentFacility = this.facilities.find(
-        (facility) => facility.facilityId == this.$route.params.projectId
-      );
-    }
-  },
-  watch: {
-    contentLoaded: {
-      handler() {
-        if (this.$route.params.projectId) {
-          this.currentFacility = this.facilities.find(
-            (facility) => facility.facilityId == this.$route.params.projectId
-          );
-        }
-      },
-    },
-    currentFacility: {
-      handler() {
-        this.currentFacilityGroup = this.facilityGroups.find(
-          (group) => group.id == this.currentFacility.facility.facilityGroupId
-        );
-
-        this.expanded.id = this.currentFacilityGroup.id;
-      },
-    },
-    facilities: {
-      handler() {
-        this.currentFacility = this.facilities.find(
-          (facility) => facility.facilityId == this.$route.params.projectId
-        );
-      },
     },
   },
 };

@@ -20,20 +20,19 @@
             <span style="font-size: 16px; margin-right: 2.5px"
               > <i class="fas fa-suitcase mb-1"></i>
             </span>
-            <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && !contract">{{
-                facility.facilityName
-                }}
-            </span>
-            <span v-if="contract">{{
-                contract.nickname || contract.name
-                }}
-            </span>
-            <span v-else>{{
-                issue.facilityName
-            }}
-            </span>            
-            </router-link>
+             <router-link :to="projectNameLink">
+               <span v-if="!isProgramView && !contract">
+                 {{ facility.facilityName }}
+                </span>
+                <span v-if="isProgramView && !contract">
+                    {{ issue.facilityName }}
+               </span>
+              </router-link>
+              <router-link :to="backToContract">
+                <span v-if="contract">
+                  {{ contract.nickname || contract.name }}
+                </span>
+              </router-link>    
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -2230,16 +2229,16 @@ export default {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
+    backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+     },
   projectNameLink() {
-     if (this.$route.params.contractId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/contract`;
-       }
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
+     if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
       } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
       }
     },
   },
