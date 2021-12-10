@@ -25,11 +25,25 @@
                 </div>
                 <!-- Breadcrumbs and form buttons -->
               </div>
-
+          <div class="container-fluid px-5">
+          <div class="row">
+            <div class="col pl-0">
               <h6 class=" mt-4 mb-0" style="color: gray; font-size: 13px">
                 <span style="color: #dc3545; font-size: 15px">*</span> Indicates
                 required fields
               </h6>
+            </div>
+               <div class="col text-right">
+                    <button
+                      @click.prevent="saveEdits"
+                      class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
+                    >
+                      Save Edits
+                    </button>
+                    <!-- Add Read only button and v-if to Save button for privileges -->
+                  </div>
+          </div>
+          </div>
               <div class="pt-1">
                 <div v-if="errors.items.length > 0" class="text-danger ">
                   Please fill the required fields before submitting
@@ -48,7 +62,7 @@
                 </div>
               </div>
               <!-- Lesson Info Tab -->
-              <div v-show="currentTab == 'tab1'" class="container mt-2 mx-0">
+              <div v-show="currentTab == 'tab1'" class="container-fluid mt-2 mx-0 px-5">
                 <div class="row row_1">
                   <div class="col-5 pl-0 d-flex">
                     <label class="font-sm my-auto mr-2 d-inline-block"
@@ -70,15 +84,7 @@
                       </el-option>
                     </el-select>
                   </div>
-                  <div class="col-7 text-right">
-                    <button
-                      @click.prevent="saveEdits"
-                      class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
-                    >
-                      Save Edits
-                    </button>
-                    <!-- Add Read only button and v-if to Save button for privileges -->
-                  </div>
+                 
                 </div>
                 <div class="row row_1">
                   <div class="col-2 pl-0">
@@ -101,7 +107,7 @@
                     />
                     <!-- Need to add additional div here for error handling -->
                   </div>
-                  <div class="col-3">
+                  <div class="col-3 pr-0">
                     <label class="font-md">Type </label>
                     <el-select
                       v-model="contract.contract_classification_id"
@@ -305,7 +311,7 @@
               </div>
 
               <!-- TAB 2: DATES -->
-              <div v-show="currentTab == 'tab2'" class="container mt-2 mx-0">
+              <div v-show="currentTab == 'tab2'" class="container-fluid mt-2 mx-0 px-5">
                 <div class="row">
                   <div class="col-6 pl-0 pr-1">
                     <label class="font-md"
@@ -425,7 +431,7 @@
                   </div>
                 </div>
               </div>
-              <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
+              <div v-show="currentTab == 'tab3'" class="container-fluid px-5 mt-2 mx-0">
                 <div class="row t3 row_1">
                   <div class="col-6 pl-0 pr-1">
                     <label class="font-md"
