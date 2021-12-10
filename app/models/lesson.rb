@@ -9,7 +9,8 @@ class Lesson < ApplicationRecord
   
   belongs_to :facility_project
   has_one :facility, through: :facility_project
-  # has_one :project, through: :facility_project
+  has_one :project, through: :facility_project
+  # Line 12 was commmented out and caused page error.  Uncommented by JR and fixed view.  Need AS to re-examine line and modify as appropriate
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
