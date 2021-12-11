@@ -3177,7 +3177,6 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="riskTable"
                     id="portRisks"
                   >
                     <thead style="background-color: #ededed">
@@ -3848,6 +3847,7 @@
                   <!-- Export (Display:none) -->
                   <table
                     class="table table-bordered w-100"
+                    ref="riskTable"
                     id="portRisks1"
                     style="display:none"
                   >
@@ -4012,6 +4012,12 @@
                             v-tooltip="`In Progress`"
                           >
                             In Progress
+                          </span>
+                          <span
+                            v-if="risk.reportable"
+                            v-tooltip="`Briefings`"
+                          >
+                            Briefings
                           </span>
                         </td>
                         <td
