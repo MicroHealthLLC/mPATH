@@ -2098,7 +2098,6 @@
               <div class="px-3 tableFixHead" style="overflow-x: auto">
                 <table
                   class="table table-sm table-bordered"
-                  ref="issueTable"
                   id="portIssues"
                 >
                   <thead style="background-color: #ededed">
@@ -2681,6 +2680,7 @@
                 </table>
                 <table
                   class="table table-bordered w-100"
+                  ref="issueTable"
                   id="portIssues1"
                   style="display:none"
                 >
@@ -2739,8 +2739,7 @@
                           Overdue
                         </span>
                         <span v-if="issue.completed" v-tooltip="`Completed`">
-                          Completed</span
-                        >
+                          Completed</span>
                         <span
                           v-if="issue.on_hold == true"
                           v-tooltip="`On Hold`"
@@ -2750,7 +2749,6 @@
                         <span v-if="issue.draft == true" v-tooltip="`Draft`">
                           Draft
                         </span>
-
                         <span v-if="issue.planned" v-tooltip="`Planned`">
                           Planned
                         </span>
@@ -2760,6 +2758,12 @@
                         >
                           In Progress
                         </span>
+                        <span v-if="issue.reportable" v-tooltip="`Briefings`">
+                          Briefings</span>
+                        <span v-if="issue.important" v-tooltip="`Important`">
+                          Important</span>
+                        <span v-if="issue.watched" v-tooltip="`Watched`">
+                          Watched</span>
                       </td>
                       <td>
                         <span
