@@ -1038,7 +1038,6 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="table"
                     id="portTasks"
                   >
                     <thead style="background-color: #ededed">
@@ -1598,6 +1597,7 @@
                   <!-- EXPORT (Display:None) -->
                   <table
                     class="table table-bordered w-100"
+                    ref="table"
                     id="portTasks1"
                     style="display:none"
                   >
@@ -1698,6 +1698,12 @@
                         <td class="text-center">
                           <span v-if="task.is_overdue" v-tooltip="`Overdue`">
                             Overdue
+                          </span><span v-if="task.important" v-tooltip="`Important`">
+                            Important
+                          </span><span v-if="task.reportable" v-tooltip="`Briefings`">
+                            Briefings
+                          </span><span v-if="task.watched" v-tooltip="`Watched`">
+                            Watched
                           </span>
                           <span v-if="task.completed" v-tooltip="`Completed`">
                             Completed
@@ -1705,11 +1711,9 @@
                           <span
                             v-if="task.ongoing == true && !task.closed"
                             v-tooltip="`Ongoing`"
-                            >Ongoing</span
-                          >
+                            >Ongoing</span>
                           <span v-if="task.closed" v-tooltip="`Ongoing: Closed`"
-                            >Ongoing</span
-                          >
+                            >Ongoing</span>
                           <span
                             v-if="task.on_hold == true"
                             v-tooltip="`On Hold`"
