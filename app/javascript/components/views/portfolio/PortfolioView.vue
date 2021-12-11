@@ -4272,7 +4272,6 @@
                 <div class="tableFixHead px-3">
                   <table
                     class="table table-sm table-bordered"
-                    ref="lessonTable"
                     id="portLessons"
                   >
                     <thead style="background-color: #ededed">
@@ -4747,6 +4746,7 @@
                     class="table table-bordered w-100"
                     id="portLessons1"
                     style="display:none"
+                    ref="lessonTable"
                   >
                     <thead>
                       <tr style="background-color:#ededed">
@@ -4781,11 +4781,14 @@
                           }}</span>
                         </td>
                         <td class="text-center">
-                          <span v-if="lesson.draft == true" v-tooltip="`Draft`">
-                            Draft
-                          </span>
-                          <span v-if="lesson.draft == false">
-                            Completed
+                          <span v-if="lesson.important == true" v-tooltip="`Important`">Important</span>
+                          <span v-if="lesson.reportable" v-tooltip="`Briefings`">Briefings</span>
+                          <span v-if="lesson.draft == true" v-tooltip="`Draft`">Draft</span>
+                          <span v-if="lesson.draft == false" v-tooltip="`Completed`">Completed</span>
+                          <span v-if="
+                                lesson.important == false &&
+                                lesson.reportable == false &&
+                                lesson.draft == false">
                           </span>
                         </td>
                         <td
