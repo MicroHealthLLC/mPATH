@@ -15,7 +15,11 @@ class Api::V1::NotesController < AuthenticatedController
       action = "delete"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
+    if params[:contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'notes', contract: params[:contract_id])
+    else
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
+    end
 
   end
 
@@ -47,7 +51,9 @@ class Api::V1::NotesController < AuthenticatedController
 
   private
   def set_noteable
-    if params[:project_id].present? && params[:facility_id].present?
+    if params[:contract_id]
+      @noteable = current_user.authorized_contracts.find_by(id: params[:contract_id] )
+    elsif params[:project_id].present? && params[:facility_id].present?
       @project = current_user.authorized_programs.find(params[:project_id])
       @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
     elsif params[:facility_project_id].present?

@@ -12,6 +12,8 @@ class Lesson < ApplicationRecord
 
   has_one :facility, through: :facility_project
   has_one :project, through: :facility_project
+  has_one :facility_group, through: :facility
+
   # Line 12 was commmented out and caused page error.  Uncommented by JR and fixed view.  Need AS to re-examine line and modify as appropriate
 
   has_one :contract_project, class_name: "Project", through: :contract
