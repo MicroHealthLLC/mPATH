@@ -1834,7 +1834,7 @@ export default {
 
 
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
          }
@@ -1846,7 +1846,7 @@ export default {
           callback = "task-updated";
         }
         if (this.task && this.task.id && this.facility) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
         if (this.task && this.task.id && this.contract) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
