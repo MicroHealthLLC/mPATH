@@ -11,7 +11,7 @@
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3">
      <i class="fal fa-cloud ml-2 mr-1 text-info"></i>  
-      MICROHEALTH CLOUD DATA (TESTING)      
+      MPATH CLOUD DATA (TESTING)
       </h4>
     </el-breadcrumb>  
      <div class="row px-0">
@@ -21,22 +21,28 @@
       </el-button>
      </div>   
      </div> 
-     <div v-if="fetchUsers.length > 0">
+     <div v-if="globalContracts.length > 0">
    <el-table
-     :data="fetchUsers"
+     :data="globalContracts"
       style="width: 100%"
       height="450"
       >
       <el-table-column
-        prop="name"
-        label="Name"
-        width="180">
+        prop="contractName"
+        label="Contract Name"
+        width="300">
       </el-table-column>
       <el-table-column
-        prop="email"
-        label="Email">
+        prop="programName"
+        label="Program Name"
+         width="300"
+        >
       </el-table-column>
-   <el-table-column
+       <el-table-column
+        prop="mpathInstance"
+        label="mPATH Organization">
+      </el-table-column>
+   <!-- <el-table-column
       label="Operations">
       <template slot-scope="scope">
         <el-button
@@ -47,10 +53,13 @@
           type="danger"
           @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
       </template>
-    </el-table-column>
+    </el-table-column> -->
     
   </el-table>
 
+     </div>
+     <div v-else>
+       NO DATA
      </div>
     <div class="w-50">
          <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
@@ -61,7 +70,7 @@
       >      
        <div class="form-group mx-3">
           <label class="font-md"
-            >Name </label
+            >Contract Name </label
           >
           <el-input
             type="textarea"
@@ -71,19 +80,7 @@
             name="Program Name"
           />
        </div>
-       <div class="form-group mx-3">
-          <label class="font-md"
-            >Email</label
-          >
-          <el-input
-            type="textarea"
-            v-model="form.email"
-            placeholder="Enter your favorite boss' name"          
-            rows="1"          
-            name="Program Name"
-          />
-       </div>
-    
+   
         <div class="right mr-2">
         <button 
           type="submit"
@@ -111,10 +108,6 @@ import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 
 
 export default {
-//  setup(){
-//   const 
-//   return { users, deleteUser}
-//   },
   name: "TestCloudData",
   components: {
    SettingsSidebar
@@ -122,11 +115,12 @@ export default {
   data() {
     return {
       currentFacility: {},
-      fetchUsers: [],
-      // currentContract: {},
+     
+      globalContracts: [],
         form: {
           name: '',
-          email: '',
+          program: '',
+          org:  this.$mpath_instance,
         },
       dialogVisible: false,
 
@@ -141,10 +135,11 @@ export default {
     };
   },
   mounted() {
-      let users = []
-      this.fetchUsers = dbCollection().get().then(querySnapshot => {
-       users = querySnapshot.docs.map(doc => doc.data())
-        this.fetchUsers = users
+      // this.fetchContracts()
+      let contracts = []
+      this.globalContracts = dbCollection().get().then(querySnapshot => {
+       contracts = querySnapshot.docs.map(doc => doc.data())
+        this.globalContracts = contracts
     })
    
     //   return users
@@ -172,16 +167,16 @@ export default {
 
    async onSubmit ()  {
          const formData = {
-            name: this.form.name,
-            email: this.form.email     
+            contractName: this.form.name,
+            programName: this.currentProject.name, 
+            mpathInstance: this.form.org
+
           }
         await createUser({...formData})
         return { formData },
-        this.form.name = "",
-        this.form.email = ""
+        this.form.name = ""      
 
-    },  
-      
+    },        
     addAnotherContract() {
          this.C_projectGroupFilter = null;
          this.contractNameText = "";
@@ -216,10 +211,7 @@ export default {
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
-    users(){
-        return this.fetchUsers 
-    },
-    tableData(){
+   tableData(){
       if(this.contracts[0] && this.contracts[0].length > 0 ){
       let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
       let contractData = programContracts.map(t => t)

@@ -34,9 +34,9 @@
                   <span v-if="item == 'Contracts'">
                     <i class="far fa-file-contract mr-3 mh-orange-text"></i>
                   </span>
-                  <span v-if="item == 'MH Data'">
+                  <!-- <span v-if="item == 'MH Data'">
                     <i class="fal fa-cloud mr-2 text-info"></i>              
-                  </span>
+                  </span> -->
                   <!-- <span v-if="item == 'Users'">   <i class="far fa-users mr-3"></i> </span> -->
                 </div>
                 <div>
@@ -49,10 +49,12 @@
                     >
                     <span v-if="item == 'Contracts'">{{
                       settingsCards.contracts
-                    }}</span>
+                    }} </span>
+<!--                     
+                   
                       <span v-if="item == 'MH Data'">{{
                       settingsCards.mhData
-                    }}</span>
+                    }}</span> -->
                     <!-- <span v-if="item == 'Users'">{{ settingsCards.users }}</span> -->
                     <!-- <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i>   {{item}}</span> -->
                   </h4>
@@ -80,7 +82,7 @@ export default {
         groups: "Groups",
         projects: "Projects",
         contracts: "Contracts",
-        mhData: "MH Data",
+        // mhData: "MH Data",
         // users: "Users"
       },
       projectNameText: "",

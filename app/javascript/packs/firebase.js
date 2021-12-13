@@ -17,14 +17,14 @@ const firebaseConfig = {
 //   const analytics = getAnalytics(app);
   
   const db = app.firestore()
-  const usersCollection = db.collection('users')
+  const usersCollection = db.collection('contracts')
 
   export const createUser = user => {
       return usersCollection.add(user)
   }
 
   export const dbCollection = () => {
-    return db.collection('users')
+    return db.collection('contracts')
   }
 
 

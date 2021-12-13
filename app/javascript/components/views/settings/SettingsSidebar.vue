@@ -19,11 +19,11 @@
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
-    <router-link :to="adminCloudView" > 
+    <!-- <router-link :to="adminCloudView" > 
        <li class="p-3 entity">
             <i class="fal fa-cloud mr-2 text-info"></i>     MH Data
         </li>
-    </router-link>
+    </router-link> -->
      </ul>
     </h5>
 
