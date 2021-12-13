@@ -21,22 +21,19 @@
             </span>
 
             <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && !contract">{{
-                facility.facilityName
-                }}
-            </span>
-            <span v-if="contract">{{
-                contract.nickname || contract.name
-                }}
-            </span>
-
-            <span v-else>{{
-                task.facilityName
-            }}
-            </span>            
+              <span v-if="!isProgramView && !contract">
+                 {{ facility.facilityName }}
+               </span>
+               <span v-if="isProgramView && !contract">
+                    {{ task.facilityName }}
+               </span>
             </router-link>
-
-           
+            <router-link :to="backToContract">
+              <span v-if="contract">{{
+                  contract.nickname || contract.name
+                  }}
+              </span>
+            </router-link>     
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -1393,6 +1390,8 @@ export default {
     }
   },
   mounted() {
+
+// console.log(this.$projectPrivileges)
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
@@ -1837,7 +1836,7 @@ export default {
 
         let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
-            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks.json`
+            url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
          }
         let method = "POST";
         let callback = "task-created";
@@ -1850,7 +1849,7 @@ export default {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
         if (this.task && this.task.id && this.contract) {
-          url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
         // var beforeSaveTask = this.task
         axios({
@@ -2216,16 +2215,16 @@ export default {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
+    backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+     },
     projectNameLink() {
-       if (this.$route.params.contractId && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/contract`;
-       }
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
+     if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
       } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
       }
     },
   },

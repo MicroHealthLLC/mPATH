@@ -13,9 +13,14 @@
        <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>  
        CONTRACTS  
        <span 
-          v-show="tableData"
+          v-if="tableData && tableData.length"
           class="ml-2 pb-1 badge badge-secondary badge-pill pill"
           >{{ tableData.length }}
+        </span>
+         <span 
+          v-else
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ 0 }}
         </span>
       </h4>
     </el-breadcrumb>   
@@ -62,7 +67,7 @@
       </div>
   </div>
   <div
-    v-if="tableData && tableData.length > 0"
+    v-if="tableData"
     v-loading="!contractsLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
@@ -193,22 +198,12 @@
     </form>
    </el-dialog>
     
-      <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
-       <div class="pr-3">   
-          <!-- <router-view
-            :key="$route.path"
-            :facility="currentFacility"
-            :contractClass="currectContract"
-            :facilityGroup="currentFacilityGroup"
-          ></router-view> -->
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
@@ -245,10 +240,12 @@ export default {
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
-
-    handleClick(tab, event) {
-        console.log(tab, event);
-    }, 
+    // _isallowed(salut) {
+    //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId]
+    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //     let s = permissionHash[salut]
+    //     return fPrivilege.contracts.includes(s);     
+    //   },
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       this.$router.push({
@@ -293,7 +290,7 @@ export default {
          this.updateContract({
             ...contractData, id
           })
-          console.log(rows, contractData)
+          // console.log(rows, contractData)
      
     },
     addAnotherContract() {

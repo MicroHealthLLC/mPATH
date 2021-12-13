@@ -8,6 +8,7 @@
   >
     <div class="col-md-2">
       <ProjectSidebar
+
         :current-facility-group="currentFacilityGroup"
         :current-contract-group="currentContractGroup"
         :expanded="expanded"
@@ -44,8 +45,8 @@
         </div>
         <div class="pr-3 ml-1">
           <ProjectTabs
-            v-if="
-              $route.name !== 'SheetRollup' &&
+            v-if="            
+                $route.name !== 'SheetRollup' &&
                 $route.name !== 'SheetTaskForm' &&
                 $route.name !== 'SheetIssueForm' &&
                 $route.name !== 'SheetRiskForm' &&
@@ -53,7 +54,7 @@
                 $route.name !== 'SheetLessonForm'
             "
           />
-        </div>
+         </div>
         <div class="pr-3">
           <router-view
             :key="$route.path"
@@ -76,7 +77,7 @@ export default {
   name: "SheetView",
   components: {
     ProjectSidebar,
-    ProjectTabs,
+    ProjectTabs
   },
   data() {
     return {

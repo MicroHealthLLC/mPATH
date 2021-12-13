@@ -13,11 +13,16 @@
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
             <i class="fal fa-clipboard-list mr-1 mh-orange-text"></i> PROJECTS
-             <span 
-              v-show="projectData"
+            <span 
+              v-if="projectData && projectData.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ projectData.length }}
-        </span>
+            </span>
+            <span 
+              v-else
+              class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+              >{{ 0 }}
+            </span>
           </h4>
         </el-breadcrumb>
 
@@ -219,7 +224,7 @@ export default {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
-      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/project`
+      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
       // router.push more efficient but programPrivileges errors persist unless reload
       // this.$router.push({
       //   name: "SheetProject",

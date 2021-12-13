@@ -12,23 +12,75 @@
                     v-for="(filterArray, index) in getAllFilterNames"
                     :key="index"  
                   >
-                    <span class="d-inline" v-if="getFilterValue(filterArray[0])">
-                   
-                        <span class="filter-green d-inline font-sm text-light px-2">{{ getFilterValue(filterArray[0]) }}</span>
-                  
+                    <span class="d-inline" v-if="getFilterValue(filterArray[0])">                   
+                        <span class="filter-green d-inline font-sm text-light px-2">{{ getFilterValue(filterArray[0]) }}</span>                  
                     </span>
                   </div>
                 </div>
             </div>
-                 <div class="row row-1 mt-2">
-    
-              <div class="col-4">
-                <div class="box-card my-el-card p-3" style="position:relative">
-                  <div class="row">
-                    <div class="col">
-                      <p>PROJECT GROUP:</p>
-                      <p>COMPLETION DATE:</p>
-                      <p>
+
+                  <hr class="mb-6 mt-4" /> 
+
+                   <div class="d-flex pt-1 mb-1 justify-content-start">
+                  <FormTabs
+                    :current-tab="currentTab"
+                    :tabs="tabs"
+                    :allErrors="errors"
+                    @on-change-tab="onChangeTab"
+                  />
+                </div>
+             <div v-show="currentTab == 'tab1'" class="container mt-2 mx-0">
+           
+             <div class="row row-1 mt-3">    
+              <div class="col-5">
+               <div class="row"> 
+                   <div class="col pt-2 text-right">     
+                  <button
+                    v-if="_isallowed('write')"
+                    class="btn btn-primary text-light mt-1 btn-sm apply-btn"
+                    :class="{'disabledBtn': !DV_updated }"
+                    @click="updateFacility"  
+                    :disabled="!DV_updated"             
+                  >
+                    Apply
+                  </button>
+                 </div>
+                </div>
+                <div class="row">              
+                  <div class="col-6">  
+                  <h6>GROUP NAME:</h6>
+
+                  </div>
+                  <div class="col-6" v-if="facility && facility.facility" >  
+                   <b> {{ facility.facility.facilityGroupName }}  </b>
+                 </div>            
+                </div>   
+
+
+                 <div class="row">              
+                  <div class="col-6">  
+                   <h6>COMPLETION DATE:</h6>
+                  </div>
+                  <div class="col-6 pt-0">  
+                     <div class="simple-select">
+                        <v2-date-picker
+                          v-model="dueDate"
+                          value-type="YYYY-MM-DD"
+                          format="DD MMM YYYY"
+                          class="w-100 vue2-datepicker mt-2"
+                          @input="onChange"
+                          placeholder="DD MM YYYY"
+                          :disabled="!_isallowed('write') || !facility.statusId"
+                        />
+                      </div>
+
+                 </div>            
+                </div>   
+
+
+                <div class="row">              
+                  <div class="col-6">  
+                      <h6>
                         STATUS:
                         <span>
                           <small
@@ -40,22 +92,64 @@
                             Date!
                           </small>
                         </span>
-                      </p>
+                      </h6>
+
+                  </div>
+                  <div class="col-6">  
+                    <div class="el-dropdown-wrapper">
+                        <el-select
+                          v-model="statusId"
+                          track-by="id"
+                          class="w-100"
+                          @change="onChange"
+                          :disabled="!_isallowed('write')"
+                          placeholder="Select Project Status"
+                        >
+                          <el-option
+                            v-for="item in statuses"
+                            :label="item.name"
+                            :key="item.id"
+                            :value="item.id"
+                          >
+                          </el-option>
+                        </el-select>
+                      </div>
+
+                 </div>            
+                </div>   
+
+                
+                <!-- <div class="row pb-1 mt-2">
+                    <div class="col">
+                      <h6 class="mb-3">GROUP NAME:</h6>
+                      <h6 class="mb-3">COMPLETION DATE:</h6>
+                      <h6>
+                        STATUS:
+                        <span>
+                          <small
+                            v-if="!facility.statusId && _isallowed('write')"
+                            class="ml-2 d-inline text-danger"
+                            style="position:absolute"
+                          >
+                            Must be updated before you can enter a Completion
+                            Date!
+                          </small>
+                        </span>
+                      </h6>
                     </div>
 
-                    <div class="col">
-                      <p
-                       v-if="facility && facility.facility"
-                        class="badge badge-secondary badge-pill font-weight-light"
-                      >
-                        {{ facility.facility.facilityGroupName }}
-                      </p>
+                    <div class="col pt-2">  
+                      <p  v-if="facility && facility.facility" class="d-inline mb-2"> 
+                       
+                      {{ facility.facility.facilityGroupName }}                        
+                    </p>         
+
                       <div class="simple-select">
                         <v2-date-picker
                           v-model="dueDate"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
-                          class="w-100 vue2-datepicker"
+                          class="w-100 vue2-datepicker mt-2"
                           @input="onChange"
                           placeholder="DD MM YYYY"
                           :disabled="!_isallowed('write') || !facility.statusId"
@@ -81,103 +175,143 @@
                         </el-select>
                       </div>
                     </div>
-                  </div>
-                  <button
-                    v-if="_isallowed('write') && DV_updated"
-                    class="btn btn-secondary mt-2 btn-sm apply-btn w-100"
-                    @click="updateFacility"
-                    :disabled="!DV_updated"
-                  >
-                    Apply
-                  </button>
-                </div>
+                  </div> -->
+                       <!-- :disabled="!DV_updated" -->
+              
               </div>  
-              <div
-                v-show="isSheetsView" 
-                v-if="project"
-                class="col-4"
-                data-cy="date_set_filter"
-              >
-                <el-card class="box-card" style="background-color: #fafafa">
-                  <div class="row">
-                    <div class="col pb-0">
-                      <h5 class="d-inline" style="font-weight: 600">CONTACT</h5>                     
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col font-sm">
-                      <p class="mt-1 mb-0">
-                        <span class="fbody-icon mr-2"
-                          ><i class="far fa-id-badge"></i
-                        ></span>
-                        <!-- <span v-if="facility && facility.facility.pointOfContact">
-                          {{ facility.facility.pointOfContact }}
-                        </span> -->
-                        <span class="d-inline">
-                          <el-input
-                            v-model="project.pointOfContact"
-                            placeholder="Enter Point of Contact name"
-                            name="Poc"
-                            class="w-75"
-                          />
-                        </span>
-                      </p>
-                      <p class="mt-1 mb-0" v-if="project && project.address">
-                        <span class="fbody-icon"
-                          ><i class="fas fa-map-marker"></i
-                        ></span>
-                        <span>{{ project.address || "N/A" }}</span>
-                      </p>
-                      <p class="mt-1 mb-0">
-                        <span class="fbody-icon mr-1"
-                          ><i class="fas fa-phone"></i
-                        ></span>
-                        <!-- <span v-if="facility && facility.facility.phoneNumber !== null">
-                          {{ facility.facility.phoneNumber }}
-                        </span> -->
-                         <span class="d-inline">
-                          <el-input
-                            v-model="project.phoneNumber"
-                            placeholder="Enter Point of Contact phone number"
-                            name="phoneNo"
-                            class="w-75"
-                          />
-                        </span>
-                      </p>
-                      <p class="mt-1">
-                        <span class="fbody-icon"
-                          ><i class="far fa-envelope"></i
-                        ></span>
-                        <!-- <span  v-if=" facility && facility.facility.email">
-                          {{ facility.facility.email  }}
-                        </span> -->
-                         <span class="d-inline">
-                          <el-input
-                            v-model="project.email"
-                            placeholder="Enter Point of Contact email"
-                            name="email"
-                            class="w-75"
-                          />
-                        </span>
+           
+             </div>
+
+             </div>
+
+      <div v-show="currentTab == 'tab2'" class="container mt-2 mx-0">
+        <div class="row row-1 mt-3">    
+        <div
+          v-show="isSheetsView" 
+          v-if="project"
+          class="col-5"
+          data-cy="date_set_filter"
+        > 
+        <div class="row pt-0 pb-2" :class="{'addHeight': !project.address}">
+          <div class="col pt-0 text-right">
+          <button 
+            :disabled="!project.pointOfContact"
+            :class="{'d-none': edit}"
+            class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
+            @click.prevent="updateContactInfo">Save</button>
+            <button 
+            :class="{'d-none': !edit}"
+              class="btn btn-info text-light mt-1 btn-sm apply-btn"                  
+            @click.prevent="editBtn">Update
+            </button>
+          </div>
+        </div>     
+        <div class="row">
+        <div class="col-1 pb-0 font-sm">
+          <p>
+              <span class="fbody-icon mr-2"
+              ><i class="fas fa-user"></i
+            ></span>
+          </p>
+        </div>
+         <div class="col-11 pb-0 font-sm">
+          <p>
+               <el-input
+                v-model="project.pointOfContact"
+                placeholder="Enter Point of Contact name"
+                name="Poc"
+                :class="{'nonEditMode' : edit }"
+              />
+          </p>
+        </div>
+
+        </div>
+       <div class="row" v-if="project && project.address">
+        <div class="col-1 pb-0 font-sm">
+          <p>
+            <span class="fbody-icon"
+              ><i class="fas fa-map-marker mr-3"></i
+            ></span>
+         
+          </p>
+        </div>
+         <div class="col-11 pb-0 font-sm">
+          <p>
+          <span>{{ project.address || "N/A" }}</span>
+          </p>
+        </div>
+       </div>
 
 
-                      </p>
+       <div class="row">
+        <div class="col-1 pb-0 font-sm">
+          <p>
+               <span class="fbody-icon mr-1"
+              ><i class="fas fa-phone"></i
+            ></span>
+          </p>
+        </div>
+         <div class="col-11 pb-0 font-sm">
+          <p>
+              <el-input
+                v-model="project.phoneNumber"
+                placeholder="Enter Point of Contact phone number"
+                name="phoneNo"
+               :class="{'nonEditMode' : edit }"
+              />
+          </p>
+        </div>
+
+        </div>
+       <div class="row">
+        <div class="col-1 pb-0 font-sm">
+          <p>
+             <span class="fbody-icon"
+              ><i class="far fa-envelope"></i
+            ></span>
+          </p>
+        </div>
+         <div class="col-11 pb-0 font-sm">
+          <p>
+            <el-input
+                v-model="project.email"
+                placeholder="Enter Point of Contact email"
+                name="email"
+                :class="{'nonEditMode' : edit }"
+              />
+          </p>
+        </div>
+
+        </div>
+
+       
+        </div>
+        </div>     
+      </div>
+
+    
+             
+              <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
+              <div class="row row-1 mt-3">    
+              <div class="col-5">
+                   <div class="row">
+                    <div class="col ml-4">
+                     <h5 class="d-inline" style="font-weight: 600"> 
+                        <i class="far fa-file-contract mr-2 mh-orange-text"></i> 
+                        Coming Soon
+                      </h5>      
+                   <!-- <el-carousel height="150px">
+                    <el-carousel-item v-for="item in options" :key="item">
+                       <i class="far fa-file-contract mh-orange-text" style="font-size:3rem"></i> 
+                      <h3>{{ item }}</h3>
+                    </el-carousel-item>
+                  </el-carousel> -->
                     </div>
                   </div>                
-                    <button 
-                      :disabled="!project.pointOfContact"
-                      :class="{'d-none': edit}"
-                     class="btn btn-sm bg-primary text-light px-2 py-0 updateBtn"
-                     @click.prevent="updateContactInfo">Save</button>
-                     <button 
-                      :class="{'d-none': !edit}"
-                     class="btn btn-sm bg-dark text-light px-2 py-0 updateBtn"
-                     @click.prevent="editBtn">Update</button>
-                    <!-- <button class="btn btn-sm mh-blue text-light px-2 py-0 updateBtn" @click.prevent="updateContactInfo">Edit</button> -->
-                
-                </el-card>
-              </div>
+                </div>  
+         
              </div>
+              </div>
                      
           </div>
           <div v-else class="text-danger mx-2 my-4">
@@ -196,30 +330,47 @@ import axios from "axios";
 import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
+import FormTabs from "../../shared/FormTabs.vue";
 import { API_BASE_PATH } from "./../../../mixins/utils";
 
 export default {
   name: "SheetProject",
   components: {
     Loader,
+    FormTabs,
   },
   props: ["currentFacility", "facility"],
   data() {
     return {
       dueDate: "",
       statusId: 0,
+      currentTab: "tab1",
+      options: ["Contract 1", "Contract 2", "Contract 3" ],
+        tabs: [
+        {
+          label: "Info",
+          key: "tab1",
+          closable: false,
+        },
+        {
+          label: "Contact",
+          key: "tab2",
+          closable: false,
+        },
+        {
+          label: "Contracts",
+          key: "tab3",
+          closable: false,
+        },
+      ],
       edit: true,
       today:  new Date().toISOString().slice(0, 10),
       loading: true,
       DV_updated: false,
       notesQuery: "",
       _selected: null,
-      _categories: null,
-
+      _categories: null
     };
-  },
-  beforeMount(){
-     
   },
   mounted() {
     this.dueDate = this.facility.dueDate;
@@ -231,6 +382,14 @@ export default {
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash", "setContactInfoForm"]),
     editBtn(){
       this.edit = false
+    },
+    onChangeTab(tab) {
+      this.currentTab = tab ? tab.key : "tab1";
+      if (tab.key == "tab2") {
+        this.fetchContractGroupTypes();
+        this.fetchCurrentPop();
+        this.fetchClassificationTypes();
+     }
     },
     updateContactInfo() {
       let formData = new FormData();
@@ -435,6 +594,9 @@ export default {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
+.addHeight{
+  margin-top: 30px;
+}
 .apply-btn,
 .red,
 .orange,
@@ -519,6 +681,11 @@ export default {
 .red {
   background-color: #d9534f;
 }
+.disabledBtn{
+  background-color: #ededed;
+  color: darkgray !important;
+  border: solid lightgray .05px;
+}
 .red,
 .orange,
 .green,
@@ -595,6 +762,13 @@ export default {
   border: .5px solid #383838;
   overflow-y: auto;
 }
+.nonEditMode {
+  /deep/.el-input__inner {
+  border: none;
+  background-color: #fafafa;  
+  pointer-events:none;
+  }
+} 
 .filterLabel {
   position: fixed;
 }

@@ -348,26 +348,6 @@ export default new Vuex.Store({
         Vue.set(state.contracts, contract_i, contract);
       }
     },
-    updateIssuesHash: (state, { issue, action }) => {
-      let facility_i = state.facilities.findIndex(
-        (f) => f.id == issue.facilityId
-      );
-      if (facility_i > -1) {
-        let facility = Object.assign({}, state.facilities[facility_i]);
-        let issue_i = facility.issues.findIndex((t) => t.id == issue.id);
-        if (action === "delete") {
-          for (let t of _.flatten(_.map(state.facilities, "issues"))) {
-            _.remove(t.subIssueIds, (id) => id == t.id);
-          }
-          Vue.delete(facility.issues, issue_i);
-        } else if (issue_i > -1) {
-          Vue.set(facility.issues, issue_i, issue);
-        } else if (issue_i == -1) {
-          facility.issues.push(issue);
-        }
-        Vue.set(state.facilities, facility_i, facility);
-      }
-    },
     updateContractIssues: (state, { issue, action }) => {
       let contract_i = state.contracts.findIndex(
         (f) => f.id == issue.contractId
@@ -388,6 +368,27 @@ export default new Vuex.Store({
         Vue.set(state.contracts, contract_i, contract);
       }
     },
+    updateIssuesHash: (state, { issue, action }) => {
+      let facility_i = state.facilities.findIndex(
+        (f) => f.id == issue.facilityId
+      );
+      if (facility_i > -1) {
+        let facility = Object.assign({}, state.facilities[facility_i]);
+        let issue_i = facility.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.facilities, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
+          }
+          Vue.delete(facility.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(facility.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          facility.issues.push(issue);
+        }
+        Vue.set(state.facilities, facility_i, facility);
+      }
+    },
+
     updateRisksHash: (state, { risk, action }) => {
       let facility_i = state.facilities.findIndex(
         (f) => f.id == risk.facilityId

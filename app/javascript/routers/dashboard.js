@@ -14,7 +14,8 @@ import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
-import MapOverview from "./../components/views/map/MapOverview";
+import MapAnalytics from "./../components/views/map/MapAnalytics";
+import MapProject from "./../components/views/map/MapProject";
 import MapTasks from "./../components/views/map/MapTasks";
 import MapTaskForm from "./../components/views/map/MapTaskForm";
 import MapIssues from "./../components/views/map/MapIssues";
@@ -98,9 +99,14 @@ export default new VueRouter({
           component: ProjectRollup,
         },
         {
-          name: "MapOverview",
-          path: "projects/:projectId/overview",
-          component: MapOverview,
+          name: "MapProject",
+          path: "projects/:projectId/",
+          component: MapProject,
+        },
+        {
+          name: "MapAnalytics",
+          path: "projects/:projectId/analytics",
+          component: MapAnalytics,
         },
         {
           name: "MapTasks",
@@ -274,11 +280,12 @@ export default new VueRouter({
         // },
         {
           name: "SheetContract",
-          path: "contracts/:contractId/contract",
+          path: "contracts/:contractId/",
           component: SheetContract,
           beforeEnter: (to, from, next) => {
             var programId = to.params.programId;
             var contractId = to.params.contractId;
+            var tab = 'contract'
             var fPrivilege = _.filter(
               Vue.prototype.$projectPrivileges,
               (f) => f.program_id == programId && f.contract_id == contractId
@@ -305,7 +312,7 @@ export default new VueRouter({
             } else if (!fPrivilege["overview"].hide) {
               next({
                 name: "ContractAnalytics",
-                params: { programId: programId, contractId: contractId },
+                params: { programId: programId, contractId: contractId, tab: tab },
               });
             } else if (!fPrivilege["tasks"].hide) {
               next({
@@ -321,6 +328,64 @@ export default new VueRouter({
               next({
                 name: "ContractRisks",
                 params: { programId: programId, contractId: contractId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "ContractNotes",
+                params: { programId: programId, contractId: contractId },
+              });
+            }
+          },
+        },
+        {
+          name: "ContractAnalytics",
+          path: "contracts/:contractId/analytics",
+          component: ContractAnalytics,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var contractId = to.params.contractId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.contract_id == contractId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["contract"].hide &&
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["overview"].hide) {
+              next();
+            } else if (!fPrivilege["contract"].hide) {
+              next({
+                name: "SheetContract",
+                params: { programId: programId,contractId: contractId  },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "ContractTasks",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "ContractIssues",
+                params: { programId: programId, contractId: contractId  },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "ContractRisks",
+                params: { programId: programId, contractId: contractId  },
               });
             } else if (!fPrivilege["notes"].hide) {
               next({
@@ -808,7 +873,7 @@ export default new VueRouter({
         // },
         {
           name: "SheetProject",
-          path: "projects/:projectId/project",
+          path: "projects/:projectId/",
           component: SheetProject,
           beforeEnter: (to, from, next) => {
             var programId = to.params.programId;

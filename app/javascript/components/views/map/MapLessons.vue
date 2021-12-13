@@ -384,9 +384,11 @@ export default {
       return {
       unfiltered: {
             lessons:  this.projectLessons
-        .filter((lesson) =>
-          lesson.title.toLowerCase().match(this.search.toLowerCase())
-        )
+        .filter(lesson => {
+          if (this.search !== "") {
+            return lesson.title.toLowerCase().match(this.search.toLowerCase());
+          } else return true;
+        })
        .filter(lesson => {
         if(milestoneIds.length > 0) {
           return milestoneIds.includes(lesson.task_type_id)
@@ -400,6 +402,10 @@ export default {
           return !lesson.draft
         } else return true
   
+      }).filter(lesson => {
+          if (this.search !== "") {
+            return lesson.title.toLowerCase().match(this.search.toLowerCase());
+          } else return true;
       }).filter(lesson => {
          if (this.getHideComplete) {
           return lesson.draft
