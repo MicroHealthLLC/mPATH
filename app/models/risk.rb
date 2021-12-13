@@ -479,7 +479,7 @@ class Risk < ApplicationRecord
 
     if params[:contract_id]
       risk.contract_id = params[:contract_id]
-    elsif !task.facility_project_id.present?
+    elsif !risk.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
