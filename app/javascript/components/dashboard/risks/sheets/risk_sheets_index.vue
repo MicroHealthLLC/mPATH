@@ -498,6 +498,9 @@
             <span v-if="risk.onHold == true">On Hold
              <!-- <span v-if="risk.draft">, </span>            -->
             </span> 
+            <span v-if="risk.planned == true">Planned</span>
+            <span v-if="risk.inProgress == true">In Progress</span>
+            <span v-if="risk.reportable == true">Briefings</span>
             <span v-if="risk.draft == true">Draft</span>   
             <span v-if="
                   risk.watched == false &&
@@ -506,6 +509,9 @@
                   risk.isOverdue == false &&
                   risk.onHold == false &&  
                   risk.draft == false && 
+                  risk.reportable == false &&
+                  risk.inProgress == false &&
+                  risk.planned == false &&
                   risk.progress < 100 "             
                   >                
             </span>  

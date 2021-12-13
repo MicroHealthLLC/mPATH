@@ -131,66 +131,50 @@
       ref="menu"
     >
     </LessonContextMenu>
-     <table style="display:none" class="table table-sm table-bordered" ref="table" id="lessonsPdf">
+    <table
+        v-if="filteredLessons.filtered.lessons.length > 0"
+        class="table table-sm table-bordered table-striped"
+        ref="table" id="lessonsMapList1"
+        style="display:none"
+      >
       <thead>
-        <tr>
+        <tr style="background-color:#ededed">
           <th>Lesson</th>
-          <th>Date</th>
+          <th>Date Added</th>
           <th>Added By</th>
           <th>Description</th>
-          <th>Flags</th>  
+          <th style="width:50%">Flags</th>
           <th>Last Update</th>
-         
         </tr>
       </thead>
       <tbody>
-         <tr
-            v-for="lesson in filteredLessons.filtered.lessons"
-            :key="lesson.id"
-            @click="openLesson(lesson.id)"
-            @mouseup.right="openContextMenu($event, lesson)"
-            @contextmenu.prevent=""
-          >
-            <td>{{ lesson.title }}</td>
-            <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
-            <td class="text-center">{{ lesson.created_by.full_name }}</td>
-            <td>{{ lesson.description }}</td>
-            <td class="text-center">
-              <span v-if="lesson.important == true" v-tooltip="`Important`">
-                <i class="fas fa-star text-warning mr-1"></i
-              ></span>
-              <span v-if="lesson.reportable" v-tooltip="`Briefings`"
-                ><i class="fas fa-presentation mr-1"></i></span>
-              <span v-if="lesson.draft == true" v-tooltip="`Draft`"
-                ><i class="fas fa-pencil-alt text-warning mr-1"></i></span>
-              <span
-                v-if="
+        <tr v-for="lesson in filteredLessons.filtered.lessons" :key="lesson.id">
+          <td>{{ lesson.title }}</td>
+          <td>{{ formatDate(new Date(lesson.date)) }}</td>
+          <td>{{ lesson.created_by.full_name }}</td>
+          <td>{{ lesson.description }}</td>
+          <td class="text-center" style="text-align:center">
+            <span v-if="lesson.important == true">Important</span>
+            <span v-if="lesson.reportable == true">Briefings</span>
+            <span v-if="lesson.draft == true">Draft</span>
+            <span v-if="!lesson.draft">Complete</span>
+            <span v-if="
                   lesson.important == false &&
-                    lesson.reportable == false &&
-                    lesson.draft == false
-                "
-              >
-                No flags at this time
-              </span>
-            </td>
-            <td>
-              <span v-if="lesson.last_update.body"
-                ><div
-                  class="date-chip"
-                  v-tooltip="'By: ' + lesson.last_update.user"
-                >
-                  {{
-                    moment(lesson.last_update.created_at).format(
-                      "DD MMM YYYY, h:mm a"
-                    )
-                  }}
-                </div>
-                {{ lesson.last_update.body }}</span
-              >
-              <span v-else>No Updates</span>
-            </td>
+                  lesson.draft == false &&
+                  lesson.reportable == false"
+                  >
+            </span>
+          </td>
+          <td v-if="lesson.notes.length > 0">
+            <span v-tooltip="('By: ' + lesson.last_update.user.fullName)">
+            {{ moment(lesson.last_update.createdAt).format('DD MMM YYYY, h:mm a')}} <br>
+            </span>
+            <span>
+              {{lesson.last_update.body}}
+            </span>
+          </td>
+          <td v-else >No Updates</td>
         </tr>
-        
       </tbody>
     </table>
   </div>
@@ -272,7 +256,7 @@ export default {
     exportToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
-      doc.autoTable({ html: "#lessonsPdf" });
+      doc.autoTable({ html: "#lessonsMapList1" });
       doc.save("Lessons Learned.pdf");
     },
     exportToExcel(table, name) {
