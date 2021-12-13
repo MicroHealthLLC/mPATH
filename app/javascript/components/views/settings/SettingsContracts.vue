@@ -200,6 +200,7 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
+import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsContracts",
   components: {
@@ -252,6 +253,7 @@ export default {
     
     },
     saveNewContract() {
+      this.onSubmit()
         let contractData = {
           contract: {
             nickname: this.contractNameText,
@@ -260,13 +262,23 @@ export default {
             project_id: this.$route.params.programId,
             contract_type_id: this.C_typeFilter,
           }
-        }
-         this.createContract({
+        }       
+        this.createContract({
             ...contractData,
           })
           this.hideSaveBtn = true;
-          // console.log(contractData)
+          console.log(contractData)
     },
+     async onSubmit ()  {
+         const formData = {
+            contractName: this.contractNameText,
+            programName: this.currentProject.name, 
+            mpathInstance: this.$mpath_instance
+
+          }
+        await createUser({...formData})
+        return { formData }
+    },   
     editContract(index, rows) {
     //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
     //  if (rows && rows !== undefined) {
