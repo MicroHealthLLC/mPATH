@@ -55,6 +55,8 @@ class Api::V1::LessonsController < AuthenticatedController
 
   def index
 
+    fph = current_user.facility_privileges_hash
+
     # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
     if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["lessons"].present?
       # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
