@@ -278,7 +278,7 @@ class Issue < ApplicationRecord
       program_name: project.name, 
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
-      project_group: facility_group.name,
+      project_group: facility_group.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),

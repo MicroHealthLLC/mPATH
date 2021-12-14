@@ -80,6 +80,10 @@ class Api::V1::LessonsController < AuthenticatedController
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
       end
+    elsif params[:contract_id]
+      lessons = Lesson.where(contract_id: params[:contract_id]).includes(Lesson.lesson_preload_array)
+      response_hash = {lessons: lessons.map(&:build_response_for_index)}
+      status_code = 200
     else
       response_hash = {errors: "Program or Project not found"}
       status_code = 404
