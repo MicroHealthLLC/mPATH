@@ -314,12 +314,24 @@ export default {
   components: {
     LessonContextMenu,
   },
+  props: ["contract"],
   data() {
     return {
       activeSortValue: "",
       sortAsc: false,
       currentSort:'text',
       currentSortDir:'asc',
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        }, 
       showContextMenu: false,
       clickedLesson: {},
       search: "",
@@ -382,10 +394,10 @@ export default {
     },
     openLesson(id) {
       this.$router.push({
-        name: "SheetLessonForm",
+        name: "ContractLessonForm",
         params: {
           programId: this.$route.params.programId,
-          projectId: this.$route.params.projectId,
+          projectId: this.$route.params.contractId,
           lessonId: id,
         },
       });
@@ -407,14 +419,25 @@ export default {
       e.preventDefault();
       this.$refs.menu.open(e);
     },
-   _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.lessons.includes(s);      
-    },
+  //  _isallowed(salut) {
+  //       var programId = this.$route.params.programId;
+  //       var projectId = this.$route.params.projectId
+  //       let fPrivilege = this.$projectPrivileges[programId][projectId]
+  //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+  //       let s = permissionHash[salut]
+  //       return  fPrivilege.lessons.includes(s);      
+  //   },
+    // Temporary _isallowed method until contract projectPrivileges is fixed
+     _isallowed() {
+      //  if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        // } else {
+        // let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return fPrivilege.lessons.includes(s); 
+        // }         
+      },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    
     },

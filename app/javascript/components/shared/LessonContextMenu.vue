@@ -36,6 +36,17 @@ export default {
       left: 0, // left position
       top: 0, // top position
       show: false, // affect display of context menu
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        }, 
     };
   },
   computed: {
@@ -99,13 +110,24 @@ export default {
         });
     },
      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+       if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.lessons.includes(s);      
-    },
+        return fPrivilege.lessons.includes(s); 
+        }         
+      },
+   // Temporary _isallowed method until contract projectPrivileges is fixed
+    //  _isallowed(salut) {
+    //     var programId = this.$route.params.programId;
+    //     var projectId = this.$route.params.projectId
+    //     let fPrivilege = this.$projectPrivileges[programId][projectId]
+    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //     let s = permissionHash[salut]
+    //     return  fPrivilege.lessons.includes(s);      
+    // },
   },
 };
 </script>
