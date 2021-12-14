@@ -18,9 +18,15 @@
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fas fa-suitcase"></i
           ></span>
-          <router-link v-if="contentLoaded" :to="projectNameLink">{{
-           lesson.project_name
+          <router-link v-if="contentLoaded && !contract" :to="projectNameLink">{{
+          facility.facilityName
           }}</router-link>
+           <router-link :to="backToContract">
+              <span v-if="contract">{{
+                  contract.nickname || contract.name
+                  }}
+              </span>
+            </router-link>     
           <el-icon
             class="el-icon-arrow-right"
             style="font-size: 12px"
@@ -967,11 +973,12 @@ export default {
         }         
       },
     close() {
-        if ((this.$route.path.includes("sheet") || this.$route.path.includes("map")) && this.facility) {
+        if (this.$route.params.projectId) {
+          // console.log("true")
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
           );
-        } if (this.$route.path.includes("sheet") || this.$route.path.includes("map") && this.contract) {
+        } else if (this.$route.params.contractId) {
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
           );
@@ -1238,8 +1245,10 @@ export default {
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+      if (this.$route.params.projectId) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
+      } else if  (this.$route.params.contractId) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
@@ -1253,6 +1262,9 @@ export default {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },
+   backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+     },
     isMapView() {
       return this.$route.name === "MapLessonForm";
     },

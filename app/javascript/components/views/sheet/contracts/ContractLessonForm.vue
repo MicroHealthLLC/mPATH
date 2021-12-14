@@ -8,7 +8,7 @@
 import LessonForm from "../../../dashboard/lessons/LessonForm";
 
 export default {
-  name: "SheetLessonForm",
+  name: "ContractLessonForm",
   props: ["contract"],
   components: {
     LessonForm,

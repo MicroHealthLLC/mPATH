@@ -349,7 +349,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchProjectLessons"]),
+    ...mapActions(["fetchContractLessons"]),
     ...mapMutations([
       "setLessonsPerPageFilter",
       'setShowCount',
@@ -365,7 +365,7 @@ export default {
       ]),
     addLesson() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
+        `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/lessons/new`
       );
     },
     sort:function(s) {
@@ -461,7 +461,7 @@ export default {
     ...mapGetters([
       'contentLoaded',
       'lessonsLoaded',
-      'projectLessons',
+      'contractLessons',
       'currentLessonPage',
       'getLessonsPerPageFilterOptions',
       'getLessonsPerPageFilter',
@@ -505,7 +505,7 @@ export default {
       let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
       return {
       unfiltered: {
-       lessons:  this.projectLessons
+       lessons:  this.contractLessons
         .filter((lesson) =>
           lesson.title.toLowerCase().match(this.search.toLowerCase())
         )
@@ -516,7 +516,7 @@ export default {
         })
       },
         filtered : {
-          lessons: this.projectLessons.filter(lesson => {
+          lessons: this.contractLessons.filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.getHideDraft) {
           return !lesson.draft
@@ -620,7 +620,7 @@ export default {
   mounted() {
     // GET request action to retrieve all lessons for project
     //  console.log(this.filteredLessons.filtered.lessons)
-    this.fetchProjectLessons(this.$route.params);
+    this.fetchContractLessons(this.$route.params);
   },
   // watch: {
   //   lessonsLoaded: {
