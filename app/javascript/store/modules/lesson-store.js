@@ -87,12 +87,12 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
-    fetchContractLessons({ commit }, { programId, contractId }) {
+    fetchContractLessons({ commit }, { contractId }) {
       commit("TOGGLE_LESSONS_LOADED", false);
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/programs/${programId}/contracts/${contractId}/lessons.json`,
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -110,31 +110,20 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
-    fetchLesson({ commit }, { id, programId, projectId, contractId }) {
-      let resourceId = projectId;
-      let resource = 'projects';
-      if(contractId){
-        id = contractId
-        resource = 'contracts'
-      }    
+    fetchLesson({ commit }, { id, programId, projectId}) {
       commit("TOGGLE_LESSONS_LOADED", false);
       // Retrieve lesson by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/programs/${programId}/${resource}/${resourceId}/lessons/${id}.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          if(projectId){
-            commit("SET_LESSON", res.data.lesson);
-          } else {
-            commit("SET_CONTRACT_LESSON", res.data.lesson);            
-          }
-           
-        })
+          commit("SET_LESSON", res.data.lesson);
+           })
         .catch((err) => {
           console.log(err);
         })
@@ -142,13 +131,28 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
-    addLesson({ commit }, { lesson, programId, projectId, contractId }) {
-          let id = projectId;
-          let resource = 'projects';
-          if(contractId){
-            id = contractId
-            resource = 'contracts'
-          }    
+    fetchContractLesson({ commit }, { id, contractId}) {
+      commit("TOGGLE_LESSONS_LOADED", false);
+      // Retrieve lesson by id
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${id}.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+           commit("SET_CONTRACT_LESSON", res.data.lesson);
+           })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED", true);
+        });
+    },
+    addLesson({ commit }, { lesson, programId, projectId }) {
       // Displays loader on front end
       commit("TOGGLE_LESSONS_LOADED", false);
       // Utilize utility function to prep Lesson form data
@@ -156,23 +160,16 @@ const lessonModule = {
 
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/programs/${programId}/${resource}/${id}/lessons.json`,
+        url: `${API_BASE_PATH}/programs/${programId}/projects/${projectId}/lessons.json`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
-        .then((res) => {
-         if(projectId){
+        .then((res) => {       
           commit("SET_LESSON", res.data.lesson);
           commit("SET_LESSON_STATUS", res.status)
-
-         } else {
-          commit("SET_CONTRACT_LESSON", res.data.lesson);
-          commit("SET_CONTRACT_LESSON_STATUS", res.status);
-         }
-         
         })
         .catch((err) => {
           console.log(err);
@@ -181,6 +178,33 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
+    addContractLesson({ commit }, { lesson, contractId }) {
+ // Displays loader on front end
+    commit("TOGGLE_LESSONS_LOADED", false);
+  // Utilize utility function to prep Lesson form data
+    let formData = lessonFormData(lesson);
+
+  axios({
+    method: "POST",
+    url: `${API_BASE_PATH}/contracts/${contractId}/lessons.json`,
+    data: formData,
+    headers: {
+      "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+        .attributes["content"].value,
+    },
+  })
+    .then((res) => {
+      commit("SET_CONTRACT_LESSON", res.data.lesson);
+      commit("SET_CONTRACT_LESSON_STATUS", res.status);
+     
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      commit("TOGGLE_LESSONS_LOADED", true);
+    });
+},
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
       // Displays loader on front end
       commit("TOGGLE_LESSONS_LOADED", false);
@@ -207,6 +231,32 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
+    updateContractLesson({ commit }, { lesson, contractId, lessonId }) {
+      // Displays loader on front end
+      commit("TOGGLE_LESSONS_LOADED", false);
+      // Utilize utility function to prep Lesson form data
+      let formData = lessonFormData(lesson);
+
+      axios({
+        method: "PATCH",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${lessonId}`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CONTRACT_LESSON", res.data.lesson);
+          commit("SET_CONTRACT_LESSON_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED", true);
+        });
+    },
     deleteLesson({ commit }, { id, programId, projectId }) {
       // Delete a single lesson
       axios({
@@ -219,6 +269,24 @@ const lessonModule = {
       })
         .then((res) => {
           commit("DELETE_LESSON", id);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {});
+    },
+    deleteContractLesson({ commit }, { id, contractId }) {
+      // Delete a single lesson
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${id}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("DELETE_CONTRACT_LESSON", id);
         })
         .catch((err) => {
           console.log(err);
@@ -238,6 +306,12 @@ const lessonModule = {
       let index = state.project_lessons.findIndex((lesson) => lesson.id == id);
       // Remove lesson from array
       state.project_lessons.splice(index, 1);
+    },
+    DELETE_CONTRACT_LESSON: (state, id) => {
+      // Find index of lesson to delete
+      let index = state.contract_lessons.findIndex((lesson) => lesson.id == id);
+      // Remove lesson from array
+      state.contract_lessons.splice(index, 1);
     },
     SET_LESSON_STAGES: (state, lessonStages) =>
       (state.lesson_stages = lessonStages),

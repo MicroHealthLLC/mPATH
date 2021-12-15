@@ -59,7 +59,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["deleteLesson"]),
+    ...mapActions(["deleteLesson", "deleteContractLesson"]),
     close() {
       this.show = false;
       this.left = 0;
@@ -78,7 +78,9 @@ export default {
       this.show = true;
     },
     openLesson(id) {
-      this.$router.push({
+
+      if(this.$route.params.projectId){
+        this.$router.push({
         name: this.routeName,
         params: {
           programId: this.$route.params.programId,
@@ -86,9 +88,21 @@ export default {
           lessonId: id,
         },
       });
+
+      } else if (this.$route.params.contractId){
+        this.$router.push({
+        name: this.routeName,
+        params: {
+          programId: this.$route.params.programId,
+          contractId: this.$route.params.contractId,
+          lessonId: id,
+        },
+      });
+      }
       this.close();
     },
     deleteSelectedLesson() {
+      if (this.$route.params.projectId){
       this.$confirm(
         `Are you sure you want to delete ${this.lesson.title}?`,
         "Confirm Delete",
@@ -108,6 +122,28 @@ export default {
             showClose: true,
           });
         });
+
+      } else if (this.$route.params.contractId){
+            this.$confirm(
+        `Are you sure you want to delete ${this.lesson.title}?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.deleteContractLesson({ id: this.lesson.id, ...this.$route.params });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Delete canceled",
+            showClose: true,
+          });
+        });        
+      }   
     },
      _isallowed(salut) {
        if (this.$route.params.contractId) {

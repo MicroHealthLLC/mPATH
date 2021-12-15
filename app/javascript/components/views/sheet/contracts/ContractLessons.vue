@@ -294,7 +294,7 @@
     <LessonContextMenu
       :lesson="clickedLesson"
       :display="showContextMenu"
-      routeName="SheetLessonForm"
+      routeName="ContractLessonForm"
       ref="menu"
     >
     </LessonContextMenu>
@@ -397,7 +397,7 @@ export default {
         name: "ContractLessonForm",
         params: {
           programId: this.$route.params.programId,
-          projectId: this.$route.params.contractId,
+          contractId: this.$route.params.contractId,
           lessonId: id,
         },
       });
