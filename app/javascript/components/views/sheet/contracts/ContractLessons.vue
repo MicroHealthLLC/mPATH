@@ -294,7 +294,7 @@
     <LessonContextMenu
       :lesson="clickedLesson"
       :display="showContextMenu"
-      routeName="SheetLessonForm"
+      routeName="ContractLessonForm"
       ref="menu"
     >
     </LessonContextMenu>
@@ -314,12 +314,24 @@ export default {
   components: {
     LessonContextMenu,
   },
+  props: ["contract"],
   data() {
     return {
       activeSortValue: "",
       sortAsc: false,
       currentSort:'text',
       currentSortDir:'asc',
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        }, 
       showContextMenu: false,
       clickedLesson: {},
       search: "",
@@ -337,7 +349,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchProjectLessons"]),
+    ...mapActions(["fetchContractLessons"]),
     ...mapMutations([
       "setLessonsPerPageFilter",
       'setShowCount',
@@ -353,7 +365,7 @@ export default {
       ]),
     addLesson() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
+        `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/lessons/new`
       );
     },
     sort:function(s) {
@@ -382,10 +394,10 @@ export default {
     },
     openLesson(id) {
       this.$router.push({
-        name: "SheetLessonForm",
+        name: "ContractLessonForm",
         params: {
           programId: this.$route.params.programId,
-          projectId: this.$route.params.projectId,
+          contractId: this.$route.params.contractId,
           lessonId: id,
         },
       });
@@ -407,14 +419,25 @@ export default {
       e.preventDefault();
       this.$refs.menu.open(e);
     },
-   _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.lessons.includes(s);      
-    },
+  //  _isallowed(salut) {
+  //       var programId = this.$route.params.programId;
+  //       var projectId = this.$route.params.projectId
+  //       let fPrivilege = this.$projectPrivileges[programId][projectId]
+  //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+  //       let s = permissionHash[salut]
+  //       return  fPrivilege.lessons.includes(s);      
+  //   },
+    // Temporary _isallowed method until contract projectPrivileges is fixed
+     _isallowed() {
+      //  if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        // } else {
+        // let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return fPrivilege.lessons.includes(s); 
+        // }         
+      },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    
     },
@@ -438,7 +461,7 @@ export default {
     ...mapGetters([
       'contentLoaded',
       'lessonsLoaded',
-      'projectLessons',
+      'contractLessons',
       'currentLessonPage',
       'getLessonsPerPageFilterOptions',
       'getLessonsPerPageFilter',
@@ -482,7 +505,7 @@ export default {
       let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
       return {
       unfiltered: {
-       lessons:  this.projectLessons
+       lessons:  this.contractLessons
         .filter((lesson) =>
           lesson.title.toLowerCase().match(this.search.toLowerCase())
         )
@@ -493,7 +516,7 @@ export default {
         })
       },
         filtered : {
-          lessons: this.projectLessons.filter(lesson => {
+          lessons: this.contractLessons.filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.getHideDraft) {
           return !lesson.draft
@@ -597,7 +620,7 @@ export default {
   mounted() {
     // GET request action to retrieve all lessons for project
     //  console.log(this.filteredLessons.filtered.lessons)
-    this.fetchProjectLessons(this.$route.params);
+    this.fetchContractLessons(this.$route.params);
   },
   // watch: {
   //   lessonsLoaded: {

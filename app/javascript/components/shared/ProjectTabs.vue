@@ -118,8 +118,7 @@ export default {
         {
           label: "Lessons",
           key: "lessons",
-          closable: false,
-          disabled: true, 
+          closable: false, 
           hidden: false,
         },
         {
