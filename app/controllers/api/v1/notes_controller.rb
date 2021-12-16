@@ -51,7 +51,7 @@ class Api::V1::NotesController < AuthenticatedController
         status_code = 200
       end
     elsif params[:contract_id]
-      notes = Note.where(notable_id: params[:contract_id], notable_type: "Contract", user_id: current_user.id)
+      notes = Note.where(noteable_id: params[:contract_id], noteable_type: "Contract")
       response_hash = {notes: notes.map(&:to_json)}
       status_code = 200
     else
