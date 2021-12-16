@@ -57,6 +57,7 @@
             v-for="note in filteredNotes.slice().reverse()" 
             :key="note.id" 
             :facility="DV_facility"
+            :contract="contract"
             :note="note"
             id="notesHover"
             :from="from"
@@ -75,7 +76,7 @@
 </template>
 
 <script>
-  import {mapMutations, mapGetters} from "vuex"
+  import {mapMutations, mapGetters, mapActions} from "vuex"
   import NotesForm from './notes_form'
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
@@ -93,8 +94,7 @@
         loading: true,
         newNote: false,
         myNotesCheckbox: false,
-        notesQuery: '',
-        DV_contract: Object.assign({}, this.contract),
+        notesQuery: '',    
         DV_facility: Object.assign({}, this.facility),
         defaultPrivileges:{
           admin: ['R', 'W', 'D'],
@@ -114,6 +114,9 @@
         'setTaskForManager',
         'setMyActionsFilter',
         'updateFacilityHash'
+      ]),
+       ...mapActions([
+        'fetchContractNotes',       
       ]),
       //TODO: change the method name of isAllowed
       // _isallowed(salut) {
@@ -171,13 +174,23 @@
         this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
       }
     },
+    mounted() {
+    // GET request action to retrieve all lessons for project
+    //  console.log(this.filteredLessons.filtered.lessons)
+    this.fetchContractNotes(this.$route.params);
+    },
     computed: {
       ...mapGetters([
-        'myActionsFilter'
+        'myActionsFilter',
+        'contractNotes'
       ]),
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
-        return _.filter(this.DV_facility.notes, n => {
+        let notes = this.DV_facility.notes;
+        if (this.$route.params.contractId){
+          notes = this.contractNotes
+        }    
+         return _.filter(notes, n => {
           let valid = this.C_myNotes ? this.$currentUser.id == n.userId : true
           if (resp) valid = valid && resp.test(n.body)
           return valid
@@ -202,12 +215,12 @@
           this.loading = true
         }, deep: true
       },
-      contract: {
-      handler: function(value) {
-        this.DV_contract = Object.assign({}, value)
-        this.loading = true
-      }, deep: true
-    }
+    //   contract: {
+    //   handler: function(value) {
+    //     this.DV_contract = Object.assign({}, value)
+    //     this.loading = true
+    //   }, deep: true
+    // }
     }
   }
 </script>

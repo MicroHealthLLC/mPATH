@@ -1,49 +1,14 @@
 <template>
-  <NotesForm
-    :contract="contract"
-    :note="note"
-    @close-note-input="redirectBack"
-  />
+  <ContractsNotesForm :contract="contract" />
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import NotesForm from "../../../dashboard/notes/notes_form.vue";
+import ContractsNotesForm from "../../../dashboard/notes/contract_notes_form.vue";
 
 export default {
   props: ["contract"],
-  components: { NotesForm },
-  data() {
-    return {
-      note: {},
-    };
-  },
-  methods: {
-    redirectBack() {
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes`
-      );
-    },
-  },
-  computed: {
-    ...mapGetters(["contentLoaded"]),
-  },
-  mounted() {
-    if (this.contentLoaded) {
-      this.note = this.facility.notes.find(
-        (note) => note.id == this.$route.params.noteId
-      );
-    }
-  },
-  watch: {
-    contentLoaded: {
-      handler() {
-        this.note = this.facility.notes.find(
-          (note) => note.id == this.$route.params.noteId
-        );
-      },
-    },
-  },
+  components: { ContractsNotesForm },
+ 
 };
 </script>
 

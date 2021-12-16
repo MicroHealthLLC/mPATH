@@ -2,8 +2,7 @@
   <div class="notes-form" :class="{'fixed-form-mapView':isMapView}">
       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h4 class="f-head mb-0" v-if="DV_facility">{{DV_facility.facilityName}}</h4>
-          <h4 class="f-head mb-0" v-else>{{DV_contract.name || DV_contract.nickname}}</h4>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
       </div>
        <div class="d-flex form-group sticky mb-2">
         <button
@@ -63,7 +62,7 @@
       </div>
       <div class="input-group mb-2">
         <label>Files Associated with this Note:</label>
-        <div v-for="file in filteredFiles" :key="file.id" class="d-flex mb-2 w-100">
+        <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
           <div class="input-group-prepend">
             <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
               <i class="fas fa-file-image"></i>
@@ -105,7 +104,7 @@
   import { API_BASE_PATH } from '../../../mixins/utils'
 
   export default {
-    props: ['facility', 'note', 'title', 'from', 'contract'],
+    props: ['facility', 'note', 'title', 'from'],
     components: {
       AttachmentInput
     },
@@ -113,20 +112,8 @@
       return {
         DV_note: this.INITIAL_NOTE_STATE(),
         DV_facility: Object.assign({}, this.facility),
-        DV_contract: Object.assign({}, this.contract),
         selectedFacilityProject: null,
         loading: true,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },    
         destroyedFiles: []
       }
     },
@@ -154,25 +141,14 @@
         }
       },
     //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.notes.includes(s); 
-    // },
-   //TEMPORARY method until projectPrivileges issue is resolved for Contracts
-      _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s); 
-        }         
-      },
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return  fPrivilege.notes.includes(s); 
+    },
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}     
         this.DV_note.facilityProjectId = this.facility.id       

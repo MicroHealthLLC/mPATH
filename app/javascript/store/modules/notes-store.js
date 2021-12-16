@@ -55,7 +55,7 @@ const notesStore = {
           commit("TOGGLE_NOTES_LOADED", true);
         });
     },
-    addContractLesson({ commit }, { note, contractId }) {
+    addContractNote({ commit }, { note, contractId }) {
  // Displays loader on front end
     commit("TOGGLE_NOTES_LOADED", false);
   // Utilize utility function to prep Lesson form data
@@ -151,7 +151,17 @@ const notesStore = {
 const noteFormData = (note) => {
   let formData = new FormData();
 // REPLACE WITH NOTES formData.append info
-
+// formData.append('contract_id', note.contractId)
+formData.append('note[body]', note.body)
+  // Prep Files
+  note.attach_files.forEach((file) => {
+    formData.append("note[note_files][]", file);
+  });
+ // Prep File Ids to be destroyed
+  note.destroy_file_ids.forEach((id) => {
+    formData.append("note[destroy_file_ids][]", id);
+  });
+// formData.append('note[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
  
   return formData;
 };
