@@ -4,6 +4,7 @@
       <notes-form
         title="Add Note"
         :facility="DV_facility"
+        :contract="DV_contract"
         @close-note-input="newNote=false"
         @note-created="noteCreated"
         class="notes_form_modal"
@@ -86,14 +87,26 @@
       NotesSheets,
       SweetModal
     },
-    props: ['facility', 'from'],
+    props: ['facility', 'from', "contract"],
     data() {
       return {
         loading: true,
         newNote: false,
         myNotesCheckbox: false,
         notesQuery: '',
-        DV_facility: Object.assign({}, this.facility)
+        DV_contract: Object.assign({}, this.contract),
+        DV_facility: Object.assign({}, this.facility),
+        defaultPrivileges:{
+          admin: ['R', 'W', 'D'],
+          contracts: ['R', 'W', 'D'],
+          facility_id: this.$route.params.contractId,
+          issues: ['R', 'W', 'D'],
+          lessons: ['R', 'W', 'D'],
+          notes: ['R', 'W', 'D'],
+          overview: ['R', 'W', 'D'],
+          risks: ['R', 'W', 'D'],
+          tasks: ['R', 'W', 'D'],
+        },    
       }
     },
     methods: {
@@ -103,17 +116,34 @@
         'updateFacilityHash'
       ]),
       //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // _isallowed(salut) {
+      //   var programId = this.$route.params.programId;
+      //   var projectId = this.$route.params.projectId
+      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return  fPrivilege.notes.includes(s); 
+      // },
+      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
+       _isallowed(salut) {
+        let programId = this.$route.params.programId;
+        if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.notes.includes(s); 
+        return fPrivilege.notes.includes(s); 
+        }         
       },
      addNewNote() {
         this.setTaskForManager({key: 'note', value: {}})
         // Route to new task form page
+        if(this.$route.params.contractId){
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/notes/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/new`
         );
@@ -171,7 +201,13 @@
           this.DV_facility = Object.assign({}, value)
           this.loading = true
         }, deep: true
-      }
+      },
+      contract: {
+      handler: function(value) {
+        this.DV_contract = Object.assign({}, value)
+        this.loading = true
+      }, deep: true
+    }
     }
   }
 </script>

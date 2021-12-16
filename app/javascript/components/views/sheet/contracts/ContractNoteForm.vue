@@ -1,6 +1,6 @@
 <template>
   <NotesForm
-    :facility="facility"
+    :contract="contract"
     :note="note"
     @close-note-input="redirectBack"
   />
@@ -11,7 +11,7 @@ import { mapGetters } from "vuex";
 import NotesForm from "../../../dashboard/notes/notes_form.vue";
 
 export default {
-  props: ["facility"],
+  props: ["contract"],
   components: { NotesForm },
   data() {
     return {
