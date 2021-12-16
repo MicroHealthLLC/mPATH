@@ -3,9 +3,8 @@ import {API_BASE_PATH} from './../../mixins/utils'
 
 const notesStore = {
   state: () => ({
-    lesson: {}, // Current lesson loaded in form
-    contract_note: {}, // Current lesson loaded in form
-    contract_notes: {}, // Current lesson loaded in form
+    contract_note: {}, 
+    contract_notes: [], 
     contract_note_loaded: true,
     contract_notes_loaded: true,
     contract_note_status: 0,
