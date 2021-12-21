@@ -209,6 +209,7 @@
         <el-select
           v-model="contractLesson.task_type_id"
           class="w-100"
+          clearable
           value-key="id"
           name="Process Area"
           placeholder="Select Process Area"
