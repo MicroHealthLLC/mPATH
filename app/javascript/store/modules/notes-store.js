@@ -71,7 +71,8 @@ const notesStore = {
         },
     })
         .then((res) => {
-        commit("SET_CONTRACT_NOTE", res.data.note);
+          // console.log(res.data)
+        commit("SET_CONTRACT_NOTE", res.data);
         commit("SET_CONTRACT_NOTE_STATUS", res.status);
         
         })
@@ -149,10 +150,11 @@ const notesStore = {
 };
 // Utility function to prepare form data from lesson object that is passed from LessonForm.vue
 const noteFormData = (note) => {
+  // console.log(note)
   let formData = new FormData();
 // REPLACE WITH NOTES formData.append info
 // formData.append('contract_id', note.contractId)
-formData.append('note[body]', note.body)
+  formData.append('note[body]', note.body)
   // Prep Files
   note.attach_files.forEach((file) => {
     formData.append("note[note_files][]", file);
@@ -161,6 +163,7 @@ formData.append('note[body]', note.body)
   note.destroy_file_ids.forEach((id) => {
     formData.append("note[destroy_file_ids][]", id);
   });
+
 // formData.append('note[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
  
   return formData;

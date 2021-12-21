@@ -16,8 +16,7 @@
       <div>
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
-            ><i class="fas fa-suitcase"></i
-          ></span>
+            ><i class="far fa-file-contract mh-orange-text"></i></span>
            <router-link :to="backToContract">
               <span v-if="contract">{{
                   contract.nickname || contract.name

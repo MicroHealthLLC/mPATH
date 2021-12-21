@@ -1,14 +1,12 @@
 <template>
-  <ContractsNotesForm :contract="contract" />
+  <ContractNotesForm  :contract="contract"   />
 </template>
 
 <script>
-import ContractsNotesForm from "../../../dashboard/notes/contract_notes_form.vue";
-
+import ContractNotesForm from "../../../dashboard/notes/contract_notes_form.vue";
 export default {
   props: ["contract"],
-  components: { ContractsNotesForm },
- 
+  components: { ContractNotesForm },
 };
 </script>
 

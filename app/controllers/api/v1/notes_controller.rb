@@ -63,6 +63,11 @@ class Api::V1::NotesController < AuthenticatedController
 
   end
 
+  def show
+    @note = Note.find(params[:id])    
+    render json: {notes: @note.to_json}, status: 200
+  end
+
   def create
     @note = @noteable.notes.new(note_params)
     @note.user = current_user

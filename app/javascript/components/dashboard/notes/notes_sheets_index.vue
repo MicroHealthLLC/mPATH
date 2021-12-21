@@ -4,7 +4,7 @@
       <notes-form
         title="Add Note"
         :facility="DV_facility"
-        :contract="DV_contract"
+        :contract="contract"
         @close-note-input="newNote=false"
         @note-created="noteCreated"
         class="notes_form_modal"
@@ -59,6 +59,7 @@
             :facility="DV_facility"
             :contract="contract"
             :note="note"
+            :contractNote="note"
             id="notesHover"
             :from="from"
             @note-updated="noteUpdated"
@@ -78,6 +79,7 @@
 <script>
   import {mapMutations, mapGetters, mapActions} from "vuex"
   import NotesForm from './notes_form'
+  import ContractNotesForm from './contract_notes_form'
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
 
@@ -85,6 +87,7 @@
     name: 'NotesSheetsIndex',
     components: {
       NotesForm,
+      ContractNotesForm, 
       NotesSheets,
       SweetModal
     },
@@ -177,7 +180,9 @@
     mounted() {
     // GET request action to retrieve all lessons for project
     //  console.log(this.filteredLessons.filtered.lessons)
-    this.fetchContractNotes(this.$route.params);
+    if (this.$route.params.contractId && !this.facility){
+        this.fetchContractNotes(this.$route.params);
+     }   
     },
     computed: {
       ...mapGetters([
@@ -191,6 +196,7 @@
           notes = this.contractNotes
         }    
          return _.filter(notes, n => {
+          //  console.log(notes)
           let valid = this.C_myNotes ? this.$currentUser.id == n.userId : true
           if (resp) valid = valid && resp.test(n.body)
           return valid
