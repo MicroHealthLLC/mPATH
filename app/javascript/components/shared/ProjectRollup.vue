@@ -1166,9 +1166,13 @@ export default {
       }
     },
     filteredLessons() {
+      let typeIds = _.map(this.taskTypeFilter, "id");
       return _.filter(this.programLessons, (resource) => {
         let valid = true;
-        return valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
       })
     },
     filteredTasks() {
@@ -1252,9 +1256,9 @@ export default {
     },
     lessonStats() {
       let lessons = new Array();
-      // console.log(this.programLessons)
-      let group = _.groupBy(this.programLessons, "category");
+      let group = _.groupBy(this.filteredLessons, "category");
       for (let type in group) {
+        if (!type || type == "null") continue;
         lessons.push({
           name: type,
           count: group[type].length,
@@ -1285,7 +1289,7 @@ export default {
         //TODO: For performance, send the whole tasks array instead of one by one
         valid =
           valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
+          this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.riskStageId);
         if (typeIds.length > 0)
