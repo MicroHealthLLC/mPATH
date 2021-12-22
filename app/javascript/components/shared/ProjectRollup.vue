@@ -1178,9 +1178,8 @@ export default {
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "tasks")
+      let tasks = this.currentProject ? _.flatten(
+            _.map(this.currentProject.facilities, "tasks")
           )
         : this.filteredAllTasks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
@@ -1210,9 +1209,8 @@ export default {
       let typeIds = _.map(this.issueTypeFilter, "id");
       let stageIds = _.map(this.issueStageFilter, "id");
       let severityIds = _.map(this.issueSeverityFilter, "id");
-      let issues = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "issues")
+      let issues = this.currentProject ? _.flatten(
+            _.map(this.currentProject.facilities, "issues")
           )
         : this.filteredAllIssues;
 
@@ -1269,9 +1267,8 @@ export default {
     filteredRisks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.riskStageFilter, "id");
-      let risks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
+      let risks =  this.currentProject ? _.flatten(
+            _.map(this.currentProject.facilities, "risks")
           )
         : this.filteredAllRisks;
       let taskIssueUsers = this.getTaskIssueUserFilter;

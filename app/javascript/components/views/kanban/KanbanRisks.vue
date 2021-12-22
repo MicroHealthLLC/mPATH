@@ -479,7 +479,7 @@ export default {
       );
      let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
      let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
-     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoingClosed == true );
+     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.closed == true );
      let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
 
       return {

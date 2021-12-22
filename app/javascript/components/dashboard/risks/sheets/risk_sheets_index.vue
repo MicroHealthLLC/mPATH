@@ -498,6 +498,9 @@
             <span v-if="risk.onHold == true">On Hold
              <!-- <span v-if="risk.draft">, </span>            -->
             </span> 
+            <span v-if="risk.planned == true">Planned</span>
+            <span v-if="risk.inProgress == true">In Progress</span>
+            <span v-if="risk.reportable == true">Briefings</span>
             <span v-if="risk.draft == true">Draft</span>   
             <span v-if="
                   risk.watched == false &&
@@ -506,6 +509,9 @@
                   risk.isOverdue == false &&
                   risk.onHold == false &&  
                   risk.draft == false && 
+                  risk.reportable == false &&
+                  risk.inProgress == false &&
+                  risk.planned == false &&
                   risk.progress < 100 "             
                   >                
             </span>  
@@ -544,13 +550,24 @@
     components: {
       RiskSheets
     },
-    props: ['facility', 'from'],
+    props: ['facility', 'from', "contract"],
     data() {
       return {
         risks: Object,
         now: new Date().toISOString(),
         risksQuery: '',
         comma: 'test',
+        defaultPrivileges:{
+          admin: ['R', 'W', 'D'],
+          contracts: ['R', 'W', 'D'],
+          facility_id: this.$route.params.contractId,
+          issues: ['R', 'W', 'D'],
+          lessons: ['R', 'W', 'D'],
+          notes: ['R', 'W', 'D'],
+          overview: ['R', 'W', 'D'],
+          risks: ['R', 'W', 'D'],
+          tasks: ['R', 'W', 'D'],
+        },
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
@@ -594,13 +611,24 @@
       ]),
 
       //TODO: change the method name of isAllowed
+      // _isallowed(salut) {
+      //   var programId = this.$route.params.programId;
+      //   var projectId = this.$route.params.projectId
+      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return  fPrivilege.risks.includes(s); 
+      // },
       _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let programId = this.$route.params.programId;
+        if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.risks.includes(s); 
+        return fPrivilege.risks.includes(s); 
+        }         
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -629,6 +657,11 @@
       addNewRisk() {
         this.setRiskForManager({key: 'risk', value: {}})
         // Route to new risk form page
+       if(this.contractRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/new`
         );
@@ -747,6 +780,14 @@
         this.setCurrentRiskPage(value);
        }
       },
+      contractRoute(){
+         return this.$route.params.contractId
+      },
+      object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+       } else return this.facility
+      },
       filteredRisks() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
@@ -759,7 +800,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
+        let risks = _.sortBy(_.filter(this.object.risks, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
           if(taskIssueUsers.length > 0){

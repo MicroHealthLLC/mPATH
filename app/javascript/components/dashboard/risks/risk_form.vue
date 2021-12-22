@@ -16,19 +16,25 @@
         <div class="mt-2 mx-4 d-flex align-items-center">
           <div>
             <h5 class="mb-0">
-               <span style="font-size: 16px; margin-right: 2.5px"
-              > <i class="fas fa-suitcase mb-1"></i>
-              </span>
-              <router-link :to="projectNameLink">
-               <span v-if="!isProgramView">{{
-                facility.facilityName
-                }}
+            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+            >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-            <span v-else>{{
-                risk.facilityName
-            }}
-            </span>            
-            </router-link>
+            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+            > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
+            </span>
+             <router-link :to="projectNameLink">
+               <span v-if="!isProgramView && !contract">
+                 {{ facility.facilityName }}
+               </span>
+               <span v-if="isProgramView && !contract">
+                    {{ risk.facilityName }}
+               </span>
+             </router-link>
+             <router-link :to="backToContract">
+              <span v-if="contract">               
+                {{ contract.nickname || contract.name }}
+              </span>
+             </router-link>          
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
@@ -2052,7 +2058,7 @@ import { API_BASE_PATH } from '../../../mixins/utils';
 
 export default {
   name: "RiskForm",
-  props: ["facility", "risk", "facilities", "fixedStage"],
+  props: ["facility", "risk", "facilities", "fixedStage", "contract"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -2072,6 +2078,18 @@ export default {
       consultedRiskUsers: [],
       informedRiskUsers: [],
       probability: [],
+      facilityProjectId: this.$route.params.programId,   
+      defaultPrivileges:{
+        admin: ['R', 'W', 'D'],
+        contracts: ['R', 'W', 'D'],
+        facility_id: this.$route.params.contractId,
+        issues: ['R', 'W', 'D'],
+        lessons: ['R', 'W', 'D'],
+        notes: ['R', 'W', 'D'],
+        overview: ['R', 'W', 'D'],
+        risks: ['R', 'W', 'D'],
+        tasks: ['R', 'W', 'D'],
+        }, 
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
       selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
       selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
@@ -2166,7 +2184,7 @@ export default {
       "setRiskImpactLevelOptions",
       'setRiskDispositionStatus',
       'setRiskDispositionDuration',
-
+      'updateContractRisks',
       "updateRisksHash",
     ]),
     ...mapActions([
@@ -2177,8 +2195,6 @@ export default {
     ]),
     INITIAL_RISK_STATE() {
       return {
-        text: "",
-        facilityProjectId: this.$route.params.programId,   
         text: "",
         riskDescription: "",
         explanation: "",
@@ -2223,14 +2239,25 @@ export default {
       //     console.log(e)
       // },
     //TODO: change the method name of isAllowed
+    // _isallowed(salut) {
+    //   var programId = this.$route.params.programId;
+    //   var projectId = this.$route.params.projectId
+    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let s = permissionHash[salut]
+    //   return  fPrivilege.risks.includes(s); 
+    // },
+    // Temporary _isallowed method until contract projectPrivileges is fixed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.risks.includes(s); 
+        }         
+      },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2343,39 +2370,41 @@ export default {
       this.DV_risk.riskFiles = _files;
     },
     deleteRisk() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this risk?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.riskDeleted(this.DV_risk);
-      this.cancelRiskSave();
+      this.$confirm(`Are you sure you want to delete this risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.riskDeleted(this.DV_risk);
+          this.cancelRiskSave();
+        });
     },
     deleteFile(file) {
       if (!file) return;
-      let confirm = window.confirm(
-        `Are you sure you want to delete attachment?`
-      );
-      if (!confirm) return;
-      if (file.uri || file.link) {
-        let index = this.DV_risk.riskFiles.findIndex(
-          (f) => f.guid === file.guid
-        );
-        if (file.id) {
-          Vue.set(this.DV_risk.riskFiles, index, { ...file, _destroy: true });
-          this.destroyedFiles.push(file);
-        }
-        this.DV_risk.riskFiles.splice(
-          this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      } else if (file.name) {
-        this.DV_risk.riskFiles.splice(
-          this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      }
+      this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          if (file.uri || file.link) {
+            let index = this.DV_risk.riskFiles.findIndex(
+              (f) => f.guid === file.guid
+            );
+            if (file.id) {
+              Vue.set(this.DV_risk.riskFiles, index, { ...file, _destroy: true });
+              this.destroyedFiles.push(file);
+            }
+            this.DV_risk.riskFiles.splice(
+              this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
+              1
+            );
+          } else if (file.name) {
+            this.DV_risk.riskFiles.splice(
+              this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
+              1
+            );
+          }
+        });
     },
     toggleWatched() {
       if(!this._isallowed('write')){
@@ -2445,7 +2474,7 @@ export default {
         this.toggleWatched();
       }
     },
-    toggleApproved() {
+    toggleApproved(e) {
       if(!this._isallowed("write"))
         return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
@@ -2687,13 +2716,24 @@ export default {
           }
         }
 
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
+       let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
+        if (this.contract) {
+            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks.json`
+         }
+     
         let method = "POST";
         let callback = "risk-created";
-        if (this.risk && this.risk.id) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
+       
+       if (this.risk && this.risk.id) {        
           method = "PUT";
           callback = "risk-updated";
+        }
+
+        if (this.risk && this.risk.id && this.facility) {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
+        }
+        if (this.risk && this.risk.id && this.contract) {
+          url = `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
         }
         // var beforeRisk = this.risk
         axios({
@@ -2709,7 +2749,12 @@ export default {
             var responseRisk = humps.camelizeKeys(response.data.risk);
             this.loadRisk(responseRisk);
             //this.$emit(callback, responseRisk);
-            this.updateRisksHash({ risk: responseRisk });
+            if (this.$route.params.contractId){
+               this.updateContractRisks({ risk: responseRisk });
+            } else {
+              this.updateRisksHash({ risk: responseRisk });
+            }  
+          
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,
@@ -2717,10 +2762,10 @@ export default {
                 showClose: true,
               });
             }
-            //Route to newly created task form page
+            //Route to newly created risk form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/risks/${response.data.risk.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -2760,15 +2805,17 @@ export default {
       this.editToggle = true;
     },
     destroyProgressList(check, progressList, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this Progress List item?`
-      );
-      if (!confirm) return;
-      let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
-        : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
-      this.validateThenSave();
+      this.$confirm(`Are you sure you want to delete Progress List item?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          let i = progressList.id
+            ? check.progressLists.findIndex((c) => c.id === progressList.id)
+            : index;
+          Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+          this.validateThenSave();
+        });
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
@@ -2782,14 +2829,16 @@ export default {
       return date < startDate;
     },
     destroyNote(note) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this update note?`
-      );
-      if (!confirm) return;
-      let i = note.id
-        ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
-        : this.DV_risk.notes.findIndex((n) => n.guid === note.guid);
-      Vue.set(this.DV_risk.notes, i, { ...note, _destroy: true });
+      this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = note.id
+          ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
+          : this.DV_risk.notes.findIndex((n) => n.guid === note.guid);
+        Vue.set(this.DV_risk.notes, i, { ...note, _destroy: true });
+      });
     },
     addChecks() {
       var postion = this.DV_risk.checklists.length;
@@ -2811,15 +2860,17 @@ export default {
       this.DV_risk.notes.unshift({ body: "", user_id: "", guid: this.guid() });
     },
     destroyCheck(check, index) {
-      let confirm = window.confirm(
-        `Are you sure, you want to delete this checklist item?`
-      );
-      if (!confirm) return;
-      let i = check.id
-        ? this.DV_risk.checklists.findIndex((c) => c.id === check.id)
-        : index;
-      Vue.set(this.DV_risk.checklists, i, { ...check, _destroy: true });
-      this.validateThenSave();
+      this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = check.id
+          ? this.DV_risk.checklists.findIndex((c) => c.id === check.id)
+          : index;
+        Vue.set(this.DV_risk.checklists, i, { ...check, _destroy: true });
+        this.validateThenSave();
+      });
     },
     calculateProgress(checks = null) {
       try {
@@ -3002,6 +3053,16 @@ export default {
         this.exists(this.DV_risk.startDate) &&
         this.exists(this.DV_risk.dueDate)
       );
+    },
+    object(){
+      if(this.$route.params.contractId){
+      return 'contracts'
+      } else return 'projects'
+    },
+    route(){
+     if(this.$route.params.contractId){
+        return this.$route.params.contractId
+      } else return this.$route.params.projectId
     },
     isProgramView() {
       return this.$route.name.includes("ProgramTaskForm") ||
@@ -3262,15 +3323,27 @@ export default {
       }
     },
   backToRisks() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+     if (this.contract && !this.facility) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/risks`
+      }
+      if (
+          this.$route.path.includes("map") || 
+          this.$route.path.includes("sheet") ||  
+          this.$route.path.includes("kanban") || 
+          this.$route.path.includes("calendar") && 
+          !this.contract
+          ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
-  projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
+    backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+    },
+    projectNameLink() {     
+      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
       } else {

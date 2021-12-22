@@ -76,6 +76,7 @@
       <task-form
         v-if="Object.entries(DV_edit_task).length"
         :facility="facility"
+        :contract="contract"
         :task="DV_edit_task"
         title="Edit Task"
         @task-updated="updateRelatedTaskIssue"
@@ -91,7 +92,6 @@
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import TaskForm from "./task_form";
-import IssueForm from "./../issues/issue_form";
 import ContextMenu from "../../shared/ContextMenu";
 import moment from "moment";
 Vue.prototype.moment = moment;
@@ -100,7 +100,6 @@ export default {
   name: "TaskSheets",
   components: {
     TaskForm,
-    IssueForm,
     ContextMenu,
   },
   props:     
@@ -119,7 +118,6 @@ export default {
       DV_task: {},       
       showALL:"none",  
       DV_edit_task: {},
-      DV_edit_issue: {},
       has_task: false,
       showContextMenu: false
     };
@@ -133,15 +131,6 @@ export default {
   methods: {
     ...mapMutations(["updateTasksHash", "setTaskForManager", "setToggleRACI"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
-    },
     openSubTask(subTask) {
       let task = this.currentTasks.find((t) => t.id == subTask.id);
       if (!task) return;
@@ -157,9 +146,10 @@ export default {
       this.$refs.taskFormModal && this.$refs.taskFormModal.open();
     },  
     editTask() {
-        this.DV_edit_task = this.DV_task;
-        
-        this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
+        this.DV_edit_task = this.DV_task;   
+        if (this.$route.params.contractId)  {
+           return this.$router.push(`/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/${this.DV_edit_task.id}`)
+        } else return this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
     },
     onCloseForm() {
       this.$refs.taskFormModal && this.$refs.taskFormModal.close();
@@ -169,11 +159,15 @@ export default {
     },
     toggleWatched() {
         if (this.DV_task.watched) {
-          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
-          if (!confirm) {return}
+          this.$confirm(`Are you sure you want to remove this task from on-watch?`, 'Confirm Remove', {
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
+            this.updateWatchedTasks(this.DV_task)
+          });
         }
-        this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
-        this.updateWatchedTasks(this.DV_task)
     },
     updateRelatedTaskIssue(task) {
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})  
@@ -189,9 +183,13 @@ export default {
       this.$refs.menu.open(e);
     },
     deleteTask() {
-      let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
-      if (!confirm) {return}
-      this.taskDeleted(this.DV_task)
+      this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.taskDeleted(this.DV_task)
+      });
     }
   },
   computed: {

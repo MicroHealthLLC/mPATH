@@ -16,11 +16,7 @@
       <div>
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
-            ><i class="fal fa-clipboard-list mh-green-text"></i>
-            </span>
-          <router-link v-if="contentLoaded && !contract" :to="projectNameLink">{{
-          facility.facilityName
-          }}</router-link>
+            ><i class="far fa-file-contract mh-orange-text"></i></span>
            <router-link :to="backToContract">
               <span v-if="contract">{{
                   contract.nickname || contract.name
@@ -41,7 +37,7 @@
             class="el-icon-arrow-right"
             style="font-size: 12px"
           ></el-icon>
-          <span>{{ lesson.title || "(Lesson Name)" }}</span>
+          <span>{{ contractLesson.title || "(Lesson Name)" }}</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -115,10 +111,10 @@
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
           >
-            <span  v-show="lesson.draft">
+            <span  v-show="contractLesson.draft">
               <i class="fas fa-pencil-alt text-warning"></i>
             </span>
-            <span v-show="!lesson.draft">
+            <span v-show="!contractLesson.draft">
               <i
                 class="fas fa-pencil-alt"
                 style="color:lightgray;cursor:pointer"
@@ -137,10 +133,10 @@
             @click.prevent.stop="toggleImportant"
             v-tooltip="`Important`"
           >
-            <span v-show="lesson.important">
+            <span v-show="contractLesson.important">
               <i class="fas fa-star text-warning"></i>
             </span>
-            <span v-show="!lesson.important">
+            <span v-show="!contractLesson.important">
               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
             </span>
             <small
@@ -155,10 +151,10 @@
             @click.prevent.stop="toggleReportable"
             v-tooltip="`Briefings`" 
           >
-            <span v-show="lesson.reportable">
+            <span v-show="contractLesson.reportable">
             <i class="fas fa-presentation text-primary"></i>
             </span>
-            <span v-show="!lesson.reportable">
+            <span v-show="!contractLesson.reportable">
               <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
             </span>
 
@@ -174,7 +170,7 @@
         <el-input
           name="Lesson Name"
           v-validate="'required'"
-          v-model="lesson.title"
+          v-model="contractLesson.title"
           type="text"
           placeholder="Lesson Name"
           data-cy="lesson_name"
@@ -193,7 +189,7 @@
           name="Description"
           type="textarea"
           v-validate="'required'"
-          v-model="lesson.description"
+          v-model="contractLesson.description"
           placeholder="Brief description..."
           rows="4"
           data-cy="lesson_description"
@@ -210,10 +206,10 @@
       <div class="col-6 pl-0">
         <label class="font-md w-100">Process Area</label>
         <el-select
-          v-model="lesson.task_type_id"
+          v-model="contractLesson.task_type_id"
           class="w-100"
-          value-key="id"
           clearable
+          value-key="id"
           name="Process Area"
           placeholder="Select Process Area"
           :disabled="!_isallowed('write')"
@@ -237,7 +233,7 @@
           <v2-date-picker
             name="Date"
             v-validate="'required'"
-            v-model="lesson.date"
+            v-model="contractLesson.date"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
@@ -254,7 +250,7 @@
         <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
-            v-show="lesson.lesson_stage_id"
+            v-show="contractLesson.lesson_stage_id"
             class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
             :disabled="!this._isallowed('write')"
@@ -266,11 +262,11 @@
         <el-steps
           :active="
             lessonStages.findIndex(
-              (stage) => stage.id == lesson.lesson_stage_id
+              (stage) => stage.id == contractLesson.lesson_stage_id
             )
           "
           finish-status="success"
-          v-model="lesson.lesson_stage_id"
+          v-model="contractLesson.lesson_stage_id"
           value-key="id"
           track-by="id"
           :class="{ 'over-six-steps': lessonStages.length >= 6 }"
@@ -658,12 +654,8 @@
             <div @click.prevent="downloadFile(file)">
               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div
-              :class="{ _disabled: loading || !_isallowed('write') }"
-              class="del-check clickable"
-              @click.prevent="removeFile(file.id, index)"
-            >
-              <i class="fas fa-times"></i>
+            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
+              <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
         </div>
@@ -689,11 +681,10 @@
               </div></a
             >
             <div
-              :class="{ _disabled: loading || !_isallowed('write') }"
-              class="del-check clickable"
-              @click.prevent="removeFileLink(link.id, index)"
+              v-if="_isallowed('delete')"
+              @click="removeFileLink(link.id, index)"
             >
-              <i class="fas fa-times"></i>
+              <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
           <div v-else class="d-flex justify-content-between">
@@ -702,12 +693,8 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div
-              :class="{ _disabled: loading || !_isallowed('write') }"
-              class="del-check mt-2 clickable"
-              @click.prevent="removeFileLink(link.id, index)"
-            >
-              <i class="fas fa-times"></i>
+            <div v-if="_isallowed('delete')" @click="removeFileLink(link.id, index)" class="clickable">
+              <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
         </div>
@@ -796,8 +783,8 @@ import FormTabs from "./../../shared/FormTabs";
 import AttachmentInput from "./../../shared/attachment_input.vue";
 
 export default {
-  name: "LessonForm",
-  props: ["facility", "contract"],
+  name: "ContractsLessonForm",
+  props: ["contract"],
   components: {
     FormTabs,
     RelatedLessonMenu,
@@ -887,15 +874,14 @@ export default {
       deleteBestPractices: [],
       updates: [],
       deleteUpdates: [],
-      loading: true,
       files: [],
       fileLinks: [],
       destroyFileIds: [],
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "fetchContractLesson", "updateLesson", "updateContractLesson", "addContractLesson"]),
-    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "SET_CONTRACT_LESSON", "SET_CONTRACT_LESSON_STATUS"]),
+    ...mapActions(["fetchContractLesson", "updateContractLesson", "addContractLesson"]),
+    ...mapMutations(["SET_CONTRACT_LESSON", "SET_CONTRACT_LESSON_STATUS"]),
     saveLesson() {
       this.$validator.validate().then((success) => {
         if (!success) {
@@ -908,14 +894,14 @@ export default {
         this.bestPractices = this.removeEmptySFBP(this.bestPractices)
         let lessonData = {
           lesson: {
-            title: this.lesson.title,
-            description: this.lesson.description,
-            date: this.lesson.date,
-            task_type_id: this.lesson.task_type_id,
-            lesson_stage_id: this.lesson.lesson_stage_id,
-            important: this.lesson.important,
-            reportable: this.lesson.reportable,
-            draft: this.lesson.draft,
+            title: this.contractLesson.title,
+            description: this.contractLesson.description,
+            date: this.contractLesson.date,
+            task_type_id: this.contractLesson.task_type_id,
+            lesson_stage_id: this.contractLesson.lesson_stage_id,
+            important: this.contractLesson.important,
+            reportable: this.contractLesson.reportable,
+            draft: this.contractLesson.draft,
             // Array values below
             sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
             sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
@@ -933,23 +919,8 @@ export default {
           },
         };
    // Check to add or update existing lesson by confirming an id
-        if (this.$route.params.projectId || this.facility) {
-           if (this.lesson.id && !this.contract) {
-          this.updateLesson({
-            ...lessonData,
-            ...this.$route.params,
-          });
-        } else {
-          lessonData.lesson.user_id = this.$currentUser.id;
-          this.addLesson({
-            ...lessonData,
-            ...this.$route.params,
-          });
-        }
-          }
-
-        if (this.$route.params.contractId || this.contract) {
-           if (this.lesson.id && !this.facility) {
+     
+           if (this.contractLesson.id) {
           this.updateContractLesson({
             ...lessonData,
             ...this.$route.params,
@@ -961,7 +932,7 @@ export default {
             ...this.$route.params,
           });
         }
-          }
+          
        
 
       });
@@ -977,7 +948,7 @@ export default {
     removeEmptySFBP(sFBP){
       var returnSFBP = [];
       for (let i in sFBP) {
-        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.lesson.draft && sFBP[i].recommendation)) continue;
+        if(!sFBP[i].finding && !sFBP[i]._destroy && !(this.contractLesson.draft && sFBP[i].recommendation)) continue;
         returnSFBP.push(sFBP[i]);        
       }
       return [...sFBP];
@@ -1001,18 +972,9 @@ export default {
         return fPrivilege.lessons.includes(s); 
         }         
       },
-    close() {
-        if (this.$route.params.projectId) {
-          // console.log("true")
-          this.$router.push(
-            `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-          );
-        } else if (this.$route.params.contractId) {
+    close() {  
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
-          );
-        } else this.$router.push(
-            `/programs/${this.$route.params.programId}/dataviewer`
           ); 
     },
     onChangeTab(tab) {
@@ -1210,32 +1172,32 @@ export default {
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      if (this.lesson.id && this._isallowed("write")) {
-        this.lesson.lesson_stage_id = stage.id;
+      if (this.contractLesson.id && this._isallowed("write")) {
+        this.contractLesson.lesson_stage_id = stage.id;
       } else if (this._isallowed("write")) {
         this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
       }
     },
     clearStage() {
-      this.lesson.lesson_stage_id = null;
+      this.contractLesson.lesson_stage_id = null;
     },
     toggleImportant() {
       if(!this._isallowed('write')){
         return
       }
-      this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
+      this.SET_CONTRACT_LESSON({ ...this.contractLesson, important: !this.contractLesson.important });
     },
     toggleDraft() {
       if(!this._isallowed('write')){
         return
       }
-      this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
+      this.SET_CONTRACT_LESSON({ ...this.contractLesson, draft: !this.contractLesson.draft });
     },
     toggleReportable() {
       if(!this._isallowed('write')){
         return
       }
-      this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
+      this.SET_CONTRACT_LESSON({ ...this.contractLesson, reportable: !this.contractLesson.reportable });
     },
     log(e)
     {
@@ -1248,10 +1210,9 @@ export default {
       "contentLoaded",
       "facilities",
       "facilityGroups",
-      "lesson",
+      "contractLesson",
       "lessonsLoaded",
       "lessonStages",
-      "lessonStatus",
       "contractLessonStatus",
       "taskTypes",
     ]),
@@ -1275,21 +1236,10 @@ export default {
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-      if (this.$route.params.projectId) {
-        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-      } else if  (this.$route.params.contractId) {
+    if  (this.$route.params.contractId) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
-      }
-    },
-  projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
-      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },
    backToContract(){
@@ -1305,57 +1255,50 @@ export default {
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
-    }
-     else if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && this.facility) {
-      this.fetchLesson({
-        id: this.$route.params.lessonId,
-        ...this.$route.params,
-      });
-    }
+    }  
   },
   beforeDestroy() {
     // Clear current lesson in store
-    this.SET_LESSON({});
       this.SET_CONTRACT_LESSON({});
   },
   watch: {
-    lesson: {
+    contractLesson: {
       handler(newValue, oldValue) {
         if (
           this.contentLoaded &&
           Object.keys(oldValue).length === 0 &&
           this.$route.params.lessonId != "new"
         ) {
-          this.relatedTasks = this.lesson.sub_tasks;
-          this.relatedIssues = this.lesson.sub_issues;
-          this.important = this.lesson.important;
-          this.draft = this.lesson.draft;
-          this.reportable = this.lesson.reportable;
-          this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.successes;
-          this.failures = this.lesson.failures;
-          this.bestPractices = this.lesson.best_practices;
-          this.updates = this.lesson.notes;
-          this.files = this.lesson.attach_files.filter((file) => !file.link);
-          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
+          this.relatedTasks = this.contractLesson.sub_tasks;
+          this.relatedIssues = this.contractLesson.sub_issues;
+          this.important = this.contractLesson.important;
+          this.draft = this.contractLesson.draft;
+          this.reportable = this.contractLesson.reportable;
+          this.relatedRisks = this.contractLesson.sub_risks;
+          this.successes = this.contractLesson.successes;
+          this.failures = this.contractLesson.failures;
+          this.bestPractices = this.contractLesson.best_practices;
+          this.updates = this.contractLesson.notes;
+          this.files = this.contractLesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.contractLesson.attach_files.filter((file) => file.link);
         }
       },
     },
     contentLoaded: {
       handler() {
-        if (this.lesson) {
-          this.relatedTasks = this.lesson.sub_tasks;
-          this.relatedIssues = this.lesson.sub_issues;
-          this.important = this.lesson.important;
-          this.draft = this.lesson.draft;
-          this.reportable = this.lesson.reportable;
-          this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.successes;
-          this.failures = this.lesson.failures;
-          this.bestPractices = this.lesson.best_practices;
-          this.updates = this.lesson.notes;
-          this.files = this.lesson.attach_files.filter((file) => !file.link);
-          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
+        if (this.contractLesson) {
+          this.relatedTasks = this.contractLesson.sub_tasks;
+          this.relatedIssues = this.contractLesson.sub_issues;
+          this.important = this.contractLesson.important;
+          this.draft = this.contractLesson.draft;
+          this.reportable = this.contractLesson.reportable;
+          this.relatedRisks = this.contractLesson.sub_risks;
+          this.successes = this.contractLesson.successes;
+          this.failures = this.contractLesson.failures;
+          this.bestPractices = this.contractLesson.best_practices;
+          this.updates = this.contractLesson.notes;
+          this.files = this.contractLesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.contractLesson.attach_files.filter((file) => file.link);
         }
        },
     },
@@ -1387,15 +1330,15 @@ export default {
         }
       });
     },
-    lessonStatus: {
+    contractLessonStatus: {
       handler() {
-        if (this.lessonStatus == 200) {
+        if (this.contractLessonStatus == 200) {
           this.$message({
-            message: `${this.lesson.title} was saved successfully.`,
+            message: `${this.contractLesson.title} was saved successfully.`,
             type: "success",
             showClose: true,
           });
-          this.SET_LESSON_STATUS(0);
+          this.SET_CONTRACT_LESSON_STATUS(0);
           //Route to newly created task form page
         //   if (this.$route.path.includes("sheet")) {
         //     this.$router.push(
@@ -1410,10 +1353,10 @@ export default {
         //       `/programs/${this.$route.params.programId}/dataviewer`
         //     );
         }
-        this.successes = this.lesson.successes;
-        this.failures = this.lesson.failures;
-        this.bestPractices = this.lesson.best_practices;
-        this.updates = this.lesson.notes;
+        this.successes = this.contractLesson.successes;
+        this.failures = this.contractLesson.failures;
+        this.bestPractices = this.contractLesson.best_practices;
+        this.updates = this.contractLesson.notes;
       },
     },
   },
@@ -1513,16 +1456,10 @@ a:hover {
 .file-name:hover {
   background-color: #cdecf5;
 }
+.delete-icon {
+  color: #dc3545;
+}
 .file-link {
   color: unset;
-}
-.del-check {
-  position: absolute;
-  display: flex;
-  right: 2rem;
-  font-weight: 500;
-  background: transparent;
-  height: fit-content;
-  color: #dc3545;
 }
 </style>

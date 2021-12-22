@@ -70,6 +70,7 @@ ActiveAdmin.register Lesson do
     column "Program", :project, nil, sortable: 'projects.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.project.name}", "#{edit_admin_project_path(lesson.project)}" if lesson.project.present?
+        link_to "#{lesson.contract_project.name}", "#{edit_admin_project_path(lesson.contract_project)}" if lesson.contract_project.present?
       else
         "<span>#{lesson.project&.name}</span>".html_safe
       end

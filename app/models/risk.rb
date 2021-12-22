@@ -388,6 +388,9 @@ class Risk < ApplicationRecord
     end
 
     sorted_notes = notes.sort_by(&:created_at).reverse
+    
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       priority_level_name: priority_level_name,
@@ -401,7 +404,7 @@ class Risk < ApplicationRecord
       class_name: self.class.name,
       completed: completed,
       planned: planned,
-      project_group: self.facility_group.name,
+      project_group: facility_group.name,
       program_name: project.name, 
       closed: closed,
       in_progress: in_progress,
@@ -474,7 +477,9 @@ class Risk < ApplicationRecord
 
     risk.attributes = r_params
 
-    if !risk.facility_project_id.present?
+    if params[:contract_id]
+      risk.contract_id = params[:contract_id]
+    elsif !risk.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 

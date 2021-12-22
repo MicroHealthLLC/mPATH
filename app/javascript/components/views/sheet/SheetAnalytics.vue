@@ -718,7 +718,7 @@
             </div>
           </el-card>
       </div>
-              <div class="col-4">
+              <div class="col-4" style="visibility:hidden">
                 <div class="box-card my-el-card p-3" style="position:relative">
                   <div class="row">
                     <div class="col">
@@ -825,6 +825,7 @@
               <div
                 v-show="isSheetsView" 
                 class="col-3"
+                style="visibility:hidden"
                 v-if="facility && facility.facility"
                 data-cy="date_set_filter"
               >

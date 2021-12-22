@@ -265,6 +265,9 @@ class Issue < ApplicationRecord
 
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse
+    
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -275,7 +278,7 @@ class Issue < ApplicationRecord
       program_name: project.name, 
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
-      project_group: self.facility_group.name,
+      project_group: facility_group.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),
@@ -312,7 +315,7 @@ class Issue < ApplicationRecord
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility).facility_name,
+      facility_name: fp.try(:facility)&.facility_name,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -362,13 +365,15 @@ class Issue < ApplicationRecord
     notes_attributes = i_params.delete(:notes_attributes)
 
     issue.attributes = i_params
-    if !issue.facility_project_id.present?
+
+    if params[:contract_id]
+      issue.contract_id = params[:contract_id]
+    elsif !issue.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
       issue.facility_project_id = facility_project.id
     end
-
 
     issue.transaction do
 

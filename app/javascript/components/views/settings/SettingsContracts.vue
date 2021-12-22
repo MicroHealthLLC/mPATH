@@ -6,17 +6,27 @@
    <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
-     <el-breadcrumb-item :to="toSettingsLanding">
+     <el-breadcrumb-item :to="backToSettings">
       <span style="cursor:pointer"><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS </span>
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
        <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>  
-       CONTRACTS
+       CONTRACTS  
+       <span 
+          v-if="tableData && tableData.length"
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ tableData.length }}
+        </span>
+         <span 
+          v-else
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ 0 }}
+        </span>
       </h4>
     </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
-    <div class="col">
+    <div class="col" v-if="_isallowed('write')">
       <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
       <i class="far fa-plus-circle mr-1"></i> Add Contract
       </el-button>
@@ -46,7 +56,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in filteredFacilityGroups"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -57,12 +67,13 @@
       </div>
   </div>
   <div
+    v-if="tableData"
     v-loading="!contractsLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
-   <el-table  v-if="tableData && tableData.length > 0" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
     <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
@@ -82,20 +93,19 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">
-         Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+      <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+       <el-button v-if="_isallowed('write')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
     </el-table-column>
   
-   </el-table>
+   </el-table>  
+   
+  </div>
    <span v-else class="mt-5">
       NO DATA TO DISPLAY   
    </span>
-   
-  </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
       accept-charset="UTF-8"    
@@ -135,7 +145,7 @@
        </div>
        <div class="form-group mx-3">
         <label class="font-md"
-        >Group</label
+        >Group<span style="color: #dc3545">*</span></label
         >
          <el-select
             class="w-100"
@@ -148,7 +158,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in filteredFacilityGroups"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -157,34 +167,39 @@
           </el-select>
        </div>
         <div class="right mr-2">
-        <el-button @click.prevent="saveNewContract" class="bg-success text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>
-       
-        <el-button @click.prevent="addAnotherContract" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Contract</el-button>
-
-        <el-button @click.prevent="closeAddContractBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+        <button 
+          @click.prevent="saveNewContract"
+          :disabled="!C_newContractGroupFilter && contractNameText" 
+          class="btn btn-sm bg-primary text-light mr-2" 
+          :class="[hideSaveBtn ? 'd-none': '']">
+          Save
+        </button>       
+        <button 
+          @click.prevent="addAnotherContract" 
+          :class="[!hideSaveBtn ? 'd-none': '']" 
+          class="btn btn-sm bg-primary text-light mr-2">
+          <i class="far fa-plus-circle mr-1"></i> Add Another Contract
+        </button>
+        <button 
+          @click.prevent="closeAddContractBtn" 
+          class="btn btn-sm bg-danger text-light mr-2"  
+          :class="[!hideSaveBtn ? 'd-none': '']">
+          Close
+        </button>
 
         </div>
     </form>
    </el-dialog>
     
-      <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
-       <div class="pr-3">   
-          <!-- <router-view
-            :key="$route.path"
-            :facility="currentFacility"
-            :contractClass="currectContract"
-            :facilityGroup="currentFacilityGroup"
-          ></router-view> -->
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
+import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsContracts",
   components: {
@@ -205,7 +220,7 @@ export default {
       },
     };
   },
-    mounted() {
+  mounted() {
     this.fetchContracts();   
   },
   methods: {
@@ -219,16 +234,27 @@ export default {
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
+    _isallowed(salut) {
 
-    handleClick(tab, event) {
-        console.log(tab, event);
-    }, 
+        let pPrivilege = this.$programPrivileges[this.$route.params.programId]
+        
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return pPrivilege.contracts.includes(s);     
+      },
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-       window.location.pathname =  `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
+      this.$router.push({
+        name: "SheetContract",
+        params: {
+          programId: this.$route.params.programId,
+          contractId: rows.id.toString(),          
+        },
+      });
     
     },
     saveNewContract() {
+      this.onSubmit()
         let contractData = {
           contract: {
             nickname: this.contractNameText,
@@ -237,13 +263,23 @@ export default {
             project_id: this.$route.params.programId,
             contract_type_id: this.C_typeFilter,
           }
-        }
-         this.createContract({
+        }       
+        this.createContract({
             ...contractData,
           })
           this.hideSaveBtn = true;
-          // console.log(contractData)
+          console.log(contractData)
     },
+     async onSubmit ()  {
+         const formData = {
+            contractName: this.contractNameText,
+            programName: this.currentProject.name, 
+            mpathInstance: this.$mpath_instance
+
+          }
+        await createUser({...formData})
+        return { formData }
+    },   
     editContract(index, rows) {
     //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
     //  if (rows && rows !== undefined) {
@@ -261,7 +297,7 @@ export default {
          this.updateContract({
             ...contractData, id
           })
-          console.log(rows, contractData)
+          // console.log(rows, contractData)
      
     },
     addAnotherContract() {
@@ -292,11 +328,11 @@ export default {
       'getProjectGroupFilter',
       'getGroupFilter',
       "facilityGroupFacilities",
-      'filteredFacilityGroups',
+      'facilityGroups',
       'currentProject'
     ]), 
-    toSettingsLanding(){
-     return `/programs/${this.$route.params.programId}/settings`  
+     backToSettings() {
+      return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData(){
       if(this.contracts[0] && this.contracts[0].length > 0 ){
@@ -351,15 +387,6 @@ export default {
     }
   },
   watch: {
-    // contentLoaded: {
-    //   handler() {
-    //     if (this.$route.params.contractId) {
-    //       this.currentContract = this.contracts[0].find(
-    //          (c) => c.id == this.$route.params.contractId
-    //       );
-    //     }
-    //   },
-    // },
     contractStatus: {
       handler() {
         if (this.contractStatus == 200 && this.contractNameText) {

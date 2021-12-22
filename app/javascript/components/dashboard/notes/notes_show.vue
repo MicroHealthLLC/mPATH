@@ -2,13 +2,15 @@
 <template>
   <div id="notes-show" data-cy="notes">
       <div v-if="permitted('write') && show == false">
-        <notes-form          
+        <notes-form   
+        
           title="Edit Note"
           :note="DV_note"
           :facility="facility"
           @close-note-input="show=true"
           @note-updated="noteUpdated"
         />
+      
       </div>
     <div v-if="C_editForManager" class="blur_show float-right">
       <div class="text-danger d-flex align-items-center">
@@ -52,6 +54,7 @@
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
   import NotesForm from './notes_form'
+    import ContractNotesForm from './contract_notes_form'
   import {API_BASE_PATH} from './../../../mixins/utils'
 
   export default {
@@ -95,19 +98,22 @@
         this.$emit('note-updated', note)
       },
       deleteNote() {
-        var confirm = window.confirm(`Are you sure, you want to delete this note?`)
-        if (!confirm) return;
-
-        http
-          .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
-          .then((res) => {
-            this.loading = false
-            this.$emit('note-deleted', this.note)
-          })
-          .catch((err) => {
-            this.loading = false
-            console.error(err)
-          })
+        this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          http
+            .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
+            .then((res) => {
+              this.loading = false
+              this.$emit('note-deleted', this.note)
+            })
+            .catch((err) => {
+              this.loading = false
+              console.error(err)
+            })
+        });
       },
       downloadFile(file) {
         if (this._isallowed('write')) {

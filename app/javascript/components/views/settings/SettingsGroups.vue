@@ -11,6 +11,16 @@
      </el-breadcrumb-item>
      <h4 class="mt-4 ml-3"> 
      <i class="fal fa-network-wired mr-1 mh-orange-text"></i>  GROUPS
+       <span 
+          v-if="tableData && tableData.length"
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ tableData.length }}
+        </span>
+         <span 
+          v-else
+          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+          >{{ 0 }}
+        </span>
       </h4>
     </el-breadcrumb>
 
@@ -34,27 +44,6 @@
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>  
       </div> 
-      <!-- <div class="col pl-0">   
-        <el-select
-          class="w-100 mx-2"
-          v-model="C_groupFilter" 
-          track-by="id"
-          value-key="id"
-          multiple
-          filterable
-          clearable
-          name="Project Group"         
-          placeholder="Filter Group"
-          >
-          <el-option
-          v-for="item in filteredFacilityGroups"
-          :key="item.id"
-          :label="item.name"
-          :value="item">
-        </el-option>
-          
-          </el-select>
-      </div> -->
   </div>
  </div>
    <div
@@ -64,7 +53,11 @@
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class=""
   >
-   <el-table :data="filteredFacilityGroups.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%"  height="450">
+   <el-table 
+   v-if="tableData && tableData.length > 0"
+   :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
+   style="width: 100%"  height="475"
+   >
     <el-table-column type="expand">
       <template slot-scope="props">
        <div class="container">
@@ -73,25 +66,35 @@
       <div class="col">
        <h5 class="mh-orange-text"> Projects 
          <span 
+         v-if="props.row.facilities && props.row.facilities.length"
           class="badge badge-secondary badge-pill pill"
           >{{ props.row.facilities.length }}
         </span>
+         <span 
+          v-else
+          class="badge badge-secondary badge-pill pill"
+          >{{ 0 }}
+        </span>
+
+    
         </h5>
         <ul class="pl-3">
           <li v-for="item, i in props.row.facilities" :key="i">
               {{ item.facilityName }}
           </li>
-
         </ul>
-
-
-       </div>      
-      
+       </div>        
        <div class="col">
      <h5 class="mh-orange-text"> Contracts
          <span 
-          class="badge badge-secondary badge-pill pill"
+          v-if="props.row.contracts && props.row.contracts.length"
+           class="badge badge-secondary badge-pill pill"
           >{{ props.row.contracts.length }}
+        </span>
+           <span 
+          v-else
+          class="badge badge-secondary badge-pill pill"
+          >{{ 0 }}
         </span>
         </h5>
        <ul class="pl-3">
@@ -111,8 +114,18 @@
     <el-table-column prop="name" sortable label="Groups">
   <template slot-scope="props">
    {{props.row.name}}  
-    <span class="ml-5 mr-2"><i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} </span> 
+    <span class="ml-5 mr-2" v-if="props.row.facilities &&props.row.facilities.length">
+      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} 
+      </span> 
+        <span class="ml-5 mr-2" v-else>
+      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
+      </span> 
+  <span  v-if="props.row.contracts && props.row.contracts.length">
     <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{ props.row.contracts.length }}
+  </span>
+      <span  v-else>
+       <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{0}}
+      </span> 
   </template>
 
     </el-table-column>
@@ -137,21 +150,28 @@
           />
        </div>
       <div class="right mr-2">
-        <el-button @click.prevent="saveGroup" class="bg-primary text-light mr-2" :class="[hideSaveBtn ? 'd-none': '']">Save</el-button>       
-        <el-button @click.prevent="addAnotherGroup" :class="[!hideSaveBtn ? 'd-none': '']" class="bg-primary text-light mr-2"><i class="far fa-plus-circle mr-1"></i> Add Another Group</el-button>
-        <el-button @click.prevent="closeAddGroupBtn" class="bg-danger text-light mr-2"  :class="[!hideSaveBtn ? 'd-none': '']">Close</el-button>
+        <button 
+          @click.prevent="saveGroup"
+          :disabled="!newGroupName"  
+          class="btn btn-sm bg-primary text-light mr-2" 
+          :class="[hideSaveBtn ? 'd-none': '']">
+          Save
+       </button>       
+        <button 
+          @click.prevent="addAnotherGroup" 
+          :class="[!hideSaveBtn ? 'd-none': '']" 
+          class="btn btn-sm bg-primary text-light mr-2">
+          <i class="far fa-plus-circle mr-1"></i> Add Another Group
+        </button>
+        <button 
+          @click.prevent="closeAddGroupBtn" 
+          class="btn btn-sm bg-danger text-light mr-2" 
+          :class="[!hideSaveBtn ? 'd-none': '']">
+          Close
+        </button>
         </div>
     </form>
    </el-dialog>
-    
-      <!-- <div v-if="currentFacility" class="d-inline"> <h5 class="text-center">{{ currentFacility.facilityName }} </h5></div> -->
-       <div class="pr-3">   
-          <router-view
-            :key="$route.path"
-            :facility="currentFacility"
-            :facilityGroup="currentFacilityGroup"
-          ></router-view>
-        </div>
       </div>
     </div>
   </div>
@@ -171,6 +191,7 @@ export default {
       dialogVisible: false,
       currentFacilityGroup: {},
       newGroupName: null,
+      programId: this.$route.params.programId,
       hideSaveBtn: false,
       search:'',
       selectedProjectGroup: null, 
@@ -181,7 +202,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS']), 
-   ...mapActions(["createGroup", "fetchGroups", "updateGroup"]),
+   ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup"]),
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
@@ -190,9 +211,6 @@ export default {
     closeAddGroupBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
-    },
-    log(e){
-      console.log(e)
     },
     addGroup(){
       this.dialogVisible = true;    
@@ -210,14 +228,12 @@ export default {
          this.createGroup({
             ...groupData,
           })
+          this.fetchFacilityGroups();
           this.hideSaveBtn = true;
-          console.log(groupData)
-    },
-    showFacility(facility) {
-      this.currentFacility = facility;
+        
     },
     handleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
     },
    
   },
@@ -231,7 +247,7 @@ export default {
       'getGroupFilter',
       'getProjectGroupFilter',
       "facilityGroupFacilities",
-      'filteredFacilityGroups',
+      'facilityGroups',
       'currentProject'
     ]), 
    backToSettings(){
@@ -247,6 +263,15 @@ export default {
         this.setGroupFilter(value);
       },
     },
+    tableData() {
+      if (
+        // this.projectsLoaded &&
+        this.facilityGroups &&
+        this.facilityGroups.length > 0
+      ) {
+        return this.facilityGroups
+      }
+    },
     // Filter when adding new Project
      C_projectGroupFilter: {
       get() {
@@ -259,7 +284,7 @@ export default {
     },
   },
 mounted() {
-   this.fetchGroups()
+  //  this.fetchFacilityGroups()
   },
   watch: {
     contentLoaded: {
@@ -280,7 +305,7 @@ mounted() {
             showClose: true,
           });
           this.SET_GROUP_STATUS(0);
-          this.fetchGroups();
+          this.fetchFacilityGroups();        
         }
       },
     },

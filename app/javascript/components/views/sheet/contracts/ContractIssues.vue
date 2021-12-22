@@ -1,6 +1,6 @@
 <template>
   <div>
-    <IssueSheetsIndex :facility="facility" />
+    <IssueSheetsIndex :facility="facility" :contract="contract" />
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import IssueSheetsIndex from "../../../dashboard/issues/issue_sheets_index.vue";
 
 export default {
-  props: ["facility"],
+  props: ["facility", "contract"],
   components: { IssueSheetsIndex },
 };
 </script>

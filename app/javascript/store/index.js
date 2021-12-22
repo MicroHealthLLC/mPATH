@@ -11,6 +11,7 @@ import projectStore from "./modules/project-store";
 import taskStore from "./modules/task-store";
 import issueStore from "./modules/issue-store";
 import riskStore from "./modules/risk-store";
+import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
 import portfolioModule from "./modules/portfolio-store";
 import { API_BASE_PATH } from "./../mixins/utils";
@@ -36,6 +37,7 @@ export default new Vuex.Store({
     issueStore,
     riskStore,
     lessonStore,
+    notesStore,
     portfolioModule,
   },
   state: {
@@ -51,7 +53,9 @@ export default new Vuex.Store({
     mapLoading: true,
     sideLoading: true,
     projects: new Array(),
+    tableData: new Array(),
     facilities: new Array(),
+    contracts: new Array(),
     facilityGroups: new Array(),
     statuses: new Array(),
     advancedFilterOptions: new Array(),
@@ -113,6 +117,11 @@ export default new Vuex.Store({
     taskIssueProgressFilter: null,
     // This filter is used to check status e.g. active or completed
     taskIssueProgressStatusFilter: new Array(),
+    contactInfoForm: {
+      poc: '',
+      phoneNo: '',
+      email: '',
+     },
     progressFilter: {
       facility: {
         min: "",
@@ -211,6 +220,8 @@ export default new Vuex.Store({
     setSideLoading: (state, loading) => (state.sideLoading = loading),
     setProjects: (state, projects) => (state.projects = projects),
     setFacilities: (state, facilities) => (state.facilities = facilities),
+    setContracts: (state, contracts) => (state.contracts = contracts),
+    setTableData: (state, tableData) => (state.tableData = tableData),
     setUnfilteredFacilities: (state, facilities) =>
       (state.unfilteredFacilities = facilities),
     setFacilityGroups: (state, facilityGroups) =>
@@ -319,6 +330,46 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility);
       }
     },
+    updateContractTasks: (state, { task, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == task.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let task_i = contract.tasks.findIndex((t) => t.id == task.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "tasks"))) {
+            _.remove(t.subTaskIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.tasks, task_i);
+        } else if (task_i > -1) {
+          Vue.set(contract.tasks, task_i, task);
+        } else if (task_i == -1) {
+          contract.tasks.push(task);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateContractIssues: (state, { issue, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == issue.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let issue_i = contract.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(contract.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          contract.issues.push(issue);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
     updateIssuesHash: (state, { issue, action }) => {
       let facility_i = state.facilities.findIndex(
         (f) => f.id == issue.facilityId
@@ -339,6 +390,7 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility);
       }
     },
+
     updateRisksHash: (state, { risk, action }) => {
       let facility_i = state.facilities.findIndex(
         (f) => f.id == risk.facilityId
@@ -357,6 +409,26 @@ export default new Vuex.Store({
           facility.risks.push(risk);
         }
         Vue.set(state.facilities, facility_i, facility);
+      }
+    },
+    updateContractRisks: (state, { risk, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == risk.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let risk_i = contract.risks.findIndex((t) => t.id == risk.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "risks"))) {
+            _.remove(t.subRiskIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.risks, risk_i);
+        } else if (risk_i > -1) {
+          Vue.set(contract.risks, risk_i, risk);
+        } else if (risk_i == -1) {
+          contract.risks.push(risk);
+        }
+        Vue.set(state.contracts, contract_i, contract);
       }
     },
     updateNotesHash: (state, { note, facilityId, action }) => {
@@ -430,6 +502,8 @@ export default new Vuex.Store({
         state.managerView[k] = k == key ? value : null;
       }
     },
+    setContactInfoForm: (state, { key, value }) =>
+    (state.contactInfoForm[key] = value),
     setMapZoomFilter: (state, filteredIds) =>
       (state.mapZoomFilter = filteredIds),
     setPreviousRoute: (state, route) => (state.previousRoute = route),
@@ -1046,6 +1120,8 @@ export default new Vuex.Store({
     sideLoading: (state) => state.sideLoading,
     projects: (state) => state.projects,
     facilities: (state) => state.facilities,
+    getContracts: (state) => state.contracts,
+    tableData: (state) => state.tableData, 
     facilityGroups: (state) => state.facilityGroups,
     statuses: (state) => state.statuses,
 
@@ -1114,6 +1190,7 @@ export default new Vuex.Store({
     mapFilters: (state) => state.mapFilters,
     progressFilter: (state) => state.progressFilter,
     managerView: (state) => state.managerView,
+    contactInfoForm: (state) => state.contactInfoForm,
     // NOTE: This function will be used in many pages to filter data based on advanced filter
     // selected by user.
     filterDataForAdvancedFilter: (state, getters) => (
@@ -1761,7 +1838,7 @@ export default new Vuex.Store({
       });
     },
     filteredFacilityGroups: (state, getters) => {
-      let ids = _.map(getters.filteredFacilities("active"), "facilityGroupId");
+      let ids = _.map(getters.facilities, "facilityGroupId");
       return _.filter(
         getters.facilityGroups,
         (fg) => ids.includes(fg.id) && fg.status == "active"
@@ -2002,7 +2079,7 @@ export default new Vuex.Store({
                   getSimpleDate(task.dueDate) - getSimpleDate(task.startDate);
 
                 hash.push({
-                  taskUrl: `#{API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
+                  taskUrl: `${API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
                   facilityId: facility.id,
                   projectId: getters.currentProject.id,
                   id: t_id,
@@ -2359,7 +2436,12 @@ export default new Vuex.Store({
             for (let facility of res.data.project.facilities) {
               facilities.push({ ...facility, ...facility.facility });
             }
+            let contracts = [];
+            for (let c of res.data.project.contracts) {
+              contracts.push({ ...c, ...c });
+            }
             commit("setFacilities", facilities);
+            commit("setContracts", contracts);
             commit("setCurrentProject", res.data.project);
             commit("setFacilityGroups", res.data.project.facilityGroups);
             commit("setProjectUsers", res.data.project.users);
@@ -2382,6 +2464,30 @@ export default new Vuex.Store({
           });
       });
     },
+    fetchProjectNames({ commit, dispatch }, id) {
+      return new Promise((resolve, reject) => {
+        http
+          .get(`${API_BASE_PATH}/programs/${id}.json`)
+          .then((res) => {
+            let facilities = [];
+            for (let facility of res.data.project.facilities) {
+              facilities.push({ ...facility, ...facility.facility });
+            }
+            commit("setTableData", facilities);
+           
+            // console.log(facilities)
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          }) .finally(() => {
+            commit("setContentLoaded", true);
+          });
+      });
+    },
+    
+
     fetchFacility({ commit, dispatch, getters }, { projectId, facilityId }) {
       return new Promise((resolve, reject) => {
         http
@@ -2420,13 +2526,14 @@ export default new Vuex.Store({
       });
     },
     fetchFacilityGroups({ commit }, id) {
-      let url = "${API_BASE_PATH}/facility_groups.json";
+      let url = `${API_BASE_PATH}/facility_groups.json`;
       if (id !== undefined) url = url + `?=project_id=${id}`;
       return new Promise((resolve, reject) => {
         http
           .get(url)
           .then((res) => {
             commit("setFacilityGroups", res.data.facilityGroups);
+            console.log(res.data.facilityGroups)
             resolve();
           })
           .catch((err) => {

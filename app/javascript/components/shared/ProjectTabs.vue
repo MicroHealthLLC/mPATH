@@ -1,14 +1,14 @@
 <template>
   <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
    <span v-if="$route.params.contractId" class="d-flex">
-    <div v-for="tab in cTabs" :key="tab.key">
+    <div v-for="cTab in cTabs" :key="cTab.key">
       <div
-        v-if="!tab.hidden"
+        v-if="!cTab.hidden"
         class="badge mx-0"
-        :class="{ active: currentTab == tab.key, disabled: tab.disabled }"
-        @click="changeTab(tab)"
+        :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
+        @click="changeCtab(cTab)"
       >
-        <div>{{ tab.label }}</div>
+        <div>{{ cTab.label }}</div>
       </div>
     </div>
     </span>
@@ -37,6 +37,7 @@ export default {
   data() {
     return {
       canSeeTab: true,
+      // currentTab: '',
       // Project Tabs
       pTabs: [
          {
@@ -90,56 +91,65 @@ export default {
           closable: false,
           hidden: false,
         },
-        // {
-        //   label: "Analytics",
-        //   key: "analytics",
-        //   closable: false,
-        //   hidden: false,
-        // },
-        // {
-        //   label: "Tasks",
-        //   key: "tasks",
-        //   closable: false,
-        //   hidden: false,
-        // },
-        // {
-        //   label: "Issues",
-        //   key: "issues",
-        //   closable: false,
-        //   hidden: false,
-        // },
-        // {
-        //   label: "Risks",
-        //   key: "risks",
-        //   closable: false,
-        //   hidden: false,
-        // },
-        // {
-        //   label: "Lessons",
-        //   key: "lessons",
-        //   closable: false,
-        //   hidden: false,
-        // },
-        // {
-        //   label: "Notes",
-        //   key: "notes",
-        //   closable: false,
-        //   hidden: false,
-        // },
+        {
+          label: "Analytics",
+          key: "analytics",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Tasks",
+          key: "tasks",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Issues",
+          key: "issues",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Risks",
+          key: "risks",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Lessons",
+          key: "lessons",
+          closable: false, 
+          hidden: false,
+        },
+        {
+          label: "Notes",
+          key: "notes",
+          closable: false,
+          hidden: false,
+        },
       ],
     };
   },
   mounted() {
+    // this.currentTab = 
     var programId = this.$route.params.programId;
     var projectId = this.$route.params.projectId;
     var contractId = this.$route.params.contractId;
 
 
+    if(contractId){
+       let cPrivilege = this.$projectPrivileges[programId][contractId];
+     if (cPrivilege) {
+      for (var i = 0; i < this.cTabs.length; i++) {
+        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+        if(this.cTabs[i].key == 'contract'){
+          continue
+        }
+        this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;      
+      }
+    }
+    } else {
     let fPrivilege = this.$projectPrivileges[programId][projectId];
-    let cPrivilege = this.$projectPrivileges[programId][contractId];
-
-    // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-
     if (fPrivilege) {
       for (var i = 0; i < this.pTabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
@@ -149,54 +159,47 @@ export default {
 
         if (fPrivilege[this.pTabs[i].key] && fPrivilege[this.pTabs[i].key].length) {
            this.pTabs[i].hidden = fPrivilege[this.pTabs[i].key].length < 1;
-        }
-      
-      
+        }     
       }
     }
-    if (cPrivilege) {
-      for (var i = 0; i < this.cTabs.length; i++) {
-        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        if(this.cTabs[i].key == 'contract'){
-          continue
-        }
-        this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;
-      
-      }
     }
   },
   methods: {
     changeTab(tab) {
-      this.$router.push(this.path + `/${tab.key}`);
+       if (tab.key === "project"){
+        this.$router.push(this.p_path + `/`);
+       } else {
+      this.$router.push(this.p_path + `/${tab.key}`);
+     }
+    },
+     changeCtab(cTab) {
+       if (cTab.key === "contract"){
+        this.$router.push(this.c_path + `/`);
+       } else {
+            this.$router.push(this.c_path + `/${cTab.key}`);
+       } 
+     
+      // this.currentTab = tab.key
     },
   },
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
-    tabReader() {
-      if (this.$route.params.contractId){
-        return this.cTabs
-      } else {
-        return this.pTabs
-      }
-     
-    },
-    routePriv(){
-      return this.$projectPrivileges 
-    },
-    currentTab() {    
-      if (this.$route.params.contractId){
-     return this.cTabs
-        .map((tab) => tab.key)
-        .filter((key) =>
-          this.$route.name.toUpperCase().includes(key.toUpperCase())
-        );
-      } else {      
+    currentTab() {
       return this.pTabs
         .map((tab) => tab.key)
         .filter((key) =>
           this.$route.name.toUpperCase().includes(key.toUpperCase())
         );
-       }        
+    },
+    currentCtab() {
+      let c = this.cTabs.map(t => t.key)
+      let cT = c.filter(k => this.$route.name.toUpperCase().includes(k.toUpperCase()))
+      if (cT.length > 1){
+        return cT.slice(1)
+      } else return cT
+    },
+    routePriv(){
+      return this.$projectPrivileges 
     },
     tab() {
       let url = this.$route.path;
@@ -209,15 +212,13 @@ export default {
         return "map";
       }
     },
-    path() {
-      if (this.$route.params.contractId){
-         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}`;
-      }
-      else  {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;    
-        } 
+    c_path() {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}`;
     },
-    tabsVisible() {
+    p_path(){
+      return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;  
+    },
+      tabsVisible() {
      if (this.$route.params.contractId){
         return this.cTabs.some((tab) => tab.hidden === false);
       } else {

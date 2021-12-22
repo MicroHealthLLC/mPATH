@@ -1,5 +1,5 @@
 <template>
-  <TaskForm :facility="facility" :task="task" @on-close-form="redirectBack" />
+  <TaskForm :contract="contract" :task="task" @on-close-form="redirectBack" />
 </template>
 
 <script>
@@ -7,7 +7,7 @@ import { mapGetters } from "vuex";
 import TaskForm from "../../../dashboard/tasks/task_form";
 
 export default {
-  props: ["facility"],
+  props: ["contract"],
   components: {
     TaskForm,
   },
@@ -19,7 +19,7 @@ export default {
   methods: {
     redirectBack() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks`
+        `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks`
       );
     },
   },
@@ -28,7 +28,7 @@ export default {
   },
   mounted() {
     if (this.contentLoaded && this.$route.params.taskId !== "new") {
-      this.task = this.facility.tasks.find(
+      this.task = this.contract.tasks.find(
         (task) => task.id == this.$route.params.taskId
       );
     }
@@ -36,8 +36,8 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        if (this.$route.params.taskId !== "new") {
-          this.task = this.facility.tasks.find(
+        if (this.$route.params.taskId !== "new"){
+            this.task = this.contract.tasks.find(
             (task) => task.id == this.$route.params.taskId
           );
         }

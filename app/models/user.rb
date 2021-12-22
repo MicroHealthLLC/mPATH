@@ -477,7 +477,7 @@ class User < ApplicationRecord
   end
 
   #This will build has like this
-  # {<project_id> : { <facility_id>: { <all_perissions> } }
+  # {<project_id> : { <contract_id>: { <all_perissions> } }
   def contract_privileges_hash
     user = self
     cp = user.contract_privileges
@@ -589,6 +589,10 @@ class User < ApplicationRecord
     end
   end
 
+  def authorized_contracts(project_ids: [])
+    Contract.where(id: authorized_contract_ids(project_ids: project_ids) )
+  end
+
   # def has_contract_permission?(action: "read", resource: , program: nil, contract: nil, project_privileges_hash: {}, contract_privileges_hash: {} )
   #   begin
   #     program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
@@ -627,6 +631,31 @@ class User < ApplicationRecord
         else
           result = pph[program_id][resource].include?(short_action_code)
         end        
+      end
+    rescue Exception => e
+      puts "Exception in  User#has_permission? #{e.message}"
+      result = false
+    end
+    return result
+  end
+
+  def has_contract_permission?(action: "read", resource: , contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
+    begin
+      contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
+      contract_id = contract.id.to_s
+      program_id = contract.project_id.to_s
+
+      action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+      result = false
+      short_action_code = action_code_hash[action]
+      if pph[program_id]
+        fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash
+        if fph[program_id][contract_id]
+          result = fph[program_id][contract_id][resource].include?(short_action_code)
+        else
+          result = pph[program_id][resource].include?(short_action_code)
+        end       
       end
     rescue Exception => e
       puts "Exception in  User#has_permission? #{e.message}"

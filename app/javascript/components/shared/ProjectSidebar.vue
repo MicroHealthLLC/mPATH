@@ -10,32 +10,42 @@
       </div>
     </div>
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
-    <div class="mb-3 ml-2" style="margin-top:1.8rem">
-      <div v-if="contentLoaded">
+    <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
+      <div v-if="contentLoaded" >
         <div
           v-for="(group, index) in sortedGroups"
-          :key="index"
-         :load="log(sortedGroups)"
-          class="my-2 px-2"
+          :key="index + 'a'"    
+          class="my-2 px-2 container"
         >
           <div
-            class="d-flex expandable"
+            class="d-flex row expandable"
             @click="expandFacilityGroup(group)"
             :class="{ active: group.id == currentFacilityGroup.id }"
             data-cy="facility_groups"
+            :key="index"
           >
+
+          <div class="col-8 py-0 pr-0">
+           <span class="d-flex">
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
             </span>
             <span v-show="expanded.id == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
-            <h5 class="clickable">{{ group.name }}</h5>
+           <p class="clickable groupName">{{ group.name }}</p>
+           </span>
+         </div>
+
+           <div class="col py-0 text-right">
+           <span class="badge badge-secondary badge-pill pill">{{ group.facilities.length}}</span>
+         
+         </div>
+             
           </div>
-          <div v-show="expanded.id == group.id" class="ml-2">
+         <div v-show="expanded.id == group.id" class="ml-2">
               <div
-              v-for="facility in facilityGroupFacilities(group)"
-              :load="log(groups)"
+              v-for="facility in facilityGroupFacilities(group)"            
               :key="facility.id"
             >
               <router-link
@@ -54,11 +64,11 @@
                 </div>
               </router-link>
               </div>
-               <div v-show="isSheetsView" v-for="object in filteredFacilityGroups.filter(t => t.id == group.id)" :key="object.id">
-                 <div v-for="c in object.contracts" :key="c.id">
-                  <router-link               
+               <div v-show="isContractsView" v-for="c in currentProject.contracts.filter(t => t.facilityGroupId == group.id)" :key="c.id + 'a'">
+              
+              <router-link               
                 :to="
-                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}`
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}${pathTab}`
                 "
               >
                 <div
@@ -71,7 +81,7 @@
                   </p>
                 </div>
               </router-link>
-              </div> 
+         
             </div>           
           </div>
         </div>
@@ -83,7 +93,7 @@
       </div>
     </div>
      <!-- <router-link  >  -->
-      <button class="btn btn-sm btn-light program-settings-btn"  @click.prevent="toggleAdminView" style="cursor: pointer">
+      <button class="btn btn-sm btn-light program-settings-btn" @click.prevent="toggleAdminView" style="cursor: pointer">
        <h6> <i class="far fa-cog"></i> Program Settings </h6>
       </button>  
       <!-- </router-link> -->
@@ -99,25 +109,9 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacilityGroup", "expanded", "currentFacility"],
+  props: ["title", "currentFacility", "currentFacilityGroup", "expanded", "currentContract"],
    data() {
       return {
-        options: [{
-          value: 'Option1',
-          label: 'Option1'
-        }, {
-          value: 'Option2',
-          label: 'Option2'
-        }, {
-          value: 'Option3',
-          label: 'Option3'
-        }, {
-          value: 'Option4',
-          label: 'Option4'
-        }, {
-          value: 'Option5',
-          label: 'Option5'
-        }],
         value: ''
       }
     },
@@ -127,11 +121,21 @@ export default {
       'getShowAdminBtn',
       "currentProject",
       "facilities",
+      "facilityGroups",
       "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
     ]),
+   isContractsView() {
+     return this.$route.name.includes("Sheet") ||
+        this.$route.name.includes("ContractAnalytics") ||
+        this.$route.name.includes("ContractTasks") ||
+        this.$route.name.includes("ContractIssues") ||
+        this.$route.name.includes("ContractRisks") ||
+        this.$route.name.includes("ContractNotes") ||
+        this.$route.name.includes("ContractLessons")
+    },
     programName() {
       if (
         this.contentLoaded &&
@@ -140,10 +144,7 @@ export default {
         return this.currentProject.name;
       }
     },
-    isSheetsView() {
-      return this.$route.name.includes("Sheet");
-    },
-  groups(){
+    groups(){
       let group = (array, key ) => {
         return array.reduce((result, currentValue) => {
       // If an array already present for key, push it to the array. Else create an array and push the object
@@ -156,7 +157,7 @@ export default {
       };
       return group(this.facilities, "facilityGroupName")
     },
-   C_projectGroupFilter: {
+    C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
       },
@@ -167,7 +168,7 @@ export default {
     },
     sortedGroups() {
       // Sort groups by name
-      return this.filteredFacilityGroups.sort((a, b) =>
+      return this.facilityGroups.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
     },
@@ -186,14 +187,14 @@ export default {
     pathTab() {
       let url = this.$route.path;
       if (url.includes("tasks")) {
-        return "/tasks";
-      }  if (url.includes("issues")) {
+        return "/tasks";    
+      } if (url.includes("issues")) {
         return "/issues";
-      }  if (url.includes("analytics")) {
+      } if (url.includes("analytics")) {
         return "/analytics";
-      } if (url.includes("project")) {
-        return "/project";
-      }  if (url.includes("risks")) {
+      } if (this.$route.name === "ContractRisks") {
+        return "/risks";
+      } if (this.$route.name === "SheetRisks") {
         return "/risks";
       } if (url.includes("lessons")) {
         return "/lessons";
@@ -203,19 +204,17 @@ export default {
         return "/tasks";
       } if (url.includes("calendar")) {
         return "/tasks";
-      } else {
-        return "/analytics";
-      }
+      } else return "/"
     },
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
      expandFacilityGroup(group) {
+       if (this.currentContract && this.currentFacility == {}) {
+         group = this.currentContract.facilityGroupId
+       }
       this.$emit("on-expand-facility-group", group);
     },
-     log(e){
-    // console.log(e)
-  },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
          this.$router.push(
@@ -243,7 +242,7 @@ export default {
   },
  
   mounted() {
-    // Expand the project tree if there is only one project group on tab transition
+     // Expand the project tree if there is only one project group on tab transition
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&
@@ -255,6 +254,12 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
+        if (this.currentFacilityGroup){
+          this.expanded.id = this.currentFacilityGroup.id
+        }
+         if (this.currentContract) {
+           this.expanded.id = this.currentContract.facilityGroupId
+        }
         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
@@ -264,6 +269,7 @@ export default {
         }
       },
     },
+
   },
 };
 </script>
@@ -318,6 +324,12 @@ export default {
     border-radius: 2px;
     margin: 1px;
     cursor: pointer;
+  }
+  .groupName{
+    overflow: hidden;
+    white-space: nowrap; /* Don't forget this one */
+    text-overflow: ellipsis;
+    font-size: 1.15rem;
   }
   .programNameBtn {
     &.active {

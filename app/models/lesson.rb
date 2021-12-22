@@ -7,9 +7,17 @@ class Lesson < ApplicationRecord
   has_many :lesson_users, dependent: :destroy
   has_many :users, through: :lesson_users
   
-  belongs_to :facility_project
+  belongs_to :facility_project, optional: true
+  belongs_to :contract, optional: true
+
   has_one :facility, through: :facility_project
   has_one :project, through: :facility_project
+  has_one :facility_group, through: :facility
+
+  # Line 12 was commmented out and caused page error.  Uncommented by JR and fixed view.  Need AS to re-examine line and modify as appropriate
+
+  has_one :contract_project, class_name: "Project", through: :contract
+  has_one :contract_facility_group, class_name: "FacilityGroup", through: :contract
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -23,7 +31,7 @@ class Lesson < ApplicationRecord
   has_many :sub_issues, through: :related_issues
   has_many :sub_risks, through: :related_risks
 
-  validates :title, :description, :date, :facility_project_id, presence: true
+  validates :title, :description, :date, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   attr_accessor :file_links
@@ -174,6 +182,10 @@ class Lesson < ApplicationRecord
 
     sorted_notes = notes.sort_by(&:created_at).reverse
 
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    fp = self.facility_project
+
     self.as_json.merge(
       class_name: self.class.name,
       added_by: user.full_name,
@@ -191,8 +203,8 @@ class Lesson < ApplicationRecord
       last_update: sorted_notes.first.as_json,
       notes: sorted_notes.as_json,
       notes_updated_at: sorted_notes.map(&:updated_at).uniq,
-      project_id: facility_project.facility_id,
-      project_name: facility.facility_name, 
+      project_id: fp.try(:facility_id),
+      project_name: fp.try(:facility)&.facility_name,
       program_name: project.name,   
       program_id: project.id, 
  
@@ -259,6 +271,11 @@ class Lesson < ApplicationRecord
 
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
+
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    fp = self.facility_project
+
     self.as_json.merge(
       class_name: self.class.name,
       user_ids: p_users.map(&:id).compact.uniq,
@@ -273,13 +290,15 @@ class Lesson < ApplicationRecord
       notes: s_notes.map(&:json_for_lasson),
       lesson_stage_id: self.lesson_stage_id,
       program_name: project.name,  
-      program_id: project.id,  
-      project_name: facility.facility_name, 
-      project_group: facility.facility_group.name,
+      program_id: project.id,
+      
+      project_id: fp.try(:facility_id),
+      project_name: fp.try(:facility)&.facility_name,
+
+      project_group: facility_group.try(:name),
       category: task_type&.name,
       lesson_stage: lesson_stage.try(:name),
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-      project_id: facility_project.facility_id,
     ).as_json
   end
 
@@ -394,7 +413,11 @@ class Lesson < ApplicationRecord
 
     lesson.attributes = t_params
     lesson.date ||= Date.today
-     
+
+    if params[:contract_id]
+      lesson.contract_id = params[:contract_id]
+    end
+
     lesson.transaction do
       lesson.save
       lesson.add_link_attachment(params)
