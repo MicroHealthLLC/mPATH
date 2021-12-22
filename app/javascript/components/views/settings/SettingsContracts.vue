@@ -26,7 +26,7 @@
     </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
-    <div class="col">
+    <div class="col" v-if="_isallowed('write')">
       <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
       <i class="far fa-plus-circle mr-1"></i> Add Contract
       </el-button>
@@ -93,9 +93,8 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">
-         Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+      <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+       <el-button v-if="_isallowed('write')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
@@ -235,12 +234,14 @@ export default {
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
-    // _isallowed(salut) {
-    //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId]
-    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //     let s = permissionHash[salut]
-    //     return fPrivilege.contracts.includes(s);     
-    //   },
+    _isallowed(salut) {
+
+        let pPrivilege = this.$programPrivileges[this.$route.params.programId]
+        
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return pPrivilege.contracts.includes(s);     
+      },
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       this.$router.push({
