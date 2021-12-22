@@ -28,6 +28,7 @@
           <i class="fas fa-trash-alt mr-2"></i>
           Delete
         </button>
+       
       </div>
 
    <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': !contentLoaded, 'border-0': from == 'manager_view'}">
@@ -215,6 +216,14 @@
       )
         .then(() => {
           this.deleteContractNote({ id: this.contractNote.id, ...this.$route.params });
+          this.$message({
+            type: "success",
+            message: "Note successfully deleted",
+            showClose: true,
+          });
+           this.$router.push(
+            `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/notes`
+          );
         })
         .catch(() => {
           this.$message({
@@ -222,14 +231,11 @@
             message: "Delete canceled",
             showClose: true,
           });
-        });
-
-      
+        });      
     },
     close() {
       this.SET_CONTRACT_NOTE({}),
-      this.contractNote.id = ""
-        this.$router.push(
+          this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/notes`
           );
         },

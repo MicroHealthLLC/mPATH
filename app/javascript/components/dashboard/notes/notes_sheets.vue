@@ -1,9 +1,7 @@
 
 <template>
   <div data-cy="notes">
-    <div v-if="C_editForManager" class="blur_show float-right">    
-
-  
+    <div v-if="C_editForManager" class="blur_show float-right">   
     </div>
     <div class="notes_show mb-5 mx-2">
       <div v-if="note">
@@ -11,13 +9,18 @@
           <span class="mr-2 edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">
              <i class="fas fa-edit"></i> 
           </span>
-          <span v-if="permitted('delete')" class="mr-2 delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
+          <span v-if="permitted('delete') && this.facility" class="mr-2 delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
+           <span class="mr-2 delete-action" v-if="this.contract" @click.stop="deleteContractNote" data-cy="note_delete_icon">
+            <i class="fas fa-trash-alt"></i>
+          </span>
+          
         </div>
         <div class="note_by my-2" >
           <!-- <span class="badge badge-secondary">Note by</span> -->
-          <span class="text-muted font-sm">{{  note_by }}</span>
+          <span class="text-muted font-sm" v-if="this.contract">{{  note_by }}</span>
+           <span class="text-muted font-sm" v-if="!this.contract && this.facility" >{{  noteBy }}</span>
         </div>
         <div v-if="facility && !this.contract">
         <div v-if="note.attachFiles.length > 0" class="note_files">
@@ -113,7 +116,8 @@
         'setTaskForManager'
       ]),
           ...mapActions([
-        'fetchContractNote'
+        'fetchContractNote',
+        'deleteContractNote'
       ]),
     //TODO: change the method name of isAllowed
     // _isallowed(salut) {
@@ -172,6 +176,28 @@
             })
         });
       },
+      deleteContractNote() {
+         this.$confirm(
+        `Are you sure you want to delete this note?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          // console.log(this.note.id)
+          this.deleteContractNote({ id: this.note.id, contractId: this.$route.params.contractId});
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Delete canceled",
+            showClose: true,
+          });
+        });      
+    },
       downloadFile(file) {
         if (this._isallowed('write')) {
           let url = window.location.origin + file.uri
