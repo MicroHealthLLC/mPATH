@@ -1041,9 +1041,9 @@ export default {
             // console.log(issue)
             return (
               l.title.toLowerCase().match(this.searchLessons.toLowerCase()) ||
-              l.category
+              (l.category && l.category
                 .toLowerCase()
-                .match(this.searchLessons.toLowerCase()) ||
+                .match(this.searchLessons.toLowerCase())) ||
               l.project_group
                 .toLowerCase()
                 .match(this.searchLessons.toLowerCase()) ||
