@@ -12,7 +12,7 @@
           <span v-if="permitted('delete') && this.facility" class="mr-2 delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
-           <span class="mr-2 delete-action" v-if="this.contract" @click.stop="deleteContractNote" data-cy="note_delete_icon">
+           <span class="mr-2 delete-action" v-if="this.contract" @click.prevent="delete_contract_note" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
           
@@ -176,7 +176,7 @@
             })
         });
       },
-      deleteContractNote() {
+      delete_contract_note() {
          this.$confirm(
         `Are you sure you want to delete this note?`,
         "Confirm Delete",
@@ -187,8 +187,12 @@
         }
       )
         .then(() => {
-          // console.log(this.note.id)
-          this.deleteContractNote({ id: this.note.id, contractId: this.$route.params.contractId});
+          this.deleteContractNote({ id: this.contractNote.id, contractId: this.$route.params.contractId });
+          this.$message({
+            type: "success",
+            message: "Note successfully deleted",
+            showClose: true,
+          });
         })
         .catch(() => {
           this.$message({

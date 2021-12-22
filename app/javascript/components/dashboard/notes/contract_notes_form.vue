@@ -207,7 +207,7 @@
     deleteNote() {
          this.$confirm(
         `Are you sure you want to delete this note?`,
-        "Confirm Delete",
+        "Confirm Delete", 
         {
           confirmButtonText: "Delete",
           cancelButtonText: "Cancel",
@@ -215,7 +215,8 @@
         }
       )
         .then(() => {
-          this.deleteContractNote({ id: this.contractNote.id, ...this.$route.params });
+          this.deleteContractNote({ id: this.contractNote.id, contractId: this.$route.params.contractId });
+          console.log({ id: this.contractNote.id, ...this.$route.params })
           this.$message({
             type: "success",
             message: "Note successfully deleted",
