@@ -2074,7 +2074,7 @@ export default new Vuex.Store({
                   getSimpleDate(task.dueDate) - getSimpleDate(task.startDate);
 
                 hash.push({
-                  taskUrl: `#{API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
+                  taskUrl: `${API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
                   facilityId: facility.id,
                   projectId: getters.currentProject.id,
                   id: t_id,

@@ -69,7 +69,7 @@
       },
       taskDeleted(task) {
         http
-          .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.DV_facility.id}/tasks/${task.id}.json`)
+          .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.DV_facility.id}/tasks/${task.id}.json`)
           .then((res) => {
             let tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)

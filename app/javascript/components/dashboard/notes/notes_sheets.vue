@@ -165,7 +165,7 @@
           type: 'warning'
         }).then(() => {
           http
-            .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
+            .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/notes/${this.note.id}.json`)
             .then((res) => {
               this.loading = false
               this.$emit('note-deleted', this.note)
