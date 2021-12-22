@@ -1,7 +1,7 @@
 <template>
   <div class="notes-form" :class="{'fixed-form-mapView':isMapView}">
       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
-        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <span class="fbody-icon"><i class="fal fa-clipboard-list mh-green-text"></i></span>
         <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
       </div>
        <div class="d-flex form-group sticky mb-2">

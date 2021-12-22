@@ -685,7 +685,7 @@
       },
       toggleWatched(issue) {
         http
-          .put(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
+          .put(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             this.issueUpdated(res.data.issue, false)
           })

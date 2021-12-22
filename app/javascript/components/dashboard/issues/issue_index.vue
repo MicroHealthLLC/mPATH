@@ -355,7 +355,7 @@ export default {
     },
     issueDeleted(issue) {
       http
-        .delete(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`)
+        .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`)
         .then((res) => {
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)

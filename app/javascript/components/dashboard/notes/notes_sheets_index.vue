@@ -4,6 +4,7 @@
       <notes-form
         title="Add Note"
         :facility="DV_facility"
+        :contract="contract"
         @close-note-input="newNote=false"
         @note-created="noteCreated"
         class="notes_form_modal"
@@ -56,7 +57,9 @@
             v-for="note in filteredNotes.slice().reverse()" 
             :key="note.id" 
             :facility="DV_facility"
+            :contract="contract"
             :note="note"
+            :contractNote="note"
             id="notesHover"
             :from="from"
             @note-updated="noteUpdated"
@@ -74,8 +77,9 @@
 </template>
 
 <script>
-  import {mapMutations, mapGetters} from "vuex"
+  import {mapMutations, mapGetters, mapActions} from "vuex"
   import NotesForm from './notes_form'
+  import ContractNotesForm from './contract_notes_form'
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
 
@@ -83,17 +87,29 @@
     name: 'NotesSheetsIndex',
     components: {
       NotesForm,
+      ContractNotesForm, 
       NotesSheets,
       SweetModal
     },
-    props: ['facility', 'from'],
+    props: ['facility', 'from', "contract"],
     data() {
       return {
         loading: true,
         newNote: false,
         myNotesCheckbox: false,
-        notesQuery: '',
-        DV_facility: Object.assign({}, this.facility)
+        notesQuery: '',    
+        DV_facility: Object.assign({}, this.facility),
+        defaultPrivileges:{
+          admin: ['R', 'W', 'D'],
+          contracts: ['R', 'W', 'D'],
+          facility_id: this.$route.params.contractId,
+          issues: ['R', 'W', 'D'],
+          lessons: ['R', 'W', 'D'],
+          notes: ['R', 'W', 'D'],
+          overview: ['R', 'W', 'D'],
+          risks: ['R', 'W', 'D'],
+          tasks: ['R', 'W', 'D'],
+        },    
       }
     },
     methods: {
@@ -102,18 +118,38 @@
         'setMyActionsFilter',
         'updateFacilityHash'
       ]),
+       ...mapActions([
+        'fetchContractNotes',       
+      ]),
       //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // _isallowed(salut) {
+      //   var programId = this.$route.params.programId;
+      //   var projectId = this.$route.params.projectId
+      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return  fPrivilege.notes.includes(s); 
+      // },
+      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
+       _isallowed(salut) {
+        let programId = this.$route.params.programId;
+        if (this.$route.params.contractId) {
+          return this.defaultPrivileges      
+        } else {
+        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.notes.includes(s); 
+        return fPrivilege.notes.includes(s); 
+        }         
       },
      addNewNote() {
         this.setTaskForManager({key: 'note', value: {}})
         // Route to new task form page
+        if(this.$route.params.contractId){
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/notes/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/new`
         );
@@ -141,13 +177,26 @@
         this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
       }
     },
+    mounted() {
+    // GET request action to retrieve all lessons for project
+    //  console.log(this.filteredLessons.filtered.lessons)
+    if (this.$route.params.contractId && !this.facility){
+        this.fetchContractNotes(this.$route.params);
+     }   
+    },
     computed: {
       ...mapGetters([
-        'myActionsFilter'
+        'myActionsFilter',
+        'contractNotes'
       ]),
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
-        return _.filter(this.DV_facility.notes, n => {
+        let notes = this.DV_facility.notes;
+        if (this.$route.params.contractId){
+          notes = this.contractNotes
+        }    
+         return _.filter(notes, n => {
+          //  console.log(notes)
           let valid = this.C_myNotes ? this.$currentUser.id == n.userId : true
           if (resp) valid = valid && resp.test(n.body)
           return valid
@@ -171,7 +220,13 @@
           this.DV_facility = Object.assign({}, value)
           this.loading = true
         }, deep: true
-      }
+      },
+    //   contract: {
+    //   handler: function(value) {
+    //     this.DV_contract = Object.assign({}, value)
+    //     this.loading = true
+    //   }, deep: true
+    // }
     }
   }
 </script>

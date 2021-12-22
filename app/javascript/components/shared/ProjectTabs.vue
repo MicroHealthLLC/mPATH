@@ -124,7 +124,6 @@ export default {
         {
           label: "Notes",
           key: "notes",
-          disabled: true, 
           closable: false,
           hidden: false,
         },

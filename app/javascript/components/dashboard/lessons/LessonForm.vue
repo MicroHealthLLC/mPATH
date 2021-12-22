@@ -16,8 +16,8 @@
       <div>
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
-            ><i class="fas fa-suitcase"></i
-          ></span>
+            ><i class="fal fa-clipboard-list mh-green-text"></i>
+            </span>
           <router-link v-if="contentLoaded && !contract" :to="projectNameLink">{{
           facility.facilityName
           }}</router-link>

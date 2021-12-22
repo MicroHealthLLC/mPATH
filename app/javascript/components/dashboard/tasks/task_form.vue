@@ -16,10 +16,12 @@
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span style="font-size: 16px; margin-right: 2.5px"
-              > <i class="fas fa-suitcase mb-1"></i>
+            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+              >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-
+            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+              > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
+            </span>
             <router-link :to="projectNameLink">
               <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
