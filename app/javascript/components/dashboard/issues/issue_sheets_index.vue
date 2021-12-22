@@ -466,6 +466,9 @@
             <span v-if="issue.important == true">Important</span>
             <span v-if="issue.isOverdue">Overdue</span>
             <span v-if="issue.progress == 100">Completed</span>   
+            <span v-if="issue.inProgress == true">In Progress</span>
+            <span v-if="issue.planned == true">Planned</span>
+            <span v-if="issue.reportable == true">Briefings</span>
             <span v-if="issue.onHold == true">On Hold</span> 
             <span v-if="issue.draft == true">Draft</span>   
             <span v-if="
@@ -473,6 +476,9 @@
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
                   issue.draft == false && 
+                  issue.reportable == false &&
+                  issue.inProgress == false &&
+                  issue.planned == false &&
                   issue.progress < 100 "             
             >                 
             </span>  
@@ -679,7 +685,7 @@
       },
       toggleWatched(issue) {
         http
-          .put(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
+          .put(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             this.issueUpdated(res.data.issue, false)
           })

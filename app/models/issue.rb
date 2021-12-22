@@ -278,7 +278,7 @@ class Issue < ApplicationRecord
       program_name: project.name, 
       in_progress: in_progress,
       issue_type: issue_type.try(:name),
-      project_group: facility_group.name,
+      project_group: facility_group.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_stage_id: self.issue_stage_id,
       issue_severity: issue_severity.try(:name),
@@ -368,7 +368,7 @@ class Issue < ApplicationRecord
 
     if params[:contract_id]
       issue.contract_id = params[:contract_id]
-    elsif !task.facility_project_id.present?
+    elsif !issue.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 

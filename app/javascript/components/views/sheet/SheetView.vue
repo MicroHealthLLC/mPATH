@@ -29,7 +29,12 @@
               $route.name !== 'SheetIssueForm' &&
               $route.name !== 'SheetRiskForm' &&
               $route.name !== 'SheetNoteForm' &&
-              $route.name !== 'SheetLessonForm'
+              $route.name !== 'SheetLessonForm' &&
+              $route.name !== 'ContractTaskForm' &&
+              $route.name !== 'ContractIssueForm' &&
+              $route.name !== 'ContractRiskForm' &&
+              $route.name !== 'ContractNoteForm' &&
+              $route.name !== 'ContractLessonForm'
           "
           class="d-flex align-items-center my-1 ml-1"
         >
@@ -51,7 +56,12 @@
                 $route.name !== 'SheetIssueForm' &&
                 $route.name !== 'SheetRiskForm' &&
                 $route.name !== 'SheetNoteForm' &&
-                $route.name !== 'SheetLessonForm'
+                $route.name !== 'SheetLessonForm' &&
+                $route.name !== 'ContractTaskForm' &&
+                $route.name !== 'ContractIssueForm' &&
+                $route.name !== 'ContractRiskForm' &&
+                $route.name !== 'ContractNoteForm' &&
+                $route.name !== 'ContractLessonForm'
             "
           />
          </div>

@@ -127,7 +127,6 @@
           v-if="filteredLessons.filtered.lessons.length > 0"
           class="table table-sm table-bordered stickyTableHeader mb-3"
           id="lessonsPdf"
-          ref="table"
         >
           <colgroup>
           <col class="lessCol" />
@@ -290,6 +289,52 @@
         </div>
       </div>
     </div>
+    <table
+        v-if="filteredLessons.filtered.lessons.length > 0"
+        class="table table-sm table-bordered table-striped"
+        ref="table" id="lessonsSheetsList1"
+        style="display:none"
+      >
+      <thead>
+        <tr style="background-color:#ededed">
+          <th>Lesson</th>
+          <th>Date Added</th>
+          <th>Added By</th>
+          <th>Description</th>
+          <th style="width:50%">Flags</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr  v-for="lesson in filteredLessons.filtered.lessons" :key="lesson.id">
+          <td>{{ lesson.title }}</td>
+          <td>{{ formatDate(new Date(lesson.date)) }}</td>
+          <td>{{ lesson.created_by.full_name }}</td>
+          <td>{{ lesson.description }}</td>
+          <td class="text-center" style="text-align:center">
+            <span v-if="lesson.important == true">Important</span>
+            <span v-if="lesson.reportable == true">Briefings</span>
+            <span v-if="lesson.draft == true">Draft</span>
+            <span v-if="!lesson.draft">Complete</span>
+            <span v-if="
+                  lesson.important == false &&
+                  lesson.draft == false &&
+                  lesson.reportable == false"
+                  >
+            </span>
+          </td>
+          <td v-if="lesson.notes.length > 0">
+            <span v-tooltip="('By: ' + lesson.lastUpdate.user.fullName)">
+            {{ moment(lesson.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>
+            </span>
+            <span>
+              {{lesson.lastUpdate.body}}
+            </span>
+          </td>
+          <td v-else >No Updates</td>
+        </tr>
+      </tbody>
+    </table>
     <!-- The context-menu appears only if table row is right-clicked -->
     <LessonContextMenu
       :lesson="clickedLesson"
@@ -366,7 +411,7 @@ export default {
     exportToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
-      doc.autoTable({ html: "#lessonsPdf" });
+      doc.autoTable({ html: "#lessonsSheetsList1" });
       doc.save("Lessons Learned.pdf");
     },
     exportToExcel(table, name) {

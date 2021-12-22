@@ -11,6 +11,7 @@ import projectStore from "./modules/project-store";
 import taskStore from "./modules/task-store";
 import issueStore from "./modules/issue-store";
 import riskStore from "./modules/risk-store";
+import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
 import portfolioModule from "./modules/portfolio-store";
 import { API_BASE_PATH } from "./../mixins/utils";
@@ -36,6 +37,7 @@ export default new Vuex.Store({
     issueStore,
     riskStore,
     lessonStore,
+    notesStore,
     portfolioModule,
   },
   state: {
@@ -2072,7 +2074,7 @@ export default new Vuex.Store({
                   getSimpleDate(task.dueDate) - getSimpleDate(task.startDate);
 
                 hash.push({
-                  taskUrl: `#{API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
+                  taskUrl: `${API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
                   facilityId: facility.id,
                   projectId: getters.currentProject.id,
                   id: t_id,

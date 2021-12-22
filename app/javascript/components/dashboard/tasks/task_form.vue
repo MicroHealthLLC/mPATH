@@ -16,10 +16,12 @@
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span style="font-size: 16px; margin-right: 2.5px"
-              > <i class="fas fa-suitcase mb-1"></i>
+            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+              >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-
+            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+              > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
+            </span>
             <router-link :to="projectNameLink">
               <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
@@ -1834,7 +1836,7 @@ export default {
 
 
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
+        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
          }
@@ -1846,7 +1848,7 @@ export default {
           callback = "task-updated";
         }
         if (this.task && this.task.id && this.facility) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.task.facilityId}/tasks/${this.task.id}.json`;
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
         if (this.task && this.task.id && this.contract) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;

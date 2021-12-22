@@ -1038,7 +1038,6 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="table"
                     id="portTasks"
                   >
                     <thead style="background-color: #ededed">
@@ -1598,6 +1597,7 @@
                   <!-- EXPORT (Display:None) -->
                   <table
                     class="table table-bordered w-100"
+                    ref="table"
                     id="portTasks1"
                     style="display:none"
                   >
@@ -1698,6 +1698,12 @@
                         <td class="text-center">
                           <span v-if="task.is_overdue" v-tooltip="`Overdue`">
                             Overdue
+                          </span><span v-if="task.important" v-tooltip="`Important`">
+                            Important
+                          </span><span v-if="task.reportable" v-tooltip="`Briefings`">
+                            Briefings
+                          </span><span v-if="task.watched" v-tooltip="`Watched`">
+                            Watched
                           </span>
                           <span v-if="task.completed" v-tooltip="`Completed`">
                             Completed
@@ -1705,11 +1711,9 @@
                           <span
                             v-if="task.ongoing == true && !task.closed"
                             v-tooltip="`Ongoing`"
-                            >Ongoing</span
-                          >
+                            >Ongoing</span>
                           <span v-if="task.closed" v-tooltip="`Ongoing: Closed`"
-                            >Ongoing</span
-                          >
+                            >Ongoing</span>
                           <span
                             v-if="task.on_hold == true"
                             v-tooltip="`On Hold`"
@@ -2098,7 +2102,6 @@
               <div class="px-3 tableFixHead" style="overflow-x: auto">
                 <table
                   class="table table-sm table-bordered"
-                  ref="issueTable"
                   id="portIssues"
                 >
                   <thead style="background-color: #ededed">
@@ -2681,6 +2684,7 @@
                 </table>
                 <table
                   class="table table-bordered w-100"
+                  ref="issueTable"
                   id="portIssues1"
                   style="display:none"
                 >
@@ -2739,8 +2743,7 @@
                           Overdue
                         </span>
                         <span v-if="issue.completed" v-tooltip="`Completed`">
-                          Completed</span
-                        >
+                          Completed</span>
                         <span
                           v-if="issue.on_hold == true"
                           v-tooltip="`On Hold`"
@@ -2750,7 +2753,6 @@
                         <span v-if="issue.draft == true" v-tooltip="`Draft`">
                           Draft
                         </span>
-
                         <span v-if="issue.planned" v-tooltip="`Planned`">
                           Planned
                         </span>
@@ -2760,6 +2762,12 @@
                         >
                           In Progress
                         </span>
+                        <span v-if="issue.reportable" v-tooltip="`Briefings`">
+                          Briefings</span>
+                        <span v-if="issue.important" v-tooltip="`Important`">
+                          Important</span>
+                        <span v-if="issue.watched" v-tooltip="`Watched`">
+                          Watched</span>
                       </td>
                       <td>
                         <span
@@ -3177,7 +3185,6 @@
                 <div class="px-3 tableFixHead">
                   <table
                     class="table table-sm table-bordered"
-                    ref="riskTable"
                     id="portRisks"
                   >
                     <thead style="background-color: #ededed">
@@ -3848,6 +3855,7 @@
                   <!-- Export (Display:none) -->
                   <table
                     class="table table-bordered w-100"
+                    ref="riskTable"
                     id="portRisks1"
                     style="display:none"
                   >
@@ -4012,6 +4020,12 @@
                             v-tooltip="`In Progress`"
                           >
                             In Progress
+                          </span>
+                          <span
+                            v-if="risk.reportable"
+                            v-tooltip="`Briefings`"
+                          >
+                            Briefings
                           </span>
                         </td>
                         <td
@@ -4272,7 +4286,6 @@
                 <div class="tableFixHead px-3">
                   <table
                     class="table table-sm table-bordered"
-                    ref="lessonTable"
                     id="portLessons"
                   >
                     <thead style="background-color: #ededed">
@@ -4747,6 +4760,7 @@
                     class="table table-bordered w-100"
                     id="portLessons1"
                     style="display:none"
+                    ref="lessonTable"
                   >
                     <thead>
                       <tr style="background-color:#ededed">
@@ -4781,11 +4795,14 @@
                           }}</span>
                         </td>
                         <td class="text-center">
-                          <span v-if="lesson.draft == true" v-tooltip="`Draft`">
-                            Draft
-                          </span>
-                          <span v-if="lesson.draft == false">
-                            Completed
+                          <span v-if="lesson.important == true" v-tooltip="`Important`">Important</span>
+                          <span v-if="lesson.reportable" v-tooltip="`Briefings`">Briefings</span>
+                          <span v-if="lesson.draft == true" v-tooltip="`Draft`">Draft</span>
+                          <span v-if="lesson.draft == false" v-tooltip="`Completed`">Completed</span>
+                          <span v-if="
+                                lesson.important == false &&
+                                lesson.reportable == false &&
+                                lesson.draft == false">
                           </span>
                         </td>
                         <td

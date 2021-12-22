@@ -15,8 +15,57 @@ class Api::V1::NotesController < AuthenticatedController
       action = "delete"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
+    if params[:contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'notes', contract: params[:contract_id])
+    else
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
+    end
 
+  end
+
+  def index
+
+    fph = current_user.facility_privileges_hash
+
+    # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
+    if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["notes"].present?
+      # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
+      facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
+      
+      if facility_project
+        notes = Note.where(facility_project_id: facility_project.id)
+        response_hash = {notes: notes.map(&:to_json)}
+        status_code = 200
+      else
+        response_hash = {errors: "Program or Project not found"}
+        status_code = 404
+      end
+    elsif params[:project_id]
+      allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["notes"].present? }.compact
+
+      fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
+      
+      if fp_ids.any?
+        notes = Note.joins(:facility_project).where(facility_project_id: fp_ids)
+        response_hash = {notes: notes.map(&:to_json)}
+        status_code = 200
+      end
+    elsif params[:contract_id]
+      notes = Note.where(noteable_id: params[:contract_id], noteable_type: "Contract")
+      response_hash = {notes: notes.map(&:to_json)}
+      status_code = 200
+    else
+      response_hash = {errors: "Program or Project not found"}
+      status_code = 404
+    end
+
+    render json: response_hash, status: status_code
+
+  end
+
+  def show
+    @note = Note.find(params[:id])    
+    render json: {notes: @note.to_json}, status: 200
   end
 
   def create
@@ -47,7 +96,9 @@ class Api::V1::NotesController < AuthenticatedController
 
   private
   def set_noteable
-    if params[:project_id].present? && params[:facility_id].present?
+    if params[:contract_id]
+      @noteable = current_user.authorized_contracts.find_by(id: params[:contract_id] )
+    elsif params[:project_id].present? && params[:facility_id].present?
       @project = current_user.authorized_programs.find(params[:project_id])
       @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
     elsif params[:facility_project_id].present?

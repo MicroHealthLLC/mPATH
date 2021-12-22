@@ -14,6 +14,7 @@
     "dayjs": "^1.10.4",
     "el-table-export": "^1.0.8",
     "element-ui": "^2.14.1",
+    "firebase": "8.10.0",
     "gantt-elastic": "^1.0.11",
     "gantt-elastic-header": "^0.1.11",
     "humps": "^2.0.1",

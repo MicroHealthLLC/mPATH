@@ -458,6 +458,9 @@
             <span v-if="task.important == true">Important</span>
             <span v-if="task.isOverdue">Overdue</span>
             <span v-if="task.progress == 100">Completed</span> 
+            <span v-if="task.planned == true">Planned</span>
+            <span v-if="task.inProgress == true">In Progress</span>
+            <span v-if="task.reportable == true">Briefings</span>
             <span v-if="task.ongoing == true">Ongoing</span>
             <span v-if="task.onHold == true">On Hold</span> 
             <span v-if="task.draft == true">Draft</span>   
@@ -467,6 +470,9 @@
                   task.isOverdue == false &&
                   task.onHold == false &&  
                   task.draft == false && 
+                  task.reportable == false &&
+                  task.inProgress == false &&
+                  task.planned == false &&
                   task.progress < 100 "             
                   >                
             </span>  

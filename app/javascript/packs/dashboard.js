@@ -59,6 +59,7 @@ if(!window.google){
   })
 }
 
+Vue.prototype.$mpath_instance = window.mpath_instance
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 // Format: {<program_id> : {
     // <project_id>:{

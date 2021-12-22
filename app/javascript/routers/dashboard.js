@@ -4,6 +4,7 @@ import ProgramView from "./../components/views/program/ProgramView";
 
 import SettingsView from "./../components/views/settings/SettingsView";
 import SettingsProjects from "./../components/views/settings/SettingsProjects";
+import TestCloudData from "./../components/views/settings/TestCloudData";
 import SettingsContracts from "./../components/views/settings/SettingsContracts";
 import SettingsGroups from "./../components/views/settings/SettingsGroups";
 
@@ -189,6 +190,11 @@ export default new VueRouter({
       name: "SettingsView",
       path: "/programs/:programId/settings",
       component: SettingsView,
+     },   
+     {
+      name: "TestCloudData",
+      path: "/programs/:programId/settings/test_cloud_data",
+      component: TestCloudData,
      },   
     {
       name: "ProgramView",

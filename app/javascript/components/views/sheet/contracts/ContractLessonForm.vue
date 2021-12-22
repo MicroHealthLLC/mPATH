@@ -1,17 +1,17 @@
 <template>
   <div>
-    <LessonForm class="mx-4" :contract="contract" />
+    <ContractsLessonForm class="mx-4" :contract="contract" />
   </div>
 </template>
 
 <script>
-import LessonForm from "../../../dashboard/lessons/LessonForm";
+import ContractsLessonForm from "../../../dashboard/lessons/ContractsLessonForm";
 
 export default {
-  name: "SheetLessonForm",
+  name: "ContractLessonForm",
   props: ["contract"],
   components: {
-    LessonForm,
+    ContractsLessonForm,
   },
 };
 </script>
