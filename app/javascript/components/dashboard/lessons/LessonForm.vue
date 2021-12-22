@@ -213,6 +213,7 @@
           v-model="lesson.task_type_id"
           class="w-100"
           value-key="id"
+          clearable
           name="Process Area"
           placeholder="Select Process Area"
           :disabled="!_isallowed('write')"
