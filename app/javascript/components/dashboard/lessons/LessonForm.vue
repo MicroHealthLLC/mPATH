@@ -19,8 +19,8 @@
             ><i class="fal fa-clipboard-list mh-green-text"></i>
             </span>
           <router-link v-if="contentLoaded && !contract" :to="projectNameLink">{{
-          facility.facilityName
-          }}</router-link>
+           lesson.project_name
+           }}</router-link>
            <router-link :to="backToContract">
               <span v-if="contract">{{
                   contract.nickname || contract.name
@@ -1275,10 +1275,8 @@ export default {
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-      if (this.$route.params.projectId) {
+      if (this.facility) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-      } else if  (this.$route.params.contractId) {
-        return  `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
@@ -1306,7 +1304,7 @@ export default {
         ...this.$route.params,
       });
     }
-     else if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && this.facility) {
+     else if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && !this.contract) {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,

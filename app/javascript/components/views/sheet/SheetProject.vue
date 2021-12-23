@@ -4,7 +4,7 @@
       <div>
         <div>
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">            
-            <div class="row filterDiv">      
+            <div class="row filterDiv" v-show="isSheetsView">      
                <div class="text-center filterLabel underline"><small class="px-2 bg">FILTERS </small></div>        
                 <div class="col filterCol text-right">                 
                   <div
@@ -32,7 +32,7 @@
              <div v-show="currentTab == 'tab1'" class="container mt-2 mx-0">
            
              <div class="row row-1 mt-3">    
-              <div class="col-5">
+              <div :class="[isMapView ? 'col-10' : 'col-5']">
                <div class="row"> 
                    <div class="col pt-2 text-right">     
                   <button
@@ -118,65 +118,6 @@
                  </div>            
                 </div>   
 
-                
-                <!-- <div class="row pb-1 mt-2">
-                    <div class="col">
-                      <h6 class="mb-3">GROUP NAME:</h6>
-                      <h6 class="mb-3">COMPLETION DATE:</h6>
-                      <h6>
-                        STATUS:
-                        <span>
-                          <small
-                            v-if="!facility.statusId && _isallowed('write')"
-                            class="ml-2 d-inline text-danger"
-                            style="position:absolute"
-                          >
-                            Must be updated before you can enter a Completion
-                            Date!
-                          </small>
-                        </span>
-                      </h6>
-                    </div>
-
-                    <div class="col pt-2">  
-                      <p  v-if="facility && facility.facility" class="d-inline mb-2"> 
-                       
-                      {{ facility.facility.facilityGroupName }}                        
-                    </p>         
-
-                      <div class="simple-select">
-                        <v2-date-picker
-                          v-model="dueDate"
-                          value-type="YYYY-MM-DD"
-                          format="DD MMM YYYY"
-                          class="w-100 vue2-datepicker mt-2"
-                          @input="onChange"
-                          placeholder="DD MM YYYY"
-                          :disabled="!_isallowed('write') || !facility.statusId"
-                        />
-                      </div>
-
-                      <div class="el-dropdown-wrapper my-2">
-                        <el-select
-                          v-model="statusId"
-                          track-by="id"
-                          class="w-100"
-                          @change="onChange"
-                          :disabled="!_isallowed('write')"
-                          placeholder="Select Project Status"
-                        >
-                          <el-option
-                            v-for="item in statuses"
-                            :label="item.name"
-                            :key="item.id"
-                            :value="item.id"
-                          >
-                          </el-option>
-                        </el-select>
-                      </div>
-                    </div>
-                  </div> -->
-                       <!-- :disabled="!DV_updated" -->
               
               </div>  
            
@@ -187,8 +128,8 @@
       <div v-show="currentTab == 'tab2'" class="container mt-2 mx-0">
         <div class="row row-1 mt-3">    
         <div
-          v-show="isSheetsView" 
           v-if="project"
+          :class="[isMapView ? 'col-10' : '']"
           class="col-5"
           data-cy="date_set_filter"
         > 
@@ -288,24 +229,15 @@
         </div>
         </div>     
       </div>
-
-    
-             
-              <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
+             <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
               <div class="row row-1 mt-3">    
-              <div class="col-5">
+              <div :class="[isMapView ? 'col-10' : 'col-5']">
                    <div class="row">
                     <div class="col ml-4">
                      <h5 class="d-inline" style="font-weight: 600"> 
                         <i class="far fa-file-contract mr-2 mh-orange-text"></i> 
                         Coming Soon
                       </h5>      
-                   <!-- <el-carousel height="150px">
-                    <el-carousel-item v-for="item in options" :key="item">
-                       <i class="far fa-file-contract mh-orange-text" style="font-size:3rem"></i> 
-                      <h3>{{ item }}</h3>
-                    </el-carousel-item>
-                  </el-carousel> -->
                     </div>
                   </div>                
                 </div>  
@@ -345,8 +277,7 @@ export default {
       dueDate: "",
       statusId: 0,
       currentTab: "tab1",
-      options: ["Contract 1", "Contract 2", "Contract 3" ],
-        tabs: [
+      tabs: [
         {
           label: "Info",
           key: "tab1",
@@ -373,23 +304,19 @@ export default {
     };
   },
   mounted() {
-    this.dueDate = this.facility.dueDate;
-    this.statusId = this.facility.statusId;
-    this.fetchProjectLessons(this.$route.params);
+  if (this.contentLoaded) {
+      this.dueDate = this.facility.dueDate;
+      this.statusId = this.facility.statusId;
+    }
   },
   methods: {
-    ...mapActions(["fetchProjectLessons", "fetchCurrentProject"]),
+    ...mapActions(["fetchCurrentProject"]),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash", "setContactInfoForm"]),
     editBtn(){
       this.edit = false
     },
     onChangeTab(tab) {
-      this.currentTab = tab ? tab.key : "tab1";
-      if (tab.key == "tab2") {
-        this.fetchContractGroupTypes();
-        this.fetchCurrentPop();
-        this.fetchClassificationTypes();
-     }
+      this.currentTab = tab ? tab.key : "tab1";     
     },
     updateContactInfo() {
       let formData = new FormData();
@@ -441,7 +368,7 @@ export default {
       });
       http
         .put(
-          `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}.json`,
+         `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}.json`,
           data
         )
         .then((res) => {
@@ -458,9 +385,6 @@ export default {
           console.error(err);
         });
     },
-    log(e){
-      console.log(e)
-    },
      _isallowed(salut) {
         var programId = this.$route.params.programId;
         var projectId = this.$route.params.projectId
@@ -476,10 +400,7 @@ export default {
         this.facility.progress < 100
       );
     },
-    // log(e){
-    //   console.log("getAllFilterNames" + e)
-    // },
-   onChange() {
+  onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
       });
