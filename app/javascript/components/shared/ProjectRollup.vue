@@ -752,7 +752,7 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                     <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                      programLessonsCount.total_count 
+                      filteredLessons.length
                     }}</b>
                   </h5>
                 </div>
@@ -775,12 +775,12 @@
                 <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
-                   programLessonsCount.completed
+                    lessonVariation.completes.length
                   }}</h4>         
                 </div>
                 <div class="col-6 pb-0 mb-0">
                   <h4>{{
-                   programLessonsCount.progress
+                    lessonVariation.drafts.length
                   }}</h4>        
                 </div>                     
                 </div>            
@@ -1156,8 +1156,26 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
-    },  
-     filteredTasks() {
+    },
+    lessonVariation() {
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
+      return {
+        completes,
+        drafts
+      }
+    },
+    filteredLessons() {
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(this.programLessons, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    },
+    filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
       let tasks = this.currentProject ? _.flatten(
@@ -1236,9 +1254,9 @@ export default {
     },
     lessonStats() {
       let lessons = new Array();
-      // console.log(this.programLessons)
-      let group = _.groupBy(this.programLessons, "category");
+      let group = _.groupBy(this.filteredLessons, "category");
       for (let type in group) {
+        if (!type || type == "null") continue;
         lessons.push({
           name: type,
           count: group[type].length,
@@ -1268,7 +1286,7 @@ export default {
         //TODO: For performance, send the whole tasks array instead of one by one
         valid =
           valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
+          this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.riskStageId);
         if (typeIds.length > 0)

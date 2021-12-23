@@ -1345,24 +1345,29 @@ export default new Vuex.Store({
       if (taskIssueOverdue == false && taskIssueNotOverdue == true) {
         valid = valid && _isOverdues.includes(false);
       }
-
-      let _progressStatuses = [];
-      _progressStatuses = _.map(resources, "progressStatus");
-
       if (
-        taskIssueActiveProgressStatus == true &&
-        taskIssueCompletedProgressStatus == false &&
-        _progressStatuses.length > 0
-      ) {
-        valid = valid && _progressStatuses.includes("active");
-      }
+        page_name.toLowerCase().includes("lesson") &&
+        taskIssueCompletedProgressStatus == true
+        ) {
+        valid = valid || _isDrafts.includes(false);
+      } else {
+        let _progressStatuses = [];
+        _progressStatuses = _.map(resources, "progressStatus");
 
-      if (
-        taskIssueActiveProgressStatus == false &&
-        taskIssueCompletedProgressStatus == true &&
-        _progressStatuses.length > 0
-      ) {
-        valid = valid || _progressStatuses.includes("completed");
+        if (
+          taskIssueActiveProgressStatus == true &&
+          taskIssueCompletedProgressStatus == false &&
+          _progressStatuses.length > 0
+        ) {
+          valid = valid && _progressStatuses.includes("active");
+        }
+        if (
+          taskIssueActiveProgressStatus == false &&
+          taskIssueCompletedProgressStatus == true &&
+          _progressStatuses.length > 0
+        ) {
+          valid = valid || _progressStatuses.includes("completed");
+        }
       }
 
       // var notes = _.flatten(_.map(resources, 'notes'))

@@ -489,6 +489,7 @@ export default {
       'getLessonsPerPageFilter',
       'getShowCount',
       'getShowAdvancedFilter',
+      'filterDataForAdvancedFilter',
       'taskTypeFilter',
       'taskTypes',
       // 2 States
@@ -525,22 +526,23 @@ export default {
    filteredLessons() {
       // Returns filtered lessons based on search value from input
       let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+      let valid = true
+      let advancedFilterlessons = _.filter(this.projectLessons, (resource) => {
+        valid = valid && this.filterDataForAdvancedFilter([resource], 'sheetLessons')
+        if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.task_type_id)
+        return valid
+      })
       return {
       unfiltered: {
-       lessons:  this.projectLessons
-        .filter(lesson => {
+       lessons:  advancedFilterlessons
+        .filter((lesson) => {
           if (this.search !== "") {
             return lesson.title.toLowerCase().match(this.search.toLowerCase());
           } else return true;
         })
-        .filter(lesson => {
-        if(milestoneIds.length > 0) {
-          return milestoneIds.includes(lesson.task_type_id)
-        } else return true;
-        })
       },
         filtered : {
-          lessons: this.projectLessons.filter(lesson => {
+          lessons: advancedFilterlessons.filter(lesson => {
         // Filtering 3 Lesson States        
         if (this.getHideDraft) {
           return !lesson.draft
@@ -553,10 +555,6 @@ export default {
          if (this.getHideComplete) {
           return lesson.draft
         } else return true
-      }).filter(lesson => {
-        if(milestoneIds.length > 0) {
-          return milestoneIds.includes(lesson.task_type_id)
-        } else return true;
       // Filtering 3 Task Tags
       }).filter(lesson => {
          if (this.getHideBriefed && !this.getHideImportant ) {
