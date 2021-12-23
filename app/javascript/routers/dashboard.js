@@ -102,7 +102,7 @@ export default new VueRouter({
         {
           name: "MapProject",
           path: "projects/:projectId/",
-          component: MapProject,
+          component: SheetProject,
         },
         {
           name: "MapAnalytics",

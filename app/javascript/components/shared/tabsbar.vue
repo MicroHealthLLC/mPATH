@@ -66,7 +66,7 @@ export default {
   name: "Tabsbar",
   computed: {
     isSheetsView() {
-      return this.$route.name.includes("Sheet");
+      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract");
     },
     isMapView() {
       return this.$route.name.includes("Map");
