@@ -654,7 +654,7 @@
         />
         <div v-for="(file, index) in files" :key="index">
           <div
-            class="clickable file-name d-flex justify-content-between w-100 py-1"
+            class="file-name d-flex justify-content-between w-100 py-1"
           >
             <div @click.prevent="downloadFile(file)">
                <i class="far fa-file mr-2"></i>{{ file.name }}
@@ -1246,7 +1246,7 @@ export default {
       if(this.portfolioUsers && this.portfolioUsers.length < 1){
         this.fetchPortfolioUsers()
       }    
-    
+      this.loading = false;
   },
   beforeDestroy() {
     // Clear current lesson in store
@@ -1418,7 +1418,13 @@ a:hover {
 .file-name:hover {
   background-color: #cdecf5;
 }
-.delete-icon {
+.del-check {
+  position: absolute;
+  display: flex;
+  right: 2rem;
+  font-weight: 500;
+  background: transparent;
+  height: fit-content;
   color: #dc3545;
 }
 .file-link {
