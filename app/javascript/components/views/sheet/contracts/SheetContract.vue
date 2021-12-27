@@ -250,7 +250,7 @@
                   </div>
                   <div class="col-6 pl-3 pr-0">
                     <label class="font-md"
-                      >Subcontract Number / PO Number *<span
+                      >Subcontract Number / PO Number<span
                         style="color: #dc3545"
                         >*</span
                       >
