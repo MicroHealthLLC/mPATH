@@ -18,15 +18,12 @@
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fal fa-clipboard-list mh-green-text"></i>
             </span>
-          <router-link v-if="contentLoaded && !contract" :to="projectNameLink">{{
-           lesson.project_name
+          <router-link v-if="contentLoaded && facility" :to="projectNameLink">{{
+           facility.facilityName
            }}</router-link>
-           <router-link :to="backToContract">
-              <span v-if="contract">{{
-                  contract.nickname || contract.name
-                  }}
-              </span>
-            </router-link>     
+          <router-link v-else :to="projectNameLink">{{
+              lesson.project_name
+           }}</router-link>
           <el-icon
             class="el-icon-arrow-right"
             style="font-size: 12px"
@@ -1002,12 +999,12 @@ export default {
         }         
       },
     close() {
-        if (this.$route.params.projectId) {
+        if (this.$route.params.projectId && this.facility) {
           // console.log("true")
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
           );
-        } else if (this.$route.params.contractId) {
+        } else if (this.$route.params.contractId && this.contract) {
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
           );
