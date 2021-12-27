@@ -1,9 +1,19 @@
 <template>
 <div class="filterbar">
+    <div class="py-1 programNameWrap">
+       <router-link :to="settingsLanding" id="noLine">
+      <div      
+        id="program_name"
+        class="programNameDiv smallCaps pl-2 pr-1"
+      >
+      {{ programName }}
+      </div>
+       </router-link>
+    </div>
 
 <div id="filter_bar">
     <h5>
-    <ul class="pt-3 program-name">
+    <ul class="pt-2 program-name">
        <router-link :to="adminGroupsView" > 
         <li class="p-3 entity">
           <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Groups
@@ -28,7 +38,7 @@
     </h5>
 
 </div>
-      <button class="btn btn-sm btn-light settingsBackBtn" @click.prevent="backToSheetView" style="cursor: pointer">
+      <button class="btn btn-sm btn-light settingsBackBtn mb-4" @click.prevent="backToSheetView" style="cursor: pointer">
        <h6> <i class="far fa-arrow-square-left mr-1"></i> Back To Program</h6>
       </button>  
 </div>
@@ -47,8 +57,21 @@ export default {
   computed: {
     ...mapGetters([
         'getShowAdminBtn',
+        'currentProject',
+        'contentLoaded'
      ]),
-   backToSheetView() {
+    programName() {
+      if (
+        this.contentLoaded &&
+        (this.currentProject !== null || this.currentProject !== undefined)
+      ) {
+        return this.currentProject.name;
+      }
+    },
+    settingsLanding() {
+     return `/programs/${this.$route.params.programId}/settings`;
+    },
+    backToSheetView() {
      window.location.pathname = `/programs/${this.$route.params.programId}/sheet`
       },
     adminProjectsView() {
@@ -83,31 +106,38 @@ export default {
 .filterbar {
   position: absolute;
   z-index: 1100;
+  background-color: #ededed;
   width: 90%;
   transition: .4s ease;
-//   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
+.programNameDiv {
+  box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
+  color: #212529 !important;
+  cursor: pointer;
+ } 
+.programNameWrap:hover {
+  background-color: rgba(211, 211, 211, 10%);
+}
+#noLine {
+  text-decoration-line: none !important;
+ }
 #filter_bar {
   overflow-y: auto;
   border-radius: 4px;
   background-color: #ededed;
   height: calc(100vh - 94px);
   max-height: calc(100vh - 94px);
-//   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
 ul {
-
   list-style-type: none; /* Remove bullets */
   li {
   color: #212529 !important; /* default color of text to replace blue default link color */
   } 
 }
-
 .entity:hover {
-    background-color: rgba(91, 192, 222, 0.3);
-    cursor: pointer;
+  background-color: rgba(91, 192, 222, 0.3);
+  cursor: pointer;
   }
-
 .settingsBackBtn {
   position: absolute;
   bottom: 15px;
