@@ -1310,6 +1310,7 @@ export default {
         ...this.$route.params,
       });
     }
+    this.loading = false;
   },
   beforeDestroy() {
     // Clear current lesson in store
