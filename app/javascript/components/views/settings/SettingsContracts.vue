@@ -124,7 +124,7 @@
        </div>
        <div class="form-group mx-3">
           <label class="font-md"
-            >Contract Type <span style="color: #dc3545">*</span></label
+            >Project Group Name <span style="color: #dc3545">*</span></label
           >
            <el-select
            v-model="C_typeFilter"
@@ -132,7 +132,7 @@
            track-by="id"
            value-key="id"         
            clearable
-           placeholder="Select Contract Type"
+           placeholder="Select Project Group Name"
            >
           <el-option
             v-for="item in getContractGroupOptions"
