@@ -395,7 +395,7 @@
                   </div>
                   <div class="col-5 pr-0">
                     <label class="font-md"
-                      >Current Pop End
+                      >Current PoP End
                       <span style="color: #dc3545">*</span></label
                     >
                     <div>
