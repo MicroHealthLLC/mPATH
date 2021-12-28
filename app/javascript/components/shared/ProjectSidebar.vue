@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "./loader";
 
 export default {
@@ -121,6 +121,7 @@ export default {
       'getShowAdminBtn',
       "currentProject",
       "facilities",
+      'contracts',
       "facilityGroups",
       "filteredFacilities",
       'getProjectGroupFilter',
@@ -128,13 +129,7 @@ export default {
       "facilityGroupFacilities",
     ]),
    isContractsView() {
-     return this.$route.name.includes("Sheet") ||
-        this.$route.name.includes("ContractAnalytics") ||
-        this.$route.name.includes("ContractTasks") ||
-        this.$route.name.includes("ContractIssues") ||
-        this.$route.name.includes("ContractRisks") ||
-        this.$route.name.includes("ContractNotes") ||
-        this.$route.name.includes("ContractLessons")
+     return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
     },
     programName() {
       if (
@@ -144,20 +139,7 @@ export default {
         return this.currentProject.name;
       }
     },
-    groups(){
-      let group = (array, key ) => {
-        return array.reduce((result, currentValue) => {
-      // If an array already present for key, push it to the array. Else create an array and push the object
-      (result[currentValue[key]] = result[currentValue[key]] || []).push(
-      currentValue
-        );
-        // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
-        return result;
-      }, {}); // empty object is the initial value for result object
-      };
-      return group(this.facilities, "facilityGroupName")
-    },
-    C_projectGroupFilter: {
+     C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
       },
@@ -209,6 +191,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
+   ...mapActions(["createContract", "fetchContracts", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
          group = this.currentContract.facilityGroupId
@@ -242,6 +225,8 @@ export default {
   },
  
   mounted() {
+    // this.fetchContracts()
+    // fetchContracts and the this.contracts getter gets all contracts regardless of privileges
      // Expand the project tree if there is only one project group on tab transition
     if (
       this.filteredFacilityGroups.length === 1 &&

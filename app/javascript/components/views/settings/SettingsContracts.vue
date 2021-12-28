@@ -83,11 +83,11 @@
 
 
     </el-table-column>
-    <el-table-column prop="facility_group_name" sortable filterable label="Group">
+    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
           <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facility_group_name"></el-input>
+            v-model="scope.row.facilityGroupName"></el-input>
        </template>
     </el-table-column>
 
@@ -197,6 +197,14 @@
 </template>
 
 <script>
+
+// Compare both array objects, if obj a is also in obj b, push key 'yes' into that value[i] else, push key 'no'
+
+// Create two empty arrays
+// Push values into array
+// Compare arrays
+
+
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
@@ -220,9 +228,9 @@ export default {
       },
     };
   },
-  mounted() {
-    this.fetchContracts();   
-  },
+  // mounted() {
+  //   this.fetchContracts();   
+  // },
   methods: {
    ...mapMutations([
      'setProjectGroupFilter', 
@@ -287,9 +295,9 @@ export default {
         let contractData = {
           contract: {
             nickname: rows.nickname,
-            contract_type_id: rows.contract_type_id,
-            facility_group_name: rows.facility_group_name,  
-            facility_group_id: rows.facility_group_id,  
+            contract_type_id: rows.contractTypeId,
+            facility_group_name: rows.facilityGroupName,  
+            facility_group_id: rows.facilityGroupId,  
             project_id: this.$route.params.programId,
             id:  id    
           }
@@ -334,22 +342,23 @@ export default {
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
+   
+
     tableData(){
-      if(this.contracts[0] && this.contracts[0].length > 0 ){
-      let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
+      if(this.currentProject && this.currentProject.contracts.length > 0 ){
+      let programContracts = this.currentProject.contracts.filter(t => t.projectId == this.$route.params.programId)
       let contractData = programContracts.map(t => t)
       .filter((td) => {
         //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
             let group = this.C_projectGroupFilter.map((t) => t.id);
-            return group.includes(td.facility_group_id);
+            return group.includes(td.facilityGroupId);
            
           } else return true;
         });
        return contractData
       }    
    },
-
     C_typeFilter: {
         get() {
           return this.getContractGroupTypes
