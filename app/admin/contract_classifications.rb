@@ -1,4 +1,4 @@
-ActiveAdmin.register ContractType do
+ActiveAdmin.register ContractClassification do
   menu parent: "Contracts", priority: 1
   actions :all, except: [:show]
 
