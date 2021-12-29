@@ -500,7 +500,7 @@ class User < ApplicationRecord
 
     pp_hash = user.project_privileges_hash
 
-    project_contract_hash = Contract.where(id: cids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.map(&:id).map(&:to_s).compact.uniq }
+    project_contract_hash = Contract.where("id in (?) and project_id is not null", cids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.map(&:id).map(&:to_s).compact.uniq }
 
     project_contract_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
