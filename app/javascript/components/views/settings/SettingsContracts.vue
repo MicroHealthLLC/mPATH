@@ -388,13 +388,6 @@ export default {
       },
     },
   },
-  beforeMount() {
-    if (this.contentLoaded && this.$route.params.contractId) {
-      this.currentContract = this.contracts[0].find(
-        (c) => c.id == this.$route.params.contractId
-      );
-    }
-  },
   watch: {
     contractStatus: {
       handler() {

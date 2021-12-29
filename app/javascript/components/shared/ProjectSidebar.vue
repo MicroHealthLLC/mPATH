@@ -38,15 +38,22 @@
          </div>
 
            <div class="col py-0 text-right">
-           <span class="badge badge-secondary badge-pill pill">{{ group.facilities.length}}</span>
+        
+            <span class="badge badge-secondary badge-pill pill">{{ 
+              facilityGroupFacilities(group).projects.a.length +  
+              facilityGroupFacilities(group).contracts.b.length
+              }}
+            </span>
+            
          
          </div>
              
           </div>
          <div v-show="expanded.id == group.id" class="ml-2">
               <div
-              v-for="facility in facilityGroupFacilities(group)"            
-              :key="facility.id"
+              v-for="facility in facilityGroupFacilities(group).projects.a"            
+              :key="facility.id"  
+              
             >
               <router-link
                 :to="
@@ -59,13 +66,16 @@
                   :class="{ active: facility.id == $route.params.projectId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{ facility.facility.facilityName }}
+                      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{ facility.facilityName }}
                   </p>
                 </div>
               </router-link>
               </div>
-               <div v-show="isContractsView" v-for="c in currentProject.contracts.filter(t => t.facilityGroupId == group.id)" :key="c.id + 'a'">
-              
+               <div 
+                v-show="isContractsView"              
+                v-for="c in filteredContracts.filter(t => t.facilityGroupId == group.id)" 
+                :key="c.id + 'a'"
+                >              
               <router-link               
                 :to="
                   `/programs/${$route.params.programId}/${tab}/contracts/${c.id}${pathTab}`
@@ -112,7 +122,8 @@ export default {
   props: ["title", "currentFacility", "currentFacilityGroup", "expanded", "currentContract"],
    data() {
       return {
-        value: ''
+        value: '',
+        filteredGroupSize: null
       }
     },
   computed: {
@@ -122,7 +133,9 @@ export default {
       "currentProject",
       "facilities",
       'contracts',
+      'projects',
       "facilityGroups",
+      'filteredContracts',
       "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
@@ -205,7 +218,10 @@ export default {
         );
 
       },
-    handleClose(done) {
+      log(e){
+        console.log(e)
+      },
+     handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {
             done();
