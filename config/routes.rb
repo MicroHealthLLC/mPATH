@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+      
+      get :get_privileges, to: 'privileges#get_privileges'
 
       # For Admin panel
       get '/settings', to: 'settings#index'

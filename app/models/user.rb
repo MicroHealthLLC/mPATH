@@ -500,7 +500,7 @@ class User < ApplicationRecord
 
     pp_hash = user.project_privileges_hash
 
-    project_contract_hash = Contract.where(id: cids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.map(&:id).map(&:to_s).compact.uniq }
+    project_contract_hash = Contract.where("id in (?) and project_id is not null", cids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.map(&:id).map(&:to_s).compact.uniq }
 
     project_contract_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
@@ -644,17 +644,18 @@ class User < ApplicationRecord
       contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
       contract_id = contract.id.to_s
       program_id = contract.project_id.to_s
-
+      
       action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
       pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
       result = false
       short_action_code = action_code_hash[action]
+
       if pph[program_id]
-        fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash
-        if fph[program_id][contract_id]
-          result = fph[program_id][contract_id][resource].include?(short_action_code)
+        fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash[program_id]
+        if fph[contract_id]
+          result = fph[contract_id][resource].include?(short_action_code)
         else
-          result = pph[program_id][resource].include?(short_action_code)
+          result = pph[resource].include?(short_action_code)
         end       
       end
     rescue Exception => e

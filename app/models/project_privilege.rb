@@ -64,6 +64,7 @@ class ProjectPrivilege < ApplicationRecord
       fp.risks = ( (fp.risks || []) + admin).compact.uniq
       fp.notes = ( (fp.notes || []) + admin).compact.uniq
       fp.lessons = ( (fp.lessons || []) + admin).compact.uniq
+      fp.contracts = ( (fp.contracts || []) + admin).compact.uniq
     end
   end
 
