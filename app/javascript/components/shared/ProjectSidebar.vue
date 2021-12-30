@@ -218,9 +218,6 @@ export default {
         );
 
       },
-      log(e){
-        console.log(e)
-      },
      handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {
@@ -241,9 +238,6 @@ export default {
   },
  
   mounted() {
-    // this.fetchContracts()
-    // fetchContracts and the this.contracts getter gets all contracts regardless of privileges
-     // Expand the project tree if there is only one project group on tab transition
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&

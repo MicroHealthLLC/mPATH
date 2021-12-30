@@ -2297,7 +2297,7 @@ export default new Vuex.Store({
               f.facilityGroupId == group.id &&
               f.projectId == getters.currentProject.id
               ).sort((a, b) => a.nickname.localeCompare(b.nickname)),
-        }      
+         }      
       }
     },
     // for gantt chart view

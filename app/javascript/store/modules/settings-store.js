@@ -345,7 +345,7 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_GROUPS", res.data.facility_groups);
+          commit("SET_GROUPS", res.data.facility_groups);        
         })
         .catch((err) => {
           console.log(err);
