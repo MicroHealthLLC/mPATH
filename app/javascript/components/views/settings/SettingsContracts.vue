@@ -74,7 +74,7 @@
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
    <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
-    <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
+    <el-table-column prop="nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
@@ -83,11 +83,11 @@
 
 
     </el-table-column>
-    <el-table-column prop="facilityGroupName" sortable filterable label="Group">
+    <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facilityGroupName"></el-input>
+            v-model="scope.row.facility_group_name"></el-input>
        </template>
     </el-table-column>
 
@@ -228,9 +228,9 @@ export default {
       },
     };
   },
-  // mounted() {
-  //   this.fetchContracts();   
-  // },
+  mounted() {
+     this.fetchContracts();   
+  },
   methods: {
    ...mapMutations([
      'setProjectGroupFilter', 
@@ -243,9 +243,7 @@ export default {
      ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
     _isallowed(salut) {
-
-        let pPrivilege = this.$programPrivileges[this.$route.params.programId]
-        
+        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         return pPrivilege.contracts.includes(s);     
@@ -295,9 +293,8 @@ export default {
         let contractData = {
           contract: {
             nickname: rows.nickname,
-            contract_type_id: rows.contractTypeId,
-            facility_group_name: rows.facilityGroupName,  
-            facility_group_id: rows.facilityGroupId,  
+            facility_group_name: rows.facility_group_name,  
+            facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
             id:  id    
           }
@@ -305,8 +302,6 @@ export default {
          this.updateContract({
             ...contractData, id
           })
-          // console.log(rows, contractData)
-     
     },
     addAnotherContract() {
          this.C_projectGroupFilter = null;
@@ -335,24 +330,24 @@ export default {
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
-      "facilityGroupFacilities",
       'facilityGroups',
       'currentProject'
     ]), 
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
-   
-
     tableData(){
-      if(this.currentProject && this.currentProject.contracts.length > 0 ){
-      let programContracts = this.currentProject.contracts.filter(t => t.projectId == this.$route.params.programId)
+      if(this.contracts &&
+         this.contracts[0] && 
+         this.contracts[0].length > 0 
+         ){
+      let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
       let contractData = programContracts.map(t => t)
       .filter((td) => {
         //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
             let group = this.C_projectGroupFilter.map((t) => t.id);
-            return group.includes(td.facilityGroupId);
+            return group.includes(td.facility_group_id);
            
           } else return true;
         });
@@ -388,13 +383,6 @@ export default {
       },
     },
   },
-  beforeMount() {
-    if (this.contentLoaded && this.$route.params.contractId) {
-      this.currentContract = this.contracts[0].find(
-        (c) => c.id == this.$route.params.contractId
-      );
-    }
-  },
   watch: {
     contractStatus: {
       handler() {
@@ -403,14 +391,12 @@ export default {
             message: `Contract saved successfully.`,
             type: "success",
             showClose: true,
-          });
-     
+          });     
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts();
         }
       },
-    },
-  
+    },  
   },
 };
 </script>

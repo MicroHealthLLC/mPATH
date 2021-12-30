@@ -1599,7 +1599,7 @@ export default {
     C_facilityCount() {         
       return this.facilityGroup
       
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.facilityCount; 
       
     },
@@ -1616,7 +1616,7 @@ export default {
       return this.facilityGroup
         ? Number(
             _.meanBy(
-              this.facilityGroupFacilities(this.facilityGroup),
+                this.facilityGroupFacilities(this.facilityGroup).projects.a,
               "progress"
             ) || 0
           ).toFixed(0)

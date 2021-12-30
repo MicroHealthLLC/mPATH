@@ -915,7 +915,7 @@
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(facilityGroup).length
+                  facilityGroupFacilities(facilityGroup).projects.a.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -1134,7 +1134,7 @@ export default {
     C_facilityCount() {         
       return this.facilityGroup
       
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.facilityCount; 
       
     },
@@ -1142,7 +1142,7 @@ export default {
       return this.facilityGroup
         ? Number(
             _.meanBy(
-              this.facilityGroupFacilities(this.facilityGroup),
+              this.facilityGroupFacilities(this.facilityGroup).projects.a,
               "progress"
             ) || 0
           ).toFixed(0)
@@ -1325,12 +1325,12 @@ export default {
     },
     activeFacilitiesByStatus() {
       return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.filteredFacilities("active").length;
     },
     inactiveFacilitiesByStatus() {
       return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
+        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").projects.a.length
         : this.filteredFacilities("inactive").length;
     },
     projectStatuses() {

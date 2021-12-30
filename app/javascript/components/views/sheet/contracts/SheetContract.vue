@@ -350,8 +350,8 @@
                 <div
                   class="row"
                   v-if="
-                    contract.contract_type_id === 0 ||
-                      contract.contract_type_id === 1
+                    contract.contract_type_id === 1 ||
+                      contract.contract_type_id === 2
                   "
                 >
                   <div class="col-2 pl-0 pr-2">
