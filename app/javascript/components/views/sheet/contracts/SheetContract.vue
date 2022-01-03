@@ -276,8 +276,8 @@
                   <div
                     class="col-4 pl-0 pr-1"
                     v-if="
-                      contract.contract_type_id === 0 ||
-                        contract.contract_type_id === 1
+                      contract.contract_type_id === 1 ||
+                        contract.contract_type_id === 2
                     "
                   >
                     <label class="font-md"
@@ -442,8 +442,8 @@
                   <div
                     class="col-6 pl-1 pr-0"
                     v-if="
-                      contract.contract_type_id === 0 ||
-                        contract.contract_type_id === 1
+                      contract.contract_type_id === 1 ||
+                        contract.contract_type_id === 2
                     "
                   >
                     <label class="font-md"
@@ -461,8 +461,8 @@
                 <div
                   class="row row_2"
                   v-if="
-                    contract.contract_type_id === 0 ||
-                      contract.contract_type_id === 1
+                    contract.contract_type_id === 1 ||
+                      contract.contract_type_id === 2
                   "
                 >
                   <div class="col-6 pl-0 pr-1">

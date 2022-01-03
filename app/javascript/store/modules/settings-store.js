@@ -454,18 +454,18 @@ const settingsStore = {
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: (state) => state.contract_type_filter,
     getContractGroupOptions: (state, getters) => {
-      var options = [
+      let options = [
         {
           id: 1,
           name: "Prime Contract",
         },
         {
           id: 2,
-          name: "Non Prime contract",
+          name: "Non Prime Contract",
         },
         {
           id: 3,
-          name: "Prime vehicles and ID IQs",
+          name: "Prime Vehicles and ID IQs",
         },
       ];
       return options;

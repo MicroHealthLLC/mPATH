@@ -45,6 +45,7 @@ export default new Vuex.Store({
     myAssignmentsFilter: [],
     contentLoaded: false,
     projectsLoaded: false,
+    showProjectStats: true,
     toggleRACI: true,
     showAllEventsToggle: false,
     showAdvancedFilter: false,
@@ -214,6 +215,8 @@ export default new Vuex.Store({
     setToggleRACI: (state, raci) => (state.toggleRACI = raci),
     setShowAllEventsToggle: (state, showAll) =>
       (state.showAllEventsToggle = showAll),
+    setShowProjectStats: (state, showStats) =>
+    (state.showProjectStats = showStats),
     setLastFocusFilter: (state, lastFocus) =>
       (state.lastCalendarFocus = lastFocus),
     setMapLoading: (state, loading) => (state.mapLoading = loading),
@@ -1112,6 +1115,7 @@ export default new Vuex.Store({
     contentLoaded: (state) => state.contentLoaded,
     projectsLoaded: (state) => state.projectsLoaded,
     getToggleRACI: (state) => state.toggleRACI,
+    getShowProjectStats: (state) => state.showProjectStats,
     getShowAllEventsToggle: (state) => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
     getLastFocusFilter: (state) => state.lastCalendarFocus,
