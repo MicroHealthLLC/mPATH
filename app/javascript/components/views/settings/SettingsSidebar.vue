@@ -38,9 +38,11 @@
     </h5>
 
 </div>
-      <button class="btn btn-sm btn-light settingsBackBtn mb-4" @click.prevent="backToSheetView" style="cursor: pointer">
-       <h6> <i class="far fa-arrow-square-left mr-1"></i> Back To Program</h6>
-      </button>  
+  <div class="bottomBtn">
+        <button class="btn btn-sm btn-light settingsBackBtn mb-4" @click.prevent="backToSheetView" style="cursor: pointer">
+        <h6> <i class="far fa-arrow-square-left mr-1"></i> Back To Program</h6>
+        </button> 
+  </div> 
 </div>
 </template>
 
@@ -139,9 +141,9 @@ ul {
   cursor: pointer;
   }
 .settingsBackBtn {
-  position: absolute;
-  bottom: 15px;
-  left: 15%;
+  position: fixed;
+  bottom: -15px;
+  left: 2.5%;
   z-index: 1140;
 }
 
