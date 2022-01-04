@@ -7,6 +7,7 @@ ProjectPrivilege.create({
  "admin"=>[],
  "risks"=>["R", "W", "D"],
  "lessons"=>["R", "W", "D"],
+ "contracts"=>["R", "W", "D"],
  "user_id"=>client.id,
  "project_ids"=>client.project_ids.map(&:to_s) })
 

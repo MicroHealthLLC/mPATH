@@ -27,8 +27,8 @@
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
 
-    <div data-cy="add_contract_btn" class="col" v-if="_isallowed('write')">
-      <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
+    <div  class="col" v-if="_isallowed('write')">
+      <el-button data-cy="add_contract_btn" @click.prevent="addContract" class="bg-primary text-light mb-2"> 
       <i class="far fa-plus-circle mr-1"></i> Add Contract
       </el-button>
      </div>    

@@ -43,7 +43,9 @@ describe('Contracts View', function() {
   })
 
   it('Add contract in program setting', function() {
+    cy.wait(800)
     cy.get('[data-cy=add_contract_btn]').click()
+    cy.wait(800)
     cy.get('[data-cy=contract_name]').type("New Contract 1")
     cy.get('[data-cy=contract_facility_group_select]').type("{downarrow}").type("{enter}")
     cy.get('[data-cy=save_contract_btn]').click()
