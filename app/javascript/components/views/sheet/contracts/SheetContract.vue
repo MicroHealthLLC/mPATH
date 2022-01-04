@@ -138,7 +138,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select or enter Customer (Agency)"
                     >
                       <el-option
                         v-for="item in cCustomerAgenciesOptions"
@@ -160,7 +160,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select or enter status"
                     >
                       <el-option
                         v-for="item in cStatusOptions"
@@ -208,7 +208,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
                     >
                       <el-option
                         v-for="item in cPrimeIdiqOptions"
@@ -224,9 +224,7 @@
                   <div class="col-6 pl-0 pr-3">
                     <label class="font-md"
                       >Prime Contract Number / Task Order / PO Number
-                      <span style="color: #dc3545">*</span>
                     </label>
-
                     <el-select
                       v-model="contract.contract_number_id"
                       filterable
@@ -237,7 +235,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
                     >
                       <el-option
                         v-for="item in cContractNoOptions"
@@ -250,10 +248,7 @@
                   </div>
                   <div class="col-6 pl-3 pr-0">
                     <label class="font-md"
-                      >Subcontract Number / PO Number *<span
-                        style="color: #dc3545"
-                        >*</span
-                      >
+                      >Subcontract Number / PO Number
                     </label>
                     <el-select
                       v-model="contract.subcontract_number_id"
@@ -265,7 +260,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select Subcontract Number / PO Number"
                     >
                       <el-option
                         v-for="item in cSubcontractNoOptions"
@@ -281,12 +276,12 @@
                   <div
                     class="col-4 pl-0 pr-1"
                     v-if="
-                      contract.contract_type_id === 0 ||
-                        contract.contract_type_id === 1
+                      contract.contract_type_id === 1 ||
+                        contract.contract_type_id === 2
                     "
                   >
                     <label class="font-md"
-                      >Prime <span style="color: #dc3545">*</span>
+                      >Prime 
                     </label>
                     <el-select
                       v-model="contract.contract_prime_id"
@@ -296,7 +291,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select Prime"
                     >
                       <el-option
                         v-for="item in cPrimeOptions"
@@ -316,7 +311,7 @@
                   <div class="col-6 pl-0 pr-1">
                     <label class="font-md"
                       >Contract Start Date
-                      <span style="color: #dc3545">*</span></label
+                     </label
                     >
                     <div>
                       <v2-date-picker
@@ -335,7 +330,7 @@
                   <div class="col-6 pl-1 pr-0">
                     <label class="font-md"
                       >Contract End Date
-                      <span style="color: #dc3545">*</span></label
+                     </label
                     >
                     <div>
                       <v2-date-picker
@@ -355,20 +350,20 @@
                 <div
                   class="row"
                   v-if="
-                    contract.contract_type_id === 0 ||
-                      contract.contract_type_id === 1
+                    contract.contract_type_id === 1 ||
+                      contract.contract_type_id === 2
                   "
                 >
                   <div class="col-2 pl-0 pr-2">
                     <label class="font-md"
-                      >Current PoP <span style="color: #dc3545">*</span>
+                      >Current PoP
                     </label>
                     <el-select
                       v-model="contract.contract_current_pop_id"
                       class="w-100"
                       track-by="id"
                       value-key="id"
-                      placeholder="Select Contract Group Type"
+                      placeholder="Select Current Pop"
                     >
                       <el-option
                         v-for="item in getCurrentPop"
@@ -382,7 +377,7 @@
                   <div class="col-5 pr-1">
                     <label class="font-md"
                       >Current PoP Start
-                      <span style="color: #dc3545">*</span></label
+                    </label
                     >
                     <div>
                       <v2-date-picker
@@ -400,7 +395,7 @@
                   </div>
                   <div class="col-5 pr-0">
                     <label class="font-md"
-                      >Current Pop End
+                      >Current PoP End
                       <span style="color: #dc3545">*</span></label
                     >
                     <div>
@@ -418,12 +413,12 @@
                 <div class="row">
                   <div class="col-4 pl-1 pr-0">
                     <label class="font-md"
-                      >Days Remaining<span style="color: #dc3545">*</span>
+                      >Days Remaining
                     </label>
                     <el-input
                       v-model="daysRemaining"
                      :disabled="!contract.current_pop_end_time"
-                      name="Contract Nickname"
+                      name="Days Remaining"
                       type="text"
                       placeholder="Days Remaining"
                     />
@@ -435,7 +430,7 @@
                 <div class="row t3 row_1">
                   <div class="col-6 pl-0 pr-1">
                     <label class="font-md"
-                      >Total Contract Value<span style="color: #dc3545">*</span>
+                      >Total Contract Value
                     </label>
                     <el-input
                       name="Total Contract Value"
@@ -447,18 +442,18 @@
                   <div
                     class="col-6 pl-1 pr-0"
                     v-if="
-                      contract.contract_type_id === 0 ||
-                        contract.contract_type_id === 1
+                      contract.contract_type_id === 1 ||
+                        contract.contract_type_id === 2
                     "
                   >
                     <label class="font-md"
-                      >Current PoP Value <span style="color: #dc3545">*</span>
+                      >Current PoP Value 
                     </label>
                     <el-input
                       name="Pop Value"
                       v-model="contract.current_pop_value"
                       type="text"
-                      placeholder="Contact Nickname"
+                      placeholder="Enter Current PoP Value"
                     />
                     <!-- Need to add additional div here for error handling -->
                   </div>
@@ -466,31 +461,30 @@
                 <div
                   class="row row_2"
                   v-if="
-                    contract.contract_type_id === 0 ||
-                      contract.contract_type_id === 1
+                    contract.contract_type_id === 1 ||
+                      contract.contract_type_id === 2
                   "
                 >
                   <div class="col-6 pl-0 pr-1">
                     <label class="font-md"
-                      >Current PoP Funded <span style="color: #dc3545">*</span>
+                      >Current PoP Funded
                     </label>
                     <el-input
                       name="Contract Type"
                       v-model="contract.current_pop_funded"
                       type="text"
-                      placeholder="Enter Contract Type"
+                      placeholder="Enter Current PoP Funded"
                     />
                   </div>
                   <div class="col-6 pl-1 pr-0">
                     <label class="font-md"
                       >Total Funded To Date
-                      <span style="color: #dc3545">*</span>
                     </label>
                     <el-input
                       v-model="contract.total_contract_funded"
                       name="Contract Status"
                       type="text"
-                      placeholder="Enter Contract Status"
+                      placeholder="Enter Total Funded To Date"
                     />
                   </div>
                 </div>

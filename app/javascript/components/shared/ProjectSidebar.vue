@@ -38,15 +38,22 @@
          </div>
 
            <div class="col py-0 text-right">
-           <span class="badge badge-secondary badge-pill pill">{{ group.facilities.length}}</span>
+        
+            <span class="badge badge-secondary badge-pill pill">{{ 
+              facilityGroupFacilities(group).projects.a.length +  
+              facilityGroupFacilities(group).contracts.b.length
+              }}
+            </span>
+            
          
          </div>
              
           </div>
          <div v-show="expanded.id == group.id" class="ml-2">
               <div
-              v-for="facility in facilityGroupFacilities(group)"            
-              :key="facility.id"
+              v-for="facility in facilityGroupFacilities(group).projects.a"            
+              :key="facility.id"  
+              
             >
               <router-link
                 :to="
@@ -59,13 +66,16 @@
                   :class="{ active: facility.id == $route.params.projectId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{ facility.facility.facilityName }}
+                      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{ facility.facilityName }}
                   </p>
                 </div>
               </router-link>
               </div>
-               <div v-show="isContractsView" v-for="c in currentProject.contracts.filter(t => t.facilityGroupId == group.id)" :key="c.id + 'a'">
-              
+               <div 
+                v-show="isContractsView"              
+                v-for="c in filteredContracts.filter(t => t.facilityGroupId == group.id)" 
+                :key="c.id + 'a'"
+                >              
               <router-link               
                 :to="
                   `/programs/${$route.params.programId}/${tab}/contracts/${c.id}${pathTab}`
@@ -101,7 +111,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "./loader";
 
 export default {
@@ -112,7 +122,8 @@ export default {
   props: ["title", "currentFacility", "currentFacilityGroup", "expanded", "currentContract"],
    data() {
       return {
-        value: ''
+        value: '',
+        filteredGroupSize: null
       }
     },
   computed: {
@@ -121,20 +132,17 @@ export default {
       'getShowAdminBtn',
       "currentProject",
       "facilities",
+      'contracts',
+      'projects',
       "facilityGroups",
+      'filteredContracts',
       "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
     ]),
    isContractsView() {
-     return this.$route.name.includes("Sheet") ||
-        this.$route.name.includes("ContractAnalytics") ||
-        this.$route.name.includes("ContractTasks") ||
-        this.$route.name.includes("ContractIssues") ||
-        this.$route.name.includes("ContractRisks") ||
-        this.$route.name.includes("ContractNotes") ||
-        this.$route.name.includes("ContractLessons")
+     return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
     },
     programName() {
       if (
@@ -144,20 +152,7 @@ export default {
         return this.currentProject.name;
       }
     },
-    groups(){
-      let group = (array, key ) => {
-        return array.reduce((result, currentValue) => {
-      // If an array already present for key, push it to the array. Else create an array and push the object
-      (result[currentValue[key]] = result[currentValue[key]] || []).push(
-      currentValue
-        );
-        // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
-        return result;
-      }, {}); // empty object is the initial value for result object
-      };
-      return group(this.facilities, "facilityGroupName")
-    },
-    C_projectGroupFilter: {
+     C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
       },
@@ -209,6 +204,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
+   ...mapActions(["createContract", "fetchContracts", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
          group = this.currentContract.facilityGroupId
@@ -222,7 +218,7 @@ export default {
         );
 
       },
-    handleClose(done) {
+     handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {
             done();
@@ -242,7 +238,6 @@ export default {
   },
  
   mounted() {
-     // Expand the project tree if there is only one project group on tab transition
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&

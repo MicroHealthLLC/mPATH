@@ -45,6 +45,7 @@ export default new Vuex.Store({
     myAssignmentsFilter: [],
     contentLoaded: false,
     projectsLoaded: false,
+    showProjectStats: true,
     toggleRACI: true,
     showAllEventsToggle: false,
     showAdvancedFilter: false,
@@ -214,6 +215,8 @@ export default new Vuex.Store({
     setToggleRACI: (state, raci) => (state.toggleRACI = raci),
     setShowAllEventsToggle: (state, showAll) =>
       (state.showAllEventsToggle = showAll),
+    setShowProjectStats: (state, showStats) =>
+    (state.showProjectStats = showStats),
     setLastFocusFilter: (state, lastFocus) =>
       (state.lastCalendarFocus = lastFocus),
     setMapLoading: (state, loading) => (state.mapLoading = loading),
@@ -1112,6 +1115,7 @@ export default new Vuex.Store({
     contentLoaded: (state) => state.contentLoaded,
     projectsLoaded: (state) => state.projectsLoaded,
     getToggleRACI: (state) => state.toggleRACI,
+    getShowProjectStats: (state) => state.showProjectStats,
     getShowAllEventsToggle: (state) => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
     getLastFocusFilter: (state) => state.lastCalendarFocus,
@@ -1345,24 +1349,29 @@ export default new Vuex.Store({
       if (taskIssueOverdue == false && taskIssueNotOverdue == true) {
         valid = valid && _isOverdues.includes(false);
       }
-
-      let _progressStatuses = [];
-      _progressStatuses = _.map(resources, "progressStatus");
-
       if (
-        taskIssueActiveProgressStatus == true &&
-        taskIssueCompletedProgressStatus == false &&
-        _progressStatuses.length > 0
-      ) {
-        valid = valid && _progressStatuses.includes("active");
-      }
+        page_name.toLowerCase().includes("lesson") &&
+        taskIssueCompletedProgressStatus == true
+        ) {
+        valid = valid || _isDrafts.includes(false);
+      } else {
+        let _progressStatuses = [];
+        _progressStatuses = _.map(resources, "progressStatus");
 
-      if (
-        taskIssueActiveProgressStatus == false &&
-        taskIssueCompletedProgressStatus == true &&
-        _progressStatuses.length > 0
-      ) {
-        valid = valid || _progressStatuses.includes("completed");
+        if (
+          taskIssueActiveProgressStatus == true &&
+          taskIssueCompletedProgressStatus == false &&
+          _progressStatuses.length > 0
+        ) {
+          valid = valid && _progressStatuses.includes("active");
+        }
+        if (
+          taskIssueActiveProgressStatus == false &&
+          taskIssueCompletedProgressStatus == true &&
+          _progressStatuses.length > 0
+        ) {
+          valid = valid || _progressStatuses.includes("completed");
+        }
       }
 
       // var notes = _.flatten(_.map(resources, 'notes'))
@@ -1832,6 +1841,387 @@ export default new Vuex.Store({
         return valid;
       });
     },
+    filteredContracts: (state, getters) => {
+
+      return _.filter(getters.getContracts, (contract) => {
+        let valid = contract.id || null;
+        // valid = valid && facility.facilityGroupStatus == "active";
+        if (!valid) return valid;
+        if (state.mapFilters.length < 1) return valid;
+
+        var resources1 = [];
+        resources1.push(...contract.tasks);
+        resources1.push(...contract.issues);
+        resources1.push(...contract.risks);
+  
+        _.each(state.mapFilters, (f) => {
+          let k = Object.keys(f)[0];
+          switch (k) {
+            case "advancedFilter": {
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "dueDate": {
+              let range = moment.range(f[k][0], f[k][1]);
+              valid =
+                valid &&
+                contract[k] &&
+                range.contains(new Date(contract[k].replace(/-/g, "/")));
+              break;
+            }
+            case "noteDate": {
+              let taksIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredContracts",
+                  contract
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _notes = _.flatten(_.map(resources, "notes"));
+              var is_valid = false;
+              for (var n of _notes) {
+                var nDate = moment(n.createdAt, "YYYY-MM-DD");
+                is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                if (is_valid) break;
+              }
+
+              valid = valid && is_valid;
+              break;
+            }
+            case "taskIssueDueDate": {
+              let taksIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredContracts",
+                  contract
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _dueDates = _.flatten(_.map(resources, "dueDate"));
+              var is_valid = false;
+
+              if (_dueDates.length < 1) {
+                valid = valid && is_valid;
+                break;
+              } else {
+                for (var dueDate of _dueDates) {
+                  var nDate = moment(dueDate, "YYYY-MM-DD");
+                  is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                  if (is_valid) break;
+                }
+                valid = valid && is_valid;
+                break;
+              }
+            }
+            // This is for facility progress
+            case "progress": {
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                is_valid =
+                  range[1] !== undefined
+                    ? range[0] <= contract[k] && range[1] >= contract[k]
+                    : contract[k] == range[0];
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            // TODO: Improve this function
+            case "taskIssueProgress": {
+              let progressFor = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              let resources = [];
+              for (let r of progressFor) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredContracts",
+                  contract
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              let progress = _.uniq(_.map(resources, "progress"));
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                let size = range[1] ? range[1] - range[0] + 1 : 1;
+                is_valid =
+                  _.intersection(
+                    progress,
+                    Array.from(Array(size), (_, i) => i + range[0])
+                  ).length > 0;
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            case "issueTypeIds": {
+              var issues = contract.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+
+              break;
+            }
+            case "issueSeverityIds": {
+              var issues = contract.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueSeverityId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+
+              break;
+            }
+            case "issueStageIds": {
+              var issues = contract.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "taskTypeIds": {
+              var tasksIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              var resources = _.filter(tasksIssues, (ti) =>
+                f[k].includes(ti.taskTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+
+              break;
+            }
+            case "taskStageIds": {
+              var tasks = contract.tasks;
+              var resources = _.filter(tasks, (ti) =>
+                f[k].includes(ti.taskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskStageIds": {
+              var risks = contract.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskPriorityLevelIds": {
+              var risks = contract.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskPriorityLevelId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskApproachFilter": {
+              var risks = contract.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproach)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskApproachFilterIds": {
+              var risks = contract.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproachId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskPriorityLevelFilter": {
+              var risks = contract.risks;
+              var fPriorityLevels = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fPriorityLevels.includes(ti.priorityLevelName.toLowerCase())
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "taskIssueUsers": {
+              var taskIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              var resources = _.filter(
+                taskIssues,
+                (ti) => _.intersection(ti.userIds, f[k]).length > 0
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "facilityGroupIds": {
+              valid =
+                valid &&
+                f[k].includes(contract.contractGroupId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "ids": {
+              valid =
+                valid &&
+                f[k].includes(contract.id) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "statusIds": {
+              valid =
+                valid &&
+                f[k].includes(contract.statusId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            default: {
+              valid = valid && contract[k] == f[k];
+              break;
+            }
+          }
+        });
+        return valid;
+      });
+    },
     filteredFacilityGroups: (state, getters) => {
       let ids = _.map(getters.facilities, "facilityGroupId");
       return _.filter(
@@ -1897,18 +2287,23 @@ export default new Vuex.Store({
       );
     },
     facilityGroupFacilities: (state, getters) => (group, status = "active") => {
-      return (
-        _.filter(
-          getters.filteredFacilities(status),
-          (f) =>
-            f.facilityGroupId == group.id &&
-            f.projectId == getters.currentProject.id
-        )
-          // Alphabetize facilities (programs)
-          .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
-      );
+      return {
+      projects: { 
+          a: getters.filteredFacilities(status)
+          .filter(f => 
+              f.facilityGroupId == group.id &&
+              f.projectId == getters.currentProject.id
+              ).sort((a, b) => a.facilityName.localeCompare(b.facilityName)),
+        },
+      contracts: { 
+          b: getters.filteredContracts
+          .filter(f => 
+              f.facilityGroupId == group.id &&
+              f.projectId == getters.currentProject.id
+              ).sort((a, b) => a.nickname.localeCompare(b.nickname)),
+         }      
+      }
     },
-
     // for gantt chart view
     ganttData: (state, getters) => {
       let hash = new Array();
@@ -2528,7 +2923,7 @@ export default new Vuex.Store({
           .get(url)
           .then((res) => {
             commit("setFacilityGroups", res.data.facilityGroups);
-            console.log(res.data.facilityGroups)
+            // console.log(res.data.facilityGroups)
             resolve();
           })
           .catch((err) => {

@@ -1,4 +1,4 @@
-class ContractType < ApplicationRecord
+class ContractType < SortableRecord
   has_many :contracts
   
   def self.prime

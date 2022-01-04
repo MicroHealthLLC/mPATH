@@ -26,8 +26,9 @@
     </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
-    <div class="col">
-      <el-button data-cy="add_contract_btn" @click.prevent="addContract" class="bg-primary text-light mb-2"> 
+
+    <div data-cy="add_contract_btn" class="col" v-if="_isallowed('write')">
+      <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
       <i class="far fa-plus-circle mr-1"></i> Add Contract
       </el-button>
      </div>    
@@ -73,16 +74,15 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
+
    <el-table data-cy="contracts_table" :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
-    <el-table-column prop="contract_nickname"  sortable  label="Contract"> 
+    <el-table-column prop="nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
             data-cy="contract_nickname"
             v-model="scope.row.nickname" controls-position="right"></el-input>
        </template>
-
-
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
@@ -95,9 +95,9 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button data-cy="contract_save_btn" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">
-         Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+
+      <el-button data-cy="contract_save_btn" v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+       <el-button v-if="_isallowed('write')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
@@ -128,7 +128,7 @@
        </div>
        <div class="form-group mx-3">
           <label class="font-md"
-            >Contract Type <span style="color: #dc3545">*</span></label
+            >Project Group Name <span style="color: #dc3545">*</span></label
           >
            <el-select
            v-model="C_typeFilter"
@@ -136,7 +136,7 @@
            track-by="id"
            value-key="id"         
            clearable
-           placeholder="Select Contract Type"
+           placeholder="Select Project Group Name"
            >
           <el-option
             v-for="item in getContractGroupOptions"
@@ -204,6 +204,14 @@
 </template>
 
 <script>
+
+// Compare both array objects, if obj a is also in obj b, push key 'yes' into that value[i] else, push key 'no'
+
+// Create two empty arrays
+// Push values into array
+// Compare arrays
+
+
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
@@ -228,7 +236,7 @@ export default {
     };
   },
   mounted() {
-    this.fetchContracts();   
+     this.fetchContracts();   
   },
   methods: {
    ...mapMutations([
@@ -241,12 +249,12 @@ export default {
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
-    // _isallowed(salut) {
-    //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId]
-    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //     let s = permissionHash[salut]
-    //     return fPrivilege.contracts.includes(s);     
-    //   },
+    _isallowed(salut) {
+        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return pPrivilege.contracts.includes(s);     
+      },
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       this.$router.push({
@@ -292,7 +300,6 @@ export default {
         let contractData = {
           contract: {
             nickname: rows.nickname,
-            contract_type_id: rows.contract_type_id,
             facility_group_name: rows.facility_group_name,  
             facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
@@ -302,8 +309,6 @@ export default {
          this.updateContract({
             ...contractData, id
           })
-          // console.log(rows, contractData)
-     
     },
     addAnotherContract() {
          this.C_projectGroupFilter = null;
@@ -332,7 +337,6 @@ export default {
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
-      "facilityGroupFacilities",
       'facilityGroups',
       'currentProject'
     ]), 
@@ -340,7 +344,10 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData(){
-      if(this.contracts[0] && this.contracts[0].length > 0 ){
+      if(this.contracts &&
+         this.contracts[0] && 
+         this.contracts[0].length > 0 
+         ){
       let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
       let contractData = programContracts.map(t => t)
       .filter((td) => {
@@ -354,7 +361,6 @@ export default {
        return contractData
       }    
    },
-
     C_typeFilter: {
         get() {
           return this.getContractGroupTypes
@@ -384,13 +390,6 @@ export default {
       },
     },
   },
-  beforeMount() {
-    if (this.contentLoaded && this.$route.params.contractId) {
-      this.currentContract = this.contracts[0].find(
-        (c) => c.id == this.$route.params.contractId
-      );
-    }
-  },
   watch: {
     contractStatus: {
       handler() {
@@ -399,14 +398,12 @@ export default {
             message: `Contract saved successfully.`,
             type: "success",
             showClose: true,
-          });
-     
+          });     
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts();
         }
       },
-    },
-  
+    },  
   },
 };
 </script>

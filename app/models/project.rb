@@ -324,7 +324,6 @@ class Project < SortableRecord
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?) or project_id = ?", all_facility_group_ids, project.id)
 
     # all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
-    all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) )
 
     facility_projects_hash = []
     facility_projects_hash2 = {}
@@ -333,7 +332,9 @@ class Project < SortableRecord
 
     pph = user.project_privileges_hash
     fph = user.facility_privileges_hash
-    cph = user.contract_privileges_hash[project.id] || {}
+    cph = user.contract_privileges_hash[project.id.to_s] || {}
+    contract_ids = cph.keys
+    all_contracts = Contract.includes(:contract_facility_group).where(facility_group_id: all_facility_group_ids, project_id: project.id, id: contract_ids )
 
     all_facility_projects.each do |fp|
 

@@ -22,9 +22,7 @@
           >{{ 0 }}
         </span>
       </h4>
-    </el-breadcrumb>
-
-   
+    </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
     <div class="col">
@@ -74,9 +72,7 @@
           v-else
           class="badge badge-secondary badge-pill pill"
           >{{ 0 }}
-        </span>
-
-    
+        </span>    
         </h5>
         <ul class="pl-3">
           <li v-for="item, i in props.row.facilities" :key="i">
@@ -84,53 +80,49 @@
           </li>
         </ul>
        </div>        
-       <div class="col">
-     <h5 class="mh-orange-text"> Contracts
-         <span 
-          v-if="props.row.contracts && props.row.contracts.length"
-           class="badge badge-secondary badge-pill pill"
-          >{{ props.row.contracts.length }}
-        </span>
-           <span 
-          v-else
-          class="badge badge-secondary badge-pill pill"
-          >{{ 0 }}
-        </span>
-        </h5>
-       <ul class="pl-3">
-          <li v-for="item, i in props.row.contracts" :key="i">
-              {{ item.nickname }}
-          </li>
-        </ul>
+        <div class="col" >
+        <h5 class="mh-orange-text"> Contracts
+          <span  
+          v-if="groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
+            class="badge badge-secondary badge-pill pill"
+            >{{ groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
+            
+          </span>
+            <span 
+            v-else
+            class="badge badge-secondary badge-pill pill"
+            >{{ 0 }}
+          </span>
+          </h5>
+        <ul class="pl-3">
+            <li v-for="item, i in groupContracts.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
+              {{ item.nickname }} 
+            </li>
+          </ul>
 
+        </div>
        </div>
-
-       </div>
-
        </div>
       
       </template>
     </el-table-column>
     <el-table-column prop="name" sortable label="Groups">
-  <template slot-scope="props">
-   {{props.row.name}}  
-    <span class="ml-5 mr-2" v-if="props.row.facilities &&props.row.facilities.length">
-      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} 
-      </span> 
-        <span class="ml-5 mr-2" v-else>
-      <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
-      </span> 
-  <span  v-if="props.row.contracts && props.row.contracts.length">
-    <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{ props.row.contracts.length }}
-  </span>
-      <span  v-else>
-       <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{0}}
-      </span> 
-  </template>
-
-    </el-table-column>
-    
-    
+    <template slot-scope="props">
+    {{props.row.name}}  
+      <span class="ml-5 mr-2" v-if="props.row.facilities && props.row.facilities.length">
+        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} 
+        </span> 
+          <span class="ml-5 mr-2" v-else>
+        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
+        </span> 
+    <span v-if="groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
+      <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
+    </span>
+        <span  v-else>
+        <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{0}}
+        </span> 
+    </template>
+    </el-table-column>  
    </el-table>  
    </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
@@ -189,6 +181,7 @@ export default {
     return {
       currentFacility: {},
       dialogVisible: false,
+      contracts: null,
       currentFacilityGroup: {},
       newGroupName: null,
       programId: this.$route.params.programId,
@@ -212,7 +205,7 @@ export default {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
     },
-    addGroup(){
+    addGroup(){     
       this.dialogVisible = true;    
       this.newGroupName = null;
       this.C_projectGroupFilter = null;     
@@ -227,9 +220,9 @@ export default {
         }
          this.createGroup({
             ...groupData,
-          })
-          this.fetchFacilityGroups();
+          })         
           this.hideSaveBtn = true;
+          // this.fetchFacilityGroups()
         
     },
     handleClick(tab, event) {
@@ -272,7 +265,15 @@ export default {
         return this.facilityGroups
       }
     },
-    // Filter when adding new Project
+    groupContracts(){
+       if (
+        this.currentProject &&
+         this.currentProject.contracts &&
+          this.currentProject.contracts.length > 0
+      ) {
+        return this.currentProject.contracts
+        }
+    },  
      C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -282,9 +283,6 @@ export default {
         this.setProjectGroupFilter(value);
       },
     },
-  },
-mounted() {
-  //  this.fetchFacilityGroups()
   },
   watch: {
     contentLoaded: {
@@ -304,8 +302,8 @@ mounted() {
             type: "success",
             showClose: true,
           });
-          this.SET_GROUP_STATUS(0);
-          this.fetchFacilityGroups();        
+          // this.SET_GROUP_STATUS(0);
+          this.fetchFacilityGroups(); 
         }
       },
     },
@@ -318,6 +316,10 @@ mounted() {
     },
   },
 };
+
+
+
+
 </script>
 
 <style scoped lang="scss">

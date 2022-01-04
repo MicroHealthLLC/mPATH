@@ -18,15 +18,12 @@
           <span style="font-size: 16px; margin-right: 10px"
             ><i class="fal fa-clipboard-list mh-green-text"></i>
             </span>
-          <router-link v-if="contentLoaded && !contract" :to="projectNameLink">{{
-          facility.facilityName
-          }}</router-link>
-           <router-link :to="backToContract">
-              <span v-if="contract">{{
-                  contract.nickname || contract.name
-                  }}
-              </span>
-            </router-link>     
+          <router-link v-if="contentLoaded && facility" :to="projectNameLink">{{
+           facility.facilityName
+           }}</router-link>
+          <router-link v-else :to="projectNameLink">{{
+              lesson.project_name
+           }}</router-link>
           <el-icon
             class="el-icon-arrow-right"
             style="font-size: 12px"
@@ -213,6 +210,7 @@
           v-model="lesson.task_type_id"
           class="w-100"
           value-key="id"
+          clearable
           name="Process Area"
           placeholder="Select Process Area"
           :disabled="!_isallowed('write')"
@@ -657,8 +655,12 @@
             <div @click.prevent="downloadFile(file)">
               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click.prevent="removeFile(file.id, index)"
+            >
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -684,10 +686,11 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
-              @click="removeFileLink(link.id, index)"
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click.prevent="removeFileLink(link.id, index)"
             >
-              <i class="fas fa-times delete-icon"></i>
+              <i class="fas fa-times"></i>
             </div>
           </div>
           <div v-else class="d-flex justify-content-between">
@@ -696,8 +699,12 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div v-if="_isallowed('delete')" @click="removeFileLink(link.id, index)" class="clickable">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check mt-2 clickable"
+              @click.prevent="removeFileLink(link.id, index)"
+            >
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -877,6 +884,7 @@ export default {
       deleteBestPractices: [],
       updates: [],
       deleteUpdates: [],
+      loading: true,
       files: [],
       fileLinks: [],
       destroyFileIds: [],
@@ -991,12 +999,12 @@ export default {
         }         
       },
     close() {
-        if (this.$route.params.projectId) {
+        if (this.$route.params.projectId && this.facility) {
           // console.log("true")
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
           );
-        } else if (this.$route.params.contractId) {
+        } else if (this.$route.params.contractId && this.contract) {
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
           );
@@ -1264,10 +1272,8 @@ export default {
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-      if (this.$route.params.projectId) {
+      if (this.facility) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-      } else if  (this.$route.params.contractId) {
-        return  `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
@@ -1295,12 +1301,13 @@ export default {
         ...this.$route.params,
       });
     }
-     else if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && this.facility) {
+     else if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && !this.contract) {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
     }
+    this.loading = false;
   },
   beforeDestroy() {
     // Clear current lesson in store
@@ -1502,10 +1509,16 @@ a:hover {
 .file-name:hover {
   background-color: #cdecf5;
 }
-.delete-icon {
-  color: #dc3545;
-}
 .file-link {
   color: unset;
+}
+.del-check {
+  position: absolute;
+  display: flex;
+  right: 2rem;
+  font-weight: 500;
+  background: transparent;
+  height: fit-content;
+  color: #dc3545;
 }
 </style>

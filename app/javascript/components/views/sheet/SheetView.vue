@@ -8,7 +8,6 @@
   >
     <div class="col-md-2">
       <ProjectSidebar
-
         :current-facility-group="currentFacilityGroup"
         :current-contract-group="currentContractGroup"
         :expanded="expanded"

@@ -67,6 +67,8 @@ var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
     // }
 // }}
 var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
+var programPrivileges = JSON.parse(window.program_privilegs.replace(/&quot;/g,'"'))
+
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
 
 var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
@@ -85,6 +87,7 @@ for (var key in privilege) {
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$topNavigationPermissions = topNavigationPermissions
 Vue.prototype.$projectPrivileges = projectPrivileges
+Vue.prototype.$programPrivileges = programPrivileges
 
 Vue.prototype.$preferences = preferences
 

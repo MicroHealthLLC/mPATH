@@ -208,6 +208,7 @@
         <el-select
           v-model="contractLesson.task_type_id"
           class="w-100"
+          clearable
           value-key="id"
           name="Process Area"
           placeholder="Select Process Area"
@@ -653,8 +654,12 @@
             <div @click.prevent="downloadFile(file)">
               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check"
+              @click.prevent="removeFile(file.id, index)"
+            >
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -680,10 +685,11 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
-              @click="removeFileLink(link.id, index)"
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click.prevent="removeFileLink(link.id, index)"
             >
-              <i class="fas fa-times delete-icon"></i>
+              <i class="fas fa-times"></i>
             </div>
           </div>
           <div v-else class="d-flex justify-content-between">
@@ -692,8 +698,12 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div v-if="_isallowed('delete')" @click="removeFileLink(link.id, index)" class="clickable">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check mt-2 clickable"
+              @click.prevent="removeFileLink(link.id, index)"
+            >
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -1255,6 +1265,7 @@ export default {
         ...this.$route.params,
       });
     }  
+    this.loading = false;
   },
   beforeDestroy() {
     // Clear current lesson in store

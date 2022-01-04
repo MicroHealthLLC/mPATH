@@ -10,7 +10,7 @@
       :to="routeKanbanSwap"
       tag="div"
     >
-      <div class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
+      <div v-show="!isContractView" class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
         Kanban
       </div>
     </router-link>
@@ -19,12 +19,12 @@
       :to="routeCalendarSwap"
       tag="div"
     >
-      <div class="badge" :class="{ active: isCalendarView }" data-cy="calendar_tab">
+      <div class="badge" v-show="!isContractView" :class="{ active: isCalendarView }" data-cy="calendar_tab">
         Calendar
       </div>
     </router-link>
      <router-link v-if="permitted('map_view')" :to="routeMapSwap" tag="div">
-      <div class="badge" :class="{ active: isMapView }" data-cy="map_tab">
+      <div class="badge" :class="{ active: isMapView }" data-cy="map_tab" v-show="!isContractView">
         Map
       </div>
     </router-link>
@@ -66,7 +66,10 @@ export default {
   name: "Tabsbar",
   computed: {
     isSheetsView() {
-      return this.$route.name.includes("Sheet");
+      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract");
+    },
+    isContractView() {
+      return this.$route.name.includes("Contract");
     },
     isMapView() {
       return this.$route.name.includes("Map");

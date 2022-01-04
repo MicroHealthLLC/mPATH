@@ -43,7 +43,7 @@ class Contract < ApplicationRecord
         contract_classification: contract_classification.as_json(except: [:created_at, :updated_at])
       ).as_json
     else
-      self.as_json(except: [:created_at, :updated_at]).merge(facility_group_name: facility_group&.name)
+      self.as_json(except: [:created_at, :updated_at]).merge(facility_group_name: contract_facility_group&.name)
     end
   end
 
@@ -130,7 +130,7 @@ class Contract < ApplicationRecord
       contract.save
     end
     if params[:facility_group_name]
-      contract.facility_group.update(name: params[:facility_group_name])
+      contract.contract_facility_group.update(name: params[:facility_group_name])
     end
     contract
   end

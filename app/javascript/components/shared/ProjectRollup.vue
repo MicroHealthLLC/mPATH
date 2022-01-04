@@ -6,13 +6,33 @@
   <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
     <div class="row pt-1 pb-2">
-      <div class="col-6 py-1 pl-0">
+      <div class="col-6 py-2 pl-0">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
-        </span>     
-        
-       
+        </span> 
+        <br>    
+        <el-button-group>
+          <el-button :class="{ 'lightBtn' : getShowProjectStats == true }" @click.prevent="showProjectStats">  
+            <i class="fal fa-clipboard-list mh-green-text mr-1"></i>
+            PROJECTS
+             <!-- <span 
+              v-if="currentProject && currentProject.facilities"
+              class="ml-1 badge badge-secondary badge-pill pill"
+              >{{ currentProject.facilities.length }}
+              </span> -->
+          </el-button>
+          <el-button :class="{ 'lightBtn' : getShowProjectStats == false }" @click.prevent="showContractStats"> 
+            <i class="far fa-file-contract mr-1 mh-orange-text"></i>
+          CONTRACTS
+            <!-- <span 
+              v-if="currentProject && currentProject.contracts"
+              class="ml-1 badge badge-secondary badge-pill pill"
+              >{{ currentProject.contracts.length }}
+              </span> -->
+          </el-button>
+       </el-button-group>
+            
       </div>
       <div class="col-6 py-1 pl-0">
         <span v-if="contentLoaded" class="float-right mt-1">
@@ -752,7 +772,7 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                     <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                      programLessonsCount.total_count 
+                      filteredLessons.length
                     }}</b>
                   </h5>
                 </div>
@@ -775,12 +795,12 @@
                 <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
-                   programLessonsCount.completed
+                    lessonVariation.completes.length
                   }}</h4>         
                 </div>
                 <div class="col-6 pb-0 mb-0">
                   <h4>{{
-                   programLessonsCount.progress
+                    lessonVariation.drafts.length
                   }}</h4>        
                 </div>                     
                 </div>            
@@ -815,10 +835,12 @@
           </el-card>
       </div> 
       <div :class="[isMapView ? 'col-9 pr-0' : 'col p-0']">
-        <el-card class="box-card">
+        <el-card class="box-card" v-if="getShowProjectStats" style="max-height: 220px">
           <div class="row">
             <div class="col">
-              <h5 class="d-inline">PROJECTS</h5>
+              <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
+               PROJECTS
+              </h5>
                <h4 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">
                      {{ C_facilityCount }}
@@ -828,9 +850,12 @@
             </div>
           </div>
           <div v-if="contentLoaded && C_facilityCount > 0">
-            <div>
+            <div  
+            style="height:215px; overflow-y:auto" 
+            class="pb-2"
+            >
                <div class="row">
-                   <div class="col-6 mb-0 card-title">
+                   <div class="col-5 mb-0 card-title">
                      Project Status
                    </div>
                     <div class="col-1 mb-0 pl-2 card-title">   
@@ -841,7 +866,7 @@
                     </div>      
                </div>
               <div class="row mb-2"  v-for="(status, index) in projectStatuses" :key="index">
-                <div class="col-6 mb-1">
+                <div class="col-5 mb-1">
                   <span
                     class="badge badge-pill badge-color"
                     :class="{ 'font-sm': isMapView }"
@@ -880,20 +905,66 @@
             <loader type="code"></loader>
           </div>
         </el-card>
+         <el-card class="box-card" v-if="!getShowProjectStats">
+          <div class="row">
+            <div class="col">
+              <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
+               CONTRACTS
+              </h5>
+               <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">
+                     {{ programResourceObj.length }}
+                    </span>
+                  </h4>
+              <hr />
+            </div>
+          </div>
+          <div v-if="contentLoaded">
+            <div class="pb-2">
+               <div class="row mb-1">
+                   <div class="col-10 mb-0 py-1 card-title">
+                     Project Group Name
+                   </div>
+                    <div class="col-2 mb-0 pl-3 py-1 card-title">   
+                      #
+                    </div>      
+                 </div>
+              <div class="row my-0" v-for="item, i in getContractGroupOptions" :key="i">
+                <div class="col-10 py-1">
+               
+                  <span :class="{ 'font-sm': isMapView }">
+                  {{ item.name }}</span
+                  >                
+                </div>
+                <div class="col-2 py-1">                
+                  <span v-if="item.id == 1" class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.prime
+                  }}</span>
+                    <span v-if="item.id == 2"   class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.nonPrime
+                  }}</span>
+                    <span v-if="item.id == 3"  class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.primeV_IDIQs
+                  }}</span>
+                </div>
+               </div>
+             </div>
+          </div>
+          <div v-if="!contentLoaded" class="my-4">
+            <loader type="code"></loader>
+          </div>
+        </el-card>
      </div>
       <div :class="[isMapView ? 'col-12 p-0' : 'col pt-0']"
         v-if="from !== 'manager_view'"
         data-cy="facility_group_summary"
       >
-
-        <!-- Issues -->
-    
-    
-   
-           <el-card class="box-card" data-cy="projet_group_summary">
+         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: 220px">
           <div class="row">
             <div class="col">
-              <h5 class="d-inline">PROJECT GROUPS</h5>
+              <h5 class="d-inline"><i class="fal fa-network-wired mr-2 mh-blue-text"></i>
+                GROUPS
+              </h5>
                   <h4 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">{{
                       filteredFacilityGroups.length 
@@ -902,12 +973,16 @@
               <hr />
             </div>
           </div>
+           <div
+           style="height:215px; overflow-y:auto" 
+           class="pb-2"
+          >
           <div
             v-for="(facilityGroup, index) in filteredFacilityGroups"
             :key="index"
-          >
-            <div class="row mb-2">
-              <div class="col-6 mb-2">
+            >
+            <div class="row py-1">
+              <div class="col-5 mb-2">
                 <span :class="{ 'font-sm': isMapView }">{{
                   facilityGroup.name
                 }}</span>
@@ -915,7 +990,7 @@
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(facilityGroup).length
+                  facilityGroupFacilities(facilityGroup).projects.a.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -936,6 +1011,7 @@
               </div>
             </div>
           </div>
+           </div>
           <div v-if="!contentLoaded" class="my-4">
             <loader type="code"></loader>
           </div>
@@ -1025,6 +1101,8 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "getShowProjectStats",
+      "getContractGroupOptions",
       "currentProject",
       "lessonsLoaded",
       'currProgramTab',
@@ -1069,7 +1147,7 @@ export default {
       'getHideOverdue',
 
     ]),
-       toggleWatched(){
+    toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
     },
     toggleImportant(){
@@ -1103,7 +1181,23 @@ export default {
      projectObj() {
         return this.currentProject.facilities
       },
-    C_taskTypeFilter: {
+    programResourceObj(){
+      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
+        return this.currentProject.facilities
+      } else if (this.currentProject && this.currentProject.contracts && !this.getShowProjectStats){
+        return this.currentProject.contracts
+      }
+    },
+    contractCategoryCount(){
+      if (this.currentProject && this.currentProject.contracts){     
+       return {
+       prime: this.currentProject.contracts.filter(c => c.contractTypeId == 1).length,
+       nonPrime: this.currentProject.contracts.filter(c => c.contractTypeId == 2).length,
+       primeV_IDIQs: this.currentProject.contracts.filter(c => c.contractTypeId == 3).length
+       }     
+      } 
+    },
+   C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter;
       },
@@ -1134,7 +1228,7 @@ export default {
     C_facilityCount() {         
       return this.facilityGroup
       
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.facilityCount; 
       
     },
@@ -1142,7 +1236,7 @@ export default {
       return this.facilityGroup
         ? Number(
             _.meanBy(
-              this.facilityGroupFacilities(this.facilityGroup),
+              this.facilityGroupFacilities(this.facilityGroup).projects.a,
               "progress"
             ) || 0
           ).toFixed(0)
@@ -1156,12 +1250,30 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
-    },  
-     filteredTasks() {
+    },
+    lessonVariation() {
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
+      return {
+        completes,
+        drafts
+      }
+    },
+    filteredLessons() {
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(this.programLessons, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    },
+    filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
       let tasks = this.currentProject ? _.flatten(
-            _.map(this.currentProject.facilities, "tasks")
+            _.map(this.programResourceObj, "tasks")
           )
         : this.filteredAllTasks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
@@ -1192,7 +1304,7 @@ export default {
       let stageIds = _.map(this.issueStageFilter, "id");
       let severityIds = _.map(this.issueSeverityFilter, "id");
       let issues = this.currentProject ? _.flatten(
-            _.map(this.currentProject.facilities, "issues")
+            _.map(this.programResourceObj, "issues")
           )
         : this.filteredAllIssues;
 
@@ -1236,9 +1348,9 @@ export default {
     },
     lessonStats() {
       let lessons = new Array();
-      // console.log(this.programLessons)
-      let group = _.groupBy(this.programLessons, "category");
+      let group = _.groupBy(this.filteredLessons, "category");
       for (let type in group) {
+        if (!type || type == "null") continue;
         lessons.push({
           name: type,
           count: group[type].length,
@@ -1250,7 +1362,7 @@ export default {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.riskStageFilter, "id");
       let risks =  this.currentProject ? _.flatten(
-            _.map(this.currentProject.facilities, "risks")
+            _.map(this.programResourceObj, "risks")
           )
         : this.filteredAllRisks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
@@ -1268,7 +1380,7 @@ export default {
         //TODO: For performance, send the whole tasks array instead of one by one
         valid =
           valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
+          this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.riskStageId);
         if (typeIds.length > 0)
@@ -1307,12 +1419,12 @@ export default {
     },
     activeFacilitiesByStatus() {
       return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.filteredFacilities("active").length;
     },
     inactiveFacilitiesByStatus() {
       return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
+        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").projects.a.length
         : this.filteredFacilities("inactive").length;
     },
     projectStatuses() {
@@ -1722,15 +1834,28 @@ export default {
         'setHideComplete',
         'setCurrProgramTab',
         'setHideInprogress',
+        'setShowProjectStats',
         'setHidePlanned',
         'setHideOverdue',
         'setHideOngoing',
         'setHideOnhold',
         'setHideDraft',
       ]),
-
     showLessToggle() {
       this.showLess = "Show Less";
+    },
+    showContractStats(){
+     if(this.getShowProjectStats == true){
+        this.setShowProjectStats(!this.getShowProjectStats)
+     } else return
+     
+    },
+    showProjectStats(){
+      if(this.getShowProjectStats == false){
+        // console.log(this.getShowProjectStats)
+        this.setShowProjectStats(!this.getShowProjectStats)
+          // console.log(this.getShowProjectStats)
+      } else return
     },
     log(e){
       // console.log(e)
@@ -1941,7 +2066,7 @@ ul > li {
 .grey {
   background-color: lightgray;
 }
-.grey2 {
+.grey2, .lightBtn {
   background-color: #ededed;
 }
 i.grow {
