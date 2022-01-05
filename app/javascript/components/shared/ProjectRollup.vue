@@ -13,7 +13,7 @@
         </span> 
         <br>    
         <el-button-group>
-          <el-button :class="{ 'lightBtn' : getShowProjectStats == true }" @click.prevent="showProjectStats">  
+          <el-button :class="{ 'lightBtn' : getShowProjectStats == false }" @click.prevent="showProjectStats">  
             <i class="fal fa-clipboard-list mh-green-text mr-1"></i>
             PROJECTS
              <!-- <span 
@@ -22,7 +22,7 @@
               >{{ currentProject.facilities.length }}
               </span> -->
           </el-button>
-          <el-button :class="{ 'lightBtn' : getShowProjectStats == false }" @click.prevent="showContractStats"> 
+          <el-button :class="{ 'lightBtn' : getShowProjectStats == true }" @click.prevent="showContractStats"> 
             <i class="far fa-file-contract mr-1 mh-orange-text"></i>
           CONTRACTS
             <!-- <span 
@@ -835,7 +835,7 @@
           </el-card>
       </div> 
       <div :class="[isMapView ? 'col-9 pr-0' : 'col p-0']">
-        <el-card class="box-card" v-if="getShowProjectStats" style="max-height: 220px">
+        <el-card class="box-card" v-if="!getShowProjectStats" style="max-height: 220px">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
@@ -905,7 +905,7 @@
             <loader type="code"></loader>
           </div>
         </el-card>
-         <el-card class="box-card" v-if="!getShowProjectStats">
+         <el-card class="box-card" v-if="getShowProjectStats">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
@@ -1182,9 +1182,9 @@ export default {
         return this.currentProject.facilities
       },
     programResourceObj(){
-      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
+      if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
         return this.currentProject.facilities
-      } else if (this.currentProject && this.currentProject.contracts && !this.getShowProjectStats){
+      } else if (this.currentProject && this.currentProject.contracts && this.getShowProjectStats){
         return this.currentProject.contracts
       }
     },
@@ -1845,13 +1845,13 @@ export default {
       this.showLess = "Show Less";
     },
     showContractStats(){
-     if(this.getShowProjectStats == true){
+     if(this.getShowProjectStats == false){
         this.setShowProjectStats(!this.getShowProjectStats)
      } else return
      
     },
     showProjectStats(){
-      if(this.getShowProjectStats == false){
+      if(this.getShowProjectStats == true){
         // console.log(this.getShowProjectStats)
         this.setShowProjectStats(!this.getShowProjectStats)
           // console.log(this.getShowProjectStats)
