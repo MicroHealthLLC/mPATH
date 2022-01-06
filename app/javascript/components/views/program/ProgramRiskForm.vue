@@ -12,6 +12,7 @@ export default {
   data() {
     return {
       risk: {},
+      allProgramRisks: [],
     };
   },
   methods: {
@@ -22,11 +23,22 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", 'filteredAllRisks']),
+    ...mapGetters([
+      "contentLoaded", 
+      'filteredAllRisks',
+      'filteredAllContractRisks',
+      'getShowProjectStats'
+      ]),
   },
   mounted() {
+  if (!this.getShowProjectStats){
+    this.allProgramRisks = this.filteredAllRisks
+  } else if (this.getShowProjectStats){
+    this.allProgramRisks = this.filteredAllContractRisks
+  }
+
     if (this.contentLoaded) {
-      this.risk = this.filteredAllRisks.find(
+      this.risk =  this.allProgramRisks.find(
         (risk) => risk.id == this.$route.params.riskId
       );
     }
@@ -34,7 +46,7 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.risk = this.filteredAllRisks.find(
+        this.risk =  this.allProgramRisks.find(
           (risk) => risk.id == this.$route.params.riskId
         );
       },

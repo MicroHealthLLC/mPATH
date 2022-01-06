@@ -224,53 +224,78 @@
                         </div>
                         </template>
                </el-dialog>
-                <div class="row pb-4">
-              <div class="col-4 py-2">
-                <div class="w-100 d-flex">
-                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
-                  <div class="w-100"  v-if="currentTab == '#tab-tasks'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Tasks Search Criteria"
-                    v-model="search_tasks"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                   <div class="w-100" v-if="currentTab == '#tab-issues'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Issues Search Criteria"
-                    v-model="issuesQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                <div class="w-100" v-if="currentTab == '#tab-risks'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Risks Search Criteria"
-                    v-model="risksQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                   <div class="w-100" v-if="currentTab == '#tab-lessons'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Lessons Search Criteria"
-                    v-model="lessonsQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-
-
+             <div class="row pb-4">
+              <div class="col-3 py-2">
+                <div class="w-100">
+                   <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
+                <el-button-group>
+                  <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
+                    <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
+                    PROJECTS
+                    <!-- <span 
+                      v-if="currentProject && currentProject.facilities"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.facilities.length }}
+                      </span> -->
+                  </el-button>
+                  <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats"> 
+                    <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
+                    CONTRACTS
+                    <!-- <span 
+                      v-if="currentProject && currentProject.contracts"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.contracts.length }}
+                      </span> -->
+                  </el-button>
+                </el-button-group>                
                 </div>
               </div>
+              <div class="col-3 py-2">
+              <div class="w-100">
+                          <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                          <div class="w-100"  v-if="currentTab == '#tab-tasks'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Tasks Search Criteria"
+                            v-model="search_tasks"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                          <div class="w-100" v-if="currentTab == '#tab-issues'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Issues Search Criteria"
+                            v-model="issuesQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                        <div class="w-100" v-if="currentTab == '#tab-risks'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Risks Search Criteria"
+                            v-model="risksQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                          <div class="w-100" v-if="currentTab == '#tab-lessons'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Lessons Search Criteria"
+                            v-model="lessonsQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
 
-              <div class="col-4 py-2">
-                <div class="d-flex w-100">          
+
+              </div>
+
+              </div>
+              <div class="col-3 py-2">
+                <div class="w-100">          
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
                        <!-- <treeselect  
@@ -294,13 +319,13 @@
                  </template>              
                 </div>         
               </div>
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
+              <div class="col-3 pl-0 py-2">
+                <div class="w-100 pr-3">
                   <div class="font-sm mr-2 mt-2">PROCESS AREA</div>
                   <template>
                     <el-select
                       v-model="C_programCategoryFilter"
-                      class="w-75"
+                      class="w-100"
                       track-by="name"
                       value-key="id"
                       multiple
@@ -635,9 +660,9 @@
                   >
                 </div>
               </div>
-              <ProjectContractSwitch />
+              <!-- <ProjectContractSwitch /> -->
               <div
-                class="row text-center mt-2 pr-3"
+                class="row text-center mt-3 pr-3"
                 style="postion:relative" 
                 v-if="filteredTasks.filtered.tasks.length > 0"
               >
@@ -1408,7 +1433,7 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
 import ProgramLessons from "./ProgramLessons.vue";
-import ProjectContractSwitch from "./ProjectContractSwitch.vue"
+// import ProjectContractSwitch from "./ProjectContractSwitch.vue"
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 Vue.component('treeselect', VueTreeselect.Treeselect)
@@ -1419,7 +1444,7 @@ export default {
     ProgramIssues,
     ProgramRisks,
     ProgramLessons,
-    ProjectContractSwitch
+    // ProjectContractSwitch
   },
   data() {
     return {
@@ -1968,6 +1993,19 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
+    showContractStats(){
+     if(this.getShowProjectStats == false){
+        this.setShowProjectStats(!this.getShowProjectStats)
+     } else return
+     
+    },
+    showProjectStats(){
+      if(this.getShowProjectStats == true){
+        // console.log(this.getShowProjectStats)
+        this.setShowProjectStats(!this.getShowProjectStats)
+          // console.log(this.getShowProjectStats)
+      } else return
+    },
       exportTasksToPdf() {
       const doc = new jsPDF("l");
          console.log( this.$refs.table)
@@ -2017,15 +2055,25 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-   openTask(task) {       
+   openTask(task) {   
+    if(!this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramTaskForm",
+      name: "ProgramTaskForm",     
       params: {
         programId: task.projectId,
         projectId: task.facilityId,
         taskId: task.id,
       },
-    });
+     });
+      } else 
+      console.log(task)
+      this.$router.push({
+        name: "ProgramTaskForm",     
+        params: {
+          programId: this.$route.params.programId,
+          taskId: task.id,
+        },
+     }); 
     // console.log(this.$route.params)
     },
     openTpresentation(){
@@ -2241,8 +2289,14 @@ export default {
 /deep/.el-switch__label.is-active, .el-switch__label--left {
   color: #383838;
 }
+/deep/.vue-treeselect__control {
+  height: 40px !important;
+}
 .lightBtn {
   background-color: #ededed;
+}
+.inactive {
+  color: lightgray ;
 }
 
 </style>

@@ -65,10 +65,8 @@
                   />
               </div>
           </div>
-
                 <div class="row pt-3 justify-content-center">
-
-                  <div class="col-3 text-center slideCol leftProgramCol">                                          
+                  <div class="col-3 text-center slideCol leftProgramCol">                                        
                   
               
                     <div class="col py-2">  
@@ -124,8 +122,7 @@
                     </span>
                 </div>  
                 </div> 
-                     
-
+              
                 <div class="issueTypes mt-3">
 
                   <h6 class="bg-secondary text-light py-1 d-block">RISK DESCRIPTION</h6>
@@ -133,14 +130,9 @@
                       <h4 class="px-3">{{ dynamicObj[currentRiskSlide].riskDescription }}</h4>
                   </div>
                 </div>
-
                 </div>
-
-
                     <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentRiskSlide] !== undefined">                                          
-                  
-              
-                    <div class="col pt-2">  
+                     <div class="col pt-2">  
                       <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
                     <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentRiskSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
                     <span v-else> -- </span>
@@ -189,12 +181,12 @@
                           v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Extreme'"
                           class="red1 riskLabels px-1"
                           >Extreme</h4
-                        >                                                                  
+                        >                                                             
           
                   </div>    
                 </div>   
 
-                </div>   
+                </div>  
                 
             </div>
         
@@ -527,9 +519,9 @@
     >
 </div>
 </div>
-<ProjectContractSwitch />
+<!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-2 pr-3"
+class="row text-center mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredRisks.filtered.risks.length > 0"
 >
@@ -1384,12 +1376,12 @@ v-if="filteredRisks.filtered.risks.length > 0"
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-import ProjectContractSwitch from  "./ProjectContractSwitch.vue"
+// import ProjectContractSwitch from  "./ProjectContractSwitch.vue"
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
   name: "ProgramRisks",
-  components:{ ProjectContractSwitch },
+  // components:{ ProjectContractSwitch },
   data() {
     return {
       showLess: "Show More",
@@ -2022,7 +2014,8 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-   openRisk(risk) {       
+  openRisk(risk) {    
+    if(!this.getShowProjectStats) {
       this.$router.push({
       name: "ProgramRiskForm",
       params: {
@@ -2030,8 +2023,18 @@ export default {
         projectId: risk.facilityId,
         riskId: risk.id,
       },
-    });
-    // console.log(this.$route.params)
+      })
+     }
+    if(this.getShowProjectStats) {
+      this.$router.push({
+      name: "ProgramRiskForm",
+      params: {
+        programId: this.$route.params.programId,
+        contractId: risk.contractId,
+        riskId: risk.id,
+      },
+      })
+      }    // console.log(this.$route.params)
     },
   exportRisksToPdf() {
       const doc = new jsPDF("l");

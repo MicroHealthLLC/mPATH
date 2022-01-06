@@ -312,9 +312,9 @@
     >
 </div>
 </div>
-
+<!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-2 pr-3"
+class="row text-center mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredLessons.filtered.lessons.length > 0"
 >
@@ -366,7 +366,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-        <th class="pl-1 sort-th twenty" @click="sortCol2('project_name')">
+        <th class="pl-1 sort-th twenty" v-if="!getShowProjectStats" @click="sortCol2('project_name')">
         Project Name 
         <span
             class="inactive-sort-icon scroll"
@@ -406,7 +406,49 @@ v-if="filteredLessons.filtered.lessons.length > 0"
         >
             <i class="fas fa-sort-down"></i
         ></span>
-        </th>                 
+        </th> 
+           <th v-if="getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('contract_nickname')">
+          Contract Name 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'contract_nickname'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'contract_nickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>  
+
         <th class="pl-1 sort-th" @click="sort('title')">
             Lessons Learned
             <span
@@ -693,7 +735,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
         <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
      
           <td>{{ lesson.project_group }}</td>
-          <td>{{ lesson.project_name }}</td>
+          <td>{{ lesson.project_name || lesson.contract_nickname }}</td>
           <td>{{ lesson.title }}</td>
           <td class="text-left">
            <span v-if="lesson.notes.length > 0">       
@@ -868,11 +910,13 @@ v-if="filteredLessons.filtered.lessons.length > 0"
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import { jsPDF } from "jspdf";
+// import ProjectContractSwitch from  "./ProjectContractSwitch.vue"
 import "jspdf-autotable";
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
   name: "ProgramLessons",
+  // components:{ ProjectContractSwitch },
   data() {
     return {
       showLess: "Show More",
@@ -907,6 +951,7 @@ export default {
     ...mapGetters([
     "contentLoaded",
     "currentProject",
+    "getShowProjectStats",
     'currLessonPage',
     "lessonsLoaded",
     "projectLessons",
@@ -1017,7 +1062,12 @@ export default {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
     filteredLessons() {
-      let lessons = this.programLessons 
+     let programLessonsObj = [];
+      if(!this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.project_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+
+      let lessons = programLessonsObj
       .filter(lesson => {
         // debugger
       if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
@@ -1045,9 +1095,9 @@ export default {
               l.project_group
                 .toLowerCase()
                 .match(this.searchLessons.toLowerCase()) ||
-              l.project_name
-                .toLowerCase()
-                .match(this.searchLessons.toLowerCase()) ||
+              // l.project_name
+              //   .toLowerCase()
+              //   .match(this.searchLessons.toLowerCase()) ||
               l.added_by.toLowerCase().match(this.searchLessons.toLowerCase())
             );
           } else return true;
@@ -1191,7 +1241,8 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-  openLesson(lesson) {       
+  openLesson(lesson) {  
+    if(!this.getShowProjectStats){
       this.$router.push({
       name: "ProgramLessonForm",
       params: {
@@ -1201,6 +1252,18 @@ export default {
         lessonId: lesson.id, 
       },
     });
+    }   
+     if(this.getShowProjectStats){
+      this.$router.push({
+      name: "ProgramLessonForm",
+      params: {
+        programId: lesson.program_id,
+        contractId: lesson.contract_id,
+        lessonId: lesson.id, 
+      },
+    });
+    }       
+ 
     // console.log(this.$route.params)
     },
   exportLessonsToPdf() {

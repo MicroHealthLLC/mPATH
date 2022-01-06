@@ -459,9 +459,9 @@
     >
 </div>
 </div>
-<ProjectContractSwitch />
+<!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-2 pr-3"
+class="row text-center mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredIssues.filtered.issues.length > 0"
 >
@@ -1217,13 +1217,13 @@ v-if="filteredIssues.filtered.issues.length > 0"
 <script>
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
-import ProjectContractSwitch from "./ProjectContractSwitch.vue"
+// import ProjectContractSwitch from "./ProjectContractSwitch.vue"
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
 export default {
   name: "ProgramIssues",
-  components:{ ProjectContractSwitch },
+  // components:{ ProjectContractSwitch },
   data() {
     return {
       showLess: "Show More",
@@ -1685,16 +1685,27 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-    openIssue(issue) {       
+   openIssue(issue) {   
+    if (!this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramIssueForm",
-      params: {
-        programId: issue.projectId,
-        projectId: issue.facilityId,
-        issueId: issue.id,
-      },
-    });
-    // console.log(this.$route.params)
+        name: "ProgramIssueForm",
+        params: {
+          programId: issue.projectId,
+          projectId: issue.facilityId,
+          issueId: issue.id,
+        },
+        });
+      }    
+      if (this.getShowProjectStats){
+        this.$router.push({
+          name: "ProgramIssueForm",
+          params: {
+          programId: this.$route.params.programId,
+          contractId: issue.contractId,
+          issueId: issue.id,
+          },
+          });
+        }    
     },
   exportIssuesToPdf() {
       const doc = new jsPDF("l");
