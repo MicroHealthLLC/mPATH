@@ -1,6 +1,6 @@
 <template>
   <div 
-   v-loading="!contentLoaded"   
+    v-loading="!contentLoaded"   
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -26,12 +26,12 @@
               <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView && !contract">
-                    {{ task.facilityName }}
+               <span v-if="isProgramView">
+                    {{ task.facilityName || task.contractNickname }}
                </span>
             </router-link>
             <router-link :to="backToContract">
-              <span v-if="contract">{{
+              <span v-if="contract && !isProgramView">{{
                   contract.nickname || contract.name
                   }}
               </span>
@@ -2208,7 +2208,7 @@ export default {
       }
     },
     backToTasks() {
-      if (this.$route.params.contractId) {
+      if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
@@ -2225,7 +2225,9 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
+      } else if (this.task.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/`;
+      } else  {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
       }
     },

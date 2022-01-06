@@ -26,12 +26,12 @@
                <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView && !contract">
-                    {{ risk.facilityName }}
+               <span v-if="isProgramView">
+                    {{ risk.facilityName || risk.contractNickname }}
                </span>
              </router-link>
              <router-link :to="backToContract">
-              <span v-if="contract">               
+              <span v-if="contract && !isProgramView">               
                 {{ contract.nickname || contract.name }}
               </span>
              </router-link>          
@@ -3323,7 +3323,7 @@ export default {
       }
     },
   backToRisks() {
-     if (this.contract && !this.facility) {
+     if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/risks`
       }
       if (
@@ -3346,6 +3346,8 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else if (this.risk.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
       } else {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }

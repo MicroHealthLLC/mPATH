@@ -27,12 +27,12 @@
                <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                 </span>
-                <span v-if="isProgramView && !contract">
-                    {{ issue.facilityName }}
+                <span v-if="isProgramView">
+                    {{ issue.facilityName || issue.contractNickname }}
                </span>
               </router-link>
               <router-link :to="backToContract">
-                <span v-if="contract">
+                <span v-if="contract  && !isProgramView">
                   {{ contract.nickname || contract.name }}
                 </span>
               </router-link>    
@@ -2223,7 +2223,7 @@ export default {
       }
     },
   backToIssues() {
-     if (this.$route.params.contractId) {
+     if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/issues`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
@@ -2235,14 +2235,16 @@ export default {
     backToContract(){
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
      },
-  projectNameLink() {
-     if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
-      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
-      }
+    projectNameLink() {
+      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+          return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
+        } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+          return `/programs/${this.$route.params.programId}/${this.tab}`;
+        } else if (this.issue.contractId) {
+          return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+        } else {
+          return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
+        }
     },
   },
   watch: {

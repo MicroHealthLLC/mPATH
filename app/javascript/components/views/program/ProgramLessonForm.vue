@@ -4,14 +4,15 @@
 
 <script>
 import { mapGetters } from "vuex";
-
 import LessonForm from "./../../dashboard/lessons/LessonForm";
 export default {
-  props: ["facility"],
-  components: { LessonForm },
+ components: { 
+   LessonForm
+   },
   data() {
     return {
       lesson: {},
+      allProgramLessons: [],
     };
   },
   methods: {
@@ -22,11 +23,16 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", 'programLessons']),
+    ...mapGetters(["contentLoaded", 'programLessons', 'getShowProjectStats']),
   },
   mounted() {
+    if(!this.getShowProjectStats){
+        this.allProgramLessons = this.programLessons.filter(l => l.project_id)
+      } else if (this.getShowProjectStats){
+         this.allProgramLessons =  this.programLessons.filter(l => l.contract_id)
+      } 
     if (this.contentLoaded) {
-      this.lesson = this.programLessons.find(
+      this.lesson =  this.allProgramLessons.find(
         (lesson) => lesson.id == this.$route.params.lessonId
       );
     }
@@ -34,7 +40,7 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.lesson = this.programLessons.find(
+        this.lesson =  this.allProgramLessons.find(
           (lesson) => lesson.id == this.$route.params.lessonId
         );
       },

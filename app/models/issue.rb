@@ -316,6 +316,7 @@ class Issue < ApplicationRecord
       last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
+      contract_nickname: self.contract.try(:nickname),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),

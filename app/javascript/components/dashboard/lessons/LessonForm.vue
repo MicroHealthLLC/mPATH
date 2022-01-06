@@ -22,7 +22,7 @@
            facility.facilityName
            }}</router-link>
           <router-link v-else :to="projectNameLink">{{
-              lesson.project_name
+              lesson.project_name || lesson.contract_nickname
            }}</router-link>
           <el-icon
             class="el-icon-arrow-right"
@@ -1276,14 +1276,16 @@ export default {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
-      }
+      } 
     },
   projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
+      } else if (this.lesson.contract_id) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else  {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },

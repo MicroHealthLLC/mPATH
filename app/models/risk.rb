@@ -449,6 +449,7 @@ class Risk < ApplicationRecord
       risk_approver_user_ids: risk_approver_user_ids,
 
       notes: sorted_notes.as_json,
+      contract_nickname: self.contract.try(:nickname),
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       project_id: fp.try(:project_id),
