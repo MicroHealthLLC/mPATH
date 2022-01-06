@@ -919,10 +919,8 @@ export default {
     'programCategoriesFilter',
     "facilityProgress",
     "filterDataForAdvancedFilter",
-    'projectGroupsFilter',
-    "filteredAllIssues",
+    'projectGroupsFilter',   
     "filteredAllLessons",
-    "filteredAllTasks",
     "filteredFacilities",
     "filteredFacilityGroups",
     "getAllFilterNames",
@@ -1152,143 +1150,7 @@ export default {
         }
     }
    },
-    filteredTasks() {
-      let typeIds = _.map(this.taskTypeFilter, "id");
-      let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "tasks")
-          )
-        : this.filteredAllTasks;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-      _.filter(tasks, (resource) => {
-        let valid = true;
-        let userIds = [
-          ..._.map(resource.checklists, "userId"),
-          resource.userIds,
-        ];
-        if (taskIssueUsers.length > 0) {
-          valid =
-            valid &&
-            userIds.some((u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1);
-        }
-        //TODO: For performance, send the whole tasks array instead of one by one
-        valid =
-          valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
-        if (stageIds.length > 0)
-          valid = valid && stageIds.includes(resource.taskStageId);
-        if (typeIds.length > 0)
-          valid = valid && typeIds.includes(resource.taskTypeId);
-        return valid;
-      })
-  return {
-       unfiltered: {
-            tasks
-            },
-       filtered: {
-         tasks:  tasks.filter(t => {
-        if (this.getHideOverdue == true) {          
-         return t.isOverdue == false
-       } else return true
-
-      }).filter(t => {
-      if (this.getHideComplete == true) { 
-        return !t.completed
-      } else return true
-
-      }).filter(t => {
-      if (this.getHidePlanned == true) { 
-        return t.planned == false
-      } else return true
-
-      }).filter(t => {
-      if (this.getHideOnhold == true) { 
-        return t.onHold == false
-      } else return true
-
-      }).filter(t => {
-      if (this.getHideInprogress == true) { 
-        return t.inProgress == false
-      } else return true
-
-      }).filter(t => {
-       if (this.getHideDraft == true){
-         return t.draft == false
-       } else return true   
-
-
-      }).filter(t => {
-      if (this.getHideOngoing == true) {
-        return t.ongoing == false
-      } else return true       
-
-      }).filter(t => {
-        if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
-        return t.reportable
-      }
-      if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
-          return t.reportable + t.watched
-
-      } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
-          return t.reportable + t.watched + t.important
-      } else return true
-
-      }).filter(t => {
-        // This and last 2 filters are for Filtered Tags
-         if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
-           return t.watched
-        } if (this.getHideWatched && !this.getHideBriefed && this.getHideImportant) {
-           return t.watched + t.important
-        } if (this.getHideWatched && this.getHideBriefed && !this.getHideImportant) {          
-           return  t.watched + t.reportable
-        } if (this.getHideWatched && this.getHideBriefed && this.getHideImportant) {          
-           return  t.watched + t.reportable + t.important
-        } else return true          
-       
-      }).filter(t => {
-         if (this.getHideImportant && !this.getHideBriefed && !this.getHideWatched) {
-          return t.important
-        } if (this.getHideImportant && this.getHideBriefed && !this.getHideWatched) {
-          return t.important + t.reportable
-       } if (this.getHideImportant && this.getHideBriefed && this.getHideWatched) {
-          return t.important + t.reportable + t.watched
-        } else return true           
-       }),  
-        }
-       }     
-    },
-      sortedTasks:function() {
-        return this.filteredTasks.filtered.tasks.sort((a,b) => {
-        let modifier = 1;
-
-        if (this.currentSortDir1 === "desc") modifier = -1;
-        if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
-        if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
-        
-        if (this.currentSortDir2 === "desc") modifier = -1;
-        if (a[this.currentSortCol2] < b[this.currentSortCol2]) return -1 * modifier;
-        if (a[this.currentSortCol2] > b[this.currentSortCol2]) return 1 * modifier;
-
-        if (this.currentSortDir === "desc") modifier = -1;
-        if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
-                if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
-                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
-            if (a[this.currentSort].toLowerCase() > b[this.currentSort].toLowerCase()) return 1 * modifier;
-                }
-            } else 
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;        
-        return 0;
-
-           }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.C_tasksPerPage.value;
-          let end = this.currentPage*this.C_tasksPerPage.value;
-          if(index >= start && index < end) return true;
-          return this.end
-        });
-    },
-   
+  
   },
   methods: {
       ...mapActions([

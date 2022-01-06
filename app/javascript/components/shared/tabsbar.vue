@@ -69,7 +69,7 @@ export default {
       return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract");
     },
     isContractView() {
-      return this.$route.name.includes("Contract");
+      return this.$route.name.includes("Contract") && !this.$route.name.includes("SettingsContracts");
     },
     isMapView() {
       return this.$route.name.includes("Map");
