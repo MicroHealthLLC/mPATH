@@ -232,7 +232,7 @@ class User < ApplicationRecord
   def allowed_sub_navigation_tabs(right = 'R')
     # sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview", "admin", "lessons"]
     # self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
-    self.facility_privileges_hash.transform_values{|v| v.transform_values{|v| v.map{|k,v| {id: k.downcase, name: k.humanize, value: k.downcase} if (k != "facility_id") && (v.present? || v.any?) }.compact } }
+    self.facility_privileges_hash.transform_values{|v| v.transform_values{|v| v.map{|k,v| {id: k.downcase, name: k.humanize, value: k.downcase} if (!["facility_id", "contracts", "overview"].include?(k)) && (v.present? || v.any?) }.compact } }
     
   end
 
