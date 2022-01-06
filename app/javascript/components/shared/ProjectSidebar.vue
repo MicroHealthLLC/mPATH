@@ -33,7 +33,7 @@
             <span v-show="expanded.id == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
-           <p class="clickable groupName">{{ group.name }}</p>
+           <p class="clickable groupName" v-tooltip="group.name">{{ group.name }}</p>
            </span>
          </div>
 
