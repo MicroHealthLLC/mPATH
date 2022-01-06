@@ -7,12 +7,12 @@
           - @contracts.each do |f|
             option{value="#{f.id}" }= f.nickname
 
-      - ContractPrivilege::PRIVILEGE_MODULE.each do |m_name|
+      - ContractPrivilege::PRIVILEGE_MODULE.each do |k, m_name|
         li(class="select input required")
           label(class="label")= m_name
-          input{type="hidden" value="" name="user[contract_privileges_attributes][#{index}][#{m_name}][]" }
+          input{type="hidden" value="" name="user[contract_privileges_attributes][#{index}][#{k}][]" }
           - ContractPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
-            input{type="checkbox" value="#{permission[1]}" name="user[contract_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if user_project_privileg.send(m_name).include?(permission[1]))}= permission[0]
+            input{type="checkbox" value="#{permission[1]}" name="user[contract_privileges_attributes][#{index}][#{k}][]" checked=("checked" if user_project_privileg.send(k).include?(permission[1]))}= permission[0]
 
   - else
     p All contracts are included in one of the contract privileges or there is not contract in this program.
