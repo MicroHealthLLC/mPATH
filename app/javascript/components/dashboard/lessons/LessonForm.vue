@@ -1368,6 +1368,22 @@ export default {
         }
       });
     },
+    contractLessonStatus: {
+      handler() {
+        if (this.contractLessonStatus == 200) {
+          this.$message({
+            message: `${this.lesson.title} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });       
+          this.SET_CONTRACT_LESSON_STATUS(0);
+         }
+        this.successes = this.lesson.successes;
+        this.failures = this.lesson.failures;
+        this.bestPractices = this.lesson.best_practices;
+        this.updates = this.lesson.notes;
+      },
+    },
     lessonStatus: {
       handler() {
         if (this.lessonStatus == 200) {

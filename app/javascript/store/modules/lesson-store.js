@@ -12,6 +12,7 @@ const lessonModule = {
     program_lessons_loaded: true,
     lesson_stages: [],
     lessons_loaded: true,
+    contract_lessons_loaded: true,
     lesson_status: 0,
     contract_lesson_status: 0,
   }),
@@ -88,7 +89,7 @@ const lessonModule = {
         });
     },
     fetchContractLessons({ commit }, { contractId }) {
-      commit("TOGGLE_LESSONS_LOADED", false);
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
@@ -107,7 +108,7 @@ const lessonModule = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED", true);
+          commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
         });
     },
     fetchLesson({ commit }, { id, programId, projectId}) {
@@ -132,7 +133,7 @@ const lessonModule = {
         });
     },
     fetchContractLesson({ commit }, { id, contractId}) {
-      commit("TOGGLE_LESSONS_LOADED", false);
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
       // Retrieve lesson by id
       axios({
         method: "GET",
@@ -149,7 +150,7 @@ const lessonModule = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED", true);
+          commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
         });
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
@@ -180,7 +181,7 @@ const lessonModule = {
     },
     addContractLesson({ commit }, { lesson, contractId }) {
  // Displays loader on front end
-    commit("TOGGLE_LESSONS_LOADED", false);
+    commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
   // Utilize utility function to prep Lesson form data
     let formData = lessonFormData(lesson);
 
@@ -202,7 +203,7 @@ const lessonModule = {
       console.log(err);
     })
     .finally(() => {
-      commit("TOGGLE_LESSONS_LOADED", true);
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
     });
 },
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
@@ -233,7 +234,7 @@ const lessonModule = {
     },
     updateContractLesson({ commit }, { lesson, contractId, lessonId }) {
       // Displays loader on front end
-      commit("TOGGLE_LESSONS_LOADED", false);
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
       // Utilize utility function to prep Lesson form data
       let formData = lessonFormData(lesson);
 
@@ -254,7 +255,7 @@ const lessonModule = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED", true);
+          commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
         });
     },
     deleteLesson({ commit }, { id, programId, projectId }) {
@@ -316,6 +317,7 @@ const lessonModule = {
     SET_LESSON_STAGES: (state, lessonStages) =>
       (state.lesson_stages = lessonStages),
     TOGGLE_LESSONS_LOADED: (state, loaded) => (state.lessons_loaded = loaded),
+    TOGGLE_CONTRACT_LESSONS_LOADED: (state, loaded) => (state.contract_lessons_loaded = loaded),
     SET_LESSON_STATUS: (state, status) => (state.lesson_status = status),
     SET_CONTRACT_LESSON_STATUS: (state, status) => (state.contract_lesson_status = status),
   },
@@ -328,6 +330,7 @@ const lessonModule = {
     programLessonsCount: (state) => state.programLessonsCount,
     lessonStages: (state) => state.lesson_stages,
     lessonsLoaded: (state) => state.lessons_loaded,
+    contractlessonsLoaded: (state) => state.contract_lessons_loaded,
     lessonStatus: (state) => state.lesson_status,
     contractLessonStatus: (state) => state.contract_lesson_status,
   },

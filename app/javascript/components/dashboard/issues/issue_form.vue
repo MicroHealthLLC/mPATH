@@ -1905,9 +1905,12 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
-             } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
-              );
+            }  else if (this.isProgramView && this.issue.contractId) { this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer`
+            );
+            } else this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
+            );
           })
           .catch((err) => {
             console.log(err);

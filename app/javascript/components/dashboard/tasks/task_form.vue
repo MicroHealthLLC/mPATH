@@ -1429,12 +1429,14 @@ export default {
           let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut]
+        console.log(fPrivilege.tasks.includes(s))
           return fPrivilege.tasks.includes(s);
-        } else {
+        } else if (this.$route.params.projectId) {
           // console.log("project route")
           let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut]
+           console.log(fPrivilege.tasks.includes(s))
           return fPrivilege.tasks.includes(s); 
         }
      },
@@ -1882,7 +1884,10 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else this.$router.push(
+             }  else if (this.isProgramView && this.task.contractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer`
+              );
+              } else this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
               );
           })

@@ -2759,7 +2759,10 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-             } else this.$router.push(
+             } else if (this.isProgramView && this.risk.contractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer`
+              );
+              } else this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/risk/${response.data.risk.id}`
               );
           })
