@@ -82,15 +82,19 @@
         'setTaskForManager',
         'setMyActionsFilter'
       ]),
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.notes.includes(s); 
-    },
+     _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.notes.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.notes.includes(s); 
+        }
+     },
       addNewNote() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'note', value: {}})

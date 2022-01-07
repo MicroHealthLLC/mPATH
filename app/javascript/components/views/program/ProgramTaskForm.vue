@@ -37,7 +37,7 @@ mounted() {
   } else if (this.getShowProjectStats){
     this.allProgramTasks = this.filteredAllContractTasks
   }
-  if (this.contentLoaded && this.$route.params.taskId !== "new") {
+  if (this.contentLoaded) {
     this.task = this.allProgramTasks.find(
         (task) => task.id == this.$route.params.taskId
       );
@@ -45,12 +45,10 @@ mounted() {
   },
   watch: {
     contentLoaded: {
-      handler() {
-        if (this.$route.params.taskId !== "new") {
+      handler() {       
           this.task = this.allProgramTasks.find(
             (task) => task.id == this.$route.params.taskId
           );
-        } 
       },
     },
   },
