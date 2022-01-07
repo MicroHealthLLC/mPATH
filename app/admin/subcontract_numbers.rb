@@ -6,4 +6,9 @@ ActiveAdmin.register SubcontractNumber do
     permitted = [:name]
     permitted
   end
+
+  preserve_default_filters!
+  filter :contracts, collection: -> {
+    Contract.pluck(:nickname, :id)
+  }
 end
