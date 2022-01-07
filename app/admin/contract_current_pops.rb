@@ -8,4 +8,10 @@ ActiveAdmin.register ContractCurrentPop do
     permitted = [:name]
     permitted
   end
+
+  controller do
+    def edit
+      @page_title = "Edit Contract Current PoP"
+    end
+  end
 end
