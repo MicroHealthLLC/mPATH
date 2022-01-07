@@ -1324,17 +1324,6 @@ export default {
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-      }, 
       selectedIssueStage: null,
       issueUsers: [],
       responsibleUsers: null,
@@ -1451,18 +1440,6 @@ export default {
           return fPrivilege.issues.includes(s); 
         }
      },
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.issues.includes(s); 
-    // },
-    // log(e){
-    //   console.log("issue stages sorted: " + JSON.stringify(e))
-    // },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
@@ -1877,10 +1854,10 @@ export default {
           method = "PUT";
           callback = "issue-updated";
         }        
-        if (this.issue && this.issue.id && this.facility) {       
+        if (this.issue && this.issue.id && this.issue.facilityId) {       
            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.issue.facilityId}/issues/${this.issue.id}.json`;
         }
-        if (this.issue && this.issue.id && this.contract) {
+        if (this.issue && this.issue.id && this.issue.contractId) {
           url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
         }
        axios({

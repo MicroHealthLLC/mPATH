@@ -608,14 +608,20 @@
            this.reRenderCalendar()
         }
       },
-      _isallowed(salut) {
-         var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.tasks.includes(s); 
-      },
+    _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
       if (this.filteredCalendar.filtered.tasks !== undefined && this.filteredCalendar.filtered.tasks.length > 0) {

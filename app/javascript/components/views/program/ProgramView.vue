@@ -2071,6 +2071,7 @@ export default {
         name: "ProgramTaskForm",     
         params: {
           programId: this.$route.params.programId,
+          contractId: task.contractId,
           taskId: task.id,
         },
      }); 

@@ -138,14 +138,16 @@ export default {
 
 
     if(contractId){
-       let cPrivilege = this.$projectPrivileges[programId][contractId];
+       let cPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]  ;
      if (cPrivilege) {
       for (var i = 0; i < this.cTabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
         if(this.cTabs[i].key == 'contract'){
           continue
         }
-        this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;      
+       if (cPrivilege[this.cTabs[i].key] && cPrivilege[this.cTabs[i].key].length) {
+           this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;
+        }     
       }
     }
     } else {
@@ -232,9 +234,7 @@ export default {
         if (this.contentLoaded) {
 
 // For Contract Privileges
-          let cPrivileges = this.$projectPrivileges[
-            this.$route.params.programId
-          ][this.$route.params.contractId];
+          let cPrivileges = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]  
 
 // For Project Privileges
           let pPrivileges = this.$projectPrivileges[
