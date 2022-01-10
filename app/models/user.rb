@@ -232,8 +232,15 @@ class User < ApplicationRecord
   def allowed_sub_navigation_tabs(right = 'R')
     # sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview", "admin", "lessons"]
     # self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
-    self.facility_privileges_hash.transform_values{|v| v.transform_values{|v| v.map{|k,v| {id: k.downcase, name: k.humanize, value: k.downcase} if (k != "facility_id") && (v.present? || v.any?) }.compact } }
-    
+    self.facility_privileges_hash.transform_values{|v| 
+      v.transform_values{|v| 
+        v.map{|k,v| 
+          if (!["facility_id", "contracts"].include?(k)) && (v.present? || v.any?)
+            {id: k.downcase, name: FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym].humanize, value: k.downcase}
+          end
+        }.compact
+      }
+    } 
   end
 
   def build_sub_navigation_tabs_for_profile
@@ -267,16 +274,20 @@ class User < ApplicationRecord
     top_navigations = allowed_navigation_tabs
     current_top_navigation_menu = nil
     url = "/"
+    navigation_menu = p.navigation_menu
+    sub_navigation_menu = p.sub_navigation_menu
+    sub_navigation_menu = FacilityPrivilege::PRIVILEGE_MODULE[sub_navigation_menu.to_sym] if sub_navigation_menu
+
     if p.program_id.present?
       url = "/programs/#{p.program_id}/sheet" # map must be
-      if p.navigation_menu.present?
+      if navigation_menu.present?
         navigtaion_present = false
-        if top_navigations.include?( top_navigation_hash.invert[p.navigation_menu] )
-          url = "/programs/#{p.program_id}/#{p.navigation_menu}"
-          current_top_navigation_menu = p.navigation_menu
+        if top_navigations.include?( top_navigation_hash.invert[navigation_menu] )
+          url = "/programs/#{p.program_id}/#{navigation_menu}"
+          current_top_navigation_menu = navigation_menu
           navigtaion_present = true
           
-          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[p.navigation_menu])
+          return url  if ["gantt_view", "members"].include?(top_navigation_hash.invert[navigation_menu])
 
         elsif top_navigations.size > 0
           url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
@@ -288,20 +299,21 @@ class User < ApplicationRecord
         end
         
         if navigtaion_present && p.project_id.present?
-          if p.sub_navigation_menu.present?
+          if sub_navigation_menu.present?
             sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
-            sub_navigation_allowed = sub_navigation_privileges[p.sub_navigation_menu].present?
+            sub_navigation_privileges["analytics"] = sub_navigation_privileges["overview"] || []
+            sub_navigation_allowed = sub_navigation_privileges[sub_navigation_menu].present?
             allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
 
             if sub_navigation_allowed
 
               # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
               if current_top_navigation_menu == 'calendar_view'
-                if  ["tasks", "issues", "risks"].include?(p.sub_navigation_menu)
-                  url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+                if  ["tasks", "issues", "risks"].include?(sub_navigation_menu)
+                  url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
                 end
               else
-                url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+                url = "#{url}/projects/#{p.project_id}/#{sub_navigation_menu}"
               end
             
             elsif allowed_sub_navigation_values.size > 0

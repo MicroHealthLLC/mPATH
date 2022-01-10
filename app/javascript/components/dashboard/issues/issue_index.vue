@@ -299,15 +299,20 @@ export default {
       'setHideImportant',
       'setHideBriefed',
     ]),
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.issues.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s); 
+        }
+     },
     toggleWatched(){
       this.setHideWatched(!this.getHideWatched)    
     },

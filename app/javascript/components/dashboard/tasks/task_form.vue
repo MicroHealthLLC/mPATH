@@ -1,6 +1,6 @@
 <template>
   <div 
-   v-loading="!contentLoaded"   
+    v-loading="!contentLoaded"   
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -26,12 +26,12 @@
               <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView && !contract">
-                    {{ task.facilityName }}
+               <span v-if="isProgramView">
+                    {{ task.facilityName || task.contractNickname }}
                </span>
             </router-link>
             <router-link :to="backToContract">
-              <span v-if="contract">{{
+              <span v-if="contract && !isProgramView">{{
                   contract.nickname || contract.name
                   }}
               </span>
@@ -1312,17 +1312,6 @@ export default {
       destroyedFiles: [],
       editTimeLive: "",   
       programId: this.$route.params.programId,         
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1434,25 +1423,23 @@ export default {
         notes: [],
       };
     },
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //     let fPrivilege = this.$projectPrivileges[this.programId][this.id]
-    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //     let s = permissionHash[salut]
-    //       return  fPrivilege.tasks.includes(s); 
-    // },
-  
-  // Temporary _isallowed method until contract projectPrivileges is fixed
-     _isallowed(salut) {
+    _isallowed(salut) {
        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.tasks.includes(s); 
-        }         
-      },
+        //  console.log("yes, contract route")      
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+        console.log(fPrivilege.tasks.includes(s))
+          return fPrivilege.tasks.includes(s);
+        } else if (this.$route.params.projectId) {
+          // console.log("project route")
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+           console.log(fPrivilege.tasks.includes(s))
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
@@ -1832,11 +1819,7 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-       
-
-
-
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
+         let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
          }
@@ -1847,13 +1830,15 @@ export default {
           method = "PUT";
           callback = "task-updated";
         }
-        if (this.task && this.task.id && this.facility) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
+        if (this.task && this.task.id && this.task.facilityId) {
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
-        if (this.task && this.task.id && this.contract) {
+        if (this.task && this.task.id && this.task.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
         // var beforeSaveTask = this.task
+
+        // Correct API http://localhost:3000/api/v1/programs/2/projects/319/tasks/1218.json
         axios({
           method: method,
           url:  url,
@@ -1899,7 +1884,10 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else this.$router.push(
+             }  else if (this.isProgramView && this.task.contractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer`
+              );
+              } else this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
               );
           })
@@ -2208,7 +2196,7 @@ export default {
       }
     },
     backToTasks() {
-      if (this.$route.params.contractId) {
+      if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
@@ -2225,8 +2213,10 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
+      } else if (this.task.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else  {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },
   },

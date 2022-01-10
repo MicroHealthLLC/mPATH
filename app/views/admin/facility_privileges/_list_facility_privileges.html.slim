@@ -33,13 +33,13 @@ div{id="facility_privilege_list"}
             - project.facilities.each do |f|
               option{value="#{f.id}" select=("selected" if facility_project_ids.include?(f.id.to_s) )}= f.facility_name
 
-        - FacilityPrivilege::PRIVILEGE_MODULE.each do |m_name|
+        - FacilityPrivilege::PRIVILEGE_MODULE.each do |k, m_name|
           li(class="select input required")
             label(class="label")= m_name
-            input{type="hidden" value="" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" }
+            input{type="hidden" value="" name="user[facility_privileges_attributes][#{index}][#{k}][]" }
 
             - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
-              input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]
+              input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{k}][]" checked=("checked" if fp.send(k).include?(permission[1]))}= permission[0]
 
 javascript:
   jQuery(function($) {

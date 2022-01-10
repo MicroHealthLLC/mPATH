@@ -81,22 +81,9 @@
     },
     data() {
       return {
-        // show: true,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        }, 
         loading: true,
         DV_note: null,  
-        // has_note: false        
-      }
+     }
     },
     mounted() {
       // this.fetchContractNote({
@@ -119,26 +106,19 @@
         'fetchContractNote',
         'deleteContractNote'
       ]),
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.notes.includes(s); 
-    // },
-          // Temporary _isallowed method until contract projectPrivileges is fixed
      _isallowed(salut) {
-       if (this.contract && !this.facility) {
-          return this.defaultPrivileges      
+       if (this.$route.params.contractId) {
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.notes.includes(s);
         } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s); 
-        }         
-      },
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.notes.includes(s); 
+        }
+     },
      editNoteMode() {
         if (this.contract) {      
            this.show = false          

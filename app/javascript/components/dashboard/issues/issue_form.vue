@@ -27,12 +27,12 @@
                <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                 </span>
-                <span v-if="isProgramView && !contract">
-                    {{ issue.facilityName }}
+                <span v-if="isProgramView">
+                    {{ issue.facilityName || issue.contractNickname }}
                </span>
               </router-link>
               <router-link :to="backToContract">
-                <span v-if="contract">
+                <span v-if="contract  && !isProgramView">
                   {{ contract.nickname || contract.name }}
                 </span>
               </router-link>    
@@ -1324,17 +1324,6 @@ export default {
       selectedTaskType: null,
       selectedIssueSeverity: null,
       editToggle: false,  
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-      }, 
       selectedIssueStage: null,
       issueUsers: [],
       responsibleUsers: null,
@@ -1439,26 +1428,18 @@ export default {
     },
     _isallowed(salut) {
        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s);
         } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.issues.includes(s); 
-        }         
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s); 
+        }
      },
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.issues.includes(s); 
-    // },
-    // log(e){
-    //   console.log("issue stages sorted: " + JSON.stringify(e))
-    // },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
@@ -1873,10 +1854,10 @@ export default {
           method = "PUT";
           callback = "issue-updated";
         }        
-        if (this.issue && this.issue.id && this.facility) {       
+        if (this.issue && this.issue.id && this.issue.facilityId) {       
            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.issue.facilityId}/issues/${this.issue.id}.json`;
         }
-        if (this.issue && this.issue.id && this.contract) {
+        if (this.issue && this.issue.id && this.issue.contractId) {
           url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
         }
        axios({
@@ -1924,9 +1905,12 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
-             } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
-              );
+            }  else if (this.isProgramView && this.issue.contractId) { this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer`
+            );
+            } else this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
+            );
           })
           .catch((err) => {
             console.log(err);
@@ -2223,7 +2207,7 @@ export default {
       }
     },
   backToIssues() {
-     if (this.$route.params.contractId) {
+     if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/issues`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
@@ -2235,14 +2219,16 @@ export default {
     backToContract(){
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
      },
-  projectNameLink() {
-     if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
-      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
-      }
+    projectNameLink() {
+      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+          return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
+        } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+          return `/programs/${this.$route.params.programId}/${this.tab}`;
+        } else if (this.issue.contractId) {
+          return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+        } else {
+          return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
+        }
     },
   },
   watch: {

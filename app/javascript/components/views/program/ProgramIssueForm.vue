@@ -7,11 +7,11 @@ import { mapGetters } from "vuex";
 
 import IssueForm from "../../dashboard/issues/issue_form.vue";
 export default {
-  props: ["facility"],
   components: { IssueForm },
   data() {
     return {
       issue: {},
+      allProgramIssues: [],
     };
   },
   methods: {
@@ -22,11 +22,22 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", 'filteredAllIssues']),
+    ...mapGetters([
+      "contentLoaded",
+      'filteredAllIssues',
+      'filteredAllContractIssues',
+      'getShowProjectStats'     
+      ]),
   },
   mounted() {
+  if (!this.getShowProjectStats){
+      this.allProgramIssues = this.filteredAllIssues
+    } else if (this.getShowProjectStats){
+      this.allProgramIssues = this.filteredAllContractIssues
+    }
+
     if (this.contentLoaded) {
-      this.issue = this.filteredAllIssues.find(
+      this.issue = this.allProgramIssues.find(
         (issue) => issue.id == this.$route.params.issueId
       );
     }
@@ -34,7 +45,7 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.issue = this.filteredAllIssues.find(
+        this.issue = this.allProgramIssues.find(
           (issue) => issue.id == this.$route.params.issueId
         );
       },

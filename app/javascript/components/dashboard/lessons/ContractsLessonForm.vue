@@ -804,17 +804,6 @@ export default {
       formLoaded: false,
       currentTab: "tab1",
       paginate: ["successes", "failures", "bestPractices", "updates"],
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       tabs: [
         {
           label: "Lesson Info",
@@ -962,25 +951,19 @@ export default {
       }
       return [...sFBP];
     },
-    // _isallowed(salut) {
-    //     var programId = this.$route.params.programId;
-    //     var projectId = this.$route.params.projectId
-    //     let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //     let s = permissionHash[salut]
-    //     return  fPrivilege.lessons.includes(s);      
-    // },
-      // Temporary _isallowed method until contract projectPrivileges is fixed
-     _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
+    _isallowed(salut) {
+      if (this.$route.params.contractId) {
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.lessons.includes(s);
+      } else {
         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         return fPrivilege.lessons.includes(s); 
-        }         
-      },
+      }
+     },
     close() {  
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
@@ -1349,19 +1332,6 @@ export default {
             showClose: true,
           });
           this.SET_CONTRACT_LESSON_STATUS(0);
-          //Route to newly created task form page
-        //   if (this.$route.path.includes("sheet")) {
-        //     this.$router.push(
-        //       `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-        //     );
-        //   } else if (this.$route.path.includes("map")) {
-        //     this.$router.push(
-        //       `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
-        //     );
-        //   } else 
-        //   this.$router.push(
-        //       `/programs/${this.$route.params.programId}/dataviewer`
-        //     );
         }
         this.successes = this.contractLesson.successes;
         this.failures = this.contractLesson.failures;

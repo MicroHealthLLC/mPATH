@@ -56,7 +56,8 @@ class Api::V1::LessonsController < AuthenticatedController
   def index
 
     fph = current_user.facility_privileges_hash
-
+    cph = current_user.contract_privileges_hash
+    
     # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
     if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["lessons"].present?
       # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
@@ -72,14 +73,26 @@ class Api::V1::LessonsController < AuthenticatedController
       end
     elsif params[:project_id]
       allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
-
-      fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
+      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
       
+      fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
+      response_lessons = []
+      lesson_ids = []
+
       if fp_ids.any?
-        lessons = Lesson.joins(:facility_project).includes(Lesson.lesson_preload_array).where(facility_project_id: fp_ids)
-        response_hash = {lessons: lessons.map(&:build_response_for_index)}
-        status_code = 200
+        lesson_ids = Lesson.joins(:facility_project).includes(Lesson.lesson_preload_array).where(facility_project_id: fp_ids).pluck(:id)
       end
+      
+      if allowed_contract_ids.any?
+        lesson_ids += Lesson.where(contract_id: allowed_contract_ids).pluck(:id)
+      end
+      
+      lessons = Lesson.includes(Lesson.lesson_preload_array).where(id: lesson_ids.compact.uniq).order(:id)
+      response_lessons = lessons.map(&:build_response_for_index)
+
+      response_hash = {lessons: response_lessons}
+      status_code = 200
+
     elsif params[:contract_id]
       lessons = Lesson.where(contract_id: params[:contract_id]).includes(Lesson.lesson_preload_array)
       response_hash = {lessons: lessons.map(&:build_response_for_index)}

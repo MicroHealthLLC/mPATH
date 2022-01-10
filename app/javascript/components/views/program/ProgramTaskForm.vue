@@ -6,13 +6,13 @@
 import { mapGetters } from "vuex";
 import TaskForm from "../../dashboard/tasks/task_form";
 export default {
-  props: ["facility"],
   components: {
     TaskForm,
   },
   data() {
     return {
       task: {},
+      allProgramTasks: [],
     };
   },
   methods: {
@@ -23,23 +23,32 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", "currentProject", 'filteredAllTasks']),
+    ...mapGetters([
+      "contentLoaded", 
+      "currentProject", 
+      'filteredAllTasks',
+      'filteredAllContractTasks',
+      'getShowProjectStats'
+      ]),
   },
-  mounted() {
-    if (this.contentLoaded && this.$route.params.taskId !== "new") {
-      this.task = this.filteredAllTasks.find(
+mounted() {
+  if (!this.getShowProjectStats){
+    this.allProgramTasks = this.filteredAllTasks
+  } else if (this.getShowProjectStats){
+    this.allProgramTasks = this.filteredAllContractTasks
+  }
+  if (this.contentLoaded) {
+    this.task = this.allProgramTasks.find(
         (task) => task.id == this.$route.params.taskId
       );
-    }
+    }        
   },
   watch: {
     contentLoaded: {
-      handler() {
-        if (this.$route.params.taskId !== "new") {
-          this.task = this.filteredAllTasks.find(
+      handler() {       
+          this.task = this.allProgramTasks.find(
             (task) => task.id == this.$route.params.taskId
           );
-        }
       },
     },
   },
