@@ -1,12 +1,7 @@
-<!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container-fluid m-2" data-cy="facility_rollup">
-
-   <!-- <el-tabs type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Program Rollup" class="p-3"> -->
-    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-1 pb-2">
-      <div class="col-6 py-2 pl-0">
+  <div class="container-fluid" data-cy="facility_rollup">
+      <div class="row pt-1 pb-2">
+      <div class="col-6 py-3 pl-3">
         <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
@@ -50,6 +45,28 @@
      
     </div>
 
+   <el-tabs type="border-card" @tab-click="handleClick">
+  <el-tab-pane label='SHEET' class="p-3 overflowX"> 
+
+<!-- ROW FOR FILTERS -->
+    <div class="row">
+    <div class="col-6 py-0 px-0" :class="[isMapView ? 'col-12' : '']" >
+      <!-- SEARCH BAR -->
+    </div>
+        <div class="col-6 py-0 px-0">
+        <!-- SEARCH BY GROUP -->
+    </div>
+      
+    </div>
+
+     <div class="row">
+    <ProgramContractsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-else />      
+    </div>
+    </el-tab-pane>
+    <el-tab-pane label='ANALYTICS' class="p-3"> 
+    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
+ 
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
     <div class="row">
       <div class="col-9 py-0 px-0" :class="[isMapView ? 'col-12' : '']">
@@ -1059,9 +1076,9 @@
     
     </div>
 
-      <!-- </el-tab-pane>
+    
   
-    <el-tab-pane label="Program Breakdown">
+ 
      <div class="mb-2 float-right"> <button class="btn btn-md btn-info"> PROJECTS: {{ C_facilityCount }}</button></div>
         <div v-if="contentLoaded" class="pb-2 table-div">
           <div class="grid-container">
@@ -1070,26 +1087,24 @@
                <span class="p-2" > {{ item.facilityName }} </span>          
             </el-card>
           </div>         
-      </div>
+      </div>     
     </el-tab-pane>
-    
-    <el-tab-pane label="Analytics">  -->
-<!-- KPI's and visual graphs will go here -->    
-       
-      
-    <!-- </el-tab-pane>
-       </el-tabs>  -->
+    </el-tabs>  
   </div>
 </template>
 
 <script>
 import Loader from "./loader";
+import ProgramContractsSheet from "../views/program/ProgramContractsSheet.vue"
+import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
   props: ["from"],
   components: {
     Loader,
+    ProgramContractsSheet,
+    ProgramProjectsSheet 
   },
   data() {
     return {
@@ -2044,6 +2059,7 @@ export default {
 .box-card {
   min-height: 150px;
 }
+
 .proj-type {
   display: inline;
   border-radius: 2px;
