@@ -1698,7 +1698,7 @@ export default {
       }    
       if (this.getShowProjectStats){
         this.$router.push({
-          name: "ProgramIssueForm",
+          name: "ProgramContractIssueForm",
           params: {
           programId: this.$route.params.programId,
           contractId: issue.contractId,

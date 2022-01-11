@@ -433,7 +433,7 @@ class Project < SortableRecord
         end
       end
 
-      if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+      if user.has_contract_permission?(resource: 'risks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
         risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq
         c_hash[:risks] = []
         risks.each do |r| 

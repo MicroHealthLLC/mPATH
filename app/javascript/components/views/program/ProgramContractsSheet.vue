@@ -1,15 +1,6 @@
 <template>
-  <div class="row">
-   <div class="col-md-12">
-  <div class="right-panel">  
-
  <div class="my-1 pb-2 buttonWrapper container-fluid">
-  <div class="row px-0">
-    <!-- <div class="col" v-if="_isallowed('write')">
-      <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
-      <i class="far fa-plus-circle mr-1"></i> Add Contract
-      </el-button>
-     </div>     -->
+  <div class="row px-0 mb-2">
      <div class="col">
         <el-input
           type="search"          
@@ -39,36 +30,43 @@
           :key="item.id"
           :label="item.name"
           :value="item">
-        </el-option>
-          
+          </el-option>          
           </el-select>
        </div>
-      </div>
-  </div>
+  </div>  
   <div
     v-if="tableData"
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="">
-   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="600">
+   >
+   <hr class="mt-2 mb-0">
+   <el-table 
+    :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" 
+    height="500"
+    stripe
+    style="width:100%" 
+    >
     <el-table-column 
       prop="projectCode"  
       sortable  
       label="Project Code"
-      width="200"
+      width="100"
+      fixed  
       > 
       <template slot-scope="scope">
         <el-input size="small"
           style="text-align:center"
-          v-model="scope.row.projectCode" controls-position="right"></el-input>
+          v-model="scope.row.projectCode" controls-position="right">
+        </el-input>
       </template>
     </el-table-column>   
     <el-table-column 
       prop="nickname"  
       sortable  
       width="200"
+      fixed  
       label="Contract Nickname"
       > 
        <template slot-scope="scope">
@@ -77,8 +75,9 @@
             v-model="scope.row.nickname" controls-position="right"></el-input>
        </template>
     </el-table-column>
+    <!-- TYPE -->
     <el-table-column 
-      prop="contractType"  
+      prop="contractClassification"  
       sortable  
       label="Type" 
       width="200"
@@ -86,21 +85,24 @@
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.contractType && scope.row.contractType.name"
-            v-model="scope.row.contractType.name" controls-position="right"></el-input>
-            <span v-else> <i> Edit in Program Settings </i> </span>
+            v-if="scope.row.contractClassification && scope.row.contractClassification !== null && scope.row.contractClassification.name"
+            v-model="scope.row.contractClassification.name" controls-position="right">
+          </el-input>
+           <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
-    </el-table-column>     
-     <el-table-column sortable prop="contractStatus"  label="Status" width="200"> 
+    </el-table-column>
+    <!-- STATUS      -->
+    <el-table-column sortable prop="contractStatus"  label="Status" width="200"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.contractStatus && scope.row.contractStatus.name"
+            v-if="scope.row.contractStatus && scope.row.contractStatus !== null && scope.row.contractStatus.name"
             v-model="scope.row.contractStatus.name" controls-position="right"></el-input>
              <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
     </el-table-column>
-      <el-table-column prop="name"  sortable  label="Contract Name" width="200"> 
+    <!-- CONTRACT NAME -->
+    <el-table-column prop="name"  sortable  label="Contract Name" width="200"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
@@ -109,109 +111,289 @@
             <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
     </el-table-column>
+    <!-- CUSTOMER (AGENCY) -->
     <el-table-column prop="contractCustomer.name"  sortable  label="Customer (Agency)" width="200"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.contractCustomer && scope.row.contractCustomer.name"
-            v-model="scope.row.contractCustomer.name" controls-position="right"></el-input>
+            v-if="scope.row.contractCustomer && scope.row.contractCustomer !== null && scope.row.contractCustomer.name"
+            v-model="scope.row.contractCustomer.name" controls-position="right">
+          </el-input>
+           <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
     </el-table-column>
-      <el-table-column prop="contractVehicle.name"  sortable  label="Vehicle" width="200"> 
+    <!-- VEHICLE -->
+    <el-table-column prop="contractVehicle.name"  sortable  label="Vehicle" width="200"> 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.contractVehicle && scope.row.contractVehicle.name"
+            v-if="scope.row.contractVehicle && scope.row.contractVehicle.name && scope.row.contractVehicle !== null"
             v-model="scope.row.contractVehicle.name" controls-position="right"></el-input>
              <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
     </el-table-column>
-        <el-table-column prop="contractVehicleNumber.name"
+    <!-- COMMERCIAL / FEDERAL -->
+     <el-table-column prop=""
+          sortable 
+          label="Commercial/Federal"
+          width="200"
+          >     
+    </el-table-column>
+    <!-- PRIME IDIQ -->
+    <el-table-column prop="contractVehicleNumber.name"
           sortable 
           label="Pime IDIQ/Vehicle Contract Number"
-          width="200"
+          width="230"
           > 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.contractVehicleNumber && scope.row.contractVehicleNumber.name"
+            v-if="scope.row.contractVehicleNumber && scope.row.contractVehicleNumber.name && scope.row.contractVehicleNumber !== null"
             v-model="scope.row.contractVehicleNumber.name" controls-position="right"></el-input>
             <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
     </el-table-column>
-        <el-table-column 
+    <!-- PRIME CONTRACT NUMBER -->
+    <el-table-column 
           prop="contractPrime.name"  
           sortable  
           label="Pime Contract Number/Task Order/PO Number"
-          width="200"
+          width="230"
           > 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.contractPrime && scope.row.contractPrime.name"
+            v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime !== null"
             v-model="scope.row.contractPrime.name" controls-position="right"></el-input>
            <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
-      </el-table-column>
-          <el-table-column 
+    </el-table-column>
+   
+    <!-- SUBCONTRACT NUMBER -->
+    <el-table-column 
           prop="subcontractNumber.name"  
           sortable  
           label="Subcontract Number/PO Number"
-          width="200"
+          width="230"
           > 
        <template slot-scope="scope">
           <el-input size="small"
             style="text-align:center"
-            v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name"
+            v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber !== null"
             v-model="scope.row.subcontractNumber.name" controls-position="right"></el-input>
           <span v-else> <i> Edit in Program Settings </i> </span>
        </template>
     </el-table-column>
+
+     <!-- GOVERNEMNT / CLIENT -->
+     <el-table-column prop=""
+      sortable 
+      label="Government/Client"
+      width="200"
+      >     
+    </el-table-column>
+   <!-- PRIME-->
+     <el-table-column 
+      prop="" 
+      sortable 
+      filterable 
+      label="Prime"
+      width="200"     
+      >     
+    </el-table-column>
+  <!-- TOTAL Number of Subcontracts to MH-->
+     <el-table-column 
+      prop="" 
+      sortable 
+      filterable 
+      label="Total Number of Subcontracts to MH"
+      width="200"     
+      >     
+    </el-table-column>
+  <!-- Contract Start-->
+     <el-table-column 
+      prop="startDate"  
+      sortable  
+      width="200"
+      label="Contract Start"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.startDate" controls-position="right"></el-input>
+       </template>
+      
+    </el-table-column>
+      <!-- Contract End-->
+     <el-table-column 
+      prop="endDate"  
+      sortable  
+      width="200"
+      label="Contract End"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.endDate" controls-position="right"></el-input>
+       </template>
+       
+    </el-table-column>
+   <!-- Current PoP-->
+     <el-table-column 
+      prop="contractCurrentPop"  
+      sortable  
+      width="200"
+      label="Current PoP"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+             v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop !== null"
+            v-model="scope.row.contractCurrentPop.name" controls-position="right"></el-input>
+       </template>
+       
+    </el-table-column>
+     <!-- Start-->
+     <el-table-column 
+      prop="currentPopStartTime"  
+      sortable  
+      width="200"
+      label="Start"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.currentPopStartTime" controls-position="right"></el-input>
+       </template>
+    </el-table-column>
+      <!-- End-->
+     <el-table-column 
+      prop="currentPopEndTime"  
+      sortable  
+      width="200"
+      label="End"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.currentPopEndTime" controls-position="right"></el-input>
+       </template>
+    </el-table-column>
+    <!--Days Remaining-->
+     <el-table-column 
+      prop="daysRemaining"  
+      sortable  
+      width="200"
+      label="Days Remaining"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.daysRemaining" controls-position="right"></el-input>
+       </template>
+    </el-table-column>
+    <!--Total Contract Value-->
+     <el-table-column 
+      prop="totalContractValue"  
+      sortable  
+      width="200"
+      fixed  
+      label="Total Contract Value"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.totalContractValue" controls-position="right"></el-input>
+       </template>
+    </el-table-column>
+     <!--Current PoP Value-->
+     <el-table-column 
+      prop="currentPopValue"  
+      sortable  
+      width="200"
+      label="Current PoP Value"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.currentPopValue" controls-position="right"></el-input>
+       </template>
+    </el-table-column>
+      <!--Total Funded To Date-->
+     <el-table-column 
+      prop="totalContractFunded"  
+      sortable  
+      width="200"
+      label="Total Funded To Date"
+      > 
+       <template slot-scope="scope">
+          <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.totalContractFunded" controls-position="right"></el-input>
+       </template>
+    </el-table-column>
+    <!--Notes-->
+     <el-table-column 
+      prop="" 
+      sortable 
+      filterable 
+      label="Notes"
+      width="300"     
+      >     
+    </el-table-column>
     <el-table-column 
-      prop="facilityGroupName" 
+      prop="facilityGroupId" 
       sortable 
       filterable 
       label="Group"
-      width="200"
+      width="200"     
       >
-          <template slot-scope="scope">
-          <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.facilityGroupName"></el-input>
+      <template slot-scope="scope">
+        <span v-if="groupsArr">
+            {{ groupsArr.find( g => g.id == scope.row.facilityGroupId).name  }}
+        </span>
+        
        </template>
     </el-table-column>
 
-     <el-table-column label="Actions" fixed="right">
-      <template slot-scope="scope" >
-      <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button v-if="_isallowed('write')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
-        </el-button>
-        <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-      </template>
-    </el-table-column>
-  
-   </el-table>  
-   
+     <el-table-column 
+      label="Actions"     
+      width="300"
+      >
+        <el-button
+          type="default"  
+           class="bg-primary text-light"     
+        >
+        <i class="far fa-save"></i>
+        </el-button>   
+        <el-button
+          type="default" 
+          class="bg-secondary text-light"      
+        >
+        <i class="far fa-cog"></i>
+        </el-button>   
+    
+        <el-button
+          type="default"       
+          @click.prevent="goToContract(scope.$index, scope.row)"
+          class="bg-success text-light"
+        >
+         <i class="far fa-file-contract"></i> 
+        <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+        </el-button>   
+    </el-table-column>  
+   </el-table>   
   </div>
    <span v-else class="mt-5">
       NO DATA TO DISPLAY   
    </span>
-     </div>
-    </div>
-  </div>
+</div>
+
 </template>
 
 <script>
 
-// Compare both array objects, if obj a is also in obj b, push key 'yes' into that value[i] else, push key 'no'
-
-// Create two empty arrays
-// Push values into array
-// Compare arrays
-
-
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "ProgramContractsSheet",
   data() {
@@ -233,7 +415,9 @@ export default {
    ...mapMutations([
      'setProjectGroupFilter', 
      'setContractTable', 
+     'setEditContractSheet',
      'setGroupFilter', 
+     'SET_EDIT_CONTRACT_SHEET',
      'SET_CONTRACT_STATUS',
      'setContractTypeFilter',
      'setNewContractGroupFilter',
@@ -257,15 +441,27 @@ export default {
       });
     
     },
-    editContract(index, rows) {
+    editContract(){
+      if(this.editContractSheet == false){
+        console.log(this.editContractSheet)
+        this.SET_EDIT_CONTRACT_SHEET(!this.editContractSheet)
+          console.log(this.editContractSheet)
+      } else return
+    },
+    saveContract() {
+      if(this.editContractSheet == true){
+        console.log(this.editContractSheet)
+       this.SET_EDIT_CONTRACT_SHEET(!this.editContractSheet)
+          console.log(this.editContractSheet)
+      } else return
     //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
     //  if (rows && rows !== undefined) {
         let id = rows.id;
         let contractData = {
           contract: {
             nickname: rows.nickname,
-            facility_group_name: rows.facility_group_name,  
-            facility_group_id: rows.facility_group_id,  
+            facility_group_name: rows.facilityGroupName,  
+            facility_group_id: rows.facilityGroupId,  
             project_id: this.$route.params.programId,
             id:  id    
           }
@@ -298,6 +494,7 @@ export default {
       "contractStatus",
       'getContractGroupOptions',
       "contracts",
+      'editContractSheet',
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
@@ -321,6 +518,11 @@ export default {
        return contractData
       }    
    },
+   groupsArr(){
+      if (this.currentProject && this.currentProject.facilityGroups.length > 0 ){   
+       return this.currentProject.facilityGroups
+      }    
+   },
     C_typeFilter: {
         get() {
           return this.getContractGroupTypes
@@ -340,30 +542,6 @@ export default {
       },
     },
 
-     C_newContractGroupFilter: {
-       get() {
-        return this.getNewContractGroupFilter;
-      },
-      set(value) {
-        // console.log(value)
-        this.setNewContractGroupFilter(value);
-      },
-    },
-  },
-  watch: {
-    contractStatus: {
-      handler() {
-        if (this.contractStatus == 200 && this.contractNameText) {
-          this.$message({
-            message: `Contract saved successfully.`,
-            type: "success",
-            showClose: true,
-          });     
-          this.SET_CONTRACT_STATUS(0);
-          this.fetchContracts();
-        }
-      },
-    },  
   },
 };
 </script>
@@ -380,7 +558,11 @@ export default {
 }
 /deep/.el-table th.el-table__cell>.cell {
   color: #212529;
-  font-size: .88rem;
+  font-size: .85rem;
+  word-break: normal;
+}
+td, th {
+  overflow-wrap: break-word !important;
 }
 .tabs {
   background-color: #ededed;
@@ -432,5 +614,12 @@ a {
     color: white;
     padding: 2px;
     font-size: .7rem;
+}
+.light {
+  background-color: lightgray;
+  color: lightgray;
+}
+.overflowX {
+  overflow-x: scroll !important;
 }
 </style>

@@ -9,6 +9,7 @@
    <form
     id="tasks-form"
     @submit.prevent="saveTask"
+    :load="log(task)"
     class="mx-auto tasks-form"
     :class="{ 'vh100' : !contentLoaded}"
     accept-charset="UTF-8"     
@@ -23,12 +24,15 @@
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
             <router-link :to="projectNameLink">
-              <span v-if="!isProgramView && !contract">
+              <span v-if="!isProgramView && !task.contractId">
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView">
                     {{ task.facilityName || task.contractNickname }}
                </span>
+                 <!-- <span v-if="isProgramView && ">
+                    {{ task.facilityName || task.contractNickname }}
+               </span> -->
             </router-link>
             <router-link :to="backToContract">
               <span v-if="contract && !isProgramView">{{
@@ -1440,6 +1444,9 @@ export default {
           return fPrivilege.tasks.includes(s); 
         }
      },
+     log(e){
+console.log(e)
+     },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
@@ -1885,10 +1892,10 @@ export default {
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
              }  else if (this.isProgramView && this.task.contractId) { this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer`
+                `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
               );
               } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
+                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`
               );
           })
           .catch((err) => {
@@ -2135,10 +2142,7 @@ export default {
       );
     },
    isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") ||
-             this.$route.name.includes("ProgramRiskForm") ||
-             this.$route.name.includes("ProgramIssueForm") ||
-             this.$route.name.includes("ProgramLessonForm") ;
+      return this.$route.name.includes("ProgramTaskForm") || this.$route.name.includes("ProgramContractTaskForm")        
     },
     isMapView() {
       return this.$route.name === "MapTaskForm";
@@ -2213,7 +2217,7 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else if (this.task.contractId) {
+      } else if (this.$route.params.contractId) {
         return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
       } else  {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;

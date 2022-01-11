@@ -1,89 +1,74 @@
 <template>
-  <div class="row">
-  
-    <div class="col-md-12">
-      <div class="right-panel">
-    
-        <div class="my-1 pb-2 buttonWrapper container-fluid">
-          <div class="row px-0">
-            <!-- <div class="col">
-              <el-button
-                @click.prevent="addProject"
-                class="bg-primary text-light mb-2"
-              >
-                <i class="far fa-plus-circle mr-1"></i> Add Project
-              </el-button>
-            </div> -->
-
-            <div class="col">
-              <el-input
-                type="search"
-                placeholder="Search Projects"
-                aria-label="Search"
-                aria-describedby="search-addon"
-                v-model="search"
-                data-cy=""
-              >
-                <el-button slot="prepend" icon="el-icon-search"></el-button>
-              </el-input>
-            </div>
-
-            <div class="col pl-0">
-              <el-select
-                class="w-100 mx-2"
-                v-model="C_groupFilter"
-                track-by="id"
-                value-key="id"
-                multiple
-                filterable
-                clearable
-                name="Project Group"
-                placeholder="Filter Projects By Group"
-              >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
-            </div>
-          </div>
-        </div>
-  <div>
-        <el-table
-          :key="componentKey"   
-          v-if="projectData && projectData.length > 0"
-          :data="
-            projectData
-              .filter(
-                (data) =>
-                  !search ||
-                  data.facilityName.toLowerCase().includes(search.toLowerCase())
-              )
-              .reverse()
-          "
-          style="width: 100%"
-          height="600"
-          class="overflowX"
+ <div class="my-1 pb-2 buttonWrapper container-fluid">
+  <div class="row px-0 mb-2">
+     <div class="col">
+        <el-input
+          type="search"
+          placeholder="Search Projects"
+          aria-label="Search"
+          aria-describedby="search-addon"
+          v-model="search"
+          data-cy=""
         >
-          <el-table-column 
-            prop="facilityName"  
-            sortable 
-            label="Project" 
-            fixed  
-            width="200"
-            >
-            <template slot-scope="scope">
-              <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.facilityName"
-                controls-position="right"
-              ></el-input>
-            </template>
-          </el-table-column>
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
+      </div>
+      <div class="col pl-0">
+        <el-select
+          class="w-100 mx-2"
+          v-model="C_groupFilter"
+          track-by="id"
+          value-key="id"
+          multiple
+          filterable
+          clearable
+          name="Project Group"
+          placeholder="Filter Projects By Group"
+        >
+          <el-option
+            v-for="item in facilityGroups"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          >
+          </el-option>
+        </el-select>
+      </div>
+  </div>
+      
+  <div
+   v-if="projectData"
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)" 
+  >
+    <hr class="mt-2 mb-0">
+    <el-table
+      :key="componentKey"   
+      v-if="projectData && projectData.length > 0"
+      :data="projectData.filter((data) => !search ||
+        data.facilityName.toLowerCase().includes(search.toLowerCase())).reverse()"
+      style="width: 100%"
+      height="500"
+      stripe
+    >
+      <el-table-column 
+        prop="facilityName"  
+        sortable 
+        label="Project" 
+        fixed  
+        width="200"
+        >
+        <template slot-scope="scope">
+          <el-input
+            size="small"
+            style="text-align:center"
+            v-model="scope.row.facilityName"
+            controls-position="right"
+          ></el-input>
+        </template>
+      </el-table-column>
           <el-table-column 
             prop="address"  
             sortable 
@@ -109,9 +94,11 @@
               <el-input
                 size="small"
                 style="text-align:center"
+                v-if="scope.row.pointOfContact"
                 v-model="scope.row.pointOfContact"
                 controls-position="right"
               ></el-input>
+              <span v-else> <i> Edit in Program Settings </i> </span>
             </template>
           </el-table-column>
           <el-table-column 
@@ -125,8 +112,10 @@
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.email"
+                v-if="scope.row.email"
                 controls-position="right"
               ></el-input>
+              <span v-else> <i> Edit in Program Settings </i> </span>
             </template>
           </el-table-column>
           <el-table-column 
@@ -138,9 +127,11 @@
               <el-input
                 size="small"
                 style="text-align:center"
+                v-if="scope.row.phoneNumber"
                 v-model="scope.row.phoneNumber"
                 controls-position="right"
               ></el-input>
+              <span v-else> <i> Edit in Program Settings </i> </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -191,13 +182,13 @@
 
           <el-table-column label="Actions"  width="300">
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
                 class="bg-primary text-light"
                 >Save</el-button
               >
-          
+           -->
               <el-button
                 type="default"
                 @click.prevent="goToProject(scope.$index, scope.row)"
@@ -209,61 +200,13 @@
               <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
             </template>
           </el-table-column>
-        </el-table>
-   </div>
-        <el-dialog
-          :visible.sync="dialogVisible"
-          append-to-body
-          center
-          class="contractForm p-0"
-        >
-          <form accept-charset="UTF-8">
-            <div class="form-group mx-4">
-              <label class="font-md"
-                >New Project Name <span style="color: #dc3545">*</span></label
-              >
-              <el-input
-                type="textarea"
-                v-model="newProjectNameText"
-                placeholder="Enter new project name"
-                rows="1"
-                name="Project Name"
-              />
-            </div>
-            <div class="form-group mx-4">
-              <label class="font-md">Group<span style="color: #dc3545">*</span></label>
-              <el-select
-                class="w-100"
-                v-model="C_projectGroupFilter"
-                track-by="id"
-                value-key="id"
-                clearable
-                filterable
-                name="Project Group"
-                placeholder="Select Group"
-              >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
-            </div>
-            <div class="right mr-2">
-              <button
-                @click.prevent="saveNewProject"
-                :disabled="!C_projectGroupFilter && newProjectNameText"
-                class="btn btn-sm bg-primary text-light mr-2"
-                >Save</button
-              >
-            </div>
-          </form>
-        </el-dialog>
-      </div>
-    </div>
+    </el-table>
   </div>
+
+     <span v-else class="mt-5">
+      NO DATA TO DISPLAY   
+     </span>
+  </div> 
 </template>
 
 <script>

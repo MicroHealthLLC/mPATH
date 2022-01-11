@@ -7,30 +7,30 @@
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group>
-          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
-          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
-          PROJECTS
+        <!-- <el-button-group> -->
+          <!-- <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
+          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
+          <!-- PROJECTS -->
           <!-- <span 
             v-if="currentProject && currentProject.facilities"
             class="ml-1 badge badge-secondary badge-pill pill"
             >{{ currentProject.facilities.length }}
             </span> -->
-        </el-button>
+        <!-- </el-button>
         <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats"> 
           <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
-          CONTRACTS
+          CONTRACTS -->
             <!-- <span 
               v-if="currentProject && currentProject.contracts"
               class="ml-1 badge badge-secondary badge-pill pill"
               >{{ currentProject.contracts.length }}
               </span> -->
-          </el-button>
-       </el-button-group>
+          <!-- </el-button>
+       </el-button-group> -->
             
       </div>
-      <div class="col-6 py-1 pl-0">
-        <span v-if="contentLoaded" class="float-right mt-1">
+      <div class="col-6 py-3 pl-0">
+        <span v-if="contentLoaded" class="float-right mt-2">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
           <router-link :to="ProgramView" > 
                <button                
@@ -60,8 +60,9 @@
     </div>
 
      <div class="row">
-    <ProgramContractsSheet v-if="this.getShowProjectStats" />
-    <ProgramProjectsSheet v-else />      
+         <ProgramProjectsSheet  />      
+    <!-- <ProgramContractsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-else />       -->
     </div>
     </el-tab-pane>
     <el-tab-pane label='ANALYTICS' class="p-3"> 
@@ -1071,23 +1072,8 @@
                 <div>
               </div>
           </el-card>
-              </div>
-      
-    
-    </div>
-
-    
-  
- 
-     <div class="mb-2 float-right"> <button class="btn btn-md btn-info"> PROJECTS: {{ C_facilityCount }}</button></div>
-        <div v-if="contentLoaded" class="pb-2 table-div">
-          <div class="grid-container">
-            <el-card class="list-group-item text-center" style="min-height: 150px" v-for="(item, index) in projectObj"  :key="index" >              
-             
-               <span class="p-2" > {{ item.facilityName }} </span>          
-            </el-card>
-          </div>         
-      </div>     
+       </div>   
+    </div>    
     </el-tab-pane>
     </el-tabs>  
   </div>
