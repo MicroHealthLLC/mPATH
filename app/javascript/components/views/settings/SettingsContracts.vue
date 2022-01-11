@@ -312,7 +312,7 @@ export default {
           type: 'warning'
         }).then(() => {
           res = this.deleteContract(id).then((value) => {
-            if (value == '200') {
+            if (value == 200) {
               this.$message({
                 message: `${rows.nickname} was deleted successfully.`,
                 type: "success",

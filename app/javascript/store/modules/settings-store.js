@@ -431,7 +431,7 @@ const settingsStore = {
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
     DELETE_CONTRACT: (state, id) => {
-      let index = state.contracts.findIndex((contracts) => contracts.id == id);
+      let index = state.contracts.findIndex((contract) => contract.id == id);
       state.contracts.splice(index, 1);
     },
     SET_GROUP: (state, value) => (state.group = value),
