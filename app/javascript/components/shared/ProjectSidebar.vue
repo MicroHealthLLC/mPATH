@@ -33,7 +33,7 @@
             <span v-show="expanded.id == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
-           <p class="clickable groupName" v-tooltip="group.name">{{ group.name }}</p>
+           <p class="clickable groupName expandText">{{ group.name }}</p>
            </span>
          </div>
 
@@ -367,6 +367,17 @@ export default {
       color: unset;
       text-decoration: unset;
     }
+  }
+  .expandText {
+    text-overflow: ellipsis;
+    overflow : hidden;
+    white-space: nowrap;
+  }
+
+  .expandText:hover {
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-all;
   }
 }
 </style>
