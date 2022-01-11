@@ -23,18 +23,21 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
-      'filteredAllIssues',
+     'filteredAllContractIssues',
+      'getShowProjectStats'     
       ]),
   },
   mounted() {
-     this.issue = this.filteredAllIssues.find(
+    if (this.contentLoaded) {
+      this.issue = this.filteredAllContractIssues.find(
         (issue) => issue.id == this.$route.params.issueId
-      )
+      );
+    }
   },
   watch: {
     contentLoaded: {
       handler() {
-        this.issue = this.filteredAllIssues.find(
+        this.issue = this.filteredAllContractIssues.find(
           (issue) => issue.id == this.$route.params.issueId
         );
       },

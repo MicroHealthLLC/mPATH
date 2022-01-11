@@ -4,14 +4,12 @@
 
 <script>
 import { mapGetters } from "vuex";
-
 import RiskForm from "../../dashboard/risks/risk_form.vue";
 export default {
-  props: ["facility"],
   components: { RiskForm },
   data() {
     return {
-      risk: {}
+      risk: {},
     };
   },
   methods: {
@@ -24,21 +22,20 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded", 
-      'filteredAllRisks',
       'filteredAllContractRisks',
-      'getShowProjectStats'
-      ]),
+        ]),
   },
   mounted() {
-
-      this.risk =  this.filteredAllRisks.find(
+    if (this.contentLoaded) {
+      this.risk =  this.filteredAllContractRisks.find(
         (risk) => risk.id == this.$route.params.riskId
       );
+    }
   },
   watch: {
     contentLoaded: {
       handler() {
-        this.risk =  this.filteredAllRisks.find(
+        this.risk =  this.filteredAllContractRisks.find(
           (risk) => risk.id == this.$route.params.riskId
         );
       },
