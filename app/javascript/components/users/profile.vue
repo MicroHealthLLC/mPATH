@@ -296,7 +296,7 @@
           this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id], h => ["tasks", "issues", "risks"].includes(h.id))
         }else if(value.id == "map" || value.id == "sheet"){
           this.subNavigationOptions = allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id]
-        }else if(['gantt_chart', 'members'].includes(value.id) ){
+        }else if(['gantt_chart', 'members', 'settings'].includes(value.id) ){
           this.subNavigationOptions = []
         }
       },
@@ -357,7 +357,7 @@
                 }else{
                   this.subNavigationOptions = []
                 }                
-              }else if(['gantt_chart', 'members'].includes(this.selectedNavigation.id) ){
+              }else if(['gantt_chart', 'members', 'settings'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
               }
             }
