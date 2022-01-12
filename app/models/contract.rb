@@ -9,6 +9,9 @@ class Contract < ApplicationRecord
   belongs_to :contract_prime, optional: true
   belongs_to :contract_current_pop, optional: true
   belongs_to :contract_classification, optional: true
+  belongs_to :contract_client_type, optional: true
+  belongs_to :contract_category, optional: true
+
   belongs_to :facility_group, optional: true
   belongs_to :project, optional: true
   belongs_to :contract_project, class_name: "Project", foreign_key: :project_id
@@ -29,7 +32,7 @@ class Contract < ApplicationRecord
   def to_json(options: {})
 
     if options[:include_associated_names]
-      self.as_json(except: [:created_at, :updated_at, :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id, :contract_classification_id]).merge(
+      self.as_json(except: [:created_at, :updated_at, :contract_type_id, :contract_status_id, :contract_name_customer_id, :contract_vehicle_id, :contract_vehicle_number_id, :contract_number_id, :subcontract_number_id, :contract_prime_id, :contract_current_pop_id, :contract_classification_id, :contract_client_type_id, :contract_category_id]).merge(
         class_name: self.class.name,
         contract_type: contract_type.as_json(except: [:created_at, :updated_at]),
         contract_status: contract_status.as_json(except: [:created_at, :updated_at]),
@@ -40,7 +43,9 @@ class Contract < ApplicationRecord
         subcontract_number: subcontract_number.as_json(except: [:created_at, :updated_at]),
         contract_prime: contract_prime.as_json(except: [:created_at, :updated_at]),
         contract_current_pop: contract_current_pop.as_json(except: [:created_at, :updated_at]),
-        contract_classification: contract_classification.as_json(except: [:created_at, :updated_at])
+        contract_classification: contract_classification.as_json(except: [:created_at, :updated_at]),
+        contract_client_type: contract_client_type.as_json(except: [:created_at, :updated_at]),
+        contract_category: contract_category.as_json(except: [:created_at, :updated_at])        
       ).as_json
     else
       self.as_json(except: [:created_at, :updated_at]).merge(facility_group_name: contract_facility_group&.name)
@@ -50,6 +55,8 @@ class Contract < ApplicationRecord
   def self.params_to_permit
     [
       :id,
+      :contract_client_type_id,
+      :contract_category_id,
       :contract_type_id,
       :project_code,
       :nickname,
@@ -125,7 +132,12 @@ class Contract < ApplicationRecord
       if c_params[:contract_classification_id] && !ContractClassification.exists?(id: c_params[:contract_classification_id])
         c_params[:contract_classification_id] = ContractClassification.create(name: c_params[:contract_classification_id]).id
       end
-
+      if c_params[:contract_client_type_id] && !ContractClientType.exists?(id: c_params[:contract_client_type_id])
+        c_params[:contract_client_type_id] = ContractClientType.create(name: c_params[:contract_client_type_id]).id
+      end
+      if c_params[:contract_category_id] && !ContractCategory.exists?(id: c_params[:contract_category_id])
+        c_params[:contract_category_id] = ContractCategory.create(name: c_params[:contract_category_id]).id
+      end
       contract.attributes = c_params
       contract.user_id = user.id
       contract.save
