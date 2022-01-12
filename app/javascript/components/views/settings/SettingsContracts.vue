@@ -112,7 +112,7 @@
       >      
        <div class="form-group mx-3">
           <label class="font-md"
-            >New Contract Name <span style="color: #dc3545">*</span></label
+            >Contract Name <span style="color: #dc3545">*</span></label
           >
           <el-input
             type="textarea"
@@ -123,6 +123,18 @@
           />
        </div>
        <div class="form-group mx-3">
+          <label class="font-md"
+            >Contract Nickname <span style="color: #dc3545">*</span></label
+          >
+          <el-input
+            type="textarea"
+            v-model="contractNicknameText"
+            placeholder="Enter new contract name here"          
+            rows="1"          
+            name="Program Name"
+          />
+       </div>
+       <!-- <div class="form-group mx-3">
           <label class="font-md"
             >Project Group Name <span style="color: #dc3545">*</span></label
           >
@@ -142,7 +154,7 @@
             >
           </el-option>
           </el-select>
-       </div>
+       </div> -->
        <div class="form-group mx-3">
         <label class="font-md"
         >Group<span style="color: #dc3545">*</span></label
@@ -169,11 +181,18 @@
         <div class="right mr-2">
         <button 
           @click.prevent="saveNewContract"
-          :disabled="!C_newContractGroupFilter && contractNameText" 
+          v-if="contractNameText && contractNicknameText && C_newContractGroupFilter.id" 
           class="btn btn-sm bg-primary text-light mr-2" 
           :class="[hideSaveBtn ? 'd-none': '']">
           Save
-        </button>       
+        </button>    
+        <button 
+          disabled
+          v-else
+          class="btn btn-sm bg-primary text-light mr-2" 
+          >
+          Save
+        </button>          
         <button 
           @click.prevent="addAnotherContract" 
           :class="[!hideSaveBtn ? 'd-none': '']" 
@@ -223,6 +242,7 @@ export default {
       search: '',
       hideSaveBtn: false,
       contractNameText: '',
+      contractNicknameText: '',
       expanded: {
         id: "",
       },
@@ -263,7 +283,7 @@ export default {
       this.onSubmit()
         let contractData = {
           contract: {
-            nickname: this.contractNameText,
+            nickname: this.contractNicknameText,
             name: this.contractNameText,
             facility_group_id: this.C_newContractGroupFilter.id,
             project_id: this.$route.params.programId,
@@ -293,6 +313,7 @@ export default {
         let contractData = {
           contract: {
             nickname: rows.nickname,
+            name: rows.name,
             facility_group_name: rows.facility_group_name,  
             facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
@@ -304,18 +325,20 @@ export default {
           })
     },
     addAnotherContract() {
-         this.C_projectGroupFilter = null;
-         this.contractNameText = "";
-         this.hideSaveBtn = false;  
+      this.C_projectGroupFilter = null;
+      this.contractNameText = "";
+      this.contractNicknameText = ""  
+      this.hideSaveBtn = false;  
     },
     closeAddContractBtn() {
-        this.dialogVisible = false;
-        this.hideSaveBtn = false;
+      this.dialogVisible = false;
+      this.hideSaveBtn = false;
     },
     addContract(){
       this.dialogVisible = true;    
       this.C_projectGroupFilter = null;
       this.contractNameText = ""  
+      this.contractNicknameText = ""  
     },
   },
   computed: {
@@ -325,8 +348,7 @@ export default {
       "getContractGroupTypes",
       'getNewContractGroupFilter',
       "contractStatus",
-      'getContractGroupOptions',
-      "contracts",
+       "contracts",
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
