@@ -322,7 +322,7 @@ export default {
   }
   .groupName{
     overflow: hidden;
-    white-space: nowrap; /* Don't forget this one */
+    // white-space: nowrap; /* Don't forget this one */
     text-overflow: ellipsis;
     font-size: 1.15rem;
   }
@@ -371,13 +371,14 @@ export default {
   .expandText {
     text-overflow: ellipsis;
     overflow : hidden;
-    white-space: nowrap;
+    // white-space: nowrap;
+
   }
 
-  .expandText:hover {
-    text-overflow: clip;
-    white-space: normal;
-    word-break: break-all;
-  }
+  // .expandText:hover {
+  //   text-overflow: clip;
+  //   white-space: normal;
+  //   word-break: break-all;
+  // }
 }
 </style>
