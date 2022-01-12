@@ -61,12 +61,13 @@
         width="200"
         >
         <template slot-scope="scope">
-          <el-input
+          <!-- <el-input
             size="small"
             style="text-align:center"
             v-model="scope.row.facilityName"
             controls-position="right"
-          ></el-input>
+          ></el-input> -->
+          {{ scope.row.facilityName }}
         </template>
       </el-table-column>
           <el-table-column 
@@ -75,14 +76,19 @@
             label="Address" 
             width="200">
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-if="scope.row.address"
                 v-model="scope.row.address"
                 controls-position="right"
               ></el-input>
-               <span v-else> <i> Edit in Program Settings </i> </span>
+
+               <span v-else> <i> Edit in Program Settings </i> </span> -->
+             <span v-if="scope.row.address">
+               {{ scope.row.address }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
             </template>
           </el-table-column>
           <el-table-column 
@@ -91,14 +97,19 @@
                 label="Point Of Contact" 
                 width="200">
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-if="scope.row.pointOfContact"
                 v-model="scope.row.pointOfContact"
                 controls-position="right"
               ></el-input>
-              <span v-else> <i> Edit in Program Settings </i> </span>
+              <span v-else> <i> Edit in Program Settings </i> </span> -->
+
+              <span v-if="scope.row.pointOfContact">
+               {{ scope.row.pointOfContact }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
             </template>
           </el-table-column>
           <el-table-column 
@@ -108,14 +119,19 @@
             width="200"
             >
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.email"
                 v-if="scope.row.email"
                 controls-position="right"
               ></el-input>
-              <span v-else> <i> Edit in Program Settings </i> </span>
+              <span v-else> <i> Edit in Program Settings </i> </span> -->
+
+            <span v-if="scope.row.email">
+               {{ scope.row.email }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
             </template>
           </el-table-column>
           <el-table-column 
@@ -124,14 +140,18 @@
             label="Phone Number" 
             width="200">
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-if="scope.row.phoneNumber"
                 v-model="scope.row.phoneNumber"
                 controls-position="right"
               ></el-input>
-              <span v-else> <i> Edit in Program Settings </i> </span>
+              <span v-else> <i> Edit in Program Settings </i> </span> -->
+            <span v-if="scope.row.phoneNumber">
+               {{ scope.row.phoneNumber }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
             </template>
           </el-table-column>
           <el-table-column
@@ -142,12 +162,18 @@
             width="200"
           >
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.facilityGroupName"
-              ></el-input>
+              ></el-input> -->
+            <span v-if="scope.row.facilityGroupName">
+               {{ scope.row.facilityGroupName }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
             </template>
+         
+            
           </el-table-column>
           <el-table-column 
             prop="phoneNumber"  
@@ -156,12 +182,17 @@
             label="Phone Number"
             >
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.phoneNumber"
                 controls-position="right"
-              ></el-input>
+              ></el-input> -->
+            <span v-if="scope.row.phoneNumber">
+               {{ scope.row.phoneNumber }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+            
             </template>
           </el-table-column>
           <el-table-column
@@ -172,11 +203,16 @@
             label="Status"
           >
             <template slot-scope="scope">
-              <el-input
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.status"
-              ></el-input>
+              ></el-input> -->
+            <span v-if="scope.row.status" style="text-transform: capitalize">
+               {{ scope.row.status }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+            
             </template>
           </el-table-column>
 
@@ -191,10 +227,12 @@
            -->
               <el-button
                 type="default"
+                v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
-                class="bg-success text-light"
+                class="bg-light"
               >
-                Go To Project <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+               <i class="fal fa-clipboard-list mh-green-text" style="font-size:1rem"></i> 
+               <i class="fas fa-arrow-alt-circle-right ml-1 text-success"></i>
               </el-button>
        
               <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->

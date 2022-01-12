@@ -56,10 +56,11 @@
       fixed  
       > 
       <template slot-scope="scope">
-        <el-input size="small"
+        {{ scope.row.projectCode }}
+        <!-- <el-input size="small"
           style="text-align:center"
           v-model="scope.row.projectCode" controls-position="right">
-        </el-input>
+        </el-input> -->
       </template>
     </el-table-column>   
     <el-table-column 
@@ -70,9 +71,11 @@
       label="Contract Nickname"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+
+         {{ scope.row.nickname }}
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.nickname" controls-position="right"></el-input>
+            v-model="scope.row.nickname" controls-position="right"></el-input> -->
        </template>
     </el-table-column>
     <!-- TYPE -->
@@ -83,53 +86,75 @@
       width="200"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.contractClassification && scope.row.contractClassification !== null && scope.row.contractClassification.name"
             v-model="scope.row.contractClassification.name" controls-position="right">
-          </el-input>
-           <span v-else> <i> Edit in Program Settings </i> </span>
+          </el-input> -->
+            <span 
+              v-if="scope.row.contractClassification &&
+               scope.row.contractClassification.name && 
+                scope.row.contractClassification.name !== 'undefined'
+               ">
+               {{ scope.row.contractClassification.name }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
     </el-table-column>
     <!-- STATUS      -->
     <el-table-column sortable prop="contractStatus"  label="Status" width="200"> 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.contractStatus && scope.row.contractStatus !== null && scope.row.contractStatus.name"
-            v-model="scope.row.contractStatus.name" controls-position="right"></el-input>
-             <span v-else> <i> Edit in Program Settings </i> </span>
+            v-model="scope.row.contractStatus.name" controls-position="right"></el-input> -->
+              <span v-if="scope.row.contractStatus && scope.row.contractStatus !== 'undefined' && scope.row.contractStatus.name">
+             {{ scope.row.contractStatus.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
     </el-table-column>
     <!-- CONTRACT NAME -->
     <el-table-column prop="name"  sortable  label="Contract Name" width="200"> 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.name"
             v-model="scope.row.name" controls-position="right"></el-input>
-            <span v-else> <i> Edit in Program Settings </i> </span>
+            <span v-else> <i> Edit in Program Settings </i> </span> -->
+             <span v-if="scope.row.name">
+               {{ scope.row.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
     </el-table-column>
     <!-- CUSTOMER (AGENCY) -->
     <el-table-column prop="contractCustomer.name"  sortable  label="Customer (Agency)" width="200"> 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.contractCustomer && scope.row.contractCustomer !== null && scope.row.contractCustomer.name"
             v-model="scope.row.contractCustomer.name" controls-position="right">
-          </el-input>
-           <span v-else> <i> Edit in Program Settings </i> </span>
+          </el-input> -->
+             <span  v-if="scope.row.contractCustomer && scope.row.contractCustomer.name !== 'undefined' && scope.row.contractCustomer.name">
+                {{ scope.row.contractCustomer.name }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
     </el-table-column>
     <!-- VEHICLE -->
     <el-table-column prop="contractVehicle.name"  sortable  label="Vehicle" width="200"> 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.contractVehicle && scope.row.contractVehicle.name && scope.row.contractVehicle !== null"
             v-model="scope.row.contractVehicle.name" controls-position="right"></el-input>
-             <span v-else> <i> Edit in Program Settings </i> </span>
+             <span v-else> <i> Edit in Program Settings </i> </span> -->
+            <span  v-if="scope.row.contractVehicle && scope.row.contractVehicle.name && scope.row.contractVehicle.name !== 'undefined'">
+               {{ scope.row.contractVehicle.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+
        </template>
     </el-table-column>
     <!-- COMMERCIAL / FEDERAL -->
@@ -146,11 +171,17 @@
           width="230"
           > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.contractVehicleNumber && scope.row.contractVehicleNumber.name && scope.row.contractVehicleNumber !== null"
             v-model="scope.row.contractVehicleNumber.name" controls-position="right"></el-input>
-            <span v-else> <i> Edit in Program Settings </i> </span>
+            <span v-else> <i> Edit in Program Settings </i> </span> -->
+
+            <span  v-if="scope.row.contractVehicleNumber && scope.row.contractVehicleNumber.name && scope.row.contractVehicleNumber.name !== 'undefined'">
+                {{ scope.row.contractVehicleNumber.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+
        </template>
     </el-table-column>
     <!-- PRIME CONTRACT NUMBER -->
@@ -161,11 +192,17 @@
           width="230"
           > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime !== null"
             v-model="scope.row.contractPrime.name" controls-position="right"></el-input>
-           <span v-else> <i> Edit in Program Settings </i> </span>
+           <span v-else> <i> Edit in Program Settings </i> </span> -->
+
+            <span    v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime.name !== 'undefined'">
+              {{ scope.row.contractPrime.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+           
        </template>
     </el-table-column>
    
@@ -177,11 +214,16 @@
           width="230"
           > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
             v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber !== null"
             v-model="scope.row.subcontractNumber.name" controls-position="right"></el-input>
-          <span v-else> <i> Edit in Program Settings </i> </span>
+          <span v-else> <i> Edit in Program Settings </i> </span> -->
+
+             <span v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber.name !== 'undefined'">
+              {{ scope.row.subcontractNumber.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
     </el-table-column>
 
@@ -218,9 +260,13 @@
       label="Contract Start"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.startDate" controls-position="right"></el-input>
+            v-model="scope.row.startDate" controls-position="right"></el-input> -->
+            <span  v-if="scope.row.startDate">
+               {{ scope.row.startDate }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
       
     </el-table-column>
@@ -232,9 +278,14 @@
       label="Contract End"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.endDate" controls-position="right"></el-input>
+            v-model="scope.row.endDate" controls-position="right"></el-input> -->
+
+              <span  v-if="scope.row.endDate">
+               {{ scope.row.endDate }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
        
     </el-table-column>
@@ -246,10 +297,14 @@
       label="Current PoP"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
              v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop !== null"
-            v-model="scope.row.contractCurrentPop.name" controls-position="right"></el-input>
+            v-model="scope.row.contractCurrentPop.name" controls-position="right"></el-input> -->
+              <span  v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop.name !== 'undefined'">
+               {{ scope.row.endDate }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
        </template>
        
     </el-table-column>
@@ -261,9 +316,10 @@
       label="Start"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.currentPopStartTime" controls-position="right"></el-input>
+            v-model="scope.row.currentPopStartTime" controls-position="right"></el-input> -->
+            {{ scope.row.currentPopStartTime }}
        </template>
     </el-table-column>
       <!-- End-->
@@ -274,9 +330,10 @@
       label="End"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.currentPopEndTime" controls-position="right"></el-input>
+            v-model="scope.row.currentPopEndTime" controls-position="right"></el-input> -->
+            {{ scope.row.currentPopEndTime }}
        </template>
     </el-table-column>
     <!--Days Remaining-->
@@ -287,9 +344,10 @@
       label="Days Remaining"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.daysRemaining" controls-position="right"></el-input>
+            v-model="scope.row.daysRemaining" controls-position="right"></el-input> -->
+        {{scope.row.daysRemaining }}
        </template>
     </el-table-column>
     <!--Total Contract Value-->
@@ -297,13 +355,13 @@
       prop="totalContractValue"  
       sortable  
       width="200"
-      fixed  
       label="Total Contract Value"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.totalContractValue" controls-position="right"></el-input>
+            v-model="scope.row.totalContractValue" controls-position="right"></el-input> -->
+            {{ scope.row.totalContractValue }}
        </template>
     </el-table-column>
      <!--Current PoP Value-->
@@ -314,9 +372,11 @@
       label="Current PoP Value"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.currentPopValue" controls-position="right"></el-input>
+            v-model="scope.row.currentPopValue" controls-position="right"></el-input> -->
+          {{ scope.row.currentPopValue }}
+
        </template>
     </el-table-column>
       <!--Total Funded To Date-->
@@ -327,9 +387,10 @@
       label="Total Funded To Date"
       > 
        <template slot-scope="scope">
-          <el-input size="small"
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.totalContractFunded" controls-position="right"></el-input>
+            v-model="scope.row.totalContractFunded" controls-position="right"></el-input> -->
+            {{ scope.row.totalContractFunded }}
        </template>
     </el-table-column>
     <!--Notes-->
@@ -360,7 +421,7 @@
       label="Actions"     
       width="300"
       >
-        <el-button
+        <!-- <el-button
           type="default"  
            class="bg-primary text-light"     
         >
@@ -371,15 +432,16 @@
           class="bg-secondary text-light"      
         >
         <i class="far fa-cog"></i>
-        </el-button>   
+        </el-button>    -->
     
         <el-button
+          v-tooltip="`Go to Contract`"
           type="default"       
           @click.prevent="goToContract(scope.$index, scope.row)"
-          class="bg-success text-light"
+          class="bg-light"
         >
-         <i class="far fa-file-contract"></i> 
-        <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+         <i class="far fa-file-contract mh-orange-text" style="font-size:1rem"></i> 
+        <i class="fas fa-arrow-alt-circle-right ml-1 text-success"></i>
         </el-button>   
     </el-table-column>  
    </el-table>   

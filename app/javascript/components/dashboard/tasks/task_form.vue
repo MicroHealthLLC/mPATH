@@ -24,15 +24,15 @@
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
             <router-link :to="projectNameLink">
-              <span v-if="!isProgramView && !task.contractId">
+              <span v-if="!isProgramView && (!contract || facility)">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView">
+               <span v-if="isProgramView && task">
                     {{ task.facilityName || task.contractNickname }}
                </span>
-                 <!-- <span v-if="isProgramView && ">
-                    {{ task.facilityName || task.contractNickname }}
-               </span> -->
+                 <span v-if="!isProgramView && (contract || !facility)">
+                    {{ task.contractNickname }}
+               </span>
             </router-link>
             <router-link :to="backToContract">
               <span v-if="contract && !isProgramView">{{
@@ -1433,14 +1433,14 @@ export default {
           let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut]
-        console.log(fPrivilege.tasks.includes(s))
+        // console.log(fPrivilege.tasks.includes(s))
           return fPrivilege.tasks.includes(s);
         } else if (this.$route.params.projectId) {
           // console.log("project route")
           let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut]
-           console.log(fPrivilege.tasks.includes(s))
+          //  console.log(fPrivilege.tasks.includes(s))
           return fPrivilege.tasks.includes(s); 
         }
      },
