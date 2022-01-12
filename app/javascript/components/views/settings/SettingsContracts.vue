@@ -3,7 +3,7 @@
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
-   <div class="col-md-10">
+   <div class="col-md-10" >
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
      <el-breadcrumb-item :to="backToSettings">
@@ -24,7 +24,7 @@
         </span>
       </h4>
     </el-breadcrumb>   
- <div class="my-1 pb-2 buttonWrapper container-fluid">
+ <div class="my-1 pb-2 buttonWrapper container-fluid" v-if="_isallowed('read')">
   <div class="row px-0">
     <div class="col" v-if="_isallowed('write')">
       <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
@@ -67,7 +67,7 @@
       </div>
   </div>
   <div
-    v-if="tableData"
+    v-if="tableData && _isallowed('read')"
     v-loading="!contractsLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
@@ -94,7 +94,7 @@
      <el-table-column label="Actions">
       <template slot-scope="scope" >
       <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button v-if="_isallowed('write')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+       <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
@@ -212,6 +212,7 @@
     
       </div>
     </div>
+   
   </div>
 </template>
 
