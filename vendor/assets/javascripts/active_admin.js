@@ -1517,12 +1517,13 @@ jQuery(function($) {
     $('#logout').click(function () {
       localStorage.removeItem('vuex');
     });
-
+    $("#titlebar_right .action_items").show();
     if ($("#__privileges").is(":visible") || $("#__privileges_id").length) {
       $.__privileges_element = $("#__privileges").is(":visible") ? $("#__privileges").data('privilege') : $("#__privileges_id").val();
       $("#q_id_input").length && $("#q_id_input").remove();
       let p_write = $.__privileges_element.includes("W");
       let p_delete = $.__privileges_element.includes("D");
+      
       if (p_write) {
         $("#titlebar_right .action_items").show();
       } else {
