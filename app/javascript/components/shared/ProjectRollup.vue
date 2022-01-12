@@ -7,26 +7,26 @@
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <!-- <el-button-group> -->
-          <!-- <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
-          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
-          <!-- PROJECTS -->
-          <!-- <span 
+        <el-button-group>
+          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
+          PROJECTS
+          <span 
             v-if="currentProject && currentProject.facilities"
-            class="ml-1 badge badge-secondary badge-pill pill"
+            class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
             >{{ currentProject.facilities.length }}
-            </span> -->
-        <!-- </el-button>
-        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats"> 
+            </span>
+        </el-button>
+        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2"> 
           <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
-          CONTRACTS -->
-            <!-- <span 
+          CONTRACTS 
+            <span 
               v-if="currentProject && currentProject.contracts"
-              class="ml-1 badge badge-secondary badge-pill pill"
+              class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
               >{{ currentProject.contracts.length }}
-              </span> -->
-          <!-- </el-button>
-       </el-button-group> -->
+              </span>
+           </el-button>
+       </el-button-group>
             
       </div>
       <div class="col-6 py-3 pl-0">
@@ -60,9 +60,8 @@
     </div>
 
      <div class="row">
-         <ProgramProjectsSheet  />      
-    <!-- <ProgramContractsSheet v-if="this.getShowProjectStats" />
-    <ProgramProjectsSheet v-else />       -->
+    <ProgramContractsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-else />      
     </div>
     </el-tab-pane>
     <el-tab-pane label='ANALYTICS' class="p-3"> 
@@ -2183,6 +2182,11 @@ i.grow:hover{
 }
 .pill {
   position: absolute;
+  top: 10%;
+  right: 1%;
+}
+.pill.pill-toggle {
+  position: relative !important;
   top: 10%;
   right: 1%;
 }
