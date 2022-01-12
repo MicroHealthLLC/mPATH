@@ -55,6 +55,7 @@ class Contract < ApplicationRecord
   def self.params_to_permit
     [
       :id,
+      :total_subcontracts,
       :contract_client_type_id,
       :contract_category_id,
       :contract_type_id,
