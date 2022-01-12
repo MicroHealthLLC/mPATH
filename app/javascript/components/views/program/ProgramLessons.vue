@@ -1255,7 +1255,7 @@ export default {
     }   
      if(this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramLessonForm",
+      name: "ProgramContractLessonForm",
       params: {
         programId: lesson.program_id,
         contractId: lesson.contract_id,

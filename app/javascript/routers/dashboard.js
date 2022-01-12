@@ -9,9 +9,13 @@ import SettingsContracts from "./../components/views/settings/SettingsContracts"
 import SettingsGroups from "./../components/views/settings/SettingsGroups";
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
+import ProgramContractTaskForm from "./../components/views/program/ProgramContractTaskForm";
 import ProgramIssueForm from "./../components/views/program/ProgramIssueForm";
+import ProgramContractIssueForm from "./../components/views/program/ProgramContractIssueForm";
 import ProgramRiskForm from "./../components/views/program/ProgramRiskForm";
+import ProgramContractRiskForm from "./../components/views/program/ProgramContractRiskForm";
 import ProgramLessonForm from "./../components/views/program/ProgramLessonForm";
+import ProgramContractLessonForm from "./../components/views/program/ProgramContractLessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
@@ -203,7 +207,7 @@ export default new VueRouter({
     },
     {
       name: "ProgramTaskForm",
-      path: "/programs/:programId/dataviewer/:projectId/task/:taskId",
+      path: "/programs/:programId/dataviewer/project/:projectId/task/:taskId",
       component: ProgramTaskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -219,8 +223,25 @@ export default new VueRouter({
       },
      },
      {
+      name: "ProgramContractTaskForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/task/:taskId",
+      component: ProgramContractTaskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
       name: "ProgramRiskForm",
-      path: "/programs/:programId/dataviewer/:projectId/risk/:riskId",
+      path: "/programs/:programId/dataviewer/project/:projectId/risk/:riskId",
       component: ProgramRiskForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -236,8 +257,25 @@ export default new VueRouter({
       },
      },
      {
+      name: "ProgramContractRiskForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/risk/:riskId",
+      component: ProgramContractRiskForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
       name: "ProgramIssueForm",
-      path: "/programs/:programId/dataviewer/:projectId/issue/:issueId",
+      path: "/programs/:programId/dataviewer/project/:projectId/issue/:issueId",
       component: ProgramIssueForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -253,8 +291,25 @@ export default new VueRouter({
       },
      },
      {
+      name: "ProgramContractIssueForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/issue/:issueId",
+      component: ProgramContractIssueForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contracttId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
       name: "ProgramLessonForm",
-      path: "/programs/:programId/dataviewer/:projectId/lesson/:lessonId",
+      path: "/programs/:programId/dataviewer/project/:projectId/lesson/:lessonId",
       component: ProgramLessonForm,   
       beforeEnter: (to, from, next) => {
         var programId = to.params.programId;
@@ -262,6 +317,23 @@ export default new VueRouter({
         var fPrivilege = _.filter(
           Vue.prototype.$projectPrivileges,
           (f) => f.program_id == programId && f.project_id == projectId
+        )[0];
+        if (!fPrivilege) {
+          next();
+          return;
+        }
+      },
+     },
+     {
+      name: "ProgramContractLessonForm",
+      path: "/programs/:programId/dataviewer/contract/:contractId/lesson/:lessonId",
+      component: ProgramContractLessonForm,   
+      beforeEnter: (to, from, next) => {
+        var programId = to.params.programId;
+        var contractId = to.params.contractId;
+        var fPrivilege = _.filter(
+          Vue.prototype.$contractPrivileges,
+          (f) => f.program_id == programId && f.contract_id == contractId
         )[0];
         if (!fPrivilege) {
           next();

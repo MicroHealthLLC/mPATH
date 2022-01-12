@@ -24,10 +24,10 @@
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
              <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && !contract">
-                 {{ facility.facilityName }}
+               <span v-if="this.$route.params.projectId && issue && !isProgramView">
+                 {{  issue.facilityName }}
                 </span>
-                <span v-if="isProgramView">
+                <span v-if="isProgramView && issue">
                     {{ issue.facilityName || issue.contractNickname }}
                </span>
               </router-link>
@@ -1906,10 +1906,10 @@ export default {
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
             }  else if (this.isProgramView && this.issue.contractId) { this.$router.push(
-              `/programs/${this.$route.params.programId}/dataviewer`
+              `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/issue/${response.data.issue.id}`
             );
             } else this.$router.push(
-              `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
+              `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/issue/${response.data.issue.id}`
             );
           })
           .catch((err) => {
@@ -2146,10 +2146,7 @@ export default {
       );
     },
     isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") ||
-             this.$route.name.includes("ProgramRiskForm") ||
-             this.$route.name.includes("ProgramIssueForm") ||
-             this.$route.name.includes("ProgramLessonForm") ;
+      return this.$route.name.includes("ProgramIssueForm") || this.$route.name.includes("ProgramContractIssueForm") ;
     },
     isMapView() {
       return this.$route.name === "MapIssueForm";
@@ -2224,7 +2221,7 @@ export default {
           return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
         } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
           return `/programs/${this.$route.params.programId}/${this.tab}`;
-        } else if (this.issue.contractId) {
+        } else if (this.$route.params.contractId) {
           return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
         } else {
           return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;

@@ -26,7 +26,7 @@
                <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView">
+               <span v-if="isProgramView && risk">
                     {{ risk.facilityName || risk.contractNickname }}
                </span>
              </router-link>
@@ -2760,10 +2760,10 @@ export default {
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
              } else if (this.isProgramView && this.risk.contractId) { this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer`
+                `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/risk/${response.data.risk.id}`
               );
               } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/risk/${response.data.risk.id}`
+                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/risk/${response.data.risk.id}`
               );
           })
           .catch((err) => {
@@ -3050,6 +3050,7 @@ export default {
     isProgramView() {
       return this.$route.name.includes("ProgramTaskForm") ||
              this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramContractRiskForm") ||
              this.$route.name.includes("ProgramIssueForm") ||
              this.$route.name.includes("ProgramLessonForm") ;
     },
@@ -3329,7 +3330,7 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else if (this.risk.contractId) {
+      } else if (this.$route.params.contractId) {
         return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
       } else {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;

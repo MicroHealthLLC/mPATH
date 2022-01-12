@@ -4,6 +4,7 @@ import { API_BASE_PATH } from "./../../mixins/utils";
 const settingsStore = {
   state: () => ({
     show_admin_btn: false,
+    edit_contract_sheet: false, 
     contract_table: [],
     group_filter: null,
     contract: {},
@@ -391,7 +392,7 @@ const settingsStore = {
     setGroupFilter: (state, value) => (state.group_filter = value),
     setNewContractGroupFilter: (state, loaded) =>
       (state.new_contract_group_filter = loaded),
-
+    SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
@@ -429,7 +430,8 @@ const settingsStore = {
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
     getNewContractGroupFilter: (state) => state.new_contract_group_filter,
-
+    
+    editContractSheet: (state) => state.edit_contract_sheet,
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
     getContractStatusesFilter: (state) => state.contract_statuses_filter,
     getContractClassifications: (state) => state.contract_classifications,

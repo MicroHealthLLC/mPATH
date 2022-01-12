@@ -2027,14 +2027,14 @@ export default {
      }
     if(this.getShowProjectStats) {
       this.$router.push({
-      name: "ProgramRiskForm",
+      name: "ProgramContractRiskForm",
       params: {
         programId: this.$route.params.programId,
         contractId: risk.contractId,
         riskId: risk.id,
       },
       })
-      }    // console.log(this.$route.params)
+      }   
     },
   exportRisksToPdf() {
       const doc = new jsPDF("l");

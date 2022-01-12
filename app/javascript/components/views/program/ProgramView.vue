@@ -1432,6 +1432,7 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
+import ProgramTaskForm from "./ProgramTaskForm.vue";
 import ProgramLessons from "./ProgramLessons.vue";
 // import ProjectContractSwitch from "./ProjectContractSwitch.vue"
 import { jsPDF } from "jspdf";
@@ -2058,24 +2059,24 @@ export default {
    openTask(task) {   
     if(!this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramTaskForm",     
-      params: {
-        programId: task.projectId,
-        projectId: task.facilityId,
-        taskId: task.id,
-      },
-     });
-      } else 
-      console.log(task)
-      this.$router.push({
-        name: "ProgramTaskForm",     
+      name: "ProgramTaskForm",   
         params: {
+          programId: task.projectId,
+          projectId: task.facilityId,
+          taskId: task.id,
+        },
+      });
+      }
+     if(this.getShowProjectStats) {
+       this.$router.push({
+        name: "ProgramContractTaskForm", 
+          params: {
           programId: this.$route.params.programId,
           contractId: task.contractId,
           taskId: task.id,
         },
-     }); 
-    // console.log(this.$route.params)
+       }); 
+      }
     },
     openTpresentation(){
       this.dialogVisible = true; 
