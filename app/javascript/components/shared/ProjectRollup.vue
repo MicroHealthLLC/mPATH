@@ -1,15 +1,15 @@
 <template>
   <div class="container-fluid" data-cy="facility_rollup">
       <div class="row pt-1 pb-2">
-      <div class="col-6 py-3 pl-3">
-        <span v-if="contentLoaded">
+      <div class="col-6 py-3 pl-3" v-if="contentLoaded">
+        <span>
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group>
+        <el-button-group :class="{'d-none': !_isallowedContracts('read') || currentProject.contracts.length <= 0 }">
           <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
-          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
+          <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
           PROJECTS
           <span 
             v-if="currentProject && currentProject.facilities"
@@ -18,7 +18,7 @@
             </span>
         </el-button>
         <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2"> 
-          <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
+          <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
           CONTRACTS 
             <span 
               v-if="currentProject && currentProject.contracts"
@@ -46,25 +46,11 @@
     </div>
 
    <el-tabs type="border-card" @tab-click="handleClick">
-  <el-tab-pane label='SHEET' class="p-3 overflowX"> 
-
-<!-- ROW FOR FILTERS -->
-    <div class="row">
-    <div class="col-6 py-0 px-0" :class="[isMapView ? 'col-12' : '']" >
-      <!-- SEARCH BAR -->
-    </div>
-        <div class="col-6 py-0 px-0">
-        <!-- SEARCH BY GROUP -->
-    </div>
-      
-    </div>
-
-     <div class="row">
-    <ProgramContractsSheet v-if="this.getShowProjectStats" />
-    <ProgramProjectsSheet v-else />      
-    </div>
-    </el-tab-pane>
-    <el-tab-pane label='ANALYTICS' class="p-3"> 
+    <el-tab-pane class="p-3"> 
+      <template slot="label">
+      <i class="fas fa-analytics mr-1"></i>
+      ANALYTICS   
+    </template>   
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
  
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
@@ -1074,6 +1060,29 @@
        </div>   
     </div>    
     </el-tab-pane>
+  <el-tab-pane class="p-3 overflowX">
+     <template slot="label">
+      <i class="fal fa-table mr-1"></i>
+      TABLE    
+    </template>   
+
+<!-- ROW FOR FILTERS -->
+    <div class="row">
+    <div class="col-6 py-0 px-0" :class="[isMapView ? 'col-12' : '']" >
+      <!-- SEARCH BAR -->
+    </div>
+        <div class="col-6 py-0 px-0">
+        <!-- SEARCH BY GROUP -->
+    </div>
+      
+    </div>
+
+     <div class="row">
+    <ProgramContractsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-else />      
+    </div>
+    </el-tab-pane>
+  
     </el-tabs>  
   </div>
 </template>
@@ -1846,6 +1855,12 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
+    _isallowedContracts(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
     showLessToggle() {
       this.showLess = "Show Less";
     },

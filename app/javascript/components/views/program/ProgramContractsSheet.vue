@@ -52,7 +52,7 @@
       prop="projectCode"  
       sortable  
       label="Project Code"
-      width="100"
+      width="120"
       fixed  
       > 
       <template slot-scope="scope">

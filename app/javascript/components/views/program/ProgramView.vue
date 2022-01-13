@@ -225,10 +225,10 @@
                         </template>
                </el-dialog>
              <div class="row pb-4">
-              <div class="col-3 py-2">
+              <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }">
                 <div class="w-100">
-                   <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
-                <el-button-group>
+                <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
+                <el-button-group >
                   <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
                     <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
                     PROJECTS
@@ -1994,6 +1994,12 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
+     _isallowed(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
     showContractStats(){
      if(this.getShowProjectStats == false){
         this.setShowProjectStats(!this.getShowProjectStats)
