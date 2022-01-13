@@ -1,13 +1,13 @@
 <template>
   <div class="container-fluid" data-cy="facility_rollup">
       <div class="row pt-1 pb-2">
-      <div class="col-6 py-3 pl-3">
-        <span v-if="contentLoaded">
+      <div class="col-6 py-3 pl-3" v-if="contentLoaded">
+        <span>
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group>
+        <el-button-group :class="{'d-none': !_isallowedContracts('read') || currentProject.contracts.length <= 0 }">
           <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
           <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
           PROJECTS
@@ -1855,6 +1855,12 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
+    _isallowedContracts(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
     showLessToggle() {
       this.showLess = "Show Less";
     },
