@@ -64,7 +64,16 @@
               <!-- Lesson Info Tab -->
               <div v-show="currentTab == 'tab1'" class="container-fluid mt-2 mx-0 px-5">
                 <div class="row row_1">
-                  <div class="col-5 pl-0 d-flex">
+                  <div class="col-5 pl-0">
+                   <label class="font-md">Contract Name </label>
+                    <el-input
+                      name="Contract Nickname"
+                      v-model="contract.name"
+                      type="text"
+                      placeholder="Contract Name"
+                    />
+                  </div>
+                  <!-- <div class="col-5 pl-0 d-flex">
                     <label class="font-sm my-auto mr-2 d-inline-block"
                       >Project Group Name:
                     </label>
@@ -83,7 +92,7 @@
                       >
                       </el-option>
                     </el-select>
-                  </div>
+                  </div> -->
                  
                 </div>
                 <div class="row row_1">
@@ -96,9 +105,8 @@
                       placeholder="Enter Project Code"
                     />
                   </div>
-                  <div class="col-7 px-2">
+                  <div class="col-5 px-2">
                     <label class="font-md">Contract Nickname </label>
-
                     <el-input
                       name="Contract Nickname"
                       v-model="contract.nickname"
@@ -107,7 +115,7 @@
                     />
                     <!-- Need to add additional div here for error handling -->
                   </div>
-                  <div class="col-3 pr-0">
+                  <div class="col-3 pr-2">
                     <label class="font-md">Type </label>
                     <el-select
                       v-model="contract.contract_classification_id"
@@ -124,6 +132,15 @@
                       >
                       </el-option>
                     </el-select>
+                  </div>
+                      <div class="col-2 pr-0">
+                    <label class="font-md">Total # of Subcontracts</label>
+                   <el-input
+                      name="Total Subcontracts"  
+                      v-model="contract.total_subcontracts"
+                      type="text"
+                      placeholder="Contract Nickname"                                   
+                    />
                   </div>
                 </div>
                 <div class="row row_2">
@@ -151,7 +168,7 @@
                   </div>
 
                   <div class="col-6 pl-3 pr-0">
-                    <label class="font-md">Status </label>
+                    <label class="font-md">Customer Entity </label>
                     <el-select
                       v-model="contract.contract_status_id"
                       filterable
@@ -273,13 +290,7 @@
                   </div>
                 </div>
                 <div class="row row_5">
-                  <div
-                    class="col-4 pl-0 pr-1"
-                    v-if="
-                      contract.contract_type_id === 1 ||
-                        contract.contract_type_id === 2
-                    "
-                  >
+                  <div class="col-6 pl-0 pr-3">
                     <label class="font-md"
                       >Prime 
                     </label>
@@ -294,7 +305,7 @@
                       placeholder="Select Prime"
                     >
                       <el-option
-                        v-for="item in cPrimeOptions"
+                        v-for="item in cPrimeOptions.filter(c => c.name !== 'null')"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id"
@@ -302,6 +313,28 @@
                       </el-option>
                     </el-select>
                   </div>
+                   <div class="col-6 pl-3 pr-0">
+                  <label class="font-md">Status </label>
+                    <el-select
+                      v-model="contract.contract_status_id"
+                      filterable
+                      class="w-100"
+                      track-by="id"
+                      value-key="id"
+                      allow-create
+                      default-first-option
+                      placeholder="Select or enter status"
+                    >
+                      <el-option
+                        v-for="item in cStatusOptions"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      >
+                      </el-option>
+                    </el-select>
+                   </div>
+                  <!-- STATUS -->
                 </div>
               </div>
 
@@ -344,16 +377,7 @@
                     </div>
                   </div>
                 </div>
-                <!-- <div class="row"  v-if="contract.contract_type_id === 0 || contract.contract_type_id === 1">
-    
-  </div> -->
-                <div
-                  class="row"
-                  v-if="
-                    contract.contract_type_id === 1 ||
-                      contract.contract_type_id === 2
-                  "
-                >
+                <div class="row">
                   <div class="col-2 pl-0 pr-2">
                     <label class="font-md"
                       >Current PoP
@@ -366,7 +390,7 @@
                       placeholder="Select Current Pop"
                     >
                       <el-option
-                        v-for="item in getCurrentPop"
+                        v-for="item in getCurrentPop.filter(c => c.name !== 'undefined')"
                         :value="item.id"
                         :key="item.id"
                         :label="item.name"
@@ -417,9 +441,8 @@
                     </label>
                     <el-input
                       v-model="daysRemaining"
-                     :disabled="!contract.current_pop_end_time"
+                      :disabled="!contract.current_pop_end_time"
                       name="Days Remaining"
-                      type="text"
                       placeholder="Days Remaining"
                     />
                     <!-- Need to add additional div here for error handling -->
@@ -440,12 +463,7 @@
                     />
                   </div>
                   <div
-                    class="col-6 pl-1 pr-0"
-                    v-if="
-                      contract.contract_type_id === 1 ||
-                        contract.contract_type_id === 2
-                    "
-                  >
+                    class="col-6 pl-1 pr-0">
                     <label class="font-md"
                       >Current PoP Value 
                     </label>
@@ -459,12 +477,7 @@
                   </div>
                 </div>
                 <div
-                  class="row row_2"
-                  v-if="
-                    contract.contract_type_id === 1 ||
-                      contract.contract_type_id === 2
-                  "
-                >
+                  class="row row_2">
                   <div class="col-6 pl-0 pr-1">
                     <label class="font-md"
                       >Current PoP Funded
@@ -507,6 +520,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../../shared/loader";
 import FormTabs from "../../../shared/FormTabs.vue";
 import moment from 'moment';
+import RelatedTaskMenuVue from '../../../shared/RelatedTaskMenu.vue';
 export default {
   name: "SheetContract",
   components: {
@@ -570,7 +584,6 @@ export default {
       "fetchCurrentPop",
       "fetchContractGroupTypes",
       "fetchCustomerAgencies",
-
       "fetchContractStatuses",
       "fetchVehicles",
       "fetchPrime",
@@ -583,6 +596,7 @@ export default {
       "SET_CONTRACT",
       "SET_CONTRACT_STATUS",
       "SET_CONTRACTS",
+      "SET_DAYS_REMAINING",
       "SET_CONTRACT_GROUP_TYPES",
       "SET_CONTRACT_LOADED",
       "SET_CONTRACT_CLASSIFICATIONS",
@@ -618,6 +632,7 @@ export default {
           project_code: this.contract.project_code,
           contract_type_id: this.contract.contract_type_id,
           contract_status_id: this.contract.contract_status_id,
+          total_subcontracts: this.contract.total_subcontracts,
           contract_customer_id: this.contract.contract_customer_id,
           contract_vehicle_id: this.contract.contract_vehicle_id,
           contract_vehicle_number_id: this.contract.contract_vehicle_number_id,
@@ -629,7 +644,7 @@ export default {
           name: this.contract.name,
           current_pop_start_time: this.contract.current_pop_start_time,
           current_pop_end_time: this.contract.current_pop_end_time,
-          days_remaining: this.contract.days_remaining,
+          days_remaining: this.daysRemaining,
           total_contract_value: this.contract.total_contract_value,
           current_pop_value: this.contract.current_pop_value,
           current_pop_funded: this.contract.current_pop_funded,
@@ -702,6 +717,7 @@ export default {
       "getCustomerAgenciesFilter",
       "getContractGroupTypes",
       "getCurrentPop",
+      "getDaysRemaining",
       "getContractClassifications",
       "getContractGroupOptions",
       "getContractStatusesFilter",
@@ -721,21 +737,24 @@ export default {
         let b =  moment(popEnd);
         let diff =  b - a;
         const diffDuration =  diff / (1000 * 3600 * 24);  
-      return Math.trunc(diffDuration)
-      }      
+        return Math.trunc(diffDuration) 
+      } else return this.contract.days_remaining  
     },
    cVehicleOptions: {
       get() {
-        return this.getVehicles;
+        if (this.getVehicles && this.getVehicles.length > 0 ) {
+            return this.getVehicles.filter(c => c.name !== 'undefined');
+        } else return []       
       },
       set(value) {
-        // console.log(value)
         this.SET_VEHICLES(value);
       },
     },
     cContractNoOptions: {
       get() {
-        return this.getContractNumbers;
+        if (this.getContractNumbers && this.getContractNumbers.length > 0){
+          return this.getContractNumbers.filter(c => c.name !== 'undefined');
+        } else return []        
       },
       set(value) {
         this.SET_CONTRACT_NUMBER(value);
@@ -743,7 +762,9 @@ export default {
     },
     cPrimeIdiqOptions: {
       get() {
-        return this.getVehicleNumbers;
+        if(this.getVehicleNumbers && this.getVehicleNumbers.length > 0){
+          return this.getVehicleNumbers.filter(c => c.name !== 'undefined');
+        } else return []        
       },
       set(value) {
         this.SET_VEHICLE_NUMBERS(value);
@@ -751,16 +772,19 @@ export default {
     },
     cSubcontractNoOptions: {
       get() {
-        return this.getSubcontractNumbers;
+        if (this.getSubcontractNumbers && this.getSubcontractNumbers.length > 0) {
+          return this.getSubcontractNumbers.filter(c => c.name !== 'undefined');
+        }  else return []   
       },
       set(value) {
         this.SET_SUBCONTRACT_NUMBER(value);
       },
     },
-    //
     cPrimeOptions: {
       get() {
-        return this.getPrime;
+        if (this.getPrime && this.getPrime.length > 0){
+          return this.getPrime.filter(c => c.name !== 'undefined');
+        } else return []      
       },
       set(value) {
         this.SET_PRIME(value);
@@ -768,7 +792,9 @@ export default {
     },
     cStatusOptions: {
       get() {
-        return this.getContractStatusesFilter;
+        if (this.getContractStatusesFilter){
+            return this.getContractStatusesFilter.filter(c => c.name !== 'undefined'); 
+        } else return []       
       },
       set(value) {
         this.SET_CONTRACT_STATUSES_FILTER(value);
@@ -776,7 +802,9 @@ export default {
     },
     cCustomerAgenciesOptions: {
       get() {
-        return this.getCustomerAgenciesFilter;
+        if (this.getCustomerAgenciesFilter && this.getCustomerAgenciesFilter.length > 0){
+          return this.getCustomerAgenciesFilter.filter(c => c.name !== 'undefined');
+        } else return []      
       },
       set(value) {
         this.SET_CUSTOMER_AGENCIES_FILTER(value);
@@ -784,7 +812,9 @@ export default {
     },
     cClassificationOptions: {
       get() {
-        return this.getContractClassifications;
+        if (this.getContractClassifications && this.getContractClassifications.length > 0){
+          return this.getContractClassifications.filter(c => c.name !== 'undefined');
+        } else return []        
       },
       set(value) {
         this.SET_CONTRACT_CLASSIFICATIONS(value);
@@ -792,7 +822,9 @@ export default {
     },
     cGroupTypeOptions: {
       get() {
-        return this.getContractGroupTypes;
+         if (this.getContractGroupTypes && this.getContractGroupTypes.length > 0){
+        return this.getContractGroupTypes.filter(c => c.name !== 'undefined')
+         } else return []
       },
       set(value) {
         this.SET_CONTRACT_GROUP_TYPES(value);

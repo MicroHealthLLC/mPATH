@@ -9,6 +9,7 @@ const settingsStore = {
     group_filter: null,
     contract: {},
     contracts: [],
+    pop_days_remaining: null,
     contract_loaded: true,
     contracts_loaded: true,
     contract_status: 0,
@@ -385,7 +386,7 @@ const settingsStore = {
   },
 
   mutations: {
-    setShowAdminBtn: (state, value) => (state.show_admin_btn = value),
+    setShowAdminBtn: (state, value) => (state.show_admin_btn = value),   
     setContractTypeFilter: (state, value) =>
       (state.contract_type_filter = value),
     setContractTable: (state, value) => (state.contract_table = value),
@@ -417,6 +418,7 @@ const settingsStore = {
     SET_SUBCONTRACT_NUMBER: (state, value) =>
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
+    SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
 
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
@@ -429,8 +431,8 @@ const settingsStore = {
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
-    getNewContractGroupFilter: (state) => state.new_contract_group_filter,
-    
+    getNewContractGroupFilter: (state) => state.new_contract_group_filter,    
+    getDaysRemaining: (state) => state.pop_days_remaining,
     editContractSheet: (state) => state.edit_contract_sheet,
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
     getContractStatusesFilter: (state) => state.contract_statuses_filter,
@@ -487,6 +489,7 @@ const contractFormData = (contract) => {
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
   formData.append("contract[project_code]", contract.project_code);
   formData.append("contract[nickname]", contract.nickname); //Required
+  formData.append("contract[total_subcontracts]", contract.total_subcontracts); //Required
   formData.append("contract[name]", contract.name); //Required
   formData.append("contract[contract_status_id]", contract.contract_status_id);
   formData.append(

@@ -85,9 +85,27 @@
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
-          <el-input size="small"
+            <el-select
+            class="w-100"
+            v-model="scope.row.facility_group_name" 
+            track-by="id"
+            value-key="id"
+            clearable
+            filterable
+            name="Project Group"         
+            placeholder="Select Group"
+          >
+          <el-option
+          v-for="item in facilityGroups"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+          
+          </el-select>
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facility_group_name"></el-input>
+            v-model="scope.row.facility_group_name"></el-input> -->
        </template>
     </el-table-column>
 
