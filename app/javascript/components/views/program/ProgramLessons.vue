@@ -1104,7 +1104,7 @@ export default {
           // Filtering 7 Task States
         })
         .filter((l) => {
-          if (this.programCategoriesFilter.length > 0) {
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
             let category = this.programCategoriesFilter.map((t) => t);
             return category.includes(l.category);
           } else return true;
