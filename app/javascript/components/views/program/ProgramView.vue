@@ -224,7 +224,7 @@
                         </div>
                         </template>
                </el-dialog>
-             <div class="row pb-4">
+             <div class="row pb-4" v-if="currentProject && currentProject.contracts || contentLoaded" >
               <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }">
                 <div class="w-100">
                 <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
