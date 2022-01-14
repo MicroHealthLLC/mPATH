@@ -108,7 +108,7 @@
             style="text-align:center"
             v-if="scope.row.contractStatus && scope.row.contractStatus !== null && scope.row.contractStatus.name"
             v-model="scope.row.contractStatus.name" controls-position="right"></el-input> -->
-              <span v-if="scope.row.contractStatus && scope.row.contractStatus !== 'undefined' && scope.row.contractStatus.name">
+              <span v-if="scope.row.contractStatus && scope.row.contractStatus.name && scope.row.contractStatus.name !== 'undefined'">
              {{ scope.row.contractStatus.name }} 
             </span>
            <span v-else> <i> Not Available </i> </span>
@@ -122,7 +122,7 @@
             v-if="scope.row.name"
             v-model="scope.row.name" controls-position="right"></el-input>
             <span v-else> <i> Edit in Program Settings </i> </span> -->
-             <span v-if="scope.row.name">
+             <span v-if="scope.row.name && scope.row.name !== 'null'">
                {{ scope.row.name }} 
             </span>
            <span v-else> <i> Not Available </i> </span>
@@ -240,17 +240,36 @@
       sortable 
       filterable 
       label="Prime"
-      width="200"     
+      width="230"     
       >     
+       <template slot-scope="scope">
+          <!-- <el-input size="small"
+            style="text-align:center"
+            v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber !== null"
+            v-model="scope.row.subcontractNumber.name" controls-position="right"></el-input>
+          <span v-else> <i> Edit in Program Settings </i> </span> -->
+
+             <span v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime.name !== 'undefined'">
+              {{ scope.row.contractPrime.name }} 
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+       </template>
     </el-table-column>
   <!-- TOTAL Number of Subcontracts to MH-->
      <el-table-column 
       prop="" 
       sortable 
       filterable 
-      label="Total Number of Subcontracts to MH"
-      width="200"     
-      >     
+      label="Total Number of Subcontracts"
+      width="150"     
+      >    
+        <template slot-scope="scope">
+        <span  v-if="scope.row.totalSubcontracts">
+          {{scope.row.totalSubcontracts }} 
+        </span>
+        <span v-else></span> 
+        </template>
+
     </el-table-column>
   <!-- Contract Start-->
      <el-table-column 
@@ -260,13 +279,10 @@
       label="Contract Start"
       > 
        <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.startDate" controls-position="right"></el-input> -->
-            <span  v-if="scope.row.startDate">
-               {{ scope.row.startDate }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
+        <span  v-if="scope.row.startDate">
+          {{ moment(scope.row.startDate).format('MM/DD/YYY') }} 
+        </span>
+        <span v-else></span>
        </template>
       
     </el-table-column>
@@ -278,14 +294,10 @@
       label="Contract End"
       > 
        <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.endDate" controls-position="right"></el-input> -->
-
-              <span  v-if="scope.row.endDate">
-               {{ scope.row.endDate }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
+        <span  v-if="scope.row.endDate">
+            {{ moment(scope.row.endDate).format('MM/DD/YYY') }} 
+        </span>
+        <span v-else></span>
        </template>
        
     </el-table-column>
@@ -302,7 +314,7 @@
              v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop !== null"
             v-model="scope.row.contractCurrentPop.name" controls-position="right"></el-input> -->
               <span  v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop.name !== 'undefined'">
-               {{ scope.row.endDate }} 
+               {{  scope.row.contractCurrentPop.name }} 
             </span>
            <span v-else> <i> Not Available </i> </span>
        </template>
@@ -312,28 +324,28 @@
      <el-table-column 
       prop="currentPopStartTime"  
       sortable  
-      width="200"
-      label="Start"
+      width="230"
+      label="Current PoP Start"
       > 
        <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.currentPopStartTime" controls-position="right"></el-input> -->
-            {{ scope.row.currentPopStartTime }}
+          <span v-if="scope.row.currentPopStartTime">
+            {{ moment(scope.row.currentPopStartTime).format('MM/DD/YYY') }} 
+          </span>
+          <span v-else></span>
        </template>
     </el-table-column>
       <!-- End-->
      <el-table-column 
       prop="currentPopEndTime"  
       sortable  
-      width="200"
-      label="End"
+      width="230"
+      label="Current PoP End"
       > 
        <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.currentPopEndTime" controls-position="right"></el-input> -->
-            {{ scope.row.currentPopEndTime }}
+          <span v-if="scope.row.currentPopEndTime">
+           {{  moment(scope.row.currentPopEndTime).format('MM/DD/YYY') }}
+          </span>
+          <span v-else></span>
        </template>
     </el-table-column>
     <!--Days Remaining-->
@@ -361,7 +373,7 @@
           <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.totalContractValue" controls-position="right"></el-input> -->
-            {{ scope.row.totalContractValue }}
+            ${{ scope.row.totalContractValue }}
        </template>
     </el-table-column>
      <!--Current PoP Value-->
@@ -375,7 +387,7 @@
           <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.currentPopValue" controls-position="right"></el-input> -->
-          {{ scope.row.currentPopValue }}
+         ${{ scope.row.currentPopValue }}
 
        </template>
     </el-table-column>
@@ -390,7 +402,7 @@
           <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.totalContractFunded" controls-position="right"></el-input> -->
-            {{ scope.row.totalContractFunded }}
+           ${{ scope.row.totalContractFunded }}
        </template>
     </el-table-column>
     <!--Notes-->
@@ -407,7 +419,7 @@
       sortable 
       filterable 
       label="Group"
-      width="200"     
+      width="230"     
       >
       <template slot-scope="scope">
         <span v-if="groupsArr">
