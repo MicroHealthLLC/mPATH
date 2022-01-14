@@ -15,7 +15,4 @@ ActiveAdmin.register ContractClientType do
     permitted
   end
 
-  form do |f|
-    f.semantic_errors *f.object.errors.keys
-  end
 end

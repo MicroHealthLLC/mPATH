@@ -32,4 +32,5 @@ ActiveAdmin.register ContractCurrentPop do
       super
     end
   end
+
 end
