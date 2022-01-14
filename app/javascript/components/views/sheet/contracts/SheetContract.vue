@@ -182,7 +182,7 @@
                       placeholder="Select or enter status"
                     >
                       <el-option
-                        v-for="item in cClientTypeOptions"
+                        v-for="item in cClientTypeOptions.filter(c => c.name !== 'null' )"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id"
@@ -790,7 +790,7 @@ export default {
     cClientTypeOptions: {
        get() {
         if (this.getClientTypes && this.getClientTypes.length > 0 ) {
-            return this.getClientTypes.filter(c => c.name !== 'undefined');
+            return this.getClientTypes;
         } else return []       
       },
       set(value) {

@@ -56,7 +56,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in facilityGroups.filter(t => t.projectId == this.$route.params.programId)"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -193,7 +193,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in facilityGroups.filter(t => t.projectId == this.$route.params.programId)"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -250,7 +250,7 @@
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
-import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
+// import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsContracts",
   components: {
@@ -304,7 +304,7 @@ export default {
     
     },
     saveNewContract() {
-      this.onSubmit()
+      // this.onSubmit()
         let contractData = {
           contract: {
             nickname: this.contractNicknameText,
@@ -318,18 +318,19 @@ export default {
             ...contractData,
           })
           this.hideSaveBtn = true;
-          console.log(contractData)
+          // console.log(contractData)
     },
-     async onSubmit ()  {
-         const formData = {
-            contractName: this.contractNameText,
-            programName: this.currentProject.name, 
-            mpathInstance: this.$mpath_instance
+    //  async onSubmit ()  {
+    //      const formData = {
+    //         contractName: this.contractNameText,
+    //         programName: this.currentProject.name, 
+    //         mpathInstance: this.$mpath_instance
 
-          }
-        await createUser({...formData})
-        return { formData }
-    },   
+    //       }
+    //     await createUser({...formData})
+    //     return { formData }
+    //  }
+    
     editContract(index, rows) {
         let id = rows.id;
         let contractData = {
