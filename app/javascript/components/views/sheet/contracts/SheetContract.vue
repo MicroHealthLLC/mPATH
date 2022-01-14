@@ -469,7 +469,7 @@
               </div>
               <div v-show="currentTab == 'tab3'" class="container-fluid px-5 mt-2 mx-0">
                 <div class="row t3 row_1">
-                  <div class="col-6 pl-0 pr-1">
+                  <div class="col-3 pl-0 pr-4">
                     <label class="font-md"
                       >Total Contract Value
                     </label>
@@ -478,10 +478,12 @@
                       v-model="contract.total_contract_value"
                       type="text"
                       placeholder="Total Contract Value"
-                    />
+                    >
+                    <el-button slot="prepend" class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
+                    </el-input>
                   </div>
                   <div
-                    class="col-6 pl-1 pr-0">
+                    class="col-3 pl-1 pr-0">
                     <label class="font-md"
                       >Current PoP Value 
                     </label>
@@ -490,13 +492,15 @@
                       v-model="contract.current_pop_value"
                       type="text"
                       placeholder="Enter Current PoP Value"
-                    />
+                    >
+                    <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
+                    </el-input>
                     <!-- Need to add additional div here for error handling -->
                   </div>
                 </div>
                 <div
                   class="row row_2">
-                  <div class="col-6 pl-0 pr-1">
+                  <div class="col-3 pl-0 pr-4">
                     <label class="font-md"
                       >Current PoP Funded
                     </label>
@@ -505,9 +509,11 @@
                       v-model="contract.current_pop_funded"
                       type="text"
                       placeholder="Enter Current PoP Funded"
-                    />
+                    >
+                        <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
+                    </el-input>
                   </div>
-                  <div class="col-6 pl-1 pr-0">
+                  <div class="col-3 pl-1 pr-0">
                     <label class="font-md"
                       >Total Funded To Date
                     </label>
@@ -516,7 +522,9 @@
                       name="Contract Status"
                       type="text"
                       placeholder="Enter Total Funded To Date"
-                    />
+                    >
+                        <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
+                    </el-input>
                   </div>
                 </div>
               </div>
@@ -644,7 +652,7 @@ export default {
       this.fetchClassificationTypes();
     },
     saveEdits() {
-      console.log(this.contract.notes)
+      // console.log(this.contract.notes)
       let id = this.contract.id;
       let contractData = {
         contract: {
@@ -964,6 +972,13 @@ export default {
 }
 .displayNone {
   display: none !important;
+}
+.fa-usd-square {
+  font-size: 1.3rem;
+}
+
+/deep/.el-button.usd-icon {
+  cursor:text;
 }
 .fa-building {
   font-size: large !important;

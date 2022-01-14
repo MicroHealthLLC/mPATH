@@ -94,7 +94,6 @@
             v-model="scope.row.facility_group_id" 
             track-by="id"
             value-key="id"
-            clearable
             filterable
             name="Project Group"         
             placeholder="Select Group"
@@ -116,7 +115,7 @@
      <el-table-column label="Actions">
       <template slot-scope="scope" >
       <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-      <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>    
+      <!-- <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>     -->
        <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
 
         </el-button>
@@ -348,32 +347,32 @@ export default {
             ...contractData, id
           })
     },
-    deleteSelectedContract(index, rows) {
-      let id = rows.id;
-      this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          res = this.deleteContract(id).then((value) => {
-            if (value == 200) {
-              this.$message({
-                message: `${rows.nickname} was deleted successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
-          }).catch((error) => {
-            console.log(error)
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete cancelled',
-            showClose: true
-          });
-        });
-    },
+    // deleteSelectedContract(index, rows) {
+    //   let id = rows.id;
+    //   this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
+    //       confirmButtonText: 'Delete',
+    //       cancelButtonText: 'Cancel',
+    //       type: 'warning'
+    //     }).then(() => {
+    //       res = this.deleteContract(id).then((value) => {
+    //         if (value == 200) {
+    //           this.$message({
+    //             message: `${rows.nickname} was deleted successfully.`,
+    //             type: "success",
+    //             showClose: true,
+    //           });
+    //         }
+    //       }).catch((error) => {
+    //         console.log(error)
+    //       });
+    //     }).catch(() => {
+    //       this.$message({
+    //         type: 'info',
+    //         message: 'Delete cancelled',
+    //         showClose: true
+    //       });
+    //     });
+    // },
     addAnotherContract() {
       this.C_projectGroupFilter = null;
       this.contractNameText = "";
