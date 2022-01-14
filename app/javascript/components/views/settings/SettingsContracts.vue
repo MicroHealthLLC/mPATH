@@ -355,22 +355,15 @@ export default {
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          res = this.deleteContract(id).then((value) => {
-            if (value == 200) {
+          this.deleteContract(id).then((value) => {
+            if (value === 200) {
+              this.fetchContracts();
               this.$message({
                 message: `${rows.nickname} was deleted successfully.`,
                 type: "success",
                 showClose: true,
               });
             }
-          }).catch((error) => {
-            console.log(error)
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete cancelled',
-            showClose: true
           });
         });
     },
