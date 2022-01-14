@@ -58,6 +58,10 @@ export default {
     },
     exists(value) {
       return value !== null && value !== undefined && String(value).trim() !== ''
-    }
+    },
+    formatDateTime(datetime) {
+      if (!moment(datetime).isValid()) return datetime
+      return moment(String(datetime)).format('MM-DD-YYYY hh:mm a')
+    },
   }
 }

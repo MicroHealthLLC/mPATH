@@ -264,7 +264,7 @@
             style="text-align:center"
             v-model="scope.row.startDate" controls-position="right"></el-input> -->
             <span  v-if="scope.row.startDate">
-               {{ scope.row.startDate }} 
+               {{ formatDateTime(scope.row.startDate) }}
             </span>
            <span v-else> <i> Not Available </i> </span>
        </template>
@@ -283,7 +283,7 @@
             v-model="scope.row.endDate" controls-position="right"></el-input> -->
 
               <span  v-if="scope.row.endDate">
-               {{ scope.row.endDate }} 
+               {{ formatDateTime(scope.row.endDate) }}
             </span>
            <span v-else> <i> Not Available </i> </span>
        </template>
@@ -302,7 +302,7 @@
              v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop !== null"
             v-model="scope.row.contractCurrentPop.name" controls-position="right"></el-input> -->
               <span  v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop.name !== 'undefined'">
-               {{ scope.row.endDate }} 
+               {{ formatDateTime(scope.row.endDate) }}
             </span>
            <span v-else> <i> Not Available </i> </span>
        </template>
@@ -319,7 +319,10 @@
           <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.currentPopStartTime" controls-position="right"></el-input> -->
-            {{ scope.row.currentPopStartTime }}
+          <span v-if="scope.row.currentPopStartTime">
+            {{ formatDateTime(scope.row.currentPopStartTime) }}
+          </span>
+          <span v-else><i> Not Available </i></span>
        </template>
     </el-table-column>
       <!-- End-->
@@ -333,7 +336,10 @@
           <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.currentPopEndTime" controls-position="right"></el-input> -->
-            {{ scope.row.currentPopEndTime }}
+          <span v-if="scope.row.currentPopEndTime">
+            {{ formatDateTime(scope.row.currentPopEndTime) }}
+          </span>
+          <span v-else><i> Not Available </i></span>
        </template>
     </el-table-column>
     <!--Days Remaining-->
