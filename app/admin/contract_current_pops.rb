@@ -1,7 +1,9 @@
 ActiveAdmin.register ContractCurrentPop do
   menu parent: "Contracts", priority: 1, label: "Contract Current PoPs"
   actions :all, except: [:show]
-  ActiveAdmin::ActionItem.new only: :index do
+  config.clear_action_items!
+
+  action_item :new, only: [:index] do
     link_to "New Contract Current PoP", new_admin_contract_current_pop_path
   end
 
