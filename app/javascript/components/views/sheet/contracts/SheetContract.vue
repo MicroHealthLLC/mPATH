@@ -339,7 +339,7 @@
                   <!-- STATUS -->
                 </div>
 
-                <div class="row row_5">
+                <!-- <div class="row row_5">
                   <div class="col-12 px-0">
                     <label class="font-md"
                       >Contract Notes
@@ -353,7 +353,7 @@
                     />
                 
                   </div>
-                 </div>
+                 </div> -->
               </div>
 
               <!-- TAB 2: DATES -->
@@ -652,7 +652,7 @@ export default {
           project_id: this.contract.project_id,
           facility_group_id: this.contract.facility_group_id,
           nickname: this.contract.nickname,
-          notes: this.contract.notes,
+          // notes: this.contract.notes,
           project_code: this.contract.project_code,
           contract_type_id: this.contract.contract_type_id,
           contract_status_id: this.contract.contract_status_id,
