@@ -519,7 +519,7 @@ const settingsStore = {
 };
 
 const contractFormData = (contract) => {
-  console.log(contract)
+  // console.log(contract)
   let formData = new FormData();
   // Append all required form data
   if (contract.id) {

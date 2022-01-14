@@ -142,6 +142,20 @@
            <span v-else> <i> Not Available </i> </span>
        </template>
     </el-table-column>
+       <!-- CUSTOMER ENTITY -->
+        <el-table-column prop="contractClientType.name"  sortable  label="Customer Entity" width="200"> 
+       <template slot-scope="scope">
+          <!-- <el-input size="small"
+            style="text-align:center"
+            v-if="scope.row.contractCustomer && scope.row.contractCustomer !== null && scope.row.contractCustomer.name"
+            v-model="scope.row.contractCustomer.name" controls-position="right">
+          </el-input> -->
+             <span  v-if="scope.row.contractClientType && scope.row.contractClientType.name !== 'undefined' && scope.row.contractClientType.name">
+                {{ scope.row.contractClientType.name }}
+            </span>
+           <span v-else> <i> Not Available </i> </span>
+       </template>
+    </el-table-column>
     <!-- VEHICLE -->
     <el-table-column prop="contractVehicle.name"  sortable  label="Vehicle" width="200"> 
        <template slot-scope="scope">
@@ -158,12 +172,12 @@
        </template>
     </el-table-column>
     <!-- COMMERCIAL / FEDERAL -->
-     <el-table-column prop=""
+     <!-- <el-table-column prop=""
           sortable 
           label="Commercial/Federal"
           width="200"
           >     
-    </el-table-column>
+    </el-table-column> -->
     <!-- PRIME IDIQ -->
     <el-table-column prop="contractVehicleNumber.name"
           sortable 
@@ -228,12 +242,12 @@
     </el-table-column>
 
      <!-- GOVERNEMNT / CLIENT -->
-     <el-table-column prop=""
+     <!-- <el-table-column prop=""
       sortable 
       label="Government/Client"
       width="200"
       >     
-    </el-table-column>
+    </el-table-column> -->
    <!-- PRIME-->
      <el-table-column 
       prop="" 
@@ -431,8 +445,10 @@
 
      <el-table-column 
       label="Actions"     
-      width="300"
+      width="300"      
       >
+        <template slot-scope="scope">
+          <!-- THESE COMMENTED OUT  BUTTONS ARE FOR CRUD OPERATIONS -->
         <!-- <el-button
           type="default"  
            class="bg-primary text-light"     
@@ -455,6 +471,7 @@
          <i class="far fa-file-contract mh-orange-text" style="font-size:1rem"></i> 
         <i class="fas fa-arrow-alt-circle-right ml-1 text-success"></i>
         </el-button>   
+        </template>
     </el-table-column>  
    </el-table>   
   </div>
