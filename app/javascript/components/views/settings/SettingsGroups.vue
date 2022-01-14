@@ -80,10 +80,10 @@
           </li>
         </ul>
        </div>        
-        <div class="col" >
+        <div class="col" v-if="groupContracts">
         <h5 class="mh-orange-text"> Contracts
           <span  
-          v-if="groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
+          v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
             class="badge badge-secondary badge-pill pill"
             >{{ groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
             
@@ -115,7 +115,7 @@
           <span class="ml-5 mr-2" v-else>
         <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
         </span> 
-    <span v-if="groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
+    <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
       <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
     </span>
         <span  v-else>
@@ -124,6 +124,9 @@
     </template>
     </el-table-column>  
    </el-table>  
+   <div v-else-if="contentLoaded &&  tableData && tableData.length === 0">
+     <i>NO GROUPS YET.  CLICK 'Add Group' BUTTON TO ADD YOUR FIRST GROUP.</i>
+   </div>
    </div>
    <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
@@ -262,7 +265,7 @@ export default {
         this.facilityGroups &&
         this.facilityGroups.length > 0
       ) {
-        return this.facilityGroups
+        return this.facilityGroups.filter(t => t.projectId == this.$route.params.programId)
       }
     },
     groupContracts(){

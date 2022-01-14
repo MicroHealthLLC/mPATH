@@ -294,7 +294,7 @@
       > 
        <template slot-scope="scope">
         <span  v-if="scope.row.startDate">
-          {{ moment(scope.row.startDate).format('MM/DD/YYY') }} 
+          {{ moment(scope.row.startDate).format('MM/DD/YYYY') }} 
         </span>
         <span v-else></span>
        </template>
@@ -309,7 +309,7 @@
       > 
        <template slot-scope="scope">
         <span  v-if="scope.row.endDate">
-            {{ moment(scope.row.endDate).format('MM/DD/YYY') }} 
+            {{ moment(scope.row.endDate).format('MM/DD/YYYY') }} 
         </span>
         <span v-else></span>
        </template>
@@ -343,7 +343,7 @@
       > 
        <template slot-scope="scope">
           <span v-if="scope.row.currentPopStartTime">
-            {{ moment(scope.row.currentPopStartTime).format('MM/DD/YYY') }} 
+            {{ moment(scope.row.currentPopStartTime).format('MM/DD/YYYY') }} 
           </span>
           <span v-else></span>
        </template>
@@ -357,7 +357,7 @@
       > 
        <template slot-scope="scope">
           <span v-if="scope.row.currentPopEndTime">
-           {{  moment(scope.row.currentPopEndTime).format('MM/DD/YYY') }}
+           {{  moment(scope.row.currentPopEndTime).format('MM/DD/YYYY') }}
           </span>
           <span v-else></span>
        </template>
