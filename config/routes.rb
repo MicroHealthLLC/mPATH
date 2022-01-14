@@ -62,7 +62,11 @@ Rails.application.routes.draw do
       get "/contract_data/contract_prime", to: "contract_data#contract_prime"
       get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
       get "/contract_data/contract_classification", to: "contract_data#contract_classification"
+      get "/contract_data/contract_client_types", to: "contract_data#contract_client_types"
+      get "/contract_data/contract_categories", to: "contract_data#contract_categories"
       
+      post "/contract_data/contract_client_types", to: "contract_data#create_contract_category"
+      post "/contract_data/contract_categories", to: "contract_data#create_contract_client_type"
       post "/contract_data/contract_type", to: "contract_data#create_contract_type"
       post "/contract_data/contract_status", to: "contract_data#create_contract_status"
       post "/contract_data/contract_customer", to: "contract_data#create_contract_customer"

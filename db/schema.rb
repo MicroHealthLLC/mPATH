@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_23_210954) do
+ActiveRecord::Schema.define(version: 2022_01_12_203244) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -88,8 +88,20 @@ ActiveRecord::Schema.define(version: 2021_11_23_210954) do
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
+  create_table "contract_categories", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "contract_classifications", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_client_types", charset: "utf8", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -185,6 +197,12 @@ ActiveRecord::Schema.define(version: 2021_11_23_210954) do
     t.bigint "facility_group_id"
     t.bigint "project_id"
     t.string "name"
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.integer "total_subcontracts", default: 0
+    t.integer "contract_category_id"
+    t.integer "contract_client_type_id"
+    t.text "notes"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
   end
@@ -316,6 +334,9 @@ ActiveRecord::Schema.define(version: 2021_11_23_210954) do
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
+    t.integer "contract_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -363,6 +384,9 @@ ActiveRecord::Schema.define(version: 2021_11_23_210954) do
     t.integer "facility_project_id"
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
+    t.integer "contract_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -657,6 +681,9 @@ ActiveRecord::Schema.define(version: 2021_11_23_210954) do
     t.string "status_name"
     t.boolean "reportable", default: false
     t.date "closed_date"
+    t.integer "contract_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -753,6 +780,9 @@ ActiveRecord::Schema.define(version: 2021_11_23_210954) do
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
     t.date "closed_date"
+    t.integer "contract_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"

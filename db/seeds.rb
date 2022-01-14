@@ -135,5 +135,20 @@ contract_classification.each do |name|
   end
 end
 
+puts "Adding Contract categories"
+contract_categories = ["Commercial", "Fedaral"]
+contract_categories.each do |name|
+  ContractCategory.find_or_create_by(name: name) do |s|
+    s.name = name
+  end
+end
+
+puts "Adding Contract client type"
+contract_client_types = ["Government","Client"]
+contract_client_types.each do |name|
+  ContractClientType.find_or_create_by(name: name) do |s|
+    s.name = name
+  end
+end
 
 puts "Seeds completed.."

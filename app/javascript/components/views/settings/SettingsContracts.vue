@@ -3,7 +3,7 @@
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
-   <div class="col-md-10" >
+   <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
      <el-breadcrumb-item :to="backToSettings">
@@ -66,14 +66,18 @@
        </div>
       </div>
   </div>
-  <div
-    v-if="tableData && _isallowed('read')"
-    v-loading="!contractsLoaded"
+  <div  
+   v-if="tableData && _isallowed('read')"
+    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
+    element-loading-background="rgba(0, 0, 0, 0.8)"  
     class="">
-   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table   
+     :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" 
+     style="width: 100%"  
+     height="450"
+     >
     <el-table-column prop="nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
@@ -85,9 +89,27 @@
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
-          <el-input size="small"
+            <el-select
+            class="w-100"
+            v-model="scope.row.facility_group_id" 
+            track-by="id"
+            value-key="id"
+            clearable
+            filterable
+            name="Project Group"         
+            placeholder="Select Group"
+          >
+          <el-option
+          v-for="item in facilityGroups"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+          
+          </el-select>
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facility_group_name"></el-input>
+            v-model="scope.row.facility_group_name"></el-input> -->
        </template>
     </el-table-column>
 
@@ -310,19 +332,18 @@ export default {
         return { formData }
     },   
     editContract(index, rows) {
-    //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
-    //  if (rows && rows !== undefined) {
         let id = rows.id;
         let contractData = {
           contract: {
             nickname: rows.nickname,
             name: rows.name,
-            facility_group_name: rows.facility_group_name,  
+            // facility_group_name: rows.facility_group_name,  
             facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
             id:  id    
           }
         }
+        this.setNewContractGroupFilter(rows.facility_group_id)
          this.updateContract({
             ...contractData, id
           })
@@ -437,7 +458,7 @@ export default {
   watch: {
     contractStatus: {
       handler() {
-        if (this.contractStatus == 200 && this.contractNameText) {
+        if (this.contractStatus == 200) {
           this.$message({
             message: `Contract saved successfully.`,
             type: "success",
