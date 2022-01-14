@@ -2,9 +2,9 @@
   <div
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
+    element-loading-spinner="el-icon-loading"  
     class="row"
+    element-loading-background="rgba(0, 0, 0, 0.8)"   
   >
     <div class="col-md-2">
       <ProjectSidebar

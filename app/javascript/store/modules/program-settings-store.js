@@ -1,11 +1,9 @@
-import http from "./../../common/http";
 import axios from "axios";
-import { API_BASE_PATH } from "./../../mixins/utils";
+import { API_BASE_PATH } from "../../mixins/utils";
 
-const settingsStore = {
+const programSettingsStore = {
   state: () => ({
     show_admin_btn: false,
-    edit_contract_sheet: false, 
     contract_table: [],
     group_filter: null,
     contract: {},
@@ -383,19 +381,6 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    deleteContract({ commit }, id) {
-      return new Promise((resolve, reject) => {
-        http
-          .delete(`${API_BASE_PATH}/contracts/${id}`)
-          .then((res) => {
-            commit("DELETE_CONTRACT", id);
-            resolve(res.status);
-          }).catch((err) => {
-            console.log(err);
-            reject();
-          });
-      });
-    },
   },
 
   mutations: {
@@ -406,7 +391,7 @@ const settingsStore = {
     setGroupFilter: (state, value) => (state.group_filter = value),
     setNewContractGroupFilter: (state, loaded) =>
       (state.new_contract_group_filter = loaded),
-    SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
+
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
@@ -431,10 +416,7 @@ const settingsStore = {
     SET_SUBCONTRACT_NUMBER: (state, value) =>
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
-    DELETE_CONTRACT: (state, id) => {
-      let index = state.contracts.findIndex((contract) => contract.id == id);
-      state.contracts.splice(index, 1);
-    },
+
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
@@ -447,8 +429,7 @@ const settingsStore = {
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
     getNewContractGroupFilter: (state) => state.new_contract_group_filter,
-    
-    editContractSheet: (state) => state.edit_contract_sheet,
+
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
     getContractStatusesFilter: (state) => state.contract_statuses_filter,
     getContractClassifications: (state) => state.contract_classifications,
@@ -567,4 +548,4 @@ const groupFormData = (group) => {
   return formData;
 };
 
-export default settingsStore;
+export default programSettingsStore;

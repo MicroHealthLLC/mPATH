@@ -145,7 +145,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -193,6 +193,16 @@ export default {
         let s = permissionHash[salut]
         return fPrivilege[module].includes(s); 
         }         
+      },
+      isAllowedFacility(salut, module, facility_id) {
+       if (this.$route.params.contractId) {
+          return this.defaultPrivileges
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut];
+          return fPrivilege[module].includes(s);
+        }
       },
     // closes context menu
     close() {

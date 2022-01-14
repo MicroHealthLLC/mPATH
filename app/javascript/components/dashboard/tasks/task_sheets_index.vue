@@ -517,18 +517,6 @@
         today: new Date().toISOString().slice(0, 10),
         now: new Date().toISOString(),
         tasksQuery: '',
-        // currentPage:1,
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },        
         showFilters: false,
         contractRoute: this.$route.params.contractId,
         id: this.$route.params.projectId,
@@ -570,30 +558,20 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-
-      // _isallowed(salut) {
-      //   let programId = this.$route.params.programId;
-      //   if (this.$route.params.contractId) {
-      //   this.id = this.$route.params.contractId            
-      //   }      
-      //   let fPrivilege = this.$projectPrivileges[programId][this.id]    
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return fPrivilege.tasks.includes(s); 
-        
-      // },
-      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
-       _isallowed(salut) {
-        let programId = this.$route.params.programId;
-        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
+      _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s);
         } else {
-        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.tasks.includes(s); 
-        }         
-      },
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {

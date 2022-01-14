@@ -33,19 +33,21 @@
             <span v-show="expanded.id == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
-           <p class="clickable groupName">{{ group.name }}</p>
+           <p class="clickable groupName expandText">{{ group.name }}</p>
            </span>
          </div>
 
            <div class="col py-0 text-right">
         
-            <span class="badge badge-secondary badge-pill pill">{{ 
+            <span class="badge badge-secondary badge-pill pill" v-if="_isallowedContracts('read')">{{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
               }}
             </span>
-            
-         
+              <span v-else class="badge badge-secondary badge-pill pill">{{ 
+              facilityGroupFacilities(group).projects.a.length              
+              }}
+            </span>
          </div>
              
           </div>
@@ -72,7 +74,7 @@
               </router-link>
               </div>
                <div 
-                v-show="isContractsView"              
+                v-show="isContractsView && _isallowedContracts('read')"              
                 v-for="c in filteredContracts.filter(t => t.facilityGroupId == group.id)" 
                 :key="c.id + 'a'"
                 >              
@@ -211,6 +213,12 @@ export default {
        }
       this.$emit("on-expand-facility-group", group);
     },
+    _isallowedContracts(salut) {
+        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return pPrivilege.contracts.includes(s);     
+    },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
          this.$router.push(
@@ -322,7 +330,7 @@ export default {
   }
   .groupName{
     overflow: hidden;
-    white-space: nowrap; /* Don't forget this one */
+    // white-space: nowrap; /* Don't forget this one */
     text-overflow: ellipsis;
     font-size: 1.15rem;
   }
@@ -368,5 +376,17 @@ export default {
       text-decoration: unset;
     }
   }
+  .expandText {
+    text-overflow: ellipsis;
+    overflow : hidden;
+    // white-space: nowrap;
+
+  }
+
+  // .expandText:hover {
+  //   text-overflow: clip;
+  //   white-space: normal;
+  //   word-break: break-all;
+  // }
 }
 </style>

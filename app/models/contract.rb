@@ -73,6 +73,7 @@ class Contract < ApplicationRecord
       :current_pop_funded,
       :total_contract_funded,
       :facility_group_id,
+      :facility_group_name,
       :project_id
     ]
   end

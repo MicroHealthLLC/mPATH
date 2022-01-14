@@ -1,6 +1,6 @@
 <template>
   <div 
-   v-loading="!contentLoaded"   
+    v-loading="!contentLoaded"   
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -9,6 +9,7 @@
    <form
     id="tasks-form"
     @submit.prevent="saveTask"
+    :load="log(task)"
     class="mx-auto tasks-form"
     :class="{ 'vh100' : !contentLoaded}"
     accept-charset="UTF-8"     
@@ -23,15 +24,18 @@
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
             <router-link :to="projectNameLink">
-              <span v-if="!isProgramView && !contract">
+              <span v-if="!isProgramView && (!contract || facility)">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView && !contract">
-                    {{ task.facilityName }}
+               <span v-if="isProgramView && task">
+                    {{ task.facilityName || task.contractNickname }}
+               </span>
+                 <span v-if="!isProgramView && (contract || !facility)">
+                    {{ task.contractNickname }}
                </span>
             </router-link>
             <router-link :to="backToContract">
-              <span v-if="contract">{{
+              <span v-if="contract && !isProgramView">{{
                   contract.nickname || contract.name
                   }}
               </span>
@@ -1312,17 +1316,6 @@ export default {
       destroyedFiles: [],
       editTimeLive: "",   
       programId: this.$route.params.programId,         
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1434,25 +1427,26 @@ export default {
         notes: [],
       };
     },
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //     let fPrivilege = this.$projectPrivileges[this.programId][this.id]
-    //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //     let s = permissionHash[salut]
-    //       return  fPrivilege.tasks.includes(s); 
-    // },
-  
-  // Temporary _isallowed method until contract projectPrivileges is fixed
-     _isallowed(salut) {
+    _isallowed(salut) {
        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.tasks.includes(s); 
-        }         
-      },
+        //  console.log("yes, contract route")      
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+        // console.log(fPrivilege.tasks.includes(s))
+          return fPrivilege.tasks.includes(s);
+        } else if (this.$route.params.projectId) {
+          // console.log("project route")
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          //  console.log(fPrivilege.tasks.includes(s))
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
+     log(e){
+console.log(e)
+     },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
@@ -1832,11 +1826,7 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-       
-
-
-
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/tasks.json`;
+         let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
          }
@@ -1847,13 +1837,15 @@ export default {
           method = "PUT";
           callback = "task-updated";
         }
-        if (this.task && this.task.id && this.facility) {
-          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
+        if (this.task && this.task.id && this.task.facilityId) {
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
-        if (this.task && this.task.id && this.contract) {
+        if (this.task && this.task.id && this.task.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
         // var beforeSaveTask = this.task
+
+        // Correct API http://localhost:3000/api/v1/programs/2/projects/319/tasks/1218.json
         axios({
           method: method,
           url:  url,
@@ -1899,8 +1891,11 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
+             }  else if (this.isProgramView && this.task.contractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
+              );
+              } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`
               );
           })
           .catch((err) => {
@@ -2147,10 +2142,7 @@ export default {
       );
     },
    isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") ||
-             this.$route.name.includes("ProgramRiskForm") ||
-             this.$route.name.includes("ProgramIssueForm") ||
-             this.$route.name.includes("ProgramLessonForm") ;
+      return this.$route.name.includes("ProgramTaskForm") || this.$route.name.includes("ProgramContractTaskForm")        
     },
     isMapView() {
       return this.$route.name === "MapTaskForm";
@@ -2208,7 +2200,7 @@ export default {
       }
     },
     backToTasks() {
-      if (this.$route.params.contractId) {
+      if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
@@ -2225,8 +2217,10 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/`;
+      } else if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else  {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },
   },

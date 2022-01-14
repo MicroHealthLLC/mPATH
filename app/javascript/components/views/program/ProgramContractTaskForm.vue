@@ -25,19 +25,20 @@ export default {
     ...mapGetters([
       "contentLoaded", 
       "currentProject", 
-      'filteredAllTasks',
-      'getShowProjectStats'
+      'filteredAllContractTasks',
       ]),
   },
 mounted() {
-    this.task = this.filteredAllTasks.find(
+  if (this.contentLoaded) {
+    this.task = this.filteredAllContractTasks.find(
         (task) => task.id == this.$route.params.taskId
-      );      
+      );
+    }        
   },
   watch: {
     contentLoaded: {
       handler() {       
-          this.task = this.filteredAllTasks.find(
+          this.task = this.filteredAllContractTasks.find(
             (task) => task.id == this.$route.params.taskId
           );
       },

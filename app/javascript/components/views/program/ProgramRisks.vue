@@ -65,10 +65,8 @@
                   />
               </div>
           </div>
-
                 <div class="row pt-3 justify-content-center">
-
-                  <div class="col-3 text-center slideCol leftProgramCol">                                          
+                  <div class="col-3 text-center slideCol leftProgramCol">                                        
                   
               
                     <div class="col py-2">  
@@ -124,8 +122,7 @@
                     </span>
                 </div>  
                 </div> 
-                     
-
+              
                 <div class="issueTypes mt-3">
 
                   <h6 class="bg-secondary text-light py-1 d-block">RISK DESCRIPTION</h6>
@@ -133,14 +130,9 @@
                       <h4 class="px-3">{{ dynamicObj[currentRiskSlide].riskDescription }}</h4>
                   </div>
                 </div>
-
                 </div>
-
-
                     <div class="col-3 mh-blue text-center text-light slideCol"  v-if="dynamicObj[currentRiskSlide] !== undefined">                                          
-                  
-              
-                    <div class="col pt-2">  
+                     <div class="col pt-2">  
                       <i class="fas fa-calendar text-light d-block pb-1" style="font-size:2.8rem"></i>
                     <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].startDate" class="d-inline-block"> <h5>{{ moment(dynamicObj[currentRiskSlide].startDate).format( "DD MMM YYYY") }}</h5></span> 
                     <span v-else> -- </span>
@@ -189,12 +181,12 @@
                           v-else-if="dynamicObj[currentRiskSlide].priorityLevelName == 'Extreme'"
                           class="red1 riskLabels px-1"
                           >Extreme</h4
-                        >                                                                  
+                        >                                                             
           
                   </div>    
                 </div>   
 
-                </div>   
+                </div>  
                 
             </div>
         
@@ -527,12 +519,13 @@
     >
 </div>
 </div>
-
+<!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-2 pr-3"
+class="row text-center mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredRisks.filtered.risks.length > 0"
 >
+
 <div class="px-3 tableFixHead" >
     <table
     class="table table-sm table-bordered"
@@ -541,7 +534,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
     >
     <thead style="background-color: #ededed">    
         <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
-        Project Group
+        Group
         <span
             class="inactive-sort-icon scroll"
             v-if="currentSortCol1 !== 'projectGroup'"
@@ -581,47 +574,88 @@ v-if="filteredRisks.filtered.risks.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-        <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
-        Project Name 
-        <span
+        <th v-if="!getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
+          Project Name 
+          <span
             class="inactive-sort-icon scroll"
             v-if="currentSortCol2 !== 'facilityName'"
-        >
+          >
             <i class="fas fa-sort"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir2 === 'asc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 === 'asc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-up"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir2 !== 'asc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-up"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="sort-icon main scroll"
             v-if="
-            currentSortDir2 === 'desc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 === 'desc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-down"></i
-        ></span>
-        <span
+          ></span>
+          <span
             class="inactive-sort-icon scroll"
             v-if="
-            currentSortDir2 !== 'desc' && currentSortCol2 === 'facilityName'
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'facilityName'
             "
-        >
+          >
             <i class="fas fa-sort-down"></i
-        ></span>
-        </th>                 
+          ></span>
+        </th>  
+        <th v-if="getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('contractNickname')">
+          Contract Name 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'contractNickname'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'contractNickname'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>              
         <th class="pl-1 sort-th twenty" @click="sort('text')">
         Risk
         <span
@@ -999,7 +1033,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
     <tbody>
         <tr v-for="(risk, index) in sortedRisks" :key="index" class="portTable taskHover" @click="openRisk(risk)">
         <td>{{ risk.projectGroup }}</td>
-        <td>{{ risk.facilityName }}</td>
+        <td>{{ risk.facilityName || risk.contractNickname }}</td>
         <td>{{ risk.text }}</td>        
         <td class="text-left">       
           <span  v-if="risk.notes.length > 0">
@@ -1342,10 +1376,12 @@ v-if="filteredRisks.filtered.risks.length > 0"
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+// import ProjectContractSwitch from  "./ProjectContractSwitch.vue"
 // import LessonForm from "./../../dashboard/lessons/LessonForm";
 
 export default {
   name: "ProgramRisks",
+  // components:{ ProjectContractSwitch },
   data() {
     return {
       showLess: "Show More",
@@ -1394,6 +1430,7 @@ export default {
     "filterDataForAdvancedFilter",
     "filteredAllIssues",
     "filteredAllRisks",
+    "filteredAllContractRisks",
     "filteredAllTasks",
     "filteredFacilities",
     "filteredFacilityGroups",
@@ -1420,6 +1457,7 @@ export default {
     "taskUserFilter",
     'getShowAdvancedFilter',
     'getShowCount',
+    'getShowProjectStats',
     // 7 States
     'getHideComplete',
     'getHideInprogress',
@@ -1433,6 +1471,11 @@ export default {
     'getHideImportant',
     'getHideBriefed',
     ]),
+    stateRisks(){
+      if(this.getShowProjectStats == false){
+        return this.filteredAllRisks
+      } else return this.filteredAllContractRisks
+    },
     projectObj() {
     return this.currentProject.facilities
     },
@@ -1559,9 +1602,12 @@ export default {
       return issues;
     },
     filteredRisks() {
-     let risks = this.filteredAllRisks
-      .filter(r => {
-      if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
+    let allRisks = this.filteredAllRisks
+     if (this.getShowProjectStats){
+       allRisks = this.filteredAllContractRisks
+     }
+     let risks = allRisks.filter(r => {
+     if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) { 
          this.facility_project_ids = [];
          let val = this.projectGroupsFilter
          for(let k = 0; k < val.length; k++){
@@ -1576,7 +1622,7 @@ export default {
        return this.facility_project_ids.includes(r.facilityProjectId)
       } else return true
        }).filter((r) => {
-          if (this.searchRisks !== "") {
+          if (this.searchRisks !== "" && r && r.text) {
             // console.log(issue)
             return (
               r.text.toLowerCase().match(this.searchRisks.toLowerCase()) ||
@@ -1586,12 +1632,15 @@ export default {
               r.projectGroup
                 .toLowerCase()
                 .match(this.searchRisks.toLowerCase()) ||
-              r.programName
-                .toLowerCase()
-                .match(this.searchRisks.toLowerCase()) ||
-              r.facilityName
-                .toLowerCase()
-                .match(this.searchRisks.toLowerCase()) ||
+              // r.programName
+              //   .toLowerCase()
+              //   .match(this.searchRisks.toLowerCase()) ||
+              // r.facilityName
+              //   .toLowerCase()
+              //   .match(this.searchRisks.toLowerCase()) ||
+              // r.contractNickname
+              //   .toLowerCase()
+              //   .match(this.searchRisks.toLowerCase()) ||
               r.userNames.toLowerCase().match(this.searchRisks.toLowerCase())
             );
           } else return true;
@@ -1965,7 +2014,8 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-   openRisk(risk) {       
+  openRisk(risk) {    
+    if(!this.getShowProjectStats) {
       this.$router.push({
       name: "ProgramRiskForm",
       params: {
@@ -1973,8 +2023,18 @@ export default {
         projectId: risk.facilityId,
         riskId: risk.id,
       },
-    });
-    // console.log(this.$route.params)
+      })
+     }
+    if(this.getShowProjectStats) {
+      this.$router.push({
+      name: "ProgramContractRiskForm",
+      params: {
+        programId: this.$route.params.programId,
+        contractId: risk.contractId,
+        riskId: risk.id,
+      },
+      })
+      }   
     },
   exportRisksToPdf() {
       const doc = new jsPDF("l");

@@ -99,17 +99,7 @@
         myNotesCheckbox: false,
         notesQuery: '',    
         DV_facility: Object.assign({}, this.facility),
-        defaultPrivileges:{
-          admin: ['R', 'W', 'D'],
-          contracts: ['R', 'W', 'D'],
-          facility_id: this.$route.params.contractId,
-          issues: ['R', 'W', 'D'],
-          lessons: ['R', 'W', 'D'],
-          notes: ['R', 'W', 'D'],
-          overview: ['R', 'W', 'D'],
-          risks: ['R', 'W', 'D'],
-          tasks: ['R', 'W', 'D'],
-        },    
+     
       }
     },
     methods: {
@@ -121,27 +111,19 @@
        ...mapActions([
         'fetchContractNotes',       
       ]),
-      //TODO: change the method name of isAllowed
-      // _isallowed(salut) {
-      //   var programId = this.$route.params.programId;
-      //   var projectId = this.$route.params.projectId
-      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return  fPrivilege.notes.includes(s); 
-      // },
-      //TEMPORARY method until projectPrivileges issue is resolved for Contracts
-       _isallowed(salut) {
-        let programId = this.$route.params.programId;
+      _isallowed(salut) {
         if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.notes.includes(s);
         } else {
-        let fPrivilege = this.$projectPrivileges[programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s); 
-        }         
-      },
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.notes.includes(s); 
+        }
+     },
      addNewNote() {
         this.setTaskForManager({key: 'note', value: {}})
         // Route to new task form page
@@ -169,10 +151,6 @@
           this.updateFacilityHash(this.facility)
         }
       },
-      // noteUpdated(note) {
-      //   let index = this.DV_facility.notes.findIndex(n => n.id == note.id)
-      //   if (index > -1) Vue.set(this.DV_facility.notes, index, note)
-      // },
       noteDeleted(note) {
         this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
       }

@@ -26,12 +26,12 @@
                <span v-if="!isProgramView && !contract">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="isProgramView && !contract">
-                    {{ risk.facilityName }}
+               <span v-if="isProgramView && risk">
+                    {{ risk.facilityName || risk.contractNickname }}
                </span>
              </router-link>
              <router-link :to="backToContract">
-              <span v-if="contract">               
+              <span v-if="contract && !isProgramView">               
                 {{ contract.nickname || contract.name }}
               </span>
              </router-link>          
@@ -2079,17 +2079,6 @@ export default {
       informedRiskUsers: [],
       probability: [],
       facilityProjectId: this.$route.params.programId,   
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
       selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
       selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
@@ -2235,29 +2224,20 @@ export default {
         notes: [],
       };
     },
-      //  log(e){
-      //     console.log(e)
-      // },
-    //TODO: change the method name of isAllowed
-    // _isallowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.risks.includes(s); 
-    // },
-    // Temporary _isallowed method until contract projectPrivileges is fixed
     _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
-        } else {
+      if (this.$route.params.contractId) {
+        // return this.defaultPrivileges
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.risks.includes(s);
+      } else {
         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         return fPrivilege.risks.includes(s); 
-        }         
-      },
+      }
+     },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2729,10 +2709,10 @@ export default {
           callback = "risk-updated";
         }
 
-        if (this.risk && this.risk.id && this.facility) {
+        if (this.risk && this.risk.id && this.risk.facilityId) {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
         }
-        if (this.risk && this.risk.id && this.contract) {
+        if (this.risk && this.risk.id && this.risk.contractId) {
           url = `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
         }
         // var beforeRisk = this.risk
@@ -2779,8 +2759,11 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-             } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/risk/${response.data.risk.id}`
+             } else if (this.isProgramView && this.risk.contractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/risk/${response.data.risk.id}`
+              );
+              } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/risk/${response.data.risk.id}`
               );
           })
           .catch((err) => {
@@ -3067,6 +3050,7 @@ export default {
     isProgramView() {
       return this.$route.name.includes("ProgramTaskForm") ||
              this.$route.name.includes("ProgramRiskForm") ||
+             this.$route.name.includes("ProgramContractRiskForm") ||
              this.$route.name.includes("ProgramIssueForm") ||
              this.$route.name.includes("ProgramLessonForm") ;
     },
@@ -3323,7 +3307,7 @@ export default {
       }
     },
   backToRisks() {
-     if (this.contract && !this.facility) {
+     if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/risks`
       }
       if (
@@ -3346,6 +3330,8 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
+      } else if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
       } else {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }

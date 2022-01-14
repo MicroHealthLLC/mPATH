@@ -17,7 +17,8 @@ class ProjectPrivilege < ApplicationRecord
   before_save :remove_facility_privileges_on_save
   after_destroy :remove_facility_privileges
 
-  PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons", "contracts"]
+  # PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons", "contracts"]
+  PRIVILEGE_MODULE = {admin: "admin", overview: "analytics", tasks: "tasks", issues: "issues", risks: "risks", notes: "notes", lessons: "lessons", contracts: "contracts" }
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   validate :validate_project_ids

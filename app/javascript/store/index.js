@@ -45,7 +45,7 @@ export default new Vuex.Store({
     myAssignmentsFilter: [],
     contentLoaded: false,
     projectsLoaded: false,
-    showProjectStats: true,
+    showProjectStats: false,
     toggleRACI: true,
     showAllEventsToggle: false,
     showAdvancedFilter: false,
@@ -2584,6 +2584,59 @@ export default new Vuex.Store({
         }
       );
     },
+    filteredAllContractTasks: (state, getters) => {
+      let ids =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let stages =
+        getters.taskStageFilter && getters.taskStageFilter.length
+          ? _.map(getters.taskStageFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "tasks")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.taskStageId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].name == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          return valid;
+        }
+      );
+    },
     filteredAllIssues: (state, getters) => {
       let taskTypeIds =
         getters.taskTypeFilter && getters.taskTypeFilter.length
@@ -2606,6 +2659,80 @@ export default new Vuex.Store({
 
       return _.filter(
         _.flatten(_.map(getters.filteredFacilities("active"), "issues")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.issueStageId);
+          if (severities.length > 0)
+            valid = valid && severities.includes(t.issueSeverityId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
+          //   valid = (t.draft == true)
+          // }
+
+          // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
+          //   valid = (t.onHold == true)
+          // }
+
+          return valid;
+        }
+      );
+    },
+    filteredAllContractIssues: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let ids =
+        getters.issueTypeFilter && getters.issueTypeFilter.length
+          ? _.map(getters.issueTypeFilter, "id")
+          : [];
+      let stages =
+        getters.issueStageFilter && getters.issueStageFilter.length
+          ? _.map(getters.issueStageFilter, "id")
+          : [];
+      let severities =
+        getters.issueSeverityFilter && getters.issueSeverityFilter.length
+          ? _.map(getters.issueSeverityFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "issues")),
         (t) => {
           let valid = true;
           if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId);
@@ -2731,6 +2858,74 @@ export default new Vuex.Store({
           //   valid = (t.onHold == true)
           // }
 
+          return valid;
+        }
+      );
+    },
+    filteredAllContractRisks: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let approaches =
+        getters.riskApproachFilter && getters.riskApproachFilter.length
+          ? _.map(getters.riskApproachFilter, "id")
+          : [];
+      let stages =
+        getters.riskStageFilter && getters.riskStageFilter.length
+          ? _.map(getters.riskStageFilter, "id")
+          : [];
+      let riskPriorityLevels =
+        getters.riskPriorityLevelFilter &&
+        getters.riskPriorityLevelFilter.length
+          ? _.map(getters.riskPriorityLevelFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "risks")),
+        (t) => {
+          let valid = true;
+          if (approaches.length > 0)
+            valid = valid && approaches.includes(t.riskApproachFilterIds);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.riskStageId);
+          if (riskPriorityLevels.length > 0)
+            valid =
+              valid && riskPriorityLevels.includes(t.riskPriorityLevelIds);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
           return valid;
         }
       );
