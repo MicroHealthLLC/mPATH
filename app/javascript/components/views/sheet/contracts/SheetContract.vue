@@ -168,19 +168,21 @@
                   </div>
 
                   <div class="col-6 pl-3 pr-0">
+                    <!-- Amand, if I add 'multiple" attribute to this Customer Entity el-select component, it creates error.
+                    Can backend store multiple entities?   -->
                     <label class="font-md">Customer Entity </label>
                     <el-select
-                      v-model="contract.contract_status_id"
-                      filterable
-                      class="w-100"
-                      track-by="id"
+                      v-model="contract.contract_client_type_id"
+                      filterable       
+                      track-by="name"        
                       value-key="id"
+                      class="w-100"
                       allow-create
                       default-first-option
                       placeholder="Select or enter status"
                     >
                       <el-option
-                        v-for="item in cStatusOptions"
+                        v-for="item in cClientTypeOptions"
                         :key="item.id"
                         :label="item.name"
                         :value="item.id"
@@ -336,6 +338,22 @@
                    </div>
                   <!-- STATUS -->
                 </div>
+
+                <div class="row row_5">
+                  <div class="col-12 px-0">
+                    <label class="font-md"
+                      >Contract Notes
+                    </label>
+                     <el-input
+                      name="Contract Notes"
+                      type="textarea"
+                      :rows="3"
+                      v-model="contract.notes"
+                      placeholder="Enter note here"
+                    />
+                
+                  </div>
+                 </div>
               </div>
 
               <!-- TAB 2: DATES -->
@@ -567,6 +585,7 @@ export default {
       this.getVehicle()
       this.getPrimeIdIqNumber()
       this.getCnData()
+      this.getClientType()
       this.getScData()
       this.getPrimeData()
       this.fetchClassificationTypes();
@@ -585,6 +604,7 @@ export default {
       "fetchContractGroupTypes",
       "fetchCustomerAgencies",
       "fetchContractStatuses",
+      "fetchClientTypes",
       "fetchVehicles",
       "fetchPrime",
       "fetchVehicleNumbers",
@@ -601,6 +621,7 @@ export default {
       "SET_CONTRACT_LOADED",
       "SET_CONTRACT_CLASSIFICATIONS",
       "SET_CONTRACTS_LOADED",
+      "SET_CLIENT_TYPES",
       "SET_CURRENT_POP",
       "SET_PRIME",
       "SET_VEHICLES",
@@ -614,6 +635,7 @@ export default {
       this.componentKey += 1;
       this.getCAgency()
       this.getStatus()
+      this.getClientType()      
       this.getVehicle()
       this.getPrimeIdIqNumber()
       this.getCnData()
@@ -622,6 +644,7 @@ export default {
       this.fetchClassificationTypes();
     },
     saveEdits() {
+      console.log(this.contract.notes)
       let id = this.contract.id;
       let contractData = {
         contract: {
@@ -629,10 +652,12 @@ export default {
           project_id: this.contract.project_id,
           facility_group_id: this.contract.facility_group_id,
           nickname: this.contract.nickname,
+          notes: this.contract.notes,
           project_code: this.contract.project_code,
           contract_type_id: this.contract.contract_type_id,
           contract_status_id: this.contract.contract_status_id,
           total_subcontracts: this.contract.total_subcontracts,
+          contract_client_type_id: this.contract.contract_client_type_id,
           contract_customer_id: this.contract.contract_customer_id,
           contract_vehicle_id: this.contract.contract_vehicle_id,
           contract_vehicle_number_id: this.contract.contract_vehicle_number_id,
@@ -669,6 +694,9 @@ export default {
     },
     getStatus(e) {
       this.fetchContractStatuses();
+    },
+    getClientType(e) {
+      this.fetchClientTypes();
     },
     getVehicle(e) {
         this.fetchVehicles();
@@ -722,6 +750,7 @@ export default {
       "getContractGroupOptions",
       "getContractStatusesFilter",
       "getFilterValue",
+      "getClientTypes",
       "getPrime",
       "getVehicles",
       "getVehicleNumbers",
@@ -748,6 +777,16 @@ export default {
       },
       set(value) {
         this.SET_VEHICLES(value);
+      },
+    },
+    cClientTypeOptions: {
+       get() {
+        if (this.getClientTypes && this.getClientTypes.length > 0 ) {
+            return this.getClientTypes.filter(c => c.name !== 'undefined');
+        } else return []       
+      },
+      set(value) {
+        this.SET_CLIENT_TYPES(value);
       },
     },
     cContractNoOptions: {

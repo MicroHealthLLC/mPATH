@@ -9,6 +9,7 @@ const settingsStore = {
     group_filter: null,
     contract: {},
     contracts: [],
+    client_types: [],
     pop_days_remaining: null,
     contract_loaded: true,
     contracts_loaded: true,
@@ -273,6 +274,27 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
+    fetchClientTypes({ commit }) {
+      commit("TOGGLE_CONTRACTS_LOADED", false);
+      // Retrieve contract by id
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/contract_data/contract_client_types`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CLIENT_TYPES", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACTS_LOADED", true);
+        });
+    },
     fetchContractNumber({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
@@ -396,6 +418,7 @@ const settingsStore = {
     SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
+    SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
@@ -432,6 +455,7 @@ const settingsStore = {
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
     getNewContractGroupFilter: (state) => state.new_contract_group_filter,    
+    getClientTypes: (state) => state.client_types,
     getDaysRemaining: (state) => state.pop_days_remaining,
     editContractSheet: (state) => state.edit_contract_sheet,
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
@@ -478,6 +502,7 @@ const settingsStore = {
 };
 
 const contractFormData = (contract) => {
+  console.log(contract)
   let formData = new FormData();
   // Append all required form data
   if (contract.id) {
@@ -491,6 +516,11 @@ const contractFormData = (contract) => {
   formData.append("contract[nickname]", contract.nickname); //Required
   formData.append("contract[total_subcontracts]", contract.total_subcontracts); //Required
   formData.append("contract[name]", contract.name); //Required
+  formData.append("contract[notes]", contract.notes); //Required
+  // contract.notes.map((note) => {
+  //   formData.append("contract[notes]", note[0]);
+  // });
+  // formData.append('note[body]', note.body)
   formData.append("contract[contract_status_id]", contract.contract_status_id);
   formData.append(
     "contract[contract_customer_id]",
@@ -503,6 +533,10 @@ const contractFormData = (contract) => {
   formData.append(
     "contract[contract_vehicle_number_id]",
     contract.contract_vehicle_number_id
+  );
+  formData.append(
+    "contract[contract_client_type_id]",
+    contract.contract_client_type_id
   );
   formData.append("contract[contract_number_id]", contract.contract_number_id);
   formData.append(
