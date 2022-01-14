@@ -116,7 +116,9 @@
      <el-table-column label="Actions">
       <template slot-scope="scope" >
       <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
+      <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>    
        <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
@@ -284,7 +286,7 @@ export default {
      'setNewContractGroupFilter',
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
-   ...mapActions(["createContract", "fetchContracts", "updateContract"]),
+   ...mapActions(["createContract", "fetchContracts", "updateContract", "deleteContract"]),
     _isallowed(salut) {
         let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -345,6 +347,32 @@ export default {
          this.updateContract({
             ...contractData, id
           })
+    },
+    deleteSelectedContract(index, rows) {
+      let id = rows.id;
+      this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          res = this.deleteContract(id).then((value) => {
+            if (value == 200) {
+              this.$message({
+                message: `${rows.nickname} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          }).catch((error) => {
+            console.log(error)
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete cancelled',
+            showClose: true
+          });
+        });
     },
     addAnotherContract() {
       this.C_projectGroupFilter = null;
