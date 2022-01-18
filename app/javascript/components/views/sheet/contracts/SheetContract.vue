@@ -118,14 +118,14 @@
                   <div class="col-3 pr-2">
                     <label class="font-md">Type </label>
                     <el-select
-                      v-model="contract.contract_classification_id"
+                      v-model="contract.contract_type_id"
                       class="w-100"
                       track-by="id"
                       value-key="id"
                       placeholder="Select Type"
                     >
                       <el-option
-                        v-for="item in cClassificationOptions"
+                        v-for="item in cGroupTypeOptions"
                         :value="item.id"
                         :key="item.id"
                         :label="item.name"
@@ -597,6 +597,7 @@ export default {
       this.getScData()
       this.getPrimeData()
       this.fetchClassificationTypes();
+      this.fetchContractGroupTypes();
       this.fetchContract({
         id: this.$route.params.contractId,
         ...this.$route.params,
