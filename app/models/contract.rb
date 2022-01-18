@@ -21,7 +21,6 @@ class Contract < ApplicationRecord
   has_many :issues
   has_many :risks
   has_many :lessons
-  has_many :notes, as: :noteable, dependent: :destroy
 
   before_save :assign_default_contract_type
 
@@ -56,6 +55,7 @@ class Contract < ApplicationRecord
     [
       :id,
       :total_subcontracts,
+      :notes,
       :contract_client_type_id,
       :contract_category_id,
       :contract_type_id,

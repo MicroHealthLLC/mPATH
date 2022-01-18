@@ -159,6 +159,30 @@ export default {
 
       return [...data];
     },
+    // contractTreeFormattedData() {
+    //   var data = [];
+
+    //   this.facilityGroups.forEach((group, index) => {
+    //     data.push({
+    //       id: index,
+    //       label: group.name,
+    //       children: [
+    //         ...group.facilities
+    //           .filter(
+    //             (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
+    //           )
+    //           .map((facility) => {
+    //             return {
+    //               id: facility.facilityProjectId,
+    //               label: facility.facilityName,
+    //             };
+    //           }),
+    //       ],
+    //     });
+    //   });
+
+    //   return [...data];
+    // },
     submitDisabled() {
       if (this.$refs.duplicatetree) {
         return (
@@ -436,12 +460,15 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteTask() {
+      // console.log(this.task)
+      let task = this.task
+      let programId = this.$route.params.programId
       this.$confirm(`Are you sure you want to delete ${this.task.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.taskDeleted(this.task).then((value) => {
+          this.taskDeleted({task, programId}).then((value) => {
             if (value === 'Success') {
               this.$message({
                 message: `${this.task.text} was deleted successfully.`,
