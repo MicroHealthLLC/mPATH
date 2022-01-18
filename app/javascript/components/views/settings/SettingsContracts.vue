@@ -56,7 +56,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in facilityGroups.filter(t => t.projectId == this.$route.params.programId)"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -94,7 +94,6 @@
             v-model="scope.row.facility_group_id" 
             track-by="id"
             value-key="id"
-            clearable
             filterable
             name="Project Group"         
             placeholder="Select Group"
@@ -116,7 +115,7 @@
      <el-table-column label="Actions">
       <template slot-scope="scope" >
       <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-      <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>    
+      <!-- <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>     -->
        <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
 
         </el-button>
@@ -194,7 +193,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in facilityGroups.filter(t => t.projectId == this.$route.params.programId)"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -251,7 +250,7 @@
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
-import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
+// import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsContracts",
   components: {
@@ -305,7 +304,7 @@ export default {
     
     },
     saveNewContract() {
-      this.onSubmit()
+      // this.onSubmit()
         let contractData = {
           contract: {
             nickname: this.contractNicknameText,
@@ -319,18 +318,19 @@ export default {
             ...contractData,
           })
           this.hideSaveBtn = true;
-          console.log(contractData)
+          // console.log(contractData)
     },
-     async onSubmit ()  {
-         const formData = {
-            contractName: this.contractNameText,
-            programName: this.currentProject.name, 
-            mpathInstance: this.$mpath_instance
+    //  async onSubmit ()  {
+    //      const formData = {
+    //         contractName: this.contractNameText,
+    //         programName: this.currentProject.name, 
+    //         mpathInstance: this.$mpath_instance
 
-          }
-        await createUser({...formData})
-        return { formData }
-    },   
+    //       }
+    //     await createUser({...formData})
+    //     return { formData }
+    //  }
+    
     editContract(index, rows) {
         let id = rows.id;
         let contractData = {
