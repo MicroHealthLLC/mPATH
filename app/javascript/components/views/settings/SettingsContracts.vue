@@ -348,32 +348,25 @@ export default {
             ...contractData, id
           })
     },
-    // deleteSelectedContract(index, rows) {
-    //   let id = rows.id;
-    //   this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
-    //       confirmButtonText: 'Delete',
-    //       cancelButtonText: 'Cancel',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       res = this.deleteContract(id).then((value) => {
-    //         if (value == 200) {
-    //           this.$message({
-    //             message: `${rows.nickname} was deleted successfully.`,
-    //             type: "success",
-    //             showClose: true,
-    //           });
-    //         }
-    //       }).catch((error) => {
-    //         console.log(error)
-    //       });
-    //     }).catch(() => {
-    //       this.$message({
-    //         type: 'info',
-    //         message: 'Delete cancelled',
-    //         showClose: true
-    //       });
-    //     });
-    // },
+    deleteSelectedContract(index, rows) {
+      let id = rows.id;
+      this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.deleteContract(id).then((value) => {
+            if (value === 200) {
+              this.fetchContracts();
+              this.$message({
+                message: `${rows.nickname} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+        });
+    },
     addAnotherContract() {
       this.C_projectGroupFilter = null;
       this.contractNameText = "";

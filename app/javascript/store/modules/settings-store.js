@@ -411,7 +411,6 @@ const settingsStore = {
         http
           .delete(`${API_BASE_PATH}/contracts/${id}`)
           .then((res) => {
-            commit("DELETE_CONTRACT", id);
             resolve(res.status);
           }).catch((err) => {
             console.log(err);
@@ -456,10 +455,6 @@ const settingsStore = {
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
     SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
-    DELETE_CONTRACT: (state, id) => {
-      let index = state.contracts.findIndex((contract) => contract.id == id);
-      state.contracts.splice(index, 1);
-    },
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
