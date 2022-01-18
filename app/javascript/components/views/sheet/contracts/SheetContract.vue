@@ -339,10 +339,10 @@
                   <!-- STATUS -->
                 </div>
 
-                <!-- <div class="row row_5">
+                <div class="row row_5">
                   <div class="col-12 px-0">
                     <label class="font-md"
-                      >Contract Notes
+                      >Remarks
                     </label>
                      <el-input
                       name="Contract Notes"
@@ -353,7 +353,7 @@
                     />
                 
                   </div>
-                 </div> -->
+                 </div>
               </div>
 
               <!-- TAB 2: DATES -->
@@ -473,28 +473,30 @@
                     <label class="font-md"
                       >Total Contract Value
                     </label>
-                    <el-input
+                   <h4> <my-currency-input v-model="contract.total_contract_value"></my-currency-input></h4>
+                    <!-- <el-input
                       name="Total Contract Value"
                       v-model="contract.total_contract_value"
                       type="text"
                       placeholder="Total Contract Value"
                     >
                     <el-button slot="prepend" class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
-                    </el-input>
+                    </el-input> -->
                   </div>
                   <div
                     class="col-3 pl-1 pr-0">
                     <label class="font-md"
                       >Current PoP Value 
                     </label>
-                    <el-input
+                  <h4>  <my-currency-input v-model="contract.current_pop_value"></my-currency-input></h4>
+                    <!-- <el-input
                       name="Pop Value"
                       v-model="contract.current_pop_value"
                       type="text"
                       placeholder="Enter Current PoP Value"
                     >
                     <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
-                    </el-input>
+                    </el-input> -->
                     <!-- Need to add additional div here for error handling -->
                   </div>
                 </div>
@@ -504,27 +506,29 @@
                     <label class="font-md"
                       >Current PoP Funded
                     </label>
-                    <el-input
+                 <h4><my-currency-input v-model="contract.current_pop_funded"></my-currency-input></h4>
+                    <!-- <el-input
                       name="Contract Type"
                       v-model="contract.current_pop_funded"
                       type="text"
                       placeholder="Enter Current PoP Funded"
                     >
                         <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
-                    </el-input>
+                    </el-input> -->
                   </div>
                   <div class="col-3 pl-1 pr-0">
                     <label class="font-md"
                       >Total Funded To Date
                     </label>
-                    <el-input
+                <h4> <my-currency-input v-model="contract.total_contract_funded"></my-currency-input></h4>
+                    <!-- <el-input                  
                       v-model="contract.total_contract_funded"
                       name="Contract Status"
                       type="text"
                       placeholder="Enter Total Funded To Date"
-                    >
-                        <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
-                    </el-input>
+                    > -->
+                        <!-- <el-button slot="prepend"  class="usd-icon"> <i class="fal fa-usd-square"></i></el-button>   
+                    </el-input> -->
                   </div>
                 </div>
               </div>
@@ -542,6 +546,43 @@
 
 <script>
 // import http from "../../../../common/http";
+Vue.component('my-currency-input', {
+ props: ["value"],
+ template: `
+        <div>
+            <input type="text" v-model="displayValue" @blur="isInputActive = false" @focus="isInputActive = true"/>
+        </div>`,
+          data: function() {
+        return {
+            isInputActive: false
+        }
+    },
+    computed: {
+        displayValue: {
+            get: function() {
+                if (this.isInputActive) {
+                    // Cursor is inside the input field. unformat display value for user
+                    return this.value.toString()
+                } else if (!this.isInputActive && this.value) {
+                    // User is not modifying now. Format display value for user interface
+                    return "$ " + this.value.toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")
+                } else return "$0.00"
+            },
+            set: function(modifiedValue) {
+                // Recalculate value after ignoring "$" and "," in user input
+                let newValue = parseFloat(modifiedValue.replace(/[^\d\.]/g, ""))
+                // Ensure that it is not NaN
+                if (isNaN(newValue)) {
+                    newValue = 0
+                }
+                // Note: we cannot set this.value as it is a "prop". It needs to be passed to parent component
+                // $emit the event so that parent component gets it
+                this.$emit('input', newValue)
+                console.log(newValue)
+            }
+        }
+    }
+});
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../../shared/loader";
 import FormTabs from "../../../shared/FormTabs.vue";
@@ -553,10 +594,12 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass"],
+  props: ["contractClass", "currency-val"],
+ 
   data() {
     return {
       loading: true,
+      isInputActive: false,
       da: "",
       statusId: null,
       componentKey: 0,
@@ -651,6 +694,10 @@ export default {
       this.getPrimeData()
       this.fetchClassificationTypes();
     },
+    formatPrice(value) {
+        let val = (value/1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    },
     saveEdits() {
       // console.log(this.contract.notes)
       let id = this.contract.id;
@@ -660,7 +707,7 @@ export default {
           project_id: this.contract.project_id,
           facility_group_id: this.contract.facility_group_id,
           nickname: this.contract.nickname,
-          // notes: this.contract.notes,
+          notes: this.contract.notes,
           project_code: this.contract.project_code,
           contract_type_id: this.contract.contract_type_id,
           contract_status_id: this.contract.contract_status_id,

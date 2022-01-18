@@ -265,7 +265,7 @@ export default {
         this.facilityGroups &&
         this.facilityGroups.length > 0
       ) {
-        return this.facilityGroups.filter(t => t.projectId == this.$route.params.programId)
+        return this.facilityGroups
       }
     },
     groupContracts(){

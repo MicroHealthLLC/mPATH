@@ -527,17 +527,13 @@ const contractFormData = (contract) => {
     formData.append("facility_group_name", contract.facility_group_name);
   }
   formData.append("contract[facility_group_id]", contract.facility_group_id);
-  formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
+  formData.append("contract[contract_type_id]", contract.contract_type_id);
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
   formData.append("contract[project_code]", contract.project_code);
   formData.append("contract[nickname]", contract.nickname); //Required
   formData.append("contract[total_subcontracts]", contract.total_subcontracts); //Required
   formData.append("contract[name]", contract.name); //Required
-  formData.append("contract[notes]", contract.notes); //Required
-  // contract.notes.map((note) => {
-  //   formData.append("contract[notes]", note[0]);
-  // });
-  // formData.append('note[body]', note.body)
+  formData.append("contract[notes]", contract.notes);
   formData.append("contract[contract_status_id]", contract.contract_status_id);
   formData.append(
     "contract[contract_customer_id]",

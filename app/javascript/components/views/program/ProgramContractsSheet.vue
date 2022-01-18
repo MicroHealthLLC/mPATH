@@ -405,6 +405,21 @@
 
        </template>
     </el-table-column>
+     <!--Total PoP Funded-->
+     <el-table-column 
+      prop="currentPopFunded"  
+      sortable  
+      width="200"
+      label="Total PoP Funded"
+      > 
+       <template slot-scope="scope">
+          <!-- <el-input size="small"
+            style="text-align:center"
+            v-model="scope.row.currentPopValue" controls-position="right"></el-input> -->
+         ${{ scope.row.currentPopFunded }}
+
+       </template>
+    </el-table-column>
       <!--Total Funded To Date-->
      <el-table-column 
       prop="totalContractFunded"  
@@ -421,12 +436,16 @@
     </el-table-column>
     <!--Notes-->
      <el-table-column 
-      prop="" 
-      sortable 
+      prop="notes" 
       filterable 
       label="Notes"
       width="300"     
       >     
+       <template slot-scope="scope">
+        <span class="truncate-line-five">
+          {{ scope.row.notes }}
+        </span>
+       </template>
     </el-table-column>
     <el-table-column 
       prop="facilityGroupId" 
@@ -712,5 +731,17 @@ a {
 }
 .overflowX {
   overflow-x: scroll !important;
+}
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+  }
 }
 </style>
