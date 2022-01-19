@@ -594,8 +594,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass", "currency-val"],
- 
+  props: ["contractClass"], 
   data() {
     return {
       loading: true,
@@ -693,10 +692,6 @@ export default {
       this.getScData()
       this.getPrimeData()
       this.fetchClassificationTypes();
-    },
-    formatPrice(value) {
-        let val = (value/1).toFixed(2).replace('.', ',')
-        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     },
     saveEdits() {
       // console.log(this.contract.notes)

@@ -8,6 +8,7 @@ const settingsStore = {
     edit_contract_sheet: false, 
     contract_table: [],
     group_filter: null,
+    transfer_data: [],
     contract: {},
     contracts: [],
     client_types: [],
@@ -432,6 +433,7 @@ const settingsStore = {
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
+    SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
@@ -481,6 +483,7 @@ const settingsStore = {
     getSubcontractNumbers: (state) => state.subcontract_number,
     getContractNumbers: (state) => state.contract_number,
 
+    getTransferData: (state) => state.transfer_data, 
     getContractGroupTypes: (state) => state.contract_group_types,
     group: (state) => state.group,
     groups: (state) => state.groups,

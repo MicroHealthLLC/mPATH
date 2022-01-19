@@ -438,7 +438,7 @@
      <el-table-column 
       prop="notes" 
       filterable 
-      label="Notes"
+      label="Remarks"
       width="300"     
       >     
        <template slot-scope="scope">

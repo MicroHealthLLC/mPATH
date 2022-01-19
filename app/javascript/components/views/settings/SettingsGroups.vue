@@ -1,9 +1,14 @@
 <template>
-  <div class="row">
+  <div 
+   v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="row">
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
-   <div class="col-md-10">
+  <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
      <el-breadcrumb-item :to="backToSettings">
@@ -30,8 +35,8 @@
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
      </div>    
-     <div class="col-5">     
-        <el-input
+     <div class="col-5"  v-show="currentTab == 'tab2'">     
+        <!-- <el-input
           type="search"          
           placeholder="Search Group"
           aria-label="Search"            
@@ -40,19 +45,79 @@
           data-cy=""
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>  
-      </div> 
+      </el-input>   -->
+      </div>  
   </div>
  </div>
+  <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
+     <form
+      accept-charset="UTF-8"    
+      >      
+       <div class="form-group mx-3">
+          <label class="font-md"
+            >New Group Name <span style="color: #dc3545">*</span></label
+          >
+          <el-input
+            type="textarea"
+            v-model="newGroupName"
+            placeholder="Enter new Group name here"          
+            rows="1"          
+            name="Group Name"
+          />
+       </div>
+      <div class="right mr-2">
+        <button 
+          @click.prevent="saveGroup"
+          :disabled="!newGroupName"  
+          class="btn btn-sm bg-primary text-light mr-2" 
+          :class="[hideSaveBtn ? 'd-none': '']">
+          Save
+       </button>       
+        <button 
+          @click.prevent="addAnotherGroup" 
+          :class="[!hideSaveBtn ? 'd-none': '']" 
+          class="btn btn-sm bg-primary text-light mr-2">
+          <i class="far fa-plus-circle mr-1"></i> Add Another Group
+        </button>
+        <button 
+          @click.prevent="closeAddGroupBtn" 
+          class="btn btn-sm bg-danger text-light mr-2" 
+          :class="[!hideSaveBtn ? 'd-none': '']">
+          Close
+        </button>
+        </div>
+    </form>
+   </el-dialog> 
+   <FormTabs
+    :current-tab="currentTab"
+    :tabs="tabs"
+    class="pl-3"
+    :allErrors="errors"
+    @on-change-tab="onChangeTab"
+  />
+    <div v-show="currentTab == 'tab1'" class="container mt-2 mx-0">
+      <div>
+        <el-transfer
+        class="pl-1 pt-3"
+        v-if="currentProject && transferData"
+        :titles="['Portfolio Groups','My Program Groups']"
+        v-model="transferData"
+        :data="generateData">
+      </el-transfer>
+
+      </div>
+    </div>
+      <div v-show="currentTab == 'tab2'" class="container mt-2 mx-0">
    <div
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
     class=""
-  >
-   <el-table 
-   v-if="tableData && tableData.length > 0"
+  > 
+  <el-table 
+   v-if="tableData"
+   :header-cell-style="{ background: '#EDEDED' }"
    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
    style="width: 100%"  height="475"
    >
@@ -123,81 +188,71 @@
         </span> 
     </template>
     </el-table-column>  
-   </el-table>  
-   <div v-else-if="contentLoaded &&  tableData && tableData.length === 0">
-     <i>NO GROUPS YET.  CLICK 'Add Group' BUTTON TO ADD YOUR FIRST GROUP.</i>
-   </div>
-   </div>
-   <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
-     <form
-      accept-charset="UTF-8"    
-      >      
-       <div class="form-group mx-3">
-          <label class="font-md"
-            >New Group Name <span style="color: #dc3545">*</span></label
-          >
-          <el-input
-            type="textarea"
-            v-model="newGroupName"
-            placeholder="Enter new Group name here"          
-            rows="1"          
-            name="Group Name"
-          />
-       </div>
-      <div class="right mr-2">
-        <button 
-          @click.prevent="saveGroup"
-          :disabled="!newGroupName"  
-          class="btn btn-sm bg-primary text-light mr-2" 
-          :class="[hideSaveBtn ? 'd-none': '']">
-          Save
-       </button>       
-        <button 
-          @click.prevent="addAnotherGroup" 
-          :class="[!hideSaveBtn ? 'd-none': '']" 
-          class="btn btn-sm bg-primary text-light mr-2">
-          <i class="far fa-plus-circle mr-1"></i> Add Another Group
-        </button>
-        <button 
-          @click.prevent="closeAddGroupBtn" 
-          class="btn btn-sm bg-danger text-light mr-2" 
-          :class="[!hideSaveBtn ? 'd-none': '']">
-          Close
-        </button>
-        </div>
-    </form>
-   </el-dialog>
+      <el-table-column
+      align="right">
+      <template slot="header" slot-scope="scope">
+        <el-input
+          v-model="search"
+          class="groupSearch"
+          placeholder="Search Group names"/>
+      </template>
+         </el-table-column>
+   </el-table>   
+  
+   </div> 
+ 
       </div>
-    </div>
+    </div> 
+     <!-- <div class="col-md-8" > -->
+       <!-- <div class="right-panel">
+       
+       </div> -->
+    <!-- </div> -->
+  </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
+import FormTabs from "../../shared/FormTabs.vue"
 export default {
   name: "SettingsGroups",
   components: {
-    SettingsSidebar
+    SettingsSidebar,
+    FormTabs
   },
-  data() {
-    return {
-      currentFacility: {},
-      dialogVisible: false,
-      contracts: null,
-      currentFacilityGroup: {},
-      newGroupName: null,
-      programId: this.$route.params.programId,
-      hideSaveBtn: false,
-      search:'',
-      selectedProjectGroup: null, 
-       expanded: {
-        id: "",
-      },
-    };
+    data() {    
+      return {
+        currentFacility: {},
+        dialogVisible: false,
+        currentTab: "tab1",
+      tabs: [
+        {
+          label: "MANAGE GROUPS",
+          key: "tab1",
+          closable: false,
+        },
+        {
+          label: "TABLE",
+          key: "tab2",
+          closable: false,
+        },
+       ],
+        contracts: null,
+        currentFacilityGroup: {},
+        newGroupName: null,
+        programId: this.$route.params.programId,
+        hideSaveBtn: false,
+        search:'',
+        selectedProjectGroup: null, 
+        expanded: {
+          id: "",
+       },
+      };
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS']), 
+   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA']), 
    ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup"]),
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
@@ -212,6 +267,9 @@ export default {
       this.dialogVisible = true;    
       this.newGroupName = null;
       this.C_projectGroupFilter = null;     
+    },
+    onChangeTab(tab) {
+      this.currentTab = tab ? tab.key : "tab1";     
     },
     saveGroup() {
         let groupData = {
@@ -233,12 +291,14 @@ export default {
     },
    
   },
+
   computed: {
     ...mapGetters([
       "contentLoaded",
       "facilities",
       "groups",
       "groupStatus",
+      "getTransferData",
       'getContractTable',
       'getGroupFilter',
       'getProjectGroupFilter',
@@ -248,9 +308,25 @@ export default {
     ]), 
    backToSettings(){
      return `/programs/${this.$route.params.programId}/settings`  
-    }, 
-      // Filter for Projects Table
-    C_groupFilter: {
+    },
+
+    generateData(){
+      const data = [];
+      if(this.facilityGroups && this.facilityGroups.length > 0){
+        let eachGroup = this.facilityGroups.map(g => g)
+       for (let i = 0; i <= this.facilityGroups.length; i++) {
+          if (eachGroup[i] !== undefined) {
+           data.push({
+            key: eachGroup[i].id,
+            label: eachGroup[i].name,  
+            disabled: eachGroup[i].projectId == this.$route.params.programId     
+            });
+           }           
+         }
+         return data;
+        }     
+      },
+     C_groupFilter: {
       get() {
         return this.getGroupFilter;
       },
@@ -263,10 +339,32 @@ export default {
       if (
         // this.projectsLoaded &&
         this.facilityGroups &&
-        this.facilityGroups.length > 0
+         this.facilityGroups.length > 0
       ) {
         return this.facilityGroups
       }
+    },
+    myProgramGroups(){
+      const data = this.getTransferData;
+      if (this.facilityGroups && this.facilityGroups.length > 0) {
+        let myGroups = this.facilityGroups.filter(t => t.projectId == this.$route.params.programId)
+       
+       for (let i = 0; i <= myGroups.length; i++) {
+          if (myGroups[i] !== undefined) {
+              data.push(myGroups[i].id);
+           }           
+         }
+       return data;
+     }
+    },
+    transferData: {
+      get() {      
+        return this.myProgramGroups     
+      },
+      set(value) {
+        console.log(`transferData setter value: ${value}`)
+        this.SET_TRANSFER_DATA(value);
+      },
     },
     groupContracts(){
        if (
@@ -319,16 +417,9 @@ export default {
     },
   },
 };
-
-
-
-
 </script>
 
 <style scoped lang="scss">
-.buttonWrapper {
-  border-bottom: lightgray solid 1px;
-}
 .right{
   text-align: right;
 }
@@ -383,6 +474,46 @@ a {
 .container {
   margin-left: 50px;
 }
+
+// Move el-transfer styles to Common file if more files require same CSS
+/deep/.el-transfer-panel{
+  width: 400px;
+}
+/deep/.el-transfer-panel__header {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+}
+/deep/.el-transfer-panel__body {
+  min-height: 400px ;
+}
+/deep/.el-transfer-panel__list {
+  height: 425px;
+}
+/deep/.el-checkbox__input.is-disabled+span.el-checkbox__label {
+    color: #1D336F !important;
+    cursor: default;
+}
+/deep/.el-transfer-panel .el-transfer-panel__header {
+  background-color: #ededed;
+}
+/deep/.el-table { 
+  ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: lightgray;
+  font-family: 'FuturaPTBook';
+  }
+}
+ 
+
+// :-ms-input-placeholder { /* Internet Explorer 10-11 */
+//   color: red;
+// }
+
+// ::-ms-input-placeholder { /* Microsoft Edge */
+//   color: red;
+// }
+
 
 
 </style>
