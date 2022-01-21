@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_12_203244) do
+ActiveRecord::Schema.define(version: 2022_01_21_170842) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -102,6 +102,13 @@ ActiveRecord::Schema.define(version: 2022_01_12_203244) do
 
   create_table "contract_client_types", charset: "utf8", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_contract_client_types", charset: "utf8", force: :cascade do |t|
+    t.integer "contract_id", null: false
+    t.integer "contract_client_type_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -201,7 +208,6 @@ ActiveRecord::Schema.define(version: 2022_01_12_203244) do
     t.string "owner_type"
     t.integer "total_subcontracts", default: 0
     t.integer "contract_category_id"
-    t.integer "contract_client_type_id"
     t.text "notes"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
@@ -495,6 +501,12 @@ ActiveRecord::Schema.define(version: 2022_01_12_203244) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "project_ids", default: "--- []\n"
     t.string "contracts"
+    t.string "cn_overview", default: "--- []\n"
+    t.string "cn_tasks", default: "--- []\n"
+    t.string "cn_notes", default: "--- []\n"
+    t.string "cn_issues", default: "--- []\n"
+    t.string "cn_risks", default: "--- []\n"
+    t.string "cn_lessons", default: "--- []\n"
   end
 
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|

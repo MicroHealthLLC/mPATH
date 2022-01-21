@@ -22,6 +22,12 @@ class ContractPrivilege < ApplicationRecord
 
   # PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_MODULE = {admin: "admin", overview: "analytics", tasks: "tasks", issues: "issues", risks: "risks", notes: "notes", lessons: "lessons" }
+  # This variables is added to match with project_privilges field for contract. 
+  # Earlier it was just e.g. tasks, issues etc as project_privileges field
+  # But now it is changed and we now has separate tasks, issues etc for contract
+  RELEVENT_CONTRACT_KEY = {
+    overview: "cn_overview", tasks: "cn_tasks", issues: "cn_issues", risks: "cn_risks", notes: "cn_notes", lessons: "cn_lessons"
+  }
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   def check_minimum_privilege

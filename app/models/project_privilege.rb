@@ -12,13 +12,20 @@ class ProjectPrivilege < ApplicationRecord
   serialize :contracts, Array
   serialize :project_ids, Array
 
+  serialize :cn_overview, Array
+  serialize :cn_tasks, Array
+  serialize :cn_issues, Array
+  serialize :cn_risks, Array
+  serialize :cn_notes, Array
+  serialize :cn_lessons, Array
+
   before_save :add_read_privilege
   before_save :check_for_admin_privileges
   before_save :remove_facility_privileges_on_save
   after_destroy :remove_facility_privileges
 
   # PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons", "contracts"]
-  PRIVILEGE_MODULE = {admin: "admin", overview: "analytics", tasks: "tasks", issues: "issues", risks: "risks", notes: "notes", lessons: "lessons", contracts: "contracts" }
+  PRIVILEGE_MODULE = {admin: "admin", overview: "Project analytics", tasks: "Project tasks", issues: "Project issues", risks: "Project risks", notes: "Project notes", lessons: "Project lessons", contracts: "contracts", cn_overview: "Contract analytics", cn_tasks: "Contract tasks", cn_issues: "Contract issues", cn_risks: "Contract risks", cn_notes: "Contract notes", cn_lessons: "Contract lessons" }
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   validate :validate_project_ids
@@ -112,6 +119,45 @@ class ProjectPrivilege < ApplicationRecord
     elsif fp.lessons && !fp.lessons.include?("R") && ( fp.lessons & ["W", "D"]).any?
       fp.lessons = (fp.lessons + ["R"]).uniq
     end
+
+
+
+    if fp.cn_overview && fp.cn_overview_was && fp.cn_overview_was.include?("R") && !fp.cn_overview.include?("R")
+      fp.cn_overview = []
+    elsif fp.cn_overview && !fp.cn_overview.include?("R") && ( fp.cn_overview & ["W", "D"]).any?
+      fp.cn_overview = (fp.cn_overview + ["R"]).uniq
+    end
+    
+    if fp.cn_tasks && fp.cn_tasks_was && fp.cn_tasks_was.include?("R") && !fp.cn_tasks.include?("R")
+      fp.cn_tasks = []
+    elsif fp.cn_tasks && !fp.cn_tasks.include?("R") && ( fp.cn_tasks & ["W", "D"]).any?
+      fp.cn_tasks = (fp.cn_tasks + ["R"]).uniq
+    end
+    
+    if fp.cn_issues && fp.cn_issues_was && fp.cn_issues_was.include?("R") && !fp.cn_issues.include?("R")
+      fp.cn_issues = []
+    elsif fp.cn_issues && !fp.cn_issues.include?("R") && ( fp.cn_issues & ["W", "D"]).any?
+      fp.cn_issues = (fp.cn_issues + ["R"]).uniq
+    end
+    
+    if fp.cn_risks && fp.cn_risks_was && fp.cn_risks_was.include?("R") && !fp.cn_risks.include?("R")
+      fp.cn_risks = []
+    elsif fp.cn_risks && !fp.cn_risks.include?("R") && ( fp.cn_risks & ["W", "D"]).any?
+      fp.cn_risks = (fp.cn_risks + ["R"]).uniq
+    end
+    
+    if fp.cn_notes && fp.cn_notes_was && fp.cn_notes_was.include?("R") && !fp.cn_notes.include?("R")
+      fp.cn_notes = []
+    elsif fp.cn_notes && !fp.cn_notes.include?("R") && ( fp.cn_notes & ["W", "D"]).any?
+      fp.cn_notes = (fp.cn_notes + ["R"]).uniq
+    end
+    
+    if fp.cn_lessons && fp.cn_lessons_was && fp.cn_lessons_was.include?("R") && !fp.cn_lessons.include?("R")
+      fp.cn_lessons = []
+    elsif fp.cn_lessons && !fp.cn_lessons.include?("R") && ( fp.cn_lessons & ["W", "D"]).any?
+      fp.cn_lessons = (fp.cn_lessons + ["R"]).uniq
+    end
+
   end
 
 end
