@@ -115,7 +115,7 @@
      <el-table-column label="Actions">
       <template slot-scope="scope" >
       <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-      <!-- <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>     -->
+      <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>
        <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
 
         </el-button>
