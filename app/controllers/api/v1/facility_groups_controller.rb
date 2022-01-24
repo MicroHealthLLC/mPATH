@@ -9,7 +9,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     # else
     #   all_facility_groups = FacilityGroup.where(project_id: authorized_program_ids )
     # end
-    all_facility_groups = FacilityGroup.where(project_id: nil).as_json
+    all_facility_groups = FacilityGroup.all.as_json
     render json: {facility_groups: all_facility_groups.as_json}
   end
 
