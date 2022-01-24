@@ -8,6 +8,7 @@ const settingsStore = {
     edit_contract_sheet: false, 
     contract_table: [],
     group_filter: null,
+    transfer_data: [],
     contract: {},
     contracts: [],
     client_types: [],
@@ -65,6 +66,32 @@ const settingsStore = {
       commit("TOGGLE_GROUPS_LOADED", false);
       // Utilize utility function to prep Lesson form data
       let formData = groupFormData(group);
+
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/facility_groups`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          commit("SET_GROUP_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    pushPortfolioGroup({ commit }, { group }) {
+    //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
+      commit("TOGGLE_GROUPS_LOADED", false);
+      // Utilize utility function to prep Lesson form data
+      let formData = portfolioGroupData(group);
 
       axios({
         method: "POST",
@@ -432,6 +459,7 @@ const settingsStore = {
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
+    SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
@@ -481,6 +509,7 @@ const settingsStore = {
     getSubcontractNumbers: (state) => state.subcontract_number,
     getContractNumbers: (state) => state.contract_number,
 
+    getTransferData: (state) => state.transfer_data, 
     getContractGroupTypes: (state) => state.contract_group_types,
     group: (state) => state.group,
     groups: (state) => state.groups,
@@ -591,6 +620,16 @@ const groupFormData = (group) => {
   // Append all required form data
   formData.append("facility_group[name]", group.name); //Required
   formData.append("facility_group[status]", group.status); //Required
+  formData.append("facility_group[project_id]", group.project_id); //Required; This is actually the Program ID
+  return formData;
+};
+
+const portfolioGroupData = (group) => {
+  let formData = new FormData();
+  // Append all required form data
+  // formData.append("_method", "patch")
+  // formData.append("facility_group[name]", 'tycvjbk')
+  formData.append("facility_group_id[]", group.id); //Required
   formData.append("facility_group[project_id]", group.project_id); //Required; This is actually the Program ID
   return formData;
 };

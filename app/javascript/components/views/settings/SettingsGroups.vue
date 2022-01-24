@@ -1,9 +1,14 @@
 <template>
-  <div class="row">
+  <div 
+   v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="row">
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
-   <div class="col-md-10">
+  <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
      <el-breadcrumb-item :to="backToSettings">
@@ -29,9 +34,12 @@
     <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2"> 
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
+    <!-- <el-button @click.prevent="addPortfolioGroup" class="bg-success text-light mb-2"> 
+    <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
+    </el-button> -->
      </div>    
-     <div class="col-5">     
-        <el-input
+     <div class="col-5"  v-show="currentTab == 'tab2'">     
+        <!-- <el-input
           type="search"          
           placeholder="Search Group"
           aria-label="Search"            
@@ -40,95 +48,11 @@
           data-cy=""
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>  
-      </div> 
+      </el-input>   -->
+      </div>  
   </div>
  </div>
-   <div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class=""
-  >
-   <el-table 
-   v-if="tableData && tableData.length > 0"
-   :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
-   style="width: 100%"  height="475"
-   >
-    <el-table-column type="expand">
-      <template slot-scope="props">
-       <div class="container">
-       <div class="row">
-     
-      <div class="col">
-       <h5 class="mh-orange-text"> Projects 
-         <span 
-         v-if="props.row.facilities && props.row.facilities.length"
-          class="badge badge-secondary badge-pill pill"
-          >{{ props.row.facilities.length }}
-        </span>
-         <span 
-          v-else
-          class="badge badge-secondary badge-pill pill"
-          >{{ 0 }}
-        </span>    
-        </h5>
-        <ul class="pl-3">
-          <li v-for="item, i in props.row.facilities" :key="i">
-              {{ item.facilityName }}
-          </li>
-        </ul>
-       </div>        
-        <div class="col" v-if="groupContracts">
-        <h5 class="mh-orange-text"> Contracts
-          <span  
-          v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
-            class="badge badge-secondary badge-pill pill"
-            >{{ groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
-            
-          </span>
-            <span 
-            v-else
-            class="badge badge-secondary badge-pill pill"
-            >{{ 0 }}
-          </span>
-          </h5>
-        <ul class="pl-3">
-            <li v-for="item, i in groupContracts.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
-              {{ item.nickname }} 
-            </li>
-          </ul>
-
-        </div>
-       </div>
-       </div>
-      
-      </template>
-    </el-table-column>
-    <el-table-column prop="name" sortable label="Groups">
-    <template slot-scope="props">
-    {{props.row.name}}  
-      <span class="ml-5 mr-2" v-if="props.row.facilities && props.row.facilities.length">
-        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} 
-        </span> 
-          <span class="ml-5 mr-2" v-else>
-        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
-        </span> 
-    <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
-      <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
-    </span>
-        <span  v-else>
-        <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{0}}
-        </span> 
-    </template>
-    </el-table-column>  
-   </el-table>  
-   <div v-else-if="contentLoaded &&  tableData && tableData.length === 0">
-     <i>NO GROUPS YET.  CLICK 'Add Group' BUTTON TO ADD YOUR FIRST GROUP.</i>
-   </div>
-   </div>
-   <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
+  <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
      <form
       accept-charset="UTF-8"    
       >      
@@ -166,44 +90,184 @@
         </button>
         </div>
     </form>
-   </el-dialog>
+   </el-dialog> 
+   <FormTabs
+    :current-tab="currentTab"
+    :tabs="tabs"
+    class="pl-3"
+    :allErrors="errors"
+    @on-change-tab="onChangeTab"
+  />
+    <div v-show="currentTab == 'tab1'" class="container mt-2 mx-0">
+      <div>
+        <el-transfer
+        class="pl-1 pt-3"
+        v-if="generateData || transferData"
+        :titles="['Portfolio Groups','My Program Groups']"
+        v-model="transferData"
+        :data="generateData">
+      </el-transfer>
+
       </div>
     </div>
+      <div v-show="currentTab == 'tab2'" class="container mt-2 mx-0">
+   <div
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class=""
+  > 
+  <el-table 
+   v-if="tableData"
+     :key="componentKey"      
+   :header-cell-style="{ background: '#EDEDED' }"
+   :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
+   style="width: 100%"  height="475"
+   >
+    <el-table-column type="expand">
+      <template slot-scope="props">
+       <div class="container">
+       <div class="row">
+     
+      <div class="col">
+       <h5 class="mh-orange-text"> Projects 
+         <span  
+          v-if="groupProjects && groupProjects.length > 0 &&  groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
+            class="badge badge-secondary badge-pill pill"
+            >{{ groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
+            
+          </span>
+            <span 
+            v-else
+            class="badge badge-secondary badge-pill pill"
+            >{{ 0 }}
+          </span>
+          </h5>
+        <ul class="pl-3"  v-if="groupProjects && groupProjects.length > 0">
+            <li v-for="item, i in groupProjects.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
+              {{ item.facilityName }} 
+            </li>
+          </ul>
+       </div>        
+        <div class="col" v-if="groupContracts">
+        <h5 class="mh-orange-text"> Contracts
+          <span  
+          v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
+            class="badge badge-secondary badge-pill pill"
+            >{{ groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
+            
+          </span>
+            <span 
+            v-else
+            class="badge badge-secondary badge-pill pill"
+            >{{ 0 }}
+          </span>
+          </h5>
+        <ul class="pl-3">
+            <li v-for="item, i in groupContracts.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
+              {{ item.nickname }} 
+            </li>
+          </ul>
+
+        </div>
+       </div>
+       </div>
+      
+      </template>
+    </el-table-column>
+    <el-table-column prop="name" sortable label="Groups">
+    <template slot-scope="props">
+    {{props.row.name}}  
+      <span class="ml-5 mr-2" v-if="groupProjects && groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length">
+        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }} 
+        </span> 
+          <span class="ml-5 mr-2" v-else>
+        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
+        </span> 
+    <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
+      <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
+    </span>
+        <span  v-else>
+        <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{0}}
+        </span> 
+    </template>
+    </el-table-column>  
+      <el-table-column
+      align="right">
+      <template slot="header" slot-scope="scope">
+        <el-input
+          v-model="search"
+          class="groupSearch"
+          placeholder="Search Group names"/>
+      </template>
+         </el-table-column>
+   </el-table>   
+  
+   </div> 
+ 
+      </div>
+    </div> 
+     <!-- <div class="col-md-8" > -->
+       <!-- <div class="right-panel">
+       
+       </div> -->
+    <!-- </div> -->
+  </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
+import FormTabs from "../../shared/FormTabs.vue"
 export default {
   name: "SettingsGroups",
   components: {
-    SettingsSidebar
+    SettingsSidebar,
+    FormTabs
   },
-  data() {
-    return {
-      currentFacility: {},
-      dialogVisible: false,
-      contracts: null,
-      currentFacilityGroup: {},
-      newGroupName: null,
-      programId: this.$route.params.programId,
-      hideSaveBtn: false,
-      search:'',
-      selectedProjectGroup: null, 
-       expanded: {
-        id: "",
-      },
-    };
+    data() {    
+      return {
+        currentFacility: {},
+        dialogVisible: false,
+        currentTab: "tab1",
+      tabs: [
+        {
+          label: "MANAGE GROUPS",
+          key: "tab1",
+          closable: false,
+        },
+        {
+          label: "TABLE",
+          key: "tab2",
+          closable: false,
+        },
+       ],
+        contracts: null,
+        currentFacilityGroup: {},
+        componentKey: 0,
+        newGroupName: null,
+        programId: this.$route.params.programId,
+        hideSaveBtn: false,
+        search:'',
+        selectedProjectGroup: null, 
+        expanded: {
+          id: "",
+       },
+      };
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS']), 
-   ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup"]),
+   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA']), 
+   ...mapActions(["createGroup", "pushPortfolioGroup", "fetchFacilityGroups", "updateGroup", "fetchGroups"]),
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
       this.hideSaveBtn = false;  
     },
+    reRenderTable() {
+      this.componentKey += 1;
+    },  
     closeAddGroupBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
@@ -212,6 +276,13 @@ export default {
       this.dialogVisible = true;    
       this.newGroupName = null;
       this.C_projectGroupFilter = null;     
+    },
+    onChangeTab(tab) {
+      this.currentTab = tab ? tab.key : "tab1"; 
+      console.log(this.currentTab) 
+      // if ( this.currentTab == 'tab2' )   {
+      //   this.fetchGroups()
+      // }
     },
     saveGroup() {
         let groupData = {
@@ -225,20 +296,42 @@ export default {
             ...groupData,
           })         
           this.hideSaveBtn = true;
+          this.reRenderTable()
           // this.fetchFacilityGroups()
         
     },
+  // addPortfolioGroup() {
+  //   // Method to add a preexisting group
+  //       let groupData = {
+  //         group: {
+  //           id: 116,
+  //           project_id: this.$route.params.programId,           
+  //         }
+  //       }
+  //        this.pushPortfolioGroup({
+  //           ...groupData,
+  //         })         
+  //         this.hideSaveBtn = true;
+  //         this.reRenderTable()
+  //         // this.fetchFacilityGroups()
+        
+  //   },
     handleClick(tab, event) {
-        // console.log(tab, event);
+        console.log(tab, event);
     },
    
   },
+mounted(){
+this.fetchGroups()
+},
+
   computed: {
     ...mapGetters([
       "contentLoaded",
       "facilities",
       "groups",
       "groupStatus",
+      "getTransferData",
       'getContractTable',
       'getGroupFilter',
       'getProjectGroupFilter',
@@ -248,9 +341,29 @@ export default {
     ]), 
    backToSettings(){
      return `/programs/${this.$route.params.programId}/settings`  
-    }, 
-      // Filter for Projects Table
-    C_groupFilter: {
+    },
+
+    generateData(){
+      const data = [];
+      // let newGroup = [];
+      let eachGroup = eachGroup = this.groups.map(g => g)
+      if(this.groups && this.groups.length > 0){
+        
+       for (let i = 0; i <= this.groups.length; i++) {
+          if (eachGroup[i] !== undefined) {
+           data.push({
+            key: eachGroup[i].id,
+            label: eachGroup[i].name,  
+            disabled: eachGroup[i].project_id == this.$route.params.programId     
+            });
+           }           
+         }
+        
+        }
+      // console.log(` new Set ${ [...new Set (data)].length}`)
+      return [ ...new Set (data)];
+      },
+     C_groupFilter: {
       get() {
         return this.getGroupFilter;
       },
@@ -260,14 +373,28 @@ export default {
       },
     },
     tableData() {
-      if (
-        // this.projectsLoaded &&
-        this.facilityGroups &&
-        this.facilityGroups.length > 0
-      ) {
-        return this.facilityGroups
-      }
+      if (this.facilityGroups && this.facilityGroups.length > 0) {
+      return this.facilityGroups
+      }   
+    }, 
+    transferData: {
+      get() {      
+        return this.myProgramGroups     
+      },
+      set(value) {
+        console.log(`transferData setter value: ${value}`)
+        this.SET_TRANSFER_DATA(value);
+      },
     },
+    groupProjects(){
+       if (
+        this.facilites &&
+         this.facilities.length && 
+         this.facilities.length > 0
+      ) {
+        return this.facilities
+        }
+    },  
     groupContracts(){
        if (
         this.currentProject &&
@@ -277,6 +404,29 @@ export default {
         return this.currentProject.contracts
         }
     },  
+   myProgramGroups(){
+      const data = this.getTransferData;
+      if (this.groups && this.groups.length > 0)  {
+        let myGroups = this.groups.filter(t => t.project_id == this.$route.params.programId)  
+         for (let i = 0; i < myGroups.length; i++) {
+          if (myGroups[i] !== undefined) {
+              // data.push(this.groupsInProgram[i])
+              data.push(myGroups[i].id);
+           }           
+        }  
+        
+      }
+      if (this.facilities && this.facilities.length > 0 ) { 
+         let myInheritedGroups = this.facilities.map(t => t)   
+        for (let i = 0; i < myInheritedGroups.length; i++) {  
+              if (myInheritedGroups[i] !== undefined) {    
+            data.push(myInheritedGroups[i].facilityGroupId);  
+              }         
+         }
+      }     
+      console.log(data)
+       return data; 
+    },
      C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -288,6 +438,16 @@ export default {
     },
   },
   watch: {
+    // fetchGroups:{
+    //       handler() {
+    //     if (this.groupStatus == 200) {
+    //       this.currentFacility = this.facilities.find(
+    //         (facility) => facility.facilityId == this.$route.params.projectId
+    //       );
+    //     }
+    //   },
+
+    // },
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
@@ -306,7 +466,9 @@ export default {
             showClose: true,
           });
           // this.SET_GROUP_STATUS(0);
-          this.fetchFacilityGroups(); 
+          this.fetchGroups(); 
+           this.reRenderTable()
+          // this.tableData.length++
         }
       },
     },
@@ -319,16 +481,9 @@ export default {
     },
   },
 };
-
-
-
-
 </script>
 
 <style scoped lang="scss">
-.buttonWrapper {
-  border-bottom: lightgray solid 1px;
-}
 .right{
   text-align: right;
 }
@@ -383,6 +538,46 @@ a {
 .container {
   margin-left: 50px;
 }
+
+// Move el-transfer styles to Common file if more files require same CSS
+/deep/.el-transfer-panel{
+  width: 400px;
+}
+/deep/.el-transfer-panel__header {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+}
+/deep/.el-transfer-panel__body {
+  min-height: 400px ;
+}
+/deep/.el-transfer-panel__list {
+  height: 425px;
+}
+/deep/.el-checkbox__input.is-disabled+span.el-checkbox__label {
+    color: #1D336F !important;
+    cursor: default;
+}
+/deep/.el-transfer-panel .el-transfer-panel__header {
+  background-color: #ededed;
+}
+/deep/.el-table { 
+  ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: lightgray;
+  font-family: 'FuturaPTBook';
+  }
+}
+ 
+
+// :-ms-input-placeholder { /* Internet Explorer 10-11 */
+//   color: red;
+// }
+
+// ::-ms-input-placeholder { /* Microsoft Edge */
+//   color: red;
+// }
+
 
 
 </style>

@@ -58,7 +58,7 @@
         sortable 
         label="Project" 
         fixed  
-        width="200"
+        width="230"
         >
         <template slot-scope="scope">
           <!-- <el-input
@@ -74,7 +74,7 @@
             prop="address"  
             sortable 
             label="Address" 
-            width="200">
+            width="250">
             <template slot-scope="scope">
               <!-- <el-input
                 size="small"
@@ -159,7 +159,7 @@
             sortable
             filterable
             label="Group"
-            width="200"
+            width="230"
           >
             <template slot-scope="scope">
               <!-- <el-input
@@ -471,7 +471,11 @@ a {
     overflow-x: auto !important;
 
 }
-
+/deep/td.el-table__cell{
+  word-wrap: break-word;
+  word-break: break-all;
+  table-layout: fixed;
+}
 .overflowX {
   overflow-x: auto !important;
 }
