@@ -122,6 +122,7 @@
                       class="w-100"
                       track-by="id"
                       value-key="id"
+                      clearable
                       placeholder="Select Type"
                     >
                       <el-option
@@ -154,6 +155,7 @@
                       track-by="id"
                       value-key="id"
                       allow-create
+                      clearable
                       default-first-option
                       placeholder="Select or enter Customer (Agency)"
                     >
@@ -177,6 +179,7 @@
                       track-by="name"        
                       value-key="id"
                       class="w-100"
+                      clearable
                       allow-create
                       default-first-option
                       placeholder="Select or enter status"
@@ -201,6 +204,7 @@
                       :key="componentKey"
                       class="w-100"
                       track-by="id"
+                      clearable
                       value-key="id"
                       allow-create
                       default-first-option
@@ -225,6 +229,7 @@
                       class="w-100"
                       track-by="id"
                       value-key="id"
+                      clearable
                       allow-create
                       default-first-option
                       placeholder="Select Prime IDIQ/Vehicle Contract Number"
@@ -252,6 +257,7 @@
                       class="w-100"
                       track-by="id"
                       value-key="id"
+                      clearable
                       allow-create
                       default-first-option
                       placeholder="Select Prime IDIQ/Vehicle Contract Number"
@@ -277,6 +283,7 @@
                       ref="subContractNumber"
                       track-by="id"
                       value-key="id"
+                      clearable
                       allow-create
                       default-first-option
                       placeholder="Select Subcontract Number / PO Number"
@@ -302,6 +309,7 @@
                       class="w-100"
                       track-by="id"
                       value-key="id"
+                      clearable
                       allow-create
                       default-first-option
                       placeholder="Select Prime"
@@ -324,6 +332,7 @@
                       track-by="id"
                       value-key="id"
                       allow-create
+                      clearable
                       default-first-option
                       placeholder="Select or enter status"
                     >
@@ -404,6 +413,7 @@
                       v-model="contract.contract_current_pop_id"
                       class="w-100"
                       track-by="id"
+                      clearable
                       value-key="id"
                       placeholder="Select Current Pop"
                     >
