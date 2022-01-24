@@ -34,6 +34,9 @@
     <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2"> 
     <i class="far fa-plus-circle mr-1"></i> Add Group
     </el-button>
+    <!-- <el-button @click.prevent="addPortfolioGroup" class="bg-success text-light mb-2"> 
+    <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
+    </el-button> -->
      </div>    
      <div class="col-5"  v-show="currentTab == 'tab2'">     
         <!-- <el-input
@@ -99,7 +102,7 @@
       <div>
         <el-transfer
         class="pl-1 pt-3"
-        v-if="currentProject && transferData"
+        v-if="generateData || transferData"
         :titles="['Portfolio Groups','My Program Groups']"
         v-model="transferData"
         :data="generateData">
@@ -117,6 +120,7 @@
   > 
   <el-table 
    v-if="tableData"
+     :key="componentKey"      
    :header-cell-style="{ background: '#EDEDED' }"
    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
    style="width: 100%"  height="475"
@@ -128,22 +132,23 @@
      
       <div class="col">
        <h5 class="mh-orange-text"> Projects 
-         <span 
-         v-if="props.row.facilities && props.row.facilities.length"
-          class="badge badge-secondary badge-pill pill"
-          >{{ props.row.facilities.length }}
-        </span>
-         <span 
-          v-else
-          class="badge badge-secondary badge-pill pill"
-          >{{ 0 }}
-        </span>    
-        </h5>
-        <ul class="pl-3">
-          <li v-for="item, i in props.row.facilities" :key="i">
-              {{ item.facilityName }}
-          </li>
-        </ul>
+         <span  
+          v-if="groupProjects && groupProjects.length > 0 &&  groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
+            class="badge badge-secondary badge-pill pill"
+            >{{ groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
+            
+          </span>
+            <span 
+            v-else
+            class="badge badge-secondary badge-pill pill"
+            >{{ 0 }}
+          </span>
+          </h5>
+        <ul class="pl-3"  v-if="groupProjects && groupProjects.length > 0">
+            <li v-for="item, i in groupProjects.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
+              {{ item.facilityName }} 
+            </li>
+          </ul>
        </div>        
         <div class="col" v-if="groupContracts">
         <h5 class="mh-orange-text"> Contracts
@@ -174,8 +179,8 @@
     <el-table-column prop="name" sortable label="Groups">
     <template slot-scope="props">
     {{props.row.name}}  
-      <span class="ml-5 mr-2" v-if="props.row.facilities && props.row.facilities.length">
-        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ props.row.facilities.length }} 
+      <span class="ml-5 mr-2" v-if="groupProjects && groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length">
+        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }} 
         </span> 
           <span class="ml-5 mr-2" v-else>
         <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
@@ -241,6 +246,7 @@ export default {
        ],
         contracts: null,
         currentFacilityGroup: {},
+        componentKey: 0,
         newGroupName: null,
         programId: this.$route.params.programId,
         hideSaveBtn: false,
@@ -253,12 +259,15 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA']), 
-   ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup"]),
+   ...mapActions(["createGroup", "pushPortfolioGroup", "fetchFacilityGroups", "updateGroup", "fetchGroups"]),
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
       this.hideSaveBtn = false;  
     },
+    reRenderTable() {
+      this.componentKey += 1;
+    },  
     closeAddGroupBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
@@ -269,7 +278,11 @@ export default {
       this.C_projectGroupFilter = null;     
     },
     onChangeTab(tab) {
-      this.currentTab = tab ? tab.key : "tab1";     
+      this.currentTab = tab ? tab.key : "tab1"; 
+      console.log(this.currentTab) 
+      // if ( this.currentTab == 'tab2' )   {
+      //   this.fetchGroups()
+      // }
     },
     saveGroup() {
         let groupData = {
@@ -283,14 +296,34 @@ export default {
             ...groupData,
           })         
           this.hideSaveBtn = true;
+          this.reRenderTable()
           // this.fetchFacilityGroups()
         
     },
+  // addPortfolioGroup() {
+  //   // Method to add a preexisting group
+  //       let groupData = {
+  //         group: {
+  //           id: 116,
+  //           project_id: this.$route.params.programId,           
+  //         }
+  //       }
+  //        this.pushPortfolioGroup({
+  //           ...groupData,
+  //         })         
+  //         this.hideSaveBtn = true;
+  //         this.reRenderTable()
+  //         // this.fetchFacilityGroups()
+        
+  //   },
     handleClick(tab, event) {
-        // console.log(tab, event);
+        console.log(tab, event);
     },
    
   },
+mounted(){
+this.fetchGroups()
+},
 
   computed: {
     ...mapGetters([
@@ -312,19 +345,23 @@ export default {
 
     generateData(){
       const data = [];
-      if(this.facilityGroups && this.facilityGroups.length > 0){
-        let eachGroup = this.facilityGroups.map(g => g)
-       for (let i = 0; i <= this.facilityGroups.length; i++) {
+      // let newGroup = [];
+      let eachGroup = eachGroup = this.groups.map(g => g)
+      if(this.groups && this.groups.length > 0){
+        
+       for (let i = 0; i <= this.groups.length; i++) {
           if (eachGroup[i] !== undefined) {
            data.push({
             key: eachGroup[i].id,
             label: eachGroup[i].name,  
-            disabled: eachGroup[i].projectId == this.$route.params.programId     
+            disabled: eachGroup[i].project_id == this.$route.params.programId     
             });
            }           
          }
-         return data;
-        }     
+        
+        }
+      // console.log(` new Set ${ [...new Set (data)].length}`)
+      return [ ...new Set (data)];
       },
      C_groupFilter: {
       get() {
@@ -336,27 +373,10 @@ export default {
       },
     },
     tableData() {
-      if (
-        // this.projectsLoaded &&
-        this.facilityGroups &&
-         this.facilityGroups.length > 0
-      ) {
-        return this.facilityGroups
-      }
-    },
-    myProgramGroups(){
-      const data = this.getTransferData;
       if (this.facilityGroups && this.facilityGroups.length > 0) {
-        let myGroups = this.facilityGroups.filter(t => t.projectId == this.$route.params.programId)
-       
-       for (let i = 0; i <= myGroups.length; i++) {
-          if (myGroups[i] !== undefined) {
-              data.push(myGroups[i].id);
-           }           
-         }
-       return data;
-     }
-    },
+      return this.facilityGroups
+      }   
+    }, 
     transferData: {
       get() {      
         return this.myProgramGroups     
@@ -366,6 +386,15 @@ export default {
         this.SET_TRANSFER_DATA(value);
       },
     },
+    groupProjects(){
+       if (
+        this.facilites &&
+         this.facilities.length && 
+         this.facilities.length > 0
+      ) {
+        return this.facilities
+        }
+    },  
     groupContracts(){
        if (
         this.currentProject &&
@@ -375,6 +404,29 @@ export default {
         return this.currentProject.contracts
         }
     },  
+   myProgramGroups(){
+      const data = this.getTransferData;
+      if (this.groups && this.groups.length > 0)  {
+        let myGroups = this.groups.filter(t => t.project_id == this.$route.params.programId)  
+         for (let i = 0; i < myGroups.length; i++) {
+          if (myGroups[i] !== undefined) {
+              // data.push(this.groupsInProgram[i])
+              data.push(myGroups[i].id);
+           }           
+        }  
+        
+      }
+      if (this.facilities && this.facilities.length > 0 ) { 
+         let myInheritedGroups = this.facilities.map(t => t)   
+        for (let i = 0; i < myInheritedGroups.length; i++) {  
+              if (myInheritedGroups[i] !== undefined) {    
+            data.push(myInheritedGroups[i].facilityGroupId);  
+              }         
+         }
+      }     
+      console.log(data)
+       return data; 
+    },
      C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -386,6 +438,16 @@ export default {
     },
   },
   watch: {
+    // fetchGroups:{
+    //       handler() {
+    //     if (this.groupStatus == 200) {
+    //       this.currentFacility = this.facilities.find(
+    //         (facility) => facility.facilityId == this.$route.params.projectId
+    //       );
+    //     }
+    //   },
+
+    // },
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
@@ -404,7 +466,9 @@ export default {
             showClose: true,
           });
           // this.SET_GROUP_STATUS(0);
-          this.fetchFacilityGroups(); 
+          this.fetchGroups(); 
+           this.reRenderTable()
+          // this.tableData.length++
         }
       },
     },
