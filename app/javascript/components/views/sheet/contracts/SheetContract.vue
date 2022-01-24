@@ -932,6 +932,21 @@ export default {
           // this.nickname = this.contract.contract_nickname;
           // this.projectCode = this.contract.project_code;
         }
+        if (this.contract.nickname === "null"){
+            this.contract.nickname = ''
+        }
+        if (this.contract.name === "null"){
+            this.contract.name = ''
+        }
+        if (this.contract.project_code === "null"){
+            this.contract.project_code = ''
+        }
+        if (this.contract.total_subcontracts === "null"){
+            this.contract.total_subcontracts = ''
+        }
+         if (this.contract.notes === "null"){
+            this.contract.notes = ''
+        }
       },
     },
     contractLoaded: {
