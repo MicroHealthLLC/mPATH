@@ -3,7 +3,7 @@ class FacilityGroup < SortableRecord
   has_many :facilities
   has_many :facility_projects, through: :facilities
 
-  validates :name, presence: true, uniqueness: true
+  # validates :name, presence: true, uniqueness: true
 
   enum status: [:inactive, :active].freeze
   before_save :set_status

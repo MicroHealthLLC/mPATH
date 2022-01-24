@@ -9,7 +9,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     # else
     #   all_facility_groups = FacilityGroup.where(project_id: authorized_program_ids )
     # end
-    all_facility_groups = FacilityGroup.all.as_json
+    all_facility_groups = FacilityGroup.where(project_id: nil).as_json
     render json: {facility_groups: all_facility_groups.as_json}
   end
 
@@ -20,6 +20,16 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
       render json: facility_group
     else
       render json: {errors: facility_group.errors.full_messages}, status: 406
+    end
+  end
+
+  def bulk_update
+    project = Project.find(params[:project_id])
+    groups = FacilityGroup.where(id: params[:facility_group_ids])
+    if groups.update_all(project_id: project.id)
+      render json: groups
+    else
+      render json: {errors: "Error while updating groups"}, status: 406
     end
   end
 
