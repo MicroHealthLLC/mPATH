@@ -26,7 +26,11 @@ Rails.application.routes.draw do
       resources :users, only: [:index]
       post '/sort-by', to: 'sorts#update'
 
-      resources :facility_groups, only: [:index, :create]
+      resources :facility_groups do
+        collection do
+          put :bulk_update
+        end
+      end
 
       resources :contracts do
         resources :notes #, module: :facilities
