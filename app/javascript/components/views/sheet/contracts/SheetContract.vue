@@ -604,8 +604,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass", "currency-val"],
- 
+  props: ["contractClass"], 
   data() {
     return {
       loading: true,
@@ -703,10 +702,6 @@ export default {
       this.getScData()
       this.getPrimeData()
       this.fetchClassificationTypes();
-    },
-    formatPrice(value) {
-        let val = (value/1).toFixed(2).replace('.', ',')
-        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     },
     saveEdits() {
       // console.log(this.contract.notes)
@@ -946,6 +941,21 @@ export default {
           this.statusId = this.contract_status_id;
           // this.nickname = this.contract.contract_nickname;
           // this.projectCode = this.contract.project_code;
+        }
+        if (this.contract.nickname === "null"){
+            this.contract.nickname = ''
+        }
+        if (this.contract.name === "null"){
+            this.contract.name = ''
+        }
+        if (this.contract.project_code === "null"){
+            this.contract.project_code = ''
+        }
+        if (this.contract.total_subcontracts === "null"){
+            this.contract.total_subcontracts = ''
+        }
+         if (this.contract.notes === "null"){
+            this.contract.notes = ''
         }
       },
     },
