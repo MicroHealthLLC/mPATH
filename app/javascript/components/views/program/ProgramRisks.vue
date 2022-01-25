@@ -1310,6 +1310,12 @@ v-if="filteredRisks.filtered.risks.length > 0"
                 >
                   In Progress
                   </span>
+                  <span v-if="risk.important" v-tooltip="`Important`">
+                    Important
+                  </span>
+                  <span v-if="risk.watched" v-tooltip="`Watched`">
+                    Watched
+                  </span>
                 </td>
              <td v-if="risk.notes.length > 0">       
               <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
