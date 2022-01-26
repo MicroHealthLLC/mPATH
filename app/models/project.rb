@@ -8,6 +8,8 @@ class Project < SortableRecord
   has_many :facility_projects, dependent: :destroy
   has_many :facilities, through: :facility_projects
   has_many :facility_groups, through: :facilities
+  has_many :project_facility_groups, dependent: :destroy
+  has_many :project_groups, through: :project_facility_groups, class_name: "FacilityGroup"
   has_many :tasks, through: :facility_projects
   has_many :issues, through: :facility_projects
   has_many :risks, through: :facility_projects
