@@ -172,7 +172,7 @@
                   <div class="col-6 pl-3 pr-0">
                     <!-- Amand, if I add 'multiple" attribute to this Customer Entity el-select component, it creates error.
                     Can backend store multiple entities?   -->
-                    <label class="font-md">Customer Entity </label>
+                    <label class="font-md">Customer Entity Type </label>
                     <el-select
                       v-model="contract.contract_client_type_id"
                       filterable       

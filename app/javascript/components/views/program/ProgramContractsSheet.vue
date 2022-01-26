@@ -143,7 +143,7 @@
        </template>
     </el-table-column>
        <!-- CUSTOMER ENTITY -->
-        <el-table-column prop="contractClientType.name"  sortable  label="Customer Entity" width="200"> 
+        <el-table-column prop="contractClientType.name"  sortable  label="Customer Entity Type" width="230"> 
        <template slot-scope="scope">
           <!-- <el-input size="small"
             style="text-align:center"
