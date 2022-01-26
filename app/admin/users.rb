@@ -58,7 +58,10 @@ ActiveAdmin.register User do
         cn_issues: [],
         cn_risks: [],
         cn_notes: [],
-        cn_lessons: []
+        cn_lessons: [],
+        admin_groups: [],
+        admin_contracts: [],
+        admin_facilities: []
       ],
       facility_privileges_attributes: [
         :id,

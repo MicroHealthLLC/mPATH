@@ -69,6 +69,7 @@ var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
 var programPrivileges = JSON.parse(window.program_privilegs.replace(/&quot;/g,'"'))
 var contractPrivileges = JSON.parse(window.contract_privilegs.replace(/&quot;/g,'"'))
+var programSettingPrivileges = JSON.parse(window.program_settings_privileges.replace(/&quot;/g,'"'))
 
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
 
@@ -90,6 +91,7 @@ Vue.prototype.$topNavigationPermissions = topNavigationPermissions
 Vue.prototype.$projectPrivileges = projectPrivileges
 Vue.prototype.$programPrivileges = programPrivileges
 Vue.prototype.$contractPrivileges = contractPrivileges
+Vue.prototype.$programSettingPrivileges = programSettingPrivileges
 
 Vue.prototype.$preferences = preferences
 

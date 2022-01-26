@@ -507,6 +507,9 @@ ActiveRecord::Schema.define(version: 2022_01_21_170842) do
     t.string "cn_issues", default: "--- []\n"
     t.string "cn_risks", default: "--- []\n"
     t.string "cn_lessons", default: "--- []\n"
+    t.string "admin_groups", default: "--- []\n"
+    t.string "admin_contracts", default: "--- []\n"
+    t.string "admin_facilities", default: "--- []\n"
   end
 
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|

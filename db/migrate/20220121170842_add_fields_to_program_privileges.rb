@@ -6,5 +6,10 @@ class AddFieldsToProgramPrivileges < ActiveRecord::Migration[6.1]
     add_column :project_privileges, :cn_issues, :string, default: [].to_yaml
     add_column :project_privileges, :cn_risks, :string, default: [].to_yaml
     add_column :project_privileges, :cn_lessons, :string, default: [].to_yaml
+
+    add_column :project_privileges, :admin_groups, :string, default: [].to_yaml
+    add_column :project_privileges, :admin_contracts, :string, default: [].to_yaml
+    add_column :project_privileges, :admin_facilities, :string, default: [].to_yaml
+
   end
 end

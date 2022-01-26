@@ -19,13 +19,17 @@ class ProjectPrivilege < ApplicationRecord
   serialize :cn_notes, Array
   serialize :cn_lessons, Array
 
+  serialize :admin_groups, Array
+  serialize :admin_contracts, Array
+  serialize :admin_facilities, Array
+
   before_save :add_read_privilege
   before_save :check_for_admin_privileges
   before_save :remove_facility_privileges_on_save
   after_destroy :remove_facility_privileges
 
   # PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons", "contracts"]
-  PRIVILEGE_MODULE = {admin: "admin", overview: "Project analytics", tasks: "Project tasks", issues: "Project issues", risks: "Project risks", notes: "Project notes", lessons: "Project lessons", contracts: "contracts", cn_overview: "Contract analytics", cn_tasks: "Contract tasks", cn_issues: "Contract issues", cn_risks: "Contract risks", cn_notes: "Contract notes", cn_lessons: "Contract lessons" }
+  PRIVILEGE_MODULE = {admin: "admin", overview: "Project analytics", tasks: "Project tasks", issues: "Project issues", risks: "Project risks", notes: "Project notes", lessons: "Project lessons", contracts: "contracts", cn_overview: "Contract analytics", cn_tasks: "Contract tasks", cn_issues: "Contract issues", cn_risks: "Contract risks", cn_notes: "Contract notes", cn_lessons: "Contract lessons", admin_groups: "Program setting groups", admin_facilities: "Program Setting Projects", admin_contracts: "Program Setting Contracts" }
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   validate :validate_project_ids
@@ -73,6 +77,17 @@ class ProjectPrivilege < ApplicationRecord
       fp.notes = ( (fp.notes || []) + admin).compact.uniq
       fp.lessons = ( (fp.lessons || []) + admin).compact.uniq
       fp.contracts = ( (fp.contracts || []) + admin).compact.uniq
+  
+      fp.cn_overview = ( (fp.cn_overview || []) + admin).compact.uniq
+      fp.cn_tasks = ( (fp.cn_tasks || [])  + admin).compact.uniq
+      fp.cn_issues = ( (fp.cn_issues || []) + admin).compact.uniq
+      fp.cn_risks = ( (fp.cn_risks || []) + admin).compact.uniq
+      fp.cn_notes = ( (fp.cn_notes || []) + admin).compact.uniq
+      fp.cn_lessons = ( (fp.cn_lessons || []) + admin).compact.uniq
+
+      fp.admin_groups = ( (fp.admin_groups || []) + admin).compact.uniq
+      fp.admin_contracts = ( (fp.admin_contracts || []) + admin).compact.uniq
+      fp.admin_facilities = ( (fp.admin_facilities || []) + admin).compact.uniq
     end
   end
 
