@@ -1,12 +1,4 @@
 <template>
-<!-- LOGIC -->
-<!-- Need to find and extract last ids entered -->
-<!-- Push those ids into array -->
-<!-- Pass those ids to updateGroup action -->
-
-<!-- UI -->
-<!-- Need button to confirm save AFTER groups have been transferred to Program panel -->
-
   <div 
    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
@@ -135,6 +127,7 @@
     class=""
   > 
   <el-table 
+
    v-if="tableData"   
    :header-cell-style="{ background: '#EDEDED' }"
    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
@@ -151,7 +144,6 @@
             v-if="props.row.facilities.length > 0"   
             class="badge badge-secondary badge-pill pill"
             >{{ props.row.facilities.length }}
-            
           </span>
             <span 
             v-else
@@ -161,6 +153,8 @@
           </h5>
         <ul class="pl-3" v-for="item, i in props.row.facilities" :key="i"   >
             <li>
+
+ 
               {{ item.facilityName }} 
             </li>
           </ul>
@@ -276,6 +270,7 @@ export default {
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA']), 
    ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup", "fetchGroups", "fetchCurrentProject"]),
+
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
@@ -332,6 +327,22 @@ export default {
       }
       this.confirmTransfer = false
     },
+  // addPortfolioGroup() {
+  //   // Method to add a preexisting group
+  //       let groupData = {
+  //         group: {
+  //           id: 116,
+  //           project_id: this.$route.params.programId,           
+  //         }
+  //       }
+  //        this.pushPortfolioGroup({
+  //           ...groupData,
+  //         })         
+  //         this.hideSaveBtn = true;
+  //         this.reRenderTable()
+  //         // this.fetchFacilityGroups()
+        
+  //   },
     handleClick(tab, event) {
         console.log(tab, event);
     },
@@ -375,7 +386,6 @@ export default {
          }
         
         }
-      // console.log(` generateData: ${ data.length}`)
       return [ ...new Set (data)];
       },
      C_groupFilter: {
@@ -427,6 +437,15 @@ export default {
         this.SET_TRANSFER_DATA(value);
       },
     },
+    groupProjects(){
+       if (
+        this.facilites &&
+         this.facilities.length && 
+         this.facilities.length > 0
+      ) {
+        return this.facilities
+        }
+    },  
     groupContracts(){
        if (
         this.currentProject &&
@@ -436,7 +455,6 @@ export default {
         return this.currentProject.contracts
         }
     },  
-
      C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -448,6 +466,16 @@ export default {
     },
   },
   watch: {
+    // fetchGroups:{
+    //       handler() {
+    //     if (this.groupStatus == 200) {
+    //       this.currentFacility = this.facilities.find(
+    //         (facility) => facility.facilityId == this.$route.params.projectId
+    //       );
+    //     }
+    //   },
+
+    // },
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {

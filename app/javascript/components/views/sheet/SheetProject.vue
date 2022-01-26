@@ -167,7 +167,7 @@
         </div>
 
         </div>
-      <div class="row">
+      <div class="row" v-if="project && project.address">
         <div class="col-1 pb-0 font-sm">
           <p>
             <span class="fbody-icon"
@@ -178,12 +178,7 @@
         </div>
          <div class="col-11 pb-0 font-sm">
           <p>
-            <el-input
-                v-model="project.address"
-                placeholder="Enter Address"
-                name="address"
-               :class="{'nonEditMode' : edit }"
-              />
+            <span>{{ project.address || "N/A" }}</span>
           </p>
         </div>
        </div>
