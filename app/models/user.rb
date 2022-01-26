@@ -593,6 +593,31 @@ class User < ApplicationRecord
     fph
   end
 
+  #This will build has like this
+  # {<project_id> : { <facility_id>: { <all_perissions> } }
+  def program_settings_privileges_hash
+    user = self
+    pv = user.project_privileges
+    ph = {}
+    project_ids_with_privileges = []
+    pv.each do |p|
+      pids = p.project_ids.map(&:to_s)
+      project_ids_with_privileges = project_ids_with_privileges + pids
+      module_permissions = p.attributes.clone.slice("admin_groups", "admin_contracts", "admin_facilities")
+      module_permissions.transform_values{|v| v.delete(""); v}
+
+      pids.each do |pid|
+        ph[pid.to_s] = module_permissions
+      end
+    end
+
+    project_ids_with_privileges = project_ids_with_privileges.compact.uniq
+    user_project_ids = user.project_ids.map(&:to_s)
+    remaining_project_ids = user_project_ids - project_ids_with_privileges
+
+    ph
+  end
+
   def authorized_contract_ids(project_ids: [])
     if project_ids.any?
       self.contract_privileges.where(project_id: project_ids).pluck(:contract_ids).flatten.compact

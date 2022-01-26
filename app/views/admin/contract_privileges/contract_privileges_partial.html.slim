@@ -12,7 +12,8 @@
           label(class="label")= m_name
           input{type="hidden" value="" name="user[contract_privileges_attributes][#{index}][#{k}][]" }
           - ContractPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
-            input{type="checkbox" value="#{permission[1]}" name="user[contract_privileges_attributes][#{index}][#{k}][]" checked=("checked" if user_project_privileg.send(k).include?(permission[1]))}= permission[0]
+            - p_field = ContractPrivilege::RELEVENT_CONTRACT_KEY[k] || k
+            input{type="checkbox" value="#{permission[1]}" name="user[contract_privileges_attributes][#{index}][#{k}][]" checked=("checked" if user_project_privileg.send(p_field).include?(permission[1]))}= permission[0]
 
   - else
     p All contracts are included in one of the contract privileges or there is not contract in this program.
