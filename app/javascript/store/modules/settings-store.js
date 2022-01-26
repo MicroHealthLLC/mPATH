@@ -87,15 +87,16 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
-    pushPortfolioGroup({ commit }, { group }) {
+   updateGroup({ commit }, { groupData }) {
     //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
       commit("TOGGLE_GROUPS_LOADED", false);
       // Utilize utility function to prep Lesson form data
-      let formData = portfolioGroupData(group);
+      let formData = portfolioGroupData(groupData);
+      console.log(groupData)
 
       axios({
-        method: "POST",
-        url: `${API_BASE_PATH}/facility_groups`,
+        method: "PUT",
+        url: `${API_BASE_PATH}/facility_groups/bulk_update`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -624,13 +625,15 @@ const groupFormData = (group) => {
   return formData;
 };
 
-const portfolioGroupData = (group) => {
+const portfolioGroupData = (groupData) => {
+  console.log(groupData)
+  console.log([groupData])
   let formData = new FormData();
-  // Append all required form data
-  // formData.append("_method", "patch")
-  // formData.append("facility_group[name]", 'tycvjbk')
-  formData.append("facility_group_id[]", group.id); //Required
-  formData.append("facility_group[project_id]", group.project_id); //Required; This is actually the Program ID
+  // formData.append("facility_group_ids[]", [groupData.ids]); //Required
+  groupData.ids.forEach((ids) => {
+    formData.append("facility_group_ids[]",ids);
+  });
+  formData.append("project_id", groupData.programId); //Required; This is actually the Program ID
   return formData;
 };
 

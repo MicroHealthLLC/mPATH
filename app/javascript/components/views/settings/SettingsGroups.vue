@@ -1,4 +1,12 @@
 <template>
+<!-- LOGIC -->
+<!-- Need to find and extract last ids entered -->
+<!-- Push those ids into array -->
+<!-- Pass those ids to updateGroup action -->
+
+<!-- UI -->
+<!-- Need button to confirm save AFTER groups have been transferred to Program panel -->
+
   <div 
    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
@@ -32,12 +40,9 @@
   <div class="row px-0">
     <div class="col">
     <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2"> 
-    <i class="far fa-plus-circle mr-1"></i> Add Group
+    <i class="far fa-plus-circle mr-1"></i> Create New Group
     </el-button>
-    <!-- <el-button @click.prevent="addPortfolioGroup" class="bg-success text-light mb-2"> 
-    <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
-    </el-button> -->
-     </div>    
+    </div>    
      <div class="col-5"  v-show="currentTab == 'tab2'">     
         <!-- <el-input
           type="search"          
@@ -103,9 +108,20 @@
         <el-transfer
         class="pl-1 pt-3"
         v-if="generateData || transferData"
-        :titles="['Portfolio Groups','My Program Groups']"
+        :titles="[ 'Portfolio Groups', 'My Program Groups']"
+        :data="generateData"
         v-model="transferData"
-        :data="generateData">
+        >
+      <el-button 
+        class="transfer-footer ml-2 py-2 text-light" 
+        :disabled="!this.confirmTransfer" 
+        slot="right-footer" 
+        @click.prevent="addPortfolioGroup" 
+        size="small" 
+        type="primary">
+        Confirm Transfer
+      </el-button>
+      <el-button class="transfer-footer" slot="left-footer" style="visibility:hidden" size="small">Save</el-button>
       </el-transfer>
 
       </div>
@@ -119,8 +135,7 @@
     class=""
   > 
   <el-table 
-   v-if="tableData"
-     :key="componentKey"      
+   v-if="tableData"   
    :header-cell-style="{ background: '#EDEDED' }"
    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
    style="width: 100%"  height="475"
@@ -133,9 +148,9 @@
       <div class="col">
        <h5 class="mh-orange-text"> Projects 
          <span  
-          v-if="groupProjects && groupProjects.length > 0 &&  groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
+            v-if="props.row.facilities.length > 0"   
             class="badge badge-secondary badge-pill pill"
-            >{{ groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }}
+            >{{ props.row.facilities.length }}
             
           </span>
             <span 
@@ -144,8 +159,8 @@
             >{{ 0 }}
           </span>
           </h5>
-        <ul class="pl-3"  v-if="groupProjects && groupProjects.length > 0">
-            <li v-for="item, i in groupProjects.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
+        <ul class="pl-3" v-for="item, i in props.row.facilities" :key="i"   >
+            <li>
               {{ item.facilityName }} 
             </li>
           </ul>
@@ -179,8 +194,8 @@
     <el-table-column prop="name" sortable label="Groups">
     <template slot-scope="props">
     {{props.row.name}}  
-      <span class="ml-5 mr-2" v-if="groupProjects && groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length">
-        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{ groupProjects.map(t => t.facilityGroupId).filter(t => t == props.row.id).length }} 
+      <span class="ml-5 mr-2" v-if="props.row.facilities.length">
+        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{  props.row.facilities.length }} 
         </span> 
           <span class="ml-5 mr-2" v-else>
         <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
@@ -247,6 +262,7 @@ export default {
         contracts: null,
         currentFacilityGroup: {},
         componentKey: 0,
+        confirmTransfer: false,
         newGroupName: null,
         programId: this.$route.params.programId,
         hideSaveBtn: false,
@@ -259,7 +275,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA']), 
-   ...mapActions(["createGroup", "pushPortfolioGroup", "fetchFacilityGroups", "updateGroup", "fetchGroups"]),
+   ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup", "fetchGroups", "fetchCurrentProject"]),
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
@@ -279,10 +295,7 @@ export default {
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1"; 
-      console.log(this.currentTab) 
-      // if ( this.currentTab == 'tab2' )   {
-      //   this.fetchGroups()
-      // }
+      // console.log(this.currentTab) 
     },
     saveGroup() {
         let groupData = {
@@ -294,37 +307,39 @@ export default {
         }
          this.createGroup({
             ...groupData,
-          })         
-          this.hideSaveBtn = true;
-          this.reRenderTable()
-          // this.fetchFacilityGroups()
-        
+          })       
+          this.fetchGroups();  
+          this.hideSaveBtn = true;       
     },
-  // addPortfolioGroup() {
-  //   // Method to add a preexisting group
-  //       let groupData = {
-  //         group: {
-  //           id: 116,
-  //           project_id: this.$route.params.programId,           
-  //         }
-  //       }
-  //        this.pushPortfolioGroup({
-  //           ...groupData,
-  //         })         
-  //         this.hideSaveBtn = true;
-  //         this.reRenderTable()
-  //         // this.fetchFacilityGroups()
-        
-  //   },
+  addPortfolioGroup() {
+    let addedPrograms = [];
+    let pIds = this.transferData.map(id => id)
+    let idMap = this.facilityGroups.map(g => g.id)
+    addedPrograms.push(pIds.filter(function(obj) { return idMap.indexOf(obj) == -1; }));
+      for (let i = 0; i  < addedPrograms.length; i++) {      
+        if (addedPrograms.length > 0) {
+      let group = {
+          groupData: {
+            ids: addedPrograms[i],
+            programId: this.$route.params.programId,           
+          }
+        }
+         this.updateGroup({
+            ...group,
+          }) 
+         }
+         this.fetchCurrentProject(this.$route.params.programId)
+      }
+      this.confirmTransfer = false
+    },
     handleClick(tab, event) {
         console.log(tab, event);
     },
    
   },
-mounted(){
-this.fetchGroups()
-},
-
+  mounted(){
+  this.fetchGroups()
+  },
   computed: {
     ...mapGetters([
       "contentLoaded",
@@ -360,7 +375,7 @@ this.fetchGroups()
          }
         
         }
-      // console.log(` new Set ${ [...new Set (data)].length}`)
+      // console.log(` generateData: ${ data.length}`)
       return [ ...new Set (data)];
       },
      C_groupFilter: {
@@ -377,33 +392,6 @@ this.fetchGroups()
       return this.facilityGroups
       }   
     }, 
-    transferData: {
-      get() {      
-        return this.myProgramGroups     
-      },
-      set(value) {
-        console.log(`transferData setter value: ${value}`)
-        this.SET_TRANSFER_DATA(value);
-      },
-    },
-    groupProjects(){
-       if (
-        this.facilites &&
-         this.facilities.length && 
-         this.facilities.length > 0
-      ) {
-        return this.facilities
-        }
-    },  
-    groupContracts(){
-       if (
-        this.currentProject &&
-         this.currentProject.contracts &&
-          this.currentProject.contracts.length > 0
-      ) {
-        return this.currentProject.contracts
-        }
-    },  
    myProgramGroups(){
       const data = this.getTransferData;
       if (this.groups && this.groups.length > 0)  {
@@ -424,9 +412,31 @@ this.fetchGroups()
               }         
          }
       }     
-      console.log(data)
+      // console.log(` myProgramsGroup: ${ data}`)
        return data; 
     },
+    transferData: {
+      get() {     
+       return [...new Set(this.myProgramGroups)]          
+      },
+      set(value) {
+        if(value){
+          this.confirmTransfer = true
+        }
+        //  console.log(`set Transfer data value: ${value}`) 
+        this.SET_TRANSFER_DATA(value);
+      },
+    },
+    groupContracts(){
+       if (
+        this.currentProject &&
+         this.currentProject.contracts &&
+          this.currentProject.contracts.length > 0
+      ) {
+        return this.currentProject.contracts
+        }
+    },  
+
      C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -438,16 +448,6 @@ this.fetchGroups()
     },
   },
   watch: {
-    // fetchGroups:{
-    //       handler() {
-    //     if (this.groupStatus == 200) {
-    //       this.currentFacility = this.facilities.find(
-    //         (facility) => facility.facilityId == this.$route.params.projectId
-    //       );
-    //     }
-    //   },
-
-    // },
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
@@ -461,14 +461,13 @@ this.fetchGroups()
       handler() {
         if (this.groupStatus == 200) {
           this.$message({
-            message: `${this.newGroupName} was saved successfully.`,
+            message: `Saved successfully.`,
             type: "success",
             showClose: true,
           });
           // this.SET_GROUP_STATUS(0);
-          this.fetchGroups(); 
-           this.reRenderTable()
-          // this.tableData.length++
+          this.fetchGroups();
+           this.fetchCurrentProject(this.$route.params.programId) 
         }
       },
     },
@@ -542,6 +541,7 @@ a {
 // Move el-transfer styles to Common file if more files require same CSS
 /deep/.el-transfer-panel{
   width: 400px;
+  padding-bottom:30px;
 }
 /deep/.el-transfer-panel__header {
   font-size: 1.5rem;
@@ -550,9 +550,10 @@ a {
 }
 /deep/.el-transfer-panel__body {
   min-height: 400px ;
+  margin-bottom: 30px;
 }
 /deep/.el-transfer-panel__list {
-  height: 425px;
+  min-height: 425px;
 }
 /deep/.el-checkbox__input.is-disabled+span.el-checkbox__label {
     color: #1D336F !important;
