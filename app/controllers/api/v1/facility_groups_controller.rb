@@ -23,6 +23,16 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     end
   end
 
+  def bulk_update
+    project = Project.find(params[:project_id])
+    groups = FacilityGroup.where(id: params[:facility_group_ids])
+    if groups.update_all(project_id: project.id)
+      render json: groups
+    else
+      render json: {errors: "Error while updating groups"}, status: 406
+    end
+  end
+
   def include_hash
     {
       facility_projects: [:facility, {

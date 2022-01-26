@@ -56,7 +56,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in facilityGroups.filter(t => t.projectId == this.$route.params.programId)"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -193,7 +193,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in facilityGroups.filter(t => t.projectId == this.$route.params.programId)"
+          v-for="item in facilityGroups"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -309,6 +309,7 @@ export default {
           contract: {
             nickname: this.contractNicknameText,
             name: this.contractNameText,
+            // contract_status_id: null,  
             facility_group_id: this.C_newContractGroupFilter.id,
             project_id: this.$route.params.programId,
             contract_type_id: this.C_typeFilter,
@@ -337,7 +338,7 @@ export default {
           contract: {
             nickname: rows.nickname,
             name: rows.name,
-            // facility_group_name: rows.facility_group_name,  
+         
             facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
             id:  id    

@@ -143,7 +143,7 @@
        </template>
     </el-table-column>
        <!-- CUSTOMER ENTITY -->
-        <el-table-column prop="contractClientType.name"  sortable  label="Customer Entity" width="200"> 
+        <el-table-column prop="contractClientType.name"  sortable  label="Customer Entity Type" width="230"> 
        <template slot-scope="scope">
           <!-- <el-input size="small"
             style="text-align:center"
@@ -455,10 +455,11 @@
       width="230"     
       >
       <template slot-scope="scope">
-        <span v-if="groupsArr">
+        <span v-if="groupsArr && groupsArr.find( g => g.id == scope.row.facilityGroupId) &&
+          groupsArr.find( g => g.id == scope.row.facilityGroupId).name !== 'undefined'">
             {{ groupsArr.find( g => g.id == scope.row.facilityGroupId).name  }}
         </span>
-        
+            <span v-else> <i> Group Name Not Available </i> </span>
        </template>
     </el-table-column>
 
