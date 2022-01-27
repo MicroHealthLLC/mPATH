@@ -1127,7 +1127,7 @@
     </template>     
     NO DATA TO DISPLAY  
     </el-tab-pane>
-  <el-tab-pane class="p-3 overflowX" v-if="currentProject.facilities.length > 0">
+  <el-tab-pane class="p-3 overflowX" v-else>
      <template slot="label">
       <i class="fal fa-table mr-1"></i>
       TABLE    
