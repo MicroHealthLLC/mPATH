@@ -103,17 +103,18 @@
         :titles="[ 'Portfolio Groups', 'My Program Groups']"
         :data="generateData"
         v-model="transferData"
+        @change="addPortfolioGroup"
         >
-      <el-button 
+      <!-- <el-button 
         class="transfer-footer ml-2 py-2 text-light" 
         :disabled="!this.confirmTransfer" 
         slot="right-footer" 
-        @click.prevent="addPortfolioGroup" 
+      
         size="small" 
         type="primary">
         Confirm Transfer
       </el-button>
-      <el-button class="transfer-footer" slot="left-footer" style="visibility:hidden" size="small">Save</el-button>
+      <el-button class="transfer-footer" slot="left-footer" style="visibility:hidden" size="small">Save</el-button> -->
       </el-transfer>
 
       </div>
@@ -175,7 +176,7 @@
           </h5>
         <ul class="pl-3">
             <li v-for="item, i in groupContracts.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
-              {{ item.nickname }} 
+              {{ item.nickname  }} 
             </li>
           </ul>
 
@@ -187,19 +188,34 @@
     </el-table-column>
     <el-table-column prop="name" sortable label="Groups">
     <template slot-scope="props">
-    {{props.row.name}}  
-      <span class="ml-5 mr-2" v-if="props.row.facilities.length">
-        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{  props.row.facilities.length }} 
-        </span> 
-          <span class="ml-5 mr-2" v-else>
-        <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>{{0}}
-        </span> 
-    <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
-      <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
+   
+
+<div class="row">
+  <div class="col-9">
+  {{props.row.name}}  
+</div>
+<div class="col-3">
+  <i class="fal fa-clipboard-list mr-1 mh-green-text" v-tooltip="`Projects`"></i>
+   <span class="mr-4" v-if="props.row.facilities.length">
+  {{  props.row.facilities.length }} 
+  </span> 
+  <span class="mr-4" v-else>
+  {{0}}
+  </span> 
+   <i class="far fa-file-contract mr-1 mh-orange-text" v-tooltip="`Contracts`"></i>
+   <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
+     {{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
     </span>
-        <span  v-else>
-        <i class="far fa-file-contract mr-1 mh-orange-text"></i>{{0}}
-        </span> 
+    <span  v-else>
+    {{0}}
+    </span> 
+</div>
+</div>
+  
+    
+
+
+   
     </template>
     </el-table-column>  
       <el-table-column
@@ -296,8 +312,7 @@ export default {
         let groupData = {
           group: {
             name: this.newGroupName,
-            project_id: this.$route.params.programId,
-            status: 'active',
+            project_id: this.$route.params.programId,        
           }
         }
          this.createGroup({
@@ -327,22 +342,6 @@ export default {
       }
       this.confirmTransfer = false
     },
-  // addPortfolioGroup() {
-  //   // Method to add a preexisting group
-  //       let groupData = {
-  //         group: {
-  //           id: 116,
-  //           project_id: this.$route.params.programId,           
-  //         }
-  //       }
-  //        this.pushPortfolioGroup({
-  //           ...groupData,
-  //         })         
-  //         this.hideSaveBtn = true;
-  //         this.reRenderTable()
-  //         // this.fetchFacilityGroups()
-        
-  //   },
     handleClick(tab, event) {
         console.log(tab, event);
     },
@@ -493,9 +492,10 @@ export default {
             type: "success",
             showClose: true,
           });
-          // this.SET_GROUP_STATUS(0);
+          this.SET_GROUP_STATUS(0);
           this.fetchGroups();
-           this.fetchCurrentProject(this.$route.params.programId) 
+          this.fetchCurrentProject(this.$route.params.programId) 
+          //  this.newGroupName =
         }
       },
     },
