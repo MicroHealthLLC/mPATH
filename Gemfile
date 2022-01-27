@@ -101,3 +101,4 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'jwt'
 
 gem "addressable", ">= 2.8.0"
+
