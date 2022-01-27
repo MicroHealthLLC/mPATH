@@ -9,8 +9,14 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     # else
     #   all_facility_groups = FacilityGroup.where(project_id: authorized_program_ids )
     # end
+    response_hash = {}
     all_facility_groups = FacilityGroup.all.as_json
-    render json: {facility_groups: all_facility_groups.as_json}
+    response_hash = {facility_groups: all_facility_groups.as_json}
+    if params[:program_id]
+      project = Project.find(params[:program_id])
+      response_hash[:program_group_ids] = project.project_groups.pluck(:id)
+    end
+    render json: response_hash
   end
 
   def create
@@ -23,11 +29,18 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     end
   end
 
-  def bulk_update
-    project = Project.find(params[:project_id])
+  def bulk_project_update
+    project = Project.find(params[:program_id])
     groups = FacilityGroup.where(id: params[:facility_group_ids])
-    if groups.update_all(project_id: project.id)
-      render json: groups
+    project.project_groups = groups
+    render json: groups
+  end
+
+  def update
+    group = FacilityGroup.find(params[:id])
+    
+    if group.update(facility_group_params)
+      render json: group
     else
       render json: {errors: "Error while updating groups"}, status: 406
     end
@@ -50,8 +63,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
 
   def facility_group_params
     params.require(:facility_group).permit(
-      :name,
-      :project_id
+      :name
     )
   end
 end

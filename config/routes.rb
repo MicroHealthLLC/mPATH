@@ -28,7 +28,7 @@ Rails.application.routes.draw do
 
       resources :facility_groups do
         collection do
-          put :bulk_update
+          put :bulk_project_update
         end
       end
 
