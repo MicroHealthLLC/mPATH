@@ -1224,6 +1224,7 @@ export default {
 
         // Used in Program Viewer
         'setTasksPerPageFilter',
+        'setLessonsPerPageFilter',
         // 7 States
         'setHideComplete',
         'setHideInprogress',
