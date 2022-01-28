@@ -13,7 +13,6 @@
                 aria-describedby="search-addon"
                 v-model="memberSearchQuery"
                 id="memberSearch"
-                data-cy="search_team_member"
               >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
@@ -34,7 +33,7 @@
                 <font-awesome-icon icon="file-excel"/>
               </button>
               <button class="btn btn-md btn-info team-total">
-                Team Total: {{tableData.length}}
+                Team Total: {{filteredMembers.members.length}}
                 </button>
               </div>
             </el-row>
@@ -120,7 +119,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in sortedMembers" :key="index" data-cy="user_data">
+            <tr v-for="(user, index) in sortedMembers" :key="index">
               <td class="text-center">{{user.id}}</td>
               <td>{{user.fullName}}</td>
               <!-- <td>{{user.lastName}}</td> -->
@@ -131,7 +130,7 @@
             </tr>
           </tbody>
         </table>
-        <div v-if="tableData.length > 0" class="float-right mb-4 mt-1 font-sm">     
+        <div v-if="filteredMembers.members.length > 0" class="float-right mb-4 mt-1 font-sm">
          <div class="simple-select my-1 text-right d-inline-block font-sm">   
           <span class="mr-2">Displaying </span>        
           <el-select 
@@ -152,7 +151,7 @@
             
           <span class="mr-1 ml-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
           <button class="btn btn-sm page-btns ml-2" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil( tableData.length / this.C_membersPerPage.value) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil( filteredMembers.members.length / this.C_membersPerPage.value) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
         </div>
         <div v-else class="float-right mb-4 mt-2 font-md mr-1">
@@ -201,8 +200,25 @@ import 'jspdf-autotable'
       orderedUsers: function() {
         return _.orderBy(this.activeProjectUsers, 'lastName', 'asc')
       },
+      filteredMembers() {
+        let memberData = [];
+        memberData = this.tableData;
+        let search = this.memberSearchQuery;
+        let members = memberData.filter((m) => {
+          if (search != "") {
+            return (
+              m.email.toLowerCase().match(search.toLowerCase()) ||
+              m.title.toLowerCase().match(search.toLowerCase()) ||
+              m.fullName.toLowerCase().match(search.toLowerCase()) ||
+              m.organization.toLowerCase().match(search.toLowerCase()) ||
+              m.phoneNumber.toLowerCase().match(search.toLowerCase())
+            )
+          } else return true;
+        });
+        return { members: members };
+      },
       sortedMembers:function() {
-          return this.tableData.sort((a,b) => {
+          return this.filteredMembers.members.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
@@ -239,7 +255,7 @@ import 'jspdf-autotable'
           this.currentSort = s;
         },
         nextPage:function() {
-          if((this.currentPage*this.C_membersPerPage.value) < this.tableData.length) this.currentPage++;
+          if((this.currentPage*this.C_membersPerPage.value) < this.filteredMembers.members.length) this.currentPage++;
         },
         prevPage:function() {
           if(this.currentPage > 1) this.currentPage--;
@@ -248,24 +264,6 @@ import 'jspdf-autotable'
             alert('this button works')
         // document.getElementsByClassName("searchbox").empty();
         },
-       memberSearch() {
-          var input, filter, table, tr, td, i, txtValue;
-          input = document.getElementById("memberSearch");
-          filter = input.value.toUpperCase();
-          table = this.$refs.table;
-          tr = table.getElementsByTagName("tr");
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1];
-            if (td) {
-              txtValue = td.textContent || td.innerText;
-              if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-              } else {
-                tr[i].style.display = "none";
-              }
-            }
-         }
-      },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
@@ -279,14 +277,7 @@ import 'jspdf-autotable'
         link.setAttribute('href', this.uri + this.base64(this.format(this.template, ctx)));
         link.setAttribute('download', 'Team_Members_list.xls');
         link.click();
-      }
-    },
-    watch: {
-      memberSearchQuery: {
-        handler: function(value) {
-          this.memberSearch();
-        }
-      }
+      },
     }
   }
 </script>
