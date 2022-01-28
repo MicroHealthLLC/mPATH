@@ -123,7 +123,7 @@ const settingsStore = {
 
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/facility_groups/bulk_update`,
+        url: `${API_BASE_PATH}/facility_groups/bulk_project_update`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -657,7 +657,7 @@ const portfolioGroupData = (groupData) => {
   groupData.ids.forEach((ids) => {
     formData.append("facility_group_ids[]",ids);
   });
-  formData.append("project_id", groupData.programId);
+  formData.append("program_id", groupData.programId);
   return formData;
 };
 

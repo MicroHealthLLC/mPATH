@@ -36,7 +36,7 @@
     </el-button>
     </div>    
      <div class="col-5"  v-show="currentTab == 'tab2'">     
-        <!-- <el-input
+        <el-input
           type="search"          
           placeholder="Search Group"
           aria-label="Search"            
@@ -45,7 +45,7 @@
           data-cy=""
       >
         <el-button slot="prepend" icon="el-icon-search"></el-button>
-      </el-input>   -->
+      </el-input>  
       </div>  
   </div>
  </div>
@@ -225,14 +225,43 @@
     </template>
     </el-table-column>  
       <el-table-column
-      align="right">
-      <template slot="header" slot-scope="scope">
+     >
+  <template slot-scope="props">
+     <div class="row">
+  <div class="col-9">
+
+  <el-input size="small"
+    v-if="rowId == props.row.id"
+    style="text-align:center"
+    v-model="props.row.name" controls-position="right">
+  </el-input>
+  <span v-else> {{ props.row.name }}</span>
+</div>
+<div class="col-3">
+  <i class="fal fa-clipboard-list mr-1 mh-green-text" v-tooltip="`Projects`"></i>
+   <span class="mr-4" v-if="props.row.facilities.length">
+  {{  props.row.facilities.length }} 
+  </span> 
+  <span class="mr-4" v-else>
+  {{0}}
+  </span> 
+   <i class="far fa-file-contract mr-1 mh-orange-text" v-tooltip="`Contracts`"></i>
+   <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
+     {{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
+    </span>
+    <span  v-else>
+    {{0}}
+    </span> 
+</div>
+</div>
+  </template>
+      <!-- <template slot="header" slot-scope="scope">
         <el-input
 
           v-model="search"
           class="groupSearch"
           placeholder="Search Group names"/>
-      </template>
+      </template> -->
          </el-table-column>
 
      <el-table-column label="Actions"   width="100">
@@ -240,7 +269,7 @@
       <el-button 
         type="default" 
         v-tooltip="`Save`"
-        @click.prevent="editGroupName(scope.$index, scope.row)"  
+        @click.prevent="saveEdits(scope.$index, scope.row)"  
         v-if="scope.$index == rowIndex" 
         class="bg-primary text-light">
         <i class="far fa-save"></i>
@@ -334,18 +363,20 @@ export default {
       this.rowIndex = index
       this.rowId = rows.id
     },
-    editGroupName(index, rows) {
-      console.log(`index: ${index}`)
-         console.log(rows)
-    // let id = rows.id;
-    // let groupNameData = {
-    //   newNameData: {
-    //     name: rows.name,
-    //   }
-    // }
-    //   this.updateGroupName({
-    //     ...groupNameData, id
-    //   })
+   saveEdits(index, rows) {
+      // console.log(`index: ${index}`)
+      //    console.log(rows)
+    let id = rows.id;
+    let groupNameData = {
+      newNameData: {
+        name: rows.name,
+      }
+    }
+      this.updateGroupName({
+        ...groupNameData, id
+      })
+       this.rowIndex = null;
+      this.rowId = null;
     },
     addGroup(){     
       this.dialogVisible = true;    
@@ -382,6 +413,7 @@ export default {
             programId: this.$route.params.programId,           
           }
         }
+          console.log(group)
          this.updateGroup({
             ...group,
           }) 
@@ -469,7 +501,7 @@ export default {
               }         
          }
       }     
-      // console.log(` myProgramsGroup: ${ data}`)
+      console.log(` myProgramsGroup: ${ data}`)
        return data; 
     },
     transferData: {
@@ -480,7 +512,7 @@ export default {
         if(value){
           this.confirmTransfer = true
         }
-        //  console.log(`set Transfer data value: ${value}`) 
+         console.log(`set Transfer data value: ${value}`) 
         this.SET_TRANSFER_DATA(value);
       },
     },
