@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_26_220235) do
+ActiveRecord::Schema.define(version: 2022_01_28_161515) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -228,6 +228,7 @@ ActiveRecord::Schema.define(version: 2022_01_26_220235) do
     t.string "lng"
     t.integer "status", default: 1
     t.string "country_code", default: ""
+    t.integer "project_facility_group_id"
     t.index ["creator_id"], name: "index_facilities_on_creator_id"
     t.index ["facility_group_id"], name: "index_facilities_on_facility_group_id"
     t.index ["status"], name: "index_facilities_on_status"
@@ -241,9 +242,7 @@ ActiveRecord::Schema.define(version: 2022_01_26_220235) do
     t.integer "status", default: 0
     t.integer "region_type", default: 0
     t.string "center"
-    t.bigint "project_id"
     t.integer "progress", default: 0
-    t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
@@ -850,7 +849,6 @@ ActiveRecord::Schema.define(version: 2022_01_26_220235) do
   add_foreign_key "contracts", "facility_groups"
   add_foreign_key "contracts", "projects"
   add_foreign_key "facilities", "users", column: "creator_id"
-  add_foreign_key "facility_groups", "projects"
   add_foreign_key "facility_projects", "facilities"
   add_foreign_key "facility_projects", "projects"
   add_foreign_key "facility_projects", "statuses"
