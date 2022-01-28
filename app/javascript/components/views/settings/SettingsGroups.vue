@@ -192,7 +192,13 @@
 
 <div class="row">
   <div class="col-9">
-  {{props.row.name}}  
+
+  <el-input size="small"
+    v-if="rowId == props.row.id"
+    style="text-align:center"
+    v-model="props.row.name" controls-position="right">
+  </el-input>
+  <span v-else> {{ props.row.name }}</span>
 </div>
 <div class="col-3">
   <i class="fal fa-clipboard-list mr-1 mh-green-text" v-tooltip="`Projects`"></i>
@@ -222,11 +228,34 @@
       align="right">
       <template slot="header" slot-scope="scope">
         <el-input
+
           v-model="search"
           class="groupSearch"
           placeholder="Search Group names"/>
       </template>
          </el-table-column>
+
+     <el-table-column label="Actions"   width="100">
+      <template slot-scope="scope" >
+      <el-button 
+        type="default" 
+        v-tooltip="`Save`"
+        @click.prevent="editGroupName(scope.$index, scope.row)"  
+        v-if="scope.$index == rowIndex" 
+        class="bg-primary text-light">
+        <i class="far fa-save"></i>
+        </el-button>
+      <el-button  
+        type="default" 
+        v-tooltip="`Edit Group Name`"
+        @click.prevent="editMode(scope.$index, scope.row)" 
+        v-if="scope.$index !== rowIndex" 
+        class="bg-light">
+        <i class="fal fa-edit text-primary" ></i>
+          </el-button> 
+      </template>
+    </el-table-column>
+     
    </el-table>   
   
    </div> 
@@ -273,6 +302,8 @@ export default {
         currentFacilityGroup: {},
         componentKey: 0,
         confirmTransfer: false,
+        rowIndex: null,
+        rowId: null,
         newGroupName: null,
         programId: this.$route.params.programId,
         hideSaveBtn: false,
@@ -285,7 +316,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA']), 
-   ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroup", "fetchGroups", "fetchCurrentProject"]),
+   ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroupName","updateGroup", "fetchGroups", "fetchCurrentProject"]),
 
    addAnotherGroup() {
       this.C_projectGroupFilter = null;
@@ -298,6 +329,23 @@ export default {
     closeAddGroupBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
+    },
+    editMode(index, rows) {
+      this.rowIndex = index
+      this.rowId = rows.id
+    },
+    editGroupName(index, rows) {
+      console.log(`index: ${index}`)
+         console.log(rows)
+    // let id = rows.id;
+    // let groupNameData = {
+    //   newNameData: {
+    //     name: rows.name,
+    //   }
+    // }
+    //   this.updateGroupName({
+    //     ...groupNameData, id
+    //   })
     },
     addGroup(){     
       this.dialogVisible = true;    
@@ -401,7 +449,7 @@ export default {
       return this.facilityGroups
       }   
     }, 
-   myProgramGroups(){
+    myProgramGroups(){
       const data = this.getTransferData;
       if (this.groups && this.groups.length > 0)  {
         let myGroups = this.groups.filter(t => t.project_id == this.$route.params.programId)  
