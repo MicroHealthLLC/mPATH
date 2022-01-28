@@ -2,6 +2,8 @@ class FacilityGroup < SortableRecord
   # default_scope {order(FacilityGroup.order_humanize)}
   has_many :facilities
   has_many :facility_projects, through: :facilities
+  has_many :project_facility_groups
+  has_many :projects, through: :project_facility_groups
 
   # validates :name, presence: true, uniqueness: true
 
