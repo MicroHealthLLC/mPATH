@@ -23,6 +23,10 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     facility_group = FacilityGroup.new(facility_group_params)
     facility_group.status = :active
     if facility_group.save
+      if params[:facility_group][:project_id]
+        project = Project.find( params[:facility_group][:project_id])
+        project.project_groups << facility_group
+      end
       render json: facility_group
     else
       render json: {errors: facility_group.errors.full_messages}, status: 406
