@@ -35,6 +35,7 @@
             </div>
                <div class="col text-right">
                     <button
+                      v-if="_isallowed('write')"
                       @click.prevent="saveEdits"
                       class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
                     >
@@ -786,14 +787,14 @@ export default {
         this.fetchClassificationTypes();
       }
     },
-    //    _isallowed(salut) {
-    //       var programId = this.$route.params.programId;
-    //       var contractId = this.$route.params.contractId
-    //       let fPrivilege = this.$projectPrivileges[programId][contractId]
-    //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //       let s = permissionHash[salut]
-    //       return  fPrivilege.overview.includes(s);
-    //   },
+    _isallowed(salut) {
+      var programId = this.$route.params.programId
+      var contractId = this.$route.params.contractId
+      let fPrivilege = this.$contractPrivileges[programId][contractId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.overview.includes(s);
+    },
   },
   computed: {
     ...mapGetters([
