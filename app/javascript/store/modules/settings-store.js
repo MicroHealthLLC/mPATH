@@ -87,8 +87,11 @@ const settingsStore = {
     },
     updateGroupName({ commit }, { id, newNameData }) {
         commit("TOGGLE_GROUPS_LOADED", false);
-        let formData = newGroupName(newNameData);
-        console.log()
+        let formData = new FormData();
+        console.log(newNameData.name)
+        formData.append("facility_group[name]", newNameData.name); //Required
+        // let formData = newGroupName(newNameData);
+        // console.log()
   
         axios({
           method: "PUT",
