@@ -200,7 +200,7 @@
   </el-input>
   <span v-else> {{ props.row.name }}</span>
 </div>
-<div class="col-3">
+<!-- <div class="col-3">
   <i class="fal fa-clipboard-list mr-1 mh-green-text" v-tooltip="`Projects`"></i>
    <span class="mr-4" v-if="props.row.facilities.length">
   {{  props.row.facilities.length }} 
@@ -215,7 +215,7 @@
     <span  v-else>
     {{0}}
     </span> 
-</div>
+</div> -->
 </div>
   
     
@@ -225,19 +225,12 @@
     </template>
     </el-table-column>  
       <el-table-column
+      label="Counts"
      >
   <template slot-scope="props">
      <div class="row">
-  <div class="col-9">
 
-  <el-input size="small"
-    v-if="rowId == props.row.id"
-    style="text-align:center"
-    v-model="props.row.name" controls-position="right">
-  </el-input>
-  <span v-else> {{ props.row.name }}</span>
-</div>
-<div class="col-3">
+<div class="col">
   <i class="fal fa-clipboard-list mr-1 mh-green-text" v-tooltip="`Projects`"></i>
    <span class="mr-4" v-if="props.row.facilities.length">
   {{  props.row.facilities.length }} 
@@ -333,6 +326,7 @@ export default {
         confirmTransfer: false,
         rowIndex: null,
         rowId: null,
+        transferGroupBack: null,
         newGroupName: null,
         programId: this.$route.params.programId,
         hideSaveBtn: false,
@@ -363,21 +357,6 @@ export default {
       this.rowIndex = index
       this.rowId = rows.id
     },
-   saveEdits(index, rows) {
-      // console.log(`index: ${index}`)
-      //    console.log(rows)
-    let id = rows.id;
-    let groupNameData = {
-      newNameData: {
-        name: rows.name,
-      }
-    }
-      this.updateGroupName({
-        ...groupNameData, id
-      })
-       this.rowIndex = null;
-      this.rowId = null;
-    },
     addGroup(){     
       this.dialogVisible = true;    
       this.newGroupName = null;
@@ -387,39 +366,71 @@ export default {
       this.currentTab = tab ? tab.key : "tab1"; 
       // console.log(this.currentTab) 
     },
-    saveGroup() {
-        let groupData = {
-          group: {
-            name: this.newGroupName,
-            project_id: this.$route.params.programId,        
+    saveEdits(index, rows) {
+      // console.log(`index: ${index}`)
+      //    console.log(rows)
+        let id = rows.id;
+        let groupNameData = {
+            newNameData: {
+            name: rows.name,
           }
-        }
-         this.createGroup({
-            ...groupData,
-          })       
-          this.fetchGroups();  
-          this.hideSaveBtn = true;       
+     }
+         console.log(groupNameData)
+      this.updateGroupName({
+        ...groupNameData, id
+      })
+       this.rowIndex = null;
+       this.rowId = null;
     },
-  addPortfolioGroup() {
-    let addedPrograms = [];
-    let pIds = this.transferData.map(id => id)
-    let idMap = this.facilityGroups.map(g => g.id)
-    addedPrograms.push(pIds.filter(function(obj) { return idMap.indexOf(obj) == -1; }));
-      for (let i = 0; i  < addedPrograms.length; i++) {      
-        if (addedPrograms.length > 0) {
-      let group = {
+    saveGroup() {
+    let groupData = {
+      group: {
+        name: this.newGroupName,
+        project_id: this.$route.params.programId,        
+      }
+     }
+      this.createGroup({
+        ...groupData,
+      })       
+      this.fetchGroups();  
+      this.hideSaveBtn = true;       
+    }, 
+  // addPortfolioGroup() {
+  //   let addedPrograms = [];
+  //   let pIds = this.getTransferData.map(id => id)
+  //   let idMap = this.facilityGroups.map(g => g.id)
+  //   addedPrograms.push(pIds.filter(function(obj) { return idMap.indexOf(obj) == -1; }));
+  //     for (let i = 0; i  < addedPrograms.length; i++) {      
+  //       if (addedPrograms.length > 0) {
+  //     let group = {
+  //         groupData: {
+  //           ids: addedPrograms[i],
+  //           programId: this.$route.params.programId,           
+  //         }
+  //       }
+  //        this.updateGroup({
+  //           ...group,
+  //         }) 
+  //        }
+  //        this.fetchCurrentProject(this.$route.params.programId)
+  //     }
+  //     this.confirmTransfer = false
+  //   },
+  addPortfolioGroup() {   
+      let group = {    
           groupData: {
-            ids: addedPrograms[i],
+            ids: this.getTransferData,
             programId: this.$route.params.programId,           
           }
         }
-          console.log(group)
-         this.updateGroup({
-            ...group,
-          }) 
-         }
-         this.fetchCurrentProject(this.$route.params.programId)
-      }
+  
+      this.updateGroup({
+        ...group,
+      }) 
+
+       this.fetchGroups()
+      // this.fetchCurrentProject(this.$route.params.programId)
+      
       this.confirmTransfer = false
     },
     handleClick(tab, event) {
@@ -482,9 +493,11 @@ export default {
       }   
     }, 
     myProgramGroups(){
-      const data = this.getTransferData;
+      const data = [...new Set(this.getTransferData)] ;
       if (this.groups && this.groups.length > 0)  {
-        let myGroups = this.groups.filter(t => t.project_id == this.$route.params.programId)  
+        let fG = this.facilityGroups.map(g => g.id)
+        let myGroups = this.groups.filter(t => t && t.id == fG)
+         console.log(` myProgramsGroup: ${  myGroups }`)
          for (let i = 0; i < myGroups.length; i++) {
           if (myGroups[i] !== undefined) {
               // data.push(this.groupsInProgram[i])
@@ -493,16 +506,24 @@ export default {
         }  
         
       }
-      if (this.facilities && this.facilities.length > 0 ) { 
-         let myInheritedGroups = this.facilities.map(t => t)   
-        for (let i = 0; i < myInheritedGroups.length; i++) {  
+      //  if (this.getTransferData && this.getTransferData.length > 0) { 
+      //    let myInheritedGroups = this.facilityGroups.filter(t => t.id == data.map( d => d))   
+      //   for (let i = 0; i < myInheritedGroups.length; i++) {  
+      //         if (myInheritedGroups[i] !== undefined) {    
+      //       data.push(myInheritedGroups[i].id);  
+      //         }         
+      //    }
+      // }     
+      if (this.facilityGroups && this.facilityGroups.length > 0 ) { 
+         let myInheritedGroups = this.facilityGroups.map(t => t)   
+        for (let i = 0; i <= myInheritedGroups.length; i++) {  
               if (myInheritedGroups[i] !== undefined) {    
-            data.push(myInheritedGroups[i].facilityGroupId);  
+            data.push(myInheritedGroups[i].id);  
               }         
          }
       }     
-      console.log(` myProgramsGroup: ${ data}`)
-       return data; 
+     
+       return [...new Set(data)] 
     },
     transferData: {
       get() {     
@@ -510,9 +531,10 @@ export default {
       },
       set(value) {
         if(value){
+          console.log(`transferGroupBack: ${value}`) 
           this.confirmTransfer = true
         }
-         console.log(`set Transfer data value: ${value}`) 
+    
         this.SET_TRANSFER_DATA(value);
       },
     },

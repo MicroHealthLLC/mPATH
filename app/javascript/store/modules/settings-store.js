@@ -62,9 +62,7 @@ const settingsStore = {
         });
     },
     createGroup({ commit }, { group }) {
-      // Displays loader on front end
       commit("TOGGLE_GROUPS_LOADED", false);
-      // Utilize utility function to prep Lesson form data
       let formData = groupFormData(group);
 
       axios({
@@ -87,12 +85,10 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
-    updateGroupName({ commit }, { id, newName }) {
-      //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
+    updateGroupName({ commit }, { id, newNameData }) {
         commit("TOGGLE_GROUPS_LOADED", false);
-        // Utilize utility function to prep Lesson form data
         let formData = newGroupName(newNameData);
-        console.log(newNameData)
+        console.log()
   
         axios({
           method: "PUT",
@@ -661,8 +657,9 @@ const portfolioGroupData = (groupData) => {
   return formData;
 };
 
-// FOR NEW UPDATE API
 const newGroupName = (newNameData) => {
+let formData = new FormData();
+console.log(newNameData.name)
 formData.append("facility_group[name]", newNameData.name); //Required
 }
 
