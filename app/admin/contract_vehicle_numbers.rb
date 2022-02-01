@@ -3,7 +3,7 @@ ActiveAdmin.register ContractVehicleNumber do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Contract Vehicle Number', admin_contract_vehicle_numbers_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Contract Vehicle Numbers', admin_contract_vehicle_numbers_path)]
     if %(show edit).include?(params['action'])
       links << link_to(contract_vehicle_number.name, edit_admin_contract_vehicle_number_path)
     end
