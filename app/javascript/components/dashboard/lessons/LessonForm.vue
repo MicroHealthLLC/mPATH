@@ -15,8 +15,9 @@
       <!-- Breadcrumbs and form buttons -->
       <div>
         <h5 class="mb-0">
-          <span style="font-size: 16px; margin-right: 10px"
-            ><i class="fal fa-clipboard-list mh-green-text"></i>
+          <span style="font-size: 16px; margin-right: 10px">
+            <i v-if="!$route.params.contractId" class="fal fa-clipboard-list mh-green-text"></i>
+            <i v-if="$route.params.contractId" class="far fa-file-contract mr-1 mh-orange-text"></i>
             </span>
           <router-link v-if="contentLoaded && facility" :to="projectNameLink">{{
            facility.facilityName
