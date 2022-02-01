@@ -235,7 +235,7 @@ class User < ApplicationRecord
     self.facility_privileges_hash.transform_values{|v| 
       v.transform_values{|v| 
         v.map{|k,v| 
-          if (!["facility_id", "contracts"].include?(k)) && (v.present? || v.any?)
+          if (!["facility_id", "contracts"].include?(k)) && (v.present? || v.any?) && FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym]
             {id: k.downcase, name: FacilityPrivilege::PRIVILEGE_MODULE[k.to_sym].humanize, value: k.downcase}
           end
         }.compact
