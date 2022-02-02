@@ -35,6 +35,7 @@
             </div>
                <div class="col text-right">
                     <button
+                      v-if="_isallowed('write')"
                       @click.prevent="saveEdits"
                       class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
                     >
@@ -71,6 +72,7 @@
                       v-model="contract.name"
                       type="text"
                       placeholder="Contract Name"
+                      :disabled="!_isallowed('write')"
                     />
                   </div>
                   <!-- <div class="col-5 pl-0 d-flex">
@@ -103,6 +105,7 @@
                       v-model="contract.project_code"
                       type="text"
                       placeholder="Enter Project Code"
+                      :disabled="!_isallowed('write')"
                     />
                   </div>
                   <div class="col-5 px-2">
@@ -112,6 +115,7 @@
                       v-model="contract.nickname"
                       type="text"
                       placeholder="Contract Nickname"
+                      :disabled="!_isallowed('write')"
                     />
                     <!-- Need to add additional div here for error handling -->
                   </div>
@@ -124,6 +128,7 @@
                       value-key="id"
                       clearable
                       placeholder="Select Type"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cClassificationOptions"
@@ -141,6 +146,7 @@
                       v-model="contract.total_subcontracts"
                       type="text"
                       placeholder="Contract Nickname"                                   
+                      :disabled="!_isallowed('write')"
                     />
                   </div>
                 </div>
@@ -158,6 +164,7 @@
                       clearable
                       default-first-option
                       placeholder="Select or enter Customer (Agency)"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cCustomerAgenciesOptions"
@@ -183,6 +190,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select or enter status"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cClientTypeOptions.filter(c => c.name !== 'null' )"
@@ -209,6 +217,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Vehicle"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cVehicleOptions"
@@ -233,6 +242,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cPrimeIdiqOptions"
@@ -261,6 +271,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cContractNoOptions"
@@ -287,6 +298,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Subcontract Number / PO Number"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cSubcontractNoOptions"
@@ -313,6 +325,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Prime"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cPrimeOptions.filter(c => c.name !== 'null')"
@@ -335,6 +348,7 @@
                       clearable
                       default-first-option
                       placeholder="Select or enter status"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cStatusOptions"
@@ -359,6 +373,7 @@
                       :rows="3"
                       v-model="contract.notes"
                       placeholder="Enter note here"
+                      :disabled="!_isallowed('write')"
                     />
                 
                   </div>
@@ -381,6 +396,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                     <!-- <div v-show="errors.has('Date')" class="text-danger">
@@ -400,6 +416,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                   </div>
@@ -416,6 +433,7 @@
                       clearable
                       value-key="id"
                       placeholder="Select Current Pop"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in getCurrentPop.filter(c => c.name !== 'undefined')"
@@ -439,6 +457,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                     <!-- <div v-show="errors.has('Date')" class="text-danger">
@@ -458,6 +477,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                   </div>
@@ -469,7 +489,7 @@
                     </label>
                     <el-input
                       v-model="daysRemaining"
-                      :disabled="!contract.current_pop_end_time"
+                      :disabled="!contract.current_pop_end_time || !_isallowed('write')"
                       name="Days Remaining"
                       placeholder="Days Remaining"
                     />
@@ -786,14 +806,14 @@ export default {
         this.fetchClassificationTypes();
       }
     },
-    //    _isallowed(salut) {
-    //       var programId = this.$route.params.programId;
-    //       var contractId = this.$route.params.contractId
-    //       let fPrivilege = this.$projectPrivileges[programId][contractId]
-    //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //       let s = permissionHash[salut]
-    //       return  fPrivilege.overview.includes(s);
-    //   },
+    _isallowed(salut) {
+      var programId = this.$route.params.programId
+      var contractId = this.$route.params.contractId
+      let fPrivilege = this.$contractPrivileges[programId][contractId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.overview.includes(s);
+    },
   },
   computed: {
     ...mapGetters([
