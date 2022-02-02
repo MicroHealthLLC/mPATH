@@ -25,7 +25,7 @@
     "moment": "^2.26.0",
     "moment-range": "^4.0.2",
     "node-forge": "^1.0.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.1",
     "sweet-modal-vue": "^2.0.0",
     "v-click-outside": "^3.1.2",
     "v-tooltip": "^2.0.3",
