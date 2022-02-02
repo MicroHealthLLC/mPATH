@@ -8,7 +8,7 @@ ActiveAdmin.register ContractCurrentPop do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Contract Current PoP', admin_contract_current_pops_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Contract Current PoPs', admin_contract_current_pops_path)]
     if %(show edit).include?(params['action'])
       links << link_to(contract_current_pop.name, edit_admin_contract_current_pop_path)
     end

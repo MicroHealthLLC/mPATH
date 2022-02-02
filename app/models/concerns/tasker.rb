@@ -43,9 +43,14 @@ module Tasker
     rescue URI::InvalidURIError
       false
     end
+    
+    def is_contract_resource?
+      self.contract_id.present?
+    end
 
     def setup_facility_project
       return unless facility_project.present?
+      return if self.is_contract_resource?
       if facility_project.facility_id_changed? || facility_project.project_id_changed?
         self.facility_project = FacilityProject.find_or_initialize_by(project: self.project, facility: self.facility)
       end
