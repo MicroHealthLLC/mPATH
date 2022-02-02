@@ -56,7 +56,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in groupList"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -81,15 +81,20 @@
     <el-table-column prop="nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
+            v-if="rowId == scope.row.id"
             style="text-align:center"
-            v-model="scope.row.nickname" controls-position="right"></el-input>
+            v-model="scope.row.nickname" controls-position="right">
+            </el-input>
+         <span v-else> {{ scope.row.nickname }}</span>
        </template>
 
 
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
-            <el-select
+
+            {{ scope.row.facility_group_name }}
+            <!-- <el-select
             class="w-100"
             v-model="scope.row.facility_group_id" 
             track-by="id"
@@ -99,13 +104,13 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in getNewGroups"
           :key="item.id"
           :label="item.name"
           :value="item.id">
         </el-option>
           
-          </el-select>
+          </el-select> -->
           <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.facility_group_name"></el-input> -->
@@ -114,8 +119,38 @@
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-      <el-button v-if="_isallowed('delete')" type="default" @click.prevent="deleteSelectedContract(scope.$index, scope.row)" class="bg-danger text-light">Delete</el-button>
+      <el-button 
+        type="default" 
+         v-if="scope.$index == rowIndex && _isallowed('write')" 
+        @click.prevent="saveEdits(scope.$index, scope.row)"   
+        v-tooltip="`Save`" 
+        class="bg-primary text-light">
+          <i class="far fa-save"></i>
+      </el-button>   <el-button 
+        type="default" 
+        v-tooltip="`Cancel Edit`"       
+        v-if="scope.$index == rowIndex" 
+        @click.prevent="cancelEdits(scope.$index, scope.row)"  
+        class="bg-secondary text-light">
+      <i class="fas fa-ban"></i>
+        </el-button>
+        <el-button  
+        type="default" 
+        v-tooltip="`Edit Contract Name`"
+        @click.prevent="editMode(scope.$index, scope.row)" 
+        v-if="scope.$index !== rowIndex" 
+        class="bg-light">
+        <i class="fal fa-edit text-primary" ></i>
+        </el-button> 
+
+      <el-button 
+        v-if="_isallowed('delete')" 
+        type="default" 
+        v-tooltip="`Delete`" 
+        @click.prevent="deleteSelectedContract(scope.$index, scope.row)" 
+        class="bg-light">
+        <i class="far fa-trash-alt text-danger"></i>
+        </el-button>
        <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
 
         </el-button>
@@ -193,7 +228,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in groupList"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -262,6 +297,8 @@ export default {
       // currentContract: {},
       dialogVisible: false,
       currentFacilityGroup: {},
+      rowIndex: null,
+      rowId: null,
       projectNameText: '',
       search: '',
       hideSaveBtn: false,
@@ -273,7 +310,8 @@ export default {
     };
   },
   mounted() {
-     this.fetchContracts();   
+  this.fetchContracts(); 
+  this.fetchGroups(this.$route.params.programId)
   },
   methods: {
    ...mapMutations([
@@ -285,7 +323,7 @@ export default {
      'setNewContractGroupFilter',
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
-   ...mapActions(["createContract", "fetchContracts", "updateContract", "deleteContract"]),
+   ...mapActions(["createContract", "fetchContracts", "fetchGroups","updateContract", "deleteContract"]),
     _isallowed(salut) {
         let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -332,7 +370,7 @@ export default {
     //     return { formData }
     //  }
     
-    editContract(index, rows) {
+    saveEdits(index, rows) {
         let id = rows.id;
         let contractData = {
           contract: {
@@ -348,6 +386,16 @@ export default {
          this.updateContract({
             ...contractData, id
           })
+        this.rowIndex = null;
+       this.rowId = null;
+    },
+    cancelEdits(index, rows) {
+       this.rowIndex = null;
+       this.rowId = null;
+    },
+    editMode(index, rows) {
+      this.rowIndex = index
+      this.rowId = rows.id
     },
     deleteSelectedContract(index, rows) {
       let id = rows.id;
@@ -393,9 +441,12 @@ export default {
       'getNewContractGroupFilter',
       "contractStatus",
        "contracts",
+       "groups",
+       "getTransferData",
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
+      "getNewGroups",
       'facilityGroups',
       'currentProject'
     ]), 
@@ -407,7 +458,7 @@ export default {
          this.contracts[0] && 
          this.contracts[0].length > 0 
          ){
-      let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
+      let programContracts = this.contracts[0].filter(u => this.getTransferData.includes(u.facility_group_id))
       let contractData = programContracts.map(t => t)
       .filter((td) => {
         //  console.log(td)
@@ -420,6 +471,27 @@ export default {
        return contractData
       }    
    },
+   groupList() {
+     if (
+        this.groups &&        
+         this.groups.length > 0  &&
+         this.getTransferData && 
+         this.getTransferData.length > 0
+         )
+         {
+        return this.groups.filter(u => this.getTransferData.includes(u.id))
+         } else if (
+        this.groups &&        
+         this.groups.length > 0  &&
+         this.facilityGroups && this.facilityGroups.length > 0 &&
+         !this.getTransferData
+         )
+         {
+         let programGroupIds = this.facilityGroups.map(t => t.id)
+          return this.groups.filter(u => programGroupIds.includes(u.id))
+         } else return []
+    }, 
+
     C_typeFilter: {
         get() {
           return this.getContractGroupTypes

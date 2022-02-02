@@ -8,6 +8,8 @@ class Project < SortableRecord
   has_many :facility_projects, dependent: :destroy
   has_many :facilities, through: :facility_projects
   has_many :facility_groups, through: :facilities
+  has_many :project_facility_groups, dependent: :destroy
+  has_many :project_groups, through: :project_facility_groups, class_name: "FacilityGroup"
   has_many :tasks, through: :facility_projects
   has_many :issues, through: :facility_projects
   has_many :risks, through: :facility_projects
@@ -321,7 +323,8 @@ class Project < SortableRecord
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
-    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?) or project_id = ?", all_facility_group_ids, project.id)
+    all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?)", all_facility_group_ids)
 
     # all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
 
