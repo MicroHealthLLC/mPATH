@@ -9,6 +9,7 @@ const settingsStore = {
     contract_table: [],
     group_filter: null,
     transfer_data: [],
+    new_groups: [], 
     contract: {},
     contracts: [],
     client_types: [],
@@ -413,18 +414,19 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    fetchGroups({ commit }) {
+    fetchGroups({ commit }, id) {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/facility_groups.json`,
+        url: `${API_BASE_PATH}/facility_groups?program_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_GROUPS", res.data.facility_groups);        
+          commit("SET_GROUPS", res.data.facility_groups);   
+          commit("SET_TRANSFER_DATA", res.data.program_group_ids);        
         })
         .catch((err) => {
           console.log(err);
@@ -486,6 +488,7 @@ const settingsStore = {
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
+    SET_NEW_GROUPS: (state, value) => (state.new_groups = value),
     SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
@@ -530,6 +533,7 @@ const settingsStore = {
     getContractClassifications: (state) => state.contract_classifications,
     getCurrentPop: (state) => state.current_pop,
     getPrime: (state) => state.prime,
+    getNewGroups: (state) => state.new_groups,
 
     getVehicles: (state) => state.vehicle_filter,
     getVehicleNumbers: (state) => state.vehicle_number,
