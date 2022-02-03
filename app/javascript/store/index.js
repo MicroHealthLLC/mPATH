@@ -3246,7 +3246,7 @@ export default new Vuex.Store({
       });
     },
 
-    taskDeleted({ commit }, { task, programId }) {
+  taskDeleted({ commit }, { task, programId }) {
       let urlPrefix = `programs/${programId}/projects`
       let taskResourceId = task.facilityId
       if(task.contractId){
@@ -3293,14 +3293,24 @@ export default new Vuex.Store({
           });
       });
     },
-    issueDeleted({ commit }, issue) {
+    issueDeleted({ commit }, { issue, programId }) {
+      let urlPrefix = `programs/${programId}/projects`
+      let issueResourceId = issue.facilityId
+      if(issue.contractId){
+         issueResourceId = issue.contractId
+         urlPrefix = 'contracts'
+      } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${issue.projectId}/projects/${issue.facilityId}/issues/${issue.id}.json`
+            `${API_BASE_PATH}/${urlPrefix}/${issueResourceId}/issues/${issue.id}.json`
           )
           .then((res) => {
-            commit("updateIssuesHash", { issue: issue, action: "delete" });
+            if (issue.facilityId){
+              commit("updateIssuesHash", { issue: issue, action: "delete" });
+            } else   {
+              commit("updateContractIssues", { issue: issue, action: "delete" });
+            }               
             resolve("Success");
           })
           .catch((err) => {
@@ -3309,14 +3319,24 @@ export default new Vuex.Store({
           });
       });
     },
-    riskDeleted({ commit }, risk) {
+    riskDeleted({ commit }, { risk, programId }) {
+      let urlPrefix = `programs/${programId}/projects`
+      let riskResourceId = risk.facilityId
+      if(risk.contractId){
+         riskResourceId = risk.contractId
+         urlPrefix = 'contracts'
+      } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`
+            `${API_BASE_PATH}/${urlPrefix}/${riskResourceId}/risks/${risk.id}.json`
           )
           .then((res) => {
-            commit("updateRisksHash", { risk: risk, action: "delete" });
+            if (risk.facilityId){
+              commit("updateRisksHash", { risk: risk, action: "delete" });
+            } else   {
+              commit("updateContractRisks", { risk: risk, action: "delete" });
+            }          
             resolve("Success");
           })
           .catch((err) => {

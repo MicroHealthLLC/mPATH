@@ -332,12 +332,18 @@
                       clearable
                       placeholder="Select Process Area"
                     >
-                      <el-option
+                        <el-option
+                        v-for="item in taskTypes"
+                        :value="item"
+                        :key="item.id"
+                        :label="item.name"
+                      >
+                      <!-- <el-option
                         v-for="item in C_categories"
                         :value="item"
                         :key="item"
                         :label="item"
-                      >
+                      > -->
                       </el-option>
                     </el-select>
                   </template>
@@ -1526,7 +1532,6 @@ export default {
     "taskStageFilter",
     "taskTypeFilter",
     "taskTypes",
-    "taskTypes",
     "taskUserFilter",
     'getShowAdvancedFilter',
     'projectGroupsFilter',
@@ -1748,8 +1753,8 @@ export default {
         })
         .filter((task) => {
           if (this.C_programCategoryFilter && this.C_programCategoryFilter.length > 0) {
-            let category = this.C_programCategoryFilter.map((t) => t);
-            return category.includes(task.taskType);
+            let category = this.C_programCategoryFilter.map((t) => t.id);
+            return category.includes(task.taskTypeId);
           } else return true;
         })
   return {

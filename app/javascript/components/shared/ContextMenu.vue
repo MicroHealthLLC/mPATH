@@ -23,7 +23,7 @@
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -65,7 +65,7 @@
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -106,17 +106,6 @@ export default {
       left: 0, // left position
       top: 0, // top position
       show: false, // affect display of context menu
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-        }, 
       defaultProps: {
         children: "children",
         label: "label",
@@ -135,9 +124,14 @@ export default {
         left: this.left + "px",
       };
     },
-    treeFormattedData() {
-      var data = [];
-
+    placeholder(){
+      if(this.$route.params.contractId){
+        return "Filter Contracts"
+      } else return "Filter Projects"
+    },
+   treeFormattedData() {
+    if(this.$route.params.projectId){
+      let data = [];
       this.facilityGroups.forEach((group, index) => {
         data.push({
           id: index,
@@ -156,33 +150,36 @@ export default {
           ],
         });
       });
-
+      // debugger
       return [...data];
+    }
+
+      if(this.$route.params.contractId){
+          let data = [];
+        let contractGroups = this.currentProject.contracts
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...contractGroups.filter(t => t.facilityGroupId == group.id)
+                  .filter(
+                    (contract) => this.isAllowedFacility("write", 'tasks', contract.id) && contract.id !== this.task.contractId
+                  )
+                  .map((contract) => {
+                    return {
+                      id: contract.id,
+                      label: contract.nickname,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
+   
     },
-    // contractTreeFormattedData() {
-    //   var data = [];
-
-    //   this.facilityGroups.forEach((group, index) => {
-    //     data.push({
-    //       id: index,
-    //       label: group.name,
-    //       children: [
-    //         ...group.facilities
-    //           .filter(
-    //             (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
-    //           )
-    //           .map((facility) => {
-    //             return {
-    //               id: facility.facilityProjectId,
-    //               label: facility.facilityName,
-    //             };
-    //           }),
-    //       ],
-    //     });
-    //   });
-
-    //   return [...data];
-    // },
     submitDisabled() {
       if (this.$refs.duplicatetree) {
         return (
@@ -196,7 +193,7 @@ export default {
   },
   methods: {
     ...mapActions(["taskDeleted"]),
-    ...mapMutations(["updateTasksHash"]),
+    ...mapMutations(["updateTasksHash", "updateContractTasks"]),
     //TODO: change the method name of isAllowed
     // isAllowed(salut, module) {
     //   var programId = this.$route.params.programId;
@@ -210,7 +207,10 @@ export default {
       // Temporary _isallowed method until contract projectPrivileges is fixed
      isAllowed(salut, module) {
        if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut];
+          return fPrivilege[module].includes(s);
         } else {
         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -220,7 +220,10 @@ export default {
       },
       isAllowedFacility(salut, module, facility_id) {
        if (this.$route.params.contractId) {
-          return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut];
+          return fPrivilege[module].includes(s);
         } else {
           let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -234,14 +237,6 @@ export default {
       this.left = 0;
       this.top = 0;
     },
-    // isAllowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.tasks.includes(s); 
-    // },
     open(evt) {
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
@@ -274,9 +269,19 @@ export default {
         this.loading = true;
         let formData = new FormData();
 
-        formData.append("task[facility_project_id]", facilityProjectId);
+      
+        if (this.$route.params.contractId) {
+             formData.append("task[contract_id]", facilityProjectId);
+         } else {
+             formData.append("task[facility_project_id]", facilityProjectId);
+         }
 
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
+       let url;
+        if (this.$route.params.contractId) {
+             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+         } else {
+             url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
+         }
         let method = "PUT";
         let callback = "task-updated";
 
@@ -290,11 +295,18 @@ export default {
           },
         })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data.task));
-            this.updateFacilities(
-              humps.camelizeKeys(response.data.task),
+            let responseTask = humps.camelizeKeys(response.data.task);
+            this.$emit(callback, responseTask);
+
+           if (this.$route.params.contractId){
+               this.updateContractTasks({ task: responseTask });
+            } else {
+              this.updateFacilities(
+              responseTask,
               facilityProjectId
             );
+            }           
+           
             if (response.status === 200) {
               this.$message({
                 message: `${task.text} was moved successfully.`,
@@ -315,6 +327,7 @@ export default {
           .finally(() => {
             this.loading = false;
             this.updateTasksHash({ task: task, action: "delete" });
+             this.updateContractTasks({ task: task, action: "delete" });
           });
       });
     },
@@ -324,6 +337,14 @@ export default {
       facilities.forEach((facility) => {
         if (facility.facilityProjectId === id) {
           facility.tasks.push(updatedTask);
+        }
+      });
+    },
+  updateContracts(updatedTask, id) {
+      var contracts = this.currentProject.contracts;
+      contracts.forEach((c) => {
+        if (c.facilityProjectId === id) {
+          c.tasks.push(updatedTask);
         }
       });
     },
@@ -337,7 +358,12 @@ export default {
       facilities[facilityIndex].tasks.push(task);
     },
     createDuplicate() {
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_duplicate.json`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      }
       let method = "POST";
       let callback = "task-created";
 
@@ -354,11 +380,19 @@ export default {
         },
       })
         .then((response) => {
+          let responseTask = humps.camelizeKeys(response.data.task);
           this.$emit(callback, humps.camelizeKeys(response.data.task));
-          this.updateFacilityTask(
-            humps.camelizeKeys(response.data.task),
-            this.task.facilityProjectId
-          );
+
+          if (this.$route.params.contractId){
+              this.updateContractTasks({
+               task: responseTask 
+              });
+            } else {
+              this.updateFacilityTask(
+              responseTask,
+              this.task.facilityProjectId
+             );
+            }      
           if (response.status === 200) {
             this.$message({
               message: `${this.task.text} was duplicated successfully.`,
@@ -389,6 +423,7 @@ export default {
     move(node) {
       if (!node.hasOwnProperty("children")) {
         this.moveTask(this.task, node.id);
+        // console.log(node.id)
       }
     },
     duplicateSelectedTasks() {
@@ -400,22 +435,43 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
-      let method = "POST";
+      console.log(ids)
+      console.log(facilityNodes)
+
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      }
+     
+     let method = "POST";
       let callback = "task-created";
 
       ids.forEach((id, index) => {
-        if (index === 0) {
+        if (index === 0 && this.$route.params.projectId) {
           url += `facility_project_ids[]=${id}`;
-        } else {
+        } else if (index !== 0 && this.$route.params.projectId)  {
           url += `&facility_project_ids[]=${id}`;
-        }
+        } if (index === 0 && this.$route.params.contractId) {
+          url += `contract_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.contractId)  {
+          url += `&contract_ids[]=${id}`;
+        } 
       });
 
       let formData = new FormData();
-      formData.append("id", this.task.id);
-      formData.append("facility_project_ids", ids);
+        formData.append("id", this.task.id);
+      if ( this.$route.params.contractId){
+         formData.append("contract_ids", ids);
+       
+        //  debugger
+      } else {
+       formData.append("facility_project_ids", ids);
+        formData.append("id", this.task.id);
+      } 
 
+  // debugger
       axios({
         method: method,
         url: url,
@@ -426,14 +482,27 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task));
-
-          response.data.tasks.forEach((task) => {
-            this.updateFacilityTask(
+          // let responseTask ;
+          this.$emit(callback, humps.camelizeKeys(response.data.task) );
+          debugger
+             console.log(`response: ${response}`)
+         
+         if (this.$route.params.contractId){
+            response.data.tasks.forEach((task) => {
+                 console.log(`task: ${task}`)
+                this.updateContractTasks({
+                task: humps.camelizeKeys(task)
+               });
+              });
+           
+         } else {
+           response.data.tasks.forEach((task) => {
+              this.updateFacilityTask(
               humps.camelizeKeys(task),
               task.facilityProjectId
-            );
-          });
+             );
+           });
+         }
           if (response.status === 200) {
             this.$message({
               message: `${this.task.text} was duplicated successfully to selected projects.`,

@@ -46,7 +46,7 @@
     </div>
 
    <el-tabs type="border-card" @tab-click="handleClick">
-       <el-tab-pane class="p-3" v-if="currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
@@ -1120,7 +1120,7 @@
        </div>   
     </div>    
     </el-tab-pane>
-    <el-tab-pane class="p-3" v-if="currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
       <template slot="label">
        <i class="fal fa-table mr-1"></i>
       TABLE   

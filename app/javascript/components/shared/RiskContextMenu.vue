@@ -23,7 +23,7 @@
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -65,7 +65,7 @@
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -106,17 +106,6 @@ export default {
       left: 0, // left position
       top: 0, // top position
       show: false, // affect display of context menu
-      defaultPrivileges:{
-        admin: ['R', 'W', 'D'],
-        contracts: ['R', 'W', 'D'],
-        facility_id: this.$route.params.contractId,
-        issues: ['R', 'W', 'D'],
-        lessons: ['R', 'W', 'D'],
-        notes: ['R', 'W', 'D'],
-        overview: ['R', 'W', 'D'],
-        risks: ['R', 'W', 'D'],
-        tasks: ['R', 'W', 'D'],
-      }, 
       defaultProps: {
         children: "children",
         label: "label",
@@ -135,9 +124,14 @@ export default {
         left: this.left + "px",
       };
     },
+   placeholder(){
+      if(this.$route.params.contractId){
+        return "Filter Contracts"
+      } else return "Filter Projects"
+    },
     treeFormattedData() {
-      var data = [];
-
+    if(this.$route.params.projectId){
+      let data = [];
       this.facilityGroups.forEach((group, index) => {
         data.push({
           id: index,
@@ -156,8 +150,33 @@ export default {
           ],
         });
       });
-
       return [...data];
+    }
+    if(this.$route.params.contractId){
+      let data = [];
+        let contractGroups = this.currentProject.contracts
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...contractGroups.filter(t => t.facilityGroupId == group.id)
+                  .filter(
+                    (contract) => this.isAllowedFacility("write", 'risks', contract.id) && contract.id !== this.risk.contractId
+                  )
+                  .map((contract) => {
+                    return {
+                      id: contract.id,
+                      label: contract.nickname,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
+   
     },
     submitDisabled() {
       if (this.$refs.duplicatetree) {
@@ -172,10 +191,13 @@ export default {
   },
   methods: {
     ...mapActions(["riskDeleted"]),
-    ...mapMutations(["updateRisksHash"]),
+    ...mapMutations(["updateRisksHash", "updateContractRisks"]),
    isAllowed(salut) {
-       if (this.$route.params.contractId) {
-          return this.defaultPrivileges      
+      if (this.$route.params.contractId) {
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut];
+        return fPrivilege.risks.includes(s);
         } else {
         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -185,7 +207,10 @@ export default {
     },
     isAllowedFacility(salut, module, facility_id) {
        if (this.$route.params.contractId) {
-          return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut];
+          return fPrivilege[module].includes(s);
         } else {
           let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -235,13 +260,21 @@ export default {
           this.showErrors = !success;
           return;
         }
-
         this.loading = true;
         let formData = new FormData();
+        if (this.$route.params.contractId) {
+             formData.append("risk[contract_id]", facilityProjectId);
+         } else {
+             formData.append("risk[facility_project_id]", facilityProjectId);
+         }
+        
+        let url;
 
-        formData.append("risk[facility_project_id]", facilityProjectId);
-
-        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
+        if (this.$route.params.contractId) {
+             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/risks/${risk.id}.json`;
+         } else {
+             url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
+         }         
         let method = "PUT";
         let callback = "risk-updated";
 
@@ -255,11 +288,17 @@ export default {
           },
         })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data.risk));
-            this.updateFacilities(
+            let responseRisk = humps.camelizeKeys(response.data.risk);
+            this.$emit(callback, responseRisk);
+
+          if (this.$route.params.contractId){
+               this.updateContractRisks({ risk: responseRisk });
+            } else {
+               this.updateFacilities(
               humps.camelizeKeys(response.data.risk),
               facilityProjectId
-            );
+             );
+            }           
             if (response.status === 200) {
               this.$message({
                 message: `${risk.title} was moved successfully.`,
@@ -280,6 +319,7 @@ export default {
           .finally(() => {
             this.loading = false;
             this.updateRisksHash({ risk: risk, action: "delete" });
+            this.updateContractRisks({ risk: risk, action: "delete" });
           });
       });
     },
@@ -302,7 +342,12 @@ export default {
       facilities[facilityIndex].risks.push(risk);
     },
     createDuplicate() {
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_duplicate.json`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
+      }
       let method = "POST";
       let callback = "risk-created";
 
@@ -319,14 +364,23 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.risk));
-          this.updateFacilityRisk(
-            humps.camelizeKeys(response.data.risk),
+          let responseRisk =  humps.camelizeKeys(response.data.risk);
+          this.$emit(callback, responseRisk);
+
+
+          if (this.$route.params.contractId){
+              this.updateContractRisks({
+               risk: responseRisk
+              });
+            } else {
+            this.updateFacilityRisk(
+            responseRisk,
             this.risk.facilityProjectId
           );
-          if (response.status === 200) {
+            }     
+            if (response.status === 200) {
             this.$message({
-              message: `${this.risk.text} was duplicated successfully.`,
+              message: `${responseRisk.text} was duplicated successfully.`,
               type: "success",
               showClose: true,
             });
@@ -334,7 +388,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.risk.text}. Please try again.`,
+            message: `Unable to duplicate ${responseRisk.text}. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -425,15 +479,17 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteRisk() {
-      this.$confirm(`Are you sure you want to delete ${this.risk.text}?`, 'Confirm Delete', {
+      let risk = this.risk
+      let programId = this.$route.params.programId
+      this.$confirm(`Are you sure you want to delete ${risk.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.riskDeleted(this.risk).then((value) => {
+          this.riskDeleted({ risk, programId }).then((value) => {
             if (value === 'Success') {
               this.$message({
-                message: `${this.risk.text} was deleted successfully.`,
+                message: `${risk.text} was deleted successfully.`,
                 type: "success",
                 showClose: true,
               });
