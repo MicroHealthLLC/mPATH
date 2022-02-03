@@ -18,6 +18,9 @@ class Issue < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|issue| issue.contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|issue| issue.contract_id.nil?}
+
   attr_accessor :file_links
 
   amoeba do
@@ -139,6 +142,7 @@ class Issue < ApplicationRecord
       :facility_project_id,
       :task_type_id,
       :progress,
+      :contract_id,
       :start_date,
       :due_date,
       :auto_calculate,
