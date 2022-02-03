@@ -1104,7 +1104,7 @@ export default {
           // Filtering 7 Task States
         })
         .filter((l) => {
-          if (this.programCategoriesFilter.length > 0) {
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
             let category = this.programCategoriesFilter.map((t) => t);
             return category.includes(l.category);
           } else return true;
@@ -1224,6 +1224,7 @@ export default {
 
         // Used in Program Viewer
         'setTasksPerPageFilter',
+        'setLessonsPerPageFilter',
         // 7 States
         'setHideComplete',
         'setHideInprogress',
@@ -1255,7 +1256,7 @@ export default {
     }   
      if(this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramLessonForm",
+      name: "ProgramContractLessonForm",
       params: {
         programId: lesson.program_id,
         contractId: lesson.contract_id,

@@ -11,7 +11,6 @@ export default {
   data() {
     return {
       issue: {},
-      allProgramIssues: [],
     };
   },
   methods: {
@@ -25,27 +24,17 @@ export default {
     ...mapGetters([
       "contentLoaded",
       'filteredAllIssues',
-      'filteredAllContractIssues',
-      'getShowProjectStats'     
       ]),
   },
   mounted() {
-  if (!this.getShowProjectStats){
-      this.allProgramIssues = this.filteredAllIssues
-    } else if (this.getShowProjectStats){
-      this.allProgramIssues = this.filteredAllContractIssues
-    }
-
-    if (this.contentLoaded) {
-      this.issue = this.allProgramIssues.find(
+     this.issue = this.filteredAllIssues.find(
         (issue) => issue.id == this.$route.params.issueId
-      );
-    }
+      )
   },
   watch: {
     contentLoaded: {
       handler() {
-        this.issue = this.allProgramIssues.find(
+        this.issue = this.filteredAllIssues.find(
           (issue) => issue.id == this.$route.params.issueId
         );
       },

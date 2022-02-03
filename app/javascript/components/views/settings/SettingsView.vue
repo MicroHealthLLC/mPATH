@@ -20,6 +20,7 @@
               class="m-2 cardWrapper"
               v-for="(item, index) of settingsCards"
               :key="index"
+               :class="{'d-none': !_isallowed('read') && item == 'Contracts' }"            
               style="width:33%"
               @click.prevent="adminRoute(index)"
             >
@@ -31,7 +32,7 @@
                   <span v-if="item == 'Projects'">
                     <i class="fal fa-clipboard-list mr-3 mh-green-text"></i
                   ></span>
-                  <span v-if="item == 'Contracts'">
+                  <span v-if="item == 'Contracts'" >
                     <i class="far fa-file-contract mr-3 mh-orange-text"></i>
                   </span>
                   <!-- <span v-if="item == 'MH Data'">
@@ -99,6 +100,12 @@ export default {
   },
   methods: {
     ...mapMutations(["setProjectGroupFilter"]),
+      _isallowed(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
      adminRoute(index) {
       // console.log(event, index, "This")
       if (index == "groups") {

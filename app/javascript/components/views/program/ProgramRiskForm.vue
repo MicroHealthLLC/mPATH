@@ -11,8 +11,7 @@ export default {
   components: { RiskForm },
   data() {
     return {
-      risk: {},
-      allProgramRisks: [],
+      risk: {}
     };
   },
   methods: {
@@ -31,22 +30,15 @@ export default {
       ]),
   },
   mounted() {
-  if (!this.getShowProjectStats){
-    this.allProgramRisks = this.filteredAllRisks
-  } else if (this.getShowProjectStats){
-    this.allProgramRisks = this.filteredAllContractRisks
-  }
 
-    if (this.contentLoaded) {
-      this.risk =  this.allProgramRisks.find(
+      this.risk =  this.filteredAllRisks.find(
         (risk) => risk.id == this.$route.params.riskId
       );
-    }
   },
   watch: {
     contentLoaded: {
       handler() {
-        this.risk =  this.allProgramRisks.find(
+        this.risk =  this.filteredAllRisks.find(
           (risk) => risk.id == this.$route.params.riskId
         );
       },

@@ -167,7 +167,7 @@
         </div>
 
         </div>
-       <div class="row" v-if="project && project.address">
+      <div class="row" v-if="project && project.address">
         <div class="col-1 pb-0 font-sm">
           <p>
             <span class="fbody-icon"
@@ -178,7 +178,7 @@
         </div>
          <div class="col-11 pb-0 font-sm">
           <p>
-          <span>{{ project.address || "N/A" }}</span>
+            <span>{{ project.address || "N/A" }}</span>
           </p>
         </div>
        </div>
@@ -229,7 +229,7 @@
         </div>
         </div>     
       </div>
-             <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
+               <div v-show="currentTab == 'tab3'" class="container mt-2 mx-0">
               <div class="row row-1 mt-3">    
               <div :class="[isMapView ? 'col-10' : 'col-5']">
                    <div class="row">
@@ -243,7 +243,10 @@
                 </div>  
          
              </div>
+            
+
               </div>
+      
                      
           </div>
           <div v-else class="text-danger mx-2 my-4">
@@ -292,7 +295,7 @@ export default {
           label: "Contracts",
           key: "tab3",
           closable: false,
-        },
+          },
       ],
       edit: true,
       today:  new Date().toISOString().slice(0, 10),
@@ -392,7 +395,7 @@ export default {
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         return  fPrivilege.overview.includes(s);      
-    },
+    }, 
     isBlockedStatus(status) {
       return (
         status &&

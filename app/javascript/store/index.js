@@ -3246,14 +3246,24 @@ export default new Vuex.Store({
       });
     },
 
-    taskDeleted({ commit }, task) {
+    taskDeleted({ commit }, { task, programId }) {
+      let urlPrefix = `programs/${programId}/projects`
+      let taskResourceId = task.facilityId
+      if(task.contractId){
+         taskResourceId = task.contractId
+         urlPrefix = 'contracts'
+      } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${task.projectId}/projects/${task.facilityId}/tasks/${task.id}.json`
+            `${API_BASE_PATH}/${urlPrefix}/${taskResourceId}/tasks/${task.id}.json`
           )
           .then((res) => {
-            commit("updateTasksHash", { task: task, action: "delete" });
+            if (task.facilityId){
+              commit("updateTasksHash", { task: task, action: "delete" });
+            } else   {
+              commit("updateContractTasks", { task: task, action: "delete" });
+            }            
             resolve("Success");
           })
           .catch((err) => {

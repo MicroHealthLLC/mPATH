@@ -224,11 +224,11 @@
                         </div>
                         </template>
                </el-dialog>
-             <div class="row pb-4">
-              <div class="col-3 py-2">
+             <div class="row pb-4" v-if="currentProject && currentProject.contracts || contentLoaded" >
+              <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }">
                 <div class="w-100">
-                   <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
-                <el-button-group>
+                <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
+                <el-button-group >
                   <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
                     <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
                     PROJECTS
@@ -1432,6 +1432,7 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
+import ProgramTaskForm from "./ProgramTaskForm.vue";
 import ProgramLessons from "./ProgramLessons.vue";
 // import ProjectContractSwitch from "./ProjectContractSwitch.vue"
 import { jsPDF } from "jspdf";
@@ -1993,6 +1994,12 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
+     _isallowed(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
     showContractStats(){
      if(this.getShowProjectStats == false){
         this.setShowProjectStats(!this.getShowProjectStats)
@@ -2058,24 +2065,24 @@ export default {
    openTask(task) {   
     if(!this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramTaskForm",     
-      params: {
-        programId: task.projectId,
-        projectId: task.facilityId,
-        taskId: task.id,
-      },
-     });
-      } else 
-      console.log(task)
-      this.$router.push({
-        name: "ProgramTaskForm",     
+      name: "ProgramTaskForm",   
         params: {
+          programId: task.projectId,
+          projectId: task.facilityId,
+          taskId: task.id,
+        },
+      });
+      }
+     if(this.getShowProjectStats) {
+       this.$router.push({
+        name: "ProgramContractTaskForm", 
+          params: {
           programId: this.$route.params.programId,
           contractId: task.contractId,
           taskId: task.id,
         },
-     }); 
-    // console.log(this.$route.params)
+       }); 
+      }
     },
     openTpresentation(){
       this.dialogVisible = true; 

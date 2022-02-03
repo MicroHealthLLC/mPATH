@@ -24,7 +24,7 @@
         </span>
       </h4>
     </el-breadcrumb>   
- <div class="my-1 pb-2 buttonWrapper container-fluid">
+ <div class="my-1 pb-2 buttonWrapper container-fluid" v-if="_isallowed('read')">
   <div class="row px-0">
     <div class="col" v-if="_isallowed('write')">
       <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
@@ -56,7 +56,7 @@
           placeholder="Filter Contracts By Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in groupList"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -66,35 +66,93 @@
        </div>
       </div>
   </div>
-  <div
-    v-if="tableData"
-    v-loading="!contractsLoaded"
+  <div  
+   v-if="tableData && _isallowed('read')"
+    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
+    element-loading-background="rgba(0, 0, 0, 0.8)"  
     class="">
-   <el-table :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" style="width: 100%"  height="450">
+   <el-table   
+     :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" 
+     style="width: 100%"  
+     height="450"
+     >
     <el-table-column prop="nickname"  sortable  label="Contract"> 
        <template slot-scope="scope">
           <el-input size="small"
+            v-if="rowId == scope.row.id"
             style="text-align:center"
-            v-model="scope.row.nickname" controls-position="right"></el-input>
+            v-model="scope.row.nickname" controls-position="right">
+            </el-input>
+         <span v-else> {{ scope.row.nickname }}</span>
        </template>
 
 
     </el-table-column>
     <el-table-column prop="facility_group_name" sortable filterable label="Group">
           <template slot-scope="scope">
-          <el-input size="small"
+
+            {{ scope.row.facility_group_name }}
+            <!-- <el-select
+            class="w-100"
+            v-model="scope.row.facility_group_id" 
+            track-by="id"
+            value-key="id"
+            filterable
+            name="Project Group"         
+            placeholder="Select Group"
+          >
+          <el-option
+          v-for="item in getNewGroups"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+          
+          </el-select> -->
+          <!-- <el-input size="small"
             style="text-align:center"
-            v-model="scope.row.facility_group_name"></el-input>
+            v-model="scope.row.facility_group_name"></el-input> -->
        </template>
     </el-table-column>
 
      <el-table-column label="Actions">
       <template slot-scope="scope" >
-      <el-button v-if="_isallowed('write')" type="default" @click.prevent="editContract(scope.$index, scope.row)" class="bg-primary text-light">Save</el-button>
-       <el-button v-if="_isallowed('write')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+      <el-button 
+        type="default" 
+         v-if="scope.$index == rowIndex && _isallowed('write')" 
+        @click.prevent="saveEdits(scope.$index, scope.row)"   
+        v-tooltip="`Save`" 
+        class="bg-primary text-light">
+          <i class="far fa-save"></i>
+      </el-button>   <el-button 
+        type="default" 
+        v-tooltip="`Cancel Edit`"       
+        v-if="scope.$index == rowIndex" 
+        @click.prevent="cancelEdits(scope.$index, scope.row)"  
+        class="bg-secondary text-light">
+      <i class="fas fa-ban"></i>
+        </el-button>
+        <el-button  
+        type="default" 
+        v-tooltip="`Edit Contract Name`"
+        @click.prevent="editMode(scope.$index, scope.row)" 
+        v-if="scope.$index !== rowIndex" 
+        class="bg-light">
+        <i class="fal fa-edit text-primary" ></i>
+        </el-button> 
+
+      <el-button 
+        v-if="_isallowed('delete')" 
+        type="default" 
+        v-tooltip="`Delete`" 
+        @click.prevent="deleteSelectedContract(scope.$index, scope.row)" 
+        class="bg-light">
+        <i class="far fa-trash-alt text-danger"></i>
+        </el-button>
+       <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
       </template>
@@ -112,7 +170,7 @@
       >      
        <div class="form-group mx-3">
           <label class="font-md"
-            >New Contract Name <span style="color: #dc3545">*</span></label
+            >Contract Name <span style="color: #dc3545">*</span></label
           >
           <el-input
             type="textarea"
@@ -123,6 +181,18 @@
           />
        </div>
        <div class="form-group mx-3">
+          <label class="font-md"
+            >Contract Nickname <span style="color: #dc3545">*</span></label
+          >
+          <el-input
+            type="textarea"
+            v-model="contractNicknameText"
+            placeholder="Enter new contract name here"          
+            rows="1"          
+            name="Program Name"
+          />
+       </div>
+       <!-- <div class="form-group mx-3">
           <label class="font-md"
             >Project Group Name <span style="color: #dc3545">*</span></label
           >
@@ -142,7 +212,7 @@
             >
           </el-option>
           </el-select>
-       </div>
+       </div> -->
        <div class="form-group mx-3">
         <label class="font-md"
         >Group<span style="color: #dc3545">*</span></label
@@ -158,7 +228,7 @@
             placeholder="Select Group"
           >
           <el-option
-          v-for="item in facilityGroups"
+          v-for="item in groupList"
           :key="item.id"
           :label="item.name"
           :value="item">
@@ -169,11 +239,18 @@
         <div class="right mr-2">
         <button 
           @click.prevent="saveNewContract"
-          :disabled="!C_newContractGroupFilter && contractNameText" 
+          v-if="contractNameText && contractNicknameText && C_newContractGroupFilter.id" 
           class="btn btn-sm bg-primary text-light mr-2" 
           :class="[hideSaveBtn ? 'd-none': '']">
           Save
-        </button>       
+        </button>    
+        <button 
+          disabled
+          v-else
+          class="btn btn-sm bg-primary text-light mr-2" 
+          >
+          Save
+        </button>          
         <button 
           @click.prevent="addAnotherContract" 
           :class="[!hideSaveBtn ? 'd-none': '']" 
@@ -193,6 +270,7 @@
     
       </div>
     </div>
+   
   </div>
 </template>
 
@@ -207,7 +285,7 @@
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
-import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
+// import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsContracts",
   components: {
@@ -219,17 +297,21 @@ export default {
       // currentContract: {},
       dialogVisible: false,
       currentFacilityGroup: {},
+      rowIndex: null,
+      rowId: null,
       projectNameText: '',
       search: '',
       hideSaveBtn: false,
       contractNameText: '',
+      contractNicknameText: '',
       expanded: {
         id: "",
       },
     };
   },
   mounted() {
-     this.fetchContracts();   
+  this.fetchContracts(); 
+  this.fetchGroups(this.$route.params.programId)
   },
   methods: {
    ...mapMutations([
@@ -241,7 +323,7 @@ export default {
      'setNewContractGroupFilter',
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
-   ...mapActions(["createContract", "fetchContracts", "updateContract"]),
+   ...mapActions(["createContract", "fetchContracts", "fetchGroups","updateContract", "deleteContract"]),
     _isallowed(salut) {
         let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -260,11 +342,12 @@ export default {
     
     },
     saveNewContract() {
-      this.onSubmit()
+      // this.onSubmit()
         let contractData = {
           contract: {
-            nickname: this.contractNameText,
+            nickname: this.contractNicknameText,
             name: this.contractNameText,
+            // contract_status_id: null,  
             facility_group_id: this.C_newContractGroupFilter.id,
             project_id: this.$route.params.programId,
             contract_type_id: this.C_typeFilter,
@@ -274,48 +357,80 @@ export default {
             ...contractData,
           })
           this.hideSaveBtn = true;
-          console.log(contractData)
+          // console.log(contractData)
     },
-     async onSubmit ()  {
-         const formData = {
-            contractName: this.contractNameText,
-            programName: this.currentProject.name, 
-            mpathInstance: this.$mpath_instance
+    //  async onSubmit ()  {
+    //      const formData = {
+    //         contractName: this.contractNameText,
+    //         programName: this.currentProject.name, 
+    //         mpathInstance: this.$mpath_instance
 
-          }
-        await createUser({...formData})
-        return { formData }
-    },   
-    editContract(index, rows) {
-    //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
-    //  if (rows && rows !== undefined) {
+    //       }
+    //     await createUser({...formData})
+    //     return { formData }
+    //  }
+    
+    saveEdits(index, rows) {
         let id = rows.id;
         let contractData = {
           contract: {
             nickname: rows.nickname,
-            facility_group_name: rows.facility_group_name,  
+            name: rows.name,
+         
             facility_group_id: rows.facility_group_id,  
             project_id: this.$route.params.programId,
             id:  id    
           }
         }
+        this.setNewContractGroupFilter(rows.facility_group_id)
          this.updateContract({
             ...contractData, id
           })
+        this.rowIndex = null;
+       this.rowId = null;
+    },
+    cancelEdits(index, rows) {
+       this.rowIndex = null;
+       this.rowId = null;
+    },
+    editMode(index, rows) {
+      this.rowIndex = index
+      this.rowId = rows.id
+    },
+    deleteSelectedContract(index, rows) {
+      let id = rows.id;
+      this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.deleteContract(id).then((value) => {
+            if (value === 200) {
+              this.fetchContracts();
+              this.$message({
+                message: `${rows.nickname} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+        });
     },
     addAnotherContract() {
-         this.C_projectGroupFilter = null;
-         this.contractNameText = "";
-         this.hideSaveBtn = false;  
+      this.C_projectGroupFilter = null;
+      this.contractNameText = "";
+      this.contractNicknameText = ""  
+      this.hideSaveBtn = false;  
     },
     closeAddContractBtn() {
-        this.dialogVisible = false;
-        this.hideSaveBtn = false;
+      this.dialogVisible = false;
+      this.hideSaveBtn = false;
     },
     addContract(){
       this.dialogVisible = true;    
       this.C_projectGroupFilter = null;
       this.contractNameText = ""  
+      this.contractNicknameText = ""  
     },
   },
   computed: {
@@ -325,11 +440,13 @@ export default {
       "getContractGroupTypes",
       'getNewContractGroupFilter',
       "contractStatus",
-      'getContractGroupOptions',
-      "contracts",
+       "contracts",
+       "groups",
+       "getTransferData",
       'getContractTable',
       'getProjectGroupFilter',
       'getGroupFilter',
+      "getNewGroups",
       'facilityGroups',
       'currentProject'
     ]), 
@@ -341,7 +458,7 @@ export default {
          this.contracts[0] && 
          this.contracts[0].length > 0 
          ){
-      let programContracts = this.contracts[0].filter(t => t.project_id == this.$route.params.programId)
+      let programContracts = this.contracts[0].filter(u => this.getTransferData.includes(u.facility_group_id))
       let contractData = programContracts.map(t => t)
       .filter((td) => {
         //  console.log(td)
@@ -354,6 +471,27 @@ export default {
        return contractData
       }    
    },
+   groupList() {
+     if (
+        this.groups &&        
+         this.groups.length > 0  &&
+         this.getTransferData && 
+         this.getTransferData.length > 0
+         )
+         {
+        return this.groups.filter(u => this.getTransferData.includes(u.id))
+         } else if (
+        this.groups &&        
+         this.groups.length > 0  &&
+         this.facilityGroups && this.facilityGroups.length > 0 &&
+         !this.getTransferData
+         )
+         {
+         let programGroupIds = this.facilityGroups.map(t => t.id)
+          return this.groups.filter(u => programGroupIds.includes(u.id))
+         } else return []
+    }, 
+
     C_typeFilter: {
         get() {
           return this.getContractGroupTypes
@@ -386,7 +524,7 @@ export default {
   watch: {
     contractStatus: {
       handler() {
-        if (this.contractStatus == 200 && this.contractNameText) {
+        if (this.contractStatus == 200) {
           this.$message({
             message: `Contract saved successfully.`,
             type: "success",

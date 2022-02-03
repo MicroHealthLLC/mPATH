@@ -4021,6 +4021,12 @@
                           >
                             In Progress
                           </span>
+                          <span v-if="risk.important" v-tooltip="`Important`">
+                            Important
+                          </span>
+                          <span v-if="risk.watched" v-tooltip="`Watched`">
+                            Watched
+                          </span>
                           <span
                             v-if="risk.reportable"
                             v-tooltip="`Briefings`"

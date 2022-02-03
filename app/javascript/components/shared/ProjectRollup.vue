@@ -1,41 +1,36 @@
-<!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container-fluid m-2" data-cy="facility_rollup">
-
-   <!-- <el-tabs type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Program Rollup" class="p-3"> -->
-    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-1 pb-2">
-      <div class="col-6 py-2 pl-0">
-        <span v-if="contentLoaded">
+  <div class="container-fluid" data-cy="facility_rollup">
+      <div class="row pt-1 pb-2">
+      <div class="col-6 py-3 pl-3" v-if="contentLoaded">
+        <span>
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group>
-          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
-          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
+        <el-button-group :class="{'d-none': !_isallowedContracts('read') || currentProject.contracts.length <= 0 }">
+          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+          <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
           PROJECTS
-          <!-- <span 
+          <span 
             v-if="currentProject && currentProject.facilities"
-            class="ml-1 badge badge-secondary badge-pill pill"
+            class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
             >{{ currentProject.facilities.length }}
-            </span> -->
+            </span>
         </el-button>
-        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats"> 
-          <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
-          CONTRACTS
-            <!-- <span 
+        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2"> 
+          <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
+          CONTRACTS 
+            <span 
               v-if="currentProject && currentProject.contracts"
-              class="ml-1 badge badge-secondary badge-pill pill"
+              class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
               >{{ currentProject.contracts.length }}
-              </span> -->
-          </el-button>
+              </span>
+           </el-button>
        </el-button-group>
             
       </div>
-      <div class="col-6 py-1 pl-0">
-        <span v-if="contentLoaded" class="float-right mt-1">
+      <div class="col-6 py-3 pl-0">
+        <span v-if="contentLoaded" class="float-right mt-2">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
           <router-link :to="ProgramView" > 
                <button                
@@ -50,6 +45,21 @@
      
     </div>
 
+   <el-tabs type="border-card" @tab-click="handleClick">
+       <el-tab-pane class="p-3" v-if="currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+      <template slot="label">
+      <i class="fas fa-analytics mr-1"></i>
+      ANALYTICS   
+    </template>     
+    NO DATA TO DISPLAY  
+    </el-tab-pane>
+    <el-tab-pane class="p-3" v-else> 
+      <template slot="label">
+      <i class="fas fa-analytics mr-1"></i>
+      ANALYTICS   
+    </template>   
+    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
+ 
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
     <div class="row">
       <div class="col-9 py-0 px-0" :class="[isMapView ? 'col-12' : '']">
@@ -761,8 +771,8 @@
               </div>
     </div>
 
-    <div class="row" :class="[isMapView ? 'mt-2' : '']">
-      <div class="col-2 pt-0" :class="[isMapView ? 'col-3 px-0 ' : 'pl-0']">
+    <div class="row" :class="[isMapView ? 'mt-4' : '']">
+      <div class="col-3 pt-0" :class="[isMapView ? 'col-3 pl-0 pr-1' : 'pl-0']">
         <el-card
             class="box-card mb-2"        
             style="background-color:#fff"  
@@ -834,21 +844,182 @@
             </div>
           </el-card>
       </div> 
-      <div :class="[isMapView ? 'col-9 pr-0' : 'col p-0']">
-        <el-card class="box-card" v-if="!getShowProjectStats" style="max-height: 220px">
+   
+      <div :class="[isMapView ? 'col-9 p-0' : 'col-6 px-0 pt-0']"
+        v-if="from !== 'manager_view'"
+        data-cy="facility_group_summary"
+      >
+         <el-card class="box-card" v-if="getShowProjectStats">
+          <div class="row">
+            <div class="col">
+              <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
+               CONTRACTS
+              </h5>
+               <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">
+                     {{ programResourceObj.length }}
+                    </span>
+                  </h4>
+              <hr />
+            </div>
+          </div>
+          <div v-if="contentLoaded">
+          <div
+           style="height:215px; overflow-y:auto" 
+           class="pb-2"
+          >
+         <div class="row py-1">
+            <div class="col-5">
+               <small class="underline">Group</small>               
+              </div>
+              <div class="col-1 pl-0">              
+                 <small class="underline">Contracts</small>
+              </div>
+              <div class="col-5">
+                <small class="underline">Total Progress</small>
+              </div>
+            </div>
+          <div
+            v-for="(facilityGroup, index) in filteredFacilityGroups"
+            :key="index"
+            >
+            <div class="row py-1">
+              <div class="col-5 mb-2">
+                <span :class="{ 'font-sm': isMapView }">{{
+                  facilityGroup.name
+                }}</span>
+               
+              </div>
+              <div class="col-1 pl-0">              
+                <span class="badge badge-secondary badge-pill">{{
+                  facilityGroupFacilities(facilityGroup).contracts.b.length
+                }}</span>
+              </div>
+              <div class="col-5">
+                <span
+                  class="w-100 mt-1 ml-2 progress pg-content"
+                  :class="{
+                    'font-sm': isMapView,
+                    'progress-0': facilityGroupProgress(facilityGroup) <= 0,
+                  }"
+                >
+                  <div
+                    class="progress-bar bg-info"
+                    :style="`width: ${facilityGroupProgress(facilityGroup)}%`"
+                  >
+                    {{ facilityGroupProgress(facilityGroup) }} %
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+   
+           </div>
+            <!-- <div class="pb-2">
+               <div class="row mb-1">
+                   <div class="col-10 mb-0 py-1 card-title">
+                     Project Group Name
+                   </div>
+                    <div class="col-2 mb-0 pl-3 py-1 card-title">   
+                      #
+                    </div>      
+                 </div>
+              <div class="row my-0" v-for="item, i in getContractGroupOptions" :key="i">
+                <div class="col-10 py-1">
+               
+                  <span :class="{ 'font-sm': isMapView }">
+                  {{ item.name }}</span
+                  >                
+                </div>
+                <div class="col-2 py-1">                
+                  <span v-if="item.id == 1" class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.prime
+                  }}</span>
+                    <span v-if="item.id == 2"   class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.nonPrime
+                  }}</span>
+                    <span v-if="item.id == 3"  class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.primeV_IDIQs
+                  }}</span>
+                </div>
+               </div>
+             </div> -->
+          </div>
+          <div v-if="!contentLoaded" class="my-4">
+            <loader type="code"></loader>
+          </div>
+        </el-card>
+         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="!getShowProjectStats">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
-               PROJECTS
+              PROJECTS
               </h5>
                <h4 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">
                      {{ C_facilityCount }}
                     </span>
                   </h4>
+                  <!-- <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">{{
+                      filteredFacilityGroups.length 
+                    }}</span>
+                  </h4> -->
               <hr />
             </div>
           </div>
+           <div
+           style="height:215px; overflow-y:auto" 
+           class="pb-2"
+          >
+          <div class="row py-1">
+            <div class="col-5">
+               <small class="underline">Group</small>               
+              </div>
+              <div class="col-1 pl-0">              
+                 <small class="underline">Projects</small>
+              </div>
+              <div class="col-5">
+                <small class="underline">Total Progress</small>
+              </div>
+            </div>
+          <div
+            v-for="(facilityGroup, index) in filteredFacilityGroups"
+            :key="index"
+            >
+           
+            <div class="row py-1">
+              <div class="col-5 mb-2">
+                <span :class="{ 'font-sm': isMapView }">{{
+                  facilityGroup.name
+                }}</span>
+               
+              </div>
+              <div class="col-1 pl-0">              
+                <span class="badge badge-secondary badge-pill">{{
+                  facilityGroupFacilities(facilityGroup).projects.a.length
+                }}</span>
+              </div>
+              <div class="col-5">
+                <span
+                  class="w-100 mt-1 ml-2 progress pg-content"
+                  :class="{
+                    'font-sm': isMapView,
+                    'progress-0': facilityGroupProgress(facilityGroup) <= 0,
+                  }"
+                >
+                  <div
+                    class="progress-bar bg-info"
+                    :style="`width: ${facilityGroupProgress(facilityGroup)}%`"
+                  >
+                    {{ facilityGroupProgress(facilityGroup) }} %
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+         <el-collapse id="roll_up" >
+           <el-collapse-item title="..." name="1">
           <div v-if="contentLoaded && C_facilityCount > 0">
             <div  
             style="height:215px; overflow-y:auto" 
@@ -901,116 +1072,8 @@
               </div>
             </div>
           </div>
-          <div v-if="!contentLoaded" class="my-4">
-            <loader type="code"></loader>
-          </div>
-        </el-card>
-         <el-card class="box-card" v-if="getShowProjectStats">
-          <div class="row">
-            <div class="col">
-              <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
-               CONTRACTS
-              </h5>
-               <h4 v-if="contentLoaded" class="d-inline">
-                    <span class="badge bg-secondary text-light badge-pill float-right">
-                     {{ programResourceObj.length }}
-                    </span>
-                  </h4>
-              <hr />
-            </div>
-          </div>
-          <div v-if="contentLoaded">
-            <div class="pb-2">
-               <div class="row mb-1">
-                   <div class="col-10 mb-0 py-1 card-title">
-                     Project Group Name
-                   </div>
-                    <div class="col-2 mb-0 pl-3 py-1 card-title">   
-                      #
-                    </div>      
-                 </div>
-              <div class="row my-0" v-for="item, i in getContractGroupOptions" :key="i">
-                <div class="col-10 py-1">
-               
-                  <span :class="{ 'font-sm': isMapView }">
-                  {{ item.name }}</span
-                  >                
-                </div>
-                <div class="col-2 py-1">                
-                  <span v-if="item.id == 1" class="badge badge-secondary badge-pill font-sm">{{
-                    contractCategoryCount.prime
-                  }}</span>
-                    <span v-if="item.id == 2"   class="badge badge-secondary badge-pill font-sm">{{
-                    contractCategoryCount.nonPrime
-                  }}</span>
-                    <span v-if="item.id == 3"  class="badge badge-secondary badge-pill font-sm">{{
-                    contractCategoryCount.primeV_IDIQs
-                  }}</span>
-                </div>
-               </div>
-             </div>
-          </div>
-          <div v-if="!contentLoaded" class="my-4">
-            <loader type="code"></loader>
-          </div>
-        </el-card>
-     </div>
-      <div :class="[isMapView ? 'col-12 p-0' : 'col pt-0']"
-        v-if="from !== 'manager_view'"
-        data-cy="facility_group_summary"
-      >
-         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: 220px">
-          <div class="row">
-            <div class="col">
-              <h5 class="d-inline"><i class="fal fa-network-wired mr-2 mh-blue-text"></i>
-                GROUPS
-              </h5>
-                  <h4 v-if="contentLoaded" class="d-inline">
-                    <span class="badge bg-secondary text-light badge-pill float-right">{{
-                      filteredFacilityGroups.length 
-                    }}</span>
-                  </h4>
-              <hr />
-            </div>
-          </div>
-           <div
-           style="height:215px; overflow-y:auto" 
-           class="pb-2"
-          >
-          <div
-            v-for="(facilityGroup, index) in filteredFacilityGroups"
-            :key="index"
-            >
-            <div class="row py-1">
-              <div class="col-5 mb-2">
-                <span :class="{ 'font-sm': isMapView }">{{
-                  facilityGroup.name
-                }}</span>
-               
-              </div>
-              <div class="col-1 pl-0">              
-                <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(facilityGroup).projects.a.length
-                }}</span>
-              </div>
-              <div class="col-5">
-                <span
-                  class="w-100 mt-1 ml-2 progress pg-content"
-                  :class="{
-                    'font-sm': isMapView,
-                    'progress-0': facilityGroupProgress(facilityGroup) <= 0,
-                  }"
-                >
-                  <div
-                    class="progress-bar bg-info"
-                    :style="`width: ${facilityGroupProgress(facilityGroup)}%`"
-                  >
-                    {{ facilityGroupProgress(facilityGroup) }} %
-                  </div>
-                </span>
-              </div>
-            </div>
-          </div>
+                </el-collapse-item>
+              </el-collapse>
            </div>
           <div v-if="!contentLoaded" class="my-4">
             <loader type="code"></loader>
@@ -1054,42 +1117,55 @@
                 <div>
               </div>
           </el-card>
-              </div>
+       </div>   
+    </div>    
+    </el-tab-pane>
+    <el-tab-pane class="p-3" v-if="currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+      <template slot="label">
+       <i class="fal fa-table mr-1"></i>
+      TABLE   
+    </template>     
+    NO DATA TO DISPLAY  
+    </el-tab-pane>
+  <el-tab-pane class="p-3 overflowX" v-else>
+     <template slot="label">
+      <i class="fal fa-table mr-1"></i>
+      TABLE    
+    </template>   
+
+<!-- ROW FOR FILTERS -->
+    <div class="row">
+    <div class="col-6 py-0 px-0" :class="[isMapView ? 'col-12' : '']" >
+      <!-- SEARCH BAR -->
+    </div>
+        <div class="col-6 py-0 px-0">
+        <!-- SEARCH BY GROUP -->
+    </div>
       
-    
     </div>
 
-      <!-- </el-tab-pane>
-  
-    <el-tab-pane label="Program Breakdown">
-     <div class="mb-2 float-right"> <button class="btn btn-md btn-info"> PROJECTS: {{ C_facilityCount }}</button></div>
-        <div v-if="contentLoaded" class="pb-2 table-div">
-          <div class="grid-container">
-            <el-card class="list-group-item text-center" style="min-height: 150px" v-for="(item, index) in projectObj"  :key="index" >              
-             
-               <span class="p-2" > {{ item.facilityName }} </span>          
-            </el-card>
-          </div>         
-      </div>
+     <div class="row">
+    <ProgramContractsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-else />      
+    </div>
     </el-tab-pane>
-    
-    <el-tab-pane label="Analytics">  -->
-<!-- KPI's and visual graphs will go here -->    
-       
-      
-    <!-- </el-tab-pane>
-       </el-tabs>  -->
+  
+    </el-tabs>  
   </div>
 </template>
 
 <script>
 import Loader from "./loader";
+import ProgramContractsSheet from "../views/program/ProgramContractsSheet.vue"
+import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
   props: ["from"],
   components: {
     Loader,
+    ProgramContractsSheet,
+    ProgramProjectsSheet 
   },
   data() {
     return {
@@ -1846,6 +1922,12 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
+    _isallowedContracts(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
     showLessToggle() {
       this.showLess = "Show Less";
     },
@@ -2044,6 +2126,7 @@ export default {
 .box-card {
   min-height: 150px;
 }
+
 .proj-type {
   display: inline;
   border-radius: 2px;
@@ -2181,6 +2264,11 @@ i.grow:hover{
 }
 .pill {
   position: absolute;
+  top: 10%;
+  right: 1%;
+}
+.pill.pill-toggle {
+  position: relative !important;
   top: 10%;
   right: 1%;
 }

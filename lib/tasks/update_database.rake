@@ -1,3 +1,15 @@
+desc "Update Facility Group"
+task :update_facility_group_data => :environment do
+
+  puts "Associating Facility Group to program"
+  project_facility_group_hash = FacilityGroup.all.group_by{|fg| fg.project_id}
+  project_facility_group_hash.each do |project_id, groups|
+    next if project_id.nil?
+    project = Project.find(project_id)
+    project.project_group_ids = (project.project_group_ids + groups.map(&:id)).compact.uniq
+  end
+end
+
 desc "Update Progress"
 task :update_progress => :environment do
 

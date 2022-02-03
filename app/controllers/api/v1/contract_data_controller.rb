@@ -1,4 +1,13 @@
 class Api::V1::ContractDataController < AuthenticatedController
+
+  def contract_client_types
+    render json: ContractClientType.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_categories
+    render json: ContractCategory.all.as_json(only: [:id, :name] )
+  end
+
   def contract_types
     render json: ContractType.all.as_json(only: [:id, :name] )
   end
@@ -28,6 +37,30 @@ class Api::V1::ContractDataController < AuthenticatedController
   end
   def contract_classification
     render json: ContractClassification.all.as_json(only: [:id, :name] )
+  end
+
+  def create_contract_category
+    @contract_category = ContractCategory.new(contract_category_params)
+    if @contract_category.save
+      render json: @contract_category.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_category.errors.full_messages}
+    end    
+  end
+  def contract_category_params
+    params.require(:contract_category).permit(:id, :name)
+  end
+
+  def create_contract_client_type
+    @contract_client_type = ContractClientType.new(contract_client_type_params)
+    if @contract_client_type.save
+      render json: @contract_client_type.as_json(only: [:id, :name] )
+    else
+      render json: {errors: @contract_client_type.errors.full_messages}
+    end    
+  end
+  def contract_client_type_params
+    params.require(:contract_client_type).permit(:id, :name)
   end
 
   def create_contract_type

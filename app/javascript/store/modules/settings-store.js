@@ -1,13 +1,19 @@
+import http from "./../../common/http";
 import axios from "axios";
 import { API_BASE_PATH } from "./../../mixins/utils";
 
 const settingsStore = {
   state: () => ({
     show_admin_btn: false,
+    edit_contract_sheet: false, 
     contract_table: [],
     group_filter: null,
+    transfer_data: [],
+    new_groups: [], 
     contract: {},
     contracts: [],
+    client_types: [],
+    pop_days_remaining: null,
     contract_loaded: true,
     contracts_loaded: true,
     contract_status: 0,
@@ -57,14 +63,67 @@ const settingsStore = {
         });
     },
     createGroup({ commit }, { group }) {
-      // Displays loader on front end
       commit("TOGGLE_GROUPS_LOADED", false);
-      // Utilize utility function to prep Lesson form data
       let formData = groupFormData(group);
 
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/facility_groups`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          commit("SET_GROUP_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    updateGroupName({ commit }, { id, newNameData }) {
+        commit("TOGGLE_GROUPS_LOADED", false);
+        let formData = new FormData();
+        console.log(newNameData.name)
+        formData.append("facility_group[name]", newNameData.name); //Required
+        // let formData = newGroupName(newNameData);
+        // console.log()
+  
+        axios({
+          method: "PUT",
+          url: `${API_BASE_PATH}/facility_groups/${id}`,
+          data: formData,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            commit("SET_GROUP", res.data.facility_groups);
+            commit("SET_GROUP_STATUS", res.status);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_GROUPS_LOADED", true);
+          });
+      },
+   updateGroup({ commit }, { groupData }) {
+    //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
+      commit("TOGGLE_GROUPS_LOADED", false);
+      // Utilize utility function to prep Lesson form data
+      let formData = portfolioGroupData(groupData);
+      console.log(groupData)
+
+      axios({
+        method: "PUT",
+        url: `${API_BASE_PATH}/facility_groups/bulk_project_update`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -271,6 +330,27 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
+    fetchClientTypes({ commit }) {
+      commit("TOGGLE_CONTRACTS_LOADED", false);
+      // Retrieve contract by id
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/contract_data/contract_client_types`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CLIENT_TYPES", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACTS_LOADED", true);
+        });
+    },
     fetchContractNumber({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
@@ -334,18 +414,19 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    fetchGroups({ commit }) {
+    fetchGroups({ commit }, id) {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/facility_groups.json`,
+        url: `${API_BASE_PATH}/facility_groups?program_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_GROUPS", res.data.facility_groups);        
+          commit("SET_GROUPS", res.data.facility_groups);   
+          commit("SET_TRANSFER_DATA", res.data.program_group_ids);        
         })
         .catch((err) => {
           console.log(err);
@@ -381,19 +462,34 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
+    deleteContract({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`${API_BASE_PATH}/contracts/${id}`)
+          .then((res) => {
+            resolve(res.status);
+          }).catch((err) => {
+            console.log(err);
+            reject();
+          });
+      });
+    },
   },
 
   mutations: {
-    setShowAdminBtn: (state, value) => (state.show_admin_btn = value),
+    setShowAdminBtn: (state, value) => (state.show_admin_btn = value),   
     setContractTypeFilter: (state, value) =>
       (state.contract_type_filter = value),
     setContractTable: (state, value) => (state.contract_table = value),
     setGroupFilter: (state, value) => (state.group_filter = value),
     setNewContractGroupFilter: (state, loaded) =>
       (state.new_contract_group_filter = loaded),
-
+    SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
+    SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
+    SET_NEW_GROUPS: (state, value) => (state.new_groups = value),
+    SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
@@ -416,7 +512,7 @@ const settingsStore = {
     SET_SUBCONTRACT_NUMBER: (state, value) =>
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
-
+    SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
@@ -428,19 +524,23 @@ const settingsStore = {
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
-    getNewContractGroupFilter: (state) => state.new_contract_group_filter,
-
+    getNewContractGroupFilter: (state) => state.new_contract_group_filter,    
+    getClientTypes: (state) => state.client_types,
+    getDaysRemaining: (state) => state.pop_days_remaining,
+    editContractSheet: (state) => state.edit_contract_sheet,
     getCustomerAgenciesFilter: (state) => state.customer_agencies_filter,
     getContractStatusesFilter: (state) => state.contract_statuses_filter,
     getContractClassifications: (state) => state.contract_classifications,
     getCurrentPop: (state) => state.current_pop,
     getPrime: (state) => state.prime,
+    getNewGroups: (state) => state.new_groups,
 
     getVehicles: (state) => state.vehicle_filter,
     getVehicleNumbers: (state) => state.vehicle_number,
     getSubcontractNumbers: (state) => state.subcontract_number,
     getContractNumbers: (state) => state.contract_number,
 
+    getTransferData: (state) => state.transfer_data, 
     getContractGroupTypes: (state) => state.contract_group_types,
     group: (state) => state.group,
     groups: (state) => state.groups,
@@ -474,6 +574,7 @@ const settingsStore = {
 };
 
 const contractFormData = (contract) => {
+  // console.log(contract)
   let formData = new FormData();
   // Append all required form data
   if (contract.id) {
@@ -481,11 +582,13 @@ const contractFormData = (contract) => {
     formData.append("facility_group_name", contract.facility_group_name);
   }
   formData.append("contract[facility_group_id]", contract.facility_group_id);
-  formData.append("contract[contract_type_id]", contract.contract_type_id); //Required
+  formData.append("contract[contract_type_id]", contract.contract_type_id);
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
   formData.append("contract[project_code]", contract.project_code);
   formData.append("contract[nickname]", contract.nickname); //Required
+  formData.append("contract[total_subcontracts]", contract.total_subcontracts); //Required
   formData.append("contract[name]", contract.name); //Required
+  formData.append("contract[notes]", contract.notes);
   formData.append("contract[contract_status_id]", contract.contract_status_id);
   formData.append(
     "contract[contract_customer_id]",
@@ -498,6 +601,10 @@ const contractFormData = (contract) => {
   formData.append(
     "contract[contract_vehicle_number_id]",
     contract.contract_vehicle_number_id
+  );
+  formData.append(
+    "contract[contract_client_type_id]",
+    contract.contract_client_type_id
   );
   formData.append("contract[contract_number_id]", contract.contract_number_id);
   formData.append(
@@ -547,5 +654,20 @@ const groupFormData = (group) => {
   formData.append("facility_group[project_id]", group.project_id); //Required; This is actually the Program ID
   return formData;
 };
+
+const portfolioGroupData = (groupData) => {
+  let formData = new FormData();
+  groupData.ids.forEach((ids) => {
+    formData.append("facility_group_ids[]",ids);
+  });
+  formData.append("program_id", groupData.programId);
+  return formData;
+};
+
+const newGroupName = (newNameData) => {
+let formData = new FormData();
+console.log(newNameData.name)
+formData.append("facility_group[name]", newNameData.name); //Required
+}
 
 export default settingsStore;

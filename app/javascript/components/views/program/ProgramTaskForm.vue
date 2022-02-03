@@ -12,7 +12,6 @@ export default {
   data() {
     return {
       task: {},
-      allProgramTasks: [],
     };
   },
   methods: {
@@ -27,26 +26,18 @@ export default {
       "contentLoaded", 
       "currentProject", 
       'filteredAllTasks',
-      'filteredAllContractTasks',
       'getShowProjectStats'
       ]),
   },
 mounted() {
-  if (!this.getShowProjectStats){
-    this.allProgramTasks = this.filteredAllTasks
-  } else if (this.getShowProjectStats){
-    this.allProgramTasks = this.filteredAllContractTasks
-  }
-  if (this.contentLoaded) {
-    this.task = this.allProgramTasks.find(
+    this.task = this.filteredAllTasks.find(
         (task) => task.id == this.$route.params.taskId
-      );
-    }        
+      );      
   },
   watch: {
     contentLoaded: {
       handler() {       
-          this.task = this.allProgramTasks.find(
+          this.task = this.filteredAllTasks.find(
             (task) => task.id == this.$route.params.taskId
           );
       },

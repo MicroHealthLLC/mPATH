@@ -52,7 +52,16 @@ ActiveAdmin.register User do
         notes: [],
         admin: [],
         lessons: [],
-        contracts: []
+        contracts: [],
+        cn_overview: [],
+        cn_tasks: [], 
+        cn_issues: [],
+        cn_risks: [],
+        cn_notes: [],
+        cn_lessons: [],
+        admin_groups: [],
+        admin_contracts: [],
+        admin_facilities: []
       ],
       facility_privileges_attributes: [
         :id,

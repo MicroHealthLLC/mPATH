@@ -8,6 +8,8 @@ class Project < SortableRecord
   has_many :facility_projects, dependent: :destroy
   has_many :facilities, through: :facility_projects
   has_many :facility_groups, through: :facilities
+  has_many :project_facility_groups, dependent: :destroy
+  has_many :project_groups, through: :project_facility_groups, class_name: "FacilityGroup"
   has_many :tasks, through: :facility_projects
   has_many :issues, through: :facility_projects
   has_many :risks, through: :facility_projects
@@ -321,7 +323,8 @@ class Project < SortableRecord
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
-    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?) or project_id = ?", all_facility_group_ids, project.id)
+    all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?)", all_facility_group_ids)
 
     # all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
 
@@ -334,7 +337,7 @@ class Project < SortableRecord
     fph = user.facility_privileges_hash
     cph = user.contract_privileges_hash[project.id.to_s] || {}
     contract_ids = cph.keys
-    all_contracts = Contract.includes(:contract_facility_group).where(facility_group_id: all_facility_group_ids, project_id: project.id, id: contract_ids )
+    all_contracts = Contract.includes(:contract_facility_group, :contract_type, :contract_status, :contract_customer, :contract_vehicle, :contract_vehicle_number, :contract_number, :subcontract_number, :contract_prime, :contract_current_pop, :contract_classification).where(project_id: project.id, id: contract_ids )
 
     all_facility_projects.each do |fp|
 
@@ -415,7 +418,7 @@ class Project < SortableRecord
     contract_hash = []
     all_contracts.each do |c|
 
-      c_hash = c.to_json
+      c_hash = c.to_json(options: {include_associated_names: true})
 
       if user.has_contract_permission?(resource: 'tasks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
         tasks = all_tasks.select{|t| t.contract_id == c.id }.compact.uniq
@@ -433,7 +436,7 @@ class Project < SortableRecord
         end
       end
 
-      if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+      if user.has_contract_permission?(resource: 'risks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
         risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq
         c_hash[:risks] = []
         risks.each do |r| 

@@ -12,7 +12,6 @@ export default {
   data() {
     return {
       lesson: {},
-      allProgramLessons: [],
     };
   },
   methods: {
@@ -23,24 +22,17 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", 'programLessons', 'getShowProjectStats']),
+    ...mapGetters(["contentLoaded", 'programLessons']),
   },
   mounted() {
-    if(!this.getShowProjectStats){
-        this.allProgramLessons = this.programLessons.filter(l => l.project_id)
-      } else if (this.getShowProjectStats){
-         this.allProgramLessons =  this.programLessons.filter(l => l.contract_id)
-      } 
-    if (this.contentLoaded) {
-      this.lesson =  this.allProgramLessons.find(
+      this.lesson =  this.programLessons.find(
         (lesson) => lesson.id == this.$route.params.lessonId
       );
-    }
   },
   watch: {
     contentLoaded: {
       handler() {
-        this.lesson =  this.allProgramLessons.find(
+        this.lesson =  this.programLessons.find(
           (lesson) => lesson.id == this.$route.params.lessonId
         );
       },
