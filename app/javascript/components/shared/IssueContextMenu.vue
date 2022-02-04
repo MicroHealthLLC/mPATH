@@ -426,21 +426,38 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.issue.facilityId}/issues/${this.issue.id}/create_bulk_duplicate?`;
+      
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/issues/${this.issue.id}/create_bulk_duplicate?`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.issue.facilityId}/issues/${this.issue.id}/create_bulk_duplicate?`;
+      }
+
       let method = "POST";
       let callback = "issue-created";
 
+  
       ids.forEach((id, index) => {
-        if (index === 0) {
+        if (index === 0 && this.$route.params.projectId) {
           url += `facility_project_ids[]=${id}`;
-        } else {
+        } else if (index !== 0 && this.$route.params.projectId)  {
           url += `&facility_project_ids[]=${id}`;
-        }
+        } if (index === 0 && this.$route.params.contractId) {
+          url += `contract_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.contractId)  {
+          url += `&contract_ids[]=${id}`;
+        } 
       });
 
-      let formData = new FormData();
-      formData.append("id", this.issue.id);
-      formData.append("facility_project_ids", ids);
+     let formData = new FormData();
+         formData.append("id", this.issue.id);
+
+      if ( this.$route.params.contractId){
+         formData.append("contract_ids", ids); 
+      } else {
+          formData.append("facility_project_ids", ids);      
+      } 
 
       axios({
         method: method,
@@ -454,13 +471,23 @@ export default {
         .then((response) => {
           this.$emit(callback, humps.camelizeKeys(response.data.issue));
 
-          response.data.issues.forEach((issue) => {
+       if (this.$route.params.contractId){
+            response.data.issues.forEach((issue) => {
+                //  console.log(`task: ${task}`)
+                this.updateContractIssues({
+                issue: humps.camelizeKeys(issue)
+               });
+              });
+           
+         } else {
+             response.data.issues.forEach((issue) => {
             this.updateFacilityIssue(
               humps.camelizeKeys(issue),
               issue.facilityProjectId
             );
           });
-          if (response.status === 200) {
+         }
+         if (response.status === 200) {
             this.$message({
               message: `${this.issue.title} was duplicated successfully to selected projects.`,
               type: "success",
