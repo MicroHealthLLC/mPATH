@@ -262,14 +262,14 @@
         type="default" 
         v-tooltip="`Save`"
         @click.prevent="saveEdits(scope.$index, scope.row)"  
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
         class="bg-primary text-light">
         <i class="far fa-save"></i>
         </el-button>
          <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary text-light">
       <i class="fas fa-ban"></i>
@@ -278,7 +278,7 @@
         type="default" 
         v-tooltip="`Edit Group Name`"
         @click.prevent="editMode(scope.$index, scope.row)" 
-        v-if="scope.$index !== rowIndex" 
+        v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
         class="bg-light">
         <i class="fal fa-edit text-primary" ></i>
           </el-button> 
