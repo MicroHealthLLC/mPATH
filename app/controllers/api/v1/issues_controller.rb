@@ -99,10 +99,10 @@ class Api::V1::IssuesController < AuthenticatedController
     end
     if params[:contract_ids].present?
       params[:contract_ids].each do |c_id|
-        duplicate_task = @task.amoeba_dup
-        duplicate_task.contract_id = c_id
-        duplicate_task.save
-        all_objs << duplicate_task
+        duplicate_issue = @issue.amoeba_dup
+        duplicate_issue.contract_id = c_id
+        duplicate_issue.save
+        all_objs << duplicate_issue
       end
     end
     # duplicate_task.save

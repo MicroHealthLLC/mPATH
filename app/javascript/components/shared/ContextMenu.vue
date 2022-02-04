@@ -435,9 +435,6 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      console.log(ids)
-      console.log(facilityNodes)
-
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_bulk_duplicate?`;
@@ -461,14 +458,11 @@ export default {
       });
 
       let formData = new FormData();
-        formData.append("id", this.task.id);
+          formData.append("id", this.task.id);
       if ( this.$route.params.contractId){
          formData.append("contract_ids", ids);
-       
-        //  debugger
       } else {
        formData.append("facility_project_ids", ids);
-        formData.append("id", this.task.id);
       } 
 
   // debugger
@@ -484,9 +478,8 @@ export default {
         .then((response) => {
           // let responseTask ;
           this.$emit(callback, humps.camelizeKeys(response.data.task) );
-          debugger
-             console.log(`response: ${response}`)
-         
+          // debugger
+                     
          if (this.$route.params.contractId){
             response.data.tasks.forEach((task) => {
                  console.log(`task: ${task}`)

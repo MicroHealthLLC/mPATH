@@ -419,21 +419,35 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+    let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      }
+
       let method = "POST";
       let callback = "risk-created";
 
       ids.forEach((id, index) => {
-        if (index === 0) {
+        if (index === 0 && this.$route.params.projectId) {
           url += `facility_project_ids[]=${id}`;
-        } else {
+        } else if (index !== 0 && this.$route.params.projectId)  {
           url += `&facility_project_ids[]=${id}`;
-        }
+        } if (index === 0 && this.$route.params.contractId) {
+          url += `contract_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.contractId)  {
+          url += `&contract_ids[]=${id}`;
+        } 
       });
+     let formData = new FormData();
+          formData.append("id", this.risk.id);
 
-      let formData = new FormData();
-      formData.append("id", this.risk.id);
-      formData.append("facility_project_ids", ids);
+      if ( this.$route.params.contractId){
+         formData.append("contract_ids", ids);
+      } else {
+          formData.append("facility_project_ids", ids);
+      } 
 
       axios({
         method: method,
@@ -447,13 +461,23 @@ export default {
         .then((response) => {
           this.$emit(callback, humps.camelizeKeys(response.data.risk));
 
-          response.data.risks.forEach((risk) => {
+                            
+         if (this.$route.params.contractId){
+             response.data.risks.forEach((risk) => {
+              this.updateContractRisks({
+                risk: humps.camelizeKeys(risk)
+               });
+              });
+           
+         } else {                 
+           response.data.risks.forEach((risk) => {
             this.updateFacilityRisk(
               humps.camelizeKeys(risk),
               risk.facilityProjectId
             );
           });
-          if (response.status === 200) {
+         }
+         if (response.status === 200) {
             this.$message({
               message: `${this.risk.text} was duplicated successfully to selected projects.`,
               type: "success",

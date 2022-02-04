@@ -108,10 +108,10 @@ class Api::V1::RisksController < AuthenticatedController
     end
     if params[:contract_ids].present?
       params[:contract_ids].each do |c_id|
-        duplicate_task = @task.amoeba_dup
-        duplicate_task.contract_id = c_id
-        duplicate_task.save
-        all_objs << duplicate_task
+        duplicate_risk = @risk.amoeba_dup
+        duplicate_risk.contract_id = c_id
+        duplicate_risk.save
+        all_objs << duplicate_risk
       end
     end
     # duplicate_task.save
