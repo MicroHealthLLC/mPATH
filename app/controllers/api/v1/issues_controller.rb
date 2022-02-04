@@ -97,6 +97,14 @@ class Api::V1::IssuesController < AuthenticatedController
         all_objs << duplicate_issue
       end
     end
+    if params[:contract_ids].present?
+      params[:contract_ids].each do |c_id|
+        duplicate_task = @task.amoeba_dup
+        duplicate_task.contract_id = c_id
+        duplicate_task.save
+        all_objs << duplicate_task
+      end
+    end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
     render json: {issues: all_objs.map(&:to_json)}
