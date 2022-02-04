@@ -30,7 +30,7 @@
     </el-breadcrumb>   
  <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
-    <div class="col-6">
+    <div class="col-6" :class="{'d-none': !_isallowedProgramSettings('write') }">
     <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2"> 
     <i class="far fa-plus-circle mr-1"></i> Create New Group
     </el-button>
@@ -262,14 +262,14 @@
         type="default" 
         v-tooltip="`Save`"
         @click.prevent="saveEdits(scope.$index, scope.row)"  
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
         class="bg-primary text-light">
         <i class="far fa-save"></i>
         </el-button>
          <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary text-light">
       <i class="fas fa-ban"></i>
@@ -278,7 +278,7 @@
         type="default" 
         v-tooltip="`Edit Group Name`"
         @click.prevent="editMode(scope.$index, scope.row)" 
-        v-if="scope.$index !== rowIndex" 
+        v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
         class="bg-light">
         <i class="fal fa-edit text-primary" ></i>
           </el-button> 
@@ -420,7 +420,12 @@ export default {
     handleClick(tab, event) {
         console.log(tab, event);
     },
-   
+    _isallowedProgramSettings(salut) {
+      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.admin_groups.includes(s);
+    },
   },
   mounted(){
   this.fetchGroups(this.$route.params.programId)

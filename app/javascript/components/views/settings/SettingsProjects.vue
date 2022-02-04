@@ -28,7 +28,7 @@
 
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <div class="col">
+            <div class="col" v-if="_isallowedProgramSettings('write')">
               <el-button
                 @click.prevent="addProject"
                 class="bg-primary text-light mb-2"
@@ -129,14 +129,14 @@
               <el-button
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
-                v-if="scope.$index == rowIndex" 
+                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
                 class="bg-primary text-light"
                 >Save</el-button
               >
               <el-button 
                 type="default" 
                 v-tooltip="`Cancel Edit`"       
-                v-if="scope.$index == rowIndex" 
+                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
                 @click.prevent="cancelEdits(scope.$index, scope.row)"  
                 class="bg-secondary text-light">
               <i class="fas fa-ban"></i>
@@ -145,7 +145,7 @@
                 type="default" 
                 v-tooltip="`Edit Project Name`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex" 
+                v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
                 class="bg-light">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button> 
@@ -340,6 +340,12 @@ export default {
        this.rowId = null;
         }
       });
+    },
+    _isallowedProgramSettings(salut) {
+      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.admin_facilities.includes(s);
     },
   },
   computed: {
