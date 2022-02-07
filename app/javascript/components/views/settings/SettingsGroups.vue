@@ -1,4 +1,5 @@
 <template>
+
   <div 
    v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
@@ -8,6 +9,7 @@
      <div class="col-md-2">
       <SettingsSidebar/>
     </div>
+    
   <div class="col-md-10">
   <div class="right-panel">  
     <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
@@ -34,8 +36,11 @@
     <el-button @click.prevent="addGroup" class="bg-primary text-light mb-2"> 
     <i class="far fa-plus-circle mr-1"></i> Create New Group
     </el-button>
+    <el-button @click.prevent="openPortfolioGroup" class="bg-success text-light mb-2"> 
+    <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
+    </el-button>
     </div>    
-     <div class="col-6"  v-show="currentTab == 'tab2'">     
+     <div class="col-6" >     
         <el-input
           type="search"          
           placeholder="Search Groups"
@@ -67,11 +72,12 @@
        </div>
       <div class="right mr-2">
         <button 
-          @click.prevent="saveGroup"
+          @click.prevent="createNewGroup"
           :disabled="!newGroupName"  
           class="btn btn-sm bg-primary text-light mr-2" 
+          v-tooltip="`Save`"
           :class="[hideSaveBtn ? 'd-none': '']">
-          Save
+        <i class="fal fa-save mr-2"></i>
        </button>       
         <button 
           @click.prevent="addAnotherGroup" 
@@ -81,45 +87,49 @@
         </button>
         <button 
           @click.prevent="closeAddGroupBtn" 
+          v-tooltip="`Close`"
           class="btn btn-sm bg-danger text-light mr-2" 
           :class="[!hideSaveBtn ? 'd-none': '']">
-          Close
+        <i class="fal fa-window-close"></i>
         </button>
         </div>
     </form>
    </el-dialog> 
-   <FormTabs
-    :current-tab="currentTab"
-    :tabs="tabs"
-    class="pl-3"
-    :allErrors="errors"
-    @on-change-tab="onChangeTab"
-  />
-    <div v-show="currentTab == 'tab1'" class="container mt-2 mx-0">
-      <div>
-        <el-transfer
-        class="pl-1 pt-2"
-        v-if="generateData || transferData"
-        :titles="[ 'Portfolio Groups', 'My Program Groups']"
-        :data="generateData"
-        v-model="transferData"
-        @change="addPortfolioGroup"
-        >
-      <!-- <el-button 
-        class="transfer-footer ml-2 py-2 text-light" 
-        :disabled="!this.confirmTransfer" 
-        slot="right-footer" 
-      
-        size="small" 
-        type="primary">
-        Confirm Transfer
-      </el-button>
-      <el-button class="transfer-footer" slot="left-footer" style="visibility:hidden" size="small">Save</el-button> -->
-      </el-transfer>
+    <el-dialog :visible.sync="dialog2Visible" append-to-body center class="portfolioNames p-0" v-if="groups && groups.length > 0">
 
-      </div>
+   <div>
+    <template >
+    <div class="sticky">
+      <el-button-group>
+        <el-button 
+          class="confirm-save-group-names btn text-light" 
+          v-tooltip="`Save Group(s)`"
+          @click.prevent="importGroupName" 
+          :disabled="portfolioGroups.length <= 0">
+        <i class="fal fa-save"></i>
+        </el-button>
+        <el-button
+          @click.prevent="closeImportGroupBtn" 
+           v-tooltip="`Close`"
+          class="btn mh-blue text-light" >
+        <i class="fal fa-window-close"></i>
+        </el-button>
+      </el-button-group>
     </div>
-      <div v-show="currentTab == 'tab2'" class="container-fluid mt-2 mx-0">
+    </template>
+        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"><i>Check all Groups</i></el-checkbox>
+  <div style="margin: 15px 0;"></div>
+  <el-checkbox-group v-model="checkedPortfolioGroups"> 
+  <div class="row">
+    <div class="col-4">
+      <el-checkbox v-for="group in portfolioGroups" :label="group.id" :key="group.id">{{ group.name }}</el-checkbox>
+    </div>
+  </div>
+  </el-checkbox-group>
+   </div>
+    
+   </el-dialog> 
+     <div class="container-fluid mt-2 mx-0">
    <div
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
@@ -153,13 +163,15 @@
             >{{ 0 }}
           </span>
           </h5>
+        <span v-if="groupProjects">
         <ul class="pl-3" v-for="item, i in groupProjects.filter(t => t.facilityGroupId == props.row.id)" :key="i"   >
             <li> 
               {{ item.facilityName }} 
             </li>
           </ul>
+          </span>
        </div>        
-        <div class="col" v-if="groupContracts">
+        <div class="col" >
         <h5 class="mh-orange-text"> Contracts
           <span  
           v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length"   
@@ -173,12 +185,13 @@
             >{{ 0 }}
           </span>
           </h5>
+          <span v-if="groupContracts">
         <ul class="pl-3">
             <li v-for="item, i in groupContracts.filter(t => t.facilityGroupId == props.row.id)" :key="i" >
               {{ item.nickname  }} 
             </li>
           </ul>
-
+          </span>
         </div>
        </div>
        </div>
@@ -199,28 +212,7 @@
   </el-input>
   <span v-else> {{ props.row.name }}</span>
 </div>
-<!-- <div class="col-3">
-  <i class="fal fa-clipboard-list mr-1 mh-green-text" v-tooltip="`Projects`"></i>
-   <span class="mr-4" v-if="props.row.facilities.length">
-  {{  props.row.facilities.length }} 
-  </span> 
-  <span class="mr-4" v-else>
-  {{0}}
-  </span> 
-   <i class="far fa-file-contract mr-1 mh-orange-text" v-tooltip="`Contracts`"></i>
-   <span v-if="groupContracts && groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length" >
-     {{  groupContracts.map(t => t.facilityGroupId).filter(t => t == props.row.id).length  }}
-    </span>
-    <span  v-else>
-    {{0}}
-    </span> 
-</div> -->
-</div>
-  
-    
-
-
-   
+</div>  
     </template>
     </el-table-column>  
       <el-table-column
@@ -247,14 +239,7 @@
 </div>
 </div>
   </template>
-      <!-- <template slot="header" slot-scope="scope">
-        <el-input
-
-          v-model="search"
-          class="groupSearch"
-          placeholder="Search Group names"/>
-      </template> -->
-         </el-table-column>
+   </el-table-column>
 
      <el-table-column label="Actions" >
       <template slot-scope="scope" >
@@ -282,6 +267,14 @@
         class="bg-light">
         <i class="fal fa-edit text-primary" ></i>
           </el-button> 
+        <el-button  
+        type="default" 
+        v-tooltip="`Remove Group`"
+        @click.prevent="removeGroup(scope.$index, scope.row)" 
+        v-if="scope.$index !== rowIndex" 
+        class="bg-light">
+         <i class="far fa-trash-alt text-danger"></i>
+          </el-button> 
       </template>
     </el-table-column>
      
@@ -301,6 +294,12 @@
 </template>
 
 <script>
+
+// List of all Portfolio Groups (Just the names) this.groups  ---DONE
+// Button for Add Protfolio Groups  --DONE
+// Filter out Groups that were created at Program Level -- DONE
+// If I click on group, it saves the names to Program table and Portfolio Group stays checked
+// It will not contain groups that were created in Program -- DONE
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import FormTabs from "../../shared/FormTabs.vue"
@@ -313,7 +312,11 @@ export default {
     data() {    
       return {
         currentFacility: {},
+        // checkAll: false,
+        // checkedCities: ['Shanghai', 'Beijing'],
+        isIndeterminate: true,
         dialogVisible: false,
+        dialog2Visible: false,
         currentTab: "tab1",
       tabs: [
         {
@@ -345,7 +348,17 @@ export default {
       };
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setContractTable','setGroupFilter', 'SET_GROUP_STATUS', 'SET_TRANSFER_DATA', 'SET_NEW_GROUPS']), 
+   ...mapMutations([
+     'setProjectGroupFilter', 
+     'setContractTable',
+     'setGroupFilter', 
+     'SET_GROUP_STATUS', 
+     'SET_TRANSFER_DATA', 
+     'SET_NEW_GROUPS', 
+     'SET_CHECKED_PORTFOLIO_GROUPS',
+     "SET_CHECK_ALL",
+     "SET_CHECKED_GROUPS"
+     ]), 
    ...mapActions(["createGroup", "fetchFacilityGroups", "updateGroupName","updateGroup", "fetchGroups", "fetchCurrentProject"]),
 
    addAnotherGroup() {
@@ -353,6 +366,16 @@ export default {
       this.newGroupName = null;
       this.hideSaveBtn = false;  
     },
+     handleCheckAllChange() {
+      //  if (this.groups && this.groups.length > 0) {
+      //     let checkGroups = this.groups.map(group => group.id)
+      //     if(val){
+      //       this.SET_CHECKED_GROUPS(checkGroups);
+      //     }         
+          this.isIndeterminate = false;
+      //  }
+       
+      },
     reRenderTable() {
       this.componentKey += 1;
     },  
@@ -364,10 +387,19 @@ export default {
       this.rowIndex = index
       this.rowId = rows.id
     },
+    closeImportGroupBtn() {
+      this.dialog2Visible = false;
+      this.SET_CHECKED_PORTFOLIO_GROUPS([0])
+    },
     addGroup(){     
       this.dialogVisible = true;    
       this.newGroupName = null;
       this.C_projectGroupFilter = null;     
+    },
+   openPortfolioGroup(){     
+      this.dialog2Visible = true;    
+      // this.newGroupName = null;
+      // this.C_projectGroupFilter = null;     
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1"; 
@@ -392,7 +424,7 @@ export default {
        this.rowIndex = null;
        this.rowId = null;
     },
-    saveGroup() {
+    createNewGroup() {
     let groupData = {
       group: {
         name: this.newGroupName,
@@ -404,10 +436,33 @@ export default {
       })       
       this.hideSaveBtn = true;       
     }, 
-  addPortfolioGroup() {   
-      let group = {    
+  removeGroup(index, rows) { 
+    let id = [rows.id]
+    let group = {    
           groupData: {
-            ids: this.getTransferData,
+            ids: this.tableData.map(row => row.id).filter(r => !id.includes(r)),
+            programId: this.$route.params.programId,           
+          }
+        }
+      this.$confirm(`Are you sure you want to remove ${rows.name}?`, 'Confirm Remove', {
+          confirmButtonText: 'Remove',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {this.updateGroup({...group})});  
+    },
+  importGroupName() {
+    let data = this.checkedPortfolioGroups
+    if (this.facilityGroups && this.facilityGroups.length > 0){ 
+        let savedGroups = this.facilityGroups.map(g => g.id)
+       for (let i = 0; i <= this.facilityGroups.length; i++) {
+          if (savedGroups[i] !== undefined) {
+           data.push(savedGroups[i]);         
+           }           
+         }
+     }  
+     let group = {    
+          groupData: {
+            ids: [ ...new Set (data)],
             programId: this.$route.params.programId,           
           }
         }
@@ -438,9 +493,47 @@ export default {
       'getProjectGroupFilter',
       "facilityGroupFacilities",
       'facilityGroups',
-      'currentProject'
+      'currentProject',
+      'getCheckedPortfolioGroups',
+      "getCheckAll",
+      "getCheckedGroups"
     ]), 
-   backToSettings(){
+  // checkedGroups:{
+  //   get(){
+  //     return this.getCheckedGroups;
+  //   },
+  //   set(value){
+  //     this.SET_CHECKED_GROUPS(value)
+  //   }
+  // },
+  checkedPortfolioGroups:{
+     get() {   
+       return this.getCheckedPortfolioGroups;
+      },
+      set(value) {
+      let checkedCount = value.length;
+
+      // this.SET_CHECK_ALL(checkedCount === this.portfolioGroups.length);
+      this.SET_CHECKED_PORTFOLIO_GROUPS(value);    
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.portfolioGroups.length;        
+      }
+    },
+    checkAll:{
+     get() {
+        return this.getCheckAll;
+      },
+      set(value) {
+        console.log(value)
+         this.SET_CHECK_ALL(value);     
+         if(value == true)   {
+          let checkGroups = this.groups.map(group => group.id)
+          this.SET_CHECKED_PORTFOLIO_GROUPS(checkGroups)
+         } else if (value == false){
+            this.SET_CHECKED_PORTFOLIO_GROUPS([0])
+         } 
+      }       
+    },
+    backToSettings(){
      return `/programs/${this.$route.params.programId}/settings`  
     },
      C_groupFilter: {
@@ -452,13 +545,7 @@ export default {
         this.setGroupFilter(value);
       },
     },
-    // inheritedGroups(){
-    // let projectGroupIds = []
-    //   if (this.facilityGroups && this.facilityGroups.length > 0){
-    //    projectGroupIds = this.facilityGroups.map(t => t.id)
-    //   }
-    //    return projectGroupIds
-    // },
+
      generateData(){
   
       const data = [];
@@ -482,9 +569,9 @@ export default {
       },
 
     myProgramGroups(){
-      const data = [...new Set(this.getTransferData)] ;
-      if (this.facilityGroups && this.facilityGroups.length > 0 ) { 
-         let myInheritedGroups = this.facilityGroups.filter(t => t && t.id == data.map(t => t))   
+      const data = this.getCheckedPortfolioGroups ;
+      if (this.groups && this.groups.length > 0 ) { 
+         let myInheritedGroups = this.groups.filter(t => t && t.id == data.map(t => t))   
         for (let i = 0; i <= myInheritedGroups.length; i++) {  
               if (myInheritedGroups[i] !== undefined) {    
             data.push(myInheritedGroups[i].id); 
@@ -503,40 +590,32 @@ export default {
         this.SET_TRANSFER_DATA(value);
          if (
         this.groups &&        
-         this.groups.length > 0  &&
-         this.getTransferData && 
-         this.getTransferData.length > 0
+         this.groups.length > 0 
+        //  this.getTransferData && 
+        //  this.getTransferData.length > 0
          )
          {     
         let newGroups = this.groups.filter(u => this.getTransferData.includes(u.id))
-        this.SET_NEW_GROUPS(newGroups)
+        this.SET_NEW_GROUPS([newGroups])
          }
       },
     },
-    tableData() {
-     if (
-        this.groups &&        
-         this.groups.length > 0  &&
-         this.getTransferData && 
-         this.getTransferData.length > 0
-         )
-         {
-     
-        let newGroups = this.groups.filter(u => this.getTransferData.includes(u.id))
-        this.SET_NEW_GROUPS(newGroups)
-        return newGroups
-         } else if (
-        this.groups &&        
-        this.groups.length > 0  &&
-        this.facilityGroups &&
-        this.facilityGroups.length > 0  &&
-        !this.getTransferData
-         )
-         {
-         let programGroupIds = this.facilityGroups.map(t => t.id)
-          return this.groups.filter(u => programGroupIds.includes(u.id))
+   portfolioGroups() {
+     //Removes current Program  Groups from checkbox options in Add Protfolio Group popup
+     if (this.groups && this.groups.length > 0){ 
+          return this.groups.filter(pG => !this.tableData.map(g => g.id).includes(pG.id))
+       }
+     },
+     tableData() {
+       if (
+        this.facilityGroups &&        
+         this.facilityGroups.length > 0
+    
+         ){
+           return this.facilityGroups
          } else return []
-    }, 
+
+     },
     groupProjects(){
        if (
         this.facilities &&
@@ -585,7 +664,7 @@ export default {
           });
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
-          // this.fetchCurrentProject(this.$route.params.programId) 
+          this.fetchCurrentProject(this.$route.params.programId) 
           //  this.newGroupName =
         }
       },
@@ -691,7 +770,34 @@ a {
 /deep/.el-input__inner {
   font-size: 1.1rem;
 }
+
+/deep/.el-button.confirm-save-group-names {
+background-color: rgba(40, 167, 69, 1);
+}
+
+label.el-checkbox {
+  margin-top: 15px;
+}
+
+div.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  text-align: right;
+  padding-top: 10px;
+}
  
+
+.portfolioNames {
+/deep/.el-dialog__header {
+padding-top: 0 !important;
+}
+/deep/.el-dialog__headerbtn {display: none;}
+
+/deep/.el-dialog__body {
+padding-top: 0 !important;
+ }
+}
 
 // :-ms-input-placeholder { /* Internet Explorer 10-11 */
 //   color: red;

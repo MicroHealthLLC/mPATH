@@ -130,8 +130,10 @@
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
                 v-if="scope.$index == rowIndex" 
-                class="bg-primary text-light"
-                >Save</el-button
+                 v-tooltip="`Save`" 
+                class="bg-primary text-light">
+               
+               <i class="far fa-save"></i></el-button
               >
               <el-button 
                 type="default" 
