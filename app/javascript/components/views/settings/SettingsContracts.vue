@@ -24,9 +24,9 @@
         </span>
       </h4>
     </el-breadcrumb>   
- <div class="my-1 pb-2 buttonWrapper container-fluid" v-if="_isallowed('read')">
+ <div class="my-1 pb-2 buttonWrapper container-fluid">
   <div class="row px-0">
-    <div class="col" v-if="_isallowed('write')">
+    <div class="col" v-if="_isallowedProgramSettings('write')">
       <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
       <i class="far fa-plus-circle mr-1"></i> Add Contract
       </el-button>
@@ -67,7 +67,7 @@
       </div>
   </div>
   <div  
-   v-if="tableData && _isallowed('read')"
+   v-if="tableData && _isallowedProgramSettings('read')"
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
@@ -121,7 +121,7 @@
       <template slot-scope="scope" >
       <el-button 
         type="default" 
-         v-if="scope.$index == rowIndex && _isallowed('write')" 
+        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
         @click.prevent="saveEdits(scope.$index, scope.row)"   
         v-tooltip="`Save`" 
         class="bg-primary text-light">
@@ -129,7 +129,7 @@
       </el-button>   <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary text-light">
       <i class="fas fa-ban"></i>
@@ -138,20 +138,20 @@
         type="default" 
         v-tooltip="`Edit Contract Name`"
         @click.prevent="editMode(scope.$index, scope.row)" 
-        v-if="scope.$index !== rowIndex" 
+        v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
         class="bg-light">
         <i class="fal fa-edit text-primary" ></i>
         </el-button> 
 
       <el-button 
-        v-if="_isallowed('delete')" 
+        v-if="_isallowedProgramSettings('delete')"
         type="default" 
         v-tooltip="`Delete`" 
         @click.prevent="deleteSelectedContract(scope.$index, scope.row)" 
         class="bg-light">
         <i class="far fa-trash-alt text-danger"></i>
         </el-button>
-       <el-button v-if="_isallowed('read')" type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+       <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
 
         </el-button>
         <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -324,12 +324,12 @@ export default {
      'SET_CONTRACT_GROUP_TYPES'
      ]), 
    ...mapActions(["createContract", "fetchContracts", "fetchGroups","updateContract", "deleteContract"]),
-    _isallowed(salut) {
-        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return pPrivilege.contracts.includes(s);     
-      },
+    _isallowedProgramSettings(salut) {
+      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.admin_contracts.includes(s);
+    },
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       this.$router.push({

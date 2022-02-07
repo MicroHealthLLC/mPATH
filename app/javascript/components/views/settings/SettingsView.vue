@@ -16,7 +16,7 @@
               class="m-2 cardWrapper"
               v-for="(item, index) of settingsCards"
               :key="index"
-               :class="{'d-none': !_isallowed('read') && item == 'Contracts' }"            
+               :class="{'d-none': !_isallowedProgramSettings(item, 'read') }"
               style="width:33%"
               @click.prevent="adminRoute(index)"
             >
@@ -124,6 +124,14 @@ export default {
           `/programs/${this.$route.params.programId}/settings/test_cloud_data`
         );
       }
+    },
+    _isallowedProgramSettings(settingType, salut) {
+      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let settingTypeHash = {"Groups": "admin_groups", "Contracts": "admin_contracts", "Projects": "admin_facilities"}
+      let s = permissionHash[salut]
+      let type = settingTypeHash[settingType]
+      return pPrivilege[type].includes(s);
     },
    },
   computed: {
