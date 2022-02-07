@@ -1,6 +1,20 @@
 <template>
   <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
-    <div v-for="tab in tabs" :key="tab.key">
+   <span v-if="$route.params.contractId" class="d-flex">
+    <div v-for="cTab in cTabs" :key="cTab.key">
+      <div
+        v-if="!cTab.hidden"
+        class="badge mx-0"
+        :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
+        @click="changeCtab(cTab)"
+      >
+        <div>{{ cTab.label }}</div>
+      </div>
+    </div>
+    </span>
+    
+    <span v-else class="d-flex">
+      <div v-for="tab in pTabs" :key="tab.key">
       <div
         v-if="!tab.hidden"
         class="badge mx-0"
@@ -10,20 +24,31 @@
         <div>{{ tab.label }}</div>
       </div>
     </div>
+    </span>
   </div>
+  
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+// When routing from any tab back to Analytics, the url is still going to OVerview
 export default {
   name: "ProjectTabs",
   data() {
     return {
       canSeeTab: true,
-      tabs: [
+      // currentTab: '',
+      // Project Tabs
+      pTabs: [
+         {
+          label: "Project",
+          key: "project",
+          closable: false,
+          hidden: false,
+        },
         {
-          label: "Overview",
-          key: "overview",
+          label: "Analytics",
+          key: "analytics",
           closable: false,
           hidden: false,
         },
@@ -58,40 +83,126 @@ export default {
           hidden: false,
         },
       ],
+      // Contract Tabs
+      cTabs: [
+       {
+          label: "Contract",
+          key: "contract",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Analytics",
+          key: "analytics",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Tasks",
+          key: "tasks",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Issues",
+          key: "issues",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Risks",
+          key: "risks",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Lessons",
+          key: "lessons",
+          closable: false, 
+          hidden: false,
+        },
+        {
+          label: "Notes",
+          key: "notes",
+          closable: false,
+          hidden: false,
+        },
+      ],
     };
   },
   mounted() {
+    // this.currentTab = 
     var programId = this.$route.params.programId;
     var projectId = this.$route.params.projectId;
-
-    let fPrivilege = this.$projectPrivileges[programId][projectId];
-
-    // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-
-    if (fPrivilege) {
-      for (var i = 0; i < this.tabs.length; i++) {
+    var contractId = this.$route.params.contractId;
+    if(contractId){
+       let cPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]  ;
+     if (cPrivilege) {
+      for (var i = 0; i < this.cTabs.length; i++) {
         // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
+        if(this.cTabs[i].key == 'contract'){        
+          continue
+        }
+       if (cPrivilege[this.cTabs[i].key] && cPrivilege[this.cTabs[i].key].length) {
+           this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;
+        }     
       }
+    }
+    } else {
+    let fPrivilege = this.$projectPrivileges[programId][projectId];
+    if (fPrivilege) {
+      for (var i = 0; i < this.pTabs.length; i++) {
+        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+        if(this.pTabs[i].key == 'project'){
+          continue
+        }
+
+        if (fPrivilege[this.pTabs[i].key] && fPrivilege[this.pTabs[i].key].length) {
+           this.pTabs[i].hidden = fPrivilege[this.pTabs[i].key].length < 1;          
+        }     
+      }
+    }
     }
   },
   methods: {
     changeTab(tab) {
-      this.$router.push(this.path + `/${tab.key}`);
+       if (tab.key === "project"){
+        this.$router.push(this.p_path + `/`);
+       } else {
+      this.$router.push(this.p_path + `/${tab.key}`);
+     }
+    },
+     changeCtab(cTab) {
+       if (cTab.key === "contract"){
+        this.$router.push(this.c_path + `/`);
+       } else {
+            this.$router.push(this.c_path + `/${cTab.key}`);
+       } 
+     
+      // this.currentTab = tab.key
     },
   },
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
     currentTab() {
-      return this.tabs
+      return this.pTabs
         .map((tab) => tab.key)
         .filter((key) =>
           this.$route.name.toUpperCase().includes(key.toUpperCase())
         );
     },
+    currentCtab() {
+      let c = this.cTabs.map(t => t.key)
+      let cT = c.filter(k => this.$route.name.toUpperCase().includes(k.toUpperCase()))
+      if (cT.length > 1){
+        return cT.slice(1)
+      } else return cT
+    },
+    routePriv(){
+      return this.$projectPrivileges 
+    },
     tab() {
       let url = this.$route.path;
-
       if (url.includes("sheet")) {
         return "sheet";
       }
@@ -101,30 +212,63 @@ export default {
         return "map";
       }
     },
-    path() {
-      return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+    c_path() {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}`;
     },
-    tabsVisible() {
-      return this.tabs.some((tab) => tab.hidden === false);
+    p_path(){
+      return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;  
     },
+      tabsVisible() {
+     if (this.$route.params.contractId){
+        return this.cTabs.some((tab) => tab.hidden === false);
+      } else {
+        return this.pTabs.some((tab) => tab.hidden === false);
+      }
+     },
   },
-  watch: {
-    "$route.path": {
-      handler() {
-        if (this.contentLoaded) {
-          let privileges = this.$projectPrivileges[
-            this.$route.params.programId
-          ][this.$route.params.projectId];
+//   watch: {
+//     "$route.path": {
+//       handler() {
+//         if (this.contentLoaded) {
 
-          if (privileges) {
-            for (var i = 0; i < this.tabs.length; i++) {
-              this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
-            }
-          }
-        }
-      },
-    },
-  },
+// // For Contract Privileges
+//           let cPrivileges = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]  
+
+// // For Project Privileges
+//           let pPrivileges = this.$projectPrivileges[
+//             this.$route.params.programId
+//           ][this.$route.params.projectId];
+
+
+//           if (cPrivileges) {
+//             for (var i = 0; i < this.cTabs.length; i++) {
+//               if(this.cTabs[i].key == 'contract'){
+//                 continue
+//               }
+//               this.cTabs[i].hidden = cPrivileges[this.cTabs[i].key].length < 1;
+//             //  debugger
+                  
+//             }
+//           }
+       
+//           if (pPrivileges) {
+//             for (var i = 0; i < this.pTabs.length; i++) {
+//               if(this.pTabs[i].key == 'project'){
+//                 continue
+//               }
+//                 if (pPrivileges[this.pTabs[i].key] && pPrivileges[this.pTabs[i].key].length) {
+//               this.pTabs[i].hidden = pPrivileges[this.pTabs[i].key].length < 1;
+//                 }
+//             //  debugger
+                  
+//             }
+//           }
+
+
+//         }
+//       },
+//     },
+//   },
 };
 </script>
 

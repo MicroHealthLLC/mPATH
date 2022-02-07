@@ -11,25 +11,77 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+      
+      get :get_privileges, to: 'privileges#get_privileges'
 
       # For Admin panel
-      namespace :admin do
-        resources :facilities do
-          resources :facility_projects, only: [:index, :update, :show]
-        end
-        get '/settings', to: 'settings#index'
-        post '/settings', to: 'settings#update'
+      get '/settings', to: 'settings#index'
+      post '/settings', to: 'settings#update'
+      resources :task_types, only: [:index]
+      resources :statuses, only: [:index]
+      resources :issue_severities, only: [:index]
+      resources :issue_types, only: [:index]
+      resources :issue_stages, only: [:index]
+      resources :task_stages, only: [:index]
+      resources :users, only: [:index]
+      post '/sort-by', to: 'sorts#update'
 
-        resources :task_types, only: [:index]
-        resources :facility_groups, only: [:index]
-        # resources :statuses, only: [:index]
-        # resources :issue_severities, only: [:index]
-        # resources :issue_types, only: [:index]
-        # resources :issue_stages, only: [:index]
-        # resources :task_stages, only: [:index]
-        # resources :users, only: [:index]
-        # post '/sort-by', to: 'sorts#update'
+      resources :facility_groups do
+        collection do
+          put :bulk_project_update
+        end
       end
+
+      resources :contracts do
+        resources :notes #, module: :facilities
+        resources :issues do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :risks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :tasks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+
+        resources :lessons do
+          get :count, on: :collection
+        end
+      end
+
+      # Contract data API
+      get "/contract_data/contract_types", to: "contract_data#contract_types"
+      get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
+      get "/contract_data/contract_customeres", to: "contract_data#contract_customeres"
+      get "/contract_data/contract_vehicles", to: "contract_data#contract_vehicles"
+      get "/contract_data/contract_vehicle_number", to: "contract_data#contract_vehicle_number"
+      get "/contract_data/contract_number", to: "contract_data#contract_number"
+      get "/contract_data/subcontract_number", to: "contract_data#subcontract_number"
+      get "/contract_data/contract_prime", to: "contract_data#contract_prime"
+      get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
+      get "/contract_data/contract_classification", to: "contract_data#contract_classification"
+      get "/contract_data/contract_client_types", to: "contract_data#contract_client_types"
+      get "/contract_data/contract_categories", to: "contract_data#contract_categories"
+      
+      post "/contract_data/contract_client_types", to: "contract_data#create_contract_category"
+      post "/contract_data/contract_categories", to: "contract_data#create_contract_client_type"
+      post "/contract_data/contract_type", to: "contract_data#create_contract_type"
+      post "/contract_data/contract_status", to: "contract_data#create_contract_status"
+      post "/contract_data/contract_customer", to: "contract_data#create_contract_customer"
+      post "/contract_data/contract_vehicle", to: "contract_data#create_contract_vehicle"
+      post "/contract_data/contract_vehicle_number", to: "contract_data#create_contract_vehicle_number"
+      post "/contract_data/contract_number", to: "contract_data#create_contract_number"
+      post "/contract_data/subcontract_number", to: "contract_data#create_subcontract_number"
+      post "/contract_data/contract_prime", to: "contract_data#create_contract_prime"
+      post "/contract_data/contract_current_pop", to: "contract_data#create_contract_current_pop"
+      post "/contract_data/contract_classification", to: "contract_data#create_contract_classification"
+      
 
       # Portfolio View
       get "/portfolio/programs", to: "portfolio#programs"
@@ -71,6 +123,8 @@ Rails.application.routes.draw do
         end
 
         resources :facilities, path: 'projects' do
+          resources :facility_projects, only: [:index, :update, :show]
+
           resources :notes #, module: :facilities
           resources :issues do
             post :batch_update, on: :collection
@@ -102,6 +156,9 @@ Rails.application.routes.draw do
   # For Admin panel
   get '/facility_privileges/facility_privileges_partial' => "facility_privileges#facility_privileges_partial", as: :facility_privileges_partial
   get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form", as: :add_facility_privilege_form
+
+  get '/contract_privileges/contract_privileges_partial' => "contract_privileges#contract_privileges_partial", as: :contract_privileges_partial
+  get '/contract_privileges/add_contract_privilege_form' => "contract_privileges#add_contract_privilege_form", as: :add_contract_privilege_form
 
   get '/project_privileges/load_form' => "project_privileges#load_form", as: :project_privileges_load_form
 
@@ -224,6 +281,24 @@ Rails.application.routes.draw do
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
   # Strictly matching programs/<program_id>/dataviewer
+  get '*all', to: "home#contract", constraints: -> (req) do
+    # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    spath = req.path.split("/")
+    i = spath.index("contract")
+    # TODO: create regex for pattern programs/<program_id>/dataviewer
+    i && (p = spath[i] ) && p.match(/^[contract]+$/)
+  end
+
+  # Strictly matching programs/<program_id>/dataviewer
+  get '*all', to: "home#settings", constraints: -> (req) do
+    # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
+    spath = req.path.split("/")
+    i = spath.index("settings")
+    # TODO: create regex for pattern programs/<program_id>/dataviewer
+    i && (p = spath[i] ) && p.match(/^[settings]+$/)
+  end
+
+  # Strictly matching programs/<program_id>/dataviewer
   get '*all', to: "home#dataviewer", constraints: -> (req) do
     # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
     spath = req.path.split("/")
@@ -236,7 +311,7 @@ Rails.application.routes.draw do
   get '*all', to: "home#portfolio", constraints: -> (req) do
     # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
     # TODO: create regex for pattern /portfolio
-    (p = req.path.split("/")[1] ) && p.match(/^[portoflio]+$/)
+    (p = req.path.split("/")[1] ) && p.downcase == "portfolio".downcase #&& p.match(/^[portoflio]+$/)
   end
 
   get "*path", to: 'home#index', constraints: -> (req) do
@@ -244,6 +319,6 @@ Rails.application.routes.draw do
   end
   
   get '*all', to: "not_found#index", constraints: -> (req) do
-    req.path.exclude? 'rails/active_storage'
+    req.path.exclude?('rails/active_storage')
   end
 end

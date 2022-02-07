@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.6'
+# updating dev 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1.4' #'~> 5.2.3'
@@ -57,7 +58,7 @@ group :development, :test do
   gem 'letter_opener'
   # gem 'bullet', '6.1.0'
   gem 'pry', '~> 0.13.1'
-  gem 'pry-rails'
+  # gem 'pry-rails'
   gem 'pry-byebug'
 end
 
@@ -100,3 +101,4 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'jwt'
 
 gem "addressable", ">= 2.8.0"
+

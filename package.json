@@ -14,6 +14,7 @@
     "dayjs": "^1.10.4",
     "el-table-export": "^1.0.8",
     "element-ui": "^2.14.1",
+    "firebase": "8.10.0",
     "gantt-elastic": "^1.0.11",
     "gantt-elastic-header": "^0.1.11",
     "humps": "^2.0.1",
@@ -23,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.26.0",
     "moment-range": "^4.0.2",
+    "node-forge": "^1.0.0",
     "node-sass": "^4.13.0",
     "sweet-modal-vue": "^2.0.0",
     "v-click-outside": "^3.1.2",
@@ -63,7 +65,9 @@
     "glob-parent": "^5.1.2",
     "tar": "^4.4.18",
     "nth-check": "^2.0.1",
-    "set-value": "^4.0.1"
+    "set-value": "^4.0.1",
+    "node-forge": "^0.10.0",
+    "json-schema": "^0.4.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",

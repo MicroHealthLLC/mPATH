@@ -24,11 +24,17 @@ body {
     background: lightgray;
     border-radius: 4px;
   }
-} 
-
-
+}
+.w-60 {
+  width: 60%;
+}
 .allCaps {
   text-transform: uppercase;
+}
+.contract {
+  .v-application--wrap {
+    min-height: auto !important;
+  }
 }
 
 .portfolio {
@@ -1886,6 +1892,11 @@ a:hover {
 }
 
 
+.v-calendar-daily__body {
+  display: none !important;
+}
+
+
 .todayBtn, .back-forth-btn {
   border-radius: 4px;
   border-style: solid;
@@ -1906,13 +1917,18 @@ background-color: #9EC64C !important;
 //  dark blue
  background-color: #1D336F !important;
 }
-
+.mh-green-text {
+  color: #9EC64C !important;
+  }
 .mh-blue-text {
   //  dark blue
    color: #1D336F !important;
   }
 .mh-orange {
   background-color: #DD9036 !important;
+}
+.mh-orange-text {
+  color: #DD9036 !important;
 }
 .light {
   color: lightgray;

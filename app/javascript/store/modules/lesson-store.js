@@ -4,13 +4,17 @@ import {API_BASE_PATH} from './../../mixins/utils'
 const lessonModule = {
   state: () => ({
     lesson: {}, // Current lesson loaded in form
+    contract_lesson: {}, // Current lesson loaded in form
     project_lessons: [],
+    contract_lessons: [],
     programLessons: [],
     programLessonsCount: [],
     program_lessons_loaded: true,
     lesson_stages: [],
     lessons_loaded: true,
+    contract_lessons_loaded: true,
     lesson_status: 0,
+    contract_lesson_status: 0,
   }),
   actions: {
     fetchProgramLessons({ commit }, { programId } ) {
@@ -84,7 +88,30 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
-    fetchLesson({ commit }, { id, programId, projectId }) {
+    fetchContractLessons({ commit }, { contractId }) {
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end
+          
+          commit("SET_CONTRACT_LESSONS", res.data.lessons);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
+        });
+    },
+    fetchLesson({ commit }, { id, programId, projectId}) {
       commit("TOGGLE_LESSONS_LOADED", false);
       // Retrieve lesson by id
       axios({
@@ -97,12 +124,33 @@ const lessonModule = {
       })
         .then((res) => {
           commit("SET_LESSON", res.data.lesson);
-        })
+           })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
           commit("TOGGLE_LESSONS_LOADED", true);
+        });
+    },
+    fetchContractLesson({ commit }, { id, contractId}) {
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
+      // Retrieve lesson by id
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${id}.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+           commit("SET_CONTRACT_LESSON", res.data.lesson);
+           })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
         });
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
@@ -120,9 +168,9 @@ const lessonModule = {
             .attributes["content"].value,
         },
       })
-        .then((res) => {
+        .then((res) => {       
           commit("SET_LESSON", res.data.lesson);
-          commit("SET_LESSON_STATUS", res.status);
+          commit("SET_LESSON_STATUS", res.status)
         })
         .catch((err) => {
           console.log(err);
@@ -131,6 +179,33 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
+    addContractLesson({ commit }, { lesson, contractId }) {
+ // Displays loader on front end
+    commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
+  // Utilize utility function to prep Lesson form data
+    let formData = lessonFormData(lesson);
+
+  axios({
+    method: "POST",
+    url: `${API_BASE_PATH}/contracts/${contractId}/lessons.json`,
+    data: formData,
+    headers: {
+      "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+        .attributes["content"].value,
+    },
+  })
+    .then((res) => {
+      commit("SET_CONTRACT_LESSON", res.data.lesson);
+      commit("SET_CONTRACT_LESSON_STATUS", res.status);
+     
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
+    });
+},
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
       // Displays loader on front end
       commit("TOGGLE_LESSONS_LOADED", false);
@@ -157,6 +232,32 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
+    updateContractLesson({ commit }, { lesson, contractId, lessonId }) {
+      // Displays loader on front end
+      commit("TOGGLE_CONTRACT_LESSONS_LOADED", false);
+      // Utilize utility function to prep Lesson form data
+      let formData = lessonFormData(lesson);
+
+      axios({
+        method: "PATCH",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${lessonId}`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CONTRACT_LESSON", res.data.lesson);
+          commit("SET_CONTRACT_LESSON_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACT_LESSONS_LOADED", true);
+        });
+    },
     deleteLesson({ commit }, { id, programId, projectId }) {
       // Delete a single lesson
       axios({
@@ -175,31 +276,63 @@ const lessonModule = {
         })
         .finally(() => {});
     },
+    deleteContractLesson({ commit }, { id, contractId }) {
+      // Delete a single lesson
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${id}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("DELETE_CONTRACT_LESSON", id);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {});
+    },
   },
   mutations: {
     SET_PROGRAM_LESSONS: (state, lessons) => (state.programLessons = lessons),
     SET_PROGRAM_LESSONS_COUNT: (state, lessons) => (state.programLessonsCount = lessons),
     SET_PROJECT_LESSONS: (state, lessons) => (state.project_lessons = lessons),
+    SET_CONTRACT_LESSONS: (state, lessons) => (state.contract_lessons = lessons),
     SET_LESSON: (state, lesson) => (state.lesson = lesson),
+    SET_CONTRACT_LESSON: (state, contract_lesson) => (state.contract_lesson = contract_lesson),
     DELETE_LESSON: (state, id) => {
       // Find index of lesson to delete
       let index = state.project_lessons.findIndex((lesson) => lesson.id == id);
       // Remove lesson from array
       state.project_lessons.splice(index, 1);
     },
+    DELETE_CONTRACT_LESSON: (state, id) => {
+      // Find index of lesson to delete
+      let index = state.contract_lessons.findIndex((lesson) => lesson.id == id);
+      // Remove lesson from array
+      state.contract_lessons.splice(index, 1);
+    },
     SET_LESSON_STAGES: (state, lessonStages) =>
       (state.lesson_stages = lessonStages),
     TOGGLE_LESSONS_LOADED: (state, loaded) => (state.lessons_loaded = loaded),
+    TOGGLE_CONTRACT_LESSONS_LOADED: (state, loaded) => (state.contract_lessons_loaded = loaded),
     SET_LESSON_STATUS: (state, status) => (state.lesson_status = status),
+    SET_CONTRACT_LESSON_STATUS: (state, status) => (state.contract_lesson_status = status),
   },
   getters: {
     lesson: (state) => state.lesson,
+    contractLesson: (state) => state.contract_lesson,
     projectLessons: (state) => state.project_lessons,
+    contractLessons: (state) => state.contract_lessons,
     programLessons: (state) => state.programLessons,
     programLessonsCount: (state) => state.programLessonsCount,
     lessonStages: (state) => state.lesson_stages,
     lessonsLoaded: (state) => state.lessons_loaded,
+    contractlessonsLoaded: (state) => state.contract_lessons_loaded,
     lessonStatus: (state) => state.lesson_status,
+    contractLessonStatus: (state) => state.contract_lesson_status,
   },
 };
 // Utility function to prepare form data from lesson object that is passed from LessonForm.vue

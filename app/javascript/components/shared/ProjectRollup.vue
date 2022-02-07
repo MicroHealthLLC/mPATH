@@ -1,26 +1,41 @@
-<!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container-fluid m-2" data-cy="facility_rollup">
-
-   <!-- <el-tabs type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Program Rollup" class="p-3"> -->
-    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
-    <div class="row pt-1 pb-2">
-      <div class="col-6 py-1 pl-0">
-        <span v-if="contentLoaded">
+  <div class="container-fluid" data-cy="facility_rollup">
+      <div class="row pt-1 pb-2">
+      <div class="col-6 py-3 pl-3" v-if="contentLoaded">
+        <span>
           <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
-        </span>     
-        
-       
+        </span> 
+        <br>    
+        <el-button-group :class="{'d-none': !_isallowedContracts('read') || currentProject.contracts.length <= 0 }">
+          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+          <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
+          PROJECTS
+          <span 
+            v-if="currentProject && currentProject.facilities"
+            class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+            >{{ currentProject.facilities.length }}
+            </span>
+        </el-button>
+        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2"> 
+          <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
+          CONTRACTS 
+            <span 
+              v-if="currentProject && currentProject.contracts"
+              class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+              >{{ currentProject.contracts.length }}
+              </span>
+           </el-button>
+       </el-button-group>
+            
       </div>
-      <div class="col-6 py-1 pl-0">
-        <span v-if="contentLoaded" class="float-right mt-1">
+      <div class="col-6 py-3 pl-0">
+        <span v-if="contentLoaded" class="float-right mt-2">
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
           <router-link :to="ProgramView" > 
                <button                
                   class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
-                  {{ currentProject.name }} DATA VIEWER
+                  PROGRAM DATA VIEWER
                 </button>   
           </router-link>             
         </span>         
@@ -30,6 +45,21 @@
      
     </div>
 
+   <el-tabs type="border-card" @tab-click="handleClick">
+       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+      <template slot="label">
+      <i class="fas fa-analytics mr-1"></i>
+      ANALYTICS   
+    </template>     
+    NO DATA TO DISPLAY  
+    </el-tab-pane>
+    <el-tab-pane class="p-3" v-else> 
+      <template slot="label">
+      <i class="fas fa-analytics mr-1"></i>
+      ANALYTICS   
+    </template>   
+    <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
+ 
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
     <div class="row">
       <div class="col-9 py-0 px-0" :class="[isMapView ? 'col-12' : '']">
@@ -741,8 +771,8 @@
               </div>
     </div>
 
-    <div class="row" :class="[isMapView ? 'mt-2' : '']">
-      <div class="col-2 pt-0" :class="[isMapView ? 'col-3 px-0 ' : 'pl-0']">
+    <div class="row" :class="[isMapView ? 'mt-4' : '']">
+      <div class="col-3 pt-0" :class="[isMapView ? 'col-3 pl-0 pr-1' : 'pl-0']">
         <el-card
             class="box-card mb-2"        
             style="background-color:#fff"  
@@ -752,7 +782,7 @@
                 <h5 class="text-light px-2 bg-secondary absolute">LESSONS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                     <b class="pill badge badge-secondary badge-pill pill mr-1">{{
-                      programLessonsCount.total_count 
+                      filteredLessons.length
                     }}</b>
                   </h5>
                 </div>
@@ -775,36 +805,228 @@
                 <div class="row text-center mt-0">
                 <div class="col-6 pb-0 mb-0">
                   <h4 class="">{{
-                   programLessonsCount.completed
+                    lessonVariation.completes.length
                   }}</h4>         
                 </div>
                 <div class="col-6 pb-0 mb-0">
                   <h4>{{
-                   programLessonsCount.progress
+                    lessonVariation.drafts.length
                   }}</h4>        
                 </div>                     
                 </div>            
-           
-    
+              <div v-if="lessonStats.length > 0" data-cy="lesson_categories">
+              <el-collapse class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div data-cy="lesson_categories" class="row">
+                    <div class="col-6 pb-0 underline">PROCRESS AREAS</div>
+                    <div class="col-6 pb-0">#</div>
+                  </div>
+
+                  <div class="row" v-for="(lesson, index) in lessonStats" :key="index">
+                    <div class="col-6 pb-0 font-sm pr-0">
+                      <span> {{ lesson.name }}</span>
+                    </div>
+                    <div class="col-6 pb-0">
+                      <span class="badge badge-secondary  font-sm badge-pill">{{ lesson.count }}</span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+            <div v-else>
+              <el-collapse id="roll_up" class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                    <div class="col p-0  mb-0">NO DATA TO DISPLAY</div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
           </el-card>
       </div> 
-      <div :class="[isMapView ? 'col-9 pr-0' : 'col p-0']">
-        <el-card class="box-card">
+   
+      <div :class="[isMapView ? 'col-9 p-0' : 'col-6 px-0 pt-0']"
+        v-if="from !== 'manager_view'"
+        data-cy="facility_group_summary"
+      >
+         <el-card class="box-card" v-if="getShowProjectStats">
           <div class="row">
             <div class="col">
-              <h5 class="d-inline">PROJECTS</h5>
+              <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
+               CONTRACTS
+              </h5>
                <h4 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">
-                     {{ C_facilityCount }}
+                     {{ programResourceObj.length }}
                     </span>
                   </h4>
               <hr />
             </div>
           </div>
+          <div v-if="contentLoaded">
+          <div
+           style="height:215px; overflow-y:auto" 
+           class="pb-2"
+          >
+         <div class="row py-1">
+            <div class="col-5">
+               <small class="underline">Group</small>               
+              </div>
+              <div class="col-1 pl-0">              
+                 <small class="underline">Contracts</small>
+              </div>
+              <div class="col-5">
+                <small class="underline">Total Progress</small>
+              </div>
+            </div>
+          <div
+            v-for="(group, index) in facilityGroups"
+            :key="index"
+            >
+            <div class="row py-1">
+              <div class="col-5 mb-2">
+                <span :class="{ 'font-sm': isMapView }">{{
+                 group.name
+                }}</span>
+               
+              </div>
+              <div class="col-1 pl-0">              
+                <span class="badge badge-secondary badge-pill">{{
+                  facilityGroupFacilities(group).contracts.b.length
+                }}</span>
+              </div>
+              <div class="col-5">
+                <span
+                  class="w-100 mt-1 ml-2 progress pg-content"
+                  :class="{
+                    'font-sm': isMapView,
+                    'progress-0': facilityGroupProgress(group) <= 0,
+                  }"
+                >
+                  <div
+                    class="progress-bar bg-info"
+                    :style="`width: ${facilityGroupProgress(group)}%`"
+                  >
+                    {{ facilityGroupProgress(group) }} %
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+   
+           </div>
+            <!-- <div class="pb-2">
+               <div class="row mb-1">
+                   <div class="col-10 mb-0 py-1 card-title">
+                     Project Group Name
+                   </div>
+                    <div class="col-2 mb-0 pl-3 py-1 card-title">   
+                      #
+                    </div>      
+                 </div>
+              <div class="row my-0" v-for="item, i in getContractGroupOptions" :key="i">
+                <div class="col-10 py-1">
+               
+                  <span :class="{ 'font-sm': isMapView }">
+                  {{ item.name }}</span
+                  >                
+                </div>
+                <div class="col-2 py-1">                
+                  <span v-if="item.id == 1" class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.prime
+                  }}</span>
+                    <span v-if="item.id == 2"   class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.nonPrime
+                  }}</span>
+                    <span v-if="item.id == 3"  class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.primeV_IDIQs
+                  }}</span>
+                </div>
+               </div>
+             </div> -->
+          </div>
+          <div v-if="!contentLoaded" class="my-4">
+            <loader type="code"></loader>
+          </div>
+        </el-card>
+         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="!getShowProjectStats">
+          <div class="row">
+            <div class="col">
+              <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
+              PROJECTS
+              </h5>
+               <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">
+                     {{ C_facilityCount }}
+                    </span>
+                  </h4>
+                  <!-- <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">{{
+                      filteredFacilityGroups.length 
+                    }}</span>
+                  </h4> -->
+              <hr />
+            </div>
+          </div>
+           <div
+           style="height:215px; overflow-y:auto" 
+           class="pb-2"
+          >
+          <div class="row py-1">
+            <div class="col-5">
+               <small class="underline">Group</small>               
+              </div>
+              <div class="col-1 pl-0">              
+                 <small class="underline">Projects</small>
+              </div>
+              <div class="col-5">
+                <small class="underline">Total Progress</small>
+              </div>
+            </div>
+          <div
+            v-for="(group, index) in facilityGroups"
+            :key="index"
+            >
+           
+            <div class="row py-1">
+              <div class="col-5 mb-2">
+                <span :class="{ 'font-sm': isMapView }">{{
+                  group.name
+                }}</span>
+               
+              </div>
+              <div class="col-1 pl-0">              
+                <span class="badge badge-secondary badge-pill">{{
+                  facilityGroupFacilities(group).projects.a.length
+                }}</span>
+              </div>
+              <div class="col-5">
+                <span
+                  class="w-100 mt-1 ml-2 progress pg-content"
+                  :class="{
+                    'font-sm': isMapView,
+                    'progress-0': facilityGroupProgress(group) <= 0,
+                  }"
+                >
+                  <div
+                    class="progress-bar bg-info"
+                    :style="`width: ${facilityGroupProgress(group)}%`"
+                  >
+                    {{ facilityGroupProgress(group) }} %
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+         <el-collapse id="roll_up" >
+           <el-collapse-item title="..." name="1">
           <div v-if="contentLoaded && C_facilityCount > 0">
-            <div>
+            <div  
+            style="height:215px; overflow-y:auto" 
+            class="pb-2"
+            >
                <div class="row">
-                   <div class="col-6 mb-0 card-title">
+                   <div class="col-5 mb-0 card-title">
                      Project Status
                    </div>
                     <div class="col-1 mb-0 pl-2 card-title">   
@@ -815,7 +1037,7 @@
                     </div>      
                </div>
               <div class="row mb-2"  v-for="(status, index) in projectStatuses" :key="index">
-                <div class="col-6 mb-1">
+                <div class="col-5 mb-1">
                   <span
                     class="badge badge-pill badge-color"
                     :class="{ 'font-sm': isMapView }"
@@ -850,66 +1072,9 @@
               </div>
             </div>
           </div>
-          <div v-if="!contentLoaded" class="my-4">
-            <loader type="code"></loader>
-          </div>
-        </el-card>
-     </div>
-      <div :class="[isMapView ? 'col-12 p-0' : 'col pt-0']"
-        v-if="from !== 'manager_view'"
-        data-cy="facility_group_summary"
-      >
-
-        <!-- Issues -->
-    
-    
-   
-           <el-card class="box-card" data-cy="projet_group_summary">
-          <div class="row">
-            <div class="col">
-              <h5 class="d-inline">PROJECT GROUPS</h5>
-                  <h4 v-if="contentLoaded" class="d-inline">
-                    <span class="badge bg-secondary text-light badge-pill float-right">{{
-                      filteredFacilityGroups.length 
-                    }}</span>
-                  </h4>
-              <hr />
-            </div>
-          </div>
-          <div
-            v-for="(facilityGroup, index) in filteredFacilityGroups"
-            :key="index"
-          >
-            <div class="row mb-2">
-              <div class="col-6 mb-2">
-                <span :class="{ 'font-sm': isMapView }">{{
-                  facilityGroup.name
-                }}</span>
-               
-              </div>
-              <div class="col-1 pl-0">              
-                <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(facilityGroup).length
-                }}</span>
-              </div>
-              <div class="col-5">
-                <span
-                  class="w-100 mt-1 ml-2 progress pg-content"
-                  :class="{
-                    'font-sm': isMapView,
-                    'progress-0': facilityGroupProgress(facilityGroup) <= 0,
-                  }"
-                >
-                  <div
-                    class="progress-bar bg-info"
-                    :style="`width: ${facilityGroupProgress(facilityGroup)}%`"
-                  >
-                    {{ facilityGroupProgress(facilityGroup) }} %
-                  </div>
-                </span>
-              </div>
-            </div>
-          </div>
+                </el-collapse-item>
+              </el-collapse>
+           </div>
           <div v-if="!contentLoaded" class="my-4">
             <loader type="code"></loader>
           </div>
@@ -952,42 +1117,55 @@
                 <div>
               </div>
           </el-card>
-              </div>
+       </div>   
+    </div>    
+    </el-tab-pane>
+    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+      <template slot="label">
+       <i class="fal fa-table mr-1"></i>
+      TABLE   
+    </template>     
+    NO DATA TO DISPLAY  
+    </el-tab-pane>
+  <el-tab-pane class="p-3 overflowX" v-else>
+     <template slot="label">
+      <i class="fal fa-table mr-1"></i>
+      TABLE    
+    </template>   
+
+<!-- ROW FOR FILTERS -->
+    <div class="row">
+    <div class="col-6 py-0 px-0" :class="[isMapView ? 'col-12' : '']" >
+      <!-- SEARCH BAR -->
+    </div>
+        <div class="col-6 py-0 px-0">
+        <!-- SEARCH BY GROUP -->
+    </div>
       
-    
     </div>
 
-      <!-- </el-tab-pane>
-  
-    <el-tab-pane label="Program Breakdown">
-     <div class="mb-2 float-right"> <button class="btn btn-md btn-info"> PROJECTS: {{ C_facilityCount }}</button></div>
-        <div v-if="contentLoaded" class="pb-2 table-div">
-          <div class="grid-container">
-            <el-card class="list-group-item text-center" style="min-height: 150px" v-for="(item, index) in projectObj"  :key="index" >              
-             
-               <span class="p-2" > {{ item.facilityName }} </span>          
-            </el-card>
-          </div>         
-      </div>
+     <div class="row">
+    <ProgramContractsSheet v-if="this.getShowProjectStats" />
+    <ProgramProjectsSheet v-else />      
+    </div>
     </el-tab-pane>
-    
-    <el-tab-pane label="Analytics">  -->
-<!-- KPI's and visual graphs will go here -->    
-       
-      
-    <!-- </el-tab-pane>
-       </el-tabs>  -->
+  
+    </el-tabs>  
   </div>
 </template>
 
 <script>
 import Loader from "./loader";
+import ProgramContractsSheet from "../views/program/ProgramContractsSheet.vue"
+import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
   props: ["from"],
   components: {
     Loader,
+    ProgramContractsSheet,
+    ProgramProjectsSheet 
   },
   data() {
     return {
@@ -999,10 +1177,13 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "getShowProjectStats",
+      "getContractGroupOptions",
       "currentProject",
       "lessonsLoaded",
       'currProgramTab',
       "projectLessons",
+      "programLessons",
       "programLessonsCount",
       'projects',
       "facilities",
@@ -1014,7 +1195,7 @@ export default {
       "filteredAllRisks",
       "filteredAllTasks",
       "filteredFacilities",
-      "filteredFacilityGroups",
+      "facilityGroups",
       "getAllFilterNames",
       "getFilterValue",
       "getTaskIssueUserFilter",
@@ -1042,7 +1223,7 @@ export default {
       'getHideOverdue',
 
     ]),
-       toggleWatched(){
+    toggleWatched(){
     this.setHideWatched(!this.getHideWatched)    
     },
     toggleImportant(){
@@ -1076,7 +1257,23 @@ export default {
      projectObj() {
         return this.currentProject.facilities
       },
-    C_taskTypeFilter: {
+    programResourceObj(){
+      if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
+        return this.currentProject.facilities
+      } else if (this.currentProject && this.currentProject.contracts && this.getShowProjectStats){
+        return this.currentProject.contracts
+      }
+    },
+    contractCategoryCount(){
+      if (this.currentProject && this.currentProject.contracts){     
+       return {
+       prime: this.currentProject.contracts.filter(c => c.contractTypeId == 1).length,
+       nonPrime: this.currentProject.contracts.filter(c => c.contractTypeId == 2).length,
+       primeV_IDIQs: this.currentProject.contracts.filter(c => c.contractTypeId == 3).length
+       }     
+      } 
+    },
+   C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter;
       },
@@ -1107,7 +1304,7 @@ export default {
     C_facilityCount() {         
       return this.facilityGroup
       
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.facilityCount; 
       
     },
@@ -1115,7 +1312,7 @@ export default {
       return this.facilityGroup
         ? Number(
             _.meanBy(
-              this.facilityGroupFacilities(this.facilityGroup),
+              this.facilityGroupFacilities(this.facilityGroup).projects.a,
               "progress"
             ) || 0
           ).toFixed(0)
@@ -1129,13 +1326,35 @@ export default {
     },
     isSheetsView() {
       return this.$route.name.includes("Sheet");
-    },  
+    },
+    lessonVariation() {
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
+      return {
+        completes,
+        drafts
+      }
+    },
+    filteredLessons() {
+      let programLessonsObj = [];
+      if(!this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.project_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(programLessonsObj, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "tasks")
+      let tasks = this.currentProject ? _.flatten(
+            _.map(this.programResourceObj, "tasks")
           )
         : this.filteredAllTasks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
@@ -1165,9 +1384,8 @@ export default {
       let typeIds = _.map(this.issueTypeFilter, "id");
       let stageIds = _.map(this.issueStageFilter, "id");
       let severityIds = _.map(this.issueSeverityFilter, "id");
-      let issues = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "issues")
+      let issues = this.currentProject ? _.flatten(
+            _.map(this.programResourceObj, "issues")
           )
         : this.filteredAllIssues;
 
@@ -1209,12 +1427,23 @@ export default {
       }
       return issues;
     },
+    lessonStats() {
+      let lessons = new Array();
+      let group = _.groupBy(this.filteredLessons, "category");
+      for (let type in group) {
+        if (!type || type == "null") continue;
+        lessons.push({
+          name: type,
+          count: group[type].length,
+        });
+      }
+      return lessons;
+    },
     filteredRisks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.riskStageFilter, "id");
-      let risks = this.facilityGroup
-        ? _.flatten(
-            _.map(this.facilityGroupFacilities(this.facilityGroup), "risks")
+      let risks =  this.currentProject ? _.flatten(
+            _.map(this.programResourceObj, "risks")
           )
         : this.filteredAllRisks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
@@ -1232,7 +1461,7 @@ export default {
         //TODO: For performance, send the whole tasks array instead of one by one
         valid =
           valid &&
-          this.filterDataForAdvancedFilter([resource], "facilityRollupTasks");
+          this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.riskStageId);
         if (typeIds.length > 0)
@@ -1271,12 +1500,12 @@ export default {
     },
     activeFacilitiesByStatus() {
       return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.filteredFacilities("active").length;
     },
     inactiveFacilitiesByStatus() {
       return this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
+        ? this.facilityGroupFacilities(this.facilityGroup, "inactive").projects.a.length
         : this.filteredFacilities("inactive").length;
     },
     projectStatuses() {
@@ -1679,21 +1908,41 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessonCounts'
+     'fetchProgramLessonCounts',
+     'fetchProgramLessons',
      ]), 
      ...mapMutations([
         'setHideComplete',
         'setCurrProgramTab',
         'setHideInprogress',
+        'setShowProjectStats',
         'setHidePlanned',
         'setHideOverdue',
         'setHideOngoing',
         'setHideOnhold',
         'setHideDraft',
       ]),
-
+    _isallowedContracts(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
     showLessToggle() {
       this.showLess = "Show Less";
+    },
+    showContractStats(){
+     if(this.getShowProjectStats == false){
+        this.setShowProjectStats(!this.getShowProjectStats)
+     } else return
+     
+    },
+    showProjectStats(){
+      if(this.getShowProjectStats == true){
+        // console.log(this.getShowProjectStats)
+        this.setShowProjectStats(!this.getShowProjectStats)
+          // console.log(this.getShowProjectStats)
+      } else return
     },
     log(e){
       // console.log(e)
@@ -1864,6 +2113,7 @@ export default {
   },
   mounted() {
     this.fetchProgramLessonCounts(this.$route.params)  
+    this.fetchProgramLessons(this.$route.params)
   },
 };
 </script>
@@ -1876,6 +2126,7 @@ export default {
 .box-card {
   min-height: 150px;
 }
+
 .proj-type {
   display: inline;
   border-radius: 2px;
@@ -1903,7 +2154,10 @@ ul > li {
 .grey {
   background-color: lightgray;
 }
-.grey2 {
+.inactive {
+  color: lightgray ;
+}
+.grey2, .lightBtn {
   background-color: #ededed;
 }
 i.grow {
@@ -2010,6 +2264,11 @@ i.grow:hover{
 }
 .pill {
   position: absolute;
+  top: 10%;
+  right: 1%;
+}
+.pill.pill-toggle {
+  position: relative !important;
   top: 10%;
   right: 1%;
 }

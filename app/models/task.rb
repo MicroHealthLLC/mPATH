@@ -4,21 +4,23 @@ class Task < ApplicationRecord
 
   belongs_to :task_type
   belongs_to :task_stage, optional: true
+
   has_many :task_users, dependent: :destroy
   has_many :users, through: :task_users
   has_many_attached :task_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
 
   validates :text, presence: true
-  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
+  validates :start_date, presence: true, if: ->  { ongoing == false && on_hold == false }
+  validates :due_date, presence: true, if: -> { progress != 100 && ongoing == false && on_hold == false }
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
-  after_save :update_facility_project
-  after_destroy :update_facility_project
+  after_save :update_facility_project, if: Proc.new {|task| task.contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|task| task.contract_id.nil?}
 
   attr_accessor :file_links
 
@@ -59,6 +61,8 @@ class Task < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
+      :contract_id,
+      :nickname, 
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -249,7 +253,6 @@ class Task < ApplicationRecord
         end
       end.compact.uniq
     end
-    fp = self.facility_project
 
     t_users = options[:all_task_users] || []
     all_users = options[:all_users] || []
@@ -320,6 +323,11 @@ class Task < ApplicationRecord
 
     
     sorted_notes = notes.sort_by(&:created_at).reverse
+    fp = self.facility_project
+
+    project = self.contract_id ? self.contract_project : self.project
+    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -335,7 +343,7 @@ class Task < ApplicationRecord
       notes: sorted_notes.as_json,
       completed: completed,
       program_name: project.name, 
-      project_group: self.facility_group.name,
+      project_group: facility_group.name,
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       important: important,
@@ -367,7 +375,8 @@ class Task < ApplicationRecord
       informed_user_ids: informed_user_ids,
 
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility).facility_name,
+      facility_name: fp.try(:facility)&.facility_name,
+      contract_nickname: self.contract.try(:nickname),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -393,11 +402,12 @@ class Task < ApplicationRecord
     checklists_attributes = t_params.delete(:checklists_attributes)
     notes_attributes = t_params.delete(:notes_attributes)
 
-    task.attributes = t_params
-    if !task.facility_project_id.present?
+    task.attributes = t_params 
+    if params[:contract_id]
+      task.contract_id = params[:contract_id]
+    elsif !task.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
-
       task.facility_project_id = facility_project.id
     end
 

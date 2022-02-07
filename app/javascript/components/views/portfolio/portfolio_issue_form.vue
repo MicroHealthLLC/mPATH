@@ -1548,41 +1548,42 @@ export default {
       this.DV_issue.issue_files = _files;
     },
     deleteIssue() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this issue?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.issueDeleted(this.DV_issue);
-      this.cancelIssueSave();
+      this.$confirm(`Are you sure you want to delete this issue?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.issueDeleted(this.DV_issue);
+        this.cancelIssueSave();
+      });
     },
     deleteFile(file) {
       if (!file) return;
-      let confirm = window.confirm(
-        `Are you sure you want to delete attachment?`
-      );
-      if (!confirm) return;
+      this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        if (file.uri || file.link) {
+          let index = this.DV_issue.issue_files.findIndex(
+            (f) => f.guid === file.guid
+          );
 
-      if (file.uri || file.link) {
-        let index = this.DV_issue.issue_files.findIndex(
-          (f) => f.guid === file.guid
-        );
-
-        if (file.id) {
-          Vue.set(this.DV_issue.issue_files, index, { ...file, _destroy: true });
-          this.destroyedFiles.push(file);
+          if (file.id) {
+            Vue.set(this.DV_issue.issue_files, index, { ...file, _destroy: true });
+            this.destroyedFiles.push(file);
+          }
+          this.DV_issue.issue_files.splice(
+            this.DV_issue.issue_files.findIndex((f) => f.guid === file.guid),
+            1
+          );
+        } else if (file.name) {
+          this.DV_issue.issue_files.splice(
+            this.DV_issue.issue_files.findIndex((f) => f.guid === file.guid),
+            1
+          );
         }
-        this.DV_issue.issue_files.splice(
-          this.DV_issue.issue_files.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      } else if (file.name) {
-        this.DV_issue.issue_files.splice(
-          this.DV_issue.issue_files.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      }
+      });
     },
     toggleWatched() {
       if(!this._isallowed('write')){
@@ -1870,14 +1871,16 @@ export default {
       this.DV_issue.notes.unshift({ body: "", user_id: "", guid: this.guid() });
     },
     destroyNote(note) {
-      let confirm = window.confirm(
-        `Are you sure, you want to delete this update note?`
-      );
-      if (!confirm) return;
-      let i = note.id
-        ? this.DV_issue.notes.findIndex((n) => n.id === note.id)
-        : this.DV_issue.notes.findIndex((n) => n.guid === note.guid);
-      Vue.set(this.DV_issue.notes, i, { ...note, _destroy: true });
+      this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = note.id
+          ? this.DV_issue.notes.findIndex((n) => n.id === note.id)
+          : this.DV_issue.notes.findIndex((n) => n.guid === note.guid);
+        Vue.set(this.DV_issue.notes, i, { ...note, _destroy: true });
+      });
     },
     noteBy(note) {
       return note.user
@@ -1891,16 +1894,17 @@ export default {
       window.open(url, "_blank");
     },
     destroyProgressList(check, progressList, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this Progress List item?`
-      );
-      if (!confirm) return;
-
-      let i = progressList.id
-        ? check.progress_lists.findIndex((c) => c.id === progressList.id)
-        : index;
-      Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
-      this.saveIssue();
+      this.$confirm(`Are you sure you want to delete this Program List item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = progressList.id
+          ? check.progress_lists.findIndex((c) => c.id === progressList.id)
+          : index;
+        Vue.set(check.progress_lists, i, { ...progressList, _destroy: true });
+        this.saveIssue();
+      });
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
@@ -1926,16 +1930,17 @@ export default {
       }
     },
     destroyCheck(check, index) {
-      let confirm = window.confirm(
-        `Are you sure, you want to delete this checklist item?`
-      );
-      if (!confirm) return;
-
-      let i = check.id
-        ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
-        : index;
-      Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
-      this.saveIssue();
+      this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = check.id
+          ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
+          : index;
+        Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
+        this.saveIssue();
+      });
     },
     calculateProgress(checks = null) {
       try {
@@ -2005,28 +2010,46 @@ export default {
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedTasks.splice(
+            this.relatedTasks.findIndex((task) => task.id == id),
+            1
+          );
+        });
     },
     addRelatedIssues(issues) {
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedIssues.splice(
+            this.relatedIssues.findIndex((issue) => issue.id == id),
+            1
+          );
+        });
     },
     addRelatedRisks(risks) {
       risks.forEach((risk) => this.relatedRisks.push(risk));
     },
     removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedRisks.splice(
+            this.relatedRisks.findIndex((risk) => risk.id == id),
+            1
+          );
+        });
     },
   },
   computed: {

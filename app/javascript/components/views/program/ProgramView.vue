@@ -1,12 +1,12 @@
 <template>
 <div>
   <div class="backBtn">  
-      <span class="float-right">   
-         <router-link :to="`/programs/${this.$route.params.programId}/sheet`" > 
-          <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
-           <i class="fal fa-arrow-alt-left text-light"></i>
-            </button>  
-          </router-link>
+      <span class="float-right">
+        <router-link :to="goBack">
+        <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
+          <i class="fal fa-arrow-alt-left text-light"></i>
+        </button>
+        </router-link>
       </span>
     </div>
   <div class="container-fluid mx-3 portfolioView_main" 
@@ -15,12 +15,12 @@
     :class="[!contentLoaded ? 'vh100': '']"
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)" 
-  >
-     
+  >     
   <el-tabs class="mt-1 mr-3" type="border-card">
     <el-tab-pane class="p-3"  style="postion:relative" >
         <template slot="label" class="text-right" v-if="contentLoaded">
-              <span class="allCaps">{{ currentProject.name }} Data Viewer</span>
+              <span class="allCaps">{{ currentProject.name }} Data Viewer </span>
+            
             </template>
                <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
                         <template slot="title">
@@ -224,53 +224,78 @@
                         </div>
                         </template>
                </el-dialog>
-                <div class="row pb-4">
-              <div class="col-4 py-2">
-                <div class="w-100 d-flex">
-                  <div class="d font-sm mt-2 mr-2">SEARCH</div>
-                  <div class="w-100"  v-if="currentTab == '#tab-tasks'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Tasks Search Criteria"
-                    v-model="search_tasks"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                   <div class="w-100" v-if="currentTab == '#tab-issues'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Issues Search Criteria"
-                    v-model="issuesQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                <div class="w-100" v-if="currentTab == '#tab-risks'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Risks Search Criteria"
-                    v-model="risksQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-                   <div class="w-100" v-if="currentTab == '#tab-lessons'">
-                  <el-input
-                    type="search"
-                    placeholder="Enter Lessons Search Criteria"
-                    v-model="lessonsQuery"
-                  >
-                    <el-button slot="prepend" icon="el-icon-search"></el-button>
-                  </el-input>
-                  </div>
-
-
+             <div class="row pb-4" v-if="currentProject && currentProject.contracts || contentLoaded" >
+              <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }">
+                <div class="w-100">
+                <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
+                <el-button-group >
+                  <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
+                    <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
+                    PROJECTS
+                    <!-- <span 
+                      v-if="currentProject && currentProject.facilities"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.facilities.length }}
+                      </span> -->
+                  </el-button>
+                  <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats"> 
+                    <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
+                    CONTRACTS
+                    <!-- <span 
+                      v-if="currentProject && currentProject.contracts"
+                      class="ml-1 badge badge-secondary badge-pill pill"
+                      >{{ currentProject.contracts.length }}
+                      </span> -->
+                  </el-button>
+                </el-button-group>                
                 </div>
               </div>
+              <div class="col-3 py-2">
+              <div class="w-100">
+                          <div class="d font-sm mt-2 mr-2">SEARCH</div>
+                          <div class="w-100"  v-if="currentTab == '#tab-tasks'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Tasks Search Criteria"
+                            v-model="search_tasks"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                          <div class="w-100" v-if="currentTab == '#tab-issues'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Issues Search Criteria"
+                            v-model="issuesQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                        <div class="w-100" v-if="currentTab == '#tab-risks'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Risks Search Criteria"
+                            v-model="risksQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
+                          <div class="w-100" v-if="currentTab == '#tab-lessons'">
+                          <el-input
+                            type="search"
+                            placeholder="Enter Lessons Search Criteria"
+                            v-model="lessonsQuery"
+                          >
+                            <el-button slot="prepend" icon="el-icon-search"></el-button>
+                          </el-input>
+                          </div>
 
-              <div class="col-4 py-2">
-                <div class="d-flex w-100">          
+
+              </div>
+
+              </div>
+              <div class="col-3 py-2">
+                <div class="w-100">          
                   <div class="font-sm px-0 mt-2 mr-2">PROGRAM<span class="invi">i</span>FILTER</div>           
                    <template>
                        <!-- <treeselect  
@@ -294,25 +319,31 @@
                  </template>              
                 </div>         
               </div>
-              <div class="col-4 pl-0 py-2">
-                <div class="d-flex w-100">
+              <div class="col-3 pl-0 py-2">
+                <div class="w-100 pr-3">
                   <div class="font-sm mr-2 mt-2">PROCESS AREA</div>
                   <template>
                     <el-select
                       v-model="C_programCategoryFilter"
-                      class="w-75"
+                      class="w-100"
                       track-by="name"
                       value-key="id"
                       multiple
                       clearable
                       placeholder="Select Process Area"
                     >
-                      <el-option
+                        <el-option
+                        v-for="item in taskTypes"
+                        :value="item"
+                        :key="item.id"
+                        :label="item.name"
+                      >
+                      <!-- <el-option
                         v-for="item in C_categories"
                         :value="item"
                         :key="item"
                         :label="item"
-                      >
+                      > -->
                       </el-option>
                     </el-select>
                   </template>
@@ -329,7 +360,8 @@
              >
                 TASKS
                 <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredAllTasks.length }}</span>
+                 <span v-if="!getShowProjectStats">{{ filteredAllTasks.length }}</span>
+                 <span v-else>{{ filteredAllContractTasks.length }}</span>
                 </span>
             </template>
 
@@ -634,12 +666,13 @@
                   >
                 </div>
               </div>
-
+              <!-- <ProjectContractSwitch /> -->
               <div
-                class="row text-center mt-2 pr-3"
+                class="row text-center mt-3 pr-3"
                 style="postion:relative" 
                 v-if="filteredTasks.filtered.tasks.length > 0"
               >
+               
                 <div class="px-3 tableFixHead" >
                   <table
                     class="table table-sm table-bordered"
@@ -648,7 +681,7 @@
                   >
                     <thead style="background-color: #ededed">    
                         <th class="pl-1 sort-th twenty" @click="sortCol1('projectGroup')">
-                        Project Group
+                        Group
                         <span
                           class="inactive-sort-icon scroll"
                           v-if="currentSortCol1 !== 'projectGroup'"
@@ -688,7 +721,7 @@
                           <i class="fas fa-sort-down"></i
                         ></span>
                       </th> 
-                       <th class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
+                       <th v-if="!getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('facilityName')">
                         Project Name 
                         <span
                           class="inactive-sort-icon scroll"
@@ -724,6 +757,47 @@
                           class="inactive-sort-icon scroll"
                           v-if="
                             currentSortDir2 !== 'desc' && currentSortCol2 === 'facilityName'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                      </th>  
+                         <th v-if="getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('contractNickname')">
+                        Contract Name 
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="currentSortCol2 !== 'contractNickname'"
+                        >
+                          <i class="fas fa-sort"></i
+                        ></span>
+                        <span
+                          class="sort-icon main scroll"
+                          v-if="
+                            currentSortDir2 === 'asc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir2 !== 'asc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-up"></i
+                        ></span>
+                        <span
+                          class="sort-icon main scroll"
+                          v-if="
+                            currentSortDir2 === 'desc' && currentSortCol2 === 'contractNickname'
+                          "
+                        >
+                          <i class="fas fa-sort-down"></i
+                        ></span>
+                        <span
+                          class="inactive-sort-icon scroll"
+                          v-if="
+                            currentSortDir2 !== 'desc' && currentSortCol2 === 'contractNickname'
                           "
                         >
                           <i class="fas fa-sort-down"></i
@@ -1025,7 +1099,7 @@
                    
                    
                         <td>{{ task.projectGroup }}</td>
-                        <td>{{ task.facilityName }}</td>
+                        <td>{{ task.facilityName || task.contractNickname }}</td>
                         <td>{{ task.text }}</td>
                         <td
                           class="text-left"
@@ -1315,7 +1389,8 @@
             <template slot="label" class="text-right">
               ISSUES
               <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredAllIssues.length }}</span>
+                 <span v-if="!getShowProjectStats">{{ filteredAllIssues.length }}</span>
+                 <span v-else>{{ filteredAllContractIssues.length }}</span>
               </span>
             </template>
             <ProgramIssues />
@@ -1330,7 +1405,8 @@
             >
               RISKS
               <span class="badge badge-secondary badge-pill">
-                <span>{{ filteredAllRisks.length }}</span>
+                 <span v-if="!getShowProjectStats">{{ filteredAllRisks.length }}</span>
+                 <span v-else>{{ filteredAllContractRisks.length }}</span>
                </span>
             </template>
             <ProgramRisks />
@@ -1362,7 +1438,9 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import ProgramIssues from "./ProgramIssues.vue";
 import ProgramRisks from "./ProgramRisks.vue";
+import ProgramTaskForm from "./ProgramTaskForm.vue";
 import ProgramLessons from "./ProgramLessons.vue";
+// import ProjectContractSwitch from "./ProjectContractSwitch.vue"
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 Vue.component('treeselect', VueTreeselect.Treeselect)
@@ -1373,6 +1451,7 @@ export default {
     ProgramIssues,
     ProgramRisks,
     ProgramLessons,
+    // ProjectContractSwitch
   },
   data() {
     return {
@@ -1411,6 +1490,7 @@ export default {
     "currentProject",
     'programCategoriesFilter',
     'currTaskPage',
+    'getShowProjectStats',
     'searchIssues',
     'searchRisks',
     'searchLessons',
@@ -1429,6 +1509,9 @@ export default {
     "filteredAllIssues",
     "filteredAllRisks",
     "filteredAllTasks",
+    "filteredAllContractTasks",
+    "filteredAllContractRisks",
+    "filteredAllContractIssues",
     "filteredFacilities",
     "filteredFacilityGroups",
     "getAllFilterNames",
@@ -1449,7 +1532,6 @@ export default {
     "taskStageFilter",
     "taskTypeFilter",
     "taskTypes",
-    "taskTypes",
     "taskUserFilter",
     'getShowAdvancedFilter',
     'projectGroupsFilter',
@@ -1468,7 +1550,10 @@ export default {
     'getHideImportant',
     'getHideBriefed',
     ]),
-    projectObj() {
+    goBack() {
+      return `/programs/${this.$route.params.programId}/sheet`;
+    },
+   projectObj() {
     return this.currentProject.facilities
     },
     C_projectGroupsFilter: {
@@ -1596,24 +1681,31 @@ export default {
     C_facilityCount() {         
       return this.facilityGroup
       
-        ? this.facilityGroupFacilities(this.facilityGroup).length
+        ? this.facilityGroupFacilities(this.facilityGroup).projects.a.length
         : this.facilityCount; 
       
     },
-  //  C_categoryNameFilter: {
-  //     get() {
-  //       return this.portfolioCategoriesFilter;
-  //     },
-  //     set(value) {
-  //       // console.log(value)
-  //       this.setPortfolioCategoriesFilter(value);
-  //     },
-  //   },
+   projectContractToggle:{     
+     get(){
+       return this.getShowProjectStats
+     },
+     set(e){
+       if(this.getShowProjectStats == false){
+        // console.log(this.getShowProjectStats)
+        this.setShowProjectStats(!this.getShowProjectStats)
+          // console.log(this.getShowProjectStats)
+      } else if(this.getShowProjectStats == true){
+        this.setShowProjectStats(!this.getShowProjectStats)
+     } else return
+     console.log(e)
+
+     }
+    },
     C_facilityProgress() {
       return this.facilityGroup
         ? Number(
             _.meanBy(
-              this.facilityGroupFacilities(this.facilityGroup),
+                this.facilityGroupFacilities(this.facilityGroup).projects.a,
               "progress"
             ) || 0
           ).toFixed(0)
@@ -1629,29 +1721,31 @@ export default {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
     filteredTasks() {
-      // let typeIds = _.map(this.taskTypeFilter, "id");
-      // let stageIds = _.map(this.taskStageFilter, "id");
-      let tasks = this.filteredAllTasks
-        .filter(t => {
+     let allTasks = this.filteredAllTasks
+     if (this.getShowProjectStats){
+       allTasks = this.filteredAllContractTasks
+     }
+     let tasks = allTasks.filter(t => {
           if (this.facility_project_ids.length > 0) {                
-            return this.facility_project_ids.includes(t.facilityProjectId)
-        } else return true
-        }).filter((task) => {
-          if (this.search_tasks !== "") {
-            return (
-              task.text.toLowerCase().match(this.search_tasks.toLowerCase()) ||
+            return this.facility_project_ids.includes(t.facilityProjectId) 
+          } else return true
+          }).filter((task) => {
+          if (this.search_tasks !== '' && task && task.text) {
+            console.log(task)
+            return (            
+              task.text.toLowerCase().match(this.search_tasks.toLowerCase()) ||       
               task.taskType
                 .toLowerCase()
                 .match(this.search_tasks.toLowerCase()) ||
               task.projectGroup
                 .toLowerCase()
                 .match(this.search_tasks.toLowerCase()) ||
-              task.programName
-                .toLowerCase()
-                .match(this.search_tasks.toLowerCase()) ||
-              task.facilityName
-                .toLowerCase()
-                .match(this.search_tasks.toLowerCase()) ||
+              // task.facilityName
+              //   .toLowerCase()
+              //   .match(this.search_tasks.toLowerCase()) ||
+              //  task.contractNickname
+              //   .toLowerCase()
+              //   .match(this.search_tasks.toLowerCase()) ||
               task.userNames.toLowerCase().match(this.search_tasks.toLowerCase())
             );
           } else return true;
@@ -1659,8 +1753,8 @@ export default {
         })
         .filter((task) => {
           if (this.C_programCategoryFilter && this.C_programCategoryFilter.length > 0) {
-            let category = this.C_programCategoryFilter.map((t) => t);
-            return category.includes(task.taskType);
+            let category = this.C_programCategoryFilter.map((t) => t.id);
+            return category.includes(task.taskTypeId);
           } else return true;
         })
   return {
@@ -1744,7 +1838,6 @@ export default {
       sortedTasks:function() {
         return this.filteredTasks.filtered.tasks.sort((a,b) => {
         let modifier = 1;
-
         if (this.currentSortDir1 === "desc") modifier = -1;
         if (a[this.currentSortCol1] < b[this.currentSortCol1]) return -1 * modifier;
         if (a[this.currentSortCol1] > b[this.currentSortCol1]) return 1 * modifier;
@@ -1874,6 +1967,7 @@ export default {
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
+        'setShowProjectStats',
         'setSearchIssues',
         'setSearchRisks',
         'setSearchLessons',
@@ -1905,6 +1999,25 @@ export default {
         'setHideImportant',
         'setHideBriefed',
       ]),
+     _isallowed(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+    },
+    showContractStats(){
+     if(this.getShowProjectStats == false){
+        this.setShowProjectStats(!this.getShowProjectStats)
+     } else return
+     
+    },
+    showProjectStats(){
+      if(this.getShowProjectStats == true){
+        // console.log(this.getShowProjectStats)
+        this.setShowProjectStats(!this.getShowProjectStats)
+          // console.log(this.getShowProjectStats)
+      } else return
+    },
       exportTasksToPdf() {
       const doc = new jsPDF("l");
          console.log( this.$refs.table)
@@ -1954,16 +2067,27 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-   openTask(task) {       
+   openTask(task) {   
+    if(!this.getShowProjectStats){
       this.$router.push({
-      name: "ProgramTaskForm",
-      params: {
-        programId: task.projectId,
-        projectId: task.facilityId,
-        taskId: task.id,
-      },
-    });
-    // console.log(this.$route.params)
+      name: "ProgramTaskForm",   
+        params: {
+          programId: task.projectId,
+          projectId: task.facilityId,
+          taskId: task.id,
+        },
+      });
+      }
+     if(this.getShowProjectStats) {
+       this.$router.push({
+        name: "ProgramContractTaskForm", 
+          params: {
+          programId: this.$route.params.programId,
+          contractId: task.contractId,
+          taskId: task.id,
+        },
+       }); 
+      }
     },
     openTpresentation(){
       this.dialogVisible = true; 
@@ -2159,7 +2283,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .backBtn {
   z-index: 1040;
   top:1rem;
@@ -2168,6 +2292,24 @@ export default {
   background-color: #fff;
   z-index: 1045;
   width: 350px;
+}
+/deep/.el-switch__label, .el-switch__label--left {
+  color: lightgray;
+}
+/deep/.el-switch__label, .el-switch__label--right {
+  color: lightgray;
+}
+/deep/.el-switch__label.is-active, .el-switch__label--left {
+  color: #383838;
+}
+/deep/.vue-treeselect__control {
+  height: 40px !important;
+}
+.lightBtn {
+  background-color: #ededed;
+}
+.inactive {
+  color: lightgray ;
 }
 
 </style>

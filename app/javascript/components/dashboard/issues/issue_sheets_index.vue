@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center w-70 float-right filters-wrapper">
+      <div class="d-flex align-item-center w-60 float-right filters-wrapper">
         <div class="ml-3 task-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
           <el-input
@@ -466,6 +466,9 @@
             <span v-if="issue.important == true">Important</span>
             <span v-if="issue.isOverdue">Overdue</span>
             <span v-if="issue.progress == 100">Completed</span>   
+            <span v-if="issue.inProgress == true">In Progress</span>
+            <span v-if="issue.planned == true">Planned</span>
+            <span v-if="issue.reportable == true">Briefings</span>
             <span v-if="issue.onHold == true">On Hold</span> 
             <span v-if="issue.draft == true">Draft</span>   
             <span v-if="
@@ -473,6 +476,9 @@
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
                   issue.draft == false && 
+                  issue.reportable == false &&
+                  issue.inProgress == false &&
+                  issue.planned == false &&
                   issue.progress < 100 "             
             >                 
             </span>  
@@ -510,7 +516,7 @@
 
   export default {
     name: 'IssueSheetsIndex',
-    props: ['facility', 'from'],
+    props: ['facility', 'from', 'contract'],
     components: {
       IssueForm,
       IssueSheets
@@ -568,15 +574,20 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-      //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.issues.includes(s); 
-      },
+    _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s); 
+        }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -657,7 +668,7 @@
       },
       toggleWatched(issue) {
         http
-          .put(`#{API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
+          .put(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
             this.issueUpdated(res.data.issue, false)
           })
@@ -680,6 +691,11 @@
       addNewIssue() {
         this.setTaskForManager({key: 'issue', value: {}})
         // Route to new issue form page
+       if(this.contractRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/issues/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/new`
         );
@@ -738,6 +754,14 @@
         this.setCurrentIssuePage(value);
       },
     },
+    contractRoute(){
+      return this.$route.params.contractId
+    },
+     object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
@@ -749,7 +773,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
+        let issues = _.sortBy(_.filter(this.object.issues, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
           if (taskIssueUsers.length > 0) {

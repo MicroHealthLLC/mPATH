@@ -11,7 +11,7 @@ export default {
   components: { RiskForm },
   data() {
     return {
-      risk: {},
+      risk: {}
     };
   },
   methods: {
@@ -22,19 +22,23 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", 'filteredAllRisks']),
+    ...mapGetters([
+      "contentLoaded", 
+      'filteredAllRisks',
+      'filteredAllContractRisks',
+      'getShowProjectStats'
+      ]),
   },
   mounted() {
-    if (this.contentLoaded) {
-      this.risk = this.filteredAllRisks.find(
+
+      this.risk =  this.filteredAllRisks.find(
         (risk) => risk.id == this.$route.params.riskId
       );
-    }
   },
   watch: {
     contentLoaded: {
       handler() {
-        this.risk = this.filteredAllRisks.find(
+        this.risk =  this.filteredAllRisks.find(
           (risk) => risk.id == this.$route.params.riskId
         );
       },

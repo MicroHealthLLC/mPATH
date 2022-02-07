@@ -574,80 +574,38 @@
                 </div>                     
                 </div>         
             </div>
-       
-          </el-card>
-      </div>
-              <div class="col-8">
-                <div class="box-card my-el-card p-3" style="position:relative">
-                  <div class="row">
-                    <div class="col">
-                      <p>PROJECT GROUP:</p>
-                      <p>COMPLETION DATE:</p>
-                      <p>
-                        STATUS:
-                        <span>
-                          <small
-                            v-if="!facility.statusId && _isallowed('write')"
-                            class="ml-2 d-inline text-danger"
-                            style="position:absolute"
-                          >
-                            Must be updated before you can enter a Completion
-                            Date!
-                          </small>
-                        </span>
-                      </p>
+            <div v-if="lessonStats.length > 0" data-cy="lesson_categories">
+              <el-collapse class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div data-cy="lesson_categories" class="row">
+                    <div class="col-6 pb-0 underline">PROCRESS AREAS</div>
+                    <div class="col-6 pb-0">#</div>
+                  </div>
+
+                  <div class="row" v-for="(lesson, index) in lessonStats" :key="index">
+                    <div class="col-6 pb-0 font-sm pr-0">
+                      <span> {{ lesson.name }}</span>
                     </div>
-
-                    <div class="col">
-                      <p
-                        class="badge badge-secondary badge-pill font-weight-light"
-                      >
-                        {{ facility.facility.facilityGroupName }}
-                      </p>
-                      <div class="simple-select">
-                        <v2-date-picker
-                          v-model="dueDate"
-                          value-type="YYYY-MM-DD"
-                          format="DD MMM YYYY"
-                          class="w-100 vue2-datepicker"
-                          @input="onChange"
-                          placeholder="DD MM YYYY"
-                          :disabled="!_isallowed('write') || !facility.statusId"
-                        />
-                      </div>
-
-                      <div class="el-dropdown-wrapper my-2">
-                        <el-select
-                          v-model="statusId"
-                          track-by="id"
-                          class="w-100"
-                          @change="onChange"
-                          :disabled="!_isallowed('write')"
-                          placeholder="Select Project Status"
-                        >
-                          <el-option
-                            v-for="item in statuses"
-                            :label="item.name"
-                            :key="item.id"
-                            :value="item.id"
-                          >
-                          </el-option>
-                        </el-select>
-                      </div>
+                    <div class="col-6 pb-0">
+                      <span class="badge badge-secondary  font-sm badge-pill">{{ lesson.count }}</span>
                     </div>
                   </div>
-                  <button
-                    v-if="_isallowed('write') && DV_updated"
-                    class="btn btn-secondary mt-2 btn-sm apply-btn w-100"
-                    @click="updateFacility"
-                    :disabled="!DV_updated"
-                  >
-                    Apply
-                  </button>
-                </div>
-              </div>
-
+                </el-collapse-item>
+              </el-collapse>
             </div>
+            <div v-else>
+              <el-collapse id="roll_up" class="lessonCard">
+                <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                    <div class="col p-0  mb-0">NO DATA TO DISPLAY</div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+          </el-card>
+      </div>            
+
+      </div>
     </div>
     <div v-else class="text-danger mx-2 my-4">
       You don't have permission to read!
@@ -976,7 +934,7 @@ export default {
         this.filteredTasks.length
       );
       let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
-      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.ongoingClosed );
+      let ongoingClosed = _.filter(this.filteredTasks, (t) => t && t.closed );
       return {
         planned: {
           count: planned.length, 
@@ -1292,7 +1250,17 @@ export default {
         drafts
       }
     },
-
+    lessonStats() {
+      let lessons = new Array();
+      let group = _.groupBy(this.projectLessons, "category");
+      for (let type in group) {
+        lessons.push({
+          name: type,
+          count: group[type].length,
+        });
+      }
+      return lessons;
+    },
   },
   watch: {
     contentLoaded: {

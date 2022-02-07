@@ -6,7 +6,11 @@
 
 = javascript_tag nonce: true do
   |var current_user = "#{JSON.generate(current_user.as_json( methods: :full_name))}";
+  |var mpath_instance = "#{ENV['MPATH_INSTANCE']}";
+  |var program_privilegs = "#{JSON.generate(current_user.project_privileges_hash)}";
+  |var contract_privilegs = "#{JSON.generate(current_user.contract_privileges_hash)}";
   |var project_privilegs = "#{JSON.generate(current_user.facility_privileges_hash)}";
+  |var program_settings_privileges = "#{JSON.generate(current_user.program_settings_privileges_hash)}";
   |var privilege = "#{JSON.generate(current_user.privilege_hash)}";
   |var preferences = "#{JSON.generate(current_user.get_preferences.value )}";
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";

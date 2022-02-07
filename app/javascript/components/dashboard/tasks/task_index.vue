@@ -226,7 +226,7 @@ export default {
   components: {
     TaskShow
   },
-  props: ['facility', 'from'],
+  props: ['facility', 'from', "contract"],
   data() {
     return {
       viewList: 'active',
@@ -263,15 +263,20 @@ export default {
       'setHideImportant',
       'setHideBriefed',
     ]),
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
     toggleAdvancedFilter() {
         this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
       },
@@ -387,7 +392,7 @@ computed: {
     let taskIssueUsers = this.getTaskIssueUserFilter
     var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
     
-    let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+    let tasks = _.sortBy(_.filter(this.object.tasks, (resource) => {
       let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
       let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -593,6 +598,11 @@ computed: {
         },      
       };
     },
+   object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
   C_facilityManagerTaskFilter: {
     get() {
       return this.getAdvancedFilter

@@ -3,7 +3,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show]
 
   def index
-    facility_projects = @project.facility_projects.includes(include_hash, :status).order(created_at: :desc).as_json
+    facility_projects = @project.facilities.includes(:facility_group).as_json
     render json: {facilities: facility_projects, project: @project}
   end
 
@@ -18,9 +18,14 @@ class Api::V1::FacilitiesController < AuthenticatedController
 
   def update
     # @facility_project.update(facility_project_params)
-    @facility_project = FacilityProject.where(project_id: @project.id, facility_id: params[:id]).first
-    @facility_project.update(facility_project_params)
-    render json: {facility: @facility_project.as_json}
+    @facility = Facility.find(params[:id])
+    if(params[:facility][:facility_group_name] && params[:facility][:facility_group_name] != 'undfined')
+      @facility.facility_group.update(name: params[:facility][:facility_group_name])
+    end
+    if params[:facility]
+      @facility.update(facility_params)
+    end
+    render json: {facility: @facility.as_json}
   end
 
   def destroy
@@ -42,6 +47,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
 
   def facility_params
     params.require(:facility).permit(
+      :country_code,
       :facility_name,
       :address,
       :facility_group_id,
