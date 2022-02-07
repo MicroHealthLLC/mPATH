@@ -1,9 +1,5 @@
 <template>
   <div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
     class="row"
   >
     <div class="col-md-2">

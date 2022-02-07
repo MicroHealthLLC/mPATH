@@ -129,10 +129,11 @@
               <el-button
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
-                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
-                class="bg-primary text-light"
-                >Save</el-button
-              >
+                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')" 
+                v-tooltip="`Save`" 
+                class="bg-primary text-light">               
+               <i class="far fa-save"></i>
+               </el-button>
               <el-button 
                 type="default" 
                 v-tooltip="`Cancel Edit`"       
