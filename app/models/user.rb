@@ -217,7 +217,8 @@ class User < ApplicationRecord
     n = []
     allowed_navigation_tabs.each do |t|
       name = "sheet" if t == "sheets_view"
-      name = "settings" if t == "settings_view"
+      # name = "settings" if t == "settings_view"
+      next if t == "settings_view"
       name = "map" if t == "map_view"
       name = "gantt_chart" if t == "gantt_view"      
       name = "kanban" if t == "kanban_view"
@@ -246,6 +247,19 @@ class User < ApplicationRecord
   def build_sub_navigation_tabs_for_profile
     # allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
     allowed_sub_navigation_tabs
+  end
+
+  def build_sub_navigation_for_program_settings_tabs(right="R")
+    h = Hash.new{|h,(k,v)| h[k] = [] }
+    program_settings_privileges_hash.map do |k,v|
+      v.each do |k1,v1|
+        if v1.include?(right)
+          puts k1
+          h[k] << {id: k1.downcase, name: ProjectPrivilege::PRIVILEGE_MODULE[k1.to_sym], value: k1 } 
+        end
+      end
+    end
+    h
   end
 
   def top_navigation_hash
