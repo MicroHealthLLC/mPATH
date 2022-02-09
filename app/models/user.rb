@@ -501,7 +501,8 @@ class User < ApplicationRecord
 
     cp.each do |c|
       contract_ids = c.contract_ids
-      f_permissions = c.attributes.slice("overview", "tasks", "notes", "issues", "risks", "lessons").clone.transform_values{|v| v.delete(""); v }
+      # f_permissions = c.attributes.slice("overview", "tasks", "notes", "issues", "risks", "lessons").clone.transform_values{|v| v.delete(""); v }
+      f_permissions = c.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
       f_permissions = f_permissions.transform_values{|v| v.delete(""); v}
 
       contract_ids.each do |fid|
@@ -516,10 +517,11 @@ class User < ApplicationRecord
 
     project_contract_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
-      p_privilege = (pp_hash[pid] || {}).slice("cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons")
+      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
+      # p_privilege = (pp_hash[pid] || {}).slice("cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons")
       fids2.each do |ff|
-        fph[pid][ff] = {overview: p_privilege["cn_overview"] , tasks: p_privilege["cn_tasks"], issues: p_privilege["cn_issues"] , risks: p_privilege["cn_risks"],lessons: p_privilege["cn_lessons"], contract_id: ff }
-        # fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
+        # fph[pid][ff] = {overview: p_privilege["cn_overview"] , tasks: p_privilege["cn_tasks"], issues: p_privilege["cn_issues"] , risks: p_privilege["cn_risks"],lessons: p_privilege["cn_lessons"], contract_id: ff }
+        fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
       end       
     end
     fph.with_indifferent_access
