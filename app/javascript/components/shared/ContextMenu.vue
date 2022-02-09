@@ -442,7 +442,7 @@ export default {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
       }
      
-     let method = "POST";
+      let method = "POST";
       let callback = "task-created";
 
       ids.forEach((id, index) => {
