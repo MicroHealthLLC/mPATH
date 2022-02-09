@@ -50,9 +50,6 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     end
   end
 
-  def destroy
-  end
-
   def include_hash
     {
       facility_projects: [:facility, {
