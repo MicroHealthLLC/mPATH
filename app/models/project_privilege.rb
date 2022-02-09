@@ -174,6 +174,24 @@ class ProjectPrivilege < ApplicationRecord
       fp.cn_lessons = (fp.cn_lessons + ["R"]).uniq
     end
 
+    if fp.admin_groups && fp.admin_groups_was && fp.admin_groups_was.include?("R") && !fp.admin_groups.include?("R")
+      fp.admin_groups = []
+    elsif fp.admin_groups && !fp.admin_groups.include?("R") && ( fp.admin_groups & ["W", "D"]).any?
+      fp.admin_groups = (fp.admin_groups + ["R"]).uniq
+    end
+
+    if fp.admin_contracts && fp.admin_contracts_was && fp.admin_contracts_was.include?("R") && !fp.admin_contracts.include?("R")
+      fp.admin_contracts = []
+    elsif fp.admin_contracts && !fp.admin_contracts.include?("R") && ( fp.admin_contracts & ["W", "D"]).any?
+      fp.admin_contracts = (fp.admin_contracts + ["R"]).uniq
+    end
+
+    if fp.admin_facilities && fp.admin_facilities_was && fp.admin_facilities_was.include?("R") && !fp.admin_facilities.include?("R")
+      fp.admin_facilities = []
+    elsif fp.admin_facilities && !fp.admin_facilities.include?("R") && ( fp.admin_facilities & ["W", "D"]).any?
+      fp.admin_facilities = (fp.admin_facilities + ["R"]).uniq
+    end
+
   end
 
 end
