@@ -105,7 +105,7 @@
       </div>
     </div>
      <!-- <router-link  >  -->
-      <button class="btn btn-sm btn-light program-settings-btn" @click.prevent="toggleAdminView" style="cursor: pointer">
+      <button v-if="_isallowedProgramSettings('read')" class="btn btn-sm btn-light program-settings-btn" @click.prevent="toggleAdminView" style="cursor: pointer">
        <h6> <i class="far fa-cog"></i> Program Settings </h6>
       </button>  
       <!-- </router-link> -->
@@ -218,6 +218,14 @@ export default {
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         return pPrivilege.contracts.includes(s);     
+    },
+    _isallowedProgramSettings(salut) {
+        let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return pPrivilege.admin_groups.includes(s) ||
+               pPrivilege.admin_contracts.includes(s) ||
+               pPrivilege.admin_facilities.includes(s);
     },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);

@@ -319,6 +319,7 @@ class Lesson < ApplicationRecord
       :reportable, 
       :important, 
       :draft, 
+      :contract_id,
       :reportable, 
       :lesson_stage_id,
       sub_task_ids: [],

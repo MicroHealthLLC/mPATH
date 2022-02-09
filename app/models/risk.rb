@@ -24,6 +24,10 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
+
+
   attr_accessor :file_links
 
   amoeba do
@@ -225,6 +229,7 @@ class Risk < ApplicationRecord
       :risk_approach,
       :on_hold,
       :draft,
+      :contract_id, 
       :ongoing,
       :duration,
       :duration_name,

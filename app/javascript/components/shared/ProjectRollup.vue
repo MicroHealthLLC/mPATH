@@ -46,7 +46,7 @@
     </div>
 
    <el-tabs type="border-card" @tab-click="handleClick">
-       <el-tab-pane class="p-3" v-if="currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+       <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
       <template slot="label">
       <i class="fas fa-analytics mr-1"></i>
       ANALYTICS   
@@ -880,19 +880,19 @@
               </div>
             </div>
           <div
-            v-for="(facilityGroup, index) in filteredFacilityGroups"
+            v-for="(group, index) in facilityGroups"
             :key="index"
             >
             <div class="row py-1">
               <div class="col-5 mb-2">
                 <span :class="{ 'font-sm': isMapView }">{{
-                  facilityGroup.name
+                 group.name
                 }}</span>
                
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(facilityGroup).contracts.b.length
+                  facilityGroupFacilities(group).contracts.b.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -900,14 +900,14 @@
                   class="w-100 mt-1 ml-2 progress pg-content"
                   :class="{
                     'font-sm': isMapView,
-                    'progress-0': facilityGroupProgress(facilityGroup) <= 0,
+                    'progress-0': facilityGroupProgress(group) <= 0,
                   }"
                 >
                   <div
                     class="progress-bar bg-info"
-                    :style="`width: ${facilityGroupProgress(facilityGroup)}%`"
+                    :style="`width: ${facilityGroupProgress(group)}%`"
                   >
-                    {{ facilityGroupProgress(facilityGroup) }} %
+                    {{ facilityGroupProgress(group) }} %
                   </div>
                 </span>
               </div>
@@ -984,20 +984,20 @@
               </div>
             </div>
           <div
-            v-for="(facilityGroup, index) in filteredFacilityGroups"
+            v-for="(group, index) in facilityGroups"
             :key="index"
             >
            
             <div class="row py-1">
               <div class="col-5 mb-2">
                 <span :class="{ 'font-sm': isMapView }">{{
-                  facilityGroup.name
+                  group.name
                 }}</span>
                
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(facilityGroup).projects.a.length
+                  facilityGroupFacilities(group).projects.a.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -1005,14 +1005,14 @@
                   class="w-100 mt-1 ml-2 progress pg-content"
                   :class="{
                     'font-sm': isMapView,
-                    'progress-0': facilityGroupProgress(facilityGroup) <= 0,
+                    'progress-0': facilityGroupProgress(group) <= 0,
                   }"
                 >
                   <div
                     class="progress-bar bg-info"
-                    :style="`width: ${facilityGroupProgress(facilityGroup)}%`"
+                    :style="`width: ${facilityGroupProgress(group)}%`"
                   >
-                    {{ facilityGroupProgress(facilityGroup) }} %
+                    {{ facilityGroupProgress(group) }} %
                   </div>
                 </span>
               </div>
@@ -1120,7 +1120,7 @@
        </div>   
     </div>    
     </el-tab-pane>
-    <el-tab-pane class="p-3" v-if="currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
+    <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
       <template slot="label">
        <i class="fal fa-table mr-1"></i>
       TABLE   
@@ -1195,7 +1195,7 @@ export default {
       "filteredAllRisks",
       "filteredAllTasks",
       "filteredFacilities",
-      "filteredFacilityGroups",
+      "facilityGroups",
       "getAllFilterNames",
       "getFilterValue",
       "getTaskIssueUserFilter",

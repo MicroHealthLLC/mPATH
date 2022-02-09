@@ -10,8 +10,11 @@ const settingsStore = {
     group_filter: null,
     transfer_data: [],
     new_groups: [], 
+    checked_portfolio_groups: [],
+    checked_groups:[],
     contract: {},
     contracts: [],
+    check_all: false, 
     client_types: [],
     pop_days_remaining: null,
     contract_loaded: true,
@@ -478,6 +481,7 @@ const settingsStore = {
 
   mutations: {
     setShowAdminBtn: (state, value) => (state.show_admin_btn = value),   
+   
     setContractTypeFilter: (state, value) =>
       (state.contract_type_filter = value),
     setContractTable: (state, value) => (state.contract_table = value),
@@ -503,7 +507,8 @@ const settingsStore = {
       (state.contract_statuses_filter = loaded),
     SET_CURRENT_POP: (state, value) => (state.current_pop = value),
     SET_PRIME: (state, value) => (state.prime = value),
-
+    SET_CHECKED_PORTFOLIO_GROUPS: (state, value)=> (state.checked_portfolio_groups = value),  
+    SET_CHECK_ALL: (state, value) => (state.check_all = value), 
     SET_CONTRACT_CLASSIFICATIONS: (state, value) =>
       (state.contract_classifications = value),
 
@@ -518,6 +523,7 @@ const settingsStore = {
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
     TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
+    SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value)
   },
 
   getters: {
@@ -534,6 +540,10 @@ const settingsStore = {
     getCurrentPop: (state) => state.current_pop,
     getPrime: (state) => state.prime,
     getNewGroups: (state) => state.new_groups,
+    getCheckAll: (state) => state.check_all,
+    getCheckedGroups: (state) => state.checked_groups,
+
+    getCheckedPortfolioGroups: (state) => state.checked_portfolio_groups,
 
     getVehicles: (state) => state.vehicle_filter,
     getVehicleNumbers: (state) => state.vehicle_number,
