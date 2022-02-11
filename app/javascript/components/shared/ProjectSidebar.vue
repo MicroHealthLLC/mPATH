@@ -39,13 +39,9 @@
 
            <div class="col py-0 text-right">
         
-            <span class="badge badge-secondary badge-pill pill" v-if="_isallowedContracts('read')">{{ 
+            <span class="badge badge-secondary badge-pill pill">{{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
-              }}
-            </span>
-              <span v-else class="badge badge-secondary badge-pill pill">{{ 
-              facilityGroupFacilities(group).projects.a.length              
               }}
             </span>
          </div>
@@ -74,7 +70,7 @@
               </router-link>
               </div>
                <div 
-                v-show="isContractsView && _isallowedContracts('read')"              
+                v-show="isContractsView && _isallowedContracts('read', c)"              
                 v-for="c in filteredContracts.filter(t => t.facilityGroupId == group.id)" 
                 :key="c.id + 'a'"
                 >              
@@ -213,11 +209,11 @@ export default {
        }
       this.$emit("on-expand-facility-group", group);
     },
-    _isallowedContracts(salut) {
-        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    _isallowedContracts(salut, c) {
+        let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return pPrivilege.contracts.includes(s);     
+        return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
     },
     _isallowedProgramSettings(salut) {
         let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
