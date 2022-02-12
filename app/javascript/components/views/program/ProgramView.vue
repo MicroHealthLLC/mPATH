@@ -1,8 +1,7 @@
 <template>
 <div>
   <div class="backBtn">  
-      <span class="float-right">
-        <router-link :to="goBack">
+      <span class="float-right" @click="goBack()">
         <button class="portfolioHomeBtn mh-orange btn btn-sm" style="cursor: pointer" @click="resetFlags">
           <i class="fal fa-arrow-alt-left text-light"></i>
         </button>
@@ -1551,7 +1550,7 @@ export default {
     'getHideBriefed',
     ]),
     goBack() {
-      return `/programs/${this.$route.params.programId}/sheet`;
+      return this.$router.go(-1);
     },
    projectObj() {
     return this.currentProject.facilities
