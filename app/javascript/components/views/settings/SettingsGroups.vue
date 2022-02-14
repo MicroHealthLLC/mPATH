@@ -271,7 +271,7 @@
         type="default" 
         v-tooltip="`Remove Group`"
         @click.prevent="removeGroup(scope.$index, scope.row)" 
-        v-if="scope.$index !== rowIndex" 
+        v-if="scope.$index !== rowIndex && _isallowedProgramSettings('delete')"
         class="bg-light">
          <i class="far fa-trash-alt text-danger"></i>
           </el-button> 
