@@ -175,26 +175,6 @@
          
             
           </el-table-column>
-          <el-table-column 
-            prop="phoneNumber"  
-            sortable 
-            width="200"
-            label="Phone Number"
-            >
-            <template slot-scope="scope">
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.phoneNumber"
-                controls-position="right"
-              ></el-input> -->
-            <span v-if="scope.row.phoneNumber">
-               {{ scope.row.phoneNumber }}
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-            
-            </template>
-          </el-table-column>
           <el-table-column
             prop="status"
             sortable
