@@ -4,7 +4,7 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div class="container-fluid px-0 mx-1">
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
             <form
               v-loading="!contractLoaded || saving"
@@ -589,9 +589,9 @@
               </div>
             </form>
           </div>
-          <!-- <div v-else class="text-danger mx-2 my-4">
+          <div v-else class="text-danger mx-2 my-4">
             You don't have permission to read!
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
