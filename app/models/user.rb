@@ -510,18 +510,22 @@ class User < ApplicationRecord
     
     cids = user.contract_ids #fp.pluck(:project_id)    
     
-    fph = Hash.new{|h, (k,v)| h[k] = {} }
+    fph = Hash.new{|h, (k,v)| h[k] = {authorized_contract_ids: []} }
     fph2 = Hash.new{|h, (k,v)| h[k] = [] }
 
     cp.each do |c|
       contract_ids = c.contract_ids
-      # f_permissions = c.attributes.slice("overview", "tasks", "notes", "issues", "risks", "lessons").clone.transform_values{|v| v.delete(""); v }
-      f_permissions = c.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
+      f_permissions = c.attributes.slice("overview", "tasks", "notes", "issues", "risks", "lessons").clone.transform_values{|v| v.delete(""); v }
+      # f_permissions = c.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
       f_permissions = f_permissions.transform_values{|v| v.delete(""); v}
 
       contract_ids.each do |fid|
         fph2[c.project_id.to_s] << fid.to_s 
         fph[c.project_id.to_s][fid] = f_permissions.merge!({"contract_id" => fid})
+        
+        if f_permissions["overview"].include?("R") || f_permissions["tasks"].include?("R") || f_permissions["notes"].include?("R") || f_permissions["issues"].include?("R") || f_permissions["risks"].include?("R") || f_permissions["lessons"].include?("R")
+          fph[c.project_id.to_s][:authorized_contract_ids] << fid
+        end
       end
     end
 
@@ -531,11 +535,14 @@ class User < ApplicationRecord
 
     project_contract_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
-      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
-      # p_privilege = (pp_hash[pid] || {}).slice("cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons")
+      # p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
+      p_privilege = (pp_hash[pid] || {}).slice("cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons")
       fids2.each do |ff|
-        # fph[pid][ff] = {overview: p_privilege["cn_overview"] , tasks: p_privilege["cn_tasks"], issues: p_privilege["cn_issues"] , risks: p_privilege["cn_risks"],lessons: p_privilege["cn_lessons"], contract_id: ff }
-        fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
+        fph[pid][ff] = {overview: p_privilege["cn_overview"] , tasks: p_privilege["cn_tasks"], issues: p_privilege["cn_issues"] , risks: p_privilege["cn_risks"],lessons: p_privilege["cn_lessons"], notes: p_privilege["cn_notes"], contract_id: ff }
+        # fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
+        if p_privilege["cn_overview"].include?("R") || p_privilege["cn_tasks"].include?("R") || p_privilege["cn_notes"].include?("R") || p_privilege["cn_issues"].include?("R") || p_privilege["cn_risks"].include?("R") || p_privilege["cn_lessons"].include?("R")
+          fph[pid][:authorized_contract_ids] << ff
+        end
       end       
     end
     fph.with_indifferent_access
@@ -636,11 +643,19 @@ class User < ApplicationRecord
   end
 
   def authorized_contract_ids(project_ids: [])
+    # if project_ids.any?
+    #   self.contract_privileges.where(project_id: project_ids).pluck(:contract_ids).flatten.compact
+    # else
+    #   self.contract_privileges.pluck(:contract_ids).flatten.compact
+    # end
+    c_ids = []
+    cph = self.contract_privileges_hash
     if project_ids.any?
-      self.contract_privileges.where(project_id: project_ids).pluck(:contract_ids).flatten.compact
+      project_ids.map{|pid| c_ids += cph[pid][:authorized_contract_ids] }
     else
-      self.contract_privileges.pluck(:contract_ids).flatten.compact
+      cph.map{|pid, h| c_ids += h[:authorized_contract_ids] }
     end
+    c_ids
   end
 
   def authorized_contracts(project_ids: [])

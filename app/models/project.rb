@@ -336,7 +336,8 @@ class Project < SortableRecord
     pph = user.project_privileges_hash
     fph = user.facility_privileges_hash
     cph = user.contract_privileges_hash[project.id.to_s] || {}
-    contract_ids = cph.keys
+    # contract_ids = cph.keys
+    contract_ids = user.authorized_contract_ids
     all_contracts = Contract.includes(:contract_facility_group, :contract_type, :contract_status, :contract_customer, :contract_vehicle, :contract_vehicle_number, :contract_number, :subcontract_number, :contract_prime, :contract_current_pop, :contract_classification).where(project_id: project.id, id: contract_ids )
 
     all_facility_projects.each do |fp|
