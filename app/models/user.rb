@@ -538,7 +538,7 @@ class User < ApplicationRecord
         fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
       end       
     end
-    fph
+    fph.with_indifferent_access
   end
 
   def project_privileges_hash
@@ -571,7 +571,7 @@ class User < ApplicationRecord
     #   end
     # end
 
-    ph
+    ph.with_indifferent_access
   end
 
   #This will build has like this
@@ -607,7 +607,7 @@ class User < ApplicationRecord
         fph[pid][ff] = p_privilege.clone.merge!({"facility_id" => ff})
       end       
     end
-    fph
+    fph.with_indifferent_access
   end
 
   #This will build has like this
@@ -632,7 +632,7 @@ class User < ApplicationRecord
     user_project_ids = user.project_ids.map(&:to_s)
     remaining_project_ids = user_project_ids - project_ids_with_privileges
 
-    ph
+    ph.with_indifferent_access
   end
 
   def authorized_contract_ids(project_ids: [])
@@ -713,7 +713,7 @@ class User < ApplicationRecord
         end       
       end
     rescue Exception => e
-      puts "Exception in  User#has_permission? #{e.message}"
+      puts "Exception in  User#has_contract_permission? #{e.message}"
       result = false
     end
     return result
