@@ -77,7 +77,7 @@
           class="btn btn-sm bg-primary text-light mr-2" 
           v-tooltip="`Save`"
           :class="[hideSaveBtn ? 'd-none': '']">
-        <i class="fal fa-save mr-2"></i>
+        <i class="fal fa-save"></i>
        </button>       
         <button 
           @click.prevent="addAnotherGroup" 
@@ -88,7 +88,7 @@
         <button 
           @click.prevent="closeAddGroupBtn" 
           v-tooltip="`Close`"
-          class="btn btn-sm bg-danger text-light mr-2" 
+          class="btn btn-sm mh-blue text-light mr-2" 
           :class="[!hideSaveBtn ? 'd-none': '']">
         <i class="fal fa-window-close"></i>
         </button>
@@ -312,9 +312,6 @@ export default {
     data() {    
       return {
         currentFacility: {},
-        // checkAll: false,
-        // checkedCities: ['Shanghai', 'Beijing'],
-        isIndeterminate: true,
         dialogVisible: false,
         dialog2Visible: false,
         currentTab: "tab1",
