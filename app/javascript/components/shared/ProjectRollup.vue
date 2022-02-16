@@ -1336,10 +1336,14 @@ export default {
       }
     },
     filteredLessons() {
-      let programLessonsObj = [];
-      if(!this.getShowProjectStats){
-        programLessonsObj = this.programLessons.filter(l => l.project_id)
-      } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+      // let programLessonsObj = [];
+      console.log("*******")
+      console.log(!this.getShowProjectStats)
+      // if(!this.getShowProjectStats){
+      //   programLessonsObj = this.programLessons.filter(l => l.project_id)
+      // } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+
+      let programLessonsObj = this.programLessons;
 
       let typeIds = _.map(this.taskTypeFilter, "id");
       return _.filter(programLessonsObj, (resource) => {
