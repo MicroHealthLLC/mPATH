@@ -27,10 +27,10 @@
 
           <div class="col-8 py-0 pr-0">
            <span class="d-flex">
-            <span v-show="expanded.id != group.id">
+            <span v-show="getExpandedGroup != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
             </span>
-            <span v-show="expanded.id == group.id">
+            <span v-show="getExpandedGroup == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
            <p class="clickable groupName expandText">{{ group.name }}</p>
@@ -39,15 +39,18 @@
 
            <div class="col py-0 text-right">
         
-            <span class="badge badge-secondary badge-pill pill">{{ 
+            <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
               }}
             </span>
+             <span class="badge badge-secondary badge-pill pill" v-else>
+               {{ facilityGroupFacilities(group).projects.a.length }}
+            </span>
          </div>
              
           </div>
-         <div v-show="expanded.id == group.id" class="ml-2">
+         <div v-show="getExpandedGroup == group.id" class="ml-2">
               <div
               v-for="facility in facilityGroupFacilities(group).projects.a"            
               :key="facility.id"  
@@ -117,11 +120,12 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacility", "currentFacilityGroup", "expanded", "currentContract"],
+  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract"],
    data() {
       return {
         value: '',
-        filteredGroupSize: null
+        filteredGroupSize: null,
+        
       }
     },
   computed: {
@@ -129,6 +133,7 @@ export default {
       "contentLoaded",
       'getShowAdminBtn',
       "currentProject",
+      "getExpandedGroup",
       "facilities",
       'contracts',
       'projects',
@@ -201,7 +206,7 @@ export default {
     },
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
+   ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn', 'SET_EXPANDED_GROUP']), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
@@ -261,11 +266,11 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        if (this.currentFacilityGroup){
-          this.expanded.id = this.currentFacilityGroup.id
+        if (this.currentFacility && !this.$route.params.contractId ){             
+          this.SET_EXPANDED_GROUP(this.currentFacility.facility.facilityGroupId)
         }
-         if (this.currentContract) {
-           this.expanded.id = this.currentContract.facilityGroupId
+         if (this.currentContract && !this.$route.params.projectId) {
+          this.SET_EXPANDED_GROUP(this.currentContract.facilityGroupId)
         }
         // Expand the project tree if there is only one project group on refresh
         if (
