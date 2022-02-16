@@ -73,7 +73,7 @@ class Api::V1::LessonsController < AuthenticatedController
       end
     elsif params[:project_id]
       allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
-      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
+      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v.is_a?(Hash) && v["lessons"].present? }.compact
       
       fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
       response_lessons = []
