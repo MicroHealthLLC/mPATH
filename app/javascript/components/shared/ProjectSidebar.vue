@@ -266,10 +266,10 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        if (this.currentFacility && !this.$route.params.contractId ){             
-          this.SET_EXPANDED_GROUP(this.currentFacility.facility.facilityGroupId)
+        if (this.currentFacility && !this.$route.params.contractId && this.currentFacilityGroup ){             
+          this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
-         if (this.currentContract && !this.$route.params.projectId) {
+         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facilityGroupId) {
           this.SET_EXPANDED_GROUP(this.currentContract.facilityGroupId)
         }
         // Expand the project tree if there is only one project group on refresh
