@@ -1,100 +1,117 @@
 <template>
   <div class="row">
-     <div class="col-md-2">
-      <SettingsSidebar/>
+    <div class="col-md-2">
+      <SettingsSidebar />
     </div>
-   <div class="col-md-10">
-  <div class="right-panel">  
-    <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
-     <el-breadcrumb-item :to="backToSettings">
-      <span style="cursor:pointer"><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS </span>
-     </el-breadcrumb-item>
-     <h4 class="mt-4 ml-3"> 
-       <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>  
-       CONTRACTS  
-       <span 
-          v-if="tableData && tableData.length"
-          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-          >{{ tableData.length }}
-        </span>
-         <span 
-          v-else
-          class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-          >{{ 0 }}
-        </span>
-      </h4>
-    </el-breadcrumb>   
- <div class="my-1 pb-2 buttonWrapper container-fluid">
-  <div class="row px-0">
-    <div class="col" v-if="_isallowedProgramSettings('write')">
-      <el-button @click.prevent="addContract" class="bg-primary text-light mb-2"> 
-      <i class="far fa-plus-circle mr-1"></i> Add Contract
-      </el-button>
-     </div>    
-     <div class="col">
-        <el-input
-          type="search"          
-          placeholder="Search Contracts"
-          aria-label="Search"            
-          aria-describedby="search-addon"    
-          v-model="search"
-          data-cy=""
-      >
-         <el-button slot="prepend" icon="el-icon-search"></el-button>    
-        </el-input>    
-     </div> 
-       <div class="col pl-0">
-         <el-select
-          class="w-100 mx-2"
-          v-model="C_projectGroupFilter" 
-          track-by="id"
-          value-key="id"
-          multiple
-          filterable
-          clearable
-          name="Project Group"         
-          placeholder="Filter Contracts By Group"
+    <div class="col-md-10">
+      <div class="right-panel">
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
+          <el-breadcrumb-item :to="backToSettings">
+            <span style="cursor:pointer"
+              ><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS
+            </span>
+          </el-breadcrumb-item>
+          <h4 class="mt-4 ml-3">
+            <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>
+            CONTRACTS
+            <span
+              v-if="tableData && tableData.length"
+              class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+              >{{ tableData.length }}
+            </span>
+            <span v-else class="ml-2 pb-1 badge badge-secondary badge-pill pill"
+              >{{ 0 }}
+            </span>
+          </h4>
+        </el-breadcrumb>
+        <div class="my-1 pb-2 buttonWrapper container-fluid">
+          <div class="row px-0">
+            <div class="col" v-if="_isallowedProgramSettings('write')">
+              <el-button
+                @click.prevent="addContract"
+                class="bg-primary text-light mb-2"
+              >
+                <i class="far fa-plus-circle mr-1"></i> Add Contract
+              </el-button>
+            </div>
+            <div class="col">
+              <el-input
+                type="search"
+                placeholder="Search Contracts"
+                aria-label="Search"
+                aria-describedby="search-addon"
+                v-model="search"
+                data-cy=""
+              >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+            </div>
+            <div class="col pl-0">
+              <el-select
+                class="w-100 mx-2"
+                v-model="C_projectGroupFilter"
+                track-by="id"
+                value-key="id"
+                multiple
+                filterable
+                clearable
+                name="Project Group"
+                placeholder="Filter Contracts By Group"
+              >
+                <el-option
+                  v-for="item in groupList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="tableData && _isallowedProgramSettings('read')"
+          v-loading="!contentLoaded"
+          element-loading-text="Fetching your data. Please wait..."
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
+          class=""
+        >
+          <el-table
+            :data="
+              tableData
+                .filter(
+                  (data) =>
+                    !search ||
+                    data.nickname.toLowerCase().includes(search.toLowerCase())
+                )
+                .reverse()
+            "
+            style="width: 100%"
+            height="450"
           >
-          <el-option
-          v-for="item in groupList"
-          :key="item.id"
-          :label="item.name"
-          :value="item">
-        </el-option>
-          
-          </el-select>
-       </div>
-      </div>
-  </div>
-  <div  
-   v-if="tableData && _isallowedProgramSettings('read')"
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"  
-    class="">
-   <el-table   
-     :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" 
-     style="width: 100%"  
-     height="450"
-     >
-    <el-table-column prop="nickname"  sortable  label="Contract"> 
-       <template slot-scope="scope">
-          <el-input size="small"
-            v-if="rowId == scope.row.id"
-            style="text-align:center"
-            v-model="scope.row.nickname" controls-position="right">
-            </el-input>
-         <span v-else> {{ scope.row.nickname }}</span>
-       </template>
-
-
-    </el-table-column>
-    <el-table-column prop="facility_group_name" sortable filterable label="Group">
-          <template slot-scope="scope">
-
-            {{ scope.row.facility_group_name }}
-            <!-- <el-select
+            <el-table-column prop="nickname" sortable label="Contract">
+              <template slot-scope="scope">
+                <el-input
+                  size="small"
+                  v-if="rowId == scope.row.id"
+                  style="text-align:center"
+                  v-model="scope.row.nickname"
+                  controls-position="right"
+                >
+                </el-input>
+                <span v-else> {{ scope.row.nickname }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="facility_group_name"
+              sortable
+              filterable
+              label="Group"
+            >
+              <template slot-scope="scope">
+                {{ scope.row.facility_group_name }}
+                <!-- <el-select
             class="w-100"
             v-model="scope.row.facility_group_id" 
             track-by="id"
@@ -111,88 +128,109 @@
         </el-option>
           
           </el-select> -->
-          <!-- <el-input size="small"
+                <!-- <el-input size="small"
             style="text-align:center"
             v-model="scope.row.facility_group_name"></el-input> -->
-       </template>
-    </el-table-column>
+              </template>
+            </el-table-column>
 
-     <el-table-column label="Actions">
-      <template slot-scope="scope" >
-      <el-button 
-        type="default" 
-        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
-        @click.prevent="saveEdits(scope.$index, scope.row)"   
-        v-tooltip="`Save`" 
-        class="bg-primary text-light">
-          <i class="far fa-save"></i>
-      </el-button>   <el-button 
-        type="default" 
-        v-tooltip="`Cancel Edit`"       
-        v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
-        @click.prevent="cancelEdits(scope.$index, scope.row)"  
-        class="bg-secondary text-light">
-      <i class="fas fa-ban"></i>
-        </el-button>
-        <el-button  
-        type="default" 
-        v-tooltip="`Edit Contract Name`"
-        @click.prevent="editMode(scope.$index, scope.row)" 
-        v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
-        class="bg-light">
-        <i class="fal fa-edit text-primary" ></i>
-        </el-button> 
+            <el-table-column label="Actions">
+              <template slot-scope="scope">
+                <el-button
+                  type="default"
+                  v-if="
+                    scope.$index == rowIndex &&
+                      _isallowedProgramSettings('write')
+                  "
+                  @click.prevent="saveEdits(scope.$index, scope.row)"
+                  v-tooltip="`Save`"
+                  class="bg-primary text-light"
+                >
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  v-tooltip="`Cancel Edit`"
+                  v-if="
+                    scope.$index == rowIndex &&
+                      _isallowedProgramSettings('write')
+                  "
+                  @click.prevent="cancelEdits(scope.$index, scope.row)"
+                  class="bg-secondary text-light"
+                >
+                  <i class="fas fa-ban"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  v-tooltip="`Edit Contract Name`"
+                  @click.prevent="editMode(scope.$index, scope.row)"
+                  v-if="
+                    scope.$index !== rowIndex &&
+                      _isallowedProgramSettings('write')
+                  "
+                  class="bg-light"
+                >
+                  <i class="fal fa-edit text-primary"></i>
+                </el-button>
 
-      <el-button 
-        v-if="_isallowedProgramSettings('delete')"
-        type="default" 
-        v-tooltip="`Delete`" 
-        @click.prevent="deleteSelectedContract(scope.$index, scope.row)" 
-        class="bg-light">
-        <i class="far fa-trash-alt text-danger"></i>
-        </el-button>
-       <el-button type="default" @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light">Go To Contract  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
-
-        </el-button>
-        <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-      </template>
-    </el-table-column>
-  
-   </el-table>  
-   
-  </div>
-   <span v-else class="mt-5">
-      NO DATA TO DISPLAY   
-   </span>
-   <el-dialog :visible.sync="dialogVisible" append-to-body center class="contractForm p-0">
-     <form
-      accept-charset="UTF-8"    
-      >      
-       <div class="form-group mx-3">
-          <label class="font-md"
-            >Contract Name <span style="color: #dc3545">*</span></label
-          >
-          <el-input
-            type="textarea"
-            v-model="contractNameText"
-            placeholder="Enter new contract name here"          
-            rows="1"          
-            name="Program Name"
-          />
-       </div>
-       <div class="form-group mx-3">
-          <label class="font-md"
-            >Contract Nickname <span style="color: #dc3545">*</span></label
-          >
-          <el-input
-            type="textarea"
-            v-model="contractNicknameText"
-            placeholder="Enter new contract name here"          
-            rows="1"          
-            name="Program Name"
-          />
-       </div>
-       <!-- <div class="form-group mx-3">
+                <el-button
+                  v-if="_isallowedProgramSettings('delete')"
+                  type="default"
+                  v-tooltip="`Delete`"
+                  @click.prevent="
+                    deleteSelectedContract(scope.$index, scope.row)
+                  "
+                  class="bg-light"
+                >
+                  <i class="far fa-trash-alt text-danger"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  @click.prevent="goToContract(scope.$index, scope.row)"
+                  class="bg-success text-light"
+                  >Go To Contract
+                  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+                </el-button>
+                <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <span v-else class="mt-5">
+          NO DATA TO DISPLAY
+        </span>
+        <el-dialog
+          :visible.sync="dialogVisible"
+          append-to-body
+          center
+          class="contractForm p-0"
+        >
+          <form accept-charset="UTF-8">
+            <div class="form-group mx-3">
+              <label class="font-md"
+                >Contract Name <span style="color: #dc3545">*</span></label
+              >
+              <el-input
+                type="textarea"
+                v-model="contractNameText"
+                placeholder="Enter new contract name here"
+                rows="1"
+                name="Program Name"
+              />
+            </div>
+            <div class="form-group mx-3">
+              <label class="font-md"
+                >Contract Nickname <span style="color: #dc3545">*</span></label
+              >
+              <el-input
+                type="textarea"
+                v-model="contractNicknameText"
+                placeholder="Enter new contract name here"
+                rows="1"
+                name="Program Name"
+              />
+            </div>
+            <!-- <div class="form-group mx-3">
           <label class="font-md"
             >Project Group Name <span style="color: #dc3545">*</span></label
           >
@@ -213,75 +251,77 @@
           </el-option>
           </el-select>
        </div> -->
-       <div class="form-group mx-3">
-        <label class="font-md"
-        >Group<span style="color: #dc3545">*</span></label
-        >
-         <el-select
-            class="w-100"
-            v-model="C_newContractGroupFilter" 
-            track-by="id"
-            value-key="id"
-            clearable
-            filterable
-            name="Project Group"         
-            placeholder="Select Group"
-          >
-          <el-option
-          v-for="item in groupList"
-          :key="item.id"
-          :label="item.name"
-          :value="item">
-        </el-option>
-          
-          </el-select>
-       </div>
-        <div class="right mr-2">
-        <button 
-          @click.prevent="saveNewContract"
-          v-if="contractNameText && contractNicknameText && C_newContractGroupFilter.id" 
-          class="btn btn-sm bg-primary text-light mr-2" 
-          :class="[hideSaveBtn ? 'd-none': '']">
-          Save
-        </button>    
-        <button 
-          disabled
-          v-else
-          class="btn btn-sm bg-primary text-light mr-2" 
-          >
-          Save
-        </button>          
-        <button 
-          @click.prevent="addAnotherContract" 
-          :class="[!hideSaveBtn ? 'd-none': '']" 
-          class="btn btn-sm bg-primary text-light mr-2">
-          <i class="far fa-plus-circle mr-1"></i> Add Another Contract
-        </button>
-        <button 
-          @click.prevent="closeAddContractBtn" 
-          class="btn btn-sm bg-danger text-light mr-2"  
-          :class="[!hideSaveBtn ? 'd-none': '']">
-          Close
-        </button>
-
-        </div>
-    </form>
-   </el-dialog>
-    
+            <div class="form-group mx-3">
+              <label class="font-md"
+                >Group<span style="color: #dc3545">*</span></label
+              >
+              <el-select
+                class="w-100"
+                v-model="C_newContractGroupFilter"
+                track-by="id"
+                value-key="id"
+                clearable
+                filterable
+                name="Project Group"
+                placeholder="Select Group"
+              >
+                <el-option
+                  v-for="item in groupList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <div class="right mr-2">
+              <button
+                @click.prevent="saveNewContract"
+                v-if="
+                  contractNameText &&
+                    contractNicknameText &&
+                    C_newContractGroupFilter.id
+                "
+                class="btn btn-sm bg-primary text-light mr-2"
+                :class="[hideSaveBtn ? 'd-none' : '']"
+              >
+                Save
+              </button>
+              <button
+                disabled
+                v-else
+                class="btn btn-sm bg-primary text-light mr-2"
+              >
+                Save
+              </button>
+              <button
+                @click.prevent="addAnotherContract"
+                :class="[!hideSaveBtn ? 'd-none' : '']"
+                class="btn btn-sm bg-primary text-light mr-2"
+              >
+                <i class="far fa-plus-circle mr-1"></i> Add Another Contract
+              </button>
+              <button
+                @click.prevent="closeAddContractBtn"
+                class="btn btn-sm bg-danger text-light mr-2"
+                :class="[!hideSaveBtn ? 'd-none' : '']"
+              >
+                Close
+              </button>
+            </div>
+          </form>
+        </el-dialog>
       </div>
     </div>
-   
   </div>
 </template>
 
 <script>
-
 // Compare both array objects, if obj a is also in obj b, push key 'yes' into that value[i] else, push key 'no'
 
 // Create two empty arrays
 // Push values into array
 // Compare arrays
-
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
@@ -289,7 +329,7 @@ import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
   name: "SettingsContracts",
   components: {
-   SettingsSidebar
+    SettingsSidebar,
   },
   data() {
     return {
@@ -299,138 +339,152 @@ export default {
       currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
-      projectNameText: '',
-      search: '',
+      projectNameText: "",
+      search: "",
       hideSaveBtn: false,
-      contractNameText: '',
-      contractNicknameText: '',
+      contractNameText: "",
+      contractNicknameText: "",
       expanded: {
         id: "",
       },
     };
   },
   mounted() {
-  this.fetchContracts(); 
-  this.fetchGroups(this.$route.params.programId)
+    this.fetchContracts();
+    this.fetchGroups(this.$route.params.programId);
   },
   methods: {
-   ...mapMutations([
-     'setProjectGroupFilter', 
-     'setContractTable', 
-     'setGroupFilter', 
-     'SET_CONTRACT_STATUS',
-     'setContractTypeFilter',
-     'setNewContractGroupFilter',
-     'SET_CONTRACT_GROUP_TYPES'
-     ]), 
-   ...mapActions(["createContract", "fetchContracts", "fetchGroups","updateContract", "deleteContract"]),
+    ...mapMutations([
+      "setProjectGroupFilter",
+      "setContractTable",
+      "setGroupFilter",
+      "SET_CONTRACT_STATUS",
+      "setContractTypeFilter",
+      "setNewContractGroupFilter",
+      "SET_CONTRACT_GROUP_TYPES",
+    ]),
+    ...mapActions([
+      "fetchCurrentProject",
+      "createContract",
+      "fetchContracts",
+      "fetchGroups",
+      "updateContract",
+      "deleteContract",
+    ]),
     _isallowedProgramSettings(salut) {
-      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
+      let pPrivilege = this.$programSettingPrivileges[
+        this.$route.params.programId
+      ];
+      let permissionHash = { write: "W", read: "R", delete: "D" };
+      let s = permissionHash[salut];
       return pPrivilege.admin_contracts.includes(s);
     },
-    goToContract(index, rows){        
+    goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       this.$router.push({
         name: "SheetContract",
         params: {
           programId: this.$route.params.programId,
-          contractId: rows.id.toString(),          
+          contractId: rows.id.toString(),
         },
       });
-    
     },
     saveNewContract() {
       // this.onSubmit()
-        let contractData = {
-          contract: {
-            nickname: this.contractNicknameText,
-            name: this.contractNameText,
-            // contract_status_id: null,  
-            facility_group_id: this.C_newContractGroupFilter.id,
-            project_id: this.$route.params.programId,
-            contract_type_id: this.C_typeFilter,
-          }
-        }       
-        this.createContract({
-            ...contractData,
-          })
-          this.hideSaveBtn = true;
-          // console.log(contractData)
+      let contractData = {
+        contract: {
+          nickname: this.contractNicknameText,
+          name: this.contractNameText,
+          // contract_status_id: null,
+          facility_group_id: this.C_newContractGroupFilter.id,
+          project_id: this.$route.params.programId,
+          contract_type_id: this.C_typeFilter,
+        },
+      };
+      this.createContract({
+        ...contractData,
+      });
+      this.hideSaveBtn = true;
+      this.fetchCurrentProject(this.$route.params.programId);
+      // console.log(contractData)
     },
     //  async onSubmit ()  {
     //      const formData = {
     //         contractName: this.contractNameText,
-    //         programName: this.currentProject.name, 
+    //         programName: this.currentProject.name,
     //         mpathInstance: this.$mpath_instance
 
     //       }
     //     await createUser({...formData})
     //     return { formData }
     //  }
-    
+
     saveEdits(index, rows) {
-        let id = rows.id;
-        let contractData = {
-          contract: {
-            nickname: rows.nickname,
-            name: rows.name,
-         
-            facility_group_id: rows.facility_group_id,  
-            project_id: this.$route.params.programId,
-            id:  id    
-          }
-        }
-        this.setNewContractGroupFilter(rows.facility_group_id)
-         this.updateContract({
-            ...contractData, id
-          })
-        this.rowIndex = null;
-       this.rowId = null;
+      let id = rows.id;
+      let contractData = {
+        contract: {
+          nickname: rows.nickname,
+          name: rows.name,
+
+          facility_group_id: rows.facility_group_id,
+          project_id: this.$route.params.programId,
+          id: id,
+        },
+      };
+      this.setNewContractGroupFilter(rows.facility_group_id);
+      this.updateContract({
+        ...contractData,
+        id,
+      });
+      this.rowIndex = null;
+      this.rowId = null;
     },
     cancelEdits(index, rows) {
-       this.rowIndex = null;
-       this.rowId = null;
+      this.rowIndex = null;
+      this.rowId = null;
     },
     editMode(index, rows) {
-      this.rowIndex = index
-      this.rowId = rows.id
+      this.rowIndex = index;
+      this.rowId = rows.id;
     },
     deleteSelectedContract(index, rows) {
       let id = rows.id;
-      this.$confirm(`Are you sure you want to delete ${rows.nickname}?`, 'Confirm Delete', {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          this.deleteContract(id).then((value) => {
-            if (value === 200) {
-              this.fetchContracts();
-              this.$message({
-                message: `${rows.nickname} was deleted successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
-          });
+      this.$confirm(
+        `Are you sure you want to delete ${rows.nickname}?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      ).then(() => {
+        this.deleteContract(id).then((value) => {
+          if (value === 200) {
+            this.fetchContracts();
+            this.$message({
+              message: `${rows.nickname} was deleted successfully.`,
+              type: "success",
+              showClose: true,
+            });
+          }
         });
+      });
     },
     addAnotherContract() {
       this.C_projectGroupFilter = null;
       this.contractNameText = "";
-      this.contractNicknameText = ""  
-      this.hideSaveBtn = false;  
+      this.contractNicknameText = "";
+      this.hideSaveBtn = false;
     },
     closeAddContractBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
     },
-    addContract(){
-      this.dialogVisible = true;    
+    addContract() {
+      this.dialogVisible = true;
       this.C_projectGroupFilter = null;
-      this.contractNameText = ""  
-      this.contractNicknameText = ""  
+      this.contractNameText = "";
+      this.contractNicknameText = "";
     },
   },
   computed: {
@@ -438,71 +492,72 @@ export default {
       "contentLoaded",
       "contractsLoaded",
       "getContractGroupTypes",
-      'getNewContractGroupFilter',
+      "getNewContractGroupFilter",
       "contractStatus",
-       "contracts",
-       "groups",
-       "getTransferData",
-      'getContractTable',
-      'getProjectGroupFilter',
-      'getGroupFilter',
+      "contracts",
+      "groups",
+      "getTransferData",
+      "getContractTable",
+      "getProjectGroupFilter",
+      "getGroupFilter",
       "getNewGroups",
-      'facilityGroups',
-      'currentProject'
-    ]), 
-     backToSettings() {
+      "facilityGroups",
+      "currentProject",
+    ]),
+    backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
-    tableData(){
-      if(this.contracts &&
-         this.contracts[0] && 
-         this.contracts[0].length > 0 
-         ){
-      let programContracts = this.contracts[0].filter(u => this.getTransferData.includes(u.facility_group_id))
-      let contractData = programContracts.map(t => t)
-      .filter((td) => {
-        //  console.log(td)
-          if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
-            let group = this.C_projectGroupFilter.map((t) => t.id);
-            return group.includes(td.facility_group_id);
-           
-          } else return true;
-        });
-       return contractData
-      }    
-   },
-   groupList() {
-     if (
-        this.groups &&        
-         this.groups.length > 0  &&
-         this.getTransferData && 
-         this.getTransferData.length > 0
-         )
-         {
-        return this.groups.filter(u => this.getTransferData.includes(u.id))
-         } else if (
-        this.groups &&        
-         this.groups.length > 0  &&
-         this.facilityGroups && this.facilityGroups.length > 0 &&
-         !this.getTransferData
-         )
-         {
-         let programGroupIds = this.facilityGroups.map(t => t.id)
-          return this.groups.filter(u => programGroupIds.includes(u.id))
-         } else return []
-    }, 
+    tableData() {
+      if (this.contracts && this.contracts[0] && this.contracts[0].length > 0) {
+        let programContracts = this.contracts[0].filter((u) =>
+          this.getTransferData.includes(u.facility_group_id)
+        );
+        let contractData = programContracts
+          .map((t) => t)
+          .filter((td) => {
+            //  console.log(td)
+            if (
+              this.C_projectGroupFilter &&
+              this.C_projectGroupFilter.length > 0
+            ) {
+              let group = this.C_projectGroupFilter.map((t) => t.id);
+              return group.includes(td.facility_group_id);
+            } else return true;
+          });
+        return contractData;
+      }
+    },
+    groupList() {
+      if (
+        this.groups &&
+        this.groups.length > 0 &&
+        this.getTransferData &&
+        this.getTransferData.length > 0
+      ) {
+        return this.groups.filter((u) => this.getTransferData.includes(u.id));
+      } else if (
+        this.groups &&
+        this.groups.length > 0 &&
+        this.facilityGroups &&
+        this.facilityGroups.length > 0 &&
+        !this.getTransferData
+      ) {
+        let programGroupIds = this.facilityGroups.map((t) => t.id);
+        return this.groups.filter((u) => programGroupIds.includes(u.id));
+      } else return [];
+    },
 
     C_typeFilter: {
-        get() {
-          return this.getContractGroupTypes
-        },
-        set(value) {
-          this.SET_CONTRACT_GROUP_TYPES(value)
-        }      
+      get() {
+        return this.getContractGroupTypes;
       },
+      set(value) {
+        this.SET_CONTRACT_GROUP_TYPES(value);
+      },
+    },
     // Filter when adding new Project
-     C_projectGroupFilter: {
-       get() {
+    C_projectGroupFilter: {
+      get() {
         return this.getGroupFilter;
       },
       set(value) {
@@ -511,8 +566,8 @@ export default {
       },
     },
 
-     C_newContractGroupFilter: {
-       get() {
+    C_newContractGroupFilter: {
+      get() {
         return this.getNewContractGroupFilter;
       },
       set(value) {
@@ -529,12 +584,12 @@ export default {
             message: `Contract saved successfully.`,
             type: "success",
             showClose: true,
-          });     
+          });
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts();
         }
       },
-    },  
+    },
   },
 };
 </script>
@@ -543,13 +598,13 @@ export default {
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
-.right{
+.right {
   text-align: right;
 }
 .fa-calendar {
-  font-size: x-large; 
+  font-size: x-large;
 }
-/deep/.el-table th.el-table__cell>.cell {
+/deep/.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1.15rem;
 }
@@ -581,27 +636,27 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
-/deep/.el-table__row .el-input .el-input__inner{
-  border-style:none;
+/deep/.el-table__row .el-input .el-input__inner {
+  border-style: none;
   font-size: 16px !important;
 }
-/deep/.hover-row .el-input .el-input__inner{
-  border-style:solid;   
+/deep/.hover-row .el-input .el-input__inner {
+  border-style: solid;
 }
 /deep/.el-dialog {
-  width:30%;
-  border-top: solid 5px  #1D336F !important;
+  width: 30%;
+  border-top: solid 5px #1d336f !important;
 }
 /deep/.el-table {
-  .el-input__inner { 
-  font-size: 16px !important;
+  .el-input__inner {
+    font-size: 16px !important;
   }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
-  background-color: #DC3545;
-    border-radius: 50%;
-    color: white;
-    padding: 2px;
-    font-size: .7rem;
+  background-color: #dc3545;
+  border-radius: 50%;
+  color: white;
+  padding: 2px;
+  font-size: 0.7rem;
 }
 </style>
