@@ -415,15 +415,13 @@ export default {
     SettingsSidebar,
     FormTabs,
   },
-  data() {
-    return {
-      currentFacility: {},
-      // checkAll: false,
-      // checkedCities: ['Shanghai', 'Beijing'],
-      isIndeterminate: true,
-      dialogVisible: false,
-      dialog2Visible: false,
-      currentTab: "tab1",
+
+    data() {    
+      return {
+        currentFacility: {},
+        dialogVisible: false,
+        dialog2Visible: false,
+        currentTab: "tab1",
       tabs: [
         {
           label: "MANAGE GROUPS",

@@ -17,7 +17,7 @@
             >{{ currentProject.facilities.length }}
             </span>
         </el-button>
-        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2"> 
+        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2" v-show="isSheetsView"> 
           <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
           CONTRACTS 
             <span 
@@ -388,32 +388,32 @@
                     </div>
                     </div>
                     <div
-                      class="row"
                       v-for="(issue, index) in issueTaskCATEGORIES"
                       :key="index"
                     >
-                      <div class="col-6">
-                        <span> {{ issue.name }}</span>                      
-                      </div>
-                      <div class="col-1 pl-0">    
-                                            
-                        <span                       
-                        class="badge badge-secondary font-sm badge-pill">{{
-                          issue.count
-                        }}</span>
-                      </div>
-                      <div class="col-5">
-                        <span
-                          class="w-100 my-1 progress ml-2 pg-content"
-                          :class="{ 'progress-0': issue.progress <= 0 }"
-                        >
-                          <div
-                            class="progress-bar bg-info"
-                            :style="`width: ${issue.progress}%`"
+                      <div class="row" v-if="issue._display">
+                        <div class="col-6">
+                          <span> {{ issue.name }}</span>
+                        </div>
+                        <div class="col-1 pl-0">
+                          <span
+                          class="badge badge-secondary font-sm badge-pill">{{
+                            issue.count
+                          }}</span>
+                        </div>
+                        <div class="col-5">
+                          <span
+                            class="w-100 my-1 progress ml-2 pg-content"
+                            :class="{ 'progress-0': issue.progress <= 0 }"
                           >
-                            {{ issue.progress }} %
-                          </div>
-                        </span>
+                            <div
+                              class="progress-bar bg-info"
+                              :style="`width: ${issue.progress}%`"
+                            >
+                              {{ issue.progress }} %
+                            </div>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1386,6 +1386,7 @@ export default {
     },
     filteredIssues() {
       let typeIds = _.map(this.issueTypeFilter, "id");
+      let taskTypeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.issueStageFilter, "id");
       let severityIds = _.map(this.issueSeverityFilter, "id");
       let issues = this.currentProject ? _.flatten(
@@ -1415,21 +1416,32 @@ export default {
           valid = valid && severityIds.includes(resource.issueSeverityId);
         if (stageIds.length > 0)
           valid = valid && stageIds.includes(resource.issueStageId);
+        if (taskTypeIds.length > 0)
+          valid = valid && taskTypeIds.includes(resource.taskTypeId);
         return valid;
       });
     },
     issueTaskCATEGORIES() {
-      let issues = new Array();
-      let group = _.groupBy(this.filteredIssues, "taskTypeName");
-      for (let type in group) {
+      let names =
+        this.taskTypeFilter &&
+        this.taskTypeFilter.length &&
+        _.map(this.taskTypeFilter, "name");
+      let taskTypes = new Array();
+      for (let type of this.taskTypes) {
         if (!type || type == "null") continue;
-        issues.push({
-          name: type,
-          count: group[type].length,
-          progress: Number((_.meanBy(group[type], "progress") || 0).toFixed(0)),
+        let issues = _.filter(
+          this.filteredIssues,
+          (t) => t.taskTypeId == type.id
+        );
+        taskTypes.push({
+          name: type.name,
+          _display:
+            issues.length > 0 && (names ? names.includes(type.name) : true),
+          count: issues.length,
+          progress: Number((_.meanBy(issues, "progress") || 0).toFixed(0)),
         });
       }
-      return issues;
+      return taskTypes;
     },
     lessonStats() {
       let lessons = new Array();

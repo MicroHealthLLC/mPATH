@@ -271,7 +271,10 @@ export default {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
-      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
+      if(this.isMapView){
+        window.location.pathname = `/programs/${this.programId}/map/projects/${rows.id}/`
+      } else  window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
+     
       // router.push more efficient but programPrivileges errors persist unless reload
       // this.$router.push({
       //   name: "SheetProject",
@@ -365,6 +368,9 @@ export default {
       "facilityGroupFacilities",
       "filteredFacilityGroups",
     ]),
+    isMapView() {
+      return this.$route.name.includes("Map");
+    },
     // Filter for Projects Table
     C_groupFilter: {
       get() {
