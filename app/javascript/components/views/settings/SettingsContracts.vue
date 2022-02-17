@@ -405,7 +405,7 @@ export default {
         ...contractData,
       });
       this.hideSaveBtn = true;
-      this.fetchCurrentProject(this.$route.params.programId);
+      // this.fetchCurrentProject(this.$route.params.programId);
       // console.log(contractData)
     },
     //  async onSubmit ()  {
@@ -508,9 +508,11 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData() {
-      if (this.contracts && this.contracts[0] && this.contracts[0].length > 0) {
-        let programContracts = this.contracts[0].filter((u) =>
-          this.getTransferData.includes(u.facility_group_id)
+      if (this.currentProject && this.currentProject.contracts.length > 0 && this.facilityGroups) {
+        let groups = this.facilityGroups.map(g => g.id)
+        let contracts = this.currentProject.map(cp = cp.contracts)
+        let programContracts = contracts.filter((u) =>
+            groups.includes(u.facility_group_id)
         );
         let contractData = programContracts
           .map((t) => t)
@@ -528,19 +530,11 @@ export default {
       }
     },
     groupList() {
-      if (
-        this.groups &&
-        this.groups.length > 0 &&
-        this.getTransferData &&
-        this.getTransferData.length > 0
-      ) {
-        return this.groups.filter((u) => this.getTransferData.includes(u.id));
-      } else if (
+    if (
         this.groups &&
         this.groups.length > 0 &&
         this.facilityGroups &&
-        this.facilityGroups.length > 0 &&
-        !this.getTransferData
+        this.facilityGroups.length > 0 
       ) {
         let programGroupIds = this.facilityGroups.map((t) => t.id);
         return this.groups.filter((u) => programGroupIds.includes(u.id));
@@ -587,6 +581,7 @@ export default {
           });
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts();
+          this.fetchCurrentProject(this.$route.params.programId);
         }
       },
     },

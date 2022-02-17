@@ -413,13 +413,10 @@ export default {
       if (
         // this.projectsLoaded &&
         this.facilities &&
-        this.facilities.length > 0 && 
-        this.getTransferData
+        this.facilities.length > 0 
       ) {
         return (
-          this.facilities.filter(u => this.getTransferData.includes(u.facilityGroupId))
-            // .map((f) => f.facility)
-            .filter((td) => {
+          this.facilities.filter((td) => {
               if (this.C_groupFilter && this.C_groupFilter.length > 0) {
                 let group = this.C_groupFilter.map((t) => t.name);
                 return group.includes(td.facilityGroupName);
