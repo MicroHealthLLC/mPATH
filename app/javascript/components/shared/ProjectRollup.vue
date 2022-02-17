@@ -865,7 +865,7 @@
           </div>
           <div v-if="contentLoaded">
           <div
-           style="height:215px; overflow-y:auto" 
+           style="height:215px; overflow-y:auto; overflow-x:hidden;"
            class="pb-2"
           >
          <div class="row py-1">
@@ -969,7 +969,7 @@
             </div>
           </div>
            <div
-           style="height:215px; overflow-y:auto" 
+           style="height:215px; overflow-y:auto; overflow-x:hidden;"
            class="pb-2"
           >
           <div class="row py-1">
@@ -1022,7 +1022,7 @@
            <el-collapse-item title="..." name="1">
           <div v-if="contentLoaded && C_facilityCount > 0">
             <div  
-            style="height:215px; overflow-y:auto" 
+            style="height:215px; overflow-y:auto; overflow-x:hidden;"
             class="pb-2"
             >
                <div class="row">
