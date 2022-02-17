@@ -9,7 +9,7 @@
     <div class="col-md-2">
       <ProjectSidebar
         :current-facility-group="currentFacilityGroup"
-        :expanded="expanded"
+        :expanded="C_expanded"
         :current-facility="currentFacility"
         @on-expand-facility-group="expandFacilityGroup"
         @on-expand-facility="showFacility"
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 
 export default {
@@ -90,20 +90,20 @@ export default {
   data() {
     return {
       currentFacility: {},
-      currentFacilityGroup: {},
-      expanded: {
-        id: "",
-      },
+      currentFacilityGroup: {},     
     };
   },
   methods: {
-    expandFacilityGroup(group) {
-      if (group.id == this.expanded.id) {
-        this.expanded.id = "";
-      } else {
-        this.expanded.id = group.id;
+    ...mapMutations([
+      "SET_EXPANDED_GROUP"
+     ]), 
+   expandFacilityGroup(group) {      
+     if (group.id == this.getExpandedGroup) {
+         this.SET_EXPANDED_GROUP('')
+       } else {
+       this.SET_EXPANDED_GROUP(group.id)
         this.currentFacilityGroup = group;
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
+        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};     
       }
     },
     showFacility(facility) {
@@ -114,9 +114,19 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "facilities",
+      "getExpandedGroup",
       "facilityGroupFacilities",
       "facilityGroups",
     ]),
+   C_expanded: {
+      get() {
+        return this.getExpandedGroup;
+      },
+      set(value) {
+        // console.log(`expanded setter value: ${value}`)
+        this.SET_EXPANDED_GROUP(value);
+      },
+    },
   },
   beforeMount() {
     if (this.contentLoaded && this.$route.params.projectId) {
@@ -137,12 +147,12 @@ export default {
     },
     currentFacility: {
       handler() {
-        this.currentFacilityGroup = this.facilityGroups.find(
+        if(this.currentFacility){
+            this.currentFacilityGroup = this.facilityGroups.find(
           (group) => group.id == this.currentFacility.facility.facilityGroupId
         );
-
-        this.expanded.id = this.currentFacilityGroup.id;
-      },
+       }
+      }      
     },
     facilities: {
       handler() {

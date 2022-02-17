@@ -1,5 +1,7 @@
 <template>
-  <div class="row">
+  <div 
+   class="row"
+  >
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -69,15 +71,15 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="tableData && _isallowedProgramSettings('read')"
-          v-loading="!contentLoaded"
-          element-loading-text="Fetching your data. Please wait..."
-          element-loading-spinner="el-icon-loading"
-          element-loading-background="rgba(0, 0, 0, 0.8)"
-          class=""
+        <div       
+        v-loading="!contentLoaded"
+        element-loading-text="Fetching your data. Please wait..."
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)" 
+        class=""
         >
           <el-table
+            v-if="tableData && _isallowedProgramSettings('read')"    
             :data="
               tableData
                 .filter(
@@ -104,33 +106,17 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="facility_group_name"
-              sortable
               filterable
               label="Group"
             >
               <template slot-scope="scope">
-                {{ scope.row.facility_group_name }}
-                <!-- <el-select
-            class="w-100"
-            v-model="scope.row.facility_group_id" 
-            track-by="id"
-            value-key="id"
-            filterable
-            name="Project Group"         
-            placeholder="Select Group"
-          >
-          <el-option
-          v-for="item in getNewGroups"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-          
-          </el-select> -->
-                <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.facility_group_name"></el-input> -->
+            <span
+            v-if="facilityGroups && facilityGroups.length > 0"
+            >
+           {{ facilityGroups.find((c) => c.id == scope.row.facilityGroupId).name }}
+
+            </span>
+
               </template>
             </el-table-column>
 
@@ -196,9 +182,9 @@
             </el-table-column>
           </el-table>
         </div>
-        <span v-else class="mt-5">
+        <!-- <span v-else class="mt-5">
           NO DATA TO DISPLAY
-        </span>
+        </span> -->
         <el-dialog
           :visible.sync="dialogVisible"
           append-to-body
@@ -381,13 +367,14 @@ export default {
     },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-      this.$router.push({
-        name: "SheetContract",
-        params: {
-          programId: this.$route.params.programId,
-          contractId: rows.id.toString(),
-        },
-      });
+      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
+      // this.$router.push({
+      //   name: "SheetContract",
+      //   params: {
+      //     programId: this.$route.params.programId,
+      //     contractId: rows.id.toString(),
+      //   },
+      // });
     },
     saveNewContract() {
       // this.onSubmit()
@@ -510,9 +497,9 @@ export default {
     tableData() {
       if (this.currentProject && this.currentProject.contracts.length > 0 && this.facilityGroups) {
         let groups = this.facilityGroups.map(g => g.id)
-        let contracts = this.currentProject.map(cp = cp.contracts)
+        let contracts = this.currentProject.contracts.map(cp => cp)
         let programContracts = contracts.filter((u) =>
-            groups.includes(u.facility_group_id)
+            groups.includes(u.facilityGroupId)
         );
         let contractData = programContracts
           .map((t) => t)
@@ -523,7 +510,7 @@ export default {
               this.C_projectGroupFilter.length > 0
             ) {
               let group = this.C_projectGroupFilter.map((t) => t.id);
-              return group.includes(td.facility_group_id);
+              return group.includes(td.facilityGroupId);
             } else return true;
           });
         return contractData;

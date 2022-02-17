@@ -14,7 +14,6 @@
         :current-facility="currentFacility"
         :current-contract="currentContract"
         @on-expand-facility-group="expandFacilityGroup"
-        @on-expand-contract-group="expandContractGroup"
         @on-expand-facility="showFacility"
         @on-expand-contract="showContract"
       />
@@ -105,27 +104,28 @@ export default {
      ...mapMutations([
       "SET_EXPANDED_GROUP"
      ]), 
-    expandFacilityGroup(group) {
-      
-     if (group &&  this.getExpandedGroup !== group.id ) {
+    expandFacilityGroup(group) {      
+     if (group && this.getExpandedGroup !== group.id ) {
       this.SET_EXPANDED_GROUP(group.id);
         this.currentFacilityGroup = group;
+         this.currentContractGroup = group
        } else {
         this.SET_EXPANDED_GROUP('');
         this.currentFacilityGroup = {};
+          this.currentContractGroup = {};
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};     
       }
     },
-     expandContractGroup(group) {
-      if (group &&  this.getExpandedGroup !== group.id) {
-         this.SET_EXPANDED_GROUP(group.id);
-         this.currentContractGroup = group;
-      } else {
-       this.SET_EXPANDED_GROUP('');
-       this.currentContractGroup = {};
-      //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
-      }
-    },
+    //  expandContractGroup(group) {
+    //   if (group &&  this.getExpandedGroup !== group.id) {
+    //      this.SET_EXPANDED_GROUP(group.id);
+    //      this.currentContractGroup = group;
+    //   } else {
+    //    this.SET_EXPANDED_GROUP('');
+    //    this.currentContractGroup = {};
+    //   //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
+    //   }
+    // },
     showFacility(facility) {
       this.currentFacility = facility;
     },
@@ -154,7 +154,7 @@ export default {
         return this.getExpandedGroup;
       },
       set(value) {
-        console.log(`expanded setter value: ${value}`)
+        // console.log(`expanded setter value: ${value}`)
         this.SET_EXPANDED_GROUP(value);
       },
     },
@@ -197,7 +197,6 @@ export default {
         }
          else if (this.$route.params.contractId) {
           this.currentContract = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId);
-          // this.expanded.id = this.currentContract.facility_group_id
         }
 
       },
@@ -207,23 +206,16 @@ export default {
         if(this.$route.params.projectId) {
           this.currentFacility = this.currentProject.facilities.find((facility) => facility.facilityId == this.$route.params.projectId)         
           this.currentFacilityGroup = this.facilityGroups.find((group) => group.id == this.currentFacility.facility.facilityGroupId);
-         
-          // this.expanded.id = this.currentFacilityGroup.id; //expanded.id value not coming from here
-        } else if(this.$route.params.contractId) {       
-            this.currentFacility = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId)
-            //  this.expanded.id = this.currentFacilityGroup.id;
-         }
-     
+        }      
       },
     },
-
-    currentContract: {
+     currentContract: {
       handler() {
-      if (this.$route.params.contractId && this.currentContract) {  
-        // this.expanded.id = this.currentContract.facilityGroupId;   
-      }
-        // console.log(this.expanded.id)
-       
+       if(this.$route.params.contractId) {       
+            this.currentContract = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId)
+            this.currentContractGroup = this.facilityGroups.find((group) => group.id == this.currentContract.facilityGroupId);
+        }
+     
       },
     },
     "$route.path": {
@@ -233,8 +225,6 @@ export default {
          }
          if (this.$route.params.contractId) {
            this.currentContract = this.currentProject.contracts.find((c) => c.id == this.$route.params.contractId)
-          //  this.expanded.id = this.currentContract.facilityGroupId;   
-
        }
 
       },

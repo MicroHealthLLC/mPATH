@@ -120,7 +120,7 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract"],
+  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract", "currentContractGroup"],
    data() {
       return {
         value: '',
@@ -247,6 +247,7 @@ export default {
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
+        this.SET_EXPANDED_GROUP("")
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );
@@ -270,7 +271,7 @@ export default {
           this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
          if (this.currentContract && !this.$route.params.projectId && this.currentContract.facilityGroupId) {
-          this.SET_EXPANDED_GROUP(this.currentContract.facilityGroupId)
+          this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
         }
         // Expand the project tree if there is only one project group on refresh
         if (
