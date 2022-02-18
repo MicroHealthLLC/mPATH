@@ -66,8 +66,8 @@ export default {
   name: "Tabsbar",
   computed: {
     isSheetsView() {
-      return this.$route.name.includes("Sheet") || 
-      this.$route.name.includes("Contract") 
+      return this.$route.name.includes("Sheet") ||
+      this.$route.name.includes("Contract") &&  !this.$route.name.includes("SettingsContracts")
     },
     isContractView() {
       return this.$route.name.includes("Contract") && 

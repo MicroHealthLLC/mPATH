@@ -23,6 +23,7 @@ class Contract < ApplicationRecord
   has_many :lessons
   # has_many :notes, as: :noteable, dependent: :destroy
 
+
   before_save :assign_default_contract_type
 
   validates_presence_of :nickname
