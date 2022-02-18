@@ -3,7 +3,7 @@ ActiveAdmin.register ContractStatus do
   actions :all, except: [:show]
   
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Contract Statues', admin_contract_statuses_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Contract Statuses', admin_contract_statuses_path)]
     if %(show edit).include?(params['action'])
       links << link_to(contract_status.name, edit_admin_contract_status_path)
     end
