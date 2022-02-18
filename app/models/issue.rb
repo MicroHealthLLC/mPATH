@@ -53,6 +53,17 @@ class Issue < ApplicationRecord
     }
   end
 
+  def update_facility_project
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progerss)
+    end
+  end
+
   def portfolio_json(facility_groups: [], files: false)
     self.on_hold = false if draft & on_hold
 
