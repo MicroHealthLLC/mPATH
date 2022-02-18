@@ -420,26 +420,27 @@ class Project < SortableRecord
     all_contracts.each do |c|
 
       c_hash = c.to_json(options: {include_associated_names: true})
-
+      
+      c_hash[:tasks] = []
       if user.has_contract_permission?(resource: 'tasks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
         tasks = all_tasks.select{|t| t.contract_id == c.id }.compact.uniq
-        c_hash[:tasks] = []
+        
         tasks.each do |t| 
           c_hash[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
         end
       end
 
+      c_hash[:issues] = []
       if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
-        issues = all_issues.select{|t| t.contract_id == c.id }.compact.uniq
-        c_hash[:issues] = []
+        issues = all_issues.select{|t| t.contract_id == c.id }.compact.uniq        
         issues.each do |i| 
           c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
         end
       end
 
+      c_hash[:risks] = []
       if user.has_contract_permission?(resource: 'risks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
-        risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq
-        c_hash[:risks] = []
+        risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq        
         risks.each do |r| 
           c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
         end
