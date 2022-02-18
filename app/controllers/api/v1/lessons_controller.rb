@@ -1,7 +1,7 @@
 class Api::V1::LessonsController < AuthenticatedController 
 # NOTE: uncomment this when we move to token based authentication
 # class Api::V1::LessonsController < Api::ApplicationController
-  before_action :authorize_request!, only: [:index, :count, :show]
+  before_action :authorize_request!, only: [:show]
 
   def authorize_request!
     if params[:contract_id]
