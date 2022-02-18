@@ -1337,8 +1337,8 @@ export default {
     },
     filteredLessons() {
       // let programLessonsObj = [];
-      console.log("*******")
-      console.log(!this.getShowProjectStats)
+      // console.log("*******")
+      // console.log(!this.getShowProjectStats)
       // if(!this.getShowProjectStats){
       //   programLessonsObj = this.programLessons.filter(l => l.project_id)
       // } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
@@ -1363,6 +1363,7 @@ export default {
         : this.filteredAllTasks;
       let taskIssueUsers = this.getTaskIssueUserFilter;
       return _.filter(tasks, (resource) => {
+        // console.log(resource)
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),

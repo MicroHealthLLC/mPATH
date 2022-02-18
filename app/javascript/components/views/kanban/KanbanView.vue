@@ -23,7 +23,7 @@
               $route.name === 'KanbanRisks'
        
        " class="d-flex align-items-center ml-1">
-           <i class="fal fa-clipboard-list mh-green-text"></i>
+           <i class="fal fa-clipboard-list mh-green-text pr-2"></i>
           <h5 class="f-head my-1 mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>   

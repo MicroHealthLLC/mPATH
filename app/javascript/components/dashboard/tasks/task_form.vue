@@ -9,7 +9,6 @@
    <form
     id="tasks-form"
     @submit.prevent="saveTask"
-    :load="log(task)"
     class="mx-auto tasks-form"
     :class="{ 'vh100' : !contentLoaded}"
     accept-charset="UTF-8"     
@@ -1444,16 +1443,10 @@ export default {
           return fPrivilege.tasks.includes(s); 
         }
      },
-     log(e){
-console.log(e)
-     },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
       }
-    },
-  log(e){
-      // console.log("taskSorted: " + e)
     },
     clearStages() {
       this.selectedTaskStage = null;
