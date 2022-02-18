@@ -431,8 +431,9 @@
     <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No Risks found...</h6>
   </div>
   </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-
+   <div v-else class="text-danger mx-2 mt-2">
+    <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+  </div>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
 
     <table

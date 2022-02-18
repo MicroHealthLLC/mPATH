@@ -56,7 +56,7 @@ export default {
           label: "Tasks",
           key: "tasks",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
         {
           label: "Issues",
@@ -68,7 +68,7 @@ export default {
           label: "Risks",
           key: "risks",
           closable: false,
-          hidden: false,
+          hidden: false, 
         },
         {
           label: "Lessons",
@@ -107,64 +107,81 @@ export default {
           label: "Issues",
           key: "issues",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
         {
           label: "Risks",
           key: "risks",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
         {
           label: "Lessons",
           key: "lessons",
           closable: false, 
-          hidden: false,
+         hidden: false,
         },
         {
           label: "Notes",
           key: "notes",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
       ],
     };
   },
   mounted() {
-    // this.currentTab = 
-    var programId = this.$route.params.programId;
-    var projectId = this.$route.params.projectId;
-    var contractId = this.$route.params.contractId;
+   var contractId = this.$route.params.contractId;
     if(contractId){
-       let cPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]  ;
-     if (cPrivilege) {
-      for (var i = 0; i < this.cTabs.length; i++) {
-        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        if(this.cTabs[i].key == 'contract'){        
-          continue
-        }
-       if (cPrivilege[this.cTabs[i].key] && cPrivilege[this.cTabs[i].key].length) {
-           this.cTabs[i].hidden = cPrivilege[this.cTabs[i].key].length < 1;
-        }     
-      }
-    }
+       for (let privelegeTab in this.privileges) {
+        // if (this.privileges[privelegeTab].length > 0 && privelegeTab !== 'contract_id') {
+        //   // console.log(`${privelegeTab}`)
+        //     for (let i = 0; i < this.cTabs.length; i++) {
+        //       if (privelegeTab == this.cTabs[i].key){
+        //         this.cTabs[i].hidden = false
+        //       }
+        //       // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+        //       if (privelegeTab == "overview"){
+        //           this.cTabs[1].hidden = false
+        //       }
+        //     }
+        // }   
+         if (this.privileges[privelegeTab].length <= 0 && privelegeTab !== 'contract_id') {
+          // console.log(`${privelegeTab}`)
+            for (let i = 0; i < this.cTabs.length; i++) {
+              if (privelegeTab == this.cTabs[i].key){
+                this.cTabs[i].hidden = true
+              }
+              // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+              if (privelegeTab == "overview"){
+                  this.cTabs[1].hidden = true
+              }
+            }
+        }  
+      }    
     } else {
-    let fPrivilege = this.$projectPrivileges[programId][projectId];
-    if (fPrivilege) {
-      for (var i = 0; i < this.pTabs.length; i++) {
-        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        if(this.pTabs[i].key == 'project'){
-          continue
-        }
-
-        if (fPrivilege[this.pTabs[i].key] && fPrivilege[this.pTabs[i].key].length) {
-           this.pTabs[i].hidden = fPrivilege[this.pTabs[i].key].length < 1;          
-        }     
-      }
-    }
+      for (let privelegeTab in this.privileges) {
+        for (let b = 0; b < this.pTabs.length; b++){
+          if (this.privileges[privelegeTab].length <= 0 && privelegeTab == this.pTabs[b].key) {
+          // console.log(`${privelegeTab}`)
+            for (let i = 0; i < this.pTabs.length; i++) {
+              if (privelegeTab == this.pTabs[i].key){
+                this.pTabs[i].hidden = true
+              }
+              // this.pTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+              if (privelegeTab == "overview"){
+                  this.pTabs[1].hidden = true
+              }
+            }
+         }   
+        }      
+      } 
+       
     }
   },
   methods: {
+    // if no privilege to tab, modify this logic to re-route to default project or contract tab
+    // instead of routing user to no tab permissions message
     changeTab(tab) {
        if (tab.key === "project"){
         this.$router.push(this.p_path + `/`);
@@ -190,6 +207,14 @@ export default {
         .filter((key) =>
           this.$route.name.toUpperCase().includes(key.toUpperCase())
         );
+    },
+    privileges(){
+      let programId = this.$route.params.programId
+      let projectId = this.$route.params.projectId;
+      let contractId = this.$route.params.contractId;
+       if(contractId){
+         return this.$contractPrivileges[programId][this.$route.params.contractId] 
+      } else return this.$projectPrivileges[programId][projectId];
     },
     currentCtab() {
       let c = this.cTabs.map(t => t.key)
@@ -226,49 +251,50 @@ export default {
       }
      },
   },
-//   watch: {
-//     "$route.path": {
-//       handler() {
-//         if (this.contentLoaded) {
-
-// // For Contract Privileges
-//           let cPrivileges = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]  
-
-// // For Project Privileges
-//           let pPrivileges = this.$projectPrivileges[
-//             this.$route.params.programId
-//           ][this.$route.params.projectId];
-
-
-//           if (cPrivileges) {
-//             for (var i = 0; i < this.cTabs.length; i++) {
-//               if(this.cTabs[i].key == 'contract'){
-//                 continue
-//               }
-//               this.cTabs[i].hidden = cPrivileges[this.cTabs[i].key].length < 1;
-//             //  debugger
-                  
-//             }
-//           }
+watch: {
+    "$route.path": {
+      handler() {
+        if (this.contentLoaded) {
+        var contractId = this.$route.params.contractId;
+        if(contractId){
+          for (let privelegeTab in this.privileges) {
+            if (this.privileges[privelegeTab].length <= 0 && privelegeTab !== 'contract_id') {
+              // console.log(`${privelegeTab}`)
+                for (let i = 0; i < this.cTabs.length; i++) {
+                  if (privelegeTab == this.cTabs[i].key){
+                    this.cTabs[i].hidden = true
+                  }
+                  // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+                  if (privelegeTab == "overview"){
+                      this.cTabs[1].hidden = true
+                      }
+                    }
+                }  
+              }    
+                } else {
+              for (let privelegeTab in this.privileges) {
+                for (let b = 0; b < this.pTabs.length; b++){
+                  if (this.privileges[privelegeTab].length <= 0 && privelegeTab == this.pTabs[b].key) {
+                  // console.log(`${privelegeTab}`)
+                    for (let i = 0; i < this.pTabs.length; i++) {
+                      if (privelegeTab == this.pTabs[i].key){
+                        this.pTabs[i].hidden = true
+                      }
+                      // this.pTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+                      if (privelegeTab == "overview"){
+                          this.pTabs[1].hidden = true
+                      }
+                    }
+                }   
+                }      
+            } 
        
-//           if (pPrivileges) {
-//             for (var i = 0; i < this.pTabs.length; i++) {
-//               if(this.pTabs[i].key == 'project'){
-//                 continue
-//               }
-//                 if (pPrivileges[this.pTabs[i].key] && pPrivileges[this.pTabs[i].key].length) {
-//               this.pTabs[i].hidden = pPrivileges[this.pTabs[i].key].length < 1;
-//                 }
-//             //  debugger
-                  
-//             }
-//           }
+          }
 
-
-//         }
-//       },
-//     },
-//   },
+        }
+      },
+    },
+  },
 };
 </script>
 
