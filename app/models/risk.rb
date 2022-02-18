@@ -49,6 +49,17 @@ class Risk < ApplicationRecord
 
     append :text => " - Copy"
   end
+  
+  def update_facility_project
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progerss)
+    end
+  end
 
   def files_as_json
     risk_files.reject {|f| valid_url?(f.blob.filename.instance_variable_get("@filename")) }.map do |file|
