@@ -47,6 +47,7 @@ export default new Vuex.Store({
     projectsLoaded: false,
     showProjectStats: false,
     toggleRACI: true,
+    expandedGroup: "", 
     showAllEventsToggle: false,
     showAdvancedFilter: false,
     currentProject: null,
@@ -211,6 +212,7 @@ export default new Vuex.Store({
       // state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => (state.contentLoaded = loading),
+    SET_EXPANDED_GROUP: (state, value) => (state.expandedGroup = value),
     setProjectsLoaded: (state, loading) => (state.projectsLoaded = loading),
     setToggleRACI: (state, raci) => (state.toggleRACI = raci),
     setShowAllEventsToggle: (state, showAll) =>
@@ -514,6 +516,7 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getExpandedGroup: (state) => state.expandedGroup,
     getFacilityProjectOptions: (state, getters) => {
       var options = [];
       for (let f of getters.facilities) {

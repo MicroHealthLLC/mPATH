@@ -340,7 +340,8 @@ class User < ApplicationRecord
                 url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
               end
             end
-          
+          else
+            url = "#{url}/projects/#{p.project_id}"
           end
         end
       end

@@ -26,17 +26,8 @@ ActiveAdmin.register ContractCurrentPop do
     permitted = [:name]
     permitted
   end
-
-  controller do
-    def edit
-      @page_title = "Edit Contract Current PoP"
-      super
-    end
-
-    def new
-      @page_title = "New Contract Current PoP"
-      super
-    end
-  end
-
+  preserve_default_filters!
+  filter :contracts, collection: -> {
+    Contract.pluck(:nickname, :id)
+  }
 end

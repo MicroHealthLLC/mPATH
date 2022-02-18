@@ -135,6 +135,12 @@ export default {
       )
         .then(() => {
           this.deleteContractLesson({ id: this.lesson.id, ...this.$route.params });
+          // Move this message to store
+          this.$message({
+            message: `${this.lesson.title} is successfully deleted.`,
+            type: "success",
+            showClose: true,
+          });
         })
         .catch(() => {
           this.$message({

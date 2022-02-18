@@ -1098,6 +1098,26 @@ export default {
         return valid;
       })
     },
+     lessonVariation() {
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
+      return {
+        completes,
+        drafts
+      }
+    },
+    lessonStats() {
+      let lessons = new Array();
+      let group = _.groupBy(this.filteredLessons, "category");
+      for (let type in group) {
+        if (!type || type == "null") continue;
+        lessons.push({
+          name: type,
+          count: group[type].length,
+        });
+      }
+      return lessons;
+    },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
@@ -1568,26 +1588,7 @@ export default {
         ongoing
       };
     },
-   lessonVariation() {
-      let completes = this.filteredLessons.filter(l => !l.draft )
-      let drafts = this.filteredLessons.filter(l => l.draft)
-      return {
-        completes,
-        drafts
-      }
-    },
-    lessonStats() {
-      let lessons = new Array();
-      let group = _.groupBy(this.filteredLessons, "category");
-      for (let type in group) {
-        if (!type || type == "null") continue;
-        lessons.push({
-          name: type,
-          count: group[type].length,
-        });
-      }
-      return lessons;
-    },
+
     currentRiskTypes() {
       let names =
         this.taskTypeFilter &&
