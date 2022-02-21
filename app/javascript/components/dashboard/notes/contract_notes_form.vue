@@ -24,6 +24,7 @@
           @click.prevent="deleteNote"
           class="btn btn-sm btn-danger sticky-btn ml-auto"
           data-cy="note_delete_btn"
+          v-if="_isallowed('delete')"
           >
           <i class="fas fa-trash-alt mr-2"></i>
           Delete
@@ -119,17 +120,10 @@
         'updateContractNote'
       ]),
      _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.notes.includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.notes.includes(s); 
-        }
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.notes.includes(s);
      },
       addFile(files) {
       files.forEach((file) => {
