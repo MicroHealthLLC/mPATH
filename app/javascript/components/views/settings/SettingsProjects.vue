@@ -12,7 +12,7 @@
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
-            <i class="fal fa-clipboard-list mr-1 mh-orange-text"></i> PROJECTS
+            <i class="fal fa-clipboard-list mr-1 mh-green-text"></i> PROJECTS
             <span 
               v-if="projectData && projectData.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"

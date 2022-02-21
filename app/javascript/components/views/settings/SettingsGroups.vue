@@ -19,7 +19,7 @@
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
-            <i class="fal fa-network-wired mr-1 mh-orange-text"></i> GROUPS
+            <i class="fal fa-network-wired mr-1 mh-blue-text"></i> GROUPS
             <span
               v-if="tableData && tableData.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
