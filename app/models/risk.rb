@@ -57,7 +57,7 @@ class Risk < ApplicationRecord
 
       fp.update_progress
       p.update_progress
-      FacilityGroup.where(project_id: p.id).map(&:update_progerss)
+      FacilityGroup.where(project_id: p.id).map(&:update_progress)
     end
   end
 
