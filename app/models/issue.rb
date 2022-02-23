@@ -395,8 +395,6 @@ class Issue < ApplicationRecord
 
       issue.save
 
-      issue.add_link_attachment(params)
-
       if user_ids && user_ids.present?
         issue_users_obj = []
         user_ids.each do |uid|
@@ -454,6 +452,7 @@ class Issue < ApplicationRecord
       issue.assign_users(params)
 
     end
+    issue.add_link_attachment(params)
 
     issue
   end
