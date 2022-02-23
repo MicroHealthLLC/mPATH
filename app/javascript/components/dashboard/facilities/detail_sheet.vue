@@ -28,6 +28,7 @@
   import TaskSheetsIndex from './../tasks/task_sheets_index'
   import TaskForm from './../tasks/task_form'
   import {mapGetters, mapMutations} from 'vuex'
+  import {API_BASE_PATH} from './../../mixins/utils'
 
   export default {
     name: 'DetailSheet',
@@ -68,7 +69,7 @@
       },
       taskDeleted(task) {
         http
-          .delete(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}/tasks/${task.id}.json`)
+          .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.DV_facility.id}/tasks/${task.id}.json`)
           .then((res) => {
             let tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)

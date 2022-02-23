@@ -1,26 +1,31 @@
-import http from './../common/http'
-import * as Moment from 'moment'
-import {extendMoment} from 'moment-range'
-const moment = extendMoment(Moment)
-import createPersistedState from 'vuex-persistedstate'
-import * as Cookies from 'js-cookie'
-import exampleModule from './modules/example-module-store'
-import programStore from './modules/program-store'
-import projectStore from './modules/project-store'
-import taskStore from './modules/task-store'
-import issueStore from './modules/issue-store'
-import riskStore from './modules/risk-store'
+import http from "./../common/http";
+import * as Moment from "moment";
+import { extendMoment } from "moment-range";
+const moment = extendMoment(Moment);
+import createPersistedState from "vuex-persistedstate";
+import * as Cookies from "js-cookie";
+import exampleModule from "./modules/example-module-store";
+import settingsStore from "./modules/settings-store";
+import programStore from "./modules/program-store";
+import projectStore from "./modules/project-store";
+import taskStore from "./modules/task-store";
+import issueStore from "./modules/issue-store";
+import riskStore from "./modules/risk-store";
+import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
-import portfolioModule from './modules/portfolio-store'
+import portfolioModule from "./modules/portfolio-store";
+import { API_BASE_PATH } from "./../mixins/utils";
 
 // utility function
 const getSimpleDate = (date) => {
-  let dt = [undefined, null, 'N/A'].includes(date) ? new Date : new Date(date)
-  let y = dt.getFullYear()
-  let m = dt.getMonth()
-  let d = dt.getDate()
-  return new Date(y, m, d, 0, 0, 0).getTime()
-}
+  let dt = [undefined, null, "N/A"].includes(date)
+    ? new Date()
+    : new Date(date);
+  let y = dt.getFullYear();
+  let m = dt.getMonth();
+  let d = dt.getDate();
+  return new Date(y, m, d, 0, 0, 0).getTime();
+};
 
 export default new Vuex.Store({
   modules: {
@@ -28,49 +33,58 @@ export default new Vuex.Store({
     programStore,
     projectStore,
     taskStore,
+    settingsStore,
     issueStore,
     riskStore,
     lessonStore,
-    portfolioModule
+    notesStore,
+    portfolioModule,
   },
   state: {
     advancedFilter: [],
-    myAssignmentsFilter:[],
+    myAssignmentsFilter: [],
     contentLoaded: false,
+    projectsLoaded: false,
+    showProjectStats: false,
     toggleRACI: true,
+    expandedGroup: "", 
     showAllEventsToggle: false,
-    showAdvancedFilter: false, 
+    showAdvancedFilter: false,
     currentProject: null,
-    lastCalendarFocus: '',
+    lastCalendarFocus: "",
     mapLoading: true,
     sideLoading: true,
-    projects: new Array,
-    facilities: new Array,
-    facilityGroups: new Array,
-    statuses: new Array,
-    advancedFilterOptions: new Array,
-    taskIssueOverdueFilter: new Array,
+    projects: new Array(),
+    tableData: new Array(),
+    facilities: new Array(),
+    contracts: new Array(),
+    facilityGroups: new Array(),
+    statuses: new Array(),
+    advancedFilterOptions: new Array(),
+    taskIssueOverdueFilter: new Array(),
 
-    taskTypes: new Array,
+    projectGroupFilter: null,
+
+    taskTypes: new Array(),
     taskTypeFilter: null,
-    taskStages: new Array,
+    taskStages: new Array(),
     taskStageFilter: null,
     taskProgressFilter: null,
 
-    riskStages: new Array,
-    riskStageFilter: new Array,
+    riskStages: new Array(),
+    riskStageFilter: new Array(),
     riskApproachFilter: null,
-    riskApproachFilterOptions: new Array,
-    riskProbabilityOptions: new Array,
-    riskPriorityLevelFilter: new Array,
-    riskImpactLevelOptions: new Array,
+    riskApproachFilterOptions: new Array(),
+    riskProbabilityOptions: new Array(),
+    riskPriorityLevelFilter: new Array(),
+    riskImpactLevelOptions: new Array(),
 
-    riskDispositionStatus: new Array,
-    riskDispositionDuration: new Array,
+    riskDispositionStatus: new Array(),
+    riskDispositionDuration: new Array(),
 
-    issueStages: new Array,
-    issueTypes: new Array,
-    issueSeverities: new Array,
+    issueStages: new Array(),
+    issueTypes: new Array(),
+    issueSeverities: new Array(),
     issueTypeFilter: null,
     issueSeverityFilter: null,
     issueStageFilter: null,
@@ -81,81 +95,92 @@ export default new Vuex.Store({
     risksPerPageFilter: null,
     lessonsPerPageFilter: null,
     issuesPerPageFilter: null,
-    membersPerPageFilter:  null,
+    membersPerPageFilter: null,
 
     currentProject: null,
-    projectUsers: new Array,
-    accountableUsers: new Array,
-    consultedUsers: new Array,
-    informedUsers: new Array,
+    projectUsers: new Array(),
+    accountableUsers: new Array(),
+    consultedUsers: new Array(),
+    informedUsers: new Array(),
 
     currentFacility: null,
     currentFacilityGroup: null,
-    mapFilters: new Array,
+    mapFilters: new Array(),
     projectStatusFilter: null,
     calendarViewFilter: null,
     facilityGroupFilter: null,
     facilityNameFilter: null,
     facilityProgressFilter: null,
-    programProgressFilter: null, 
+    programProgressFilter: null,
     facilityDueDateFilter: null,
     noteDateFilter: null,
     taskIssueDueDateFilter: null,
     // This filter is used for progress range number e.g. 1-19
     taskIssueProgressFilter: null,
     // This filter is used to check status e.g. active or completed
-    taskIssueProgressStatusFilter: new Array,
+    taskIssueProgressStatusFilter: new Array(),
+    contactInfoForm: {
+      poc: '',
+      phoneNo: '',
+      email: '',
+     },
     progressFilter: {
       facility: {
-        min: '',
-        max: '',
-        error: ''
+        min: "",
+        max: "",
+        error: "",
       },
       program: {
-        min: '',
-        max: '',
-        error: ''
+        min: "",
+        max: "",
+        error: "",
       },
       task: {
-        min: '',
-        max: '',
-        error: ''
+        min: "",
+        max: "",
+        error: "",
       },
       issue: {
-        min: '',
-        max: '',
-        error: ''
+        min: "",
+        max: "",
+        error: "",
       },
-      taskIssue:{
-        min: '',
-        max: '',
-        error: ''
-      }
+      taskIssue: {
+        min: "",
+        max: "",
+        error: "",
+      },
     },
-    taskIssueUserFilter: new Array,
-    myActionsFilter: new Array,
-    onWatchFilter: new Array,
+    taskIssueUserFilter: new Array(),
+    myActionsFilter: new Array(),
+    onWatchFilter: new Array(),
     managerView: {
       task: null,
       issue: null,
       note: null,
       risk: null,
-      lesson: null
+      lesson: null,
     },
-    mapZoomFilter: new Array,
-    unfilteredFacilities: new Array,
-    previousRoute: '',
+    mapZoomFilter: new Array(),
+    unfilteredFacilities: new Array(),
+    previousRoute: "",
 
-    newSession: true
+    newSession: true,
   },
 
   mutations: {
-    setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
-    setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
-    setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
-    setMyAssignmentsFilter: (state, filter) => state.myAssignmentsFilter = filter,
+    setTaskIssueUserFilter: (state, filter) =>
+      (state.taskIssueUserFilter = filter),
+    setProjectGroupFilter: (state, filter) =>
+      (state.projectGroupFilter = filter),
+    setTaskIssueProgressStatusFilter: (state, filter) =>
+      (state.taskIssueProgressStatusFilter = filter),
+    setTaskIssueProgressFilter: (state, filter) =>
+      (state.taskIssueProgressFilter = filter),
+    setMyAssignmentsFilter: (state, filter) =>
+      (state.myAssignmentsFilter = filter),
     setAdvancedFilter: (state, selectedOptions) => {
-      state.advancedFilter = selectedOptions
+      state.advancedFilter = selectedOptions;
       // var _taskIssueOverdueFilter = []
       // var _onWatchFilter = []
       // var _myActionsFilter = []
@@ -186,783 +211,1048 @@ export default new Vuex.Store({
       // state.myActionsFilter = _myActionsFilter
       // state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
-    setContentLoaded: (state, loading) => state.contentLoaded = loading,
-    setToggleRACI: (state, raci) => state.toggleRACI = raci,
-    setShowAllEventsToggle: (state, showAll) => state.showAllEventsToggle = showAll,
-    setLastFocusFilter: (state, lastFocus) => state.lastCalendarFocus = lastFocus,
-    setMapLoading: (state, loading) => state.mapLoading = loading,
-    setSideLoading: (state, loading) => state.sideLoading = loading,
-    setProjects: (state, projects) => state.projects = projects,
-    setFacilities: (state, facilities) => state.facilities = facilities,
-    setUnfilteredFacilities: (state, facilities) => state.unfilteredFacilities = facilities,
-    setFacilityGroups: (state, facilityGroups) => state.facilityGroups = facilityGroups,
-    setStatuses: (state, statuses) => state.statuses = statuses,
+    setContentLoaded: (state, loading) => (state.contentLoaded = loading),
+    SET_EXPANDED_GROUP: (state, value) => (state.expandedGroup = value),
+    setProjectsLoaded: (state, loading) => (state.projectsLoaded = loading),
+    setToggleRACI: (state, raci) => (state.toggleRACI = raci),
+    setShowAllEventsToggle: (state, showAll) =>
+      (state.showAllEventsToggle = showAll),
+    setShowProjectStats: (state, showStats) =>
+    (state.showProjectStats = showStats),
+    setLastFocusFilter: (state, lastFocus) =>
+      (state.lastCalendarFocus = lastFocus),
+    setMapLoading: (state, loading) => (state.mapLoading = loading),
+    setSideLoading: (state, loading) => (state.sideLoading = loading),
+    setProjects: (state, projects) => (state.projects = projects),
+    setFacilities: (state, facilities) => (state.facilities = facilities),
+    setContracts: (state, contracts) => (state.contracts = contracts),
+    setTableData: (state, tableData) => (state.tableData = tableData),
+    setUnfilteredFacilities: (state, facilities) =>
+      (state.unfilteredFacilities = facilities),
+    setFacilityGroups: (state, facilityGroups) =>
+      (state.facilityGroups = facilityGroups),
+    setStatuses: (state, statuses) => (state.statuses = statuses),
 
-    setTaskTypes: (state, taskTypes) => state.taskTypes = taskTypes,
-    setTaskStages: (state, taskStages) => state.taskStages = taskStages,
-    setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
-    setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
-    setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
+    setTaskTypes: (state, taskTypes) => (state.taskTypes = taskTypes),
+    setTaskStages: (state, taskStages) => (state.taskStages = taskStages),
+    setTaskTypeFilter: (state, filter) => (state.taskTypeFilter = filter),
+    setTaskStageFilter: (state, filter) => (state.taskStageFilter = filter),
+    setTaskProgressFilter: (state, filter) =>
+      (state.taskProgressFilter = filter),
 
-    setRiskStages: (state, riskStages) => state.riskStages = riskStages,
-    setRiskStageFilter: (state, filter) => state.riskStageFilter = filter,
-    setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
-    setRiskPriorityLevelFilter: (state, filter) =>  state.riskPriorityLevelFilter = filter,
-    setRiskProbabilityOptions: (state, riskProbabilityOptions) => state.riskProbabilityOptions = riskProbabilityOptions,
-    setRiskImpactLevelOptions: (state, riskImpactLevelOptions) => state.riskImpactLevelOptions = riskImpactLevelOptions,
+    setRiskStages: (state, riskStages) => (state.riskStages = riskStages),
+    setRiskStageFilter: (state, filter) => (state.riskStageFilter = filter),
+    setRiskApproachFilter: (state, filter) =>
+      (state.riskApproachFilter = filter),
+    setRiskPriorityLevelFilter: (state, filter) =>
+      (state.riskPriorityLevelFilter = filter),
+    setRiskProbabilityOptions: (state, riskProbabilityOptions) =>
+      (state.riskProbabilityOptions = riskProbabilityOptions),
+    setRiskImpactLevelOptions: (state, riskImpactLevelOptions) =>
+      (state.riskImpactLevelOptions = riskImpactLevelOptions),
 
-    setRiskDispositionDuration: (state, riskDispositionDuration) => state.riskDispositionDuration = riskDispositionDuration,
-    setRiskDispositionStatus: (state, riskDispositionStatus) => state.riskDispositionStatus = riskDispositionStatus,
+    setRiskDispositionDuration: (state, riskDispositionDuration) =>
+      (state.riskDispositionDuration = riskDispositionDuration),
+    setRiskDispositionStatus: (state, riskDispositionStatus) =>
+      (state.riskDispositionStatus = riskDispositionStatus),
 
-    setIssueStages: (state, issueStages) => state.issueStages = issueStages,
-    setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
-    setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
-    setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
-    setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
-    setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
-    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
+    setIssueStages: (state, issueStages) => (state.issueStages = issueStages),
+    setIssueTypes: (state, issueTypes) => (state.issueTypes = issueTypes),
+    setIssueSeverities: (state, issueSeverities) =>
+      (state.issueSeverities = issueSeverities),
+    setIssueTypeFilter: (state, filter) => (state.issueTypeFilter = filter),
+    setIssueStageFilter: (state, filter) => (state.issueStageFilter = filter),
+    setIssueSeverityFilter: (state, filter) =>
+      (state.issueSeverityFilter = filter),
+    setIssueProgressFilter: (state, filter) =>
+      (state.issueProgressFilter = filter),
 
-    setMembersPerPageFilter: (state, filter) => state.membersPerPageFilter = filter,
-    setTasksPerPageFilter: (state, filter) => state.tasksPerPageFilter = filter,
-    setIssuesPerPageFilter: (state, filter) => state.issuesPerPageFilter = filter,
-    setRisksPerPageFilter: (state, filter) => state.risksPerPageFilter = filter,
-    setLessonsPerPageFilter: (state, filter) => state.lessonsPerPageFilter = filter,
+    setMembersPerPageFilter: (state, filter) =>
+      (state.membersPerPageFilter = filter),
+    setTasksPerPageFilter: (state, filter) =>
+      (state.tasksPerPageFilter = filter),
+    setIssuesPerPageFilter: (state, filter) =>
+      (state.issuesPerPageFilter = filter),
+    setRisksPerPageFilter: (state, filter) =>
+      (state.risksPerPageFilter = filter),
+    setLessonsPerPageFilter: (state, filter) =>
+      (state.lessonsPerPageFilter = filter),
 
-    setCalendarViewFilter: (state, filter) => state.calendarViewFilter = filter,
+    setCalendarViewFilter: (state, filter) =>
+      (state.calendarViewFilter = filter),
 
-    setCurrentProject: (state, project) => state.currentProject = project,
-    setProjectUsers: (state, users) => state.projectUsers = users,
-    setAccountableUsers: (state, users) => state.accountableUsers = users,
-    setConsultedUsers: (state, consulted) => state.consultedUsers = consulted,
-    setInformedUsers: (state, informed) => state.informedUsers = informed,
+    setCurrentProject: (state, project) => (state.currentProject = project),
+    setProjectUsers: (state, users) => (state.projectUsers = users),
+    setAccountableUsers: (state, users) => (state.accountableUsers = users),
+    setConsultedUsers: (state, consulted) => (state.consultedUsers = consulted),
+    setInformedUsers: (state, informed) => (state.informedUsers = informed),
 
-
-    setCurrentFacility: (state, facility) => state.currentFacility = facility,
-    setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
-    setMapFilters: (state, filters) => state.mapFilters = filters,
-    updateFacilities: (state, {index, facility}) => Vue.set(state.facilities, index, facility),
+    setCurrentFacility: (state, facility) => (state.currentFacility = facility),
+    setCurrentFacilityGroup: (state, facilityGroup) =>
+      (state.currentFacilityGroup = facilityGroup),
+    setMapFilters: (state, filters) => (state.mapFilters = filters),
+    updateFacilities: (state, { index, facility }) =>
+      Vue.set(state.facilities, index, facility),
     updateFacilityHash: (state, facility) => {
-      let index = state.facilities.findIndex(f => f.id == facility.id)
-      if (index > -1) Vue.set(state.facilities, index, facility)
+      let index = state.facilities.findIndex((f) => f.id == facility.id);
+      if (index > -1) Vue.set(state.facilities, index, facility);
     },
-    updateMapFilters: (state, {key, filter, same, _k}) => {
-      if (filter && !filter.includes(null) && Array.isArray(filter) && filter.length > 0) {
-        let i = state.mapFilters.findIndex(f => f.hasOwnProperty(key))
-        if (i < 0) i = state.mapFilters.length
-        let value = {[key]: same ? filter : _.map(filter, _k || 'id')}
-        Vue.set(state.mapFilters, i, value)
-      }
-      else {
-        state.mapFilters = _.filter(state.mapFilters, f => !f.hasOwnProperty(key))
+    updateMapFilters: (state, { key, filter, same, _k }) => {
+      if (
+        filter &&
+        !filter.includes(null) &&
+        Array.isArray(filter) &&
+        filter.length > 0
+      ) {
+        let i = state.mapFilters.findIndex((f) => f.hasOwnProperty(key));
+        if (i < 0) i = state.mapFilters.length;
+        let value = { [key]: same ? filter : _.map(filter, _k || "id") };
+        Vue.set(state.mapFilters, i, value);
+      } else {
+        state.mapFilters = _.filter(
+          state.mapFilters,
+          (f) => !f.hasOwnProperty(key)
+        );
       }
     },
-    updateTasksHash: (state, {task, action}) => {
-      let facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
+    updateTasksHash: (state, { task, action }) => {
+      let facility_i = state.facilities.findIndex(
+        (f) => f.id == task.facilityId
+      );
       if (facility_i > -1) {
-        let facility = Object.assign({}, state.facilities[facility_i])
-        let task_i = facility.tasks.findIndex((t) => t.id == task.id)
-        if (action === 'delete') {
-          for (let t of _.flatten(_.map(state.facilities, 'tasks'))) {
-            _.remove(t.subTaskIds, id => id == t.id)
+        let facility = Object.assign({}, state.facilities[facility_i]);
+        let task_i = facility.tasks.findIndex((t) => t.id == task.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.facilities, "tasks"))) {
+            _.remove(t.subTaskIds, (id) => id == t.id);
           }
-          Vue.delete(facility.tasks, task_i)
-        
-        }else if (task_i > -1){
-         Vue.set(facility.tasks, task_i, task)
-        }else if (task_i == -1){
-          facility.tasks.push(task)
+          Vue.delete(facility.tasks, task_i);
+        } else if (task_i > -1) {
+          Vue.set(facility.tasks, task_i, task);
+        } else if (task_i == -1) {
+          facility.tasks.push(task);
         }
-        Vue.set(state.facilities, facility_i, facility)
+        Vue.set(state.facilities, facility_i, facility);
       }
     },
-    updateIssuesHash: (state, {issue, action}) => {
-      let facility_i = state.facilities.findIndex(f => f.id == issue.facilityId)
+    updateContractTasks: (state, { task, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == task.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let task_i = contract.tasks.findIndex((t) => t.id == task.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "tasks"))) {
+            _.remove(t.subTaskIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.tasks, task_i);
+        } else if (task_i > -1) {
+          Vue.set(contract.tasks, task_i, task);
+        } else if (task_i == -1) {
+          contract.tasks.push(task);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateContractIssues: (state, { issue, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == issue.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let issue_i = contract.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(contract.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          contract.issues.push(issue);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateIssuesHash: (state, { issue, action }) => {
+      let facility_i = state.facilities.findIndex(
+        (f) => f.id == issue.facilityId
+      );
       if (facility_i > -1) {
-        let facility = Object.assign({}, state.facilities[facility_i])
-        let issue_i = facility.issues.findIndex((t) => t.id == issue.id)
-        if (action === 'delete') {
-          for (let t of _.flatten(_.map(state.facilities, 'issues'))) {
-            _.remove(t.subIssueIds, id => id == t.id)
+        let facility = Object.assign({}, state.facilities[facility_i]);
+        let issue_i = facility.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.facilities, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
           }
-          Vue.delete(facility.issues, issue_i)
+          Vue.delete(facility.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(facility.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          facility.issues.push(issue);
         }
-        else if (issue_i > -1){
-          Vue.set(facility.issues, issue_i, issue)
-        }else if(issue_i == -1){
-          facility.issues.push(issue)
-        }
-        Vue.set(state.facilities, facility_i, facility)
+        Vue.set(state.facilities, facility_i, facility);
       }
     },
-    updateRisksHash: (state, {risk, action}) => {
-      let facility_i = state.facilities.findIndex(f => f.id == risk.facilityId)
+
+    updateRisksHash: (state, { risk, action }) => {
+      let facility_i = state.facilities.findIndex(
+        (f) => f.id == risk.facilityId
+      );
       if (facility_i > -1) {
-        let facility = Object.assign({}, state.facilities[facility_i])
-        let risk_i = facility.risks.findIndex((t) => t.id == risk.id)
-        if (action === 'delete') {
-          for (let t of _.flatten(_.map(state.facilities, 'risks'))) {
-            _.remove(t.subRiskIds, id => id == t.id)
+        let facility = Object.assign({}, state.facilities[facility_i]);
+        let risk_i = facility.risks.findIndex((t) => t.id == risk.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.facilities, "risks"))) {
+            _.remove(t.subRiskIds, (id) => id == t.id);
           }
-          Vue.delete(facility.risks, risk_i)
+          Vue.delete(facility.risks, risk_i);
+        } else if (risk_i > -1) {
+          Vue.set(facility.risks, risk_i, risk);
+        } else if (risk_i == -1) {
+          facility.risks.push(risk);
         }
-        else if (risk_i > -1){ 
-          Vue.set(facility.risks, risk_i, risk)
-        }else if (risk_i == -1){
-          facility.risks.push(risk)
-        }
-        Vue.set(state.facilities, facility_i, facility)
+        Vue.set(state.facilities, facility_i, facility);
       }
     },
-    updateNotesHash: (state, {note, facilityId, action}) => {
+    updateContractRisks: (state, { risk, action }) => {
+      let contract_i = state.contracts.findIndex(
+        (f) => f.id == risk.contractId
+      );
+      if (contract_i > -1) {
+        let contract = Object.assign({}, state.contracts[contract_i]);
+        let risk_i = contract.risks.findIndex((t) => t.id == risk.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.contracts, "risks"))) {
+            _.remove(t.subRiskIds, (id) => id == t.id);
+          }
+          Vue.delete(contract.risks, risk_i);
+        } else if (risk_i > -1) {
+          Vue.set(contract.risks, risk_i, risk);
+        } else if (risk_i == -1) {
+          contract.risks.push(risk);
+        }
+        Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateNotesHash: (state, { note, facilityId, action }) => {
       // console.log(JSON.stringify(note))
-      let facility_i = state.facilities.findIndex(f => f.id == facilityId)
+      let facility_i = state.facilities.findIndex((f) => f.id == facilityId);
       if (facility_i > -1) {
-        let facility = Object.assign({}, state.facilities[facility_i])
-        let note_i = facility.notes.findIndex((t) => t.id == note.id)
-        if (action === 'delete') {
-          Vue.delete(facility.notes, note_i)
+        let facility = Object.assign({}, state.facilities[facility_i]);
+        let note_i = facility.notes.findIndex((t) => t.id == note.id);
+        if (action === "delete") {
+          Vue.delete(facility.notes, note_i);
+        } else if (note_i > -1) {
+          Vue.set(facility.notes, note_i, note);
+        } else if (note_i == -1) {
+          facility.notes.push(note);
         }
-        else if (note_i > -1) {
-          Vue.set(facility.notes, note_i, note)
-        } else if (note_i == -1){
-          facility.notes.push(note)
-        }
-        Vue.set(state.facilities, facility_i, facility)
+        Vue.set(state.facilities, facility_i, facility);
       }
     },
-    setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
+    setProjectStatusFilter: (state, filter) =>
+      (state.projectStatusFilter = filter),
     setTaskIssueOverdueFilter: (state, filter) => {
-      state.taskIssueOverdueFilter = filter
+      state.taskIssueOverdueFilter = filter;
     },
-  
-    setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
-    setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
-    setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
-    setProgramProgressFilter: (state, filter) => state.programProgressFilter = filter,
-    setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
-    setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
-    setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
 
-    
-    setShowAdvancedFilter: (state, show) => state.showAdvancedFilter = show, 
+    setFacilityGroupFilter: (state, filter) =>
+      (state.facilityGroupFilter = filter),
+    setFacilityNameFilter: (state, filter) =>
+      (state.facilityNameFilter = filter),
+    setFacilityProgressFilter: (state, filter) =>
+      (state.facilityProgressFilter = filter),
+    setProgramProgressFilter: (state, filter) =>
+      (state.programProgressFilter = filter),
+    setFacilityDueDateFilter: (state, filter) =>
+      (state.facilityDueDateFilter = filter),
+    setNoteDateFilter: (state, filter) => (state.noteDateFilter = filter),
+    setTaskIssueDueDateFilter: (state, filter) =>
+      (state.taskIssueDueDateFilter = filter),
 
-    setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
-    setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
+    setShowAdvancedFilter: (state, show) => (state.showAdvancedFilter = show),
+
+    setMyActionsFilter: (state, filter) => (state.myActionsFilter = filter),
+    setOnWatchFilter: (state, filter) => (state.onWatchFilter = filter),
     clearProgressFilters: (state) => {
-      let filters = new Object
+      let filters = new Object();
       for (let key of Object.keys(state.progressFilter)) {
-        filters[key] = new Object
+        filters[key] = new Object();
         for (let fil of Object.keys(state.progressFilter[key])) {
-          filters[key][fil] = ""
+          filters[key][fil] = "";
         }
       }
-      state.progressFilter = filters
+      state.progressFilter = filters;
     },
-    setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value,
-    nullifyTasksForManager: (state) => state.managerView = {task: null, issue: null, note: null, risk: null},
-    setTaskForManager: (state, {key, value}) => {
+    setProgressFilters: (state, { key, value }) =>
+      (state.progressFilter[key] = value),
+    nullifyTasksForManager: (state) =>
+      (state.managerView = { task: null, issue: null, note: null, risk: null }),
+    setTaskForManager: (state, { key, value }) => {
       for (let k in state.managerView) {
-        state.managerView[k] = k == key ? value : null
+        state.managerView[k] = k == key ? value : null;
       }
     },
-    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
-    setRiskForManager: (state, {key, value}) => {
+    setMapZoomFilter: (state, filteredIds) =>
+      (state.mapZoomFilter = filteredIds),
+    setRiskForManager: (state, { key, value }) => {
       for (let k in state.managerView) {
-        state.managerView[k] = k == key ? value : null
+        state.managerView[k] = k == key ? value : null;
       }
     },
-    setLessonForManager: (state, {key, value}) => {
+    setLessonForManager: (state, { key, value }) => {
       for (let k in state.managerView) {
-        state.managerView[k] = k == key ? value : null
+        state.managerView[k] = k == key ? value : null;
       }
     },
-    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
-    setPreviousRoute: (state, route) => state.previousRoute = route,
-    setNewSession: (state) => state.newSession = !state.newSession
+    setContactInfoForm: (state, { key, value }) =>
+    (state.contactInfoForm[key] = value),
+    setMapZoomFilter: (state, filteredIds) =>
+      (state.mapZoomFilter = filteredIds),
+    setPreviousRoute: (state, route) => (state.previousRoute = route),
+    setNewSession: (state) => (state.newSession = !state.newSession),
   },
 
   getters: {
-    getFacilityProjectOptions:(state, getters) =>{
-      var options = []
-      for(let f of getters.facilities){
-        options.push({id: f.facilityProjectId, name: f.facilityName})
+    getExpandedGroup: (state) => state.expandedGroup,
+    getFacilityProjectOptions: (state, getters) => {
+      var options = [];
+      for (let f of getters.facilities) {
+        options.push({ id: f.facilityProjectId, name: f.facilityName });
       }
-      return options
+      return options;
     },
-    getTaskIssueUserFilter:(state, getters) =>{
-      return state.taskIssueUserFilter
+    getTaskIssueUserFilter: (state, getters) => {
+      return state.taskIssueUserFilter;
     },
     // TODO: remove if not used anywhere
-    getTaskIssueTabFilterOptions: (state, getters) =>{
+    getTaskIssueTabFilterOptions: (state, getters) => {
       var options = [
-        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
-        {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
-        {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+        {
+          id: "active",
+          name: "Not Completed",
+          value: "active",
+          filterCategoryId: "progressStatusFilter",
+          filterCategoryName: "Progress Status",
+        },
+        {
+          id: "completed",
+          name: "Completed",
+          value: "completed",
+          filterCategoryId: "progressStatusFilter",
+          filterCategoryName: "Progress Status",
+        },
+        {
+          id: "overdue",
+          name: "Overdue",
+          value: "overdue",
+          filterCategoryId: "overDueFilter",
+          filterCategoryName: "Action Overdue",
+        },
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
-        {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
-        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
-        {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
-        {id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draft', filterCategoryName: 'Drafts'}
-      ]
+        {
+          id: "myAction",
+          name: "My Assignments",
+          value: "my action",
+          filterCategoryId: "myActionsFilter",
+          filterCategoryName: "My Assignments",
+        },
+        {
+          id: "notMyAction",
+          name: "Not My Assignments",
+          value: "not my action",
+          filterCategoryId: "myActionsFilter",
+          filterCategoryName: "My Assignments",
+        },
+        {
+          id: "onWatch",
+          name: "On Watch",
+          value: "onWatch",
+          filterCategoryId: "onWatchFilter",
+          filterCategoryName: "On Watch",
+        },
+        {
+          id: "notOnWatch",
+          name: "Not On Watch",
+          value: "onWatch",
+          filterCategoryId: "onWatchFilter",
+          filterCategoryName: "On Watch",
+        },
+        {
+          id: "onHold",
+          name: "On Hold",
+          value: "onHold",
+          filterCategoryId: "onHoldFilter",
+          filterCategoryName: "On Hold",
+        },
+        {
+          id: "draft",
+          name: "Drafts",
+          value: "draft",
+          filterCategoryId: "draft",
+          filterCategoryName: "Drafts",
+        },
+      ];
 
       return options;
     },
-    getCalendarViewFilter: state => state.calendarViewFilter,
+    getCalendarViewFilter: (state) => state.calendarViewFilter,
     getCalendarViewFilterOptions: (state, getters) => {
       var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
+        { id: "month", name: "Month", value: "month" },
+        { id: "week", name: "Week", value: "week" },
+        { id: "day", name: "Day", value: "day" },
+        { id: "4day", name: "4 Days", value: "4day" },
+      ];
       return options;
     },
     //For Datatables items per page display only
-    getMembersPerPageFilter: state => state.membersPerPageFilter,
+    getMembersPerPageFilter: (state) => state.membersPerPageFilter,
     getMembersPerPageFilterOptions: (state, getters) => {
       var options = [
-        {id: 5, name: '5', value: 5},
-        {id: 15, name: '15', value: 15},
-        {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},
-        {id: 100, name: '100', value: 100},
-      ]
+        { id: 5, name: "5", value: 5 },
+        { id: 15, name: "15", value: 15 },
+        { id: 25, name: "25", value: 25 },
+        { id: 50, name: "50", value: 50 },
+        { id: 100, name: "100", value: 100 },
+      ];
       return options;
     },
-    getTasksPerPageFilter: state => state.tasksPerPageFilter,
+    getTasksPerPageFilter: (state) => state.tasksPerPageFilter,
     getTasksPerPageFilterOptions: (state, getters) => {
       var options = [
-        {id: 5, name: '5', value: 5},
-        {id: 15, name: '15', value: 15},
-        {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},
-        {id: 100, name: '100', value: 100},
-      ]
+        { id: 5, name: "5", value: 5 },
+        { id: 15, name: "15", value: 15 },
+        { id: 25, name: "25", value: 25 },
+        { id: 50, name: "50", value: 50 },
+        { id: 100, name: "100", value: 100 },
+      ];
       return options;
     },
-    getIssuesPerPageFilter: state => state.issuesPerPageFilter,
+    getIssuesPerPageFilter: (state) => state.issuesPerPageFilter,
     getIssuesPerPageFilterOptions: (state, getters) => {
       var options = [
-        {id: 5, name: '5', value: 5},
-        {id: 15, name: '15', value: 15},
-        {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},
-        {id: 100, name: '100', value: 100},
-      ]
+        { id: 5, name: "5", value: 5 },
+        { id: 15, name: "15", value: 15 },
+        { id: 25, name: "25", value: 25 },
+        { id: 50, name: "50", value: 50 },
+        { id: 100, name: "100", value: 100 },
+      ];
       return options;
     },
 
-    getRisksPerPageFilter: state => state.risksPerPageFilter,
+    getRisksPerPageFilter: (state) => state.risksPerPageFilter,
     getRisksPerPageFilterOptions: (state, getters) => {
       var options = [
-        {id: 5, name: '5', value: 5},
-        {id: 15, name: '15', value: 15},
-        {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},
-        {id: 100, name: '100', value: 100},
-      ]
+        { id: 5, name: "5", value: 5 },
+        { id: 15, name: "15", value: 15 },
+        { id: 25, name: "25", value: 25 },
+        { id: 50, name: "50", value: 50 },
+        { id: 100, name: "100", value: 100 },
+      ];
       return options;
     },
-    getLessonsPerPageFilter: state => state.lessonsPerPageFilter,
+    getLessonsPerPageFilter: (state) => state.lessonsPerPageFilter,
     getLessonsPerPageFilterOptions: (state, getters) => {
       var options = [
-        {id: 5, name: '5', value: 5},
-        {id: 15, name: '15', value: 15},
-        {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},
-        {id: 100, name: '100', value: 100},
-      ]
+        { id: 5, name: "5", value: 5 },
+        { id: 15, name: "15", value: 15 },
+        { id: 25, name: "25", value: 25 },
+        { id: 50, name: "50", value: 50 },
+        { id: 100, name: "100", value: 100 },
+      ];
       return options;
     },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
-        {id: 'active', name: 'Not Completed'},
-        {id: 'completed', name: 'Completed'}
-      ]
+        { id: "active", name: "Not Completed" },
+        { id: "completed", name: "Completed" },
+      ];
     },
     getTaskIssueProgressStatusFilter: (state) => {
-      return state.taskIssueProgressStatusFilter
+      return state.taskIssueProgressStatusFilter;
     },
-    getMyAssignmentsFilter: state => state.myAssignmentsFilter,
+    getMyAssignmentsFilter: (state) => state.myAssignmentsFilter,
     getMyAssignmentsFilterOptions: (state, getters) => {
-
-      var options = [       
-        {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
-        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
-      ]
+      var options = [
+        {
+          id: "myAction",
+          name: "My Assignments",
+          value: "my action",
+          filterCategoryId: "myActionsFilter",
+          filterCategoryName: "My Assignments",
+        },
+        {
+          id: "notMyAction",
+          name: "Not My Assignments",
+          value: "not my action",
+          filterCategoryId: "myActionsFilter",
+          filterCategoryName: "My Assignments",
+        },
+      ];
       return options;
     },
-// DO NOT ERASE:  HELPFUL IF WE WANT TO ADD DROPDOWN WITH DIFFERENT CATEGORY LABELS
-    getAdvancedFilter: state => state.advancedFilter,
+    // DO NOT ERASE:  HELPFUL IF WE WANT TO ADD DROPDOWN WITH DIFFERENT CATEGORY LABELS
+    getAdvancedFilter: (state) => state.advancedFilter,
     getAdvancedFilterOptions: (state, getters) => {
-      var options = [{
-        label: 'State To Display',
-        options: [{
-          id: 'completed', name: 'Complete', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
-        }, {
-          id: 'inProgress', name: 'In Progress', value: 'inProgress', filterCategoryId: 'inProgressFilter', filterCategoryName: 'In Progress'
-        }, {
-          id: 'planned', name: 'Planned', value: 'planned', filterCategoryId: 'plannedFilter', filterCategoryName: 'Planned'
-        },{
-          id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue',
-        },{
-          id: 'onGoing', name: 'Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'
-        },{
-          id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'
-        },{
-          id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'
-        }]
-      }, {
-        label: 'Tag Focus',
-        options: [{
-        id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'
-      },{
-        id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'
-      },{
-        id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'
-      }]
-      // }, {
-      //   label: 'Assignments',
-      //   options: [{
-      //   id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
-      //  },{
-      //   id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
-      //  }]
-    // }, {
-    //     label: 'Default Settings',
-    //     options: [{
-    //       id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
-    //    },{
-    //     id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
-    //    }]
-    }]
+      var options = [
+        {
+          label: "State To Display",
+          options: [
+            {
+              id: "completed",
+              name: "Complete",
+              value: "completed",
+              filterCategoryId: "progressStatusFilter",
+              filterCategoryName: "Progress Status",
+            },
+            {
+              id: "inProgress",
+              name: "In Progress",
+              value: "inProgress",
+              filterCategoryId: "inProgressFilter",
+              filterCategoryName: "In Progress",
+            },
+            {
+              id: "planned",
+              name: "Planned",
+              value: "planned",
+              filterCategoryId: "plannedFilter",
+              filterCategoryName: "Planned",
+            },
+            {
+              id: "overdue",
+              name: "Overdue",
+              value: "overdue",
+              filterCategoryId: "overDueFilter",
+              filterCategoryName: "Action Overdue",
+            },
+            {
+              id: "onGoing",
+              name: "Ongoing",
+              value: "onGoing",
+              filterCategoryId: "onGoingFilter",
+              filterCategoryName: "Ongoing",
+            },
+            {
+              id: "onHold",
+              name: "On Hold",
+              value: "onHold",
+              filterCategoryId: "onHoldFilter",
+              filterCategoryName: "On Hold",
+            },
+            {
+              id: "draft",
+              name: "Drafts",
+              value: "draft",
+              filterCategoryId: "draftFilter",
+              filterCategoryName: "Drafts",
+            },
+          ],
+        },
+        {
+          label: "Tag Focus",
+          options: [
+            {
+              id: "onWatch",
+              name: "On Watch",
+              value: "onWatch",
+              filterCategoryId: "onWatchFilter",
+              filterCategoryName: "On Watch",
+            },
+            {
+              id: "reportable",
+              name: "Briefings",
+              value: "reportable",
+              filterCategoryId: "briefingsFilter",
+              filterCategoryName: "Briefings",
+            },
+            {
+              id: "important",
+              name: "Marked Important",
+              value: "important",
+              filterCategoryId: "importantFilter",
+              filterCategoryName: "Important",
+            },
+          ],
+          // }, {
+          //   label: 'Assignments',
+          //   options: [{
+          //   id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments', label:"Assignments"
+          //  },{
+          //   id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+          //  }]
+          // }, {
+          //     label: 'Default Settings',
+          //     options: [{
+          //       id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'
+          //    },{
+          //     id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments',  label:"Assignments"
+          //    }]
+        },
+      ];
       return options;
     },
 
-    getRiskApproachFilter: state => state.riskApproachFilter,
+    getRiskApproachFilter: (state) => state.riskApproachFilter,
     getRiskApproachFilterOptions: (state, getters) => {
       var options = [
-        {id: 'accept', name: 'Accept', value: 'accept'},
-        {id: 'avoid', name: 'Avoid', value: 'avoid'},
-        {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
-        {id: 'transfer', name: 'Transfer', value: "transfer"},
-      ]
+        { id: "accept", name: "Accept", value: "accept" },
+        { id: "avoid", name: "Avoid", value: "avoid" },
+        { id: "mitigate", name: "Mitigate", value: "mitigate" },
+        { id: "transfer", name: "Transfer", value: "transfer" },
+      ];
       return options;
     },
-    getRiskImpactLevelOptions: state => state.riskImpactLevelOptions,
+    getRiskImpactLevelOptions: (state) => state.riskImpactLevelOptions,
     getRiskImpactLevelNames: (state, getters) => {
-     var options = [
-        {id: 1, value: 1, name: "1 - Negligible"},
-        {id: 2, value: 2, name: "2 - Minor"},
-        {id: 3, value: 3, name: "3 - Moderate"},
-        {id: 4, value: 4, name: "4 - Major"},
-        {id: 5, value: 5, name: "5 - Catastrophic"}
+      var options = [
+        { id: 1, value: 1, name: "1 - Negligible" },
+        { id: 2, value: 2, name: "2 - Minor" },
+        { id: 3, value: 3, name: "3 - Moderate" },
+        { id: 4, value: 4, name: "4 - Major" },
+        { id: 5, value: 5, name: "5 - Catastrophic" },
         // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
-      ]
-      return options
+      ];
+      return options;
     },
-    getRiskDispositionStatusOptions: state => state.riskDispositionStatus,
+    getRiskDispositionStatusOptions: (state) => state.riskDispositionStatus,
     getRiskDispositionStatus: (state, getters) => {
-     var options = [      
-        {id: 1, value: 1, name: "Monitoring"},
-        {id: 2, value: 2, name: "Resolved"},
-        {id: 3, value: 3, name: "Closed"},
-      ]
-      return options
+      var options = [
+        { id: 1, value: 1, name: "Monitoring" },
+        { id: 2, value: 2, name: "Resolved" },
+        { id: 3, value: 3, name: "Closed" },
+      ];
+      return options;
     },
-    getRiskDispositionDurationOptions: state => state.riskDispositionDuration,
+    getRiskDispositionDurationOptions: (state) => state.riskDispositionDuration,
     getRiskDispositionDuration: (state, getters) => {
-     var options = [
-        {id: 1, value: 1, name: "Temporary"},
-        {id: 2, value: 2, name: "Perpetual"},
-      
-       ]
-      return options
+      var options = [
+        { id: 1, value: 1, name: "Temporary" },
+        { id: 2, value: 2, name: "Perpetual" },
+      ];
+      return options;
     },
-    getRiskProbabilityOptions: state => state.riskProbabilityOptions,
+    getRiskProbabilityOptions: (state) => state.riskProbabilityOptions,
     getRiskProbabilityNames: (state, getters) => {
-     var options = [
-        {id: 1, value: 1, name: "1 - Rare"},
-        {id: 2, value: 2, name: "2 - Unlikely"},
-        {id: 3, value: 3, name: "3 - Possible"},
-        {id: 4, value: 4, name: "4 - Likely"},
-        {id: 5, value: 5, name: "5 - Almost Certain"}
+      var options = [
+        { id: 1, value: 1, name: "1 - Rare" },
+        { id: 2, value: 2, name: "2 - Unlikely" },
+        { id: 3, value: 3, name: "3 - Possible" },
+        { id: 4, value: 4, name: "4 - Likely" },
+        { id: 5, value: 5, name: "5 - Almost Certain" },
         // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
-      ]
-      return options
+      ];
+      return options;
     },
-    getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
+    getRiskPriorityLevelFilter: (state) => state.riskPriorityLevelFilter,
     getRiskPriorityLevelFilterOptions: (state, getters) => {
       var options = [
-        {id: 'very low', name: 'Very Low 1', value: 'very low'},
-        {id: 'low', name: 'Low 2 - 3', value: 'low'},
-        {id: 'moderate', name: 'Moderate 4 - 6', value: 'moderate'},
-        {id: 'high', name: 'High 8 - 12', value: 'high' },
-        {id: 'extreme', name: 'Extreme 15 - 25', value: 'extreme'}
-      ]
+        { id: "very low", name: "Very Low 1", value: "very low" },
+        { id: "low", name: "Low 2 - 3", value: "low" },
+        { id: "moderate", name: "Moderate 4 - 6", value: "moderate" },
+        { id: "high", name: "High 8 - 12", value: "high" },
+        { id: "extreme", name: "Extreme 15 - 25", value: "extreme" },
+      ];
       return options;
     },
     // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
       return [
-
-        ['facilityGroupFilter', 'Project Groups'],
-        ['facilityNameFilter', 'Project Names'],        
-        ['projectStatusFilter', 'Project Statuses'],
-        ['facilityProgressFilter', 'Project Progress Range'],
-        ['facilityDueDateFilter', 'Project Completion Date Range'],
-        ['taskTypeFilter', 'Categories'],
-        ['noteDateFilter', 'Updates Date Range'],
-        ['taskIssueDueDateFilter', 'Action Due Date Range'],
-        ['taskIssueProgressFilter', 'Action Progress Range'],
-        ['taskUserFilter', 'Task Users'],
-        ['issueTypeFilter', 'Issue Types'],
-        ['issueSeverityFilter', 'Issue Severities'],
-        ['issueUserFilter', 'Issue Users'],
-        ['taskStageFilter', 'Task Stages'],
-        ['issueStageFilter', 'Issue Stages'],
-        ['calendarViewFilter', 'Calendar View'],
-        ['membersPerPageFilter', 'Members Per Page'],
-        ['tasksPerPageFilter', 'Tasks Per Page'],
-        ['issuesPerPageFilter', 'Issues Per Page'],
-        ['risksPerPageFilter', 'Risks Per Page'],
-        ['lessonsPerPageFilter', 'Lessons Per Page'],
-        ['taskIssueUserFilter', 'Action Users'],
-        ['riskApproachFilter', 'Risk Approaches'],
-        ['riskStageFilter', 'Risk Stages'],
-        ['riskPriorityLevelFilter', 'Risk Priority Levels'],
-
+        ["facilityGroupFilter", "Project Groups"],
+        ["facilityNameFilter", "Project Names"],
+        ["projectStatusFilter", "Project Statuses"],
+        ["facilityProgressFilter", "Project Progress Range"],
+        ["facilityDueDateFilter", "Project Completion Date Range"],
+        ["taskTypeFilter", "Categories"],
+        ["noteDateFilter", "Updates Date Range"],
+        ["taskIssueDueDateFilter", "Action Due Date Range"],
+        ["taskIssueProgressFilter", "Action Progress Range"],
+        ["taskUserFilter", "Task Users"],
+        ["issueTypeFilter", "Issue Types"],
+        ["issueSeverityFilter", "Issue Severities"],
+        ["issueUserFilter", "Issue Users"],
+        ["taskStageFilter", "Task Stages"],
+        ["issueStageFilter", "Issue Stages"],
+        ["calendarViewFilter", "Calendar View"],
+        ["membersPerPageFilter", "Members Per Page"],
+        ["tasksPerPageFilter", "Tasks Per Page"],
+        ["issuesPerPageFilter", "Issues Per Page"],
+        ["risksPerPageFilter", "Risks Per Page"],
+        ["lessonsPerPageFilter", "Lessons Per Page"],
+        ["taskIssueUserFilter", "Action Users"],
+        ["riskApproachFilter", "Risk Approaches"],
+        ["riskStageFilter", "Risk Stages"],
+        ["riskPriorityLevelFilter", "Risk Priority Levels"],
 
         // Advanced Filters
         // The first index value is filterCategoryId in advanced filter
-        ['overDueFilter','Action Overdue'],
-        ['myActionsFilter', 'My Assignments'],
-        ['myAssignmentsFilter', 'My Assignments'],
-        ['onWatchFilter', 'On Watch'],
-        ['importantFilter', 'Important'],
-        ['briefingsFilter', 'Briefings'],
-        ['onGoingFilter', 'Ongoing'],
-        ['inProgressFilter','In Progress'],
-        ['plannedFilter','Planned'],
-        ['onHoldFilter', 'On Hold'],
-        ['draftFilter', 'Drafts'],
-        ['progressStatusFilter', 'Action Status']
-
-      ]
+        ["overDueFilter", "Action Overdue"],
+        ["myActionsFilter", "My Assignments"],
+        ["myAssignmentsFilter", "My Assignments"],
+        ["onWatchFilter", "On Watch"],
+        ["importantFilter", "Important"],
+        ["briefingsFilter", "Briefings"],
+        ["onGoingFilter", "Ongoing"],
+        ["inProgressFilter", "In Progress"],
+        ["plannedFilter", "Planned"],
+        ["onHoldFilter", "On Hold"],
+        ["draftFilter", "Drafts"],
+        ["progressStatusFilter", "Action Status"],
+      ];
     },
     // This method is used to show filters applied in overview tabs
-    getFilterValue: (state, getter)=>(_filterValue) =>{
-
-      if(_filterValue == 'facilityGroupFilter'){
+    getFilterValue: (state, getter) => (_filterValue) => {
+      if (_filterValue == "facilityGroupFilter") {
         // console.log(getter.facilityGroupFilter)
-        var user_names = null
-        if(getter.facilityGroupFilter && getter.facilityGroupFilter[0]){
-          user_names = _.map(getter.facilityGroupFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.facilityGroupFilter && getter.facilityGroupFilter[0]) {
+          user_names = _.map(getter.facilityGroupFilter, "name").join(", ");
         }
-        return user_names
-      // Advanced filters
-      }else if( ['plannedFilter', 'inProgressFilter', 'overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter', 'briefingsFilter'].includes(_filterValue) ){
+        return user_names;
+        // Advanced filters
+      } else if (
+        [
+          "plannedFilter",
+          "inProgressFilter",
+          "overDueFilter",
+          "myActionsFilter",
+          "onWatchFilter",
+          "progressStatusFilter",
+          "importantFilter",
+          "onGoingFilter",
+          "onHoldFilter",
+          "draftFilter",
+          "briefingsFilter",
+        ].includes(_filterValue)
+      ) {
+        var aFilter = getter.getAdvancedFilter;
+        var user_names = _.map(
+          _.filter(aFilter, (fHash) => fHash.filterCategoryId == _filterValue),
+          "name"
+        ).join(", ");
 
-        var aFilter = getter.getAdvancedFilter
-        var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
-
-        return user_names
-
-      }else if(_filterValue =='myActionsFilter'){
-      var user_names = null
-        if(getter.myActionsFilter && getter.myActionsFilter[0]){
-          user_names = _.map(getter.myActionsFilter, 'myActionsFilter').join(", ")
+        return user_names;
+      } else if (_filterValue == "myActionsFilter") {
+        var user_names = null;
+        if (getter.myActionsFilter && getter.myActionsFilter[0]) {
+          user_names = _.map(getter.myActionsFilter, "myActionsFilter").join(
+            ", "
+          );
         }
-        return user_names
+        return user_names;
 
-
-      // }else if(_filterValue =='myAssignmentsFilter'){
-      //   var user_names = null
-      //     if(getter.myAssignmentsFilter && getter.myAssignmentsFilter[0]){
-      //       user_names = _.map(getter.myAssignmentsFilter, 'myAssignmentsFilter').join(", ")
-      //     }
-      //     return user_names
-  
-      }else if(_filterValue == 'facilityNameFilter'){
+        // }else if(_filterValue =='myAssignmentsFilter'){
+        //   var user_names = null
+        //     if(getter.myAssignmentsFilter && getter.myAssignmentsFilter[0]){
+        //       user_names = _.map(getter.myAssignmentsFilter, 'myAssignmentsFilter').join(", ")
+        //     }
+        //     return user_names
+      } else if (_filterValue == "facilityNameFilter") {
         // console.log(getter.facilityNameFilter)
-        var user_names = null
-        if(getter.facilityNameFilter && getter.facilityNameFilter[0]){
-          user_names = _.map(getter.facilityNameFilter, 'facilityName').join(", ")
+        var user_names = null;
+        if (getter.facilityNameFilter && getter.facilityNameFilter[0]) {
+          user_names = _.map(getter.facilityNameFilter, "facilityName").join(
+            ", "
+          );
         }
-        return user_names
-      }else if(_filterValue == 'projectStatusFilter'){
+        return user_names;
+      } else if (_filterValue == "projectStatusFilter") {
         // console.log(getter.projectStatusFilter)
-        var user_names = null
-        if(getter.projectStatusFilter && getter.projectStatusFilter[0]){
-          user_names = _.map(getter.projectStatusFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.projectStatusFilter && getter.projectStatusFilter[0]) {
+          user_names = _.map(getter.projectStatusFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'facilityProgressFilter'){
+        return user_names;
+      } else if (_filterValue == "facilityProgressFilter") {
         // console.log(getter.facilityProgressFilter)
-        var user_names = null
-        if(getter.facilityProgressFilter && getter.facilityProgressFilter[0]){
-          user_names = _.map(getter.facilityProgressFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.facilityProgressFilter && getter.facilityProgressFilter[0]) {
+          user_names = _.map(getter.facilityProgressFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'facilityDueDateFilter'){
+        return user_names;
+      } else if (_filterValue == "facilityDueDateFilter") {
         // console.log(getter.facilityDueDateFilter)
-        var dates = null
-        if(getter.facilityDueDateFilter && getter.facilityDueDateFilter[0]){
-          dates = []
-          dates.push( moment(getter.facilityDueDateFilter[0]).format("YYYY-MM-DD") )
-          dates.push( moment(getter.facilityDueDateFilter[1]).format("YYYY-MM-DD") )
-          dates = dates.join(" - ")
+        var dates = null;
+        if (getter.facilityDueDateFilter && getter.facilityDueDateFilter[0]) {
+          dates = [];
+          dates.push(
+            moment(getter.facilityDueDateFilter[0]).format("YYYY-MM-DD")
+          );
+          dates.push(
+            moment(getter.facilityDueDateFilter[1]).format("YYYY-MM-DD")
+          );
+          dates = dates.join(" - ");
         }
-        return dates
-
-      }else if(_filterValue == 'taskTypeFilter'){
+        return dates;
+      } else if (_filterValue == "taskTypeFilter") {
         // console.log(getter.taskTypeFilter)
-        var user_names = null
-        if(getter.taskTypeFilter && getter.taskTypeFilter[0]){
-          user_names = _.map(getter.taskTypeFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.taskTypeFilter && getter.taskTypeFilter[0]) {
+          user_names = _.map(getter.taskTypeFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'noteDateFilter'){
+        return user_names;
+      } else if (_filterValue == "noteDateFilter") {
         // console.log(getter.noteDateFilter)
-        var dates = null
-        if(getter.noteDateFilter && getter.noteDateFilter[0]){
-          dates = []
-          dates.push( moment(getter.noteDateFilter[0]).format("YYYY-MM-DD") )
-          dates.push( moment(getter.noteDateFilter[1]).format("YYYY-MM-DD") )
-          dates = dates.join(" - ")
+        var dates = null;
+        if (getter.noteDateFilter && getter.noteDateFilter[0]) {
+          dates = [];
+          dates.push(moment(getter.noteDateFilter[0]).format("YYYY-MM-DD"));
+          dates.push(moment(getter.noteDateFilter[1]).format("YYYY-MM-DD"));
+          dates = dates.join(" - ");
         }
-        return dates
-
-      }else if(_filterValue == 'taskIssueDueDateFilter'){
+        return dates;
+      } else if (_filterValue == "taskIssueDueDateFilter") {
         // console.log(getter.taskIssueDueDateFilter)
-        var dates = null
-        if(getter.taskIssueDueDateFilter && getter.taskIssueDueDateFilter[0]){
-          dates = []
-          dates.push( moment(getter.taskIssueDueDateFilter[0]).format("YYYY-MM-DD") )
-          dates.push( moment(getter.taskIssueDueDateFilter[1]).format("YYYY-MM-DD") )
-          dates = dates.join(" - ")
+        var dates = null;
+        if (getter.taskIssueDueDateFilter && getter.taskIssueDueDateFilter[0]) {
+          dates = [];
+          dates.push(
+            moment(getter.taskIssueDueDateFilter[0]).format("YYYY-MM-DD")
+          );
+          dates.push(
+            moment(getter.taskIssueDueDateFilter[1]).format("YYYY-MM-DD")
+          );
+          dates = dates.join(" - ");
         }
-        return dates
-
-      }else if(_filterValue == 'taskIssueProgressFilter'){
+        return dates;
+      } else if (_filterValue == "taskIssueProgressFilter") {
         // console.log(getter.taskProgressFilter)
-        var user_names = null
-        if(getter.taskIssueProgressFilter && getter.taskIssueProgressFilter[0]){
-          user_names = _.map(getter.taskIssueProgressFilter, 'name').join(", ")
+        var user_names = null;
+        if (
+          getter.taskIssueProgressFilter &&
+          getter.taskIssueProgressFilter[0]
+        ) {
+          user_names = _.map(getter.taskIssueProgressFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'taskUserFilter'){
+        return user_names;
+      } else if (_filterValue == "taskUserFilter") {
         // console.log(getter.taskUserFilter)
-        var user_names = null
-        if(getter.taskUserFilter && getter.taskUserFilter[0]){
-          user_names = _.map(getter.taskUserFilter, 'fullName').join(", ")
+        var user_names = null;
+        if (getter.taskUserFilter && getter.taskUserFilter[0]) {
+          user_names = _.map(getter.taskUserFilter, "fullName").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'issueTypeFilter'){
+        return user_names;
+      } else if (_filterValue == "issueTypeFilter") {
         // console.log(getter.issueTypeFilter)
-        var names = null
-        if(getter.issueTypeFilter && getter.issueTypeFilter[0]){
-           names = _.map(getter.issueTypeFilter, 'name').join(", ")
+        var names = null;
+        if (getter.issueTypeFilter && getter.issueTypeFilter[0]) {
+          names = _.map(getter.issueTypeFilter, "name").join(", ");
         }
-        return names
-
-      }else if(_filterValue == 'issueProgressFilter'){
+        return names;
+      } else if (_filterValue == "issueProgressFilter") {
         // console.log(getter.issueProgressFilter)
-        var user_names = null
-        if(getter.issueProgressFilter && getter.issueProgressFilter[0]){
-          user_names = _.map(getter.issueProgressFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.issueProgressFilter && getter.issueProgressFilter[0]) {
+          user_names = _.map(getter.issueProgressFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'issueSeverityFilter'){
+        return user_names;
+      } else if (_filterValue == "issueSeverityFilter") {
         // console.log(getter.issueSeverityFilter)
-        var names = null
-        if(getter.issueSeverityFilter && getter.issueSeverityFilter[0]){
-           names = _.map(getter.issueSeverityFilter, 'name').join(", ")
+        var names = null;
+        if (getter.issueSeverityFilter && getter.issueSeverityFilter[0]) {
+          names = _.map(getter.issueSeverityFilter, "name").join(", ");
         }
-        return names
-
-      }else if(_filterValue == 'issueUserFilter'){
+        return names;
+      } else if (_filterValue == "issueUserFilter") {
         // console.log(getter.issueUserFilter)
-        var user_names = null
-        if(getter.issueUserFilter && getter.issueUserFilter[0]){
-          user_names = _.map(getter.issueUserFilter, 'fullName').join(", ")
+        var user_names = null;
+        if (getter.issueUserFilter && getter.issueUserFilter[0]) {
+          user_names = _.map(getter.issueUserFilter, "fullName").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'taskStageFilter'){
+        return user_names;
+      } else if (_filterValue == "taskStageFilter") {
         // console.log(getter.taskStageFilter)
 
-        var user_names = null
-        if(getter.taskStageFilter && getter.taskStageFilter[0]){
-          user_names = _.map(getter.taskStageFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.taskStageFilter && getter.taskStageFilter[0]) {
+          user_names = _.map(getter.taskStageFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'issueStageFilter'){
+        return user_names;
+      } else if (_filterValue == "issueStageFilter") {
         // console.log(getter.issueStageFilter)
-        var user_names = null
-        if(getter.issueStageFilter && getter.issueStageFilter[0]){
-          user_names = _.map(getter.issueStageFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.issueStageFilter && getter.issueStageFilter[0]) {
+          user_names = _.map(getter.issueStageFilter, "name").join(", ");
         }
-        return user_names
-      }else if(_filterValue == 'taskIssueUserFilter'){
+        return user_names;
+      } else if (_filterValue == "taskIssueUserFilter") {
         // console.log(getter.getTaskIssueUserFilter)
-        var user_names = null
-        if(getter.getTaskIssueUserFilter && getter.getTaskIssueUserFilter[0]){
-          user_names = _.map(getter.getTaskIssueUserFilter, 'fullName').join(", ")
+        var user_names = null;
+        if (getter.getTaskIssueUserFilter && getter.getTaskIssueUserFilter[0]) {
+          user_names = _.map(getter.getTaskIssueUserFilter, "fullName").join(
+            ", "
+          );
         }
-        return user_names
-      }else if(_filterValue == 'riskPriorityLevelFilter'){
+        return user_names;
+      } else if (_filterValue == "riskPriorityLevelFilter") {
         // console.log(getter.getTaskIssueUserFilter)
-        var user_names = null
-        if(getter.getRiskPriorityLevelFilter && getter.getRiskPriorityLevelFilter[0]){
-          user_names = _.map(getter.getRiskPriorityLevelFilter, 'name').join(", ")
+        var user_names = null;
+        if (
+          getter.getRiskPriorityLevelFilter &&
+          getter.getRiskPriorityLevelFilter[0]
+        ) {
+          user_names = _.map(getter.getRiskPriorityLevelFilter, "name").join(
+            ", "
+          );
         }
-        return user_names
-
-      }else if(_filterValue == 'riskStageFilter'){
+        return user_names;
+      } else if (_filterValue == "riskStageFilter") {
         // console.log(getter.getTaskIssueUserFilter)
-        var user_names = null
-        if(getter.riskStageFilter && getter.riskStageFilter[0]){
-          user_names = _.map(getter.riskStageFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.riskStageFilter && getter.riskStageFilter[0]) {
+          user_names = _.map(getter.riskStageFilter, "name").join(", ");
         }
-        return user_names
-
-      }else if(_filterValue == 'riskApproachFilter'){
+        return user_names;
+      } else if (_filterValue == "riskApproachFilter") {
         // console.log(getter.getTaskIssueUserFilter)
-        var user_names = null
-        if(getter.getRiskApproachFilter && getter.getRiskApproachFilter[0]){
-          user_names = _.map(getter.getRiskApproachFilter, 'name').join(", ")
+        var user_names = null;
+        if (getter.getRiskApproachFilter && getter.getRiskApproachFilter[0]) {
+          user_names = _.map(getter.getRiskApproachFilter, "name").join(", ");
         }
-        return user_names
+        return user_names;
       }
     },
-    contentLoaded: state => state.contentLoaded,
-    getToggleRACI: state => state.toggleRACI,
-    getShowAllEventsToggle: state => state.showAllEventsToggle,
+    contentLoaded: (state) => state.contentLoaded,
+    projectsLoaded: (state) => state.projectsLoaded,
+    getToggleRACI: (state) => state.toggleRACI,
+    getShowProjectStats: (state) => state.showProjectStats,
+    getShowAllEventsToggle: (state) => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
-    getLastFocusFilter: state => state.lastCalendarFocus,
+    getLastFocusFilter: (state) => state.lastCalendarFocus,
 
-    mapLoading: state => state.mapLoading,
-    sideLoading: state => state.sideLoading,
-    projects: state => state.projects,
-    facilities: state => state.facilities,
-    facilityGroups: state => state.facilityGroups,
-    statuses: state => state.statuses,
+    mapLoading: (state) => state.mapLoading,
+    sideLoading: (state) => state.sideLoading,
+    projects: (state) => state.projects,
+    facilities: (state) => state.facilities,
+    getContracts: (state) => state.contracts,
+    tableData: (state) => state.tableData, 
+    facilityGroups: (state) => state.facilityGroups,
+    statuses: (state) => state.statuses,
 
-    taskTypes: state => state.taskTypes,
-    taskStages: state => state.taskStages,
-    taskTypeFilter: state => state.taskTypeFilter,
-    taskStageFilter: state => state.taskStageFilter,
-    taskProgressFilter: state => state.taskProgressFilter,
-    taskUserFilter: state => state.taskUserFilter,
+    taskTypes: (state) => state.taskTypes,
+    taskStages: (state) => state.taskStages,
+    taskTypeFilter: (state) => state.taskTypeFilter,
+    taskStageFilter: (state) => state.taskStageFilter,
+    taskProgressFilter: (state) => state.taskProgressFilter,
+    taskUserFilter: (state) => state.taskUserFilter,
 
-    riskStages: state => state.riskStages,
-    riskStageFilter: state => state.riskStageFilter,
-    riskApproach: state => state.riskApproach,
-    riskApproachFilter: state => state.riskApproachFilter,
-    riskProbabilityOptions: state => state.riskProbabilityOptions,
-    riskImpactLevelOptions: state => state.riskImpactLevelOptions,
+    getProjectGroupFilter: (state) => state.projectGroupFilter,
 
-    issueStages: state => state.issueStages,
-    issueTypes: state => state.issueTypes,
-    issueSeverities: state => state.issueSeverities,
-    issueStageFilter: state => state.issueStageFilter,
-    issueTypeFilter: state => state.issueTypeFilter,
-    issueSeverityFilter: state => state.issueSeverityFilter,
-    issueProgressFilter: state => state.issueProgressFilter,
-    issueUserFilter: state => state.issueUserFilter,
+    riskStages: (state) => state.riskStages,
+    riskStageFilter: (state) => state.riskStageFilter,
+    riskApproach: (state) => state.riskApproach,
+    riskApproachFilter: (state) => state.riskApproachFilter,
+    riskProbabilityOptions: (state) => state.riskProbabilityOptions,
+    riskImpactLevelOptions: (state) => state.riskImpactLevelOptions,
 
-    membersPerPageFilter: state => state.membersPerPageFilter,
-    tasksPerPageFilter: state => state.tasksPerPageFilter,
-    issuesPerPageFilter: state => state.issuesPerPageFilter,
-    risksPerPageFilter: state => state.risksPerPageFilter,
-    lessonsPerPageFilter: state => state.lessonsPerPageFilter,
-    calendarViewFilter: state => state.calendarViewFilter,
+    issueStages: (state) => state.issueStages,
+    issueTypes: (state) => state.issueTypes,
+    issueSeverities: (state) => state.issueSeverities,
+    issueStageFilter: (state) => state.issueStageFilter,
+    issueTypeFilter: (state) => state.issueTypeFilter,
+    issueSeverityFilter: (state) => state.issueSeverityFilter,
+    issueProgressFilter: (state) => state.issueProgressFilter,
+    issueUserFilter: (state) => state.issueUserFilter,
 
+    membersPerPageFilter: (state) => state.membersPerPageFilter,
+    tasksPerPageFilter: (state) => state.tasksPerPageFilter,
+    issuesPerPageFilter: (state) => state.issuesPerPageFilter,
+    risksPerPageFilter: (state) => state.risksPerPageFilter,
+    lessonsPerPageFilter: (state) => state.lessonsPerPageFilter,
+    calendarViewFilter: (state) => state.calendarViewFilter,
 
-    currentProject: state => state.currentProject,
-    projectUsers: state => state.projectUsers,
-    accountableUsers: state => state.accountableUsers,
-    consultedUsers: state => state.consultedUsers,
-    informedUsers: state => state.informedUsers,
-    activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
-    accountableProjectUsers: state => _.filter(state.accountableUsers, u => u.status == "active"),
-    consultedProjectUsers: state => _.filter(state.consultedUsers, u => u.status == "active"),
-    informedProjectUsers: state => _.filter(state.informedUsers, u => u.status == "active"),
+    currentProject: (state) => state.currentProject,
+    projectUsers: (state) => state.projectUsers,
+    accountableUsers: (state) => state.accountableUsers,
+    consultedUsers: (state) => state.consultedUsers,
+    informedUsers: (state) => state.informedUsers,
+    activeProjectUsers: (state) =>
+      _.filter(state.projectUsers, (u) => u.status == "active"),
+    accountableProjectUsers: (state) =>
+      _.filter(state.accountableUsers, (u) => u.status == "active"),
+    consultedProjectUsers: (state) =>
+      _.filter(state.consultedUsers, (u) => u.status == "active"),
+    informedProjectUsers: (state) =>
+      _.filter(state.informedUsers, (u) => u.status == "active"),
 
-    currentFacility: state => state.currentFacility,
-    currentFacilityGroup: state => state.currentFacilityGroup,
-    projectStatusFilter: state => state.projectStatusFilter,
-    taskIssueOverdueFilter: state => state.taskIssueOverdueFilter,
-   
+    currentFacility: (state) => state.currentFacility,
+    currentFacilityGroup: (state) => state.currentFacilityGroup,
+    projectStatusFilter: (state) => state.projectStatusFilter,
+    taskIssueOverdueFilter: (state) => state.taskIssueOverdueFilter,
 
-    facilityGroupFilter: state => state.facilityGroupFilter,
-    facilityNameFilter: state => state.facilityNameFilter,
-    facilityProgressFilter: state => state.facilityProgressFilter,
-    programProgressFilter: state => state.programProgressFilter,
-    facilityDueDateFilter: state => state.facilityDueDateFilter,
-    noteDateFilter: state => state.noteDateFilter,
-    taskIssueDueDateFilter: state => state.taskIssueDueDateFilter,
+    facilityGroupFilter: (state) => state.facilityGroupFilter,
+    facilityNameFilter: (state) => state.facilityNameFilter,
+    facilityProgressFilter: (state) => state.facilityProgressFilter,
+    programProgressFilter: (state) => state.programProgressFilter,
+    facilityDueDateFilter: (state) => state.facilityDueDateFilter,
+    noteDateFilter: (state) => state.noteDateFilter,
+    taskIssueDueDateFilter: (state) => state.taskIssueDueDateFilter,
 
-    taskIssueProgressFilter: state => state.taskIssueProgressFilter,
-    myActionsFilter: state => state.myActionsFilter,
-    onWatchFilter: state => state.onWatchFilter,
-    mapFilters: state => state.mapFilters,
-    progressFilter: state => state.progressFilter,
-    managerView: state => state.managerView,
+    taskIssueProgressFilter: (state) => state.taskIssueProgressFilter,
+    myActionsFilter: (state) => state.myActionsFilter,
+    onWatchFilter: (state) => state.onWatchFilter,
+    mapFilters: (state) => state.mapFilters,
+    progressFilter: (state) => state.progressFilter,
+    managerView: (state) => state.managerView,
+    contactInfoForm: (state) => state.contactInfoForm,
     // NOTE: This function will be used in many pages to filter data based on advanced filter
     // selected by user.
-    filterDataForAdvancedFilter: (state, getters) => (resources, page_name, facility=null) => {
-
-      var aFilter = getters.getAdvancedFilter
+    filterDataForAdvancedFilter: (state, getters) => (
+      resources,
+      page_name,
+      facility = null
+    ) => {
+      var aFilter = getters.getAdvancedFilter;
 
       // console.log("aFilter----")
       // console.log(aFilter)
       // console.log(resources)
 
-      var myFilter = getters.getMyAssignmentsFilter
+      var myFilter = getters.getMyAssignmentsFilter;
 
-      let taksIssueNotOnWatch = _.map(aFilter, 'id').includes("notOnWatch")
-      let taskIssueOnWatch =  _.map(aFilter, 'id').includes("onWatch")
+      let taksIssueNotOnWatch = _.map(aFilter, "id").includes("notOnWatch");
+      let taskIssueOnWatch = _.map(aFilter, "id").includes("onWatch");
 
-      let taksIssueNotImportant = _.map(aFilter, 'id').includes("notImportant")
-      let taskIssueImporant =  _.map(aFilter, 'id').includes("important")
+      let taksIssueNotImportant = _.map(aFilter, "id").includes("notImportant");
+      let taskIssueImporant = _.map(aFilter, "id").includes("important");
 
-      let taksIssueNotReportable = _.map(aFilter, 'id').includes("notReportable")
-      let taskIssueReportable =  _.map(aFilter, 'id').includes("reportable")
+      let taksIssueNotReportable = _.map(aFilter, "id").includes(
+        "notReportable"
+      );
+      let taskIssueReportable = _.map(aFilter, "id").includes("reportable");
 
-      let taksIssueNotOnGoing = _.map(aFilter, 'id').includes("notOnGoing")
-      let taskIssueOnGoing =  _.map(aFilter, 'id').includes("onGoing")
+      let taksIssueNotOnGoing = _.map(aFilter, "id").includes("notOnGoing");
+      let taskIssueOnGoing = _.map(aFilter, "id").includes("onGoing");
 
-      let taskIssueMyAction = _.map(myFilter, 'id').includes("myAction")
-      let taksIssueNotMyAction = _.map(myFilter, 'id').includes("notMyAction")
+      let taskIssueMyAction = _.map(myFilter, "id").includes("myAction");
+      let taksIssueNotMyAction = _.map(myFilter, "id").includes("notMyAction");
 
-      let taskIssueOverdue = _.map(aFilter, 'id').includes("overdue")
-      let taskIssueNotOverdue = _.map(aFilter, 'id').includes("notOverdue")
+      let taskIssueOverdue = _.map(aFilter, "id").includes("overdue");
+      let taskIssueNotOverdue = _.map(aFilter, "id").includes("notOverdue");
 
-      let taskIssueActiveProgressStatus = _.map(aFilter, 'id').includes("active")
-      let taskIssueCompletedProgressStatus = _.map(aFilter, 'id').includes("completed")
+      let taskIssueActiveProgressStatus = _.map(aFilter, "id").includes(
+        "active"
+      );
+      let taskIssueCompletedProgressStatus = _.map(aFilter, "id").includes(
+        "completed"
+      );
 
-      let taskIssueRiskDraft = _.map(aFilter, 'id').includes("draft")
-      let taskIssueRiskNotDraft = _.map(aFilter, 'id').includes("notDraft")
+      let taskIssueRiskDraft = _.map(aFilter, "id").includes("draft");
+      let taskIssueRiskNotDraft = _.map(aFilter, "id").includes("notDraft");
 
-      let taskIssueRiskOnHold = _.map(aFilter, 'id').includes("onHold")
-      let taskIssueRiskNotOnHold = _.map(aFilter, 'id').includes("notOnHold")
+      let taskIssueRiskOnHold = _.map(aFilter, "id").includes("onHold");
+      let taskIssueRiskNotOnHold = _.map(aFilter, "id").includes("notOnHold");
 
-      let taskIssueRiskPlanned = _.map(aFilter, 'id').includes("planned")
-      let taskIssueRiskNotPlanned = _.map(aFilter, 'id').includes("notPlanned")
+      let taskIssueRiskPlanned = _.map(aFilter, "id").includes("planned");
+      let taskIssueRiskNotPlanned = _.map(aFilter, "id").includes("notPlanned");
 
-      let taskIssueRiskInprogress = _.map(aFilter, 'id').includes("inProgress")
-      let taskIssueRiskNotInprogress = _.map(aFilter, 'id').includes("notInprogress")
+      let taskIssueRiskInprogress = _.map(aFilter, "id").includes("inProgress");
+      let taskIssueRiskNotInprogress = _.map(aFilter, "id").includes(
+        "notInprogress"
+      );
 
       // let riskPriorityLevel = _.map(aFilter, 'filterCategoryId').includes("riskPriorityLevelFilter")
       // let riskPriorityLevelNames = _.map(aFilter, 'id')
@@ -970,1115 +1260,2144 @@ export default new Vuex.Store({
       // let riskApproach = _.map(aFilter, 'filterCategoryId').includes("riskApproachFilter")
       // let riskApproachNames = _.map(aFilter, 'id')
 
-      let valid = true
+      let valid = true;
 
       if (
-        (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == true) ||
+        (taskIssueActiveProgressStatus == true &&
+          taskIssueCompletedProgressStatus == true) ||
         (taskIssueMyAction == true && taksIssueNotMyAction == true) ||
         (taskIssueOnWatch == true && taksIssueNotOnWatch == true) ||
         (taskIssueImporant == true && taksIssueNotImportant == true) ||
         (taskIssueReportable == true && taksIssueNotReportable == true) ||
         (taskIssueOnGoing == true && taksIssueNotOnGoing == true) ||
         (taskIssueRiskPlanned == true && taskIssueRiskNotPlanned == true) ||
-        (taskIssueRiskInprogress == true && taskIssueRiskNotInprogress == true) ||
+        (taskIssueRiskInprogress == true &&
+          taskIssueRiskNotInprogress == true) ||
         (taskIssueOverdue == true && taskIssueNotOverdue == true) ||
-        // (taskIssueRiskNotDraft == true && taskIssueRiskDraft == true) ||  
-        (taskIssueRiskNotOnHold == true && taskIssueRiskOnHold == true) 
-
-        )  {
-        valid = true
+        // (taskIssueRiskNotDraft == true && taskIssueRiskDraft == true) ||
+        (taskIssueRiskNotOnHold == true && taskIssueRiskOnHold == true)
+      ) {
+        valid = true;
       }
 
-      let _isOverdues = []
-      _isOverdues = _.map(resources, 'isOverdue')
+      let _isOverdues = [];
+      _isOverdues = _.map(resources, "isOverdue");
 
-      let _isDrafts = []
-      _isDrafts = _.map(resources, 'draft')
+      let _isDrafts = [];
+      _isDrafts = _.map(resources, "draft");
 
-      let isPlanned = []
-          isPlanned = resources.map(p => p.planned)
+      let isPlanned = [];
+      isPlanned = resources.map((p) => p.planned);
 
-      let isInprogress = []
-          isInprogress = resources.map(p => p.inProgress)      
-   
-      let _isOnHolds = []
-      _isOnHolds = _.map(resources, 'onHold')
+      let isInprogress = [];
+      isInprogress = resources.map((p) => p.inProgress);
 
-      if(
-        taskIssueRiskDraft == true || taskIssueRiskOnHold == true || 
-        taskIssueRiskPlanned == true || taskIssueRiskInprogress == true ||
-        taskIssueOverdue == true || taskIssueCompletedProgressStatus == true ||
-        taskIssueOnGoing == true || taskIssueOnWatch == true || 
-        taskIssueReportable == true || taskIssueImporant == true
-      ){
-        valid = false
+      let _isOnHolds = [];
+      _isOnHolds = _.map(resources, "onHold");
+
+      if (
+        taskIssueRiskDraft == true ||
+        taskIssueRiskOnHold == true ||
+        taskIssueRiskPlanned == true ||
+        taskIssueRiskInprogress == true ||
+        taskIssueOverdue == true ||
+        taskIssueCompletedProgressStatus == true ||
+        taskIssueOnGoing == true ||
+        taskIssueOnWatch == true ||
+        taskIssueReportable == true ||
+        taskIssueImporant == true
+      ) {
+        valid = false;
       }
 
-      if(taskIssueRiskDraft == false && taskIssueRiskNotDraft == true){
-        valid = valid && _isDrafts.includes(false)
-      } 
-      if(taskIssueRiskDraft == true && taskIssueRiskNotDraft == false){
-        valid = valid || _isDrafts.includes(true)
-      } 
-      if(taskIssueRiskOnHold == false && taskIssueRiskNotOnHold == true){
-        valid = valid && _isOnHolds.includes(false)
-      } 
-
-      if(taskIssueRiskOnHold == true && taskIssueRiskNotOnHold == false){
-        valid = valid || _isOnHolds.includes(true)
-      } 
-
-      if(taskIssueRiskPlanned == false && taskIssueRiskNotPlanned == true){
-        valid = valid && isPlanned.includes(false)
+      if (taskIssueRiskDraft == false && taskIssueRiskNotDraft == true) {
+        valid = valid && _isDrafts.includes(false);
+      }
+      if (taskIssueRiskDraft == true && taskIssueRiskNotDraft == false) {
+        valid = valid || _isDrafts.includes(true);
+      }
+      if (taskIssueRiskOnHold == false && taskIssueRiskNotOnHold == true) {
+        valid = valid && _isOnHolds.includes(false);
       }
 
-      if(taskIssueRiskPlanned == true && taskIssueRiskNotPlanned == false){
-        valid = valid || isPlanned.includes(true)
-      }
-      
-      if(taskIssueRiskInprogress == false && taskIssueRiskNotInprogress == true){
-        valid = valid && isInprogress.includes(false)
+      if (taskIssueRiskOnHold == true && taskIssueRiskNotOnHold == false) {
+        valid = valid || _isOnHolds.includes(true);
       }
 
-      if(taskIssueRiskInprogress == true && taskIssueRiskNotInprogress == false){
-        valid = valid || isInprogress.includes(true)
+      if (taskIssueRiskPlanned == false && taskIssueRiskNotPlanned == true) {
+        valid = valid && isPlanned.includes(false);
       }
 
-      if(taskIssueOverdue == true && taskIssueNotOverdue == false){
-        valid = valid || _isOverdues.includes(true)
-      }
-      if(taskIssueOverdue == false && taskIssueNotOverdue == true){
-        valid = valid && _isOverdues.includes(false)
-      }
-      
-      let _progressStatuses = []
-      _progressStatuses = _.map(resources, 'progressStatus')
-      
-      if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false && _progressStatuses.length > 0) {
-        valid = valid && _progressStatuses.includes('active')
+      if (taskIssueRiskPlanned == true && taskIssueRiskNotPlanned == false) {
+        valid = valid || isPlanned.includes(true);
       }
 
-      if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.length > 0) {
-        valid = valid || _progressStatuses.includes('completed')
+      if (
+        taskIssueRiskInprogress == false &&
+        taskIssueRiskNotInprogress == true
+      ) {
+        valid = valid && isInprogress.includes(false);
+      }
+
+      if (
+        taskIssueRiskInprogress == true &&
+        taskIssueRiskNotInprogress == false
+      ) {
+        valid = valid || isInprogress.includes(true);
+      }
+
+      if (taskIssueOverdue == true && taskIssueNotOverdue == false) {
+        valid = valid || _isOverdues.includes(true);
+      }
+      if (taskIssueOverdue == false && taskIssueNotOverdue == true) {
+        valid = valid && _isOverdues.includes(false);
+      }
+      if (
+        page_name.toLowerCase().includes("lesson") &&
+        taskIssueCompletedProgressStatus == true
+        ) {
+        valid = valid || _isDrafts.includes(false);
+      } else {
+        let _progressStatuses = [];
+        _progressStatuses = _.map(resources, "progressStatus");
+
+        if (
+          taskIssueActiveProgressStatus == true &&
+          taskIssueCompletedProgressStatus == false &&
+          _progressStatuses.length > 0
+        ) {
+          valid = valid && _progressStatuses.includes("active");
+        }
+        if (
+          taskIssueActiveProgressStatus == false &&
+          taskIssueCompletedProgressStatus == true &&
+          _progressStatuses.length > 0
+        ) {
+          valid = valid || _progressStatuses.includes("completed");
+        }
       }
 
       // var notes = _.flatten(_.map(resources, 'notes'))
-      var userIds = [] //_.uniq(_.map(notes, 'userId'))
+      var userIds = []; //_.uniq(_.map(notes, 'userId'))
 
-      var uids = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
+      var uids = _.compact(
+        _.uniq([
+          ..._.flatten(_.map(resources, "userIds")),
+          ..._.map(_.flatten(_.map(resources, "checklists")), "userId"),
+        ])
+      );
       // if(page_name == 'filteredFacilities'){
       //   var u = _.uniq(_.map(facility['notes'], 'userId'))
       //   userIds = userIds.concat(u)
       // }
-      userIds = _.uniq(userIds.concat(uids))
+      userIds = _.uniq(userIds.concat(uids));
 
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
-        valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
+        valid = valid && userIds.includes(Vue.prototype.$currentUser.id);
       }
 
       if (taskIssueMyAction == false && taksIssueNotMyAction == true) {
-        var isValid = false
-        for(let res of resources){
-          if( !res.userIds.includes(Vue.prototype.$currentUser.id) ){
-            isValid = true
+        var isValid = false;
+        for (let res of resources) {
+          if (!res.userIds.includes(Vue.prototype.$currentUser.id)) {
+            isValid = true;
           }
-          if(isValid) break
-
+          if (isValid) break;
         }
-        valid = valid && isValid
+        valid = valid && isValid;
       }
 
-      var watches = _.uniq(_.map(resources, 'watched'))
+      var watches = _.uniq(_.map(resources, "watched"));
 
-      if(taskIssueOnWatch == true && taksIssueNotOnWatch == false){
-        valid = valid || watches.includes(true)
+      if (taskIssueOnWatch == true && taksIssueNotOnWatch == false) {
+        valid = valid || watches.includes(true);
       }
 
-      if(taskIssueOnWatch == false && taksIssueNotOnWatch == true){
-        valid = valid && watches.includes(false)
+      if (taskIssueOnWatch == false && taksIssueNotOnWatch == true) {
+        valid = valid && watches.includes(false);
       }
 
-      var importants = _.uniq(_.map(resources, 'important'))
-      if(taskIssueImporant == true && taksIssueNotImportant == false){
-        valid = valid || importants.includes(true)
-      }
-  
-
-      if(taskIssueImporant == false && taksIssueNotImportant == true){
-        valid = valid && importants.includes(false)
+      var importants = _.uniq(_.map(resources, "important"));
+      if (taskIssueImporant == true && taksIssueNotImportant == false) {
+        valid = valid || importants.includes(true);
       }
 
-      let reportables = _.uniq(_.map(resources, 'reportable'))
-      if(taskIssueReportable == true && taksIssueNotReportable == false){
-        valid = valid || reportables.includes(true)
+      if (taskIssueImporant == false && taksIssueNotImportant == true) {
+        valid = valid && importants.includes(false);
       }
 
-      if(taskIssueReportable == false && taksIssueNotReportable == true){
-        valid = valid && reportables.includes(false)
+      let reportables = _.uniq(_.map(resources, "reportable"));
+      if (taskIssueReportable == true && taksIssueNotReportable == false) {
+        valid = valid || reportables.includes(true);
+      }
+
+      if (taskIssueReportable == false && taksIssueNotReportable == true) {
+        valid = valid && reportables.includes(false);
       }
 
       // As per issue https://github.com/MicroHealthLLC/mPATH/issues/2649
       // ongoing flat is just for Task and Risk so, we will filter it
       // on Task or Risk resources
-      if(page_name.toLowerCase().includes("task") || page_name.toLowerCase().includes("risk")){
+      if (
+        page_name.toLowerCase().includes("task") ||
+        page_name.toLowerCase().includes("risk")
+      ) {
         // console.log("inside ongoing filter")
-        var onGoings = _.uniq(_.map(resources, 'ongoing'))
-        if(taskIssueOnGoing == true && taksIssueNotOnGoing == false){
-          valid = valid || onGoings.includes(true)
+        var onGoings = _.uniq(_.map(resources, "ongoing"));
+        if (taskIssueOnGoing == true && taksIssueNotOnGoing == false) {
+          valid = valid || onGoings.includes(true);
         }
 
-        if(taskIssueOnGoing == false && taksIssueNotOnGoing == true){
-          valid = valid && onGoings.includes(false)
+        if (taskIssueOnGoing == false && taksIssueNotOnGoing == true) {
+          valid = valid && onGoings.includes(false);
         }
-      } else if(page_name.toLowerCase().includes("issue")) {
-        if(taskIssueOnGoing == true && taksIssueNotOnGoing == false){
-          valid = false
+      } else if (page_name.toLowerCase().includes("issue")) {
+        if (taskIssueOnGoing == true && taksIssueNotOnGoing == false) {
+          valid = false;
         }
       }
-      return valid
+      return valid;
     },
 
-    filteredFacilities: (state, getters) => (_status='active') => {
+    filteredFacilities: (state, getters) => (_status = "active") => {
       // return getters.facilities;
 
       return _.filter(getters.facilities, (facility) => {
-        let valid = _status === 'all' || facility.status === _status
-        valid = valid && facility.facilityGroupStatus == "active"
-        if (!valid) return valid
-        if(state.mapFilters.length < 1) return valid
+        let valid = _status === "all" || facility.status === _status;
+        valid = valid && facility.facilityGroupStatus == "active";
+        if (!valid) return valid;
+        if (state.mapFilters.length < 1) return valid;
 
-        var resources1 = []
-        resources1.push(...facility.tasks)
-        resources1.push(...facility.issues)
-        resources1.push(...facility.risks)
+        var resources1 = [];
+        resources1.push(...facility.tasks);
+        resources1.push(...facility.issues);
+        resources1.push(...facility.risks);
         // resources1 = resources1.concat(facility.tasks)
         // resources1 = resources1.concat(facility.issues)
         // resources1 = resources1.concat(facility.risks)
 
         _.each(state.mapFilters, (f) => {
-          let k = Object.keys(f)[0]
-          switch(k) {
-            case "advancedFilter":{
-               valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+          let k = Object.keys(f)[0];
+          switch (k) {
+            case "advancedFilter": {
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "dueDate": {
-              let range = moment.range(f[k][0], f[k][1])
-              valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
-              break
+              let range = moment.range(f[k][0], f[k][1]);
+              valid =
+                valid &&
+                facility[k] &&
+                range.contains(new Date(facility[k].replace(/-/g, "/")));
+              break;
             }
             case "noteDate": {
-              let taksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
-              let resources = []
+              let taksIssues = facility.tasks
+                .concat(facility.issues)
+                .concat(facility.risks);
+              let resources = [];
               for (let r of taksIssues) {
-                var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
-                if(v){
-                  resources.push(r)
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredFacilities",
+                  facility
+                );
+                if (v) {
+                  resources.push(r);
                 }
               }
-              var startDate = moment(f[k][0], "YYYY-MM-DD")
-              var endDate = moment(f[k][1], "YYYY-MM-DD")
-              var _notes = _.flatten(_.map(resources, 'notes') )
-              var is_valid = false
-              for(var n of _notes){
-                var nDate = moment(n.createdAt, "YYYY-MM-DD")
-                is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-                if(is_valid) break
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _notes = _.flatten(_.map(resources, "notes"));
+              var is_valid = false;
+              for (var n of _notes) {
+                var nDate = moment(n.createdAt, "YYYY-MM-DD");
+                is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                if (is_valid) break;
               }
 
-              valid = valid && is_valid
-              break
+              valid = valid && is_valid;
+              break;
             }
             case "taskIssueDueDate": {
-
-              let taksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
-              let resources = []
+              let taksIssues = facility.tasks
+                .concat(facility.issues)
+                .concat(facility.risks);
+              let resources = [];
               for (let r of taksIssues) {
-                var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
-                if(v){
-                  resources.push(r)
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredFacilities",
+                  facility
+                );
+                if (v) {
+                  resources.push(r);
                 }
               }
 
-              var startDate = moment(f[k][0], "YYYY-MM-DD")
-              var endDate = moment(f[k][1], "YYYY-MM-DD")
-              var _dueDates = _.flatten(_.map(resources, 'dueDate') )
-              var is_valid = false
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _dueDates = _.flatten(_.map(resources, "dueDate"));
+              var is_valid = false;
 
-              if(_dueDates.length < 1){
-                valid = valid && is_valid
-                break
-
-              }else{
-                for(var dueDate of _dueDates){
-                  var nDate = moment(dueDate, "YYYY-MM-DD")
-                  is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-                  if(is_valid) break
+              if (_dueDates.length < 1) {
+                valid = valid && is_valid;
+                break;
+              } else {
+                for (var dueDate of _dueDates) {
+                  var nDate = moment(dueDate, "YYYY-MM-DD");
+                  is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                  if (is_valid) break;
                 }
-                valid = valid && is_valid
-                break
+                valid = valid && is_valid;
+                break;
               }
-
             }
             // This is for facility progress
             case "progress": {
-              let ranges = f[k].map(r => r.split("-").map(Number))
-              let is_valid = false
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
               for (let range of ranges) {
-                is_valid = range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0]
-                if (is_valid) break
+                is_valid =
+                  range[1] !== undefined
+                    ? range[0] <= facility[k] && range[1] >= facility[k]
+                    : facility[k] == range[0];
+                if (is_valid) break;
               }
-              valid = valid && is_valid
-              break
+              valid = valid && is_valid;
+              break;
             }
             // TODO: Improve this function
             case "taskIssueProgress": {
-              let progressFor = facility.tasks.concat(facility.issues).concat(facility.risks)
-              let resources = []
+              let progressFor = facility.tasks
+                .concat(facility.issues)
+                .concat(facility.risks);
+              let resources = [];
               for (let r of progressFor) {
-                var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
-                if(v){
-                  resources.push(r)
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredFacilities",
+                  facility
+                );
+                if (v) {
+                  resources.push(r);
                 }
               }
-              let progress = _.uniq(_.map(resources, 'progress'))
-              let ranges = f[k].map(r => r.split("-").map(Number))
-              let is_valid = false
+              let progress = _.uniq(_.map(resources, "progress"));
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
               for (let range of ranges) {
-                let size = range[1] ? (range[1] - range[0]) + 1 : 1
-                is_valid = _.intersection(progress, Array.from(Array(size), (_, i) => i + range[0])).length > 0
-                if (is_valid) break
+                let size = range[1] ? range[1] - range[0] + 1 : 1;
+                is_valid =
+                  _.intersection(
+                    progress,
+                    Array.from(Array(size), (_, i) => i + range[0])
+                  ).length > 0;
+                if (is_valid) break;
               }
-              valid = valid && is_valid
-              break
+              valid = valid && is_valid;
+              break;
             }
             case "issueTypeIds": {
-              var issues = facility.issues
-              var resources = _.filter(issues, ti => f[k].includes(ti.issueTypeId) )
-              if(resources.length < 1){
-                valid = false
+              var issues = facility.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
 
-              break
+              break;
             }
             case "issueSeverityIds": {
-              var issues = facility.issues
-              var resources = _.filter(issues, ti => f[k].includes(ti.issueSeverityId) )
-              if(resources.length < 1){
-                valid = false
+              var issues = facility.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueSeverityId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
 
-              break
+              break;
             }
             case "issueStageIds": {
-              var issues = facility.issues
-              var resources = _.filter(issues, ti => f[k].includes(ti.issueStageId)   )
-              if(resources.length < 1){
-                valid = false
+              var issues = facility.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "taskTypeIds": {
-              var tasksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
-              var resources = _.filter(tasksIssues, ti => f[k].includes(ti.taskTypeId) )
-              if(resources.length < 1){
-                valid = false
+              var tasksIssues = facility.tasks
+                .concat(facility.issues)
+                .concat(facility.risks);
+              var resources = _.filter(tasksIssues, (ti) =>
+                f[k].includes(ti.taskTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
 
-              break
+              break;
             }
             case "taskStageIds": {
-              var tasks = facility.tasks
-              var resources = _.filter(tasks, ti => f[k].includes(ti.taskStageId) )
-              if(resources.length < 1){
-                valid = false
+              var tasks = facility.tasks;
+              var resources = _.filter(tasks, (ti) =>
+                f[k].includes(ti.taskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "riskStageIds": {
-              var risks = facility.risks
-              var resources = _.filter(risks, ti => f[k].includes(ti.riskStageId) )
-              if(resources.length < 1){
-                valid = false
+              var risks = facility.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "riskPriorityLevelIds": {
-              var risks = facility.risks
-              var resources = _.filter(risks, ti => f[k].includes(ti.riskPriorityLevelId) )
-              if(resources.length < 1){
-                valid = false
+              var risks = facility.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskPriorityLevelId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "riskApproachFilter": {
-              var risks = facility.risks
-              var fApproaches = _.map(f[k], "id")
-              var resources = _.filter(risks, ti => fApproaches.includes(ti.riskApproach) )
-              if(resources.length < 1){
-                valid = false
+              var risks = facility.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproach)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "riskApproachFilterIds": {
-              var risks = facility.risks
-              var fApproaches = _.map(f[k], "id")
-              var resources = _.filter(risks, ti => fApproaches.includes(ti.riskApproachId) )
-              if(resources.length < 1){
-                valid = false
+              var risks = facility.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproachId)
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "riskPriorityLevelFilter": {
-              var risks = facility.risks
-              var fPriorityLevels = _.map(f[k], "id")
-              var resources = _.filter(risks, ti => fPriorityLevels.includes(ti.priorityLevelName.toLowerCase()) )
-              if(resources.length < 1){
-                valid = false
+              var risks = facility.risks;
+              var fPriorityLevels = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fPriorityLevels.includes(ti.priorityLevelName.toLowerCase())
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "taskIssueUsers": {
-
-              var taskIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
-              var resources = _.filter(taskIssues, ti => _.intersection(ti.userIds, f[k]).length > 0 )
-              if(resources.length < 1){
-                valid = false
+              var taskIssues = facility.tasks
+                .concat(facility.issues)
+                .concat(facility.risks);
+              var resources = _.filter(
+                taskIssues,
+                (ti) => _.intersection(ti.userIds, f[k]).length > 0
+              );
+              if (resources.length < 1) {
+                valid = false;
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "facilityGroupIds": {
-              valid = valid && f[k].includes(facility.facilityGroupId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                f[k].includes(facility.facilityGroupId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "ids": {
-              valid = valid && f[k].includes(facility.id) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                f[k].includes(facility.id) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             case "statusIds": {
-              valid = valid && f[k].includes(facility.statusId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              break
+              valid =
+                valid &&
+                f[k].includes(facility.statusId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredFacilities",
+                  facility
+                );
+              break;
             }
             default: {
-              valid = valid && facility[k] == f[k]
-              break
+              valid = valid && facility[k] == f[k];
+              break;
             }
           }
-        })
-        return valid
-      })
+        });
+        return valid;
+      });
+    },
+    filteredContracts: (state, getters) => {
+
+      return _.filter(getters.getContracts, (contract) => {
+        let valid = contract.id || null;
+        // valid = valid && facility.facilityGroupStatus == "active";
+        if (!valid) return valid;
+        if (state.mapFilters.length < 1) return valid;
+
+        var resources1 = [];
+        resources1.push(...contract.tasks);
+        resources1.push(...contract.issues);
+        resources1.push(...contract.risks);
+  
+        _.each(state.mapFilters, (f) => {
+          let k = Object.keys(f)[0];
+          switch (k) {
+            case "advancedFilter": {
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "dueDate": {
+              let range = moment.range(f[k][0], f[k][1]);
+              valid =
+                valid &&
+                contract[k] &&
+                range.contains(new Date(contract[k].replace(/-/g, "/")));
+              break;
+            }
+            case "noteDate": {
+              let taksIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredContracts",
+                  contract
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _notes = _.flatten(_.map(resources, "notes"));
+              var is_valid = false;
+              for (var n of _notes) {
+                var nDate = moment(n.createdAt, "YYYY-MM-DD");
+                is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                if (is_valid) break;
+              }
+
+              valid = valid && is_valid;
+              break;
+            }
+            case "taskIssueDueDate": {
+              let taksIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredContracts",
+                  contract
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _dueDates = _.flatten(_.map(resources, "dueDate"));
+              var is_valid = false;
+
+              if (_dueDates.length < 1) {
+                valid = valid && is_valid;
+                break;
+              } else {
+                for (var dueDate of _dueDates) {
+                  var nDate = moment(dueDate, "YYYY-MM-DD");
+                  is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                  if (is_valid) break;
+                }
+                valid = valid && is_valid;
+                break;
+              }
+            }
+            // This is for facility progress
+            case "progress": {
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                is_valid =
+                  range[1] !== undefined
+                    ? range[0] <= contract[k] && range[1] >= contract[k]
+                    : contract[k] == range[0];
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            // TODO: Improve this function
+            case "taskIssueProgress": {
+              let progressFor = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              let resources = [];
+              for (let r of progressFor) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredContracts",
+                  contract
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              let progress = _.uniq(_.map(resources, "progress"));
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                let size = range[1] ? range[1] - range[0] + 1 : 1;
+                is_valid =
+                  _.intersection(
+                    progress,
+                    Array.from(Array(size), (_, i) => i + range[0])
+                  ).length > 0;
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            case "issueTypeIds": {
+              var issues = contract.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+
+              break;
+            }
+            case "issueSeverityIds": {
+              var issues = contract.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueSeverityId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+
+              break;
+            }
+            case "issueStageIds": {
+              var issues = contract.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "taskTypeIds": {
+              var tasksIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              var resources = _.filter(tasksIssues, (ti) =>
+                f[k].includes(ti.taskTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+
+              break;
+            }
+            case "taskStageIds": {
+              var tasks = contract.tasks;
+              var resources = _.filter(tasks, (ti) =>
+                f[k].includes(ti.taskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskStageIds": {
+              var risks = contract.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskPriorityLevelIds": {
+              var risks = contract.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskPriorityLevelId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskApproachFilter": {
+              var risks = contract.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproach)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskApproachFilterIds": {
+              var risks = contract.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproachId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "riskPriorityLevelFilter": {
+              var risks = contract.risks;
+              var fPriorityLevels = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fPriorityLevels.includes(ti.priorityLevelName.toLowerCase())
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "taskIssueUsers": {
+              var taskIssues = contract.tasks
+                .concat(contract.issues)
+                .concat(contract.risks);
+              var resources = _.filter(
+                taskIssues,
+                (ti) => _.intersection(ti.userIds, f[k]).length > 0
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "facilityGroupIds": {
+              valid =
+                valid &&
+                f[k].includes(contract.contractGroupId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "ids": {
+              valid =
+                valid &&
+                f[k].includes(contract.id) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            case "statusIds": {
+              valid =
+                valid &&
+                f[k].includes(contract.statusId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredContracts",
+                  contract
+                );
+              break;
+            }
+            default: {
+              valid = valid && contract[k] == f[k];
+              break;
+            }
+          }
+        });
+        return valid;
+      });
     },
     filteredFacilityGroups: (state, getters) => {
-      let ids = _.map(getters.filteredFacilities('active'), 'facilityGroupId')
-      return _.filter(getters.facilityGroups, fg => ids.includes(fg.id) && fg.status == "active")
+      let ids = _.map(getters.facilities, "facilityGroupId");
+      return _.filter(
+        getters.facilityGroups,
+        (fg) => ids.includes(fg.id) && fg.status == "active"
+      );
     },
     facilityCount: (state, getters) => {
-      return getters.filteredFacilities('all').length
+      return getters.filteredFacilities("all").length;
     },
     facilityProgress: (state, getters) => {
-      let mean = _.meanBy(getters.filteredFacilities('active'), 'progress') || 0
-      return Number(mean.toFixed(2))
+      let mean =
+        _.meanBy(getters.filteredFacilities("active"), "progress") || 0;
+      return Number(mean.toFixed(2));
     },
     filterFacilitiesWithActiveFacilityGroups: (state, getters) => {
-      let ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
-      return _.filter(getters.filteredFacilities('active'), (f) => ids.includes(f.facilityGroupId) && f.status === 'active')
+      let ids = _.map(
+        _.filter(state.facilityGroups, (fg) => fg.status === "active"),
+        "id"
+      );
+      return _.filter(
+        getters.filteredFacilities("active"),
+        (f) => ids.includes(f.facilityGroupId) && f.status === "active"
+      );
     },
     unFilterFacilities: (state) => {
-      let ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
-      return _.filter(state.facilities, (f) => ids.includes(f.facilityGroupId) && f.status === 'active')
+      let ids = _.map(
+        _.filter(state.facilityGroups, (fg) => fg.status === "active"),
+        "id"
+      );
+      return _.filter(
+        state.facilities,
+        (f) => ids.includes(f.facilityGroupId) && f.status === "active"
+      );
     },
     // activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
     //   return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
     // },
 
     activeFacilityGroups: (state, getters) => (id) => {
-      return _.filter(getters.facilityGroups, f => f.status === 'active')     
+      return _.filter(getters.facilityGroups, (f) => f.status === "active");
     },
     getTaskIssueOverdueOptions: (state, getters) => {
-      return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "notOverdue",name: "not overdue", value: "not overdue"}]
+      return [
+        { id: "overdue", name: "overdue", value: "overdue" },
+        { id: "notOverdue", name: "not overdue", value: "not overdue" },
+      ];
     },
 
     currentTasks: (state, getters) => {
-      return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'tasks'))
+      return _.flatten(
+        _.map(getters.filterFacilitiesWithActiveFacilityGroups, "tasks")
+      );
     },
     currentIssues: (state, getters) => {
-      return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'issues'))
+      return _.flatten(
+        _.map(getters.filterFacilitiesWithActiveFacilityGroups, "issues")
+      );
     },
     currentRisks: (state, getters) => {
-      return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'risks'))
+      return _.flatten(
+        _.map(getters.filterFacilitiesWithActiveFacilityGroups, "risks")
+      );
     },
-    facilityGroupFacilities: (state, getters) => (group, status='active') => {
-      return _.filter(getters.filteredFacilities(status), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
-        // Alphabetize facilities (programs)
-        .sort((a, b) => a.facilityName.localeCompare(b.facilityName))    
+    facilityGroupFacilities: (state, getters) => (group, status = "active") => {
+      return {
+      projects: { 
+          a: getters.filteredFacilities(status)
+          .filter(f => 
+              f.facilityGroupId == group.id &&
+              f.projectId == getters.currentProject.id
+              ).sort((a, b) => a.facilityName.localeCompare(b.facilityName)),
+        },
+      contracts: { 
+          b: getters.filteredContracts
+          .filter(f => 
+              f.facilityGroupId == group.id &&
+              f.projectId == getters.currentProject.id
+              ).sort((a, b) => a.nickname.localeCompare(b.nickname)),
+         }      
+      }
     },
-
     // for gantt chart view
     ganttData: (state, getters) => {
-      let hash = new Array
+      let hash = new Array();
       if (!getters.contentLoaded) return hash;
 
       // for project
-      let p_id = getters.currentProject ? `p_${getters.currentProject.id}` : `p_${Vue.prototype.$preferences.projectId}`
+      let p_id = getters.currentProject
+        ? `p_${getters.currentProject.id}`
+        : `p_${Vue.prototype.$preferences.projectId}`;
 
+      let _p_id = "1";
+      let p_s_date = _.min(_.map(getters.currentTasks, "startDate")) || "N/A";
+      let p_e_date = _.max(_.map(getters.currentTasks, "dueDate")) || "N/A";
+      let p_duration = getSimpleDate(p_e_date) - getSimpleDate(p_s_date) || 0;
+      let p_progress = _.meanBy(getters.currentTasks, "progress") || 0;
 
-      let _p_id = '1'
-      let p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
-      let p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'
-      let p_duration = getSimpleDate(p_e_date) - getSimpleDate(p_s_date) || 0
-      let p_progress = _.meanBy(getters.currentTasks, 'progress') || 0
-
-      hash.push(
-        {
-          id: p_id,
-          _id: _p_id,
-          name: getters.currentProject.name,
-          duration: p_duration,
-          durationInDays: `${Math.ceil(p_duration / (1000 * 3600 * 24)) || 0} days`,
-          percent: Number(p_progress.toFixed(2)),
-          start: getSimpleDate(p_s_date),
-          startDate: p_s_date,
-          endDate: p_e_date,
-          type: 'project'
-        }
-      )
+      hash.push({
+        id: p_id,
+        _id: _p_id,
+        name: getters.currentProject.name,
+        duration: p_duration,
+        durationInDays: `${Math.ceil(p_duration / (1000 * 3600 * 24)) ||
+          0} days`,
+        percent: Number(p_progress.toFixed(2)),
+        start: getSimpleDate(p_s_date),
+        startDate: p_s_date,
+        endDate: p_e_date,
+        type: "project",
+      });
 
       // for facility_groups
-      let groups = _.groupBy(getters.filterFacilitiesWithActiveFacilityGroups, 'facilityGroupName')
-      let group_count = 1
+      let groups = _.groupBy(
+        getters.filterFacilitiesWithActiveFacilityGroups,
+        "facilityGroupName"
+      );
+      let group_count = 1;
       for (let group in groups) {
-        let _fg_id = _p_id + "." + group_count
-        let fg_id = `${p_id}_fg_${group}`.replace(/ /i, '_')
-        let fg_tasks = _.flatten(_.map(groups[group], 'tasks'))
-        let fg_s_date = _.min(_.map(fg_tasks, 'startDate')) || 'N/A'
-        let fg_e_date = _.max(_.map(fg_tasks, 'dueDate')) || 'N/A'
-        let fg_duration = getSimpleDate(fg_e_date) - getSimpleDate(fg_s_date) || 0
-        let fg_progress = _.meanBy(fg_tasks, 'progress') || 0
+        let _fg_id = _p_id + "." + group_count;
+        let fg_id = `${p_id}_fg_${group}`.replace(/ /i, "_");
+        let fg_tasks = _.flatten(_.map(groups[group], "tasks"));
+        let fg_s_date = _.min(_.map(fg_tasks, "startDate")) || "N/A";
+        let fg_e_date = _.max(_.map(fg_tasks, "dueDate")) || "N/A";
+        let fg_duration =
+          getSimpleDate(fg_e_date) - getSimpleDate(fg_s_date) || 0;
+        let fg_progress = _.meanBy(fg_tasks, "progress") || 0;
 
-        hash.push(
-          {
-            id: fg_id,
-            _id: _fg_id,
-            parentId: p_id,
-            name: group,
-            duration: fg_duration,
-            durationInDays: `${Math.ceil(fg_duration / (1000 * 3600 * 24)) || 0} days`,
-            percent: Number(fg_progress.toFixed(2)),
-            start: getSimpleDate(fg_s_date),
-            startDate: fg_s_date,
-            endDate: fg_e_date,
-            type: 'milestone'
-          }
-        )
+        hash.push({
+          id: fg_id,
+          _id: _fg_id,
+          parentId: p_id,
+          name: group,
+          duration: fg_duration,
+          durationInDays: `${Math.ceil(fg_duration / (1000 * 3600 * 24)) ||
+            0} days`,
+          percent: Number(fg_progress.toFixed(2)),
+          start: getSimpleDate(fg_s_date),
+          startDate: fg_s_date,
+          endDate: fg_e_date,
+          type: "milestone",
+        });
 
-        let f_read = Vue.prototype.$topNavigationPermissions.gantt_view['read']  || false
+        let f_read =
+          Vue.prototype.$topNavigationPermissions.gantt_view["read"] || false;
         // for facilities under facility_groups
-        let facility_count = 1
+        let facility_count = 1;
         for (let facility of groups[group]) {
-          let f_id = f_read ? `${fg_id}_f_${facility.id}` : fg_id
-          let _f_id = _fg_id + "." + facility_count
-          let f_s_date = _.min(_.map(facility.tasks, 'startDate')) || 'N/A'
-          let f_e_date = _.max(_.map(facility.tasks, 'dueDate')) || 'N/A'
-          let f_duration = getSimpleDate(f_e_date) - getSimpleDate(f_s_date) || 0
-          let f_progress = _.meanBy(facility.tasks, 'progress') || 0
+          let f_id = f_read ? `${fg_id}_f_${facility.id}` : fg_id;
+          let _f_id = _fg_id + "." + facility_count;
+          let f_s_date = _.min(_.map(facility.tasks, "startDate")) || "N/A";
+          let f_e_date = _.max(_.map(facility.tasks, "dueDate")) || "N/A";
+          let f_duration =
+            getSimpleDate(f_e_date) - getSimpleDate(f_s_date) || 0;
+          let f_progress = _.meanBy(facility.tasks, "progress") || 0;
 
-          hash.push(
-            {
-              id: f_id,
-              _id: _f_id,
-              parentId: fg_id,
-              name: facility.facility.facilityName,
-              duration: f_duration,
-              durationInDays: `${Math.ceil(f_duration / (1000 * 3600 * 24)) || 0} days`,
-              percent: Number(f_progress.toFixed(2)),
-              start: getSimpleDate(f_s_date),
-              startDate: f_s_date,
-              endDate: f_e_date,
-              type: 'milestone'
-            }
-          )
+          hash.push({
+            id: f_id,
+            _id: _f_id,
+            parentId: fg_id,
+            name: facility.facility.facilityName,
+            duration: f_duration,
+            durationInDays: `${Math.ceil(f_duration / (1000 * 3600 * 24)) ||
+              0} days`,
+            percent: Number(f_progress.toFixed(2)),
+            start: getSimpleDate(f_s_date),
+            startDate: f_s_date,
+            endDate: f_e_date,
+            type: "milestone",
+          });
 
-          if (f_read)
-          {
+          if (f_read) {
             // for task_types under facilities
-            let types = _.groupBy(facility.tasks, 'taskType')
-            let filteredTaskTypes = _.map(getters.taskTypeFilter, 'name')
-            let types_count = 1
+            let types = _.groupBy(facility.tasks, "taskType");
+            let filteredTaskTypes = _.map(getters.taskTypeFilter, "name");
+            let types_count = 1;
             for (let type in types) {
-              if (filteredTaskTypes.length > 0 && !filteredTaskTypes.includes(type)) continue
-              let tasks = types[type]
-              let tt_id = `${f_id}_tt_${type}`.replace(/ /i, '_')
-              let _tt_id = _f_id + "." + types_count
-              let tt_s_date = _.min(_.map(tasks, 'startDate'))
-              let tt_e_date = _.max(_.map(tasks, 'dueDate'))
-              let tt_duration = getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date)
-              let tt_progress = _.meanBy(tasks, 'progress')
-
-              hash.push(
-                {
-                  id: tt_id,
-                  _id: _tt_id,
-                  parentId: f_id,
-                  name: type,
-                  duration: tt_duration,
-                  durationInDays: `${Math.ceil(tt_duration / (1000 * 3600 * 24))} days`,
-                  percent: Number(tt_progress.toFixed(2)),
-                  start: getSimpleDate(tt_s_date),
-                  startDate: tt_s_date,
-                  endDate: tt_e_date,
-                  type: 'milestone'
-                }
+              if (
+                filteredTaskTypes.length > 0 &&
+                !filteredTaskTypes.includes(type)
               )
+                continue;
+              let tasks = types[type];
+              let tt_id = `${f_id}_tt_${type}`.replace(/ /i, "_");
+              let _tt_id = _f_id + "." + types_count;
+              let tt_s_date = _.min(_.map(tasks, "startDate"));
+              let tt_e_date = _.max(_.map(tasks, "dueDate"));
+              let tt_duration =
+                getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date);
+              let tt_progress = _.meanBy(tasks, "progress");
 
-              let ranges = getters.taskProgressFilter ? _.map(getters.taskProgressFilter, 'value').map(r => r.split("-").map(Number)) : false
-              let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
+              hash.push({
+                id: tt_id,
+                _id: _tt_id,
+                parentId: f_id,
+                name: type,
+                duration: tt_duration,
+                durationInDays: `${Math.ceil(
+                  tt_duration / (1000 * 3600 * 24)
+                )} days`,
+                percent: Number(tt_progress.toFixed(2)),
+                start: getSimpleDate(tt_s_date),
+                startDate: tt_s_date,
+                endDate: tt_e_date,
+                type: "milestone",
+              });
+
+              let ranges = getters.taskProgressFilter
+                ? _.map(getters.taskProgressFilter, "value").map((r) =>
+                    r.split("-").map(Number)
+                  )
+                : false;
+              let stages =
+                getters.taskStageFilter && getters.taskStageFilter.length
+                  ? _.map(getters.taskStageFilter, "id")
+                  : [];
 
               // for tasks under task_types
-              let task_count = 1
+              let task_count = 1;
               for (let task of tasks) {
-                if (stages.length > 0 && !stages.includes(task.taskStageId)) continue
-                if (_.map(getters.myActionsFilter, 'value').includes('tasks')) {
-                  let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-                  if (!userIds.includes(Vue.prototype.$currentUser.id)) continue
+                if (stages.length > 0 && !stages.includes(task.taskStageId))
+                  continue;
+                if (_.map(getters.myActionsFilter, "value").includes("tasks")) {
+                  let userIds = [
+                    ..._.map(task.checklists, "userId"),
+                    ...task.userIds,
+                  ];
+                  if (!userIds.includes(Vue.prototype.$currentUser.id))
+                    continue;
                 }
                 if (ranges && ranges.length > 0) {
-                  let is_valid = false
+                  let is_valid = false;
                   for (let range of ranges) {
-                    is_valid = range[1] !== undefined ? range[0] <= task.progress && range[1] >= task.progress : task.progress == range[0]
-                    if (is_valid) break
+                    is_valid =
+                      range[1] !== undefined
+                        ? range[0] <= task.progress && range[1] >= task.progress
+                        : task.progress == range[0];
+                    if (is_valid) break;
                   }
-                  if (!is_valid) continue
+                  if (!is_valid) continue;
                 }
-                let t_id = `${tt_id}_t_${task.id}`
-                let _t_id = _tt_id + "." + task_count
-                let t_duration = getSimpleDate(task.dueDate) - getSimpleDate(task.startDate)
+                let t_id = `${tt_id}_t_${task.id}`;
+                let _t_id = _tt_id + "." + task_count;
+                let t_duration =
+                  getSimpleDate(task.dueDate) - getSimpleDate(task.startDate);
 
-                hash.push(
-                  {
-                    taskUrl: `/projects/${getters.currentProject.id}/facilities/${facility.facility.id}/tasks/${task.id}`,
-                    facilityId: facility.id,
-                    projectId: getters.currentProject.id,
-                    id: t_id,
-                    _id: _t_id,
-                    parentId: tt_id,
-                    name: task.text,
+                hash.push({
+                  taskUrl: `${API_BASE_PATH}/programs/${getters.currentProject.id}/projects/${facility.facility.id}/tasks/${task.id}`,
+                  facilityId: facility.id,
+                  projectId: getters.currentProject.id,
+                  id: t_id,
+                  _id: _t_id,
+                  parentId: tt_id,
+                  name: task.text,
+                  duration: t_duration,
+                  durationInDays: `${Math.ceil(
+                    t_duration / (1000 * 3600 * 24)
+                  )} days`,
+                  percent: Number(task.progress.toFixed(2)),
+                  start: getSimpleDate(task.startDate),
+                  startDate: task.startDate,
+                  endDate: task.dueDate,
+                  _users: task.users.map((_u) => _u.fullName).join(","),
+                  type: "task",
+                  collapsed: true,
+                });
+
+                // for checklists under tasks
+                let checklist_count = 1;
+                for (let checklist of task.checklists) {
+                  if (
+                    _.map(getters.myActionsFilter, "value").includes("tasks") &&
+                    checklist.userId !== Vue.prototype.$currentUser.id
+                  )
+                    continue;
+                  let c_id = `${t_id}_t_${checklist.id}`;
+                  let _c_id = _t_id + "." + checklist_count;
+                  hash.push({
+                    id: c_id,
+                    _id: _c_id,
+                    parentId: t_id,
+                    name: checklist.text,
+                    dueDate: checklist.dueDate,
                     duration: t_duration,
-                    durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
-                    percent: Number(task.progress.toFixed(2)),
+                    durationInDays: `${Math.ceil(
+                      t_duration / (1000 * 3600 * 24)
+                    )} days`,
+                    percent: checklist.checked ? 100 : 0,
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
-                    _users: task.users.map(_u => _u.fullName).join(","),
-                    type: 'task',
-                    collapsed: true
-                  }
-                )
-
-                // for checklists under tasks
-                let checklist_count = 1
-                for (let checklist of task.checklists) {
-                  if (_.map(getters.myActionsFilter, 'value').includes('tasks') && checklist.userId !== Vue.prototype.$currentUser.id) continue
-                  let c_id = `${t_id}_t_${checklist.id}`
-                  let _c_id = _t_id + "." + checklist_count
-                  hash.push(
-                    {
-                      id: c_id,
-                      _id: _c_id,
-                      parentId: t_id,
-                      name: checklist.text,
-                      dueDate: checklist.dueDate,
-                      duration: t_duration,
-                      durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
-                      percent: checklist.checked ? 100 : 0,
-                      start: getSimpleDate(task.startDate),
-                      startDate: task.startDate,
-                      endDate: task.dueDate,
-                      type: 'task',
-                      dependentOn: [t_id],
-                      _users: checklist.user ? [checklist.user.fullName] : null
-                    }
-                  )
-                  checklist_count++
+                    type: "task",
+                    dependentOn: [t_id],
+                    _users: checklist.user ? [checklist.user.fullName] : null,
+                  });
+                  checklist_count++;
                 }
-                task_count++
+                task_count++;
               }
-              types_count++
+              types_count++;
             }
           }
-          facility_count++
+          facility_count++;
         }
-        group_count++
+        group_count++;
       }
 
-      return hash
+      return hash;
     },
     filteredAllTasks: (state, getters) => {
-      let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
-      let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
-      let taskIssueDueDates = getters.taskIssueDueDateFilter
-      let taskIssueOverdue = getters.taskIssueOverdueFilter
+      let ids =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let stages =
+        getters.taskStageFilter && getters.taskStageFilter.length
+          ? _.map(getters.taskStageFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
 
-      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
-        let valid = true
-        if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
-        if (stages.length > 0) valid = valid && stages.includes(t.taskStageId)
+      return _.filter(
+        _.flatten(_.map(getters.filteredFacilities("active"), "tasks")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.taskStageId);
 
-        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
 
-          var is_valid = true
-          var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-          valid = is_valid
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].name == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          return valid;
         }
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-          valid = (t.isOverdue == true)
+      );
+    },
+    filteredAllContractTasks: (state, getters) => {
+      let ids =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let stages =
+        getters.taskStageFilter && getters.taskStageFilter.length
+          ? _.map(getters.taskStageFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
+
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "tasks")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.taskStageId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].name == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          return valid;
         }
-
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
-          valid = (t.isOverdue == false)
-        }
-
-        return valid
-      })
-
+      );
     },
     filteredAllIssues: (state, getters) => {
-      let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
-      let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
-      let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
-      let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
-      let taskIssueDueDates = getters.taskIssueDueDateFilter
-      let taskIssueOverdue = getters.taskIssueOverdueFilter
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let ids =
+        getters.issueTypeFilter && getters.issueTypeFilter.length
+          ? _.map(getters.issueTypeFilter, "id")
+          : [];
+      let stages =
+        getters.issueStageFilter && getters.issueStageFilter.length
+          ? _.map(getters.issueStageFilter, "id")
+          : [];
+      let severities =
+        getters.issueSeverityFilter && getters.issueSeverityFilter.length
+          ? _.map(getters.issueSeverityFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
 
-      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
-        let valid = true
-        if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
-        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
-        if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
-        if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
+      return _.filter(
+        _.flatten(_.map(getters.filteredFacilities("active"), "issues")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.issueStageId);
+          if (severities.length > 0)
+            valid = valid && severities.includes(t.issueSeverityId);
 
-        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
 
-          var is_valid = true
-          var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-          valid = is_valid
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
+          //   valid = (t.draft == true)
+          // }
+
+          // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
+          //   valid = (t.onHold == true)
+          // }
+
+          return valid;
         }
+      );
+    },
+    filteredAllContractIssues: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let ids =
+        getters.issueTypeFilter && getters.issueTypeFilter.length
+          ? _.map(getters.issueTypeFilter, "id")
+          : [];
+      let stages =
+        getters.issueStageFilter && getters.issueStageFilter.length
+          ? _.map(getters.issueStageFilter, "id")
+          : [];
+      let severities =
+        getters.issueSeverityFilter && getters.issueSeverityFilter.length
+          ? _.map(getters.issueSeverityFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
 
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "overdue"){
-          valid = (t.isOverdue == true)
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "issues")),
+        (t) => {
+          let valid = true;
+          if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.issueStageId);
+          if (severities.length > 0)
+            valid = valid && severities.includes(t.issueSeverityId);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
+          //   valid = (t.draft == true)
+          // }
+
+          // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
+          //   valid = (t.onHold == true)
+          // }
+
+          return valid;
         }
-
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
-          valid = (t.isOverdue == false)
-        }
-
-        // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
-        //   valid = (t.draft == true)
-        // }
-
-        // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
-        //   valid = (t.onHold == true)
-        // }
-
-        return valid
-      })
+      );
     },
     filteredAllRisks: (state, getters) => {
-      let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
-      let approaches = getters.riskApproachFilter && getters.riskApproachFilter.length ? _.map(getters.riskApproachFilter, 'id') : []
-      let stages = getters.riskStageFilter && getters.riskStageFilter .length ? _.map(getters.riskStageFilter, 'id') : []
-      let riskPriorityLevels = getters.riskPriorityLevelFilter && getters.riskPriorityLevelFilter.length ? _.map(getters.riskPriorityLevelFilter, 'id') : []
-      let taskIssueDueDates = getters.taskIssueDueDateFilter
-      let taskIssueOverdue = getters.taskIssueOverdueFilter
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let approaches =
+        getters.riskApproachFilter && getters.riskApproachFilter.length
+          ? _.map(getters.riskApproachFilter, "id")
+          : [];
+      let stages =
+        getters.riskStageFilter && getters.riskStageFilter.length
+          ? _.map(getters.riskStageFilter, "id")
+          : [];
+      let riskPriorityLevels =
+        getters.riskPriorityLevelFilter &&
+        getters.riskPriorityLevelFilter.length
+          ? _.map(getters.riskPriorityLevelFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
 
-      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'risks')), t => {
-        let valid = true
-        if (approaches.length > 0) valid = valid && approaches.includes(t.riskApproachFilterIds)
-        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
-        if (stages.length > 0) valid = valid && stages.includes(t.riskStageId)
-        if (riskPriorityLevels.length > 0) valid = valid && riskPriorityLevels.includes(t.riskPriorityLevelIds)
+      return _.filter(
+        _.flatten(_.map(getters.filteredFacilities("active"), "risks")),
+        (t) => {
+          let valid = true;
+          if (approaches.length > 0)
+            valid = valid && approaches.includes(t.riskApproachFilterIds);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.riskStageId);
+          if (riskPriorityLevels.length > 0)
+            valid =
+              valid && riskPriorityLevels.includes(t.riskPriorityLevelIds);
 
-        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
 
-          var is_valid = true
-          var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-          valid = is_valid
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+
+          // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
+          //   valid = (t.draft == true)
+          // }
+
+          // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
+          //   valid = (t.onHold == true)
+          // }
+
+          return valid;
         }
+      );
+    },
+    filteredAllContractRisks: (state, getters) => {
+      let taskTypeIds =
+        getters.taskTypeFilter && getters.taskTypeFilter.length
+          ? _.map(getters.taskTypeFilter, "id")
+          : [];
+      let approaches =
+        getters.riskApproachFilter && getters.riskApproachFilter.length
+          ? _.map(getters.riskApproachFilter, "id")
+          : [];
+      let stages =
+        getters.riskStageFilter && getters.riskStageFilter.length
+          ? _.map(getters.riskStageFilter, "id")
+          : [];
+      let riskPriorityLevels =
+        getters.riskPriorityLevelFilter &&
+        getters.riskPriorityLevelFilter.length
+          ? _.map(getters.riskPriorityLevelFilter, "id")
+          : [];
+      let taskIssueDueDates = getters.taskIssueDueDateFilter;
+      let taskIssueOverdue = getters.taskIssueOverdueFilter;
 
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "overdue"){
-          valid = (t.isOverdue == true)
+      return _.filter(
+        _.flatten(_.map(getters.filteredContracts, "risks")),
+        (t) => {
+          let valid = true;
+          if (approaches.length > 0)
+            valid = valid && approaches.includes(t.riskApproachFilterIds);
+          if (taskTypeIds.length > 0)
+            valid = valid && taskTypeIds.includes(t.taskTypeId);
+          if (stages.length > 0)
+            valid = valid && stages.includes(t.riskStageId);
+          if (riskPriorityLevels.length > 0)
+            valid =
+              valid && riskPriorityLevels.includes(t.riskPriorityLevelIds);
+
+          if (
+            taskIssueDueDates &&
+            taskIssueDueDates[0] &&
+            taskIssueDueDates[1]
+          ) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
+
+            var is_valid = true;
+            var nDate = moment(t.dueDate, "YYYY-MM-DD");
+            is_valid = nDate.isBetween(startDate, endDate, "days", true);
+            valid = is_valid;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "overdue"
+          ) {
+            valid = t.isOverdue == true;
+          }
+
+          if (
+            taskIssueOverdue &&
+            taskIssueOverdue[0] &&
+            taskIssueOverdue[0].id == "notOverdue"
+          ) {
+            valid = t.isOverdue == false;
+          }
+          return valid;
         }
-
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
-          valid = (t.isOverdue == false)
-        }
-
-        // if(taskIssueRiskDraft && taskIssueRiskDraft[0] && taskIssueRiskDraft[0].id == "draft"){
-        //   valid = (t.draft == true)
-        // }
-
-        // if(taskIssueRiskOnHold && taskIssueRiskOnHold[0] && taskIssueRiskOnHold[0].id == "onHold"){
-        //   valid = (t.onHold == true)
-        // }
-
-
-        return valid
-      })
+      );
     },
     on_watched: (state, getters) => {
-      let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
-      let issues = _.filter(getters.filteredAllIssues, t => t.watched)
-      let risks = _.filter(getters.filteredAllRisks, t => t.watched)
-      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId'), ..._.map(risks, 'facilityId')]
-      let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
+      let tasks = _.filter(getters.filteredAllTasks, (t) => t.watched);
+      let issues = _.filter(getters.filteredAllIssues, (t) => t.watched);
+      let risks = _.filter(getters.filteredAllRisks, (t) => t.watched);
+      let ids = [
+        ..._.map(issues, "facilityId"),
+        ..._.map(tasks, "facilityId"),
+        ..._.map(risks, "facilityId"),
+      ];
+      let facilities = _.filter(getters.filteredFacilities("active"), (t) =>
+        ids.includes(t.id)
+      );
 
-      return {tasks, issues, risks, facilities}
+      return { tasks, issues, risks, facilities };
     },
     approved_risks: (state, getters) => {
-      let risks = _.filter(getters.filteredAllRisks, t => t.approved)
-      let ids = [..._.map(risks,'facilityId')]
-      let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
-      return {risks,  facilities}
+      let risks = _.filter(getters.filteredAllRisks, (t) => t.approved);
+      let ids = [..._.map(risks, "facilityId")];
+      let facilities = _.filter(getters.filteredFacilities("active"), (t) =>
+        ids.includes(t.id)
+      );
+      return { risks, facilities };
     },
     viewPermit: () => (view, req) => {
       if (Vue.prototype.$currentUser.role === "superadmin") return true;
-      return Vue.prototype.$permissions[view][req]
+      return Vue.prototype.$permissions[view][req];
     },
     riskApproaches: () => {
-      return   ['avoid', 'mitigate', 'transfer', 'accept']
+      return ["avoid", "mitigate", "transfer", "accept"];
     },
     // riskDispositionStatuses: () => {
-    //   return   ['monitoring', 'resolved', 'closed']    
+    //   return   ['monitoring', 'resolved', 'closed']
     // },
     // riskDispositionDuration: () => {
-    //   return   ['temporary', 'perpetual']   
+    //   return   ['temporary', 'perpetual']
 
     // },
     probabilityNames: () => {
       return [
-        {id: 1, value: 1, name: "1 - Rare"},
-        {id: 2, value: 2, name: "2 - Unlikely"},
-        {id: 3, value: 3, name: "3 - Possible"},
-        {id: 4, value: 4, name: "4 - Likely"},
-        {id: 5, value: 5, name: "5 - Almost Certain"}
+        { id: 1, value: 1, name: "1 - Rare" },
+        { id: 2, value: 2, name: "2 - Unlikely" },
+        { id: 3, value: 3, name: "3 - Possible" },
+        { id: 4, value: 4, name: "4 - Likely" },
+        { id: 5, value: 5, name: "5 - Almost Certain" },
         // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
-      ]
+      ];
     },
     impactLevelNames: () => {
-      return ["1 - Negligible", "2 - Minor", "3 - Moderate", "4 - Major", "5 - Catastrophic"]
+      return [
+        "1 - Negligible",
+        "2 - Minor",
+        "3 - Moderate",
+        "4 - Major",
+        "5 - Catastrophic",
+      ];
     },
     getMapZoomFilter: (state) => state.mapZoomFilter,
     getUnfilteredFacilities: (state) => state.unfilteredFacilities,
     getPreviousRoute: (state) => state.previousRoute,
-    getNewSession: (state) => state.newSession
+    getNewSession: (state) => state.newSession,
   },
 
   actions: {
-    fetchFacilities({commit, dispatch}, id) {
+    fetchFacilities({ commit, dispatch }, id) {
       return new Promise((resolve, reject) => {
-        http.get(`/projects/${id}/facilities.json`)
+        http
+          .get(`${API_BASE_PATH}/programs/${id}/projects.json`)
           .then((res) => {
-            let facilities = []
-            for (let facility of res.data.facilities) {
-              facilities.push({...facility, ...facility.facility})
-            }
-            commit('setFacilities', facilities)
-            resolve()
+            let facilities = res.data.facilities;
+            // for (let facility of res.data.facilities) {
+            //   facilities.push({...facility, ...facility.facility})
+            // }
+            commit("setFacilities", facilities);
+            commit("setProjectsLoaded", true);
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
-    fetchCurrentProject({commit, dispatch}, id) {
+    fetchCurrentProject({ commit, dispatch }, id) {
       return new Promise((resolve, reject) => {
-        http.get(`/projects/${id}.json`)
+        http
+          .get(`${API_BASE_PATH}/programs/${id}.json`)
           .then((res) => {
-            let facilities = []
+            let facilities = [];
             for (let facility of res.data.project.facilities) {
-              facilities.push({...facility, ...facility.facility})
+              facilities.push({ ...facility, ...facility.facility });
             }
-            commit('setFacilities', facilities)
-            commit('setCurrentProject', res.data.project)
-            commit('setFacilityGroups', res.data.project.facilityGroups)
-            commit('setProjectUsers', res.data.project.users)
-            commit('setAccountableUsers', res.data.project.accountableUsers)
-            commit('setConsultedUsers', res.data.project.consulted)
-            commit('setInformedUsers', res.data.project.informed)
-            commit('setStatuses', res.data.project.statuses)
-            commit('setTaskTypes', res.data.project.taskTypes)
-            commit('setTaskStages', res.data.project.taskStages)
-            commit('setRiskStages', res.data.project.riskStages)
-            commit('setIssueStages', res.data.project.issueStages)
-            commit('setIssueTypes', res.data.project.issueTypes)
-            commit('setIssueSeverities', res.data.project.issueSeverities)
-            commit('SET_LESSON_STAGES', res.data.project.lessonStages)
-            resolve()
+            let contracts = [];
+            for (let c of res.data.project.contracts) {
+              contracts.push({ ...c, ...c });
+            }
+            commit("setFacilities", facilities);
+            commit("setContracts", contracts);
+            commit("setCurrentProject", res.data.project);
+            commit("setFacilityGroups", res.data.project.facilityGroups);
+            commit("setProjectUsers", res.data.project.users);
+            commit("setAccountableUsers", res.data.project.accountableUsers);
+            commit("setConsultedUsers", res.data.project.consulted);
+            commit("setInformedUsers", res.data.project.informed);
+            commit("setStatuses", res.data.project.statuses);
+            commit("setTaskTypes", res.data.project.taskTypes);
+            commit("setTaskStages", res.data.project.taskStages);
+            commit("setRiskStages", res.data.project.riskStages);
+            commit("setIssueStages", res.data.project.issueStages);
+            commit("setIssueTypes", res.data.project.issueTypes);
+            commit("setIssueSeverities", res.data.project.issueSeverities);
+            commit("SET_LESSON_STAGES", res.data.project.lessonStages);
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
-    fetchFacility({commit, dispatch, getters}, {projectId, facilityId}) {
+    fetchProjectNames({ commit, dispatch }, id) {
       return new Promise((resolve, reject) => {
-        http.get(`/projects/${projectId}/facilities/${facilityId}.json`)
+        http
+          .get(`${API_BASE_PATH}/programs/${id}.json`)
           .then((res) => {
-            let facility = Object.assign({}, {...res.data.facility, ...res.data.facility.facility})
-            let index = getters.facilities.findIndex(f => f.id == facility.id)
-            if (index > -1) commit('updateFacilities', {index, facility})
-            return resolve(facility)
+            let facilities = [];
+            for (let facility of res.data.project.facilities) {
+              facilities.push({ ...facility, ...facility.facility });
+            }
+            commit("setTableData", facilities);
+           
+            // console.log(facilities)
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject(err)
-          })
-      })
+            console.error(err);
+            reject();
+          }) .finally(() => {
+            commit("setContentLoaded", true);
+          });
+      });
     },
-    fetchProjects({commit}) {
+    
+
+    fetchFacility({ commit, dispatch, getters }, { projectId, facilityId }) {
       return new Promise((resolve, reject) => {
-        http.get('/projects.json')
+        http
+          .get(
+            `${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}.json`
+          )
           .then((res) => {
-            commit('setProjects', res.data.projects)
-            resolve()
+            let facility = Object.assign(
+              {},
+              { ...res.data.facility, ...res.data.facility.facility }
+            );
+            let index = getters.facilities.findIndex(
+              (f) => f.id == facility.id
+            );
+            if (index > -1) commit("updateFacilities", { index, facility });
+            return resolve(facility);
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject(err);
+          });
+      });
     },
-    fetchFacilityGroups({commit}, id) {
-      let url = '/api/facility_groups.json'
-      if (id !== undefined) url = url + `?=project_id=${id}`
+    fetchProjects({ commit }) {
       return new Promise((resolve, reject) => {
-        http.get(url)
+        http
+          .get(`${API_BASE_PATH}/projects.json`)
           .then((res) => {
-            commit('setFacilityGroups', res.data.facilityGroups)
-            resolve()
+            commit("setProjects", res.data.projects);
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
+            console.error(err);
+            reject();
+          });
+      });
+    },
+    fetchFacilityGroups({ commit }, id) {
+      let url = `${API_BASE_PATH}/facility_groups.json`;
+      if (id !== undefined) url = url + `?=project_id=${id}`;
+      return new Promise((resolve, reject) => {
+        http
+          .get(url)
+          .then((res) => {
+            commit("setFacilityGroups", res.data.facilityGroups);
+            // console.log(res.data.facilityGroups)
+            resolve();
           })
-      })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          });
+      });
     },
 
-    async fetchDashboardData({dispatch, commit}, {id, cb}) {
+    async fetchDashboardData({ dispatch, commit }, { id, cb }) {
       // await dispatch('fetchProjects')
-      await dispatch('fetchCurrentProject', id)
-      commit('setContentLoaded', true)
+      await dispatch("fetchCurrentProject", id);
+      commit("setContentLoaded", true);
       // commit('setToggleRACI', false)
-      if (cb) return cb()
+      if (cb) return cb();
     },
 
-    async taskUpdated({dispatch}, {projectId, facilityId, cb}) {
+    async taskUpdated({ dispatch }, { projectId, facilityId, cb }) {
       return new Promise(async (resolve, reject) => {
-        let facility = await dispatch('fetchFacility', {projectId, facilityId})
-        if (cb) cb()
-        if (facility instanceof Error) return reject(facility)
-        return resolve(facility)
-      })
+        let facility = await dispatch("fetchFacility", {
+          projectId,
+          facilityId,
+        });
+        if (cb) cb();
+        if (facility instanceof Error) return reject(facility);
+        return resolve(facility);
+      });
     },
 
     // store actions watch_view
-    updateWatchedTasks({commit}, task) {
+    updateWatchedTasks({ commit }, task) {
       return new Promise((resolve, reject) => {
-        http.put(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`, {task: task})
+        http
+          .put(
+            `${API_BASE_PATH}/programs/${task.projectId}/projects/${task.facilityId}/tasks/${task.id}.json`,
+            { task: task }
+          )
           .then((res) => {
-            commit('updateTasksHash', {task: res.data.task})
-            resolve()
+            commit("updateTasksHash", { task: res.data.task });
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
-    updateWatchedIssues({commit}, issue) {
+    updateWatchedIssues({ commit }, issue) {
       return new Promise((resolve, reject) => {
-        http.put(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`, {issue: issue})
+        http
+          .put(
+            `${API_BASE_PATH}/programs/${issue.projectId}/projects/${issue.facilityId}/issues/${issue.id}.json`,
+            { issue: issue }
+          )
           .then((res) => {
-            commit('updateIssuesHash', {issue: res.data.issue})
-            resolve()
+            commit("updateIssuesHash", { issue: res.data.issue });
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
-    updateWatchedRisks({commit}, risk) {
+    updateWatchedRisks({ commit }, risk) {
       return new Promise((resolve, reject) => {
-        http.put(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+        http
+          .put(
+            `${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`,
+            { risk: risk }
+          )
           .then((res) => {
-            commit('updateRisksHash', {risk: res.data.risk})
-            resolve()
+            commit("updateRisksHash", { risk: res.data.risk });
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
-    updateApprovedRisks({commit}, risk) {
+    updateApprovedRisks({ commit }, risk) {
       return new Promise((resolve, reject) => {
-        http.put(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+        http
+          .put(
+            `${API_BASE_PATH}/programs/${risk.projectId}/projects/${risk.facilityId}/risks/${risk.id}.json`,
+            { risk: risk }
+          )
           .then((res) => {
-            commit('updateRisksHash', {risk: res.data.risk})
-            resolve()
+            commit("updateRisksHash", { risk: res.data.risk });
+            resolve();
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
     // update_from_kanban_view
-    updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
+    updateKanbanTaskIssues(
+      { commit, getters },
+      { projectId, facilityId, data, type }
+    ) {
       return new Promise((resolve, reject) => {
-        http.post(`/projects/${projectId}/facilities/${facilityId}/${type}/batch_update.json`, data)
+        http
+          .post(
+            `${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}/${type}/batch_update.json`,
+            data
+          )
           .then((res) => {
-            let facility = Object.assign({}, {...res.data, ...res.data.facility})
-            let index = getters.facilities.findIndex(f => f.id == facility.id)
-            if (index > -1) commit('updateFacilities', {index, facility})
-            return resolve(res)
+            let facility = Object.assign(
+              {},
+              { ...res.data, ...res.data.facility }
+            );
+            let index = getters.facilities.findIndex(
+              (f) => f.id == facility.id
+            );
+            if (index > -1) commit("updateFacilities", { index, facility });
+            return resolve(res);
           })
           .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
+            console.error(err);
+            reject();
+          });
+      });
     },
 
-    taskDeleted({commit}, task) {
+  taskDeleted({ commit }, { task, programId }) {
+      let urlPrefix = `programs/${programId}/projects`
+      let taskResourceId = task.facilityId
+      if(task.contractId){
+         taskResourceId = task.contractId
+         urlPrefix = 'contracts'
+      } 
       return new Promise((resolve, reject) => {
         http
-          .delete(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`)
+          .delete(
+            `${API_BASE_PATH}/${urlPrefix}/${taskResourceId}/tasks/${task.id}.json`
+          )
           .then((res) => {
-            commit('updateTasksHash', {task: task, action: 'delete'})
-            resolve('Success')
+            if (task.facilityId){
+              commit("updateTasksHash", { task: task, action: "delete" });
+            } else   {
+              commit("updateContractTasks", { task: task, action: "delete" });
+            }            
+            resolve("Success");
           })
           .catch((err) => {
-            console.log(err)
-            reject()
-          })
-      })
+            console.log(err);
+            reject();
+          });
+      });
     },
-    noteDeleted({commit}, {note, projectId, facilityId, cb}) {
+    noteDeleted({ commit }, { note, projectId, facilityId, cb }) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`/projects/${projectId}/facilities/${facilityId}/notes/${note.id}.json`)
+          .delete(
+            `${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`
+          )
           .then((res) => {
-            commit('updateNotesHash', {note: note, facilityId, action: 'delete'})
-            if (cb) cb()
-            resolve()
+            commit("updateNotesHash", {
+              note: note,
+              facilityId,
+              action: "delete",
+            });
+            if (cb) cb();
+            resolve();
           })
           .catch((err) => {
-            console.log(err)
-            reject()
-          })
-      })
+            console.log(err);
+            reject();
+          });
+      });
     },
-    issueDeleted({commit}, issue) {
+    issueDeleted({ commit }, { issue, programId }) {
+      let urlPrefix = `programs/${programId}/projects`
+      let issueResourceId = issue.facilityId
+      if(issue.contractId){
+         issueResourceId = issue.contractId
+         urlPrefix = 'contracts'
+      } 
       return new Promise((resolve, reject) => {
         http
-          .delete(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`)
+          .delete(
+            `${API_BASE_PATH}/${urlPrefix}/${issueResourceId}/issues/${issue.id}.json`
+          )
           .then((res) => {
-            commit('updateIssuesHash', {issue: issue, action: 'delete'})
-            resolve('Success')
+            if (issue.facilityId){
+              commit("updateIssuesHash", { issue: issue, action: "delete" });
+            } else   {
+              commit("updateContractIssues", { issue: issue, action: "delete" });
+            }               
+            resolve("Success");
           })
           .catch((err) => {
-            console.log(err)
-            reject()
-          })
-      })
+            console.log(err);
+            reject();
+          });
+      });
     },
-    riskDeleted({commit}, risk) {
+    riskDeleted({ commit }, { risk, programId }) {
+      let urlPrefix = `programs/${programId}/projects`
+      let riskResourceId = risk.facilityId
+      if(risk.contractId){
+         riskResourceId = risk.contractId
+         urlPrefix = 'contracts'
+      } 
       return new Promise((resolve, reject) => {
         http
-          .delete(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`)
+          .delete(
+            `${API_BASE_PATH}/${urlPrefix}/${riskResourceId}/risks/${risk.id}.json`
+          )
           .then((res) => {
-            commit('updateRisksHash', {risk: risk, action: 'delete'})
-            resolve('Success')
+            if (risk.facilityId){
+              commit("updateRisksHash", { risk: risk, action: "delete" });
+            } else   {
+              commit("updateContractRisks", { risk: risk, action: "delete" });
+            }          
+            resolve("Success");
           })
           .catch((err) => {
-            console.log(err)
-            reject()
-          })
-      })
-    }
+            console.log(err);
+            reject();
+          });
+      });
+    },
   },
 
   plugins: [
     createPersistedState({
       localStorage: {
-        getState: key => Cookies.getJSON(key),
+        getState: (key) => Cookies.getJSON(key),
         setState: (key, state) => Cookies.set(key, state, { expires: 3 }),
-        removeItem: key => Cookies.remove(key),
+        removeItem: (key) => Cookies.remove(key),
       },
       paths: [
         // 'advancedFilter',
-        'taskIssueUserFilter',
-        'projectStatusFilter',
-        'calendarViewFilter',
+        "taskIssueUserFilter",
+        "projectStatusFilter",
+        "calendarViewFilter",
 
-        'taskTypeFilter',
-        'taskStageFilter',
+        "taskTypeFilter",
+        "taskStageFilter",
 
-        'facilityGroupFilter',
-        'facilityNameFilter',
-        'facilityProgressFilter',
-        'facilityDueDateFilter',
-        'noteDateFilter',
-        'taskIssueDueDateFilter',
+        "facilityGroupFilter",
+        "facilityNameFilter",
+        "facilityProgressFilter",
+        "facilityDueDateFilter",
+        "noteDateFilter",
+        "taskIssueDueDateFilter",
 
-        'issueTypeFilter',
-        'issueSeverityFilter',
-        'issueStageFilter',
+        "issueTypeFilter",
+        "issueSeverityFilter",
+        "issueStageFilter",
 
-        'membersPerPageFilter',
-        'tasksPerPageFilter',
-        'issuesPerPageFilter',
-        'risksPerPageFilter',
-        'lessonsPerPageFilter',
+        "membersPerPageFilter",
+        "tasksPerPageFilter",
+        "issuesPerPageFilter",
+        "risksPerPageFilter",
+        "lessonsPerPageFilter",
 
-        'riskStageFilter',
-        'riskApproachFilter',
-        'riskPriorityLevelFilter',
-        'riskProbabilityOptions',
-        'riskImpactLevelOptions',
-        'riskDispositionStatus',
-        'riskDispositionDuration',
+        "riskStageFilter",
+        "riskApproachFilter",
+        "riskPriorityLevelFilter",
+        "riskProbabilityOptions",
+        "riskImpactLevelOptions",
+        "riskDispositionStatus",
+        "riskDispositionDuration",
 
-        'taskIssueProgressFilter',
-        'myAssignmentsFilter',
-        'myActionsFilter',
-        'onWatchFilter',
-        'progressFilter',
-        'mapFilters'
-      ]
-    })
-  ]
-})
+        "taskIssueProgressFilter",
+        "myAssignmentsFilter",
+        "myActionsFilter",
+        "onWatchFilter",
+        "progressFilter",
+        "mapFilters",
+      ],
+    }),
+  ],
+});

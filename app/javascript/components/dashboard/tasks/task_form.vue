@@ -1,6 +1,6 @@
 <template>
   <div 
-   v-loading="!contentLoaded"   
+    v-loading="!contentLoaded"   
     element-loading-text="Fetching Task data. Please wait..."
     :class="{ 'line' : isProgramView}"
     element-loading-spinner="el-icon-loading"
@@ -16,22 +16,29 @@
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span style="font-size: 16px; margin-right: 2.5px"
-              > <i class="fas fa-suitcase mb-1"></i>
+            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+              >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-
+            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+              > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
+            </span>
             <router-link :to="projectNameLink">
-               <span v-if="!isProgramView">{{
-                facility.facilityName
-                }}
-            </span>
-            <span v-else>{{
-                task.facilityName
-            }}
-            </span>            
+              <span v-if="!isProgramView && (!contract || facility)">
+                 {{ facility.facilityName }}
+               </span>
+               <span v-if="isProgramView && task">
+                    {{ task.facilityName || task.contractNickname }}
+               </span>
+                 <span v-if="!isProgramView && (contract || !facility)">
+                    {{ task.contractNickname }}
+               </span>
             </router-link>
-
-           
+            <router-link :to="backToContract">
+              <span v-if="contract && !isProgramView">{{
+                  contract.nickname || contract.name
+                  }}
+              </span>
+            </router-link>     
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -436,7 +443,7 @@
               ></span>
           
                 <v2-date-picker
-                  v-validate="{ required: !DV_task.ongoing && !DV_task.onHold }"
+                  v-validate="{ required: DV_task.progress != 100 && !DV_task.ongoing && !DV_task.onHold }"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
@@ -1288,10 +1295,12 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import * as Moment from "moment";
 import { extendMoment } from "moment-range";
+import { API_BASE_PATH } from '../../../mixins/utils';
 const moment = extendMoment(Moment);
+
 export default {
   name: "TaskForm",
-  props: ["facility", "task", "title", "fixedStage"],
+  props: ["facility", "task", "title", "fixedStage", "contract"],
   components: {
     AttachmentInput,
     Draggable,
@@ -1304,7 +1313,8 @@ export default {
       DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
-      editTimeLive: "",
+      editTimeLive: "",   
+      programId: this.$route.params.programId,         
       selectedTaskType: null,
       selectedTaskStage: null,
       responsibleUsers: null,
@@ -1374,6 +1384,8 @@ export default {
     }
   },
   mounted() {
+
+// console.log(this.$projectPrivileges)
     if (!_.isEmpty(this.task)) {
       this.loadTask(this.task);
     } else {
@@ -1384,14 +1396,13 @@ export default {
     this._ismounted = true;
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateTasksHash"]),
+    ...mapMutations(["setTaskForManager", "updateTasksHash", "updateContractTasks"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
     INITIAL_TASK_STATE() {
       return {
         text: "",
         startDate: "",
-        dueDate: "",
-        facilityProjectId: this.$route.params.programId,
+        dueDate: "",      
         checklistDueDate: "",
         taskTypeId: "",
         taskStageId: "",
@@ -1415,22 +1426,27 @@ export default {
         notes: [],
       };
     },
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+        //  console.log("yes, contract route")      
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+        // console.log(fPrivilege.tasks.includes(s))
+          return fPrivilege.tasks.includes(s);
+        } else if (this.$route.params.projectId) {
+          // console.log("project route")
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          //  console.log(fPrivilege.tasks.includes(s))
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
       }
-    },
-  log(e){
-      // console.log("taskSorted: " + e)
     },
     clearStages() {
       this.selectedTaskStage = null;
@@ -1485,14 +1501,14 @@ export default {
       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
     },
     deleteTask() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete "${this.DV_task.text}"?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.taskDeleted(this.DV_task);
-      this.cancelSave();
+      this.$confirm(`Are you sure you want to delete "${this.DV_task.text}"?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.taskDeleted(this.DV_task);
+        this.cancelSave();
+      });
     },
     progressListTitleText(progressList) {
       if (!progressList.id) return;
@@ -1550,29 +1566,30 @@ export default {
     },
     deleteFile(file) {
       if (!file) return;
-      let confirm = window.confirm(
-        `Are you sure you want to delete attachment?`
-      );
-      if (!confirm) return;
-
-      if (file.uri || file.link) {
-        let index = this.DV_task.taskFiles.findIndex(
-          (f) => f.guid === file.guid
-        );
-        if (file.id) {
-          Vue.set(this.DV_task.taskFiles, index, { ...file, _destroy: true });
-          this.destroyedFiles.push(file);
+      this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        if (file.uri || file.link) {
+          let index = this.DV_task.taskFiles.findIndex(
+            (f) => f.guid === file.guid
+          );
+          if (file.id) {
+            Vue.set(this.DV_task.taskFiles, index, { ...file, _destroy: true });
+            this.destroyedFiles.push(file);
+          }
+          this.DV_task.taskFiles.splice(
+            this.DV_task.taskFiles.findIndex((f) => f.guid === file.guid),
+            1
+          );
+        } else if (file.name) {
+          this.DV_task.taskFiles.splice(
+            this.DV_task.taskFiles.findIndex((f) => f.guid === file.guid),
+            1
+          );
         }
-        this.DV_task.taskFiles.splice(
-          this.DV_task.taskFiles.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      } else if (file.name) {
-        this.DV_task.taskFiles.splice(
-          this.DV_task.taskFiles.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      }
+      });
     },
     toggleWatched() {
       if(!this._isallowed('write')){
@@ -1802,18 +1819,29 @@ export default {
             formData.append("file_links[]", file.name);
           }
         }
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`;
+         let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
+        if (this.contract) {
+            url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
+         }
         let method = "POST";
         let callback = "task-created";
-        if (this.task && this.task.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`;
+
+        if (this.task && this.task.id) {        
           method = "PUT";
           callback = "task-updated";
         }
+        if (this.task && this.task.id && this.task.facilityId) {
+          url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
+         }
+        if (this.task && this.task.id && this.task.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+        }
         // var beforeSaveTask = this.task
+
+        // Correct API http://localhost:3000/api/v1/programs/2/projects/319/tasks/1218.json
         axios({
           method: method,
-          url: url,
+          url:  url,
           data: formData,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1826,7 +1854,11 @@ export default {
             var responseTask = humps.camelizeKeys(response.data.task);
             this.loadTask(responseTask);
             //this.$emit(callback, responseTask)
-            this.updateTasksHash({ task: responseTask });
+            if (this.$route.params.contractId){
+               this.updateContractTasks({ task: responseTask });
+            } else {
+                this.updateTasksHash({ task: responseTask });
+            }           
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
@@ -1837,7 +1869,7 @@ export default {
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/tasks/${response.data.task.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -1852,8 +1884,11 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-            } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/task/${response.data.task.id}`
+             }  else if (this.isProgramView && this.task.contractId) { this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
+              );
+              } else this.$router.push(
+                `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`
               );
           })
           .catch((err) => {
@@ -1891,14 +1926,16 @@ export default {
     },
 
     destroyNote(note) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this update note?`
-      );
-      if (!confirm) return;
-      let i = note.id
-        ? this.DV_task.notes.findIndex((n) => n.id === note.id)
-        : this.DV_task.notes.findIndex((n) => n.guid === note.guid);
-      Vue.set(this.DV_task.notes, i, { ...note, _destroy: true });
+      this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = note.id
+          ? this.DV_task.notes.findIndex((n) => n.id === note.id)
+          : this.DV_task.notes.findIndex((n) => n.guid === note.guid);
+        Vue.set(this.DV_task.notes, i, { ...note, _destroy: true });
+      });
     },
     noteBy(note) {
       return note.user
@@ -1912,26 +1949,30 @@ export default {
       window.open(url, "_blank");
     },
     destroyProgressList(check, progressList, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this Progress List item?`
-      );
-      if (!confirm) return;
-      let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
-        : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
-      this.saveTask();
+      this.$confirm(`Are you sure you want to delete this Progress List item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = progressList.id
+          ? check.progressLists.findIndex((c) => c.id === progressList.id)
+          : index;
+        Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+        this.saveTask();
+      });
     },
     destroyCheck(check, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this checklist item?`
-      );
-      if (!confirm) return;
-      let i = check.id
-        ? this.DV_task.checklists.findIndex((c) => c.id === check.id)
-        : index;
-      Vue.set(this.DV_task.checklists, i, { ...check, _destroy: true });
-      this.saveTask();
+      this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        let i = check.id
+          ? this.DV_task.checklists.findIndex((c) => c.id === check.id)
+          : index;
+        Vue.set(this.DV_task.checklists, i, { ...check, _destroy: true });
+        this.saveTask();
+      });
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
@@ -2005,28 +2046,46 @@ export default {
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedTasks.splice(
+            this.relatedTasks.findIndex((task) => task.id == id),
+            1
+          );
+        });
     },
     addRelatedIssues(issues) {
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
+     this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedIssues.splice(
+            this.relatedIssues.findIndex((issue) => issue.id == id),
+            1
+          );
+        });
     },
     addRelatedRisks(risks) {
       risks.forEach((risk) => this.relatedRisks.push(risk));
     },
     removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedRisks.splice(
+            this.relatedRisks.findIndex((risk) => risk.id == id),
+            1
+          );
+        });
     },
   },
   computed: {
@@ -2036,6 +2095,7 @@ export default {
       "currentProject",
       "currentRisks",
       "currentTasks",
+      "getContracts",
       "facilities",
       'contentLoaded',
       "facilityGroups",
@@ -2050,6 +2110,21 @@ export default {
       var taskStagesSortedReturn = [...this.taskStages]; 
       return taskStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
+    id(){
+      if(this.$route.params.contractId){
+        return this.$route.params.contractId
+      } else return this.$route.params.projectId
+    },
+    route(){
+      if(this.$route.params.projectId){
+        return this.$route.params.projectId
+      } else return this.$route.params.contractId
+    },
+    object(){
+       if(this.$route.params.contractId){
+        return 'contracts'
+       } else return 'projects'
+    },
     readyToSave() {
       return (
         this.DV_task &&
@@ -2060,10 +2135,7 @@ export default {
       );
     },
    isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") ||
-             this.$route.name.includes("ProgramRiskForm") ||
-             this.$route.name.includes("ProgramIssueForm") ||
-             this.$route.name.includes("ProgramLessonForm") ;
+      return this.$route.name.includes("ProgramTaskForm") || this.$route.name.includes("ProgramContractTaskForm")        
     },
     isMapView() {
       return this.$route.name === "MapTaskForm";
@@ -2121,19 +2193,27 @@ export default {
       }
     },
     backToTasks() {
+      if (this.$route.params.contractId && !this.isProgramView) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
+      }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
+    backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+     },
     projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
+     if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
+      } else if (this.$route.params.contractId) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else  {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },
   },
@@ -2141,6 +2221,13 @@ export default {
     task: {
       handler: function(value) {
         this.loadTask(this.task);
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
       },
     },
     "DV_task.startDate"(value) {

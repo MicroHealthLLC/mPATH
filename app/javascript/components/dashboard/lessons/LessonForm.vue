@@ -15,12 +15,16 @@
       <!-- Breadcrumbs and form buttons -->
       <div>
         <h5 class="mb-0">
-          <span style="font-size: 16px; margin-right: 10px"
-            ><i class="fas fa-suitcase"></i
-          ></span>
-          <router-link v-if="contentLoaded" :to="projectNameLink">{{
-           lesson.project_name
-          }}</router-link>
+          <span style="font-size: 16px; margin-right: 10px">
+            <i v-if="!$route.params.contractId" class="fal fa-clipboard-list mh-green-text"></i>
+            <i v-if="$route.params.contractId" class="far fa-file-contract mr-1 mh-orange-text"></i>
+            </span>
+          <router-link v-if="contentLoaded && facility" :to="projectNameLink">{{
+           facility.facilityName
+           }}</router-link>
+          <router-link v-else :to="projectNameLink">{{
+              lesson.project_name || lesson.contract_nickname
+           }}</router-link>
           <el-icon
             class="el-icon-arrow-right"
             style="font-size: 12px"
@@ -207,6 +211,7 @@
           v-model="lesson.task_type_id"
           class="w-100"
           value-key="id"
+          clearable
           name="Process Area"
           placeholder="Select Process Area"
           :disabled="!_isallowed('write')"
@@ -651,8 +656,12 @@
             <div @click.prevent="downloadFile(file)">
               <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click.prevent="removeFile(file.id, index)"
+            >
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -678,10 +687,11 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
-              @click="removeFileLink(link.id, index)"
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click.prevent="removeFileLink(link.id, index)"
             >
-              <i class="fas fa-times delete-icon"></i>
+              <i class="fas fa-times"></i>
             </div>
           </div>
           <div v-else class="d-flex justify-content-between">
@@ -690,8 +700,12 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div @click="removeFileLink(link.id, index)" class="clickable">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check mt-2 clickable"
+              @click.prevent="removeFileLink(link.id, index)"
+            >
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -781,7 +795,7 @@ import AttachmentInput from "./../../shared/attachment_input.vue";
 
 export default {
   name: "LessonForm",
-  props: ["facility"],
+  props: ["facility", "contract"],
   components: {
     FormTabs,
     RelatedLessonMenu,
@@ -860,14 +874,15 @@ export default {
       deleteBestPractices: [],
       updates: [],
       deleteUpdates: [],
+      loading: true,
       files: [],
       fileLinks: [],
       destroyFileIds: [],
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
-    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS"]),
+    ...mapActions(["addLesson", "fetchLesson", "fetchContractLesson", "updateLesson", "updateContractLesson", "addContractLesson"]),
+    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "SET_CONTRACT_LESSON", "SET_CONTRACT_LESSON_STATUS"]),
     saveLesson() {
       this.$validator.validate().then((success) => {
         if (!success) {
@@ -904,9 +919,9 @@ export default {
             destroy_file_ids: [...this.destroyFileIds],
           },
         };
-
-        // Check to add or update existing lesson by confirming an id
-        if (this.lesson.id) {
+   // Check to add or update existing lesson by confirming an id
+        if (this.$route.params.projectId || this.facility) {
+           if (this.lesson.id && !this.contract) {
           this.updateLesson({
             ...lessonData,
             ...this.$route.params,
@@ -918,6 +933,24 @@ export default {
             ...this.$route.params,
           });
         }
+          }
+
+        if (this.$route.params.contractId || this.contract) {
+           if (this.lesson.id && !this.facility) {
+          this.updateContractLesson({
+            ...lessonData,
+            ...this.$route.params,
+          });
+        } else {
+          lessonData.lesson.user_id = this.$currentUser.id;
+          this.addContractLesson({
+            ...lessonData,
+            ...this.$route.params,
+          });
+        }
+          }
+       
+
       });
     },
     removeEmptyUpdates(){
@@ -937,17 +970,27 @@ export default {
       return [...sFBP];
     },
     _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
+      if (this.$route.params.contractId) {
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return  fPrivilege.lessons.includes(s);      
-    },
+        return fPrivilege.lessons.includes(s);
+      } else {
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return fPrivilege.lessons.includes(s); 
+      }
+     },
     close() {
-        if (this.$route.path.includes("sheet") || this.$route.path.includes("map")) {
+        if (this.$route.params.projectId && this.facility) {
+          // console.log("true")
           this.$router.push(
             `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
+          );
+        } else if (this.$route.params.contractId && this.contract) {
+          this.$router.push(
+            `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
           );
         } else this.$router.push(
             `/programs/${this.$route.params.programId}/dataviewer`
@@ -966,28 +1009,46 @@ export default {
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedTasks.splice(
+            this.relatedTasks.findIndex((task) => task.id == id),
+            1
+          );
+        });
     },
     addRelatedIssues(issues) {
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedIssues.splice(
+            this.relatedIssues.findIndex((issue) => issue.id == id),
+            1
+          );
+        });
     },
     addRelatedRisks(risks) {
       risks.forEach((risk) => this.relatedRisks.push(risk));
     },
     removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedRisks.splice(
+            this.relatedRisks.findIndex((risk) => risk.id == id),
+            1
+          );
+        });
     },
     addSuccess() {
       if (this._isallowed("write")) {
@@ -1172,6 +1233,7 @@ export default {
       "lessonsLoaded",
       "lessonStages",
       "lessonStatus",
+      "contractLessonStatus",
       "taskTypes",
     ]),
     tab() {
@@ -1194,36 +1256,49 @@ export default {
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
-        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      if (this.facility) {
+        return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
-      }
+      } 
     },
   projectNameLink() {
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/analytics`;
       } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
+      } else if (this.lesson.contract_id) {
+        return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+      } else  {
+        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }
     },
+   backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+     },
     isMapView() {
       return this.$route.name === "MapLessonForm";
     },
   },
   mounted() {
-    if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
+     if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && this.contract) {
+      this.fetchContractLesson({
+        id: this.$route.params.lessonId,
+        ...this.$route.params,
+      });
+    }
+     else if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && !this.contract) {
       this.fetchLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
     }
+    this.loading = false;
   },
   beforeDestroy() {
     // Clear current lesson in store
     this.SET_LESSON({});
+      this.SET_CONTRACT_LESSON({});
   },
   watch: {
     lesson: {
@@ -1264,7 +1339,7 @@ export default {
           this.files = this.lesson.attach_files.filter((file) => !file.link);
           this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
-      },
+       },
     },
     "successes.length"(value, previous) {
       this.$nextTick(() => {
@@ -1293,6 +1368,22 @@ export default {
           this.$refs.paginator.goToPage(1);
         }
       });
+    },
+    contractLessonStatus: {
+      handler() {
+        if (this.contractLessonStatus == 200) {
+          this.$message({
+            message: `${this.lesson.title} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });       
+          this.SET_CONTRACT_LESSON_STATUS(0);
+         }
+        this.successes = this.lesson.successes;
+        this.failures = this.lesson.failures;
+        this.bestPractices = this.lesson.best_practices;
+        this.updates = this.lesson.notes;
+      },
     },
     lessonStatus: {
       handler() {
@@ -1420,10 +1511,16 @@ a:hover {
 .file-name:hover {
   background-color: #cdecf5;
 }
-.delete-icon {
-  color: #dc3545;
-}
 .file-link {
   color: unset;
+}
+.del-check {
+  position: absolute;
+  display: flex;
+  right: 2rem;
+  font-weight: 500;
+  background: transparent;
+  height: fit-content;
+  color: #dc3545;
 }
 </style>

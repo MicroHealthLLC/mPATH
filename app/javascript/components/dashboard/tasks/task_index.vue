@@ -164,7 +164,9 @@
         <h6 class="text-danger mt-2 ml-1">No tasks found..</h6>
       </div>
     </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+       <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
     <table style="display:none" class="table table-sm table-bordered" ref="table" id="taskList1">
       <thead>
         <tr>
@@ -226,7 +228,7 @@ export default {
   components: {
     TaskShow
   },
-  props: ['facility', 'from'],
+  props: ['facility', 'from', "contract"],
   data() {
     return {
       viewList: 'active',
@@ -263,15 +265,20 @@ export default {
       'setHideImportant',
       'setHideBriefed',
     ]),
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.tasks.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
     toggleAdvancedFilter() {
         this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
       },
@@ -387,7 +394,7 @@ computed: {
     let taskIssueUsers = this.getTaskIssueUserFilter
     var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
     
-    let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+    let tasks = _.sortBy(_.filter(this.object.tasks, (resource) => {
       let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
       let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -593,6 +600,11 @@ computed: {
         },      
       };
     },
+   object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
   C_facilityManagerTaskFilter: {
     get() {
       return this.getAdvancedFilter

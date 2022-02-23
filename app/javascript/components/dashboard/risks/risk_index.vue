@@ -223,7 +223,9 @@
             <h6 class="text-danger ml-1 mt-4">No risks found..</h6>
           </div>
         </div>
-        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+      <div v-else class="text-danger mx-2 mt-2">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
          <table style="display:none" class="table table-sm table-bordered" ref="table" id="riskList1">
       <thead>
         <tr>          
@@ -336,15 +338,20 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-      //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.risks.includes(s); 
-      },
+       _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.risks.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.risks.includes(s); 
+        }
+     },
     toggleWatched(){
       this.setHideWatched(!this.getHideWatched)    
     },

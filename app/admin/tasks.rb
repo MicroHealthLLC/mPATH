@@ -20,6 +20,8 @@ ActiveAdmin.register Task do
       :task_stage_id,
       :start_date,
       :auto_calculate,
+      :contract_id,
+      :facility_project_id,
       task_files: [],
       file_links: [],
       user_ids: [],
@@ -64,6 +66,9 @@ ActiveAdmin.register Task do
     column :due_date
     column :progress
     column :description, sortable: false
+    column :contract, nil, sortable: 'contracts.name' do |task|
+      "<span>#{task.contract&.name}</span>".html_safe
+    end
     column "Files & Links" do |task|
       task.task_files.map do |file|
         next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
@@ -115,11 +120,29 @@ ActiveAdmin.register Task do
           f.input :id, input_html: { value: f.object.id }, as: :hidden
           f.input :text, label: 'Name'
           f.input :description
-          div id: 'facility_projects' do
-            f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-                fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-                fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+          if f.object.is_contract_resource?
+            f.input :contract, include_blank: false
+          else
+            # div id: 'facility_projects' do
+            #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+            #     fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+            #                           include_blank: false
+            #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+            #                           include_blank: false
+            #   end
+            # end
+            facility_project_options = []
+          
+            Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                facility_project_options << [project.name, project.id, {disabled: true}]
+                project.facility_projects.each do |fp|
+                  facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+                end
+              end
             end
+            
+            f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
           end
           f.input :task_type, include_blank: false
           f.input :task_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
@@ -206,8 +229,10 @@ ActiveAdmin.register Task do
   filter :task_stage
   filter :start_date
   filter :due_date
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
+  filter :facility_project_project_id, as: :select, collection: -> { Project.pluck(:name, :id) },
+                                       label: 'Program', input_html: { multiple: true }
+  filter :facility_project_facility_id, as: :select, collection: -> { Facility.pluck(:facility_name, :id) },
+                                        label: 'Project', input_html: { multiple: true }
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true}
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true}

@@ -189,7 +189,10 @@
             <h6 class="text-danger ml-1 mt-4">No issues found..</h6>
           </div>
         </div>
-        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+      <div v-else class="text-danger mx-2 mt-5">
+      <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
+
       </div>
     </div>
     <table style="display:none" class="table table-sm table-bordered" ref="table" id="issueList1">
@@ -249,6 +252,7 @@ library.add(faFilePdf)
 import * as Moment from 'moment'
 import { extendMoment } from 'moment-range'
 const moment = extendMoment(Moment)
+import {API_BASE_PATH} from './../../../mixins/utils'
 
 export default {
   name: 'IssueIndex',
@@ -298,15 +302,20 @@ export default {
       'setHideImportant',
       'setHideBriefed',
     ]),
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.issues.includes(s); 
-    },
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.issues.includes(s); 
+        }
+     },
     toggleWatched(){
       this.setHideWatched(!this.getHideWatched)    
     },
@@ -354,7 +363,7 @@ export default {
     },
     issueDeleted(issue) {
       http
-        .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
+        .delete(`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.facility.id}/issues/${issue.id}.json`)
         .then((res) => {
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)

@@ -7,7 +7,6 @@ import { mapGetters } from "vuex";
 
 import IssueForm from "../../dashboard/issues/issue_form.vue";
 export default {
-  props: ["facility"],
   components: { IssueForm },
   data() {
     return {
@@ -22,14 +21,15 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", 'filteredAllIssues']),
+    ...mapGetters([
+      "contentLoaded",
+      'filteredAllIssues',
+      ]),
   },
   mounted() {
-    if (this.contentLoaded) {
-      this.issue = this.filteredAllIssues.find(
+     this.issue = this.filteredAllIssues.find(
         (issue) => issue.id == this.$route.params.issueId
-      );
-    }
+      )
   },
   watch: {
     contentLoaded: {

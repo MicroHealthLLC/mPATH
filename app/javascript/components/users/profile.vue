@@ -238,6 +238,7 @@
 
 <script>
   import http from './../../common/http'
+  import { API_BASE_PATH } from '../../mixins/utils';
 
   export default {
     data() {
@@ -295,12 +296,12 @@
           this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id], h => ["tasks", "issues", "risks"].includes(h.id))
         }else if(value.id == "map" || value.id == "sheet"){
           this.subNavigationOptions = allowed_sub_navigation_tabs[this.selectedProgram.id][this.selectedProject.id]
-        }else if(['gantt_chart', 'members'].includes(value.id) ){
+        }else if(['gantt_chart', 'members', 'settings'].includes(value.id) ){
           this.subNavigationOptions = []
         }
       },
       fetchProfile() {
-        http.get('/current_user.json')
+        http.get(`${API_BASE_PATH}/current_user.json`)
           .then((res) => {
 
             this.profile = {...this.profile, ...res.data.currentUser}
@@ -356,7 +357,7 @@
                 }else{
                   this.subNavigationOptions = []
                 }                
-              }else if(['gantt_chart', 'members'].includes(this.selectedNavigation.id) ){
+              }else if(['gantt_chart', 'members', 'settings'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
               }
             }
@@ -422,7 +423,7 @@
           delete(data["preferences"])
 
           http
-            .post('/profile.json', {profile: data, preferences: preferences})
+            .post(`${API_BASE_PATH}/profile.json`, {profile: data, preferences: preferences})
             .then((res) => {
               console.log("profile-updated")
               var pref = res.data.preferences

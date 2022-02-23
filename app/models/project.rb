@@ -8,6 +8,8 @@ class Project < SortableRecord
   has_many :facility_projects, dependent: :destroy
   has_many :facilities, through: :facility_projects
   has_many :facility_groups, through: :facilities
+  has_many :project_facility_groups, dependent: :destroy
+  has_many :project_groups, through: :project_facility_groups, class_name: "FacilityGroup"
   has_many :tasks, through: :facility_projects
   has_many :issues, through: :facility_projects
   has_many :risks, through: :facility_projects
@@ -39,6 +41,8 @@ class Project < SortableRecord
 
   has_many :project_lesson_stages, dependent: :destroy
   has_many :lesson_stages, through: :project_lesson_stages
+  
+  has_many :contracts, dependent: :destroy
 
   enum status: [:inactive, :active].freeze
 
@@ -289,22 +293,25 @@ class Project < SortableRecord
   end
   
   def build_json_response(user)
-    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
+    project = self
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: project.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
+    all_authorized_contract_ids = user.authorized_contract_ids
 
     all_users = []
     all_user_ids = []
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, {facility_project: :facility} ]).where("tasks.facility_project_id in (?) or tasks.contract_id in (?)", all_facility_project_ids, all_authorized_contract_ids).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
+    
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
 
-    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, :contract_facility_group, :contract_project, {facility_project: :facility}, :issue_severity ]).where("issues.facility_project_id in (?) or issues.contract_id in (?)", all_facility_project_ids, all_authorized_contract_ids)
     all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
     all_user_ids += all_issue_users.values.flatten.map(&:user_id)
 
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort{ |r1,r2| (r1.due_date && r2.due_date) ? (r1.due_date <=> r2.due_date) : ( r1.due_date ? -1 : 1 ) }
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :project, :contract_facility_group, :contract_project, {facility_project: :facility} ]).where("risks.facility_project_id in (?) or risks.contract_id in (?)", all_facility_project_ids, all_authorized_contract_ids).sort{ |r1,r2| (r1.due_date && r2.due_date) ? (r1.due_date <=> r2.due_date) : ( r1.due_date ? -1 : 1 ) }
     all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
     all_user_ids += all_risk_users.values.flatten.map(&:user_id)
 
@@ -313,18 +320,25 @@ class Project < SortableRecord
     all_users = User.includes(:organization).where(id: all_user_ids ).active
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
-    all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
+    all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
-    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
+    all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?)", all_facility_group_ids)
+
+    # all_contracts = Contract.where(facility_group_id: all_facility_group_ids, project_id: project.id, id: user.authorized_contract_ids(project_ids: [project.id]) ).group_by(&:facility_group_id)
 
     facility_projects_hash = []
     facility_projects_hash2 = {}
 
-    project_type_name = self.project_type.try(:name)
+    project_type_name = project.project_type.try(:name)
 
     pph = user.project_privileges_hash
     fph = user.facility_privileges_hash
+    cph = user.contract_privileges_hash[project.id.to_s] || {}
+    # contract_ids = cph.keys
+    contract_ids = user.authorized_contract_ids
+    all_contracts = Contract.includes(:contract_facility_group, :contract_type, :contract_status, :contract_customer, :contract_vehicle, :contract_vehicle_number, :contract_number, :subcontract_number, :contract_prime, :contract_current_pop, :contract_classification).where(project_id: project.id, id: contract_ids )
 
     all_facility_projects.each do |fp|
 
@@ -402,11 +416,48 @@ class Project < SortableRecord
       facility_projects_hash << h
     end
 
+    contract_hash = []
+    all_contracts.each do |c|
+
+      c_hash = c.to_json(options: {include_associated_names: true})
+      
+      c_hash[:tasks] = []
+      if user.has_contract_permission?(resource: 'tasks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+        tasks = all_tasks.select{|t| t.contract_id == c.id }.compact.uniq
+        
+        tasks.each do |t| 
+          c_hash[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
+        end
+      end
+
+      c_hash[:issues] = []
+      if user.has_contract_permission?(resource: 'issues', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+        issues = all_issues.select{|t| t.contract_id == c.id }.compact.uniq        
+        issues.each do |i| 
+          c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
+        end
+      end
+
+      c_hash[:risks] = []
+      if user.has_contract_permission?(resource: 'risks', contract: c, project_privileges_hash: pph, contract_privileges_hash: cph)
+        risks = all_risks.select{|t| t.contract_id == c.id }.compact.uniq        
+        risks.each do |r| 
+          c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+        end
+      end
+
+
+      contract_hash << c_hash
+    end
+
     facility_groups_hash = []
     all_facility_groups.each do |fg|
       h2 = fg.attributes
       h2[:facilities] = []
       h2[:project_ids] = []
+
+      # h2[:contracts] = (all_contracts[fg.id] || []).map(&:to_json)
+
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
         # h2[:project_ids] << fp.project_id
@@ -416,12 +467,13 @@ class Project < SortableRecord
       facility_groups_hash << h2
     end
 
-    hash = self.attributes.merge({project_type: project_type_name})
+    hash = project.attributes.merge({project_type: project_type_name})
 
     hash.merge!({
       #users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
       users: users.as_json({only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ], all_organizations: all_organizations}),
       facilities: facility_projects_hash,
+      contracts: contract_hash,
       facility_groups: facility_groups_hash,
       statuses: statuses.as_json(except: [:created_at, :updated_at]),
       task_types: task_types.as_json,
@@ -430,7 +482,17 @@ class Project < SortableRecord
       task_stages: task_stages.as_json,
       issue_stages: issue_stages.as_json,
       risk_stages: risk_stages.as_json,
-      lesson_stages: lesson_stages.as_json
+      lesson_stages: lesson_stages.as_json,
+      contract_types: ContractType.all.as_json,
+      contract_statues: ContractStatus.all.as_json,
+      contract_customers: ContractCustomer.all.as_json,
+      contract_vehicles: ContractVehicle.all.as_json,
+      contract_vehicle_numbers: ContractVehicleNumber.all.as_json,
+      contract_numbers: ContractNumber.all.as_json,
+      subcontract_numbers: SubcontractNumber.all.as_json,
+      contract_primes: ContractPrime.all.as_json,
+      contract_current_pops: ContractCurrentPop.all.as_json,
+      contract_classifications: ContractClassification.all.as_json
     })
 
     hash

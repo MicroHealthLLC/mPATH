@@ -15,15 +15,19 @@ class Api::V1::TasksController < AuthenticatedController
       action = "delete"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
-
+    if params[:contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'tasks', contract: params[:contract_id])
+    else
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
+    end
   end
 
   def index
     all_users = []
     all_user_ids = []
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks,:contract_facility_group, :contract_project, {facility_project: :facility} ]).where("tasks.facility_project_id in (?) or tasks.contract_id in (?)", [@facility_project.id], [@contract.id]).paginate(:page => params[:page], :per_page => 15)
+
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
     all_user_ids = all_user_ids.compact.uniq
@@ -68,11 +72,15 @@ class Api::V1::TasksController < AuthenticatedController
     @task.add_link_attachment(params)
     @task.reload
     # @task.create_or_update_task(params, current_user)
-
+    if params[:source] == "portfolio_viewer"
+      response = @task.portfolio_json
+    else
+      response = @task.to_json
+    end
     if @task.errors.any?
       render json: {task: @task.to_json, errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
     else
-      render json: {task: @task.to_json}
+      render json: {task: response}
     end
   end
 
@@ -93,13 +101,25 @@ class Api::V1::TasksController < AuthenticatedController
         all_objs << duplicate_task
       end
     end
+    if params[:contract_ids].present?
+      params[:contract_ids].each do |c_id|
+        duplicate_task = @task.amoeba_dup
+        duplicate_task.contract_id = c_id
+        duplicate_task.save
+        all_objs << duplicate_task
+      end
+    end
     # duplicate_task.save
     # @task.create_or_update_task(params, current_user)
     render json: {tasks: all_objs.map(&:to_json)}
   end
 
   def show
-    @task = @facility_project.tasks.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+    if params[:contract_id]
+      @task = @contract.tasks.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+    else
+      @task = @facility_project.tasks.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+    end
     render json: {task: @task.to_json}
   end
 
@@ -115,12 +135,20 @@ class Api::V1::TasksController < AuthenticatedController
 
   private
   def set_resources
-    @project = current_user.authorized_programs.find_by(id: params[:project_id])
-    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    if params[:contract_id]
+      @contract = current_user.authorized_contracts.find_by(id: params[:contract_id] )
+    else
+      @project = current_user.authorized_programs.find_by(id: params[:project_id])
+      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    end
   end
 
   def set_task
-    @task = @facility_project.tasks.find(params[:id])
+    if params[:contract_id]
+      @task = @contract.tasks.find(params[:id])
+    else
+      @task = @facility_project.tasks.find(params[:id])
+    end
   end
 
   def task_params

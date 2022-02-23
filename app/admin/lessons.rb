@@ -17,6 +17,7 @@ ActiveAdmin.register Lesson do
       :date, 
       :task_type_id,  
       :facility_project_id,
+      :contract_id,
       :user_id, 
       :lesson_stage_id,
       file_links: [],
@@ -45,6 +46,9 @@ ActiveAdmin.register Lesson do
         "<span>#{lesson.task_type&.name}</span>".html_safe
       end
     end
+    column :contract, nil, sortable: 'contracts.name' do |lesson|
+      "<span>#{lesson.contract&.name}</span>".html_safe
+    end
     column "Stage", :lesson_stage, nil, sortable: 'lesson_stages.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.lesson_stage.name}", "#{edit_admin_lesson_stage_path(lesson.lesson_stage)}" if lesson.lesson_stage.present?
@@ -70,6 +74,7 @@ ActiveAdmin.register Lesson do
     column "Program", :project, nil, sortable: 'projects.name' do |lesson|
       if current_user.admin_write?
         link_to "#{lesson.project.name}", "#{edit_admin_project_path(lesson.project)}" if lesson.project.present?
+        link_to "#{lesson.contract_project.name}", "#{edit_admin_project_path(lesson.contract_project)}" if lesson.contract_project.present?
       else
         "<span>#{lesson.project&.name}</span>".html_safe
       end
@@ -120,18 +125,30 @@ ActiveAdmin.register Lesson do
           f.input :title, label: 'Name'
           f.input :description
           f.input :date, label: 'Date', as: :datepicker
-          facility_project_options = []
+          if f.object.is_contract_resource?
+            f.input :contract, include_blank: false
+          else
+            # div id: 'facility_projects' do
+            #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+            #     fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+            #                           include_blank: false
+            #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+            #                           include_blank: false
+            #   end
+            # end
+            facility_project_options = []
           
-          Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
-            projects.each do |project|
-              facility_project_options << [project.name, project.id, {disabled: true}]
-              project.facility_projects.each do |fp|
-                facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+            Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                facility_project_options << [project.name, project.id, {disabled: true}]
+                project.facility_projects.each do |fp|
+                  facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+                end
               end
             end
+            
+            f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
           end
-          
-          f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
 
           # div id: 'facility_projects' do
           #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|

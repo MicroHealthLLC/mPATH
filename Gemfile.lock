@@ -163,7 +163,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
     hashie (4.1.0)
-    i18n (1.8.10)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     inherited_resources (1.13.0)
       actionpack (>= 5.2, < 6.2)
@@ -199,7 +199,11 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
+<<<<<<< HEAD
     loofah (2.12.0)
+=======
+    loofah (2.13.0)
+>>>>>>> release
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -208,15 +212,24 @@ GEM
     marcel (1.0.2)
     method_source (1.0.0)
     mini_magick (4.11.0)
+<<<<<<< HEAD
     mini_mime (1.1.1)
     minitest (5.14.4)
+=======
+    mini_mime (1.1.2)
+    minitest (5.15.0)
+>>>>>>> release
     msgpack (1.4.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     mysql2 (0.5.3)
     nio4r (2.5.8)
+<<<<<<< HEAD
     nokogiri (1.12.5-x86_64-linux)
+=======
+    nokogiri (1.13.1-x86_64-linux)
+>>>>>>> release
       racc (~> 1.4)
     oauth2 (1.4.7)
       faraday (>= 0.8, < 2.0)
@@ -247,12 +260,14 @@ GEM
     pry-byebug (3.9.0)
       byebug (~> 11.0)
       pry (~> 0.13.0)
-    pry-rails (0.3.9)
-      pry (>= 0.10.4)
     public_suffix (4.0.6)
+<<<<<<< HEAD
     puma (5.5.2)
+=======
+    puma (5.6.2)
+>>>>>>> release
       nio4r (~> 2.0)
-    racc (1.5.2)
+    racc (1.6.0)
     rack (2.2.3)
     rack-proxy (0.7.0)
       rack
@@ -362,7 +377,7 @@ GEM
     xdan-datetimepicker-rails (2.5.4)
       jquery-rails
       rails (>= 3.2.16)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.3)
 
 PLATFORMS
   x86_64-linux
@@ -399,8 +414,12 @@ DEPENDENCIES
   omniauth-rails_csrf_protection (~> 0.1)
   pry (~> 0.13.1)
   pry-byebug
+<<<<<<< HEAD
   pry-rails
   puma (>= 4.3.8)
+=======
+  puma (>= 5.5.2)
+>>>>>>> release
   rails (~> 6.1.4)
   sass-rails (~> 5.0)
   slim-rails

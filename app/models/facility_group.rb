@@ -2,19 +2,28 @@ class FacilityGroup < SortableRecord
   # default_scope {order(FacilityGroup.order_humanize)}
   has_many :facilities
   has_many :facility_projects, through: :facilities
+  has_many :project_facility_groups
+  has_many :projects, through: :project_facility_groups
 
-  validates :name, presence: true, uniqueness: true
+  # validates :name, presence: true, uniqueness: true
 
   enum status: [:inactive, :active].freeze
+  before_save :set_status
 
-  def as_json(options=nil)
-    json = super(options)
-    fp = self.facility_projects
-    json.merge(
-      facilities: fp.as_json,
-      project_ids: fp.pluck(:project_id).uniq
-    ).as_json
+  def set_status
+    if !status
+      status = :active
+    end
   end
+
+  # def as_json(options=nil)
+  #   json = super(options)
+  #   fp = self.facility_projects
+  #   json.merge(
+  #     facilities: fp.as_json,
+  #     project_ids: fp.pluck(:project_id).uniq
+  #   ).as_json
+  # end
 
   def update_progress
     t = self.facility_projects

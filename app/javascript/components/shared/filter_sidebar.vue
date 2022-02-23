@@ -1,7 +1,7 @@
 <!-- NOTE: This file is used Global filter view in left side -->
 <template>
 
-  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick" data-cy="filter_bar">
+  <div id="filterbar" :style="filterBarStyle" data-cy="filter_bar">
 
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
@@ -40,7 +40,7 @@
                   <el-option 
                     v-for="item in C_activeFacilityGroups"                                                     
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'i'"
                     :label="item.name"                                                  
                     >
                   </el-option>
@@ -60,10 +60,9 @@
                     placeholder="Search and select Project Name"
                     >
                   <el-option 
-                    v-for="item in C_activeProjectNames" 
-                                                           
+                    v-for="item in C_activeProjectNames"                                                            
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'j'"
                     :label="projectNameShortener(item.facilityName, 35)"                                                     
                     >
                   </el-option>
@@ -100,7 +99,7 @@
                   <el-option 
                     v-for="item in statuses"                                                     
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'k'"
                     :label="item.name"                                                  
                     >
                   </el-option>
@@ -137,7 +136,7 @@
                 <el-option 
                   v-for="item in taskTypes"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'l'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -159,7 +158,7 @@
                 <el-option 
                   v-for="item in activeProjectUsers"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'm'"
                   :label="item.fullName"                                                  
                   >
                 </el-option>
@@ -184,7 +183,7 @@
                 <el-option 
                   v-for="item in getMyAssignmentsFilterOptions"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'n'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -210,7 +209,7 @@
                 <el-option 
                   v-for="item in group.options"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'o'"
                   :label="item.name"                                                                        
                   >
                 </el-option>
@@ -269,7 +268,7 @@
                 <el-option 
                   v-for="item in taskStages"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'a'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -293,7 +292,7 @@
                 <el-option 
                   v-for="item in issueStages"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'b'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -315,7 +314,7 @@
                 <el-option 
                   v-for="item in issueTypes"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'c'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -337,7 +336,7 @@
                 <el-option 
                   v-for="item in issueSeverities"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'd'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -362,7 +361,7 @@
                 <el-option 
                   v-for="item in riskStages"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'e'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -381,7 +380,7 @@
                 <el-option 
                   v-for="item in getRiskApproachFilterOptions"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'f'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -400,7 +399,7 @@
                 <el-option 
                   v-for="item in getRiskPriorityLevelFilterOptions"                                                     
                   :value="item"   
-                  :key="item.id"
+                  :key="item.id + 'g'"
                   :label="item.name"                                                  
                   >
                 </el-option>
@@ -435,7 +434,7 @@
                   <el-option 
                     v-for="item in C_favoriteFilterSelectOptions"                                                     
                     :value="item"   
-                    :key="item.id"
+                    :key="item.id + 'h'"
                     :label="item.name"                                                  
                     >
                   </el-option>
@@ -489,6 +488,8 @@ import axios from 'axios'
 import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
+import {API_BASE_PATH} from './../../mixins/utils'
+
 export default {
   name: 'FilterSidebar',
   data() {
@@ -907,12 +908,12 @@ export default {
     // log(e){
     //   console.log("getAdvancedFilterOptions " + e)
     // },
-    handleOutsideClick() {
-      if (this.getShowAdvancedFilter && !this.datePicker) {
-         this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
-      }
+    // handleOutsideClick() {
+    //   if (this.getShowAdvancedFilter && !this.datePicker) {
+    //      this.setShowAdvancedFilter(this.getShowAdvancedFilter) 
+    //   }
      
-    },
+    // },
     toggleFilters() {
       this.setShowAdvancedFilter(!this.getShowAdvancedFilter)
     },
@@ -1008,7 +1009,7 @@ export default {
       }
     },
     fetchFilters(){
-      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/query_filters.json`
       var method = "GET"
 
       axios({
@@ -1236,7 +1237,7 @@ export default {
         formData.append('query_filters[][filter_value]', dates )        
       }
 
-      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/query_filters.json`
       var method = "POST"
       var callback = "filter-created"
 
@@ -1319,98 +1320,98 @@ export default {
       this.setMembersPerPageFilter(null)
     },
     onClearFilter() {
-      var decision = window.confirm("Are you sure you want to remove this favorite filter?")
-      if(!decision){
-        return
-      }
-      this.setTaskIssueUserFilter([])
-      this.setTaskIssueProgressStatusFilter([])
-      this.setAdvancedFilter([])
-      this.setMyAssignmentsFilter([])
-      this.setProjectStatusFilter(null)
-      this.setTaskIssueOverdueFilter([])
-      this.setTaskTypeFilter(null)
-      this.setFacilityGroupFilter(null)
-      this.setFacilityProgressFilter(null)
-      this.setFacilityDueDateFilter([null])
-      this.setNoteDateFilter([null])
-      this.setTaskIssueDueDateFilter([null])
-      this.setFacilityNameFilter(null)
-      this.setIssueTypeFilter(null)
-      this.setIssueSeverityFilter(null)
-      this.setIssueStageFilter(null)
-      this.setTaskStageFilter(null)
-      this.setRiskStageFilter(null)
-      this.setTaskIssueProgressFilter(null)
-      this.setMyActionsFilter([])
-      this.setOnWatchFilter([])
-      this.setMapFilters([])
-      this.clearProgressFilters()
-      this.setIssueUserFilter([])
-      this.setTaskUserFilter(null)
-      this.setRiskApproachFilter([])
-      this.setRiskPriorityLevelFilter([])
-      this.setTasksPerPageFilter(null)
-      this.setRisksPerPageFilter(null)
-      this.setIssuesPerPageFilter(null)
-      this.setMembersPerPageFilter(null)
-      this.setFacilities(this.getUnfilteredFacilities)
+      this.$confirm(`Are you sure you want to remove this favorite filter?`, 'Confirm Remove', {
+        confirmButtonText: 'Remove',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.setTaskIssueUserFilter([])
+        this.setTaskIssueProgressStatusFilter([])
+        this.setAdvancedFilter([])
+        this.setMyAssignmentsFilter([])
+        this.setProjectStatusFilter(null)
+        this.setTaskIssueOverdueFilter([])
+        this.setTaskTypeFilter(null)
+        this.setFacilityGroupFilter(null)
+        this.setFacilityProgressFilter(null)
+        this.setFacilityDueDateFilter([null])
+        this.setNoteDateFilter([null])
+        this.setTaskIssueDueDateFilter([null])
+        this.setFacilityNameFilter(null)
+        this.setIssueTypeFilter(null)
+        this.setIssueSeverityFilter(null)
+        this.setIssueStageFilter(null)
+        this.setTaskStageFilter(null)
+        this.setRiskStageFilter(null)
+        this.setTaskIssueProgressFilter(null)
+        this.setMyActionsFilter([])
+        this.setOnWatchFilter([])
+        this.setMapFilters([])
+        this.clearProgressFilters()
+        this.setIssueUserFilter([])
+        this.setTaskUserFilter(null)
+        this.setRiskApproachFilter([])
+        this.setRiskPriorityLevelFilter([])
+        this.setTasksPerPageFilter(null)
+        this.setRisksPerPageFilter(null)
+        this.setIssuesPerPageFilter(null)
+        this.setMembersPerPageFilter(null)
+        this.setFacilities(this.getUnfilteredFacilities)
 
-      if(!this.favoriteFilterData.id)
-        return
+        if(!this.favoriteFilterData.id)
+          return
 
-      var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
-      var method = "DELETE"
-      var callback = "filter-destroyed"
+        var url = `${API_BASE_PATH}/programs/${this.currentProject.id}/query_filters/reset.json`
+        var method = "DELETE"
+        var callback = "filter-destroyed"
 
-      let formData = new FormData()
+        let formData = new FormData()
 
-      formData.append('favorite_filter[id]', this.favoriteFilterData.id)
+        formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
-        }
-      })
-      .then((response) => {
-        var id = parseInt(response.data.id)
-        this.favoriteFilterOptions = _.filter(this.favoriteFilterOptions, function(currentObject) {
-          return currentObject.id != id;
-        });
-        if(this.favoriteFilterOptions && this.favoriteFilterOptions.length > 0){
-          this.favoriteFilterData = this.favoriteFilterOptions[0]
-          this.loadFavoriteFilter(this.favoriteFilterData)
-        }else{
-          this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
-        }
-        
-        //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
-        //Vue.set(this.favoriteFilterOptions, i, null)
-        this.$message({
-          message: `Favorite Filter is removed successfully.`,
-          type: "success",
-          showClose: true,
-        });
-      })
-      .catch((err) => {
-        // var errors = err.response.data.errors
-        console.log(err)
-        if(err.response.data.error){
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          var id = parseInt(response.data.id)
+          this.favoriteFilterOptions = _.filter(this.favoriteFilterOptions, function(currentObject) {
+            return currentObject.id != id;
+          });
+          if(this.favoriteFilterOptions && this.favoriteFilterOptions.length > 0){
+            this.favoriteFilterData = this.favoriteFilterOptions[0]
+            this.loadFavoriteFilter(this.favoriteFilterData)
+          }else{
+            this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
+          }
+          //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
+          //Vue.set(this.favoriteFilterOptions, i, null)
           this.$message({
-            message: err.response.data.error,
-            type: "error",
+            message: `Favorite Filter is removed successfully.`,
+            type: "success",
             showClose: true,
           });
-        }
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+          if(err.response.data.error){
+            this.$message({
+              message: err.response.data.error,
+              type: "error",
+              showClose: true,
+            });
+          }
 
-      })
-      .finally(() => {
-        // this.loading = false
-      })
-
+        })
+        .finally(() => {
+          // this.loading = false
+        })
+      });
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;

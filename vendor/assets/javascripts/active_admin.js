@@ -91,6 +91,23 @@ function addFacilityPrivilegeForm(element){
   })
 }
 
+function addContractPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  let program_ids = $.map( $(".project_select"), function(e, i){
+    return $(e).val()
+  } )
+  $.ajax({
+    url: url,
+    data: {program_ids: program_ids},
+    success: function(res, data){
+      $("#contract_privilege_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
 function addProjectPrivilegeForm(element){
   let url = $(element).attr("data-url")
   $.ajax({
@@ -128,6 +145,51 @@ function programSelectChange(element){
       alert("Error loading data. Please try again later")
     }
   })
+}
+
+function programSelectChangeForContract(element){
+  var project_id = $(element).val()
+  if(project_id == "select_project") return
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  let paramsIndex = $(element).attr("data-index")
+  $.ajax({
+    url: '/contract_privileges/contract_privileges_partial',
+    data: {project_id: project_id, user_id: user_id, index: paramsIndex},
+    success: function(res, data){
+      $("#"+div_id).html(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function initializeContractPrivilegeSelect2(){
+
+  $.map($(".contract_privileges_project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
+
+    $(element).select2({
+      placeholder: "Search and select Contract",
+      allowClear: true,
+      tags: true
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
 }
 
 function initializeProjectPrivilegeSelect2(){
@@ -185,6 +247,7 @@ function initializeProgramPrivilegeSelect2(){
 
 jQuery(function($) {
 
+  initializeContractPrivilegeSelect2()
   initializeProjectPrivilegeSelect2()
   initializeProgramPrivilegeSelect2()
 
@@ -203,12 +266,14 @@ jQuery(function($) {
     allowClear: true
   });
 
-  $(".project_privileges_select").select2({
+  $(".project_privileges_select, #q_facility_project_facility_id, #issue_facility_project_attributes_project_id,\
+     #task_facility_project_attributes_project_id").select2({
     placeholder: "Search and select Project",
     allowClear: false
   });
 
-  $(".program_select").select2({
+  $(".program_select, #q_facility_project_project_id, #issue_facility_project_attributes_facility_id,\
+     #task_facility_project_attributes_facility_id").select2({
     placeholder: "Search and select Program",
     allowClear: false
   });
@@ -327,7 +392,7 @@ jQuery(function($) {
           }, deep: true
         }
       },
-      template: `<li class='string input required stringish' id='facility_address_input_gmap'><label for='facility_address_input_gmap' class='label'>Address<abbr title="required">*</abbr></label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_address_input_gmap'><label for='facility_address_input_gmap' class='label'>Address</label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -512,7 +577,7 @@ jQuery(function($) {
           return this.phoneData.phoneNumber ? this.phoneData.countryCode : this.countryCode;
         }
       },
-      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number</label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -586,13 +651,13 @@ jQuery(function($) {
       },
       methods: {
         fetchFacilityProjects(cb) {
-          $.get(`/facilities/${facility_id}/facility_projects.json`, (data) => {
+          $.get(`/api/v1/facilities/${facility_id}/facility_projects.json`, (data) => {
             this.projects = data;
             this.fetchStatuses(cb);
           });
         },
         fetchStatuses(cb) {
-          $.get("/api/v1/filter_data/statuses.json", (data) => {
+          $.get("/api/v1/statuses.json", (data) => {
             this.statuses = data.statuses;
             return cb();
           });
@@ -611,7 +676,7 @@ jQuery(function($) {
           let data = {facility_project: {due_date: this.project.due_date, status_id: this.project.status_id}};
           let _this = this;
           $.ajax({
-            url: `/facilities/${facility_id}/facility_projects/${this.project.id}.json`,
+            url: `api/v1/facilities/${facility_id}/facility_projects/${this.project.id}.json`,
             type: 'PUT',
             data: data,
             success: function(res) {
@@ -704,6 +769,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          settings_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
           calendar_view: {
             read: false,
             write: false,
@@ -769,6 +839,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          contracts: {
+            read: false,
+            write: false,
+            delete: false
+          },
           lessons: {
             read: false,
             write: false,
@@ -785,6 +860,7 @@ jQuery(function($) {
       methods: {
         writePrivileges() {
           let overview = $("#user_privilege_attributes_overview").val() || "";
+          let contracts = $("#user_privilege_attributes_contracts").val() || "";
           let tasks = $("#user_privilege_attributes_tasks").val() || "";
           let issues = $("#user_privilege_attributes_issues").val() || "";
           let risks = $("#user_privilege_attributes_risks").val() || "";
@@ -793,6 +869,7 @@ jQuery(function($) {
           let map_view = $("#user_privilege_attributes_map_view").val() || "";
           let facility_manager_view = $("#user_privilege_attributes_facility_manager_view").val() || "";
           let sheets_view = $("#user_privilege_attributes_sheets_view").val() || "";
+          let settings_view = $("#user_privilege_attributes_settings_view").val() || "";
           let calendar_view = $("#user_privilege_attributes_calendar_view").val() || "";
           let gantt_view = $("#user_privilege_attributes_gantt_view").val() || "";
           let watch_view = $("#user_privilege_attributes_watch_view").val() || "";
@@ -809,6 +886,11 @@ jQuery(function($) {
             read: overview.includes("R"),
             write: overview.includes("W"),
             delete: overview.includes("D")
+          }
+          this.contracts = {
+            read: contracts.includes("R"),
+            write: contracts.includes("W"),
+            delete: contracts.includes("D")
           }
           this.tasks = {
             read: tasks.includes("R"),
@@ -849,6 +931,11 @@ jQuery(function($) {
             read: sheets_view.includes("R"),
             write: sheets_view.includes("W"),
             delete: sheets_view.includes("D")
+          }
+          this.settings_view = {
+            read: settings_view.includes("R"),
+            write: settings_view.includes("W"),
+            delete: settings_view.includes("D")
           }
           this.calendar_view = {
             read: calendar_view.includes("R"),
@@ -908,6 +995,32 @@ jQuery(function($) {
           v = value ? v + "D" : v.replace("D", "")
           //if (value) this.overview.read = value;
           $("#user_privilege_attributes_overview").val(v);
+        },
+        "contracts.read"(value) {
+          if (this.loading) return;
+          // if (!value) this.overview.read = true;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.contracts.read = false;
+            this.contracts.write = false;
+            this.contracts.delete = false;
+          }
+          $("#user_privilege_attributes_contracts").val(v);
+        },
+        "contracts.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "W" : v.replace("W", "")
+          //if (value) this.overview.read = value;
+          $("#user_privilege_attributes_contracts").val(v);
+        },
+        "contracts.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_contracts").val();
+          v = value ? v + "D" : v.replace("D", "")
+          //if (value) this.overview.read = value;
+          $("#user_privilege_attributes_contracts").val(v);
         },
         "tasks.read"(value) {
           if (this.loading) return;
@@ -1139,6 +1252,40 @@ jQuery(function($) {
           }
           $("#user_privilege_attributes_sheets_view").val(v);
         },
+        "settings_view.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.settings_view.write = false;
+            this.settings_view.delete = false;
+          }
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
+        "settings_view.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.settings_view.read = value;
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
+        "settings_view.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.settings_view.read = value;
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
+        "settings_view.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_settings_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.settings_view.write = false;
+            this.settings_view.delete = false;
+          }
+          $("#user_privilege_attributes_settings_view").val(v);
+        },
         "calendar_view.write"(value) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_calendar_view").val();
@@ -1282,6 +1429,10 @@ jQuery(function($) {
             <label>Sheet</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
            </li>
+           <li class="choice d-flex">
+           <label>Program Settings</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="settings_view.read">Read</label>
+          </li>
             <li class="choice d-flex">
               <label>Map</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
@@ -1306,6 +1457,12 @@ jQuery(function($) {
             <label>Members</label>
             <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>
            </li>
+           <li class="choice d-flex">
+           <label>Contracts</label>
+           <label class="d-flex align-center" ><input type="checkbox" v-model="contracts.read">Read</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="contracts.write">Write</label>
+           <label class="d-flex align-center"><input type="checkbox" v-model="contracts.delete">Delete</label>
+         </li>
             <li class="choice d-flex">
               <label>Overview</label>
               <label class="d-flex align-center" ><input type="checkbox" v-model="overview.read">Read</label>
@@ -1360,12 +1517,13 @@ jQuery(function($) {
     $('#logout').click(function () {
       localStorage.removeItem('vuex');
     });
-
+    $("#titlebar_right .action_items").show();
     if ($("#__privileges").is(":visible") || $("#__privileges_id").length) {
       $.__privileges_element = $("#__privileges").is(":visible") ? $("#__privileges").data('privilege') : $("#__privileges_id").val();
       $("#q_id_input").length && $("#q_id_input").remove();
       let p_write = $.__privileges_element.includes("W");
       let p_delete = $.__privileges_element.includes("D");
+      
       if (p_write) {
         $("#titlebar_right .action_items").show();
       } else {
@@ -1420,12 +1578,12 @@ jQuery(function($) {
         methods: {
           submitSettings() {
             if (!this.permitted) return;
-            $.post("/api/settings.json", {settings: this.settings}, (data) => {
+            $.post("/api/v1/settings.json", {settings: this.settings}, (data) => {
               window.location.href = "/admin/settings";
             });
           },
           fetchSettings() {
-            $.get("/api/settings.json", (data) => {
+            $.get("/api/v1/settings.json", (data) => {
               for (let key in this.settings) {
                 this.settings[key] = data[key] || '';
               }
@@ -1584,13 +1742,13 @@ jQuery(function($) {
               this.project_id = $("select[name=Program]").children("option:selected").val();
             },
             fetchProjectUsers() {
-              $.get(`/api/v1/filter_data/users.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/users.json?project_id=${this.project_id}`, (data) => {
                 this.project_users = data.filter(u => u.status == "active");
                 this.loading = false;
               });
             },
             fetchProgramCategories(){
-              $.get(`/api/v1/filter_data/categories.json?project_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/task_types.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Category]").html("")
                 let task_types = data.categories
                 for(var i = 0; i <= task_types.length; i++){
@@ -1602,7 +1760,7 @@ jQuery(function($) {
               });
             },
             fetchProgramStages(){
-              $.get(`/api/v1/filter_data/stages.json?resource=task&program_id=${this.project_id}`, (data) => {
+              $.get(`/api/v1/task_stages.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Stage]").html("")
                 let task_stages = data.all_stages
                 for(var i = 0; i <= task_stages.length; i++){
@@ -1863,7 +2021,7 @@ jQuery(function($) {
             this.u_id = $(`#${item.input_id}`).val();
           },
           fetchProjectUsers() {
-            $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+            $.get(`/api/v1/users.json?project_id=${this.project_id}`, (data) => {
               this.users = data.filter(u => u.status == "active");
               this.loading = false;
             });
@@ -1934,7 +2092,7 @@ jQuery(function($) {
             this.u_ids = $(`#${this.type}_user_ids`).val().map(Number);
           },
           fetchProjectUsers() {
-            $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+            $.get(`/api/v1/users.json?project_id=${this.project_id}`, (data) => {
               this.project_users = data.filter(u => u.status == "active");
               this.task_users = this.project_users.filter(u => this.u_ids.includes(u.id));
               this.loading = false;
@@ -2038,7 +2196,7 @@ jQuery(function($) {
             this.fetchProjectTaskIssues()
           },
           fetchProjectTaskIssues() {
-            $.get(`/api/v1/programs/${this.project_id}/task_issues.json`, (data) => {
+            $.get(`/api/v1/projects/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
               this.risks = data ? this.type == 'risk' ? data.risks.filter(t => t.id !== this._id) : data.risks : [];
@@ -2311,7 +2469,7 @@ jQuery(function($) {
           let order = sort_col.split('_').pop();
           sort_col = sort_col.replace(`_${order}`, '');
           let data = {relation: model, order: order, column: sort_col}
-          $.post("/api/sort-by.json", data, (res) => {/* Noops */});
+          $.post("/api/v1/sort-by.json", data, (res) => {/* Noops */});
         }
       });
     }
@@ -2344,7 +2502,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/v1/filter_data/users.json`, (data) => {
+            $.get(`/api/v1/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
@@ -2428,7 +2586,7 @@ jQuery(function($) {
         },
         methods: {
           fetchUsers() {
-            $.get(`/api/v1/filter_data/users.json`, (data) => {
+            $.get(`/api/v1/users.json`, (data) => {
               this.users = data.filter(u => u.status == "active");
               let user_ids = $("#__checklist_users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));

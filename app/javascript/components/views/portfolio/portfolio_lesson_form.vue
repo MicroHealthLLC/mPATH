@@ -212,6 +212,7 @@
         <el-select
           v-model="lesson.task_type_id"
           class="w-100"
+          clearable
           value-key="id"
           name="Process Area"
           placeholder="Select Process Area"
@@ -653,13 +654,16 @@
         />
         <div v-for="(file, index) in files" :key="index">
           <div
-            class="clickable file-name d-flex justify-content-between w-100 py-1"
+            class="file-name d-flex justify-content-between w-100 py-1"
           >
             <div @click.prevent="downloadFile(file)">
                <i class="far fa-file mr-2"></i>{{ file.name }}
             </div>
-            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click="removeFile(file.id, index)">
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -685,10 +689,10 @@
               </div></a
             >
             <div
-              v-if="_isallowed('delete')"
-              @click="removeFileLink(link.id, index)"
-            >
-              <i class="fas fa-times delete-icon"></i>
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click="removeFileLink(link.id, index)">
+              <i class="fas fa-times"></i>
             </div>
           </div>
           <div v-else class="d-flex justify-content-between">
@@ -697,8 +701,11 @@
               class="my-1"
               placeholder="Enter link to a site or file"
             ></el-input>
-            <div @click="removeFileLink(link.id, index)" class="clickable">
-              <i class="fas fa-times delete-icon"></i>
+            <div
+              :class="{ _disabled: loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click="removeFileLink(link.id, index)">
+              <i class="fas fa-times"></i>
             </div>
           </div>
         </div>
@@ -873,6 +880,7 @@ export default {
       deleteUpdates: [],
       files: [],
       fileLinks: [],
+      loading: true,
       destroyFileIds: [],
     };
   },
@@ -983,28 +991,46 @@ export default {
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedTasks.splice(
+            this.relatedTasks.findIndex((task) => task.id == id),
+            1
+          );
+        });
     },
     addRelatedIssues(issues) {
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedIssues.splice(
+            this.relatedIssues.findIndex((issue) => issue.id == id),
+            1
+          );
+        });
     },
     addRelatedRisks(risks) {
       risks.forEach((risk) => this.relatedRisks.push(risk));
     },
     removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedRisks.splice(
+            this.relatedRisks.findIndex((risk) => risk.id == id),
+            1
+          );
+        });
     },
     addSuccess() {
       if (this._isallowed("write")) {
@@ -1220,7 +1246,7 @@ export default {
       if(this.portfolioUsers && this.portfolioUsers.length < 1){
         this.fetchPortfolioUsers()
       }    
-    
+      this.loading = false;
   },
   beforeDestroy() {
     // Clear current lesson in store
@@ -1392,7 +1418,13 @@ a:hover {
 .file-name:hover {
   background-color: #cdecf5;
 }
-.delete-icon {
+.del-check {
+  position: absolute;
+  display: flex;
+  right: 2rem;
+  font-weight: 500;
+  background: transparent;
+  height: fit-content;
   color: #dc3545;
 }
 .file-link {

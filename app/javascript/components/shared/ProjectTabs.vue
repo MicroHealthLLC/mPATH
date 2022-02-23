@@ -1,29 +1,58 @@
 <template>
   <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
-    <div v-for="tab in tabs" :key="tab.key">
+   <span v-if="$route.params.projectId" class="d-flex">
+    <div v-for="cTab in cTabs" :key="cTab.key" class="d-flex">
       <div
-        v-if="!tab.hidden"
+        v-if="!cTab.hidden && cTab.key !== 'contract'"
         class="badge mx-0"
-        :class="{ active: currentTab == tab.key, disabled: tab.disabled }"
-        @click="changeTab(tab)"
+        :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
+        @click="changeCtab(cTab)"
       >
-        <div>{{ tab.label }}</div>
+        <div>{{ cTab.label }}</div>
       </div>
     </div>
+   </span>
+
+    <span v-else class="d-flex">
+     <div v-for="cTab in cTabs" :key="cTab.key" >
+      <div
+        v-if="!cTab.hidden && cTab.key !== 'project'"
+        class="badge mx-0"
+        :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
+        @click="changeCtab(cTab)"
+      >
+        <div>{{ cTab.label }}</div>
+      </div>
+    </div>
+</span>
   </div>
+  
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+// When routing from any tab back to Analytics, the url is still going to OVerview
 export default {
   name: "ProjectTabs",
   data() {
     return {
-      canSeeTab: true,
-      tabs: [
+      canSeeTab: true,     
+      cTabs: [
+       {
+          label: "Contract",
+          key: "contract",
+          closable: false,
+          hidden: false,
+        },
         {
-          label: "Overview",
-          key: "overview",
+          label: "Project",
+          key: "project",
+          closable: false,
+          hidden: false,
+        },
+        {
+          label: "Analytics",
+          key: "analytics",
           closable: false,
           hidden: false,
         },
@@ -37,61 +66,96 @@ export default {
           label: "Issues",
           key: "issues",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
         {
           label: "Risks",
           key: "risks",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
         {
           label: "Lessons",
           key: "lessons",
-          closable: false,
-          hidden: false,
+          closable: false, 
+         hidden: false,
         },
         {
           label: "Notes",
           key: "notes",
           closable: false,
-          hidden: false,
+         hidden: false,
         },
       ],
     };
   },
   mounted() {
-    var programId = this.$route.params.programId;
-    var projectId = this.$route.params.projectId;
-
-    let fPrivilege = this.$projectPrivileges[programId][projectId];
-
-    // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-
-    if (fPrivilege) {
-      for (var i = 0; i < this.tabs.length; i++) {
-        // this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].length < 1;
-      }
-    }
-  },
+       for (let privelegeTab in this.privileges) {
+        if (this.privileges[privelegeTab].length <= 0 && privelegeTab !== 'contract_id') {
+          // console.log(`${privelegeTab}`)
+            for (let i = 0; i < this.cTabs.length; i++) {
+              if (privelegeTab == this.cTabs[i].key){
+                this.cTabs[i].hidden = true
+              }
+              // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+              if (privelegeTab == "overview"){
+                  this.cTabs[1].hidden = true
+                  }
+                }
+            }  
+              if (this.privileges[privelegeTab].length > 0 && privelegeTab !== 'contract_id') {
+          // console.log(`${privelegeTab}`)
+            for (let i = 0; i < this.cTabs.length; i++) {
+              if (privelegeTab == this.cTabs[i].key){
+                this.cTabs[i].hidden = false
+              }
+              // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+              if (privelegeTab == "overview"){
+                  this.cTabs[1].hidden = false
+                  }
+                }
+            }  
+              }    
+   },
   methods: {
-    changeTab(tab) {
-      this.$router.push(this.path + `/${tab.key}`);
+     changeCtab(cTab) {
+       if(this.$route.params.contractId){
+      if (cTab.key === "contract"){
+        this.$router.push(this.c_path + `/`);
+       } else {
+        this.$router.push(this.c_path + `/${cTab.key}`);
+       } 
+
+       } else if (cTab.key === "project" && this.$route.params.projectId){
+        this.$router.push(this.p_path + `/`);
+       } else {
+      this.$router.push(this.p_path + `/${cTab.key}`);
+       }
+
     },
   },
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
-    currentTab() {
-      return this.tabs
-        .map((tab) => tab.key)
-        .filter((key) =>
-          this.$route.name.toUpperCase().includes(key.toUpperCase())
-        );
+    privileges(){
+      let programId = this.$route.params.programId
+      let projectId = this.$route.params.projectId;
+      let contractId = this.$route.params.contractId;
+       if(contractId){
+         return this.$contractPrivileges[programId][this.$route.params.contractId] 
+      } else return this.$projectPrivileges[programId][projectId];
+    },
+    currentCtab() {
+      let c = this.cTabs.map(t => t.key)
+      let cT = c.filter(k => this.$route.name.toUpperCase().includes(k.toUpperCase()))
+      if (cT.length > 1){
+        return cT.slice(1)
+      } else return cT
+    },
+    routePriv(){
+      return this.$projectPrivileges 
     },
     tab() {
       let url = this.$route.path;
-
       if (url.includes("sheet")) {
         return "sheet";
       }
@@ -101,29 +165,54 @@ export default {
         return "map";
       }
     },
-    path() {
-      return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+    c_path() {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}`;
     },
-    tabsVisible() {
-      return this.tabs.some((tab) => tab.hidden === false);
+    p_path(){
+      return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;  
     },
+   tabsVisible() {
+     if (this.$route.params.contractId){
+        return this.cTabs.some((tab) => tab.hidden === false);
+      } else {
+        return this.cTabs.some((tab) => tab.hidden === false);
+      }
+     },
   },
-  watch: {
+watch: {
     "$route.path": {
       handler() {
         if (this.contentLoaded) {
-          let privileges = this.$projectPrivileges[
-            this.$route.params.programId
-          ][this.$route.params.projectId];
-
-          if (privileges) {
-            for (var i = 0; i < this.tabs.length; i++) {
-              this.tabs[i].hidden = privileges[this.tabs[i].key].length < 1;
+          for (let privelegeTab in this.privileges) {
+            if (this.privileges[privelegeTab].length <= 0 && privelegeTab !== 'contract_id') {
+              // console.log(`${privelegeTab}`)
+                for (let i = 0; i < this.cTabs.length; i++) {
+                  if (privelegeTab == this.cTabs[i].key){
+                    this.cTabs[i].hidden = true
+                  }
+                  // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+                  if (privelegeTab == "overview"){
+                      this.cTabs[1].hidden = true
+                      }
+                    }
+                }  
+                 if (this.privileges[privelegeTab].length > 0 && privelegeTab !== 'contract_id') {
+              // console.log(`${privelegeTab}`)
+                for (let i = 0; i < this.cTabs.length; i++) {
+                  if (privelegeTab == this.cTabs[i].key){
+                    this.cTabs[i].hidden = false
+                  }
+                  // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
+                  if (privelegeTab == "overview"){
+                      this.cTabs[1].hidden = false
+                      }
+                    }
+                }  
+              }    
             }
-          }
-        }
       },
     },
+ 
   },
 };
 </script>

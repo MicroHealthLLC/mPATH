@@ -169,15 +169,6 @@
         'taskUpdated',
         'updateWatchedIssues'
       ]),
-    //TODO: change the method name of isAllowed
-    _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.issues.includes(s); 
-    },
       editIssue() {
         this.DV_edit_issue = this.DV_issue;
         if (this.$route.path.includes("kanban")) {
@@ -187,9 +178,13 @@
         }      
       },
       deleteIssue() {
-        let confirm = window.confirm(`Are you sure, you want to delete this issue?`)
-        if (!confirm) {return}
-        this.issueDeleted(this.DV_issue)
+        this.$confirm(`Are you sure you want to delete this issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(this.DV_issue)
+        });
       },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)
@@ -213,11 +208,15 @@
       },
       toggleWatched() {
         if (this.DV_issue.watched) {
-          let confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
-          if (!confirm) {return}
+          his.$confirm(`Are you sure you want to remove this issue from on-watch?`, 'Confirm Remove', {
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
+            this.updateWatchedIssues(this.DV_issue)
+          });
         }
-        this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
-        this.updateWatchedIssues(this.DV_issue)
       },
       updateRelatedTaskIssue(task) {    
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})

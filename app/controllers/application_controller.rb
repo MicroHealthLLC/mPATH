@@ -37,7 +37,6 @@ class ApplicationController < ActionController::Base
   end
 
   def render_error(error_obj = Exception.new("Error occurred!"), status_code = 500, options = {})
-    
     if error_obj.is_a?(Exception)
       error_msg = error_obj.message
       Rails.logger.error error_obj.message

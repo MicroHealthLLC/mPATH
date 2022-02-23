@@ -1,7 +1,7 @@
 <template>
   <div id="risks-index" class="my-4 ml-1" data-cy="risk_sheet_index">
   <div v-if="_isallowed('read')">
-    <div class="d-flex align-item-center  w-70 float-right filters-wrapper">
+    <div class="d-flex align-item-center  w-60 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
@@ -431,8 +431,9 @@
     <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No Risks found...</h6>
   </div>
   </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-
+   <div v-else class="text-danger mx-2 mt-2">
+    <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+  </div>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
 
     <table
@@ -498,6 +499,9 @@
             <span v-if="risk.onHold == true">On Hold
              <!-- <span v-if="risk.draft">, </span>            -->
             </span> 
+            <span v-if="risk.planned == true">Planned</span>
+            <span v-if="risk.inProgress == true">In Progress</span>
+            <span v-if="risk.reportable == true">Briefings</span>
             <span v-if="risk.draft == true">Draft</span>   
             <span v-if="
                   risk.watched == false &&
@@ -506,6 +510,9 @@
                   risk.isOverdue == false &&
                   risk.onHold == false &&  
                   risk.draft == false && 
+                  risk.reportable == false &&
+                  risk.inProgress == false &&
+                  risk.planned == false &&
                   risk.progress < 100 "             
                   >                
             </span>  
@@ -544,7 +551,7 @@
     components: {
       RiskSheets
     },
-    props: ['facility', 'from'],
+    props: ['facility', 'from', "contract"],
     data() {
       return {
         risks: Object,
@@ -592,16 +599,20 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-
-      //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.risks.includes(s); 
-      },
+       _isallowed(salut) {
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.risks.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.risks.includes(s); 
+        }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -629,6 +640,11 @@
       addNewRisk() {
         this.setRiskForManager({key: 'risk', value: {}})
         // Route to new risk form page
+       if(this.contractRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/new`
         );
@@ -747,6 +763,14 @@
         this.setCurrentRiskPage(value);
        }
       },
+      contractRoute(){
+         return this.$route.params.contractId
+      },
+      object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+       } else return this.facility
+      },
       filteredRisks() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
@@ -759,7 +783,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
+        let risks = _.sortBy(_.filter(this.object.risks, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
           if(taskIssueUsers.length > 0){

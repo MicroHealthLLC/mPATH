@@ -23,10 +23,13 @@ ActiveAdmin.register Risk do
       :task_type,
       :task_type_id,
       :risk_stage_id,
+      :contract_id,
+      :facility_project_id,
       :progress,
       :start_date,
       :due_date,
       :auto_calculate,
+      :contract_id,
       user_ids: [],
       risk_files: [],
       file_links: [],
@@ -64,6 +67,9 @@ ActiveAdmin.register Risk do
     column :priority_level
     column :risk_approach
     column :risk_approach_description, sortable: false
+    column :contract, nil, sortable: 'contracts.name' do |risk|
+      "<span>#{risk.contract&.name}</span>".html_safe
+    end
     column :task_type, nil, sortable: 'task_types.name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.task_type.name}", "#{edit_admin_task_type_path(risk.task_type)}" if risk.task_type.present?
@@ -129,11 +135,29 @@ ActiveAdmin.register Risk do
       f.input :risk_description, label: 'Risk Description', input_html: { rows: 8 }
       f.input :impact_description, label: 'Impact Description', input_html: { rows: 8 }
       f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
-      div id: 'facility_projects' do
-        f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, input_html: {class: 'program_select'}
-            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, input_html: {class: 'project_privileges_select'}
+      if f.object.is_contract_resource?
+        f.input :contract, include_blank: false
+      else
+        # div id: 'facility_projects' do
+        #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+        #     fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+        #                           include_blank: false
+        #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+        #                           include_blank: false
+        #   end
+        # end
+        facility_project_options = []
+      
+        Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+          projects.each do |project|
+            facility_project_options << [project.name, project.id, {disabled: true}]
+            project.facility_projects.each do |fp|
+              facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+            end
+          end
         end
+        
+        f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
       end
       f.input :start_date, label: 'Identified Date', as: :datepicker
       f.input :due_date, label: 'Risk Approach Due Date', as: :datepicker

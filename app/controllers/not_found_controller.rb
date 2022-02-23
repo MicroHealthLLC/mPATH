@@ -1,3 +1,5 @@
 class NotFoundController < ApplicationController
-  def index; end
+  def index
+    render json: {error: "Not found"}, status: 404
+  end
 end

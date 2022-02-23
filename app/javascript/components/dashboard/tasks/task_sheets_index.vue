@@ -2,7 +2,7 @@
   <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index">
      <!-- <v-app id="app" > -->
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-60 filters-wrapper">
          <div class="ml-3 task-search-bar w-100">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input
@@ -409,7 +409,9 @@
       <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No Tasks found...</h6>
     </div>
       </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+      <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
+      </div>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
 
     <table
@@ -458,6 +460,9 @@
             <span v-if="task.important == true">Important</span>
             <span v-if="task.isOverdue">Overdue</span>
             <span v-if="task.progress == 100">Completed</span> 
+            <span v-if="task.planned == true">Planned</span>
+            <span v-if="task.inProgress == true">In Progress</span>
+            <span v-if="task.reportable == true">Briefings</span>
             <span v-if="task.ongoing == true">Ongoing</span>
             <span v-if="task.onHold == true">On Hold</span> 
             <span v-if="task.draft == true">Draft</span>   
@@ -467,6 +472,9 @@
                   task.isOverdue == false &&
                   task.onHold == false &&  
                   task.draft == false && 
+                  task.reportable == false &&
+                  task.inProgress == false &&
+                  task.planned == false &&
                   task.progress < 100 "             
                   >                
             </span>  
@@ -504,15 +512,16 @@
     components: {
       TaskSheets
     },
-    props: ['facility', 'from'],
+    props: ['facility', 'from', "contract"],
     data() {
       return {
         tasks: Object,
         today: new Date().toISOString().slice(0, 10),
         now: new Date().toISOString(),
         tasksQuery: '',
-        // currentPage:1,
         showFilters: false,
+        contractRoute: this.$route.params.contractId,
+        id: this.$route.params.projectId,
         datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
@@ -551,15 +560,20 @@
         'setHideImportant',
         'setHideBriefed',
       ]),
-      //TODO: change the method name of isAllowed
       _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.tasks.includes(s); 
-      },
+       if (this.$route.params.contractId) {
+          // return this.defaultPrivileges
+          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s);
+        } else {
+          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut]
+          return fPrivilege.tasks.includes(s); 
+        }
+     },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -627,6 +641,11 @@
       addNewTask() {
         this.setTaskForManager({key: 'task', value: {}})
         // Route to new task form page
+        if(this.contractRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/new`
+        );
+        } else
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
@@ -634,13 +653,10 @@
     showCounts(){
         this.setShowCount(!this.getShowCount)       
       },
-      // log(e){
-      //   console.log(e)
-      // },
-      showAllToggle() {
+    showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
-         exportToPdf() {
+    exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#taskSheetsList1"})
@@ -683,7 +699,6 @@
         'viewPermit',
         'getToggleRACI',
         'getShowAdvancedFilter',
-
         'getShowCount',
         // 7 States
         'getHideComplete',
@@ -698,7 +713,7 @@
         'getHideImportant',
         'getHideBriefed',
       ]),
-          currentPage:{
+      currentPage:{
        get() {
         return this.currentTaskPage
       },
@@ -716,8 +731,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
-
+        let tasks = _.sortBy(_.filter(this.object.tasks, (resource) => {
      
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -726,7 +740,6 @@
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-
       
           // //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
@@ -772,49 +785,39 @@
         if (this.getHideOverdue == true) {          
          return t.isOverdue == false
        } else return true
-
       }).filter(t => {
       if (this.getHideComplete == true) { 
         return !t.completed
       } else return true
-
       }).filter(t => {
       if (this.getHidePlanned == true) { 
         return t.planned == false
       } else return true
-
       }).filter(t => {
       if (this.getHideOnhold == true) { 
         return t.onHold == false
       } else return true
-
       }).filter(t => {
       if (this.getHideInprogress == true) { 
         return t.inProgress == false
       } else return true
-
       }).filter(t => {
        if (this.getHideDraft == true){
          return t.draft == false
        } else return true   
-
-
       }).filter(t => {
       if (this.getHideOngoing == true) {
         return t.ongoing == false
       } else return true       
-
       }).filter(t => {
         if (this.getHideBriefed && !this.getHideWatched && !this.getHideImportant ) {
         return t.reportable
       }
       if (this.getHideBriefed && this.getHideWatched && !this.getHideImportant) {          
           return t.reportable + t.watched
-
       } if (this.getHideBriefed && this.getHideWatched && this.getHideImportant) {          
           return t.reportable + t.watched + t.important
       } else return true
-
       }).filter(t => {
         // This and last 2 filters are for Filtered Tags
          if (this.getHideWatched && !this.getHideBriefed && !this.getHideImportant) {
@@ -877,7 +880,6 @@
      let onHold = _.filter( this.filteredTasks.unfiltered.tasks, (t) => t && t.onHold == true );
      let ongoing = _.filter(  this.filteredTasks.unfiltered.tasks, (t) => t && t.ongoing == true );
      let overdue = _.filter(  this.filteredTasks.unfiltered.tasks, (t) => t.isOverdue == true);
-
       return {
         planned: {
           count: planned.length, 
@@ -918,6 +920,11 @@
         },     
       };
     },
+    object(){
+      if (this.$route.params.contractId) {
+        return this.contract
+      } else return this.facility
+     },
       C_sheetsTaskFilter: {
         get() {
           return this.getAdvancedFilter
@@ -955,6 +962,9 @@
           this.setTaskIssueProgressStatusFilter(value)
         }
       },
+      priv(){
+        return this.$projectPrivileges[this.$route.params.programId][this.$route.params.contratId]  
+      },
       C_taskIssueOverdueFilter: {
         get() {
           return this.taskIssueOverdueFilter
@@ -991,9 +1001,7 @@
       sortedTasks:function() {
           return this.filteredTasks.filtered.tasks.sort((a,b) => {
           let modifier = 1;
-
           if(this.currentSortDir === 'desc') modifier = -1;
-
           if (typeof a[this.currentSort] === "string" && typeof b[this.currentSort] === "string" ) {
             if (typeof a[this.currentSort] === "string" || typeof b[this.currentSort] === "string" ) {
                if (a[this.currentSort].toLowerCase() < b[this.currentSort].toLowerCase()) return -1 * modifier;
@@ -1081,7 +1089,6 @@
     border-radius: 4px;
     padding: 4px;
   }
-
   .taskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
@@ -1139,7 +1146,6 @@
  .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
 .btn-group-btns {
   border: solid 1px lightgray;
-
   line-height: 1 !important;
 }
 .activeLastName, .activeFirstName, .activeResponsible, .activeAccountable {
@@ -1175,7 +1181,6 @@
   background-color: #f8f9fa;
   border: .5px solid lightgray;
 }
-
 i, .icons {
   cursor: pointer;
   -webkit-touch-callout: none;
@@ -1188,9 +1193,7 @@ i, .icons {
 .statesCol {
   border-radius: 4px; 
   border: .5px solid lightgray;
-
 }
-
 /deep/.v-input__slot {
   display: inline;
   .v-label {
@@ -1199,17 +1202,14 @@ i, .icons {
    color: #007bff !important;
   }
 }
-
 .hideLabels {
   font-weight: 600;
 }
-
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
     width: 65% !important;
   } 
 }
-
 .fiterLi {
   white-space: nowrap; 
 }
@@ -1235,4 +1235,6 @@ i, .icons {
     display: none !important;
   }
 }
+
+
 </style>
