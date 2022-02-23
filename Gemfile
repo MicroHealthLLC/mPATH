@@ -5,7 +5,7 @@ ruby '2.6.6'
 # updating dev 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.4' #'~> 5.2.3'
+gem 'rails', '6.1.4.6' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
