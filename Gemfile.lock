@@ -199,11 +199,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-<<<<<<< HEAD
-    loofah (2.12.0)
-=======
     loofah (2.13.0)
->>>>>>> release
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -212,24 +208,15 @@ GEM
     marcel (1.0.2)
     method_source (1.0.0)
     mini_magick (4.11.0)
-<<<<<<< HEAD
-    mini_mime (1.1.1)
-    minitest (5.14.4)
-=======
     mini_mime (1.1.2)
     minitest (5.15.0)
->>>>>>> release
     msgpack (1.4.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     mysql2 (0.5.3)
     nio4r (2.5.8)
-<<<<<<< HEAD
-    nokogiri (1.12.5-x86_64-linux)
-=======
     nokogiri (1.13.1-x86_64-linux)
->>>>>>> release
       racc (~> 1.4)
     oauth2 (1.4.7)
       faraday (>= 0.8, < 2.0)
