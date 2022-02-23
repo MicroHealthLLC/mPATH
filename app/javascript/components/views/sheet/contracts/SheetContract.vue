@@ -848,7 +848,7 @@ export default {
       let fPrivilege = this.$contractPrivileges[programId][contractId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return fPrivilege.overview.includes(s);
+      return fPrivilege.cn_overview.includes(s);
     },
   },
   computed: {
