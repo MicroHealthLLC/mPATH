@@ -990,7 +990,7 @@ export default {
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         // console.log(fPrivilege)
-        return  fPrivilege.cn_overview.includes(s);
+        return  fPrivilege.overview.includes(s);
           
     },
   },
