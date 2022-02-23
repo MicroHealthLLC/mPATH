@@ -1,5 +1,6 @@
 <template>
   <div v-if="contentLoaded" class="mt-1 ml-1">
+    <div v-if="_isallowed('read')">
        <div class="d-flex align-item-center w-60 float-right filters-wrapper">
       <div class="ml-3 risk-search-bar w-100">
         <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
@@ -122,8 +123,7 @@
         </button>
       </div>
       <!-- Lessons Learned Table -->
-      <div style="margin-bottom:50px" data-cy="lessons_table">
-        <div v-if="_isallowed('read')">
+        <div style="margin-bottom:50px" data-cy="lessons_table">
           <table
             v-if="filteredLessons.filtered.lessons.length > 0"
             class="table table-sm table-bordered stickyTableHeader mb-3"
@@ -253,9 +253,6 @@
 
           <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
         </div>
-        <div v-else class="text-danger mx-2 mt-2">
-          <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
-        </div>
         <!-- Lessons Per Page Toggle -->
         <div
           v-if="filteredLessons.filtered.lessons.length > 0"
@@ -293,6 +290,9 @@
           </button>
         </div>
       </div>
+    </div>
+    <div v-else class="text-danger mx-2 mt-2">
+      <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
     </div>
     <!-- The context-menu appears only if table row is right-clicked -->
     <LessonContextMenu
