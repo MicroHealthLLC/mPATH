@@ -261,11 +261,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.6)
-<<<<<<< HEAD
-    puma (5.5.2)
-=======
     puma (5.6.2)
->>>>>>> release
       nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3)
@@ -414,12 +410,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection (~> 0.1)
   pry (~> 0.13.1)
   pry-byebug
-<<<<<<< HEAD
-  pry-rails
-  puma (>= 4.3.8)
-=======
   puma (>= 5.5.2)
->>>>>>> release
   rails (~> 6.1.4)
   sass-rails (~> 5.0)
   slim-rails
