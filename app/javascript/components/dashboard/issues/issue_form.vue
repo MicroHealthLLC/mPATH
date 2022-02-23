@@ -24,6 +24,9 @@
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
              <router-link :to="projectNameLink">
+               <span v-if="!isProgramView && (!contract || facility)">
+                 {{ facility.facilityName }}
+               </span>
                <span v-if="this.$route.params.projectId && issue && !isProgramView">
                  {{  issue.facilityName }}
                 </span>
