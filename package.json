@@ -25,7 +25,6 @@
     "moment": "^2.26.0",
     "moment-range": "^4.0.2",
     "node-forge": "^1.0.0",
-    "node-sass": "^4.13.0",
     "sweet-modal-vue": "^2.0.0",
     "v-click-outside": "^3.1.2",
     "v-tooltip": "^2.0.3",
@@ -72,6 +71,7 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
     "cypress": "^7.0.0",
+    "sass": "^1.49.8",
     "webpack-dev-server": "^3.9.0"
   }
 }
