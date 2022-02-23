@@ -1,129 +1,124 @@
 <template>
   <div v-if="contentLoaded" class="mt-1 ml-1">
-       <div class="d-flex align-item-center w-60 float-right filters-wrapper">
-      <div class="ml-3 risk-search-bar w-100">
-        <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
-        <el-input type="search" placeholder="Search Lessons" v-model="search">
-          <el-button slot="prepend" icon="el-icon-search"></el-button>
-        </el-input>
-      </div>
+    <div v-if="_isallowed('read')">
+      <div class="d-flex align-item-center w-60 float-right filters-wrapper">
+        <div class="ml-3 risk-search-bar w-100">
+          <label data-v-076a3755="" class="font-sm mb-0"><span data-v-076a3755="" style="visibility: hidden;">|</span></label>
+          <el-input type="search" placeholder="Search Lessons" v-model="search">
+            <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </div>
         <div class="ml-2">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label> 
-        <span class="filterToggleWrapper mr-1 p-1" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
-           <i class="fas fa-sliders-h p-2"></i>      
-        </span>    
-         </div>
-      <div class="mx-1 w-75">
-        <label class="font-sm my-0">Process Area</label>
-        <el-select
-          v-model="C_taskTypeFilter"
-          class="w-100"
-          track-by="name"
-          value-key="id"
-          multiple
-          clearable
-          placeholder="Select Process Area"
-          >
-          <el-option
-            v-for="item in taskTypes"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
+          <span class="filterToggleWrapper mr-1 p-1" @click.prevent="toggleAdvancedFilter" v-tooltip="`Advanced Filters`">
+            <i class="fas fa-sliders-h p-2"></i>      
+          </span>    
+        </div>
+        <div class="mx-1 w-75">
+          <label class="font-sm my-0">Process Area</label>
+          <el-select
+            v-model="C_taskTypeFilter"
+            class="w-100"
+            track-by="name"
+            value-key="id"
+            multiple
+            clearable
+            placeholder="Select Process Area"
             >
-          </el-option>
-        </el-select>
+            <el-option
+              v-for="item in taskTypes"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+              >
+            </el-option>
+          </el-select>
+        </div>
       </div>
-    </div>
-    <div class="wrapper mt-3 p-3">
-
-    <div class="d-inline ">
-    <span class="text-center">  
-    <span class="d-inline">  
-      <button
-        v-if="_isallowed('write')"
-        class="btn btn-md btn-primary addLessonBtn mr-5 float-left"
-        @click="addLesson"
-      >
-        <font-awesome-icon icon="plus-circle" />
-        Add Lesson
-      </button>
-
-       <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>     
-                
-                <span class="statesCol d-inline-block p-1 mr-2">
-                 <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
-                   <span class="d-block">
+      <div class="wrapper mt-3 p-3">
+        <div class="d-inline ">
+          <span class="text-center">  
+            <span class="d-inline">  
+              <button
+                v-if="_isallowed('write')"
+                class="btn btn-md btn-primary addLessonBtn mr-5 float-left"
+                @click="addLesson"
+              >
+                <font-awesome-icon icon="plus-circle" />
+                Add Lesson
+              </button>
+              <span class="font-sm pr-2 hideLabels"> STATES TO DISPLAY </span>
+              <span class="statesCol d-inline-block p-1 mr-2">
+                <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideComplete == true ? 'light':'']" @click.prevent="toggleComplete" >                              
+                  <span class="d-block">
                     <i class="fas fa-clipboard-check" :class="[getHideComplete == true ? 'light':'text-success']"></i>
-                    </span>      
+                  </span>      
                   <span class="smallerFont">COMPLETE</span>
-                   <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
-                  </div>              
-                  <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
-                   <span class="d-block">
+                  <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{variation.completed.count}}</h6>  
+                </div>              
+                <div class="pr-2 font-sm text-center d-inline-block icons"  :class="[getHideDraft == true ? 'light':'']"  @click.prevent="toggleDraft" >                              
+                  <span class="d-block">
                     <i class="fas fa-pencil-alt"  :class="[getHideDraft == true ? 'light':'text-warning']"></i>
-                    </span>      
+                  </span>      
                   <span class="smallerFont">DRAFT</span>
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
-                  </div>
-                </span>
+                  <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.drafts.count }}</h6>
+                </div>
+              </span>
   
-            <span class="pl-4 pr-2 font-sm hideLabels">FOCUS</span>
-            <span class="tagCol d-inline-block p-1">
-                 
-                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
-                   <span class="d-block">
+              <span class="pl-4 pr-2 font-sm hideLabels">FOCUS</span>
+              <span class="tagCol d-inline-block p-1">
+                <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideImportant == true ? '':'light']" @click.prevent="toggleImportant">                              
+                  <span class="d-block">
                     <i class="fas fa-star" :class="[getHideImportant == true ? 'text-warning':'light']"></i>
-                    </span>      
+                  </span>      
                   <span class="smallerFont">IMPORTANT</span>
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
-                  </div>
-                  <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
-                   <span class="d-block">
+                  <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.important.count }}</h6>
+                </div>
+                <div class="pr-2 font-sm text-center d-inline-block icons" :class="[getHideBriefed == true ? '':'light']" @click.prevent="toggleBriefed">                              
+                  <span class="d-block">
                     <i class="fas fa-presentation" :class="[getHideBriefed == true ? 'text-primary':'']"></i>
-                    </span>      
+                  </span>      
                   <span class="smallerFont">BRIEFINGS</span>
-                    <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
-                  </div>
+                  <h6 :class="[getShowCount == false ? 'd-none' : 'd-block']" >{{ variation.briefings.count }}</h6>
+                </div>
               </span>            
-     </span> 
-     </span>     
-    </div>
-    <div class="d-inline-block ml-3">
-        <!-- <v-app id="app"> -->
-      <v-checkbox     
-      v-model="C_showCountToggle"     
-      class="d-inline-block"  
-      @click.prevent="showCounts"   
-      :label="`Show Counts`"
-    ></v-checkbox>
-        <!-- </v-app> -->
-
-    </div>
-      <div class="float-right">
-        <button
-          v-tooltip="`Export to PDF`"
-          @click.prevent="exportToPdf"
-          class="btn btn-md mr-1 exportBtns text-light"
-        >
-          <font-awesome-icon icon="file-pdf" />
-        </button>
-        <button
-          v-tooltip="`Export to Excel`"
-          @click.prevent="exportToExcel('table', 'Lessons Learned')"
-          class="btn btn-md mr-1 exportBtns text-light"
-        >
-          <font-awesome-icon icon="file-excel" />
-        </button>
-        <button
-          class="ml-2 btn btn-md btn-info total-table-btns"
-          data-cy="lessons_total"
-        >
-          Total: {{ filteredLessons.filtered.lessons.length }}
-        </button>
-      </div>
-      <!-- Lessons Learned Table -->
-      <div style="margin-bottom:50px" data-cy="lessons_table">
-        <div v-if="_isallowed('read')">
+            </span> 
+          </span>     
+        </div>
+        <div class="d-inline-block ml-3">
+          <!-- <v-app id="app"> -->
+          <v-checkbox     
+            v-model="C_showCountToggle"     
+            class="d-inline-block"  
+            @click.prevent="showCounts"   
+            :label="`Show Counts`"
+            ></v-checkbox>
+          <!-- </v-app> -->
+        </div>
+        <div class="float-right">
+          <button
+            v-tooltip="`Export to PDF`"
+            @click.prevent="exportToPdf"
+            class="btn btn-md mr-1 exportBtns text-light"
+          >
+            <font-awesome-icon icon="file-pdf" />
+          </button>
+          <button
+            v-tooltip="`Export to Excel`"
+            @click.prevent="exportToExcel('table', 'Lessons Learned')"
+            class="btn btn-md mr-1 exportBtns text-light"
+          >
+            <font-awesome-icon icon="file-excel" />
+          </button>
+          <button
+            class="ml-2 btn btn-md btn-info total-table-btns"
+            data-cy="lessons_total"
+          >
+            Total: {{ filteredLessons.filtered.lessons.length }}
+          </button>
+        </div>
+        <!-- Lessons Learned Table -->
+        <div style="margin-bottom:50px" data-cy="lessons_table">
           <table
             v-if="filteredLessons.filtered.lessons.length > 0"
             class="table table-sm table-bordered stickyTableHeader mb-3"
@@ -250,10 +245,7 @@
             </tbody>
           </table>
           <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
-      </div>
-      <div v-else class="text-danger mx-2 mt-2">
-        <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
-      </div>
+        </div>
         <!-- Lessons Per Page Toggle -->
         <div
           v-if="filteredLessons.filtered.lessons.length > 0"
@@ -291,6 +283,9 @@
           </button>
         </div>
       </div>
+    </div>
+    <div v-else class="text-danger mx-2 mt-2">
+      <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
     </div>
     <table
         v-if="filteredLessons.filtered.lessons.length > 0"
