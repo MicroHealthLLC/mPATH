@@ -12,7 +12,7 @@
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
-            <i class="fal fa-clipboard-list mr-1 mh-orange-text"></i> PROJECTS
+            <i class="fal fa-clipboard-list mr-1 mh-green-text"></i> PROJECTS
             <span 
               v-if="projectData && projectData.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
@@ -28,7 +28,7 @@
 
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <div class="col">
+            <div class="col" v-if="_isallowedProgramSettings('write')">
               <el-button
                 @click.prevent="addProject"
                 class="bg-primary text-light mb-2"
@@ -63,7 +63,7 @@
                 placeholder="Filter Projects By Group"
               >
                 <el-option
-                  v-for="item in facilityGroups"
+                  v-for="item in groupList"
                   :key="item.id"
                   :label="item.name"
                   :value="item"
@@ -96,12 +96,16 @@
         >
           <el-table-column prop="facilityName"  sortable label="Project">
             <template slot-scope="scope">
+           
+           
               <el-input
                 size="small"
+                v-if="rowId == scope.row.id"
                 style="text-align:center"
                 v-model="scope.row.facilityName"
                 controls-position="right"
               ></el-input>
+              <span v-else> {{ scope.row.facilityName }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -111,11 +115,12 @@
             label="Group"
           >
             <template slot-scope="scope">
-              <el-input
+              {{ scope.row.facilityGroupName }}
+              <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.facilityGroupName"
-              ></el-input>
+              ></el-input> -->
             </template>
           </el-table-column>
 
@@ -124,9 +129,27 @@
               <el-button
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
-                class="bg-primary text-light"
-                >Save</el-button
-              >
+                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')" 
+                v-tooltip="`Save`" 
+                class="bg-primary text-light">               
+               <i class="far fa-save"></i>
+               </el-button>
+              <el-button 
+                type="default" 
+                v-tooltip="`Cancel Edit`"       
+                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
+                @click.prevent="cancelEdits(scope.$index, scope.row)"  
+                class="bg-secondary text-light">
+              <i class="fas fa-ban"></i>
+                </el-button>
+              <el-button  
+                type="default" 
+                v-tooltip="`Edit Project Name`"
+                @click.prevent="editMode(scope.$index, scope.row)" 
+                v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
+                class="bg-light">
+                <i class="fal fa-edit text-primary" ></i>
+               </el-button> 
           
               <el-button
                 type="default"
@@ -173,7 +196,7 @@
                 placeholder="Select Group"
               >
                 <el-option
-                  v-for="item in facilityGroups"
+                  v-for="item in groupList"
                   :key="item.id"
                   :label="item.name"
                   :value="item"
@@ -214,14 +237,19 @@ export default {
       componentKey: 0,
       programId: this.$route.params.programId,
       search: "",
+      rowIndex: null,
+      rowId: null,
       projectId: null, 
       selectedProjectGroup: null,
       newProjectNameText: "",
       value: "",
      };
   },
+ mounted(){
+  this.fetchGroups(this.$route.params.programId)
+  },
   methods: {
-    ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
+    ...mapActions(["fetchFacilities", "fetchCurrentProject", "fetchGroups"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
@@ -239,6 +267,10 @@ export default {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
       this.newProjectNameText = "";
+    },
+    editMode(index, rows) {
+      this.rowIndex = index
+      this.rowId = rows.id
     },
     saveNewProject(e) {
       e.preventDefault();
@@ -275,6 +307,10 @@ export default {
         }
       });
     },
+  cancelEdits(index, rows) {
+       this.rowIndex = null;
+       this.rowId = null;
+    },
     saveEdits(index, rows) {
       let updatedProjectName = rows.facilityName;
       let updatedGroupName = rows.facilityGroupName;
@@ -301,8 +337,16 @@ export default {
             showClose: true,
           });
           this.fetchCurrentProject(this.programId)
+       this.rowIndex = null;
+       this.rowId = null;
         }
       });
+    },
+    _isallowedProgramSettings(salut) {
+      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.admin_facilities.includes(s);
     },
   },
   computed: {
@@ -312,6 +356,9 @@ export default {
       "projectsLoaded",
       "facilities",
       "facilityGroups",
+      "groups",
+      "getTransferData",
+      "getNewGroups",
       "tableData",
       "getProjectGroupFilter",
       "getGroupFilter",
@@ -328,6 +375,26 @@ export default {
         this.setGroupFilter(value);
       },
     },
+    groupList() {
+     if (
+        this.groups &&        
+         this.groups.length > 0  &&
+         this.getTransferData && 
+         this.getTransferData.length > 0
+         )
+         {
+        return this.groups.filter(u => this.getTransferData.includes(u.id))
+         } else if (
+        this.groups &&        
+         this.groups.length > 0  &&
+         this.facilityGroups && this.facilityGroups.length > 0 &&
+         !this.getTransferData
+         )
+         {
+         let programGroupIds = this.facilityGroups.map(t => t.id)
+          return this.groups.filter(u => programGroupIds.includes(u.id))
+         } else return []
+    }, 
 
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
@@ -346,12 +413,10 @@ export default {
       if (
         // this.projectsLoaded &&
         this.facilities &&
-        this.facilities.length > 0
+        this.facilities.length > 0 
       ) {
         return (
-          this.facilities
-            // .map((f) => f.facility)
-            .filter((td) => {
+          this.facilities.filter((td) => {
               if (this.C_groupFilter && this.C_groupFilter.length > 0) {
                 let group = this.C_groupFilter.map((t) => t.name);
                 return group.includes(td.facilityGroupName);

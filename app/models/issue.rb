@@ -18,6 +18,9 @@ class Issue < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|issue| issue.contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|issue| issue.contract_id.nil?}
+
   attr_accessor :file_links
 
   amoeba do
@@ -48,6 +51,17 @@ class Issue < ApplicationRecord
       project_id: facility.id,
       project_name: facility.facility_name
     }
+  end
+
+  def update_facility_project
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progress)
+    end
   end
 
   def portfolio_json(facility_groups: [], files: false)
@@ -139,6 +153,7 @@ class Issue < ApplicationRecord
       :facility_project_id,
       :task_type_id,
       :progress,
+      :contract_id,
       :start_date,
       :due_date,
       :auto_calculate,

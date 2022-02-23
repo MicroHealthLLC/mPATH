@@ -9,8 +9,12 @@ const settingsStore = {
     contract_table: [],
     group_filter: null,
     transfer_data: [],
+    new_groups: [], 
+    checked_portfolio_groups: [],
+    checked_groups:[],
     contract: {},
     contracts: [],
+    check_all: false, 
     client_types: [],
     pop_days_remaining: null,
     contract_loaded: true,
@@ -62,9 +66,7 @@ const settingsStore = {
         });
     },
     createGroup({ commit }, { group }) {
-      // Displays loader on front end
       commit("TOGGLE_GROUPS_LOADED", false);
-      // Utilize utility function to prep Lesson form data
       let formData = groupFormData(group);
 
       axios({
@@ -87,6 +89,34 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    updateGroupName({ commit }, { id, newNameData }) {
+        commit("TOGGLE_GROUPS_LOADED", false);
+        let formData = new FormData();
+        console.log(newNameData.name)
+        formData.append("facility_group[name]", newNameData.name); //Required
+        // let formData = newGroupName(newNameData);
+        // console.log()
+  
+        axios({
+          method: "PUT",
+          url: `${API_BASE_PATH}/facility_groups/${id}`,
+          data: formData,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            commit("SET_GROUP", res.data.facility_groups);
+            commit("SET_GROUP_STATUS", res.status);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_GROUPS_LOADED", true);
+          });
+      },
    updateGroup({ commit }, { groupData }) {
     //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
       commit("TOGGLE_GROUPS_LOADED", false);
@@ -96,7 +126,7 @@ const settingsStore = {
 
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/facility_groups/bulk_update`,
+        url: `${API_BASE_PATH}/facility_groups/bulk_project_update`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -387,18 +417,19 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    fetchGroups({ commit }) {
+    fetchGroups({ commit }, id) {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/facility_groups.json`,
+        url: `${API_BASE_PATH}/facility_groups?program_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_GROUPS", res.data.facility_groups);        
+          commit("SET_GROUPS", res.data.facility_groups);   
+          commit("SET_TRANSFER_DATA", res.data.program_group_ids);        
         })
         .catch((err) => {
           console.log(err);
@@ -450,6 +481,7 @@ const settingsStore = {
 
   mutations: {
     setShowAdminBtn: (state, value) => (state.show_admin_btn = value),   
+   
     setContractTypeFilter: (state, value) =>
       (state.contract_type_filter = value),
     setContractTable: (state, value) => (state.contract_table = value),
@@ -460,6 +492,7 @@ const settingsStore = {
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
+    SET_NEW_GROUPS: (state, value) => (state.new_groups = value),
     SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
     SET_CONTRACT_STATUS: (state, status) => (state.contract_status = status),
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
@@ -474,7 +507,8 @@ const settingsStore = {
       (state.contract_statuses_filter = loaded),
     SET_CURRENT_POP: (state, value) => (state.current_pop = value),
     SET_PRIME: (state, value) => (state.prime = value),
-
+    SET_CHECKED_PORTFOLIO_GROUPS: (state, value)=> (state.checked_portfolio_groups = value),  
+    SET_CHECK_ALL: (state, value) => (state.check_all = value), 
     SET_CONTRACT_CLASSIFICATIONS: (state, value) =>
       (state.contract_classifications = value),
 
@@ -489,6 +523,7 @@ const settingsStore = {
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
     TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
+    SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value)
   },
 
   getters: {
@@ -504,6 +539,11 @@ const settingsStore = {
     getContractClassifications: (state) => state.contract_classifications,
     getCurrentPop: (state) => state.current_pop,
     getPrime: (state) => state.prime,
+    getNewGroups: (state) => state.new_groups,
+    getCheckAll: (state) => state.check_all,
+    getCheckedGroups: (state) => state.checked_groups,
+
+    getCheckedPortfolioGroups: (state) => state.checked_portfolio_groups,
 
     getVehicles: (state) => state.vehicle_filter,
     getVehicleNumbers: (state) => state.vehicle_number,
@@ -626,15 +666,18 @@ const groupFormData = (group) => {
 };
 
 const portfolioGroupData = (groupData) => {
-  console.log(groupData)
-  console.log([groupData])
   let formData = new FormData();
-  // formData.append("facility_group_ids[]", [groupData.ids]); //Required
   groupData.ids.forEach((ids) => {
     formData.append("facility_group_ids[]",ids);
   });
-  formData.append("project_id", groupData.programId); //Required; This is actually the Program ID
+  formData.append("program_id", groupData.programId);
   return formData;
 };
+
+const newGroupName = (newNameData) => {
+let formData = new FormData();
+console.log(newNameData.name)
+formData.append("facility_group[name]", newNameData.name); //Required
+}
 
 export default settingsStore;

@@ -175,26 +175,6 @@
          
             
           </el-table-column>
-          <el-table-column 
-            prop="phoneNumber"  
-            sortable 
-            width="200"
-            label="Phone Number"
-            >
-            <template slot-scope="scope">
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.phoneNumber"
-                controls-position="right"
-              ></el-input> -->
-            <span v-if="scope.row.phoneNumber">
-               {{ scope.row.phoneNumber }}
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-            
-            </template>
-          </el-table-column>
           <el-table-column
             prop="status"
             sortable
@@ -271,7 +251,10 @@ export default {
     ...mapActions(["fetchFacilities", "fetchCurrentProject"]),
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
-      window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
+      if(this.isMapView){
+        window.location.pathname = `/programs/${this.programId}/map/projects/${rows.id}/`
+      } else  window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
+     
       // router.push more efficient but programPrivileges errors persist unless reload
       // this.$router.push({
       //   name: "SheetProject",
@@ -365,6 +348,9 @@ export default {
       "facilityGroupFacilities",
       "filteredFacilityGroups",
     ]),
+    isMapView() {
+      return this.$route.name.includes("Map");
+    },
     // Filter for Projects Table
     C_groupFilter: {
       get() {

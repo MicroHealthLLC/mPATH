@@ -27,10 +27,10 @@
 
           <div class="col-8 py-0 pr-0">
            <span class="d-flex">
-            <span v-show="expanded.id != group.id">
+            <span v-show="getExpandedGroup != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
             </span>
-            <span v-show="expanded.id == group.id">
+            <span v-show="getExpandedGroup == group.id">
               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
             </span>
            <p class="clickable groupName expandText">{{ group.name }}</p>
@@ -38,20 +38,19 @@
          </div>
 
            <div class="col py-0 text-right">
-        
-            <span class="badge badge-secondary badge-pill pill" v-if="_isallowedContracts('read')">{{ 
+            <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
               }}
             </span>
-              <span v-else class="badge badge-secondary badge-pill pill">{{ 
-              facilityGroupFacilities(group).projects.a.length              
-              }}
+
+             <span class="badge badge-secondary badge-pill pill" v-else>
+               {{ facilityGroupFacilities(group).projects.a.length }}
             </span>
          </div>
              
           </div>
-         <div v-show="expanded.id == group.id" class="ml-2">
+         <div v-show="getExpandedGroup == group.id" class="ml-2">
               <div
               v-for="facility in facilityGroupFacilities(group).projects.a"            
               :key="facility.id"  
@@ -74,7 +73,7 @@
               </router-link>
               </div>
                <div 
-                v-show="isContractsView && _isallowedContracts('read')"              
+                v-show="isContractsView && _isallowedContracts('read', c)"              
                 v-for="c in filteredContracts.filter(t => t.facilityGroupId == group.id)" 
                 :key="c.id + 'a'"
                 >              
@@ -105,7 +104,7 @@
       </div>
     </div>
      <!-- <router-link  >  -->
-      <button class="btn btn-sm btn-light program-settings-btn" @click.prevent="toggleAdminView" style="cursor: pointer">
+      <button v-if="_isallowedProgramSettings('read')" class="btn btn-sm btn-light program-settings-btn" @click.prevent="toggleAdminView" style="cursor: pointer">
        <h6> <i class="far fa-cog"></i> Program Settings </h6>
       </button>  
       <!-- </router-link> -->
@@ -121,11 +120,12 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacility", "currentFacilityGroup", "expanded", "currentContract"],
+  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract", "currentContractGroup"],
    data() {
       return {
         value: '',
-        filteredGroupSize: null
+        filteredGroupSize: null,
+        
       }
     },
   computed: {
@@ -133,6 +133,7 @@ export default {
       "contentLoaded",
       'getShowAdminBtn',
       "currentProject",
+      "getExpandedGroup",
       "facilities",
       'contracts',
       'projects',
@@ -205,7 +206,7 @@ export default {
     },
   },
   methods: {
-   ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn']), 
+   ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn', 'SET_EXPANDED_GROUP']), 
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
@@ -213,11 +214,19 @@ export default {
        }
       this.$emit("on-expand-facility-group", group);
     },
-    _isallowedContracts(salut) {
-        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    _isallowedContracts(salut, c) {
+        let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        return pPrivilege.contracts.includes(s);     
+        return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
+    },
+    _isallowedProgramSettings(salut) {
+        let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return pPrivilege.admin_groups.includes(s) ||
+               pPrivilege.admin_contracts.includes(s) ||
+               pPrivilege.admin_facilities.includes(s);
     },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);
@@ -238,6 +247,7 @@ export default {
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
+        this.SET_EXPANDED_GROUP("")
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );
@@ -257,11 +267,11 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        if (this.currentFacilityGroup){
-          this.expanded.id = this.currentFacilityGroup.id
+        if (this.currentFacility && !this.$route.params.contractId && this.currentFacilityGroup ){             
+          this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
-         if (this.currentContract) {
-           this.expanded.id = this.currentContract.facilityGroupId
+         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facilityGroupId) {
+          this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
         }
         // Expand the project tree if there is only one project group on refresh
         if (

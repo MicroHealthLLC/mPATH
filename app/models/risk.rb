@@ -24,6 +24,10 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
+
+
   attr_accessor :file_links
 
   amoeba do
@@ -44,6 +48,17 @@ class Risk < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+  
+  def update_facility_project
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progress)
+    end
   end
 
   def files_as_json
@@ -225,6 +240,7 @@ class Risk < ApplicationRecord
       :risk_approach,
       :on_hold,
       :draft,
+      :contract_id, 
       :ongoing,
       :duration,
       :duration_name,

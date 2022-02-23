@@ -973,10 +973,10 @@ export default {
   mounted() {
     // this.dueDate = this.facility.dueDate;
     // this.statusId = this.facility.statusId;
-    // this.fetchProjectLessons(this.$route.params);
+    this.fetchProgramLessons(this.$route.params);
   },
   methods: {
-    ...mapActions(["fetchProjectLessons"]),
+    ...mapActions(['fetchProgramLessons']),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
     onChange() {
       this.$nextTick(() => {
@@ -990,7 +990,7 @@ export default {
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
         // console.log(fPrivilege)
-        return  fPrivilege.overview.includes(s);    
+        return  fPrivilege.cn_overview.includes(s);
           
     },
   },
@@ -1005,6 +1005,7 @@ export default {
       "projectLessons",
       "contentLoaded",
       "currentProject",
+      "programLessons",
       "taskTypeFilter",
       "issueTypeFilter",
       "riskStageFilter",
@@ -1550,13 +1551,32 @@ export default {
         ongoing,
       };
     },
-    lessonVariation() {
-      let completes = this.projectLessons.filter((l) => !l.draft);
-      let drafts = this.projectLessons.filter((l) => l.draft);
+    filteredLessons() {
+      // let programLessonsObj = [];
+      console.log("*******")
+      console.log(!this.getShowProjectStats)
+      // if(!this.getShowProjectStats){
+      //   programLessonsObj = this.programLessons.filter(l => l.project_id)
+      // } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+
+      let programLessonsObj = this.programLessons.filter(l => l.contract_id == this.$route.params.contractId )
+
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(programLessonsObj, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    },
+     lessonVariation() {
+      let completes = this.filteredLessons.filter(l => !l.draft )
+      let drafts = this.filteredLessons.filter(l => l.draft)
       return {
         completes,
-        drafts,
-      };
+        drafts
+      }
     },
     currentRiskTypes() {
       let names =

@@ -4,7 +4,7 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div class="container-fluid px-0 mx-1">
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
             <form
               v-loading="!contractLoaded || saving"
@@ -35,6 +35,7 @@
             </div>
                <div class="col text-right">
                     <button
+                      v-if="_isallowed('write')"
                       @click.prevent="saveEdits"
                       class="btn btn-sm saveBtn btn-primary text-nowrap btn-shadow mr-2"
                     >
@@ -66,12 +67,22 @@
                 <div class="row row_1">
                   <div class="col-5 pl-0">
                    <label class="font-md">Contract Name </label>
+                     <span style="color: #dc3545; font-size: 15px">*</span>
                     <el-input
-                      name="Contract Nickname"
+                      name="Contract Name"
                       v-model="contract.name"
+                      v-validate="'required'"
                       type="text"
+                      :class="{ 'error': errors.has('Contract Name') }"
                       placeholder="Contract Name"
+                      :disabled="!_isallowed('write')"
                     />
+                       <div
+                        v-show="errors.has('Contract Name')"
+                        class="text-danger"                      
+                      >
+                        {{ errors.first("Contract Name") }}
+                   </div>
                   </div>
                   <!-- <div class="col-5 pl-0 d-flex">
                     <label class="font-sm my-auto mr-2 d-inline-block"
@@ -103,16 +114,27 @@
                       v-model="contract.project_code"
                       type="text"
                       placeholder="Enter Project Code"
+                      :disabled="!_isallowed('write')"
                     />
                   </div>
                   <div class="col-5 px-2">
                     <label class="font-md">Contract Nickname </label>
+                      <span style="color: #dc3545; font-size: 15px">*</span>
                     <el-input
                       name="Contract Nickname"
+                       v-validate="'required'"
+                      :class="{ 'error': errors.has('Contract Nickname') }"
                       v-model="contract.nickname"
                       type="text"
                       placeholder="Contract Nickname"
+                      :disabled="!_isallowed('write')"
                     />
+                        <div
+                        v-show="errors.has('Contract Nickname')"
+                        class="text-danger"                      
+                      >
+                        {{ errors.first("Contract Nickname") }}
+                   </div>
                     <!-- Need to add additional div here for error handling -->
                   </div>
                   <div class="col-3 pr-2">
@@ -124,6 +146,7 @@
                       value-key="id"
                       clearable
                       placeholder="Select Type"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cClassificationOptions"
@@ -141,6 +164,7 @@
                       v-model="contract.total_subcontracts"
                       type="text"
                       placeholder="Contract Nickname"                                   
+                      :disabled="!_isallowed('write')"
                     />
                   </div>
                 </div>
@@ -158,6 +182,7 @@
                       clearable
                       default-first-option
                       placeholder="Select or enter Customer (Agency)"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cCustomerAgenciesOptions"
@@ -183,6 +208,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select or enter status"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cClientTypeOptions.filter(c => c.name !== 'null' )"
@@ -209,6 +235,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Vehicle"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cVehicleOptions"
@@ -233,6 +260,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cPrimeIdiqOptions"
@@ -261,6 +289,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cContractNoOptions"
@@ -287,6 +316,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Subcontract Number / PO Number"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cSubcontractNoOptions"
@@ -313,6 +343,7 @@
                       allow-create
                       default-first-option
                       placeholder="Select Prime"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cPrimeOptions.filter(c => c.name !== 'null')"
@@ -335,6 +366,7 @@
                       clearable
                       default-first-option
                       placeholder="Select or enter status"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in cStatusOptions"
@@ -359,6 +391,7 @@
                       :rows="3"
                       v-model="contract.notes"
                       placeholder="Enter note here"
+                      :disabled="!_isallowed('write')"
                     />
                 
                   </div>
@@ -381,6 +414,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                     <!-- <div v-show="errors.has('Date')" class="text-danger">
@@ -400,6 +434,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                   </div>
@@ -416,6 +451,7 @@
                       clearable
                       value-key="id"
                       placeholder="Select Current Pop"
+                      :disabled="!_isallowed('write')"
                     >
                       <el-option
                         v-for="item in getCurrentPop.filter(c => c.name !== 'undefined')"
@@ -439,6 +475,7 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                     <!-- <div v-show="errors.has('Date')" class="text-danger">
@@ -446,11 +483,9 @@
         </div> -->
                   </div>
                   <div class="col-5 pr-0">
-                    <label class="font-md"
-                      >Current PoP End
-                      <span style="color: #dc3545">*</span></label
-                    >
-                    <div>
+                    <label class="font-md">
+                      Current PoP End</label>
+                      <div>
                       <v2-date-picker
                         name="Date"
                         v-model="contract.current_pop_end_time"  
@@ -458,20 +493,30 @@
                         format="M/DD/YYYY"
                         placeholder="M/DD/YYYY"
                         class="w-100"
+                        :disabled="!_isallowed('write')"
                       />
                     </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-4 pl-1 pr-0">
-                    <label class="font-md"
+                    <label class="font-md mr-2"
                       >Days Remaining
                     </label>
                     <el-input
+                      v-if="contract.current_pop_end_time"
                       v-model="daysRemaining"
-                      :disabled="!contract.current_pop_end_time"
+                      :disabled="!contract.current_pop_end_time || !_isallowed('write')"
                       name="Days Remaining"
+                      style="width:35%"     
                       placeholder="Days Remaining"
+                    />
+                     <el-input
+                      v-else   
+                      v-tooltip="`Days until Current PoP End`" 
+                      disabled
+                      style="width:35%"                 
+                      placeholder="---"
                     />
                     <!-- Need to add additional div here for error handling -->
                   </div>
@@ -544,9 +589,9 @@
               </div>
             </form>
           </div>
-          <!-- <div v-else class="text-danger mx-2 my-4">
+          <div v-else class="text-danger mx-2 my-4">
             You don't have permission to read!
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -613,8 +658,8 @@ export default {
       statusId: null,
       componentKey: 0,
       saving: false, 
-      // contractNickname: '',
-      // projectCode: null,
+      showErrors: false,
+      loading: true,
       inputText: "",
       value: "",
       currentTab: "tab1",
@@ -624,6 +669,10 @@ export default {
           label: "Info",
           key: "tab1",
           closable: false,
+          form_fields: [
+          "Contract Name",
+          "Contract Nickname",            
+        ],
         },
         {
           label: "Dates",
@@ -639,6 +688,7 @@ export default {
     };
   },
   mounted() {
+    this.loading = false;
     if (this.$route.params.contractId) {
       this.getCAgency()
       this.getStatus()
@@ -705,6 +755,11 @@ export default {
     },
     saveEdits() {
       // console.log(this.contract.notes)
+     this.$validator.validate().then((success) => {
+        if (!success || this.loading) {
+          this.showErrors = !success;
+          return;
+        }
       let id = this.contract.id;
       let contractData = {
         contract: {
@@ -744,6 +799,7 @@ export default {
       });
       this.reRenderDropdowns();
       this.saving = true
+     });
       // console.log(this.contract.contract_vehicle_id.id)
     },
     vehicleText(e) {
@@ -786,14 +842,14 @@ export default {
         this.fetchClassificationTypes();
       }
     },
-    //    _isallowed(salut) {
-    //       var programId = this.$route.params.programId;
-    //       var contractId = this.$route.params.contractId
-    //       let fPrivilege = this.$projectPrivileges[programId][contractId]
-    //       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //       let s = permissionHash[salut]
-    //       return  fPrivilege.overview.includes(s);
-    //   },
+    _isallowed(salut) {
+      var programId = this.$route.params.programId
+      var contractId = this.$route.params.contractId
+      let fPrivilege = this.$contractPrivileges[programId][contractId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.cn_overview.includes(s);
+    },
   },
   computed: {
     ...mapGetters([

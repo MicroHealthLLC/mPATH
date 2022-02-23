@@ -1,7 +1,7 @@
 class Api::V1::LessonsController < AuthenticatedController 
 # NOTE: uncomment this when we move to token based authentication
 # class Api::V1::LessonsController < Api::ApplicationController
-  before_action :authorize_request!, only: [:index, :count, :show]
+  before_action :authorize_request!, only: [:show]
 
   def authorize_request!
     if params[:contract_id]
@@ -15,6 +15,7 @@ class Api::V1::LessonsController < AuthenticatedController
   def count
     pph = current_user.project_privileges_hash
     fph = current_user.facility_privileges_hash
+    cph = current_user.contract_privileges_hash
 
     response_hash =  {total_count: 0, progress: 0, completed: 0 }
     status_code = 200
@@ -33,12 +34,20 @@ class Api::V1::LessonsController < AuthenticatedController
       end
     elsif params[:project_id]
       allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
+      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v.is_a?(Hash) && v["lessons"].present? }.compact
 
       fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
+      lesson_ids = []
 
+      if allowed_contract_ids.any?
+        lesson_ids += Lesson.where(contract_id: allowed_contract_ids).pluck(:id)
+      end
       if fp_ids.any?
-        lessons_count = Lesson.where(facility_project_id: fp_ids).count
-        progress = Lesson.where(facility_project_id: fp_ids, draft: true).count
+        lesson_ids += Lesson.where(facility_project_id: fp_ids).pluck(:id)
+      end
+      if lesson_ids.any?
+        lessons_count = Lesson.where(id: lesson_ids).count
+        progress = Lesson.where(id: lesson_ids, draft: true).count
 
         # lessons_count = Lesson.joins(:facility_project).where("facility_project.project_id" => params[:project_id]).count
         # progress = Lesson.joins(:facility_project).where("facility_project.project_id" => params[:project_id], draft: true).count
@@ -73,8 +82,8 @@ class Api::V1::LessonsController < AuthenticatedController
       end
     elsif params[:project_id]
       allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
-      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
-      
+      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v.is_a?(Hash) && v["lessons"].present? }.compact
+
       fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
       response_lessons = []
       lesson_ids = []
@@ -86,7 +95,7 @@ class Api::V1::LessonsController < AuthenticatedController
       if allowed_contract_ids.any?
         lesson_ids += Lesson.where(contract_id: allowed_contract_ids).pluck(:id)
       end
-      
+
       lessons = Lesson.includes(Lesson.lesson_preload_array).where(id: lesson_ids.compact.uniq).order(:id)
       response_lessons = lessons.map(&:build_response_for_index)
 

@@ -12,25 +12,22 @@ ActiveAdmin.register ContractCurrentPop do
     if %(show edit).include?(params['action'])
       links << link_to(contract_current_pop.name, edit_admin_contract_current_pop_path)
     end
+    div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     links
   end
   index title: "Contract Current PoPs"
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these #{ContractCurrentPop.name.titleize}" do |ids|
+    deleted = ContractCurrentPop.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} #{ContractCurrentPop.name.titleize}"
+  end
+  
   permit_params do
     permitted = [:name]
     permitted
   end
-
-  controller do
-    def edit
-      @page_title = "Edit Contract Current PoP"
-      super
-    end
-
-    def new
-      @page_title = "New Contract Current PoP"
-      super
-    end
-  end
-
+  preserve_default_filters!
+  filter :contracts, collection: -> {
+    Contract.pluck(:nickname, :id)
+  }
 end
