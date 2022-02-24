@@ -92,14 +92,17 @@ export default {
   mounted() {
        for (let privelegeTab in this.privileges) {
         if (this.privileges[privelegeTab].length <= 0 && privelegeTab !== 'contract_id') {
-          // console.log(`${privelegeTab}`)
+        //  console.log(`${privelegeTab}`)            
             for (let i = 0; i < this.cTabs.length; i++) {
               if (privelegeTab == this.cTabs[i].key){
                 this.cTabs[i].hidden = true
               }
               // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
               if (privelegeTab == "overview"){
-                  this.cTabs[1].hidden = true
+                  this.cTabs[2].hidden = true   
+                 if (this.$route.params.contractId){
+                      this.cTabs[0].hidden = true                
+                  } else  this.cTabs[1].hidden = true                
                   }
                 }
             }  
@@ -111,7 +114,12 @@ export default {
               }
               // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
               if (privelegeTab == "overview"){
-                  this.cTabs[1].hidden = false
+                  this.cTabs[2].hidden = false
+                if (this.$route.params.contractId){
+                      this.cTabs[0].hidden = false                
+                  } else  this.cTabs[1].hidden = false 
+
+
                   }
                 }
             }  
@@ -183,16 +191,20 @@ watch: {
     "$route.path": {
       handler() {
         if (this.contentLoaded) {
-          for (let privelegeTab in this.privileges) {
+          for (let privelegeTab in this.privileges) {              
             if (this.privileges[privelegeTab].length <= 0 && privelegeTab !== 'contract_id') {
-              // console.log(`${privelegeTab}`)
+              console.log(`${privelegeTab}`)
                 for (let i = 0; i < this.cTabs.length; i++) {
                   if (privelegeTab == this.cTabs[i].key){
+                       console.log(`${privelegeTab}`)
                     this.cTabs[i].hidden = true
                   }
                   // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
                   if (privelegeTab == "overview"){
-                      this.cTabs[1].hidden = true
+                      this.cTabs[2].hidden = true
+                     if (this.$route.params.contractId){
+                      this.cTabs[0].hidden = true                
+                       } else  this.cTabs[1].hidden = true  
                       }
                     }
                 }  
@@ -204,7 +216,10 @@ watch: {
                   }
                   // this.cTabs[1] below is the Analytics tab as it is still named 'overview' in backend
                   if (privelegeTab == "overview"){
-                      this.cTabs[1].hidden = false
+                      this.cTabs[2].hidden = false
+                        if (this.$route.params.contractId){
+                      this.cTabs[0].hidden = false                
+                       } else  this.cTabs[1].hidden = false 
                       }
                     }
                 }  

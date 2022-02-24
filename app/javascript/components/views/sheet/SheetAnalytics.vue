@@ -902,8 +902,8 @@
             <!-- Row 2, col-1 for Tasks Card -->
             
           </div>
-          <div v-else class="text-danger mx-2 my-4">
-            You don't have permission to read!
+           <div v-else class="text-danger mx-2 mt-5">
+            <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
           </div>
         </div>
       </div>
