@@ -15,7 +15,7 @@
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
           <el-breadcrumb-item :to="backToSettings">
             <span style="cursor:pointer"
-              ><i class="far fa-cog mr-1"></i> PROFGRAM SETTINGS
+              ><i class="far fa-cog mr-1"></i> PROGRAM SETTINGS
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
