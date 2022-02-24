@@ -66,19 +66,27 @@ class Api::V1::LessonsController < AuthenticatedController
 
     fph = current_user.facility_privileges_hash
     cph = current_user.contract_privileges_hash
-    
+
+    lessons = []
+
     # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
-    if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["lessons"].present?
+    if params[:project_id] && params[:facility_id]      
+      
       # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       
-      if facility_project
+      allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
+
+      if !allowed_facility_ids.include?(params[:facility_id])
+        response_hash = {lessons: lessons, errors: "You are not authorized!"}
+        status_code = 200
+      elsif facility_project
         lessons = Lesson.where(facility_project_id: facility_project.id).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
       else
-        response_hash = {errors: "Program or Project not found"}
-        status_code = 404
+        response_hash = {lessons: lessons, errors: "Program or Project not found"}
+        status_code = 200
       end
     elsif params[:project_id]
       allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
