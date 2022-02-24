@@ -12,7 +12,7 @@
           <span v-if="permitted('delete') && this.facility" class="mr-2 delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
-           <span class="mr-2 delete-action" v-if="this.contract" @click.prevent="delete_contract_note" data-cy="note_delete_icon">
+           <span class="mr-2 delete-action" v-if="this.contract && _isallowed('delete')" @click.prevent="delete_contract_note" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
           
