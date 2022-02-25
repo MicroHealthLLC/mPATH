@@ -21,7 +21,7 @@ class Contract < ApplicationRecord
   has_many :issues
   has_many :risks
   has_many :lessons
-  # has_many :notes, as: :noteable, dependent: :destroy
+  has_many :notes, as: :noteable, dependent: :destroy
 
 
   before_save :assign_default_contract_type
@@ -145,9 +145,9 @@ class Contract < ApplicationRecord
       contract.user_id = user.id
       contract.save
     end
-    if params[:facility_group_name]
-      contract.contract_facility_group.update(name: params[:facility_group_name])
-    end
+    # if params[:facility_group_name]
+    #   contract.contract_facility_group.update(name: params[:facility_group_name])
+    # end
     contract
   end
 
