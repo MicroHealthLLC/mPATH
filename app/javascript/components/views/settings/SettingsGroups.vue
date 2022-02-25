@@ -423,19 +423,7 @@ export default {
         dialog2Visible: false,
         isIndeterminate: true,
         currentTab: "tab1",
-      tabs: [
-        {
-          label: "MANAGE GROUPS",
-          key: "tab1",
-          closable: false,
-        },
-        {
-          label: "TABLE",
-          key: "tab2",
-          closable: false,
-        },
-      ],
-      contracts: null,
+         contracts: null,
       currentFacilityGroup: {},
       componentKey: 0,
       confirmTransfer: false,

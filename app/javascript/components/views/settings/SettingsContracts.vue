@@ -407,18 +407,19 @@ export default {
     //  }
 
     saveEdits(index, rows) {
+      // console.log(rows)
       let id = rows.id;
       let contractData = {
         contract: {
           nickname: rows.nickname,
           name: rows.name,
-
-          facility_group_id: rows.facility_group_id,
+          // facility_group_id: rows.facilityGroupId,
+          // facility_group_name: rows.facilityGroupName,
           project_id: this.$route.params.programId,
           id: id,
         },
       };
-      this.setNewContractGroupFilter(rows.facility_group_id);
+      // this.setNewContractGroupFilter(rows.facility_group_id);
       this.updateContract({
         ...contractData,
         id,

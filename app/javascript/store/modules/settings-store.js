@@ -5,6 +5,7 @@ import { API_BASE_PATH } from "./../../mixins/utils";
 const settingsStore = {
   state: () => ({
     show_admin_btn: false,
+    user_status: true,
     edit_contract_sheet: false, 
     contract_table: [],
     group_filter: null,
@@ -480,8 +481,7 @@ const settingsStore = {
   },
 
   mutations: {
-    setShowAdminBtn: (state, value) => (state.show_admin_btn = value),   
-   
+    setShowAdminBtn: (state, value) => (state.show_admin_btn = value),  
     setContractTypeFilter: (state, value) =>
       (state.contract_type_filter = value),
     setContractTable: (state, value) => (state.contract_table = value),
@@ -512,6 +512,7 @@ const settingsStore = {
     SET_CONTRACT_CLASSIFICATIONS: (state, value) =>
       (state.contract_classifications = value),
 
+    SET_USER_STATUS: (state, value) => (state.user_status = value),  
     SET_VEHICLES: (state, value) => (state.vehicle_filter = value),
     SET_VEHICLE_NUMBERS: (state, value) => (state.vehicle_number = value),
     SET_SUBCONTRACT_NUMBER: (state, value) =>
@@ -549,6 +550,8 @@ const settingsStore = {
     getVehicleNumbers: (state) => state.vehicle_number,
     getSubcontractNumbers: (state) => state.subcontract_number,
     getContractNumbers: (state) => state.contract_number,
+
+    getUserStatus: (state) => state.user_status,
 
     getTransferData: (state) => state.transfer_data, 
     getContractGroupTypes: (state) => state.contract_group_types,
