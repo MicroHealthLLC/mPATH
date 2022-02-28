@@ -27,7 +27,7 @@ Rails.application.routes.draw do
       resources :issue_types, only: [:index]
       resources :issue_stages, only: [:index]
       resources :task_stages, only: [:index]
-      resources :users, only: [:index]
+      resources :users, only: [:index, :create, :update]
       post '/sort-by', to: 'sorts#update'
 
       resources :facility_groups do
