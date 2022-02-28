@@ -166,11 +166,10 @@
             element-loading-text="Fetching your data. Please wait..."
             element-loading-spinner="el-icon-loading"
             element-loading-background="rgba(0, 0, 0, 0.8)"
-            class="mt-4"
+            class="mt-2"
           >
             <el-table
               v-if="tableData"
-              :header-cell-style="{ background: '#EDEDED' }"
               :data="
                 tableData
                   .filter(
@@ -795,6 +794,9 @@ export default {
 <style scoped lang="scss">
 .right {
   text-align: right;
+}
+.buttonWrapper {
+  border-bottom: lightgray solid 1px;
 }
 .fa-calendar {
   font-size: x-large;

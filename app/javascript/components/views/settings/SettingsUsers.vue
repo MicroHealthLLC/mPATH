@@ -157,6 +157,7 @@
               <el-select
                 v-model="portfolioUsers"
                 class="w-100"
+                v-if="getPortfolioUsers.length > 0"
                 track-by="id"
                 value-key="id"
                 :multiple="true"
@@ -165,10 +166,10 @@
                 filterable
               >
                 <el-option
-                  v-for="item in userData"
+                  v-for="item in getPortfolioUsers.filter(u => !userData.map(p => p.id).includes(u.id))"
                   :value="item"
                   :key="item.id"
-                  :label="item.fullName"
+                  :label="item.full_name"
                 >
                 </el-option>
               </el-select>
@@ -304,13 +305,15 @@ export default {
     ...mapMutations([
       "SET_USER_STATUS"
     ]),
-    ...mapActions([
-    ]),
+  ...mapActions(["fetchPortfolioUsers"]),
     selectResult(user) {
       this.autoCompleteSearch = user.fullName;
     },
    addUser() {
-      this.dialogVisible = true;      
+      this.dialogVisible = true;  
+      if (this.getPortfolioUsers.length <= 0)    {
+        this.fetchPortfolioUsers()
+      }
     },
     openEditUser(index, rows){
       this.editUserDialogVisible = true;
@@ -345,7 +348,9 @@ export default {
     ...mapGetters([
         "contentLoaded",
         "currentProject",
-        "getUserStatus"
+        "getUserStatus",
+        "getPortfolioUsers",
+        "activeProjectUsers"
     ]),
     userData(){
       if(this.currentProject && this.currentProject.users){
@@ -387,8 +392,15 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+.buttonWrapper {
+  border-bottom: lightgray solid 1px;
+}
 /deep/.el-dialog__header.users{
   padding: 0;
+}
+/deep/.el-table th.el-table__cell > .cell {
+  color: #212529;
+  font-size: 1.1rem;
 }
 .auto-complete-wrapper {
   justify-content: center;

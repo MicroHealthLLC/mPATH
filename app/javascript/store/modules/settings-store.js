@@ -13,6 +13,7 @@ const settingsStore = {
     new_groups: [], 
     checked_portfolio_groups: [],
     checked_groups:[],
+    portfolio_users: [],
     contract: {},
     contracts: [],
     check_all: false, 
@@ -36,6 +37,7 @@ const settingsStore = {
     groups: [],
     group_loaded: true,
     groups_loaded: true,
+    portfolio_users_loaded: true,
     group_status: 0,
     new_contract_group_filter: [],
   }),
@@ -185,6 +187,27 @@ const settingsStore = {
         })
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
+        });
+    },
+    fetchPortfolioUsers({ commit }) {
+      commit("TOGGLE_USERS_LOADED", false);
+      // Retrieve contract by id
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/users`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_PORTFOLIO_USERS", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_USERS_LOADED", true);
         });
     },
     fetchContractGroupTypes({ commit }) {
@@ -498,7 +521,7 @@ const settingsStore = {
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
       (state.contracts_loaded = loaded),
-
+    TOGGLE_USERS_LOADED: (state, loaded) => (state.portfolio_users_loaded = loaded),
     SET_CONTRACT_GROUP_TYPES: (state, loaded) =>
       (state.contract_group_types = loaded),
     SET_CUSTOMER_AGENCIES_FILTER: (state, loaded) =>
@@ -521,6 +544,7 @@ const settingsStore = {
     SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
+    SET_PORTFOLIO_USERS: (state, value) => (state.portfolio_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
     TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
@@ -557,8 +581,10 @@ const settingsStore = {
     getContractGroupTypes: (state) => state.contract_group_types,
     group: (state) => state.group,
     groups: (state) => state.groups,
+    getPortfolioUsers: (state) => state.portfolio_users,
     groupStatus: (state) => state.group_status,
     groupsLoaded: (state) => state.groups_loaded,
+    portfolioUsersLoaded: (state) => state.portfolio_users_loaded,
 
     getShowAdminBtn: (state) => state.show_admin_btn,
     getContractTable: (state) => state.contract_table,
