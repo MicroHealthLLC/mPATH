@@ -110,8 +110,25 @@
               label="Group"
             >
               <template slot-scope="scope">
+              <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>        
             <span
-            v-if="facilityGroups && facilityGroups.length > 0"
+            v-else
             >
            {{ facilityGroups.find((c) => c.id == scope.row.facilityGroupId).name }}
 
@@ -148,7 +165,7 @@
                 </el-button>
                 <el-button
                   type="default"
-                  v-tooltip="`Edit Contract Name`"
+                  v-tooltip="`Edit Contract Name or Change Group`"
                   @click.prevent="editMode(scope.$index, scope.row)"
                   v-if="
                     scope.$index !== rowIndex &&
@@ -407,13 +424,13 @@ export default {
     //  }
 
     saveEdits(index, rows) {
+    
       let id = rows.id;
       let contractData = {
         contract: {
           nickname: rows.nickname,
           name: rows.name,
-
-          facility_group_id: rows.facility_group_id,
+          facility_group_id: rows.facilityGroupId,
           project_id: this.$route.params.programId,
           id: id,
         },

@@ -115,7 +115,27 @@
             label="Group"
           >
             <template slot-scope="scope">
+               <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>   
+
+               <span v-else>  
               {{ scope.row.facilityGroupName }}
+               </span>
               <!-- <el-input
                 size="small"
                 style="text-align:center"
@@ -144,7 +164,7 @@
                 </el-button>
               <el-button  
                 type="default" 
-                v-tooltip="`Edit Project Name`"
+                v-tooltip="`Edit Project Name or Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
                 class="bg-light">
@@ -313,12 +333,10 @@ export default {
     },
     saveEdits(index, rows) {
       let updatedProjectName = rows.facilityName;
-      let updatedGroupName = rows.facilityGroupName;
       let projectId = rows.id;
       let formData = new FormData();
       formData.append("facility[facility_name]", updatedProjectName);
-      // Need one url to support these two data name edits
-      formData.append("facility[facility_group_name]", updatedGroupName);
+      formData.append("facility[facility_group_id]", rows.facilityGroupId);
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${projectId}`;
       let method = "PUT";
       axios({
