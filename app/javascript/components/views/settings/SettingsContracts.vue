@@ -148,7 +148,7 @@
                   v-tooltip="`Save`"
                   class="bg-primary text-light"
                 >
-                  <i class="far fa-save"></i>
+                  <i class="far fa-save mr-1"></i>Save
                 </el-button>
                 <el-button
                   type="default"
@@ -172,7 +172,7 @@
                   "
                   class="bg-light"
                 >
-                  <i class="fal fa-edit text-primary"></i>
+                  <i class="fal fa-edit text-primary mr-1"></i>Edit
                 </el-button>
 
                 <el-button
@@ -352,8 +352,12 @@ export default {
     };
   },
   mounted() {
+    if(this.contracts[0] && this.contracts[0].length <= 0){
     this.fetchContracts();
+    }  
+    if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapMutations([
@@ -411,6 +415,7 @@ export default {
       // this.fetchCurrentProject(this.$route.params.programId);
       // console.log(contractData)
     },
+    // DO NOT DELETE This async method.  It is code for firebase cloud functionality
     //  async onSubmit ()  {
     //      const formData = {
     //         contractName: this.contractNameText,

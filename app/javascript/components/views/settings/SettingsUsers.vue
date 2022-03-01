@@ -19,11 +19,11 @@
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
-            <i class="fal fa-network-wired mr-1 mh-blue-text"></i> USERS
+             <i class="fas fa-users mr-1 text-secondary"></i> USERS
             <span
-              v-if="userData && userData.length"
+              v-if="programUsers && programUsers.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-              >{{ userData.length }}
+              >{{ programUsers.length }}
             </span>
             <span v-else class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ 0 }}
@@ -40,12 +40,17 @@
               class="col-6"
               >
               <el-button
-                @click.prevent="addUser"
+                @click.prevent="openCreateUser"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add User
+               <i class="fas fa-user-plus mr-1"></i> Create New User
               </el-button>
-              
+                  <el-button
+                @click.prevent="addUser"
+                class="bg-success text-light mb-2"
+              >
+              <i class="fas fa-users mr-1"></i>  Add Exisiting User(s)
+              </el-button>
             </div>
             <div class="col-6">
               <el-input
@@ -71,7 +76,7 @@
         element-loading-background="rgba(0, 0, 0, 0.8)"
         class="">
         <el-table
-        v-if="userData && userData.length > 0"
+        v-if="programUsers && programUsers.length > 0"
         :data="
             userData
             .filter(
@@ -84,7 +89,7 @@
         style="width: 100%"
         height="450"
         >
-        <el-table-column prop="firstName"  sortable label="First Name">
+        <el-table-column prop="first_name"  sortable label="First Name">
             <template slot-scope="scope">
         
         
@@ -95,17 +100,17 @@
             v-model="scope.row.firstName"
             controls-position="right"
             ></el-input>
-            <span v-else> {{ scope.row.firstName }}</span>
+            <span v-else> {{ scope.row.first_name }}</span>
             </template>
         </el-table-column>
         <el-table-column
-            prop="lastName"
+            prop="last_name"
             sortable
             filterable
             label="Last Name"
         >
             <template slot-scope="scope">
-            {{ scope.row.lastName}}
+            {{ scope.row.last_name}}
             <!-- <el-input
                 size="small"
                 style="text-align:center"
@@ -145,6 +150,76 @@
     </div>
     </div>
       <el-dialog
+        :visible.sync="newUserDialogVisible"
+        append-to-body
+        center
+        class="p-0 users"       
+      >
+      <span slot="title" class="text-left">
+        <h4 class="text-dark"><i class="fas fa-user-plus mr-2"></i>Add New User </h4>
+      </span>
+      <form accept-charset="UTF-8">
+       <div class="container">        
+        <div class="row">       
+          <div class="col-6">
+            <label class="mb-0 pb-0 text-dark"
+              >First Name </label
+            >
+            <el-input
+              class="mb-2 pl-1"
+              v-model="firstName"
+              placeholder="Enter First Name"
+              rows="1"
+              />        
+          </div>
+          <div class="col-6">
+            <label class="mb-0 pb-0 text-dark"
+                >Last Name</label
+              >
+              <el-input
+                v-model="lastName"
+                class="mb-2 pl-1"
+                placeholder="Enter Last Name"
+                rows="1"    
+              />          
+          </div>
+        </div>
+        <div class="row mt-0">
+          <div class="col-6">
+            <label class="mb-0 pb-0 text-dark"
+              >Email</label>
+            <el-input
+              v-model="email"
+              placeholder="Enter Email"
+              rows="1"  
+              class="mb-2 pl-1"        
+            />            
+          </div>
+        
+        </div>  
+        <div class="mt-3 text-right">
+          <button
+            @click.prevent="createUser"
+            class="btn btn-sm bg-primary text-light mr-2 modalBtns"
+            v-tooltip="`Save New User`"               
+          >
+          <i class="fal fa-save mr-1"></i> SAVE
+        </button>
+         <button
+            @click.prevent="cancelAddNewUser"
+           class="btn btn-sm bg-danger text-light modalBtns"
+            v-tooltip="`Cancel`"               
+          >
+         <i class="fal fa-window-close mr-1"></i> CANCEL
+        </button>
+        </div>      
+       </div>
+      </form>
+        
+        
+
+      </el-dialog>
+      <el-dialog
         :visible.sync="dialogVisible"
         append-to-body
         center
@@ -157,7 +232,7 @@
               <el-select
                 v-model="portfolioUsers"
                 class="w-100"
-                v-if="getPortfolioUsers.length > 0"
+                v-if="getPortfolioUsers.length > 0 && programUsers"
                 track-by="id"
                 value-key="id"
                 :multiple="true"
@@ -166,7 +241,7 @@
                 filterable
               >
                 <el-option
-                  v-for="item in getPortfolioUsers.filter(u => !userData.map(p => p.id).includes(u.id))"
+                  v-for="item in getPortfolioUsers.filter(u => !programUsers.map(p => p.id).includes(u.id))"
                   :value="item"
                   :key="item.id"
                   :label="item.full_name"
@@ -175,34 +250,26 @@
               </el-select>
                 <el-button
                 type="default"            
-                class="bg-primary text-light mt-3 float-right"
+                class="bg-primary text-light mt-3 float-right modalBtns"
                >
                 <i class="far fa-plus-circle mr-1"></i> Add Users to Program
             </el-button>
-            <!-- <div class="auto-complete-wrapper ">
-              <label class="font-md"><i class="fa-solid fa-magnifying-glass mr-1"></i>Search Portfolio Users</label>
-              <input type="text" placeholder="Type your query" v-model="autoCompleteSearch" @blur="toggle = false" @focus="toggle = true">
-              <div class="results" v-if="toggle">
-                <div class="result" v-for="user, i in addedUsers" :key="i">
-                  <span @click="selectResult(user)" @mousedown.prevent>
-                    {{ user.fullName }}
-                  </span>
-                </div>
-              </div>   
-            </div>  -->
           </div> 
                 
         </div>    
       </div>
       </el-dialog>
 
-  <el-dialog
-        :visible.sync="editUserDialogVisible"
-        append-to-body
-        center
-        class="p-0 users"       
-      >
-      <div class="container">      
+    <el-dialog
+      :visible.sync="editUserDialogVisible"
+      append-to-body
+      center
+      class="p-0 users"       
+        >
+      <span slot="title" class="text-left">
+        <h4 class="text-dark"> <i class="fas fa-edit mr-1"></i>Edit User </h4>
+      </span>
+      <div class="container">  
         <div class="row">
           <div class="col-12">
              <form accept-charset="UTF-8">
@@ -211,7 +278,7 @@
               >
               <el-input
                 class="mb-2 pl-1"
-                v-model="rowUser.firstName"
+                v-model="rowUser.first_name"
                 placeholder="Enter new Group name here"
                 rows="1"
                 />
@@ -219,7 +286,7 @@
                 >Last Name</label
               >
               <el-input
-                v-model="rowUser.lastName"
+                v-model="rowUser.last_name"
                 class="mb-2 pl-1"
                 placeholder="Enter new Group name here"
                 rows="1"    
@@ -240,12 +307,29 @@
                 rows="1"  
                 class="mb-2 pl-1"        
               />
+
+      <div class="my-3 float-right">
+         <button
+            @click.prevent="saveUserEdits"
+            class="btn btn-sm bg-primary text-light mr-2 modalBtns"
+            v-tooltip="`Save New User`"               
+          >
+          <i class="fal fa-save mr-1"></i>SAVE
+        </button>
+          <button
+            @click.prevent="cancelEdits"
+           class="btn btn-sm bg-danger text-light modalBtns"
+            v-tooltip="`Close`"               
+          >
+         <i class="fal fa-window-close mr-1"></i> CLOSE
+        </button>
+      </div>
            </form>
           </div> 
                 
         </div>    
       </div>
-      </el-dialog>
+    </el-dialog>
     
     </div>
 
@@ -286,45 +370,84 @@ export default {
       return {
         search:"",
         autoCompleteSearch:"",
+        firstName:'',
+        lastName:'',
+        email:'',
         rowIndex: null,
         rowId: null,
         addedUsers: [],
         rowUser: {},
         portfolioUsers:[],
         programNameList: [],
+        newUserValidation: null, 
         inactiveUser: false, 
         activeUser: true,
         //toggle used by autocomplete
         toggle: false,
         //dialogVisible used by el-dialogue popup
         dialogVisible: false,
-        editUserDialogVisible: false
+        editUserDialogVisible: false,
+        newUserDialogVisible: false
     };
   },
   methods: {
     ...mapMutations([
-      "SET_USER_STATUS"
+      "SET_USER_STATUS",
+      "SET_NEW_USER_STATUS"
     ]),
-  ...mapActions(["fetchPortfolioUsers"]),
+  ...mapActions(["fetchPortfolioUsers", "createNewUser", "updateUserData"]),
     selectResult(user) {
       this.autoCompleteSearch = user.fullName;
     },
    addUser() {
-      this.dialogVisible = true;  
-      if (this.getPortfolioUsers.length <= 0)    {
-        this.fetchPortfolioUsers()
-      }
+      this.dialogVisible = true; 
+    },
+    openCreateUser(){
+      this.newUserDialogVisible = true
+    },
+    createUser() {
+      let newUserData = {
+        newUser: {
+           fName: this.firstName,
+           lName: this.lastName,
+           email: this.email,
+        },
+      };
+      this.createNewUser({
+        ...newUserData,
+      });
+      // this.hideSaveBtn = true;
     },
     openEditUser(index, rows){
       this.editUserDialogVisible = true;
-
       this.rowUser = rows
-
+      console.log(rows)
     },
-
-    // removeName(tag) {
-    //     this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-    //   },
+   saveUserEdits() {
+     let editUserData = {
+        userData: {
+          fName: this.rowUser.first_name,
+          lName: this.rowUser.last_name,
+          email: this.rowUser.email,
+          title: this.rowUser.title,
+          id:    this.rowUser.id
+        },
+      };
+      this.updateUserData({
+        ...editUserData   
+      });
+      // this.rowIndex = null;
+      // this.rowId = null;
+    },
+    cancelEdits() {
+      this.editUserDialogVisible = false;
+      this.rowIndex = null;
+      this.rowId = null;
+      // this.hideSaveBtn = false;
+    },
+    cancelAddNewUser() {
+      this.newUserDialogVisible = false;
+    },
     editMode(index, rows) {
       this.rowIndex = index;
       this.rowId = rows.id;
@@ -335,52 +458,52 @@ export default {
       }
      
     },
-    cancelEdits(index, rows) {
-      this.rowIndex = null;
-      this.rowId = null;
-    },
-
   },
   mounted() {
-
+   if (this.getPortfolioUsers.length <= 0)    {
+        this.fetchPortfolioUsers()
+      }
   },
   computed: {
     ...mapGetters([
         "contentLoaded",
         "currentProject",
-        "getUserStatus",
         "getPortfolioUsers",
-        "activeProjectUsers"
+        "activeProjectUsers",
+        "newUserStatus"
     ]),
     userData(){
-      if(this.currentProject && this.currentProject.users){
-      return this.currentProject.users
+      if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
+      return this.getPortfolioUsers
      }       
+    },
+    programUsers(){
+     if(this.currentProject && this.currentProject.users && this.currentProject.users.length > 0) {
+     if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
+      // return this.getPortfolioUsers.filter(u => this.currentProject.users.map(cP => cP.id).includes(u.id))
+       return this.currentProject.users.filter(u =>  this.getPortfolioUsers.map(cP => cP.id).includes(u.id))
+       }  
+      }    
     },
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
-    userStatusToggle:{     
-     get(){
-       return this.getUserStatus
-     },
-     set(){
-       if(this.getUserStatus == false){
-        this.SET_USER_STATUS(!this.getUserStatus)
-      } else if(this.getUserStatus == true){
-        this.SET_USER_STATUS(!this.getUserStatus)
-     } else return
-     }
-    },  
     },
   watch: { 
-   autoCompleteSearch(val) {
-      this.addedUsers = [];   
-      this.userData.forEach(user => {
-        if(user.fullName.includes(val) && val != ""){
-      this.addedUsers.push(user);
-     }
-    });
+    newUserStatus: {
+      handler() {
+        if (this.newUserStatus == 200) {
+          this.$message({
+            message: ` ${this.firstName + this.lastName } successfully added to your program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_NEW_USER_STATUS(0);
+          this.lastName = '',
+          this.firstName = '',
+          this.email = ''
+        }
+      },
     },
    
   },
@@ -401,6 +524,9 @@ export default {
 /deep/.el-table th.el-table__cell > .cell {
   color: #212529;
   font-size: 1.1rem;
+}
+.modalBtns {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 .auto-complete-wrapper {
   justify-content: center;

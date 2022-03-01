@@ -39,7 +39,11 @@ const settingsStore = {
     groups_loaded: true,
     portfolio_users_loaded: true,
     group_status: 0,
+    new_user_status: 0,
     new_contract_group_filter: [],
+    new_user_loaded: true,
+    new_user:[],
+    edit_user_data:[]
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -95,11 +99,8 @@ const settingsStore = {
     updateGroupName({ commit }, { id, newNameData }) {
         commit("TOGGLE_GROUPS_LOADED", false);
         let formData = new FormData();
-        console.log(newNameData.name)
+        // console.log(newNameData.name)
         formData.append("facility_group[name]", newNameData.name); //Required
-        // let formData = newGroupName(newNameData);
-        // console.log()
-  
         axios({
           method: "PUT",
           url: `${API_BASE_PATH}/facility_groups/${id}`,
@@ -125,7 +126,7 @@ const settingsStore = {
       commit("TOGGLE_GROUPS_LOADED", false);
       // Utilize utility function to prep Lesson form data
       let formData = portfolioGroupData(groupData);
-      console.log(groupData)
+      // console.log(groupData)
 
       axios({
         method: "PUT",
@@ -210,6 +211,61 @@ const settingsStore = {
           commit("TOGGLE_USERS_LOADED", true);
         });
     },
+   updateUserData({ commit }, { userData }) {
+      commit("TOGGLE_USERS_LOADED", false);
+      let formData = new FormData();
+      formData.append("user[first_name]", userData.fName)
+      formData.append("user[last_name]", userData.lName)
+      formData.append("user[email]", userData.email)
+      formData.append("user[title]", userData.title)
+
+      axios({
+        method: "PATCH",
+        url: `${API_BASE_PATH}/users/${userData.id}`,
+        data: formData, 
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_EDIT_USER_DATA", res.data);
+          commit("SET_NEW_USER_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_USERS_LOADED", true);
+        });
+    },
+    createNewUser({ commit }, { newUser }) {
+       commit("TOGGLE_NEW_USER_LOADED", false);   
+      //  console.log(newUser.fName)   
+       let formData = new FormData();
+        formData.append("user[first_name]", newUser.fName)
+        formData.append("user[last_name]", newUser.lName)
+        formData.append("user[email]", newUser.email)
+        axios({
+          method: "POST",
+          url: `${API_BASE_PATH}/users`,
+          data: formData,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            commit("SET_NEW_USER", res.data);
+            commit("SET_NEW_USER_STATUS", res.status);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_NEW_USER_LOADED", true);
+          });
+      },
     fetchContractGroupTypes({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
@@ -541,13 +597,19 @@ const settingsStore = {
     SET_SUBCONTRACT_NUMBER: (state, value) =>
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
+    SET_NEW_USER: (state, value) => (state.new_user = value),
     SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_PORTFOLIO_USERS: (state, value) => (state.portfolio_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
-    TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
+
+    SET_NEW_USER_STATUS: (state, status) => (state.new_user_status = status),
+
+    SET_EDIT_USER_DATA: (state, value) => (state.edit_user_data = value),
+
+    TOGGLE_NEW_USER_LOADED: (state, loaded) => (state.new_user_loaded = loaded),
     SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value)
   },
 
@@ -568,6 +630,9 @@ const settingsStore = {
     getCheckAll: (state) => state.check_all,
     getCheckedGroups: (state) => state.checked_groups,
 
+    getNewUser:(state) => state.new_user,
+    getEditUserData: (state) => state.edit_user_data,
+
     getCheckedPortfolioGroups: (state) => state.checked_portfolio_groups,
 
     getVehicles: (state) => state.vehicle_filter,
@@ -585,6 +650,8 @@ const settingsStore = {
     groupStatus: (state) => state.group_status,
     groupsLoaded: (state) => state.groups_loaded,
     portfolioUsersLoaded: (state) => state.portfolio_users_loaded,
+
+    newUserStatus: (state) => state.new_user_status,
 
     getShowAdminBtn: (state) => state.show_admin_btn,
     getContractTable: (state) => state.contract_table,

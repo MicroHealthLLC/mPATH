@@ -266,7 +266,9 @@ export default {
      };
   },
  mounted(){
-  this.fetchGroups(this.$route.params.programId)
+    if(this.groups && this.groups.length <= 0){
+    this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapActions(["fetchFacilities", "fetchCurrentProject", "fetchGroups"]),

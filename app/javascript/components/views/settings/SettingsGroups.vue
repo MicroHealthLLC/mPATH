@@ -90,7 +90,7 @@
                 v-tooltip="`Save`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
-                <i class="fal fa-save mr-2"></i>
+                <i class="fal fa-save"></i>
               </button>
               <button
                 @click.prevent="addAnotherGroup"
@@ -102,7 +102,7 @@
               <button
                 @click.prevent="closeAddGroupBtn"
                 v-tooltip="`Close`"
-                class="btn btn-sm bg-danger text-light mr-2"
+                class="btn btn-sm bg-danger text-light"
                 :class="[!hideSaveBtn ? 'd-none' : '']"
               >
                 <i class="fal fa-window-close"></i>
@@ -417,12 +417,12 @@ export default {
 
     data() {    
       return {
-        currentFacility: {},
-        dialogVisible: false,
-        dialog2Visible: false,
-        isIndeterminate: true,
-        currentTab: "tab1",
-         contracts: null,
+      currentFacility: {},
+      dialogVisible: false,
+      dialog2Visible: false,
+      isIndeterminate: true,
+      currentTab: "tab1",
+      contracts: null,
       currentFacilityGroup: {},
       componentKey: 0,
       confirmTransfer: false,
@@ -592,7 +592,10 @@ export default {
     },
   },
   mounted() {
+  if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
+    }
+   
   },
   computed: {
     ...mapGetters([
