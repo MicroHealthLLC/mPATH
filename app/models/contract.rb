@@ -23,8 +23,8 @@ class Contract < ApplicationRecord
   has_many :lessons
   has_many :notes, as: :noteable, dependent: :destroy
 
-
   before_save :assign_default_contract_type
+  before_save :assign_default_facility_group
 
   validates_presence_of :nickname
 
@@ -88,6 +88,12 @@ class Contract < ApplicationRecord
     ]
   end
   
+  def assign_default_facility_group
+    if !self.facility_group.present?
+      self.facility_group_id = FacilityGroup.unassigned_group.id
+    end
+  end
+
   def assign_default_contract_type
     if !self.contract_type_id.present?
       self.contract_type_id = ContractType.prime.id

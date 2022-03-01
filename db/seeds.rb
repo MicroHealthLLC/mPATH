@@ -20,6 +20,7 @@ user.save(validate: false)
 puts "superuser created with email: #{user.email}"
 
 FacilityGroup.find_or_create_by(name: 'Sample Group', code: 'SAMP', status: 'active')
+FacilityGroup.find_or_create_by(name: 'Unassigned', code: 'UNAS', status: 'active')
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 
 Status.find_or_create_by(name: "Not Started", color: "#000000")
