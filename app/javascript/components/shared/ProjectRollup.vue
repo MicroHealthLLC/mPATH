@@ -34,7 +34,7 @@
           <!-- <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>           -->
           <router-link :to="ProgramView" > 
                <button                
-                  class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy=program_viewer_btn>
+                  class="btn btn-sm mh-orange text-light programViewerBtn allCaps" data-cy="program_viewer_btn" @click="setBackRoute">
                   PROGRAM DATA VIEWER
                 </button>   
           </router-link>             
@@ -2108,6 +2108,9 @@ export default {
       this.$router.push(
          `/programs/${this.$route.params.programId}/dataviewer`
       );
+    },
+    setBackRoute() {
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
     },
      facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities("active"), "id");
