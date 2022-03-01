@@ -23,10 +23,11 @@ class Api::V1::UsersController < AuthenticatedController
 
   def update
     @user = User.find(params[:id])
+    binding.pry
     if @user.update(user_params)
       render json: {msg: "User updated successfully!"}, status: 200
     else
-      render json: {msg: "Error updating user"}, status: 406
+      render json: {msg: @user.errors.full_messages.join(",")}, status: 406
     end
   end
 
