@@ -8,6 +8,7 @@ import TestCloudData from "./../components/views/settings/TestCloudData";
 import SettingsContracts from "./../components/views/settings/SettingsContracts";
 import SettingsGroups from "./../components/views/settings/SettingsGroups";
 import SettingsUsers from "./../components/views/settings/SettingsUsers";
+import SettingsRoles from "./../components/views/settings/SettingsRoles";
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
 import ProgramContractTaskForm from "./../components/views/program/ProgramContractTaskForm";
@@ -195,6 +196,11 @@ export default new VueRouter({
       name: "SettingsUsers",
       path: "/programs/:programId/settings/users",
       component: SettingsUsers,
+    },
+    {
+      name: "SettingsRoles",
+      path: "/programs/:programId/settings/roles",
+      component: SettingsRoles,
     },
     {
       name: "SettingsView",

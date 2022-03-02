@@ -346,7 +346,7 @@
                     "
                     class="bg-primary text-light"
                   >
-                    <i class="far fa-save"></i>
+                    <i class="far fa-save mr-1"></i>Save
                   </el-button>
                   <el-button
                     type="default"
@@ -370,7 +370,7 @@
                     "
                     class="bg-light"
                   >
-                    <i class="fal fa-edit text-primary"></i>
+                    <i class="fal fa-edit text-primary mr-1"></i>Edit
                   </el-button>
                   <el-button
                     type="default"
@@ -779,6 +779,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
+
           //  this.newGroupName =
         }
       },

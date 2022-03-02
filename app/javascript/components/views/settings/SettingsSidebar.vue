@@ -31,7 +31,12 @@
     </router-link>
   <router-link :to="adminUsersView"> 
        <li class="p-3 entity">
-         <i class="fas fa-users mr-2 pr-1 text-secondary"></i>Users
+         <i class="fal fa-users mr-2 pr-1 text-secondary"></i>Users
+        </li>
+    </router-link>
+      <router-link :to="adminRolesView"> 
+       <li class="p-3 entity">
+        <i class="fal fa-user-lock mr-2 pr-1 bootstrap-purple-text"></i>Roles
         </li>
     </router-link>
     <!-- <router-link :to="adminCloudView" > 
@@ -91,6 +96,9 @@ export default {
     },
     adminUsersView() {
      return `/programs/${this.$route.params.programId}/settings/users`
+    },
+    adminRolesView() {
+     return `/programs/${this.$route.params.programId}/settings/roles`
     },
     adminCloudView() {
      return `/programs/${this.$route.params.programId}/settings/test_cloud_data`

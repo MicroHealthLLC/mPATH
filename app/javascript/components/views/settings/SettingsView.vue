@@ -34,6 +34,9 @@
                    <span v-if="item == 'Users'" >
                      <i class="fas fa-users mr-3 text-secondary"></i>
                   </span>
+                  <span v-if="item == 'Roles'" >
+                    <i class="fal fa-user-lock mr-3 bootstrap-purple-text"></i>
+                  </span>
                   <!-- <span v-if="item == 'MH Data'">
                     <i class="fal fa-cloud mr-2 text-info"></i>              
                   </span> -->
@@ -53,6 +56,9 @@
                     <span v-if="item == 'Users'">{{
                       settingsCards.users
                     }} </span>
+                    <span v-if="item == 'Roles'">{{
+                    settingsCards.roles
+                  }} </span>
 <!--                     
                    
                       <span v-if="item == 'MH Data'">{{
@@ -85,7 +91,8 @@ export default {
         groups: "Groups",
         projects: "Projects",
         contracts: "Contracts",
-        users: "Users"
+        users: "Users",
+        roles:"Roles"
         // mhData: "MH Data",
         // users: "Users"
       },
@@ -134,6 +141,11 @@ export default {
      if (index == "users") {
         this.$router.push(
           `/programs/${this.$route.params.programId}/settings/users`
+        );
+      }
+       if (index == "roles") {
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/settings/roles`
         );
       }
     },
