@@ -1551,7 +1551,13 @@ export default {
     'getHideBriefed',
     ]),
     goBack() {
-      return `/programs/${this.$route.params.programId}/sheet`;
+      var backRoute = localStorage.getItem('backRoute');
+      localStorage.getItem('backRoute');
+      if (backRoute) {
+        return `/programs/${this.$route.params.programId}/` + backRoute;
+      } else {
+        return `/programs/${this.$route.params.programId}/sheet`;
+      }
     },
    projectObj() {
     return this.currentProject.facilities
