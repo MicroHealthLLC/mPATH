@@ -1,15 +1,12 @@
 <template>
-<div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="row"
-  >
+<div 
+  v-loading="!contentLoaded"
+  element-loading-text="Fetching your data. Please wait..."
+  element-loading-spinner="el-icon-loading"
+  element-loading-background="rgba(0, 0, 0, 0.8)" class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
-
     <div class="col-md-10">
           <div class="right-panel">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
@@ -45,7 +42,7 @@
               >
                <i class="fas fa-user-plus mr-1"></i> Create New User
               </el-button>
-                  <el-button
+               <el-button
                 @click.prevent="addUser"
                 class="bg-success text-light mb-2"
               >
@@ -70,7 +67,7 @@
      
     <div class="container-fluid mt-2 mx-0">
     <div  
-        v-loading="!contentLoaded"
+        v-loading="!programUsers"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -82,7 +79,7 @@
             .filter(
                 (data) =>
                 !search ||
-                data.fullName.toLowerCase().includes(search.toLowerCase())
+                data.full_name.toLowerCase().includes(search.toLowerCase())
             )
             .reverse()
         "
@@ -90,9 +87,7 @@
         height="450"
         >
         <el-table-column prop="first_name"  sortable label="First Name">
-            <template slot-scope="scope">
-        
-        
+            <template slot-scope="scope">       
             <el-input
             size="small"
             v-if="rowId == scope.row.id"
@@ -118,14 +113,80 @@
             ></el-input> -->
             </template>
         </el-table-column>
-           <el-table-column label="Roles">
-       
-    
-            <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-         
+     
+     
+        <!--BEGIN Expandable Column Containing Priveleges Info -->
+         <el-table-column type="expand" label="Privileges" width="100">
+       <!-- <template slot-scope="scope"> -->
+       <!-- <div class="container-fluid pt-0"> 
+         <div class="row rowPrivileges" >      -->
+   
+          <!-- Privileges Table 1 -->
+      <div class="">
+      <el-table
+        :data="projectsTable"
+        style="width: 100%"
+        border
+        :header-cell-style="{ background: '#EDEDED' }"
+      >
+      <el-table-column prop="role"  sortable label="Project Roles">
+      
+      </el-table-column>
+      <el-table-column
+          prop="projects"
+          sortable
+          filterable
+          label="Projects"
+      >        
+      </el-table-column> 
+       <el-table-column label="Actions" align="center"  width="75">
+          <!-- <template slot-scope="scope" > -->
+            <!-- USe this attribute when functionaloty gets built in -->
+                <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
+       <span v-tooltip="`Manage Project Privileges`">
+          <i class="fas fa-user-lock"></i>               
+          </span>
+  
+          <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+          <!-- </template> -->
+      </el-table-column>   
+      </el-table>
+      <!-- Table 2 -->
+        <el-table
+            :data="contractsTable"
+            style="width: 100%"
+            border
+            :header-cell-style="{ background: '#dda769' }"
+            >
+          <el-table-column prop="role"  sortable label="Contract Roles">
+          
+          </el-table-column>
+          <el-table-column
+              prop="contracts"
+              sortable
+              filterable
+              label="Contracts"
+          >
+          </el-table-column>
+          <el-table-column label="Actions"  align="center" width="75">
+              <!-- <template slot-scope="scope" > -->
+              <!-- USe this attribute when functionaloty gets built in -->
+                    <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
+              <span v-tooltip="`Manage Contract Privileges`">
+                <i class="fas fa-user-lock"></i>               
+              </span>
+      
+              <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+              <!-- </template> -->
+          </el-table-column>
+          </el-table>
+          </div>
+        <!-- </template> -->
         </el-table-column>
+        <!-- END Expandable Column Containing Priveleges Info -->
 
-        <el-table-column label="Actions">
+
+        <el-table-column label="Actions"  align="right">
             <template slot-scope="scope" >
             <el-button  
                 type="default" 
@@ -135,11 +196,14 @@
                 <i class="fal fa-edit text-primary" ></i>    
             </el-button> 
         
+        <!-- USe this attribute when functionaloty gets built in -->
+                  <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
             <el-button
-            type="default"            
-            class="mh-orange text-light"
+            type="default"  
+            class="bg-light"         
+             v-tooltip="`Remove User`"  
             >
-            <i class="fal fa-user-lock mr-2"></i>Privileges                
+            <i class="fas fa-user-slash"></i>               
             </el-button>
     
             <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -248,12 +312,12 @@
                 >
                 </el-option>
               </el-select>
-                <el-button
+            <button
                 type="default"            
-                class="bg-primary text-light mt-3 float-right modalBtns"
+                class="btn btn-primary text-light mt-3 float-right modalBtns"
                >
                 <i class="far fa-plus-circle mr-1"></i> Add Users to Program
-            </el-button>
+            </button>
           </div> 
                 
         </div>    
@@ -330,7 +394,83 @@
         </div>    
       </div>
     </el-dialog>
+
+  <!-- Permissions Profile modal -->
+    <!-- <el-dialog
+        :visible.sync="privilegesProfileVisible"
+        append-to-body
+        center
+        class="p-0 users"       
+      >
+      <span slot="title" class="text-left">
+        <h4 class="text-dark"> <i class="fal fa-user-lock mr-2 bootstrap-purple-text"></i>PRIVILEGES PROFILE </h4>
+      </span>
+
+       <div class="container pt-0"> 
+         <div class="row">       
+          <div class="col-6 py-0" v-if="userPrivileges">
+     
+         <h5 class="text-dark" style="text-decoration:underline" >User: {{ userPrivileges.full_name}}</h5>
+          </div>
+       
+        </div>       
+        <div class="row">       
+          <div class="col-6">
+        <el-table
+          :data="projectsTable"
+          style="width: 100%"
+          border
+        >
+        <el-table-column prop="project"  sortable label="Project">
+        
+        </el-table-column>
+        <el-table-column
+            prop="role"
+            sortable
+            filterable
+            label="Role"
+        >
+        
+         
+        </el-table-column>
+
     
+        </el-table>
+        
+          </div>
+          <div class="col-6">
+         <el-table
+          :data="projectsTable"
+          style="width: 100%"
+          border
+        >
+        <el-table-column prop="project"  sortable label="Contracts">
+        
+        </el-table-column>
+        <el-table-column
+            prop="role"
+            sortable
+            filterable
+            label="Role"
+        >
+        
+         
+        </el-table-column>
+
+    
+        </el-table>
+             
+          </div>
+        </div>
+     
+    
+       </div>
+     
+        
+        
+
+      </el-dialog>
+     -->
     </div>
 
     </div>
@@ -356,13 +496,19 @@
 //3.  I want a collapsed box that opens directory of names just incase I forget the spelling of a name
 //4. 
 
+//PRIVILEGES
+//1. This will consist of editable tables
+//2. An Admin Table?, Projects Table, and Contracts Table
+// each table will be comprised of two columns
+//3. First Column will list Projects/Contract/or Admin
+//4. Second column will be for Roles (with "Roles" header)
+
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 export default {
   name: "SettingsUsers",
   components: {
     SettingsSidebar,
-
   },
 
 
@@ -370,6 +516,36 @@ export default {
       return {
         search:"",
         autoCompleteSearch:"",
+        projectsTable: [
+        {          
+          role: 'project-read', 
+          projects: 'Project A, Project B, Project C'
+        }, {
+          role: 'project-write', 
+          projects: 'Project D, Project E, Project F'
+        }, {
+           role: 'project-delete', 
+          projects: 'Project D, Project E, Project F'
+       }, {
+          role: 'project-admin', 
+          projects: 'Project D, Project E, Project F'
+        }, 
+        ],
+        contractsTable: [
+        {          
+          role: 'contract-read', 
+          contracts: 'Contract A, Contract B, Contract C'
+        }, {
+          role: 'contract-write', 
+          contracts: 'Contract D, Contract E, Contract F'
+        }, {
+           role: 'contract-delete', 
+          contracts: 'Contract D, Contract E, Contract F'
+       }, {
+          role: 'contract-admin', 
+          contracts: 'Contract D, Contract E, Contract F'
+        }, 
+        ],
         firstName:'',
         lastName:'',
         email:'',
@@ -377,6 +553,7 @@ export default {
         rowId: null,
         addedUsers: [],
         rowUser: {},
+        userPrivileges: {},
         portfolioUsers:[],
         programNameList: [],
         newUserValidation: null, 
@@ -387,7 +564,8 @@ export default {
         //dialogVisible used by el-dialogue popup
         dialogVisible: false,
         editUserDialogVisible: false,
-        newUserDialogVisible: false
+        newUserDialogVisible: false,
+        privilegesProfileVisible: false
     };
   },
   methods: {
@@ -399,9 +577,19 @@ export default {
     selectResult(user) {
       this.autoCompleteSearch = user.fullName;
     },
+     handleClick(tab, event) { 
+        //Route redirecting incase we want to assign url paths to each tab
+        // if(tab.index == 1) {
+        //  this.$router.push({ name: "SettingsRolesProjects" })
+        // }    
+   
+    },
    addUser() {
       this.dialogVisible = true; 
     },
+    // contractsHeader(){
+    //   return ''
+    // },
     openCreateUser(){
       this.newUserDialogVisible = true
     },
@@ -422,6 +610,12 @@ export default {
       this.editUserDialogVisible = true;
       this.rowUser = rows
       console.log(rows)
+    },
+    openUserPrivileges(index, rows){
+      this.privilegesProfileVisible = true;
+      this.userPrivileges = rows
+      console.log(rows)
+  
     },
    saveUserEdits() {
      let editUserData = {
@@ -521,7 +715,7 @@ export default {
 /deep/.el-dialog__header.users{
   padding: 0;
 }
-/deep/.el-table th.el-table__cell > .cell {
+/deep/.el-table th.el-table__cell > .cell, .priviLabel {
   color: #212529;
   font-size: 1.1rem;
 }
@@ -546,6 +740,9 @@ export default {
       outline: none;
       box-shadow: inset 0 0 0 2px #DD9036;
     }
+  }
+  .rowPrivileges {
+    overflow-x: auto;
   }
   .results {
     position: absolute;

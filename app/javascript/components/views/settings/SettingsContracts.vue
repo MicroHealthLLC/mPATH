@@ -136,7 +136,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column label="Actions">
+            <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
                 <el-button
                   type="default"

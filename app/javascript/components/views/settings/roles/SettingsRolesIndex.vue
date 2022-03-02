@@ -57,16 +57,17 @@
         element-loading-background="rgba(0, 0, 0, 0.8)"
         class="">
 
-<el-tabs class="mt-1 mr-3" type="border-card">
+<el-tabs class="mt-1 mr-3" type="border-card"  @tab-click="handleClick">
     <el-tab-pane class="p-3"  style="postion:relative"  label="ADMIN">
     <el-table      
         :data="tableData"   
         height="450"
         >
     <el-table-column
+      fixed
       prop="role"
-      label="Role"
-      width="250">
+      label="Admin Role"
+      width="340">
     </el-table-column>
     <el-table-column label="Program Admin">
       <el-table-column
@@ -75,6 +76,10 @@
         width="75">
 
       <template slot-scope="scope">
+        <span
+        class="watch_action clickable mx-2"
+        @click.prevent.stop="programAdminRead(scope.$index, scope.row)"    
+          >
         <span 
         v-if="scope.row.read">
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -82,7 +87,8 @@
         <span 
         v-show="!scope.row.read">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>       
+        </span>   
+        </span>    
        </template>
       </el-table-column>
        <el-table-column
@@ -90,6 +96,10 @@
         label="Write"
         width="75">
         <template slot-scope="scope">
+        <span
+        class="watch_action clickable mx-2"
+        @click.prevent.stop="programAdminWrite(scope.$index, scope.row)"    
+          >
         <span 
         v-if="scope.row.write">
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -97,14 +107,19 @@
         <span 
         v-show="!scope.row.write">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>       
+        </span>   
+        </span>    
        </template>
       </el-table-column>
-     <el-table-column
+      <el-table-column
         prop="delete"
         label="Delete"
        width="75">
        <template slot-scope="scope">
+        <span
+        class="watch_action clickable mx-2"
+        @click.prevent.stop="programAdminDelete(scope.$index, scope.row)"    
+          >
         <span 
         v-if="scope.row.delete">
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -112,6 +127,7 @@
         <span 
         v-show="!scope.row.delete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>
         </span>       
        </template>
       </el-table-column>
@@ -317,8 +333,10 @@
     </el-table>
     </el-tab-pane>
      <el-tab-pane class="p-3"  style="postion:relative"  label="PROJECTS">
+          <SettingsRolesProjects/>
      </el-tab-pane>
       <el-tab-pane class="p-3"  style="postion:relative"  label="CONTRACTS">
+          <SettingsRolesContracts/>
      </el-tab-pane>
 </el-tabs>
     </div>
@@ -335,15 +353,16 @@
  
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import SettingsSidebar from "./SettingsSidebar.vue";
+import SettingsSidebar from "../SettingsSidebar.vue";
+import SettingsRolesProjects from "./SettingsRolesProjects.vue"
+import SettingsRolesContracts from "./SettingsRolesContracts.vue"
 export default {
-  name: "SettingsRoles",
+  name: "SettingsRolesIndex",
   components: {
     SettingsSidebar,
-
+    SettingsRolesProjects,
+    SettingsRolesContracts
   },
-
-
     data() {    
       return {
        tableData: [{
@@ -392,12 +411,26 @@ export default {
       }
   },
   methods: {
-    ...mapMutations([
-     
-    ]),
-  ...mapActions([
+    ...mapMutations([]),
+  ...mapActions([]),
+    programAdminRead(rows, index) {
+        // console.log(index) 
+      index.read = !index.read
+    },
+    programAdminWrite(rows, index) {
+     index.write = !index.write
+    },
+     programAdminDelete(rows, index) {
+      index.delete = !index.delete
+    },
+    handleClick(tab, event) { 
+        //Route redirecting incase we want to assign url paths to each tab
+        // if(tab.index == 1) {
+        //  this.$router.push({ name: "SettingsRolesProjects" })
+        // }    
+   
+    },
 
-  ]),
    },
   mounted() {
  

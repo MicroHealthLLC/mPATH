@@ -182,7 +182,77 @@
               style="width: 100%"
               height="475"
             >
-              <el-table-column type="expand">
+          
+              <el-table-column prop="name" sortable label="Groups">
+                <template slot-scope="props">
+                  <div class="row">
+                    <div class="col-9">
+                      <el-input
+                        size="small"
+                        v-if="rowId == props.row.id"
+                        style="text-align:center"
+                        v-model="props.row.name"
+                        controls-position="right"
+                      >
+                      </el-input>
+                      <span v-else> {{ props.row.name }}</span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="Counts" width="165">
+                <template slot-scope="props">
+                  <div class="row">
+                    <div class="col">
+                      <i
+                        class="fal fa-clipboard-list mr-1 mh-green-text"
+                        v-tooltip="`Projects`"
+                      ></i>
+                      <span
+                        class="mr-4"
+                        v-if="
+                          groupProjects &&
+                            groupProjects
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupProjects &&
+                            groupProjects
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span class="mr-4" v-else>
+                        {{ 0 }}
+                      </span>
+                      <i
+                        class="far fa-file-contract mr-1 mh-orange-text"
+                        v-tooltip="`Contracts`"
+                      ></i>
+                      <span
+                        v-if="
+                          groupContracts &&
+                            groupContracts
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupContracts
+                            .map((t) => t.facilityGroupId)
+                            .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span v-else>
+                        {{ 0 }}
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+                <el-table-column type="expand">
                 <template slot-scope="props">
                   <div class="container">
                     <div class="row">
@@ -264,77 +334,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="name" sortable label="Groups">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col-9">
-                      <el-input
-                        size="small"
-                        v-if="rowId == props.row.id"
-                        style="text-align:center"
-                        v-model="props.row.name"
-                        controls-position="right"
-                      >
-                      </el-input>
-                      <span v-else> {{ props.row.name }}</span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column label="Counts">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col">
-                      <i
-                        class="fal fa-clipboard-list mr-1 mh-green-text"
-                        v-tooltip="`Projects`"
-                      ></i>
-                      <span
-                        class="mr-4"
-                        v-if="
-                          groupProjects &&
-                            groupProjects
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          groupProjects &&
-                            groupProjects
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span class="mr-4" v-else>
-                        {{ 0 }}
-                      </span>
-                      <i
-                        class="far fa-file-contract mr-1 mh-orange-text"
-                        v-tooltip="`Contracts`"
-                      ></i>
-                      <span
-                        v-if="
-                          groupContracts &&
-                            groupContracts
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          groupContracts
-                            .map((t) => t.facilityGroupId)
-                            .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span v-else>
-                        {{ 0 }}
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="Actions">
+              <el-table-column label="Actions"  align="right">
                 <template slot-scope="scope">
                   <el-button
                     type="default"
@@ -386,6 +386,7 @@
                   </el-button>
                 </template>
               </el-table-column>
+              
             </el-table>
           </div>
         </div>

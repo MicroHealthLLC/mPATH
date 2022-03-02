@@ -29,16 +29,17 @@
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
-  <router-link :to="adminUsersView"> 
-       <li class="p-3 entity">
-         <i class="fal fa-users mr-2 pr-1 text-secondary"></i>Users
-        </li>
-    </router-link>
-      <router-link :to="adminRolesView"> 
+       <router-link :to="adminRolesView"> 
        <li class="p-3 entity">
         <i class="fal fa-user-lock mr-2 pr-1 bootstrap-purple-text"></i>Roles
         </li>
     </router-link>
+    <router-link :to="adminUsersView"> 
+       <li class="p-3 entity">
+         <i class="fal fa-users mr-2 pr-1 text-secondary"></i>Users
+        </li>
+    </router-link>
+   
     <!-- <router-link :to="adminCloudView" > 
        <li class="p-3 entity">
             <i class="fal fa-cloud mr-2 text-info"></i>     MH Data
