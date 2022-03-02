@@ -181,7 +181,7 @@
     <!-- PRIME IDIQ -->
     <el-table-column prop="contractVehicleNumber.name"
           sortable 
-          label="Pime IDIQ/Vehicle Contract Number"
+          label="Prime IDIQ/Vehicle Contract Number"
           width="230"
           > 
        <template slot-scope="scope">
@@ -202,7 +202,7 @@
     <el-table-column 
           prop="contractPrime.name"  
           sortable  
-          label="Pime Contract Number/Task Order/PO Number"
+          label="Prime Contract Number/Task Order/PO Number"
           width="230"
           > 
        <template slot-scope="scope">
