@@ -30,6 +30,18 @@ class Api::V1::UsersController < AuthenticatedController
     end
   end
 
+  def add_to_program
+    @program = Project.find(params[:program_id])
+    @users = User.where(id: params[:user_ids])
+    all_user_ids = (@program.project_users.pluck(:user_id) + @users.pluck(:id)).compact.uniq
+    @program.user_ids = all_user_ids
+    
+    if @program.save
+      render json: {msg: "Users are added to program sucuessfully!"}, status: 200
+    else
+      render json: {msg: @program.errors.full_messages.join(",")}, status: 406
+    end
+  end
 
   private
   def user_params
