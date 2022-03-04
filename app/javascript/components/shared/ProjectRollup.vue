@@ -1969,6 +1969,7 @@ export default {
     },
     completedOnly(e){
       let action = e.currentTarget.id;
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "issueFlags"){
@@ -1991,6 +1992,7 @@ export default {
     },
     draftsOnly(e){
       let action = e.currentTarget.id;
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "issueFlags"){
@@ -2013,6 +2015,7 @@ export default {
     },
     plannedOnly(e){
       let action = e.currentTarget.id;  
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "issueFlags"){
@@ -2033,6 +2036,7 @@ export default {
     },
     inprogressOnly(e){
       let action = e.currentTarget.id;  
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "issueFlags"){
@@ -2053,6 +2057,7 @@ export default {
     },
     ongoingOnly(e){
       let action = e.currentTarget.id;  
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "riskFlags"){
@@ -2071,6 +2076,7 @@ export default {
     },
     onholdOnly(e){
      let action = e.currentTarget.id;  
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "issueFlags"){
@@ -2091,6 +2097,7 @@ export default {
     },
     overdueOnly(e){   
       let action = e.currentTarget.id;  
+      localStorage.setItem('backRoute', this.isSheetsView ? 'sheet' : 'map');
       if (action == "taskFlags"){
         this.setCurrProgramTab('#tab-tasks')
       } else if (action == "issueFlags"){
