@@ -2,7 +2,7 @@
 
 class Facility < ApplicationRecord
   strip_attributes
-  belongs_to :facility_group
+  belongs_to :facility_group, optional: true
   belongs_to :creator, class_name: "User"
   has_many :facility_projects, dependent: :destroy
   has_many :projects, through: :facility_projects
@@ -11,9 +11,18 @@ class Facility < ApplicationRecord
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment, allow_destroy: true
 
-  validates_presence_of :facility_name, :facility_group_id # :address, :point_of_contact, :phone_number, :email
+  validates_presence_of :facility_name #, :facility_group_id # :address, :point_of_contact, :phone_number, :email
 
   enum status: [:inactive, :active].freeze
+
+  before_create :assign_default_facility_group 
+
+
+  def assign_default_facility_group
+    if self.facility_group.nil?
+      self.facility_group_id = FacilityGroup.unassigned.id
+    end
+  end
 
   def as_json(options=nil)
     json = super(options)

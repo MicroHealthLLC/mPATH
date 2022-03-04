@@ -90,7 +90,7 @@ class Contract < ApplicationRecord
   
   def assign_default_facility_group
     if !self.facility_group.present?
-      self.facility_group_id = FacilityGroup.unassigned_group.id
+      self.facility_group_id = FacilityGroup.unassigned.id
     end
   end
 
