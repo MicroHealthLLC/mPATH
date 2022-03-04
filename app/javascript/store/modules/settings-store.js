@@ -38,12 +38,16 @@ const settingsStore = {
     group_loaded: true,
     groups_loaded: true,
     portfolio_users_loaded: true,
+    added_program_users_loaded:true, 
     group_status: 0,
     new_user_status: 0,
     new_contract_group_filter: [],
     new_user_loaded: true,
     new_user:[],
-    edit_user_data:[]
+    edit_user_data:[],
+    add_users_to_program:[],
+    add_users_to_program_status:0,
+    edit_user_data_status:0
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -211,14 +215,17 @@ const settingsStore = {
           commit("TOGGLE_USERS_LOADED", true);
         });
     },
-   updateUserData({ commit }, { userData }) {
+    updateUserData({ commit }, { userData }) {
       commit("TOGGLE_USERS_LOADED", false);
       let formData = new FormData();
+      console.log(userData)
       formData.append("user[first_name]", userData.fName)
       formData.append("user[last_name]", userData.lName)
       formData.append("user[email]", userData.email)
       formData.append("user[title]", userData.title)
-
+      formData.append("user[organization]", userData.org)
+      formData.append("user[address]", userData.address)
+      formData.append("user[phone_number]", userData.phNumber)
       axios({
         method: "PATCH",
         url: `${API_BASE_PATH}/users/${userData.id}`,
@@ -230,13 +237,41 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_EDIT_USER_DATA", res.data);
-          commit("SET_NEW_USER_STATUS", res.status);
+          commit("SET_EDIT_USER_DATA_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
           commit("TOGGLE_USERS_LOADED", true);
+        });
+    },
+    addUsersToProgram({ commit }, { addedUsers }) {
+      commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", false);
+      // console.log(addedUsers);
+      let formData = new FormData();
+      formData.append("program_id", addedUsers.programId);
+        addedUsers.userIds.forEach((ids) => {
+        formData.append("user_ids[]",ids);
+      });
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/users/add_to_program`,
+        data: formData, 
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_ADD_USERS_TO_PROGRAM", res.data);
+          commit("SET_ADD_USERS_TO_PROGRAM_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", true);
         });
     },
     createNewUser({ commit }, { newUser }) {
@@ -578,6 +613,7 @@ const settingsStore = {
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
       (state.contracts_loaded = loaded),
     TOGGLE_USERS_LOADED: (state, loaded) => (state.portfolio_users_loaded = loaded),
+    TOGGLE_ADDED_PROGRAM_USERS_LOADED: (state, loaded) => (state.added_program_users_loaded = loaded),
     SET_CONTRACT_GROUP_TYPES: (state, loaded) =>
       (state.contract_group_types = loaded),
     SET_CUSTOMER_AGENCIES_FILTER: (state, loaded) =>
@@ -610,7 +646,12 @@ const settingsStore = {
     SET_EDIT_USER_DATA: (state, value) => (state.edit_user_data = value),
 
     TOGGLE_NEW_USER_LOADED: (state, loaded) => (state.new_user_loaded = loaded),
-    SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value)
+    SET_EDIT_USER_DATA_STATUS:(state, status) => (state.edit_user_data_status = status),
+    SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value),
+    SET_ADD_USERS_TO_PROGRAM: (state, value) => (state.add_users_to_program = value),
+    SET_ADD_USERS_TO_PROGRAM_STATUS: (state, status) => (state.add_users_to_program_status = status),
+
+      
   },
 
   getters: {
@@ -641,6 +682,7 @@ const settingsStore = {
     getContractNumbers: (state) => state.contract_number,
 
     getUserStatus: (state) => state.user_status,
+    editUserDataStatus:(state) => state.edit_user_data_status,
 
     getTransferData: (state) => state.transfer_data, 
     getContractGroupTypes: (state) => state.contract_group_types,
@@ -650,8 +692,11 @@ const settingsStore = {
     groupStatus: (state) => state.group_status,
     groupsLoaded: (state) => state.groups_loaded,
     portfolioUsersLoaded: (state) => state.portfolio_users_loaded,
+    addedProgramUsersLoaded: (state) => state.added_program_users_loaded,
 
     newUserStatus: (state) => state.new_user_status,
+    addedUsersToProgramStatus: (state) => state.add_users_to_program_status,
+    getAddedUsersToProgram: (state) => state.add_users_to_program,
 
     getShowAdminBtn: (state) => state.show_admin_btn,
     getContractTable: (state) => state.contract_table,

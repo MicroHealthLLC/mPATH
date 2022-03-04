@@ -46,7 +46,7 @@
                 @click.prevent="addUser"
                 class="bg-success text-light mb-2"
               >
-              <i class="fas fa-users mr-1"></i>  Add Exisiting User(s)
+            <i class="fas fa-users-medical mr-1"></i> Add User(s) to Program
               </el-button>
             </div>
             <div class="col-6">
@@ -67,15 +67,15 @@
      
     <div class="container-fluid mt-2 mx-0">
     <div  
-        v-loading="!programUsers"
+        v-loading="!programUsers && !contentLoaded"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)"
         class="">
         <el-table
-        v-if="programUsers && programUsers.length > 0"
+        v-if="programUsers && programUsers.length > 0 && contentLoaded"
         :data="
-            userData
+            programUsers
             .filter(
                 (data) =>
                 !search ||
@@ -92,7 +92,7 @@
             size="small"
             v-if="rowId == scope.row.id"
             style="text-align:center"
-            v-model="scope.row.firstName"
+            v-model="scope.row.first_name"
             controls-position="right"
             ></el-input>
             <span v-else> {{ scope.row.first_name }}</span>
@@ -136,10 +136,10 @@
           prop="projects"
           sortable
           filterable
-          label="Projects"
+          label="Associations"
       >        
       </el-table-column> 
-       <el-table-column label="Actions" align="center"  width="75">
+       <el-table-column icon="el-user" align="center"  width="75">
           <!-- <template slot-scope="scope" > -->
             <!-- USe this attribute when functionaloty gets built in -->
                 <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
@@ -151,35 +151,35 @@
           <!-- </template> -->
       </el-table-column>   
       </el-table>
-      <!-- Table 2 -->
-        <el-table
-            :data="contractsTable"
-            style="width: 100%"
-            border
-            :header-cell-style="{ background: '#dda769' }"
-            >
-          <el-table-column prop="role"  sortable label="Contract Roles">
-          
-          </el-table-column>
-          <el-table-column
-              prop="contracts"
-              sortable
-              filterable
-              label="Contracts"
-          >
-          </el-table-column>
-          <el-table-column label="Actions"  align="center" width="75">
-              <!-- <template slot-scope="scope" > -->
-              <!-- USe this attribute when functionaloty gets built in -->
-                    <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-              <span v-tooltip="`Manage Contract Privileges`">
-                <i class="fas fa-user-lock"></i>               
-              </span>
+       <el-table
+        :data="projectsTable"
+        style="width: 100%"
+        border
+        :header-cell-style="{ background: '#dda769' }"
+      >
+      <el-table-column prop="role"  sortable label="Contract Roles">
       
-              <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-              <!-- </template> -->
-          </el-table-column>
-          </el-table>
+      </el-table-column>
+      <el-table-column
+          prop="projects"
+          sortable
+          filterable
+          label="Associations"
+      >        
+      </el-table-column> 
+       <el-table-column icon="el-user" align="center"  width="75">
+          <!-- <template slot-scope="scope" > -->
+            <!-- USe this attribute when functionaloty gets built in -->
+                <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
+       <span v-tooltip="`Manage Project Privileges`">
+          <i class="fas fa-user-lock"></i>               
+          </span>
+  
+          <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+          <!-- </template> -->
+      </el-table-column>   
+      </el-table>
+
           </div>
         <!-- </template> -->
         </el-table-column>
@@ -271,10 +271,10 @@
         </button>
          <button
             @click.prevent="cancelAddNewUser"
-           class="btn btn-sm bg-danger text-light modalBtns"
+           class="btn btn-sm bg-secondary text-light modalBtns"
             v-tooltip="`Cancel`"               
           >
-         <i class="fal fa-window-close mr-1"></i> CANCEL
+         <i class="fas fa-ban mr-1"></i> CANCEL
         </button>
         </div>      
        </div>
@@ -289,6 +289,9 @@
         center
         class="p-0 users"       
       >
+       <span slot="title" class="text-left">
+        <h4 class="text-dark"><i class="fas fa-users-medical mr-2"></i>Add User(s) To Program</h4>
+      </span>
       <div class="container">      
         <div class="row">
           <div class="col-12">
@@ -305,19 +308,29 @@
                 filterable
               >
                 <el-option
-                  v-for="item in getPortfolioUsers.filter(u => !programUsers.map(p => p.id).includes(u.id))"
+                  v-for="item in portfolioUsersOnly"
                   :value="item"
                   :key="item.id"
                   :label="item.full_name"
                 >
                 </el-option>
               </el-select>
-            <button
-                type="default"            
-                class="btn btn-primary text-light mt-3 float-right modalBtns"
-               >
-                <i class="far fa-plus-circle mr-1"></i> Add Users to Program
-            </button>
+            <div class="text-right">
+              <button
+                type="default"   
+                @click.prevent="addPortfolioUsersToProgram"         
+                class="btn btn-sm btn-primary text-light mt-3 mr-2 modalBtns"
+                >
+                  <i class="far fa-plus-circle mr-1"></i> Add Users to Program
+              </button>
+               <button
+                @click.prevent="cancelAddUser"
+                class="btn btn-sm bg-secondary text-light mt-3 modalBtns"
+                v-tooltip="`Cancel`"               
+              >
+               <i class="fas fa-ban mr-1"></i> CANCEL
+              </button>
+              </div>
           </div> 
                 
         </div>    
@@ -333,17 +346,23 @@
       <span slot="title" class="text-left">
         <h4 class="text-dark"> <i class="fas fa-edit mr-1"></i>Edit User </h4>
       </span>
-      <div class="container">  
+      <div class="container pt-0">  
         <div class="row">
-          <div class="col-12">
+          <div class="col-12 pt-0">
              <form accept-charset="UTF-8">
+                <FormTabs
+                class="mb-3"
+                :current-tab="currentTab"
+                :tabs="tabs"
+                 @on-change-tab="onChangeTab"
+              />
+                <div v-show="currentTab == 'tab1'" class="tab_1">
                <label class="mb-0 pb-0 text-dark"
                 >First Name </label
               >
               <el-input
                 class="mb-2 pl-1"
                 v-model="rowUser.first_name"
-                placeholder="Enter new Group name here"
                 rows="1"
                 />
                <label class="mb-0 pb-0 text-dark"
@@ -352,8 +371,7 @@
               <el-input
                 v-model="rowUser.last_name"
                 class="mb-2 pl-1"
-                placeholder="Enter new Group name here"
-                rows="1"    
+                 rows="1"    
               />
              <label class="mb-0 pb-0 text-dark"
                 >Title</label
@@ -363,14 +381,50 @@
                 class="mb-2 pl-1"
                 rows="1"               
               />
+              <label class="mb-0 pb-0 text-dark"
+                >Organization</label
+              >
+               <el-input
+                v-model="rowUser.organization"
+                class="mb-2 pl-1"
+                rows="1"               
+              />
+                </div>
+              <div v-show="currentTab == 'tab2'" class="tab_2">
                <label class="mb-0 pb-0 text-dark"
                 >Email</label>
                <el-input
                 v-model="rowUser.email"
-                placeholder="Enter new Group name here"
+                placeholder="Enter updated email here"
                 rows="1"  
                 class="mb-2 pl-1"        
               />
+
+               <label class="mb-0 pb-0 text-dark"
+                >Phone Number</label>
+               <el-input
+                v-model="rowUser.phone_number"
+                placeholder="Enter updated phone number here"
+                rows="1"  
+                class="mb-2 pl-1"        
+              />
+               <label class="mb-0 pb-0 text-dark"
+                >Address</label>
+               <el-input
+                v-model="rowUser.address"
+                placeholder="Enter updated address here"
+                rows="1"  
+                class="mb-2 pl-1"        
+              />
+               </div>
+                  <div v-show="currentTab == 'tab3'" class="tab_3 w-70">
+               <h6 style="color:#383838">mPATH User since: </h6>            
+                {{ moment(rowUser.created_at).format("DD MMM YYYY, h:mm a") }}
+            
+               <br>
+                <h6 class="mt-3" style="color:#383838">mPATH User Id#:</h6>      
+                {{ rowUser.id }}         
+                 </div>
 
       <div class="my-3 float-right">
          <button
@@ -382,10 +436,10 @@
         </button>
           <button
             @click.prevent="cancelEdits"
-           class="btn btn-sm bg-danger text-light modalBtns"
+           class="btn btn-sm bg-secondary text-light modalBtns"
             v-tooltip="`Close`"               
           >
-         <i class="fal fa-window-close mr-1"></i> CLOSE
+         <i class="fas fa-ban mr-1"></i> CANCEL
         </button>
       </div>
            </form>
@@ -505,10 +559,12 @@
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
+import FormTabs from "../../shared/FormTabs.vue"
 export default {
   name: "SettingsUsers",
   components: {
     SettingsSidebar,
+    FormTabs
   },
 
 
@@ -516,6 +572,35 @@ export default {
       return {
         search:"",
         autoCompleteSearch:"",
+         currentTab: "tab1",
+            tabs: [
+        {
+          label: "Basic Info",
+          key: "tab1",
+          closable: false,
+          // form_fields: [
+          //   "Task Name",
+          //   "Description",
+          //   "Start Date",
+          //   "Process Area",
+          //   "Stage",
+          //   "Start Date",
+          //   "Date Closed",
+          // ],
+        },
+        {
+          label: "Contact Info",
+          key: "tab2",
+          closable: false,
+          // form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
+        },
+        {
+          label: "Misc",
+          key: "tab3",
+          closable: false,
+          // form_fields: ["Checklists"],
+        },      
+      ],
         projectsTable: [
         {          
           role: 'project-read', 
@@ -530,8 +615,6 @@ export default {
           role: 'project-admin', 
           projects: 'Project D, Project E, Project F'
         }, 
-        ],
-        contractsTable: [
         {          
           role: 'contract-read', 
           contracts: 'Contract A, Contract B, Contract C'
@@ -570,12 +653,25 @@ export default {
   },
   methods: {
     ...mapMutations([
-      "SET_USER_STATUS",
-      "SET_NEW_USER_STATUS"
+       "SET_USER_STATUS",
+       "SET_NEW_USER_STATUS",
+       "SET_ADD_USERS_TO_PROGRAM",
+       "SET_ADD_USERS_TO_PROGRAM_STATUS",
+       "SET_EDIT_USER_DATA_STATUS"
+
     ]),
-  ...mapActions(["fetchPortfolioUsers", "createNewUser", "updateUserData"]),
+  ...mapActions([
+    "fetchPortfolioUsers", 
+    "fetchCurrentProject",
+    "createNewUser", 
+    "updateUserData", 
+    "addUsersToProgram"
+    ]),
     selectResult(user) {
       this.autoCompleteSearch = user.fullName;
+    },
+    onChangeTab(tab) {
+      this.currentTab = tab ? tab.key : "tab1";
     },
      handleClick(tab, event) { 
         //Route redirecting incase we want to assign url paths to each tab
@@ -584,12 +680,27 @@ export default {
         // }    
    
     },
+   addPortfolioUsersToProgram(){
+     if (this.portfolioUsers && this.portfolioUsers.length > 0) {
+      let uIds = []
+       for(let i = 0; i < this.portfolioUsers.length; i++) {
+            uIds.push(this.portfolioUsers[i].id)
+       }     
+      // console.log(uIds)
+      let addedUsersAr = {
+        addedUsers: {
+           programId: this.$route.params.programId,
+           userIds: uIds,      
+        },
+      };
+      this.addUsersToProgram({
+        ...addedUsersAr,
+      });
+     }
+   },
    addUser() {
       this.dialogVisible = true; 
     },
-    // contractsHeader(){
-    //   return ''
-    // },
     openCreateUser(){
       this.newUserDialogVisible = true
     },
@@ -618,19 +729,24 @@ export default {
   
     },
    saveUserEdits() {
-     let editUserData = {
-        userData: {
+    let editUserData = {
+     userData: {
           fName: this.rowUser.first_name,
           lName: this.rowUser.last_name,
           email: this.rowUser.email,
           title: this.rowUser.title,
-          id:    this.rowUser.id
-        },
+          id:    this.rowUser.id,
+          org:   this.rowUser.organization,
+          phNumber: this.rowUser.phone_number,
+          address: this.rowUser.address,
+          },
       };
       this.updateUserData({
         ...editUserData   
       });
-      // this.rowIndex = null;
+      this.fetchPortfolioUsers();
+
+      //  this.rowIndex = null;
       // this.rowId = null;
     },
     cancelEdits() {
@@ -641,6 +757,10 @@ export default {
     },
     cancelAddNewUser() {
       this.newUserDialogVisible = false;
+    },
+    cancelAddUser() {
+      this.dialogVisible = false;
+      this.portfolioUsers = [];
     },
     editMode(index, rows) {
       this.rowIndex = index;
@@ -664,20 +784,27 @@ export default {
         "currentProject",
         "getPortfolioUsers",
         "activeProjectUsers",
-        "newUserStatus"
+        "newUserStatus",
+        "getAddedUsersToProgram",
+        "addedUsersToProgramStatus",
+         "editUserDataStatus"
     ]),
-    userData(){
-      if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
-      return this.getPortfolioUsers
-     }       
+    portfolioUsersOnly(){
+    if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
+      if(this.currentProject && this.currentProject.users.length > 0){
+          let cpUserIds = this.currentProject.users.map(users => users.id)
+        return this.getPortfolioUsers.filter(u => !cpUserIds.includes(u.id) )     
+      }     
+     }      
     },
     programUsers(){
-     if(this.currentProject && this.currentProject.users && this.currentProject.users.length > 0) {
-     if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
-      // return this.getPortfolioUsers.filter(u => this.currentProject.users.map(cP => cP.id).includes(u.id))
-       return this.currentProject.users.filter(u =>  this.getPortfolioUsers.map(cP => cP.id).includes(u.id))
-       }  
-      }    
+    if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
+      if(this.currentProject && this.currentProject.users.length > 0){
+          let cpUserIds = this.currentProject.users.map(users => users.id)
+         return this.getPortfolioUsers.filter(u => cpUserIds.includes(u.id))     
+      }     
+     }       
+      
     },
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
@@ -693,9 +820,41 @@ export default {
             showClose: true,
           });
           this.SET_NEW_USER_STATUS(0);
+          this.fetchPortfolioUsers();
           this.lastName = '',
           this.firstName = '',
           this.email = ''
+          this.newUserDialogVisible = false;
+        }
+      },
+    },
+    editUserDataStatus: {
+      handler() {
+        if (this.editUserDataStatus == 200) {
+          this.$message({
+            message: `Successfully updated user`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_EDIT_USER_DATA_STATUS(0);
+          this.fetchPortfolioUsers();
+          this.editUserDialogVisible = false;
+        }
+      },
+    },
+    addedUsersToProgramStatus: {
+      handler() {
+        if (this.addedUsersToProgramStatus == 200) {
+          this.$message({
+            message: `${this.portfolioUsers.length} users successfully added to your program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_ADD_USERS_TO_PROGRAM_STATUS(0);
+          this.fetchPortfolioUsers();
+          this.fetchCurrentProject(this.$route.params.programId);
+          this.portfolioUsers = [];
+          this.dialogVisible = false;
         }
       },
     },
@@ -711,6 +870,9 @@ export default {
 }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
+}
+/deep/.el-dialog__close.el-icon.el-icon-close{
+  display: none;
 }
 /deep/.el-dialog__header.users{
   padding: 0;
@@ -743,6 +905,13 @@ export default {
   }
   .rowPrivileges {
     overflow-x: auto;
+  }
+  .spanInput{
+    background-color: #F5F7FA;
+    // border-color: #E4E7ED;
+    color: #C0C4CC;
+    border-radius: 4px;
+    border:solid 1px #E4E7ED; 
   }
   .results {
     position: absolute;

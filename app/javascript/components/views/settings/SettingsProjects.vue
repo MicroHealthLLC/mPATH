@@ -170,6 +170,15 @@
                 class="bg-light">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button> 
+                 <el-button
+                  type="default"
+                  v-if="scope.$index !== rowIndex"
+                  v-tooltip="`See Contract Users`"
+                  @click.prevent="openUserPrivileges(scope.$index, scope.row)"
+                  class="bg-light"
+                >
+                   <i class="fas fa-users mr-1"></i>
+                </el-button>
           
               <el-button
                 type="default"
@@ -234,6 +243,14 @@
             </div>
           </form>
         </el-dialog>
+           <el-dialog
+          :visible.sync="openUserPrivilegesDialog"
+          append-to-body
+          center
+          class="contractForm p-0"
+        >
+     USERS AND THEIR ROLES TYPES FOR THIS CONTRACT
+        </el-dialog>
       </div>
     </div>
   </div>
@@ -260,6 +277,7 @@ export default {
       rowIndex: null,
       rowId: null,
       projectId: null, 
+      openUserPrivilegesDialog:false,
       selectedProjectGroup: null,
       newProjectNameText: "",
       value: "",
@@ -283,6 +301,12 @@ export default {
       //     projectId: rows.id.toString(),          
       //   },
       // });
+    },
+   openUserPrivileges() {
+      this.openUserPrivilegesDialog = true;
+      // this.C_projectGroupFilter = null;
+      // this.contractNameText = "";
+      // this.contractNicknameText = "";
     },
   
     addProject() {

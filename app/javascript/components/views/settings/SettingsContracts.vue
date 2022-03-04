@@ -174,9 +174,18 @@
                 >
                   <i class="fal fa-edit text-primary mr-1"></i>Edit
                 </el-button>
+                 <el-button
+                  type="default"
+                  v-tooltip="`See Contract Users`"
+                  v-if="scope.$index !== rowIndex"
+                  @click.prevent="openUserPrivileges(scope.$index, scope.row)"
+                  class="bg-light"
+                >
+                   <i class="fas fa-users mr-1"></i>
+                </el-button>
 
                 <el-button
-                  v-if="_isallowedProgramSettings('delete')"
+                  v-if="_isallowedProgramSettings('delete') && scope.$index !== rowIndex"
                   type="default"
                   v-tooltip="`Delete`"
                   @click.prevent="
@@ -187,7 +196,7 @@
                   <i class="far fa-trash-alt text-danger"></i>
                 </el-button>
                 <el-button
-                  type="default"
+                  type="default"               
                   @click.prevent="goToContract(scope.$index, scope.row)"
                   class="bg-success text-light"
                   >Go To Contract
@@ -205,7 +214,7 @@
           :visible.sync="dialogVisible"
           append-to-body
           center
-          class="contractForm p-0"
+          class="contractForm addContract p-0"
         >
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
@@ -314,6 +323,83 @@
           </form>
         </el-dialog>
       </div>
+
+      <el-dialog
+          :visible.sync="openUserPrivilegesDialog"
+          append-to-body
+          center
+          class="contractUsers"
+          id="contractUsers p-0"
+        >
+      <span slot="title" class="text-left">
+       <h5 class="text-dark"> <i class="far fa-file-contract mr-1 mh-orange-text"></i> 
+        {{ contractData.nickname }}
+      </h5>
+      </span>
+         <el-table
+         :data="contractUser.filter(
+                (data) =>
+                  !searchContractUsers ||
+                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
+              )"
+          style="width: 100%"
+          height="450"
+        >
+          <el-table-column prop="user"  sortable label="Users">
+            <!-- <template slot-scope="scope">
+           
+           
+        
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="roles"
+            sortable
+            filterable
+            label="Roles"
+          >
+            <!-- <template slot-scope="scope"> -->
+               <!-- <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>    -->
+
+              
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            <!-- </template> -->
+          </el-table-column>
+          <el-table-column>
+          <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchContractUsers"
+            size="mini"
+            placeholder="Search contract users"            
+            >
+
+              <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          </el-table-column>
+
+         </el-table>
+        </el-dialog>
     </div>
   </div>
 </template>
@@ -338,17 +424,39 @@ export default {
       currentFacility: {},
       // currentContract: {},
       dialogVisible: false,
+      openUserPrivilegesDialog: false, 
+      contractData: {},
       currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
       projectNameText: "",
       search: "",
+      searchContractUsers:"",
       hideSaveBtn: false,
       contractNameText: "",
       contractNicknameText: "",
       expanded: {
         id: "",
       },
+      contractUser: [
+        {          
+          user: 'John Doe',
+          roles: 'contract-write, contract-read',
+        }, {
+          user: 'Bob Dole',
+          roles: 'contract-write'
+        }, {
+          user: 'Adam Smith',
+          roles: 'contract-write, contract-read, contract-delete',
+       }, {
+          user: 'Samantha Smith',
+          roles: 'contract-write, contract-read', 
+        }, {
+          user: 'Curtis Smith',
+          roles: 'contract-write, contract-read',
+        }, 
+       
+        ],
     };
   },
   mounted() {
@@ -494,6 +602,13 @@ export default {
       this.contractNameText = "";
       this.contractNicknameText = "";
     },
+    openUserPrivileges(index, rows) {
+      this.openUserPrivilegesDialog = true;
+      this.contractData = rows
+      // this.C_projectGroupFilter = null;
+      // this.contractNameText = "";
+      // this.contractNicknameText = "";
+    },
   },
   computed: {
     ...mapGetters([
@@ -611,6 +726,29 @@ export default {
   color: #212529;
   font-size: 1.15rem;
 }
+.contractUsers { 
+  
+  /deep/.el-dialog{
+ width: 60% !important; 
+
+ /deep/.el-dialog__body {
+   padding-top: 0;
+ }
+
+  }
+  
+}
+/deep/.el-dialog.contractUsers{
+ width: 60% !important; 
+  }
+.contractUsers{
+ /deep/.el-dialog__body {
+   padding-top: 0;
+ }
+}
+
+
+
 .tabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
@@ -639,6 +777,9 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+/deep/.el-input__inner{
+  font-weight: 300 !important;
+}
 /deep/.el-table__row .el-input .el-input__inner {
   border-style: none;
   font-size: 16px !important;
@@ -646,7 +787,7 @@ a {
 /deep/.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
-/deep/.el-dialog {
+/deep/.el-dialog.addContract {
   width: 30%;
   border-top: solid 5px #1d336f !important;
 }
