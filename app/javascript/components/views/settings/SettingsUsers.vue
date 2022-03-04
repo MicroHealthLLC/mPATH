@@ -1,7 +1,7 @@
 <template>
 <div 
-  v-loading="!contentLoaded"
-  element-loading-text="Fetching your data. Please wait..."
+  v-loading="!programUsers"
+
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(0, 0, 0, 0.8)" class="row">
     <div class="col-md-2">
@@ -54,6 +54,7 @@
                 type="search"
                 placeholder="Search Users"
                 aria-label="Search"
+                
                 aria-describedby="search-addon"
                 v-model="search"
                 data-cy=""
@@ -67,14 +68,14 @@
      
     <div class="container-fluid mt-2 mx-0">
     <div  
-        v-loading="!programUsers && !contentLoaded"
+        v-loading="!programUsersLoaded"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)"
         class="">
         <el-table
-        v-if="programUsers && programUsers.length > 0 && contentLoaded"
-        :data="
+        v-if="programUsers && programUsers.length > 0"
+       :data="
             programUsers
             .filter(
                 (data) =>
@@ -83,102 +84,74 @@
             )
             .reverse()
         "
+        highlight-current-row
         style="width: 100%"
         height="450"
+        :default-sort="{ prop: 'last_name', order: 'ascending'}"  
         >
-        <el-table-column prop="first_name"  sortable label="First Name">
-            <template slot-scope="scope">       
-            <el-input
-            size="small"
-            v-if="rowId == scope.row.id"
-            style="text-align:center"
-            v-model="scope.row.first_name"
-            controls-position="right"
-            ></el-input>
-            <span v-else> {{ scope.row.first_name }}</span>
-            </template>
-        </el-table-column>
-        <el-table-column
-            prop="last_name"
-            sortable
-            filterable
-            label="Last Name"
-        >
-            <template slot-scope="scope">
-            {{ scope.row.last_name}}
-            <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.facilityGroupName"
-            ></el-input> -->
-            </template>
-        </el-table-column>
+        <el-table-column prop="first_name" sortable label="First Name"> </el-table-column>
+        <el-table-column prop="last_name" sortable label="Last Name"> </el-table-column>
      
      
         <!--BEGIN Expandable Column Containing Priveleges Info -->
          <el-table-column type="expand" label="Privileges" width="100">
-       <!-- <template slot-scope="scope"> -->
-       <!-- <div class="container-fluid pt-0"> 
-         <div class="row rowPrivileges" >      -->
-   
-          <!-- Privileges Table 1 -->
-      <div class="">
-      <el-table
-        :data="projectsTable"
-        style="width: 100%"
-        border
-        :header-cell-style="{ background: '#EDEDED' }"
-      >
-      <el-table-column prop="role"  sortable label="Project Roles">
-      
-      </el-table-column>
-      <el-table-column
-          prop="projects"
-          sortable
-          filterable
-          label="Associations"
-      >        
-      </el-table-column> 
-       <el-table-column icon="el-user" align="center"  width="75">
-          <!-- <template slot-scope="scope" > -->
-            <!-- USe this attribute when functionaloty gets built in -->
-                <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-       <span v-tooltip="`Manage Project Privileges`">
-          <i class="fas fa-user-lock"></i>               
-          </span>
-  
-          <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-          <!-- </template> -->
-      </el-table-column>   
-      </el-table>
-       <el-table
-        :data="projectsTable"
-        style="width: 100%"
-        border
-        :header-cell-style="{ background: '#dda769' }"
-      >
-      <el-table-column prop="role"  sortable label="Contract Roles">
-      
-      </el-table-column>
-      <el-table-column
-          prop="projects"
-          sortable
-          filterable
-          label="Associations"
-      >        
-      </el-table-column> 
-       <el-table-column icon="el-user" align="center"  width="75">
-          <!-- <template slot-scope="scope" > -->
-            <!-- USe this attribute when functionaloty gets built in -->
-                <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-       <span v-tooltip="`Manage Project Privileges`">
-          <i class="fas fa-user-lock"></i>               
-          </span>
-  
-          <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-          <!-- </template> -->
-      </el-table-column>   
-      </el-table>
+       <div class="">
+        <el-table
+          :data="projectsTable"
+          style="width: 100%"
+          border
+          :header-cell-style="{ background: '#EDEDED' }"
+        >
+        <el-table-column prop="role"  sortable label="Project Roles">
+        
+        </el-table-column>
+        <el-table-column
+            prop="projects"
+            sortable
+            filterable
+            label="Associations"
+        >        
+        </el-table-column> 
+        <el-table-column icon="el-user" align="center"  width="75">
+            <!-- <template slot-scope="scope" > -->
+              <!-- USe this attribute when functionaloty gets built in -->
+                  <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
+        <span v-tooltip="`Manage Project Privileges`">
+            <i class="fas fa-user-lock"></i>               
+            </span>
+    
+            <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+            <!-- </template> -->
+        </el-table-column>   
+        </el-table>
+        <el-table
+          :data="projectsTable"
+          style="width: 100%"
+          border
+          :header-cell-style="{ background: '#dda769' }"
+        >
+        <el-table-column prop="role"  sortable label="Contract Roles">
+        
+        </el-table-column>
+        <el-table-column
+            prop="projects"
+            sortable
+            filterable
+            label="Associations"
+        >        
+        </el-table-column> 
+        <el-table-column icon="el-user" align="center"  width="75">
+            <!-- <template slot-scope="scope" > -->
+              <!-- USe this attribute when functionaloty gets built in -->
+                  <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
+        <span v-tooltip="`Manage Project Privileges`">
+            <i class="fas fa-user-lock"></i>               
+            </span>
+    
+            <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+            <!-- </template> -->
+        </el-table-column>   
+        </el-table>
 
           </div>
         <!-- </template> -->
@@ -292,14 +265,13 @@
        <span slot="title" class="text-left">
         <h4 class="text-dark"><i class="fas fa-users-medical mr-2"></i>Add User(s) To Program</h4>
       </span>
-      <div class="container">      
+      <div class="container" v-if="portfolioUsersOnly && portfolioUsersOnly.length > 0">      
         <div class="row">
           <div class="col-12">
           <label class="font-md mb-0">Search and select Users</label>
               <el-select
                 v-model="portfolioUsers"
                 class="w-100"
-                v-if="getPortfolioUsers.length > 0 && programUsers"
                 track-by="id"
                 value-key="id"
                 :multiple="true"
@@ -374,7 +346,7 @@
                  rows="1"    
               />
              <label class="mb-0 pb-0 text-dark"
-                >Title</label
+                >Position</label
               >
                <el-input
                 v-model="rowUser.title"
@@ -386,6 +358,7 @@
               >
                <el-input
                 v-model="rowUser.organization"
+                disabled
                 class="mb-2 pl-1"
                 rows="1"               
               />
@@ -404,6 +377,7 @@
                 >Phone Number</label>
                <el-input
                 v-model="rowUser.phone_number"
+                disabled
                 placeholder="Enter updated phone number here"
                 rows="1"  
                 class="mb-2 pl-1"        
@@ -412,6 +386,7 @@
                 >Address</label>
                <el-input
                 v-model="rowUser.address"
+                disabled
                 placeholder="Enter updated address here"
                 rows="1"  
                 class="mb-2 pl-1"        
@@ -448,83 +423,6 @@
         </div>    
       </div>
     </el-dialog>
-
-  <!-- Permissions Profile modal -->
-    <!-- <el-dialog
-        :visible.sync="privilegesProfileVisible"
-        append-to-body
-        center
-        class="p-0 users"       
-      >
-      <span slot="title" class="text-left">
-        <h4 class="text-dark"> <i class="fal fa-user-lock mr-2 bootstrap-purple-text"></i>PRIVILEGES PROFILE </h4>
-      </span>
-
-       <div class="container pt-0"> 
-         <div class="row">       
-          <div class="col-6 py-0" v-if="userPrivileges">
-     
-         <h5 class="text-dark" style="text-decoration:underline" >User: {{ userPrivileges.full_name}}</h5>
-          </div>
-       
-        </div>       
-        <div class="row">       
-          <div class="col-6">
-        <el-table
-          :data="projectsTable"
-          style="width: 100%"
-          border
-        >
-        <el-table-column prop="project"  sortable label="Project">
-        
-        </el-table-column>
-        <el-table-column
-            prop="role"
-            sortable
-            filterable
-            label="Role"
-        >
-        
-         
-        </el-table-column>
-
-    
-        </el-table>
-        
-          </div>
-          <div class="col-6">
-         <el-table
-          :data="projectsTable"
-          style="width: 100%"
-          border
-        >
-        <el-table-column prop="project"  sortable label="Contracts">
-        
-        </el-table-column>
-        <el-table-column
-            prop="role"
-            sortable
-            filterable
-            label="Role"
-        >
-        
-         
-        </el-table-column>
-
-    
-        </el-table>
-             
-          </div>
-        </div>
-     
-    
-       </div>
-     
-        
-        
-
-      </el-dialog>
-     -->
     </div>
 
     </div>
@@ -534,6 +432,7 @@
 </template>
 
 <script>
+//DEVELOPMENT NOTES FEB 2022 (Erase After Release)
 // Create route for SettingsUsers
 //1. Create table with all Program Users
 //2. Table should have search bar 
@@ -633,6 +532,7 @@ export default {
         lastName:'',
         email:'',
         rowIndex: null,
+        programId: this.$route.params.programId,
         rowId: null,
         addedUsers: [],
         rowUser: {},
@@ -652,24 +552,23 @@ export default {
     };
   },
   methods: {
-    ...mapMutations([
-       "SET_USER_STATUS",
-       "SET_NEW_USER_STATUS",
-       "SET_ADD_USERS_TO_PROGRAM",
-       "SET_ADD_USERS_TO_PROGRAM_STATUS",
-       "SET_EDIT_USER_DATA_STATUS"
+...mapMutations([
+    "SET_USER_STATUS",
+    "SET_NEW_USER_STATUS",
+    "SET_ADD_USERS_TO_PROGRAM",
+    "SET_PROGRAM_USERS",
+    "SET_ADD_USERS_TO_PROGRAM_STATUS",
+    "SET_EDIT_USER_DATA_STATUS"
 
     ]),
   ...mapActions([
     "fetchPortfolioUsers", 
+    "fetchProgramUsers", 
     "fetchCurrentProject",
     "createNewUser", 
     "updateUserData", 
     "addUsersToProgram"
     ]),
-    selectResult(user) {
-      this.autoCompleteSearch = user.fullName;
-    },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
     },
@@ -689,17 +588,18 @@ export default {
       // console.log(uIds)
       let addedUsersAr = {
         addedUsers: {
-           programId: this.$route.params.programId,
+           programId: this.programId,
            userIds: uIds,      
         },
       };
-      this.addUsersToProgram({
+     this.addUsersToProgram({
         ...addedUsersAr,
       });
      }
    },
    addUser() {
       this.dialogVisible = true; 
+      // this.fetchPortfolioUsers()
     },
     openCreateUser(){
       this.newUserDialogVisible = true
@@ -710,6 +610,7 @@ export default {
            fName: this.firstName,
            lName: this.lastName,
            email: this.email,
+           pId: this.programId
         },
       };
       this.createNewUser({
@@ -722,12 +623,6 @@ export default {
       this.rowUser = rows
       console.log(rows)
     },
-    openUserPrivileges(index, rows){
-      this.privilegesProfileVisible = true;
-      this.userPrivileges = rows
-      console.log(rows)
-  
-    },
    saveUserEdits() {
     let editUserData = {
      userData: {
@@ -736,7 +631,7 @@ export default {
           email: this.rowUser.email,
           title: this.rowUser.title,
           id:    this.rowUser.id,
-          org:   this.rowUser.organization,
+          // org:   this.rowUser.organizationId,
           phNumber: this.rowUser.phone_number,
           address: this.rowUser.address,
           },
@@ -744,10 +639,6 @@ export default {
       this.updateUserData({
         ...editUserData   
       });
-      this.fetchPortfolioUsers();
-
-      //  this.rowIndex = null;
-      // this.rowId = null;
     },
     cancelEdits() {
       this.editUserDialogVisible = false;
@@ -774,9 +665,12 @@ export default {
     },
   },
   mounted() {
-   if (this.getPortfolioUsers.length <= 0)    {
-        this.fetchPortfolioUsers()
+   if (this.programUsers.length <= 0)    {
+        this.fetchProgramUsers(this.$route.params.programId)
       }
+    if (this.getPortfolioUsers.length <= 0)    {
+      this.fetchPortfolioUsers()
+    }  
   },
   computed: {
     ...mapGetters([
@@ -785,27 +679,27 @@ export default {
         "getPortfolioUsers",
         "activeProjectUsers",
         "newUserStatus",
+        "getNewUserId",
         "getAddedUsersToProgram",
         "addedUsersToProgramStatus",
-         "editUserDataStatus"
+         "editUserDataStatus",
+         "portfolioUsersLoaded",
+         "programUsers",
+         "programUsersLoaded"
     ]),
+
+    // users(){
+    //  if(this.programUsers && this.programUsers.length > 0){
+    //    return this.programUsers
+    //  }
+    // },
     portfolioUsersOnly(){
-    if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
-      if(this.currentProject && this.currentProject.users.length > 0){
-          let cpUserIds = this.currentProject.users.map(users => users.id)
-        return this.getPortfolioUsers.filter(u => !cpUserIds.includes(u.id) )     
+    if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
+          this.programUsers && this.programUsers.length > 0
+          ){     
+        return this.getPortfolioUsers.filter(u => !this.programUsers.includes(u.id) )     
       }     
-     }      
-    },
-    programUsers(){
-    if(this.getPortfolioUsers && this.getPortfolioUsers.length > 0){
-      if(this.currentProject && this.currentProject.users.length > 0){
-          let cpUserIds = this.currentProject.users.map(users => users.id)
-         return this.getPortfolioUsers.filter(u => cpUserIds.includes(u.id))     
-      }     
-     }       
-      
-    },
+     },
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
@@ -818,9 +712,20 @@ export default {
             message: ` ${this.firstName + this.lastName } successfully added to your program.`,
             type: "success",
             showClose: true,
-          });
+          })
+       
+          if (this.getNewUserId && this.getNewUserId.msg) {
+              let addedUserId = {
+                addedUsers: {
+                programId: this.programId,
+                userIds: [this.getNewUserId.msg],      
+                  },
+               }
+             this.addUsersToProgram(addedUserId);
+          }
           this.SET_NEW_USER_STATUS(0);
-          this.fetchPortfolioUsers();
+          this.fetchProgramUsers(this.$route.params.programId);
+          // this.fetchCurrentProject(this.$route.params.programId);
           this.lastName = '',
           this.firstName = '',
           this.email = ''
@@ -837,7 +742,7 @@ export default {
             showClose: true,
           });
           this.SET_EDIT_USER_DATA_STATUS(0);
-          this.fetchPortfolioUsers();
+          this.fetchProgramUsers(this.programId);
           this.editUserDialogVisible = false;
         }
       },
@@ -851,8 +756,7 @@ export default {
             showClose: true,
           });
           this.SET_ADD_USERS_TO_PROGRAM_STATUS(0);
-          this.fetchPortfolioUsers();
-          this.fetchCurrentProject(this.$route.params.programId);
+          this.fetchProgramUsers(this.programId);
           this.portfolioUsers = [];
           this.dialogVisible = false;
         }

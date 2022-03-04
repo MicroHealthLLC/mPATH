@@ -13,9 +13,8 @@ class Api::V1::UsersController < AuthenticatedController
   def create
     @user = User.new(user_params)
     @user.password = "changeme"
-    if @user.save
-      
-      render json: {msg: "User created successfully!"}, status: 200
+    if @user.save      
+      render json: {msg: @user.id }, status: 200
     else
       render json: {msg: "Error crating user"}, status: 406
     end
@@ -37,7 +36,7 @@ class Api::V1::UsersController < AuthenticatedController
     @program.user_ids = all_user_ids
     
     if @program.save
-      render json: {msg: "Users are added to program sucuessfully!"}, status: 200
+      render json: {msg: "Users are added to program successfully!"}, status: 200
     else
       render json: {msg: @program.errors.full_messages.join(",")}, status: 406
     end
@@ -45,7 +44,7 @@ class Api::V1::UsersController < AuthenticatedController
 
   private
   def user_params
-    params.require(:user).permit(:email, :first_name, :last_name)
+    params.require(:user).permit(:email, :first_name, :last_name, :title, :phone_number)
   end
 
 end

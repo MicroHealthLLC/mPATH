@@ -38,12 +38,15 @@ const settingsStore = {
     group_loaded: true,
     groups_loaded: true,
     portfolio_users_loaded: true,
+    program_users_loaded: true,
+    program_users:[],
+
     added_program_users_loaded:true, 
     group_status: 0,
     new_user_status: 0,
     new_contract_group_filter: [],
     new_user_loaded: true,
-    new_user:[],
+    new_user_id: null,
     edit_user_data:[],
     add_users_to_program:[],
     add_users_to_program_status:0,
@@ -215,15 +218,36 @@ const settingsStore = {
           commit("TOGGLE_USERS_LOADED", true);
         });
     },
+    fetchProgramUsers({ commit }, id) {
+      commit("TOGGLE_PROGRAM_USERS_LOADED", false);
+      // Retrieve contract by id
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/users.json?project_id=${id}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_PROGRAM_USERS", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PROGRAM_USERS_LOADED", true);
+        });
+    },
     updateUserData({ commit }, { userData }) {
-      commit("TOGGLE_USERS_LOADED", false);
+      commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
       console.log(userData)
       formData.append("user[first_name]", userData.fName)
       formData.append("user[last_name]", userData.lName)
       formData.append("user[email]", userData.email)
       formData.append("user[title]", userData.title)
-      formData.append("user[organization]", userData.org)
+      formData.append("user[organization_id]", userData.org)
       formData.append("user[address]", userData.address)
       formData.append("user[phone_number]", userData.phNumber)
       axios({
@@ -243,12 +267,12 @@ const settingsStore = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_USERS_LOADED", true);
+          commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
     addUsersToProgram({ commit }, { addedUsers }) {
       commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", false);
-      // console.log(addedUsers);
+      console.log(addedUsers);
       let formData = new FormData();
       formData.append("program_id", addedUsers.programId);
         addedUsers.userIds.forEach((ids) => {
@@ -276,7 +300,7 @@ const settingsStore = {
     },
     createNewUser({ commit }, { newUser }) {
        commit("TOGGLE_NEW_USER_LOADED", false);   
-      //  console.log(newUser.fName)   
+       console.log(newUser.fName)   
        let formData = new FormData();
         formData.append("user[first_name]", newUser.fName)
         formData.append("user[last_name]", newUser.lName)
@@ -292,6 +316,7 @@ const settingsStore = {
         })
           .then((res) => {
             commit("SET_NEW_USER", res.data);
+            console.log(res.data)
             commit("SET_NEW_USER_STATUS", res.status);
           })
           .catch((err) => {
@@ -613,6 +638,7 @@ const settingsStore = {
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
       (state.contracts_loaded = loaded),
     TOGGLE_USERS_LOADED: (state, loaded) => (state.portfolio_users_loaded = loaded),
+    TOGGLE_PROGRAM_USERS_LOADED: (state, loaded) => (state.program_users_loaded = loaded),
     TOGGLE_ADDED_PROGRAM_USERS_LOADED: (state, loaded) => (state.added_program_users_loaded = loaded),
     SET_CONTRACT_GROUP_TYPES: (state, loaded) =>
       (state.contract_group_types = loaded),
@@ -633,11 +659,13 @@ const settingsStore = {
     SET_SUBCONTRACT_NUMBER: (state, value) =>
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
-    SET_NEW_USER: (state, value) => (state.new_user = value),
+    SET_NEW_USER: (state, value) => (state.new_user_id = value),
     SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_PORTFOLIO_USERS: (state, value) => (state.portfolio_users = value),
+
+    SET_PROGRAM_USERS: (state, value) => (state.program_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
 
@@ -671,7 +699,7 @@ const settingsStore = {
     getCheckAll: (state) => state.check_all,
     getCheckedGroups: (state) => state.checked_groups,
 
-    getNewUser:(state) => state.new_user,
+    getNewUserId:(state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,
 
     getCheckedPortfolioGroups: (state) => state.checked_portfolio_groups,
@@ -689,6 +717,8 @@ const settingsStore = {
     group: (state) => state.group,
     groups: (state) => state.groups,
     getPortfolioUsers: (state) => state.portfolio_users,
+    programUsersLoaded: (state) => state.program_users_loaded,
+    programUsers: (state) => state.program_users,
     groupStatus: (state) => state.group_status,
     groupsLoaded: (state) => state.groups_loaded,
     portfolioUsersLoaded: (state) => state.portfolio_users_loaded,

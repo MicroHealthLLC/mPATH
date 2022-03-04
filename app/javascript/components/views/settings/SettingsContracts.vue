@@ -90,7 +90,13 @@
                 .reverse()
             "
             style="width: 100%"
+            highlight-current-row
             height="450"
+            ref="table"
+            :row-key="row => row.id"
+            :expand-row-keys="expandRowKeys"
+		      	@expand-change="handleExpandChange" 
+            :default-sort="{ prop: 'nickname', order: 'ascending'}"        
           >
             <el-table-column prop="nickname" sortable label="Contract">
               <template slot-scope="scope">
@@ -135,6 +141,86 @@
 
               </template>
             </el-table-column>
+  <!--BEGIN Expandable Column Containing Contract User roles -->
+      <el-table-column label="Users" width="100" type="expand">
+         <template>
+       <!-- <template slot-scope="scope">
+         <el-button type="text" @click="toggleExpand(scope.row)"><i class="fas fa-users mr-1"></i></el-button>
+        </template>  -->
+
+      <!-- <span slot="title" class="text-left">
+       <h5 class="text-dark"> <i class="far fa-file-contract mr-1 mh-orange-text"></i> 
+        {{ contractData.nickname }}
+      </h5> -->
+      <!-- </span> -->
+         <el-table
+         :data="contractUser.filter(
+                (data) =>
+                  !searchContractUsers ||
+                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
+              )"
+          style="width: 100%"
+          height="450"
+        >
+          <el-table-column prop="user"  sortable label="Users">
+            <!-- <template slot-scope="scope">
+           
+           
+        
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="roles"
+            sortable
+            filterable
+            label="Roles"
+          >
+            <!-- <template slot-scope="scope"> -->
+               <!-- <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>    -->
+
+              
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            <!-- </template> -->
+          </el-table-column>
+          <el-table-column>
+          <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchContractUsers"
+            size="mini"
+            placeholder="Search contract users"            
+            >
+
+              <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          </el-table-column>
+
+         </el-table>
+         </template>
+
+         </el-table-column>
+           <!--END Expandable Column Containing Contract User roles -->
+
 
             <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
@@ -174,7 +260,7 @@
                 >
                   <i class="fal fa-edit text-primary mr-1"></i>Edit
                 </el-button>
-                 <el-button
+                 <!-- <el-button
                   type="default"
                   v-tooltip="`See Contract Users`"
                   v-if="scope.$index !== rowIndex"
@@ -182,7 +268,7 @@
                   class="bg-light"
                 >
                    <i class="fas fa-users mr-1"></i>
-                </el-button>
+                </el-button> -->
 
                 <el-button
                   v-if="_isallowedProgramSettings('delete') && scope.$index !== rowIndex"
@@ -405,11 +491,14 @@
 </template>
 
 <script>
-// Compare both array objects, if obj a is also in obj b, push key 'yes' into that value[i] else, push key 'no'
+//PRIVILEGES FEATURE REQUIREMENTS
 
-// Create two empty arrays
-// Push values into array
-// Compare arrays
+//I want to see a column for roles
+//When I click on that column row, row expands to show users of that contract, as well as the roles of the users
+//
+
+
+
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
@@ -421,6 +510,7 @@ export default {
   },
   data() {
     return {
+      expandRowKeys: [],
       currentFacility: {},
       // currentContract: {},
       dialogVisible: false,
@@ -504,6 +594,12 @@ export default {
       //   },
       // });
     },
+	  handleExpandChange (row, expandedRows) {
+			const id = row.id;
+			const lastId = this.expandRowKeys[0];
+			// disable mutiple row expanded 
+			this.expandRowKeys = id === lastId ? [] : [id];
+		},
     saveNewContract() {
       // this.onSubmit()
       let contractData = {

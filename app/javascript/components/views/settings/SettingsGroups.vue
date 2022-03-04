@@ -181,6 +181,8 @@
               "
               style="width: 100%"
               height="475"
+              highlight-current-row
+              :default-sort="{ prop: 'name', order: 'ascending'}"  
             >
           
               <el-table-column prop="name" sortable label="Groups">
