@@ -151,9 +151,9 @@ class Contract < ApplicationRecord
       contract.user_id = user.id
       contract.save
     end
-    if params[:facility_group_name]
-      contract.contract_facility_group.update(name: params[:facility_group_name])
-    end
+    # if params[:facility_group_name]
+    #   contract.contract_facility_group.update(name: params[:facility_group_name])
+    # end
     contract
   end
 

@@ -1028,7 +1028,7 @@
               </div>
 
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-2 pr-3"
                 style="postion:relative"
                 v-if="
                   tasksObj.filtered.tasks !== null &&
@@ -1439,7 +1439,6 @@
                         <td>{{ task.project_name }}</td>
                         <td>{{ task.text }}</td>
                         <td
-                          class="text-left"
                           v-if="task.notes_updated_at.length > 0"
                         >
                           <span
@@ -1461,9 +1460,9 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
 
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="
                               (task.ongoing &&
@@ -1488,7 +1487,7 @@
                             moment(task.start_date).format("DD MMM YYYY")
                           }}</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="task.ongoing && !task.closed"
                             v-tooltip="`Ongoing`"
@@ -1511,7 +1510,7 @@
                           }}</span>
                         </td>
                         <td>{{ task.users }}</td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="task.ongoing && !task.closed"
                             v-tooltip="`Ongoing`"
@@ -1735,7 +1734,6 @@
                           </span>
                         </td>
                         <td
-                          class="text-left"
                           v-if="task.notes_updated_at.length > 0"
                         >
                           <span
@@ -1756,7 +1754,7 @@
                             {{ task.notes[task.notes.length - 1].body }}
                           </span>
                         </td>
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                       </tr>
                     </tbody>
                   </table>
@@ -2093,7 +2091,7 @@
             </div>
 
             <div
-              class="row text-center mt-1 pr-3"
+              class="row mt-1 pr-3"
               v-if="
                 issuesObj.filtered.issues !== null &&
                   issuesObj.filtered.issues.length > 0
@@ -2585,7 +2583,6 @@
                       <td>{{ issue.project_name }}</td>
                       <td>{{ issue.title }}</td>
                       <td
-                        class="text-left"
                         v-if="issue.notes_updated_at.length > 0"
                       >
                         <span
@@ -2607,13 +2604,13 @@
                         </span>
                       </td>
                       <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                      <td class="text-left" v-else>No Update</td>
+                      <td v-else>No Update</td>
                       <td>{{ issue.issue_type }}</td>
                       <td>{{ issue.issue_severity }}</td>
-                      <td>
+                      <td class="text-center">
                         {{ moment(issue.start_date).format("DD MMM YYYY") }}
                       </td>
-                      <td>
+                      <td class="text-center">
                         <span
                           v-if="issue.on_hold && issue.due_date == null"
                           v-tooltip="`On Hold (w/no Due Date)`"
@@ -2631,7 +2628,7 @@
                         </span>
                       </td>
                       <td>{{ issue.users }}</td>
-                      <td>{{ issue.progress + "%" }}</td>
+                      <td class="text-center">{{ issue.progress + "%" }}</td>
                       <td class="text-center">
                         <span v-if="issue.is_overdue" v-tooltip="`Overdue`">
                           <i class="fas fa-calendar mr-1 text-danger"></i>
@@ -2771,7 +2768,6 @@
                       </td>
                       <td>
                         <span
-                          class="text-left"
                           v-if="issue.notes_updated_at.length > 0"
                         >
                           <span
@@ -3176,7 +3172,7 @@
                 </div>
               </div>
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-2 pr-3"
                 v-if="
                   risksObj.filtered.risks !== null &&
                     risksObj.filtered.risks.length > 0
@@ -3675,7 +3671,6 @@
                         <td>{{ risk.project_name }}</td>
                         <td>{{ risk.text }}</td>
                         <td
-                          class="text-left"
                           v-if="risk.notes_updated_at.length > 0"
                         >
                           <span
@@ -3697,7 +3692,7 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
 
                         <td>
                           {{
@@ -3732,7 +3727,7 @@
                             >Extreme</span
                           >
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="
                               (risk.ongoing &&
@@ -3757,7 +3752,7 @@
                             moment(risk.start_date).format("DD MMM YYYY")
                           }}</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="risk.ongoing && !risk.closed"
                             v-tooltip="`Ongoing`"
@@ -3780,7 +3775,7 @@
                           }}</span>
                         </td>
                         <td>{{ risk.users }}</td>
-                        <td>
+                        <td class="text-center">
                           <span
                             v-if="risk.ongoing && !risk.closed"
                             v-tooltip="`Ongoing`"
@@ -4035,7 +4030,6 @@
                           </span>
                         </td>
                         <td
-                          class="text-left"
                           v-if="risk.notes_updated_at.length > 0"
                         >
                           <span
@@ -4057,7 +4051,7 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                       </tr>
                     </tbody>
                   </table>
@@ -4283,7 +4277,7 @@
               </div>
 
               <div
-                class="row text-center mt-2 pr-3"
+                class="row mt-2 pr-3"
                 v-if="
                   lessonsObj.filtered.lessons !== null &&
                     lessonsObj.filtered.lessons.length > 0
@@ -4685,7 +4679,6 @@
                         <td>{{ lesson.project_name }}</td>
                         <td>{{ lesson.title }}</td>
                         <td
-                          class="text-left"
                           v-if="lesson.notes_updated_at.length > 0"
                         >
                           <span
@@ -4708,14 +4701,14 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                         <td>
                           <span class="truncate-line-five">{{
                             lesson.description
                           }}</span>
                         </td>
                         <td>{{ lesson.added_by }}</td>
-                        <td>
+                        <td class="text-center">
                           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
                         </td>
                         <td class="text-center">
@@ -4812,7 +4805,6 @@
                           </span>
                         </td>
                         <td
-                          class="text-left"
                           v-if="lesson.notes_updated_at.length > 0"
                         >
                           <span
@@ -4835,7 +4827,7 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
                       </tr>
                     </tbody>
                   </table>
