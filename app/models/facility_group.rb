@@ -10,6 +10,10 @@ class FacilityGroup < SortableRecord
   enum status: [:inactive, :active].freeze
   before_save :set_status
 
+  def self.unassigned_group
+    FacilityGroup.where(name: 'Unassigned').first
+  end
+  
   def set_status
     if !status
       status = :active

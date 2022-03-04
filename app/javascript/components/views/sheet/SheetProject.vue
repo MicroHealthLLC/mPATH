@@ -249,7 +249,7 @@
       
                      
           </div>
-         <div v-else class="text-danger mx-2 mt-5">
+          <div v-else class="text-danger mx-2 mt-5">
             <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
           </div>
         </div>

@@ -12,7 +12,11 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       
-      get :get_privileges, to: 'privileges#get_privileges'
+      resources :privileges do
+        collection do
+          get :get_privileges, to: 'privileges#get_privileges'
+        end
+      end
 
       # For Admin panel
       get '/settings', to: 'settings#index'
@@ -23,7 +27,11 @@ Rails.application.routes.draw do
       resources :issue_types, only: [:index]
       resources :issue_stages, only: [:index]
       resources :task_stages, only: [:index]
-      resources :users, only: [:index]
+      resources :users do
+        collection do
+          post :add_to_program
+        end
+      end
       post '/sort-by', to: 'sorts#update'
 
       resources :facility_groups do

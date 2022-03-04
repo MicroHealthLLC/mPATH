@@ -10,17 +10,17 @@
         <h4 class="mt-4">
           <i class="far fa-cog mh-orange-text"></i> PROGRAM SETTINGS
         </h4>
-        <div class="grid-container px-5">
-          <ul>
+        <div class="px-5">
+          <ul class="grid-container">
+           <!-- Move back into li attributes after finished with Users module   :class="{'d-none': !_isallowedProgramSettings(item, 'read') }" -->
             <li
-              class="m-2 cardWrapper"
+              class="m-2 cardWrapper list-group-item"
               v-for="(item, index) of settingsCards"
-              :key="index"
-               :class="{'d-none': !_isallowedProgramSettings(item, 'read') }"
-              style="width:33%"
+              :key="index" 
+              style="width:350px"   
               @click.prevent="adminRoute(index)"
             >
-              <el-card :body-style="{ padding: '0px' }">
+              <div>
                 <div class="p-2" style="font-size:3.5rem">
                   <span v-if="item == 'Groups'">
                     <i class="fal fa-network-wired mr-3 mh-blue-text"></i
@@ -30,6 +30,12 @@
                   ></span>
                   <span v-if="item == 'Contracts'" >
                     <i class="far fa-file-contract mr-3 mh-orange-text"></i>
+                  </span>
+                   <span v-if="item == 'Users'" >
+                     <i class="fas fa-users mr-3 text-secondary"></i>
+                  </span>
+                  <span v-if="item == 'Roles'" >
+                    <i class="fal fa-user-lock mr-3 bootstrap-purple-text"></i>
                   </span>
                   <!-- <span v-if="item == 'MH Data'">
                     <i class="fal fa-cloud mr-2 text-info"></i>              
@@ -47,6 +53,12 @@
                     <span v-if="item == 'Contracts'">{{
                       settingsCards.contracts
                     }} </span>
+                    <span v-if="item == 'Users'">{{
+                      settingsCards.users
+                    }} </span>
+                    <span v-if="item == 'Roles'">{{
+                    settingsCards.roles
+                  }} </span>
 <!--                     
                    
                       <span v-if="item == 'MH Data'">{{
@@ -56,7 +68,7 @@
                     <!-- <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i>   {{item}}</span> -->
                   </h4>
                 </div>
-              </el-card>
+              </div>
             </li>
           </ul>
         </div>
@@ -79,6 +91,8 @@ export default {
         groups: "Groups",
         projects: "Projects",
         contracts: "Contracts",
+        users: "Users",
+        roles:"Roles"
         // mhData: "MH Data",
         // users: "Users"
       },
@@ -122,6 +136,16 @@ export default {
       if (index == "mhData") {
         this.$router.push(
           `/programs/${this.$route.params.programId}/settings/test_cloud_data`
+        );
+      }
+     if (index == "users") {
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/settings/users`
+        );
+      }
+       if (index == "roles") {
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/settings/roles`
         );
       }
     },

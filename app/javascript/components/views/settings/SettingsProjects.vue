@@ -93,6 +93,11 @@
           "
           style="width: 100%"
           height="450"
+          highlight-current-row
+          :row-key="row => row.id"
+          :expand-row-keys="expandRowKeys"
+          @expand-change="handleExpandChange" 
+         :default-sort="{ prop: 'facilityName', order: 'ascending'}" 
         >
           <el-table-column prop="facilityName"  sortable label="Project">
             <template slot-scope="scope">
@@ -143,8 +148,76 @@
               ></el-input> -->
             </template>
           </el-table-column>
+     <!--BEGIN Expandable Column Containing Project User roles -->
+      <el-table-column label="Users" width="100" type="expand">
+         <template>
+          <el-table
+         :data="contractUser.filter(
+                (data) =>
+                  !searchContractUsers ||
+                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
+              )"
+          style="width: 100%"
+          height="450"
+          :default-sort="{ prop: 'last_name', order: 'ascending'}" 
 
-          <el-table-column label="Actions">
+        >
+          <el-table-column prop="user"  sortable label="Users">
+         </el-table-column>
+          <el-table-column
+            prop="roles"
+            sortable
+            filterable
+            label="Roles"
+          >
+            <!-- <template slot-scope="scope"> -->
+               <!-- <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>    -->
+
+              
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            <!-- </template> -->
+          </el-table-column>
+          <el-table-column>
+          <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchContractUsers"
+            size="mini"
+            placeholder="Search project users"            
+            >
+
+              <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          </el-table-column>
+
+         </el-table>
+         </template>
+
+         </el-table-column>
+           <!--END Expandable Column Containing Project User roles -->
+
+
+          <el-table-column label="Actions" align="right">
             <template slot-scope="scope">
               <el-button
                 type="default"
@@ -169,7 +242,7 @@
                 v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
                 class="bg-light">
                 <i class="fal fa-edit text-primary" ></i>
-               </el-button> 
+               </el-button>  
           
               <el-button
                 type="default"
@@ -234,7 +307,7 @@
             </div>
           </form>
         </el-dialog>
-      </div>
+         </div>
     </div>
   </div>
 </template>
@@ -254,19 +327,51 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      expandRowKeys: [],
       componentKey: 0,
       programId: this.$route.params.programId,
       search: "",
       rowIndex: null,
       rowId: null,
       projectId: null, 
+      searchContractUsers:"",
       selectedProjectGroup: null,
       newProjectNameText: "",
       value: "",
+        contractUser: [
+        {          
+          user: 'John Doe',
+          roles: 'project-write, project-read',
+          last_name: 'Doe'
+        }, {
+          user: 'Bob Dole',
+          roles: 'project-write',
+          last_name: 'Dole'
+        }, {
+          user: 'Adam Smith',
+          roles: 'project-write, project-read, project-delete',
+          last_name: 'Smith'
+       }, {
+          user: 'Samantha Smith',
+          roles: 'project-write, project-read',
+          last_name: 'Smith'
+        }, {
+          user: 'Curtis Smith',
+          roles: 'project-write, project-read',
+          last_name: 'Smith'
+        }, {
+          user: 'Daisy Rivera',
+          roles: 'project-write, project-read',
+          last_name: 'Rivera'
+        }, 
+       
+        ],
      };
   },
  mounted(){
-  this.fetchGroups(this.$route.params.programId)
+    if(this.groups && this.groups.length <= 0){
+    this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapActions(["fetchFacilities", "fetchCurrentProject", "fetchGroups"]),
@@ -282,7 +387,12 @@ export default {
       //   },
       // });
     },
-  
+    handleExpandChange (row, expandedRows) {
+			const id = row.id;
+			const lastId = this.expandRowKeys[0];
+			// disable mutiple row expanded 
+			this.expandRowKeys = id === lastId ? [] : [id];
+		},  
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
@@ -504,6 +614,7 @@ a {
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;
+    font-weight: 300 !important;
   }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {

@@ -90,7 +90,7 @@
                 v-tooltip="`Save`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
-                <i class="fal fa-save mr-2"></i>
+                <i class="fal fa-save"></i>
               </button>
               <button
                 @click.prevent="addAnotherGroup"
@@ -102,7 +102,7 @@
               <button
                 @click.prevent="closeAddGroupBtn"
                 v-tooltip="`Close`"
-                class="btn btn-sm bg-danger text-light mr-2"
+                class="btn btn-sm bg-danger text-light"
                 :class="[!hideSaveBtn ? 'd-none' : '']"
               >
                 <i class="fal fa-window-close"></i>
@@ -166,11 +166,10 @@
             element-loading-text="Fetching your data. Please wait..."
             element-loading-spinner="el-icon-loading"
             element-loading-background="rgba(0, 0, 0, 0.8)"
-            class="mt-4"
+            class="mt-2"
           >
             <el-table
               v-if="tableData"
-              :header-cell-style="{ background: '#EDEDED' }"
               :data="
                 tableData
                   .filter(
@@ -182,8 +181,80 @@
               "
               style="width: 100%"
               height="475"
+              highlight-current-row
+              :default-sort="{ prop: 'name', order: 'ascending'}"  
             >
-              <el-table-column type="expand">
+          
+              <el-table-column prop="name" sortable label="Groups">
+                <template slot-scope="props">
+                  <div class="row">
+                    <div class="col-9">
+                      <el-input
+                        size="small"
+                        v-if="rowId == props.row.id"
+                        style="text-align:center"
+                        v-model="props.row.name"
+                        controls-position="right"
+                      >
+                      </el-input>
+                      <span v-else> {{ props.row.name }}</span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="Counts" width="165">
+                <template slot-scope="props">
+                  <div class="row">
+                    <div class="col">
+                      <i
+                        class="fal fa-clipboard-list mr-1 mh-green-text"
+                        v-tooltip="`Projects`"
+                      ></i>
+                      <span
+                        class="mr-4"
+                        v-if="
+                          groupProjects &&
+                            groupProjects
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupProjects &&
+                            groupProjects
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span class="mr-4" v-else>
+                        {{ 0 }}
+                      </span>
+                      <i
+                        class="far fa-file-contract mr-1 mh-orange-text"
+                        v-tooltip="`Contracts`"
+                      ></i>
+                      <span
+                        v-if="
+                          groupContracts &&
+                            groupContracts
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupContracts
+                            .map((t) => t.facilityGroupId)
+                            .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span v-else>
+                        {{ 0 }}
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+                <el-table-column type="expand">
                 <template slot-scope="props">
                   <div class="container">
                     <div class="row">
@@ -265,77 +336,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="name" sortable label="Groups">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col-9">
-                      <el-input
-                        size="small"
-                        v-if="rowId == props.row.id"
-                        style="text-align:center"
-                        v-model="props.row.name"
-                        controls-position="right"
-                      >
-                      </el-input>
-                      <span v-else> {{ props.row.name }}</span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column label="Counts">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col">
-                      <i
-                        class="fal fa-clipboard-list mr-1 mh-green-text"
-                        v-tooltip="`Projects`"
-                      ></i>
-                      <span
-                        class="mr-4"
-                        v-if="
-                          groupProjects &&
-                            groupProjects
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          groupProjects &&
-                            groupProjects
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span class="mr-4" v-else>
-                        {{ 0 }}
-                      </span>
-                      <i
-                        class="far fa-file-contract mr-1 mh-orange-text"
-                        v-tooltip="`Contracts`"
-                      ></i>
-                      <span
-                        v-if="
-                          groupContracts &&
-                            groupContracts
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          groupContracts
-                            .map((t) => t.facilityGroupId)
-                            .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span v-else>
-                        {{ 0 }}
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="Actions">
+              <el-table-column label="Actions"  align="right">
                 <template slot-scope="scope">
                   <el-button
                     type="default"
@@ -347,7 +348,7 @@
                     "
                     class="bg-primary text-light"
                   >
-                    <i class="far fa-save"></i>
+                    <i class="far fa-save mr-1"></i>Save
                   </el-button>
                   <el-button
                     type="default"
@@ -371,7 +372,7 @@
                     "
                     class="bg-light"
                   >
-                    <i class="fal fa-edit text-primary"></i>
+                    <i class="fal fa-edit text-primary mr-1"></i>Edit
                   </el-button>
                   <el-button
                     type="default"
@@ -387,6 +388,7 @@
                   </el-button>
                 </template>
               </el-table-column>
+              
             </el-table>
           </div>
         </div>
@@ -418,23 +420,11 @@ export default {
 
     data() {    
       return {
-        currentFacility: {},
-        dialogVisible: false,
-        dialog2Visible: false,
-        isIndeterminate: true,
-        currentTab: "tab1",
-      tabs: [
-        {
-          label: "MANAGE GROUPS",
-          key: "tab1",
-          closable: false,
-        },
-        {
-          label: "TABLE",
-          key: "tab2",
-          closable: false,
-        },
-      ],
+      currentFacility: {},
+      dialogVisible: false,
+      dialog2Visible: false,
+      isIndeterminate: true,
+      currentTab: "tab1",
       contracts: null,
       currentFacilityGroup: {},
       componentKey: 0,
@@ -605,7 +595,10 @@ export default {
     },
   },
   mounted() {
+  if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
+    }
+   
   },
   computed: {
     ...mapGetters([
@@ -789,6 +782,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
+
           //  this.newGroupName =
         }
       },
@@ -807,6 +801,9 @@ export default {
 <style scoped lang="scss">
 .right {
   text-align: right;
+}
+.buttonWrapper {
+  border-bottom: lightgray solid 1px;
 }
 .fa-calendar {
   font-size: x-large;

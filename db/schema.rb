@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_28_161515) do
+ActiveRecord::Schema.define(version: 2022_02_24_211409) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -208,7 +208,7 @@ ActiveRecord::Schema.define(version: 2022_01_28_161515) do
     t.string "owner_type"
     t.integer "total_subcontracts", default: 0
     t.integer "contract_category_id"
-    t.text "notes"
+    t.text "remarks"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
   end
