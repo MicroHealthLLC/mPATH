@@ -70,7 +70,7 @@ module Tasker
 
     def remove_on_watch
       if self.progress == 100 && self.watched == true
-        self.update_attributes(watched: false)
+        self.update(watched: false)
       end
     end
 
