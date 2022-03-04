@@ -521,7 +521,7 @@
 </div>
 <!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-3 pr-3"
+class="row mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredRisks.filtered.risks.length > 0"
 >
@@ -1035,7 +1035,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
         <td>{{ risk.projectGroup }}</td>
         <td>{{ risk.facilityName || risk.contractNickname }}</td>
         <td>{{ risk.text }}</td>        
-        <td class="text-left">       
+        <td>       
           <span  v-if="risk.notes.length > 0">
           <span  class="toolTip" v-tooltip="('By: ' + risk.lastUpdate.user.fullName)" > 
           {{ moment(risk.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -1079,7 +1079,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
               >Extreme</span
             >
           </td>
-        <td>
+        <td class="text-center">
             <span v-if="risk.ongoing && !risk.closed && risk.startDate == null || undefined">
             <i class="fas fa-retweet text-success"></i>
             </span>
@@ -1090,7 +1090,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             moment(risk.startDate).format("DD MMM YYYY") 
             }}</span>
         </td>
-        <td>
+        <td class="text-center">
             <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
             ></span>
@@ -1105,7 +1105,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             }}</span>
         </td>
         <td>{{ risk.users.fullName }}</td>
-        <td>                          
+        <td class="text-center">                          
             <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
             ></span>

@@ -668,7 +668,7 @@
               </div>
               <!-- <ProjectContractSwitch /> -->
               <div
-                class="row text-center mt-3 pr-3"
+                class="row mt-3 pr-3"
                 style="postion:relative" 
                 v-if="filteredTasks.filtered.tasks.length > 0"
               >
@@ -1102,7 +1102,6 @@
                         <td>{{ task.facilityName || task.contractNickname }}</td>
                         <td>{{ task.text }}</td>
                         <td
-                          class="text-left"
                           v-if="task.notes.length > 0"
                         >
                           <span
@@ -1124,9 +1123,9 @@
                           </span>
                         </td>
                         <!-- <td v-else class="twentyTwo">No Updates</td> -->
-                        <td class="text-left" v-else>No Update</td>
+                        <td v-else>No Update</td>
 
-                        <td>
+                        <td class="text-center">
                          <span v-if="task.ongoing && !task.closed && task.startDate == null || undefined">
                            <i class="fas fa-retweet text-success"></i>
                          </span>
@@ -1137,7 +1136,7 @@
                            moment(task.startDate).format("DD MMM YYYY") 
                           }}</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>
@@ -1152,7 +1151,7 @@
                           }}</span>
                         </td>
                         <td>{{ task.userNames }}</td>
-                        <td>                          
+                        <td class="text-center">                          
                            <span v-if="task.ongoing && !task.closed" v-tooltip="`Ongoing`"
                             ><i class="fas fa-retweet text-success"></i
                           ></span>

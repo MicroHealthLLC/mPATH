@@ -461,7 +461,7 @@
 </div>
 <!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-3 pr-3"
+class="row mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredIssues.filtered.issues.length > 0"
 >
@@ -987,10 +987,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
          <td>{{ issue.projectGroup }}</td>
         <td>{{ issue.facilityName || issue.contractNickname }}</td>
         <td>{{ issue.title }}</td>
-        <td
-            class="text-left"           
-        >
-
+        <td>
          <span v-if="issue.notes.length > 0">       
           <span  class="toolTip" v-tooltip="('By: ' + issue.lastUpdate.user.fullName)" > 
           {{ moment(issue.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -999,16 +996,16 @@ v-if="filteredIssues.filtered.issues.length > 0"
             {{ issue.lastUpdate.body }}
           </span>         
           </span>  
-          <span class="text-left" v-else>No Update</span>
+          <span v-else>No Update</span>
         </td>
    
        
         <td>{{ issue.issueType }}</td>
         <td>{{ issue.issueSeverity }}</td>
-        <td>           
+        <td class="text-center">           
             {{ moment(issue.startDate).format("DD MMM YYYY") }}
         </td>
-        <td>
+        <td class="text-center">
            
             <span v-if="issue.completed && (issue.dueDate == null || issue.dueDate == undefined)"></span>
             <span
@@ -1021,7 +1018,7 @@ v-if="filteredIssues.filtered.issues.length > 0"
             }}</span>
         </td>
         <td>{{ issue.userNames }}</td>
-        <td>                          
+        <td class="text-center">                          
            
         
             {{ issue.progress + "%" }}

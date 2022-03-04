@@ -314,7 +314,7 @@
 </div>
 <!-- <ProjectContractSwitch /> -->
 <div
-class="row text-center mt-3 pr-3"
+class="row mt-3 pr-3"
 style="postion:relative" 
 v-if="filteredLessons.filtered.lessons.length > 0"
 >
@@ -737,7 +737,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           <td>{{ lesson.project_group }}</td>
           <td>{{ lesson.project_name || lesson.contract_nickname }}</td>
           <td>{{ lesson.title }}</td>
-          <td class="text-left">
+          <td>
            <span v-if="lesson.notes.length > 0">       
               <span  class="toolTip" v-tooltip="('By: ' + lesson.last_update.user)" > 
               {{ moment(lesson.last_update.created_at).format('DD MMM YYYY, h:mm a')}} <br>         
@@ -746,7 +746,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
                 {{lesson.last_update.body}}
               </span>         
            </span>  
-           <span class="text-left" v-else>No Update</span>
+           <span v-else>No Update</span>
           </td>
           <td>
             <span class="truncate-line-five">{{
@@ -754,7 +754,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             }}</span>
           </td>
           <td>{{ lesson.added_by }}</td>
-          <td>
+          <td class="text-center">
           {{ moment(lesson.created_at).format("DD MMM YYYY") }}
         </td>
        
@@ -852,7 +852,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
           {{lesson.last_update.body}}
         </span>         
       </span>  
-      <span class="text-left" v-else>No Update</span>         
+      <span v-else>No Update</span>         
     </td>   
         </tr>
     </tbody>
