@@ -45,7 +45,7 @@ class User < ApplicationRecord
   def provide_program_privileges
     user = self
     return if !user.project_ids.any?
-    privilege = user.privilege
+    privilege = user.privilege || Privilege.new
     privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "settings_view", "sheets_view", "kanban_view", "calendar_view", "admin" ).clone
     privilege_attr.each do |k,v|
       privilege_attr[k] = ["R"]
