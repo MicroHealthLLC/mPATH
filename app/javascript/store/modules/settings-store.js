@@ -274,10 +274,13 @@ const settingsStore = {
       commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", false);
       console.log(addedUsers);
       let formData = new FormData();
+
       formData.append("program_id", addedUsers.programId);
-        addedUsers.userIds.forEach((ids) => {
+      
+      addedUsers.userIds.forEach((ids) => {
         formData.append("user_ids[]",ids);
       });
+
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/users/add_to_program`,
@@ -300,7 +303,7 @@ const settingsStore = {
     },
     createNewUser({ commit }, { newUser }) {
        commit("TOGGLE_NEW_USER_LOADED", false);   
-       console.log(newUser.fName)   
+      //  console.log(newUser.fName)   
        let formData = new FormData();
         formData.append("user[first_name]", newUser.fName)
         formData.append("user[last_name]", newUser.lName)

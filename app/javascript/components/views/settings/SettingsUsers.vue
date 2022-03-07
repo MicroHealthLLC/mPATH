@@ -1,7 +1,6 @@
 <template>
 <div 
   v-loading="!programUsers"
-
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(0, 0, 0, 0.8)" class="row">
     <div class="col-md-2">
@@ -232,9 +231,25 @@
               class="mb-2 pl-1"        
             />            
           </div>
+            <div class="col-6 py-1 text-right" style="line-height:6">
+           <button
+            @click.prevent="createUser"
+            class="btn btn-sm bg-primary text-light mr-2 modalBtns"
+            v-tooltip="`Save New User`"               
+          >
+          <i class="fal fa-save mr-1"></i> SAVE
+        </button>
+         <button
+            @click.prevent="cancelAddNewUser"
+           class="btn btn-sm bg-secondary text-light modalBtns"
+            v-tooltip="`Cancel`"               
+          >
+         <i class="fas fa-ban mr-1"></i> CANCEL
+        </button>
+          </div>
         
         </div>  
-        <div class="mt-3 text-right">
+        <!-- <div class="mt-3 text-right">
           <button
             @click.prevent="createUser"
             class="btn btn-sm bg-primary text-light mr-2 modalBtns"
@@ -249,7 +264,7 @@
           >
          <i class="fas fa-ban mr-1"></i> CANCEL
         </button>
-        </div>      
+        </div>       -->
        </div>
       </form>
         
@@ -745,11 +760,14 @@ export default {
     addedUsersToProgramStatus: {
       handler() {
         if (this.addedUsersToProgramStatus == 200) {
+         if (this.portfolioUsers.length > 0){
           this.$message({
-            message: `${this.portfolioUsers.length} users successfully added to your program.`,
+            message: `${this.portfolioUsers.length} user(s) successfully added to your program.`,
             type: "success",
             showClose: true,
           });
+          }
+
           this.SET_ADD_USERS_TO_PROGRAM_STATUS(0);
           this.fetchProgramUsers(this.programId);
           this.portfolioUsers = [];
