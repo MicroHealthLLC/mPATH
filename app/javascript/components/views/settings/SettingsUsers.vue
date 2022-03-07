@@ -599,7 +599,7 @@ export default {
    },
    addUser() {
       this.dialogVisible = true; 
-      // this.fetchPortfolioUsers()
+      console.log(this.portfolioUsersOnly)
     },
     openCreateUser(){
       this.newUserDialogVisible = true
@@ -687,17 +687,12 @@ export default {
          "programUsers",
          "programUsersLoaded"
     ]),
-
-    // users(){
-    //  if(this.programUsers && this.programUsers.length > 0){
-    //    return this.programUsers
-    //  }
-    // },
     portfolioUsersOnly(){
     if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
           this.programUsers && this.programUsers.length > 0
-          ){     
-        return this.getPortfolioUsers.filter(u => !this.programUsers.includes(u.id) )     
+          ){  
+        let programUserIds = this.programUsers.map(p => p.id)
+        return this.getPortfolioUsers.filter(u => !programUserIds.includes(u.id) )     
       }     
      },
     backToSettings() {
