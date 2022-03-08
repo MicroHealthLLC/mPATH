@@ -174,7 +174,8 @@ export default {
   }
 }
 .programNameDiv:hover {
-  background-color: rgba(211, 211, 211, 10%);
+  background-color: #8f510b;
+
 }
 #filter_bar {
   overflow-y: auto;

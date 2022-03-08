@@ -46,7 +46,7 @@
                 @click.prevent="openPortfolioGroup"
                 class="bg-success text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
+                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group(s)
               </el-button>
             </div>
             <div class="col-6">
@@ -129,7 +129,7 @@
             <template>
               <div class="sticky">
                <span slot="title" class="text-left add-groups-header">
-                <h4 class="text-dark"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h4>
+                <h5 class="text-dark"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
               </span>
                 <span class="add-groups-action-btns">
                   <el-button

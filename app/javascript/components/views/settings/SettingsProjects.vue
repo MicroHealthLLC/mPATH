@@ -33,7 +33,7 @@
                 @click.prevent="addProject"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Project
+                <i class="far fa-plus-circle mr-1"></i> Create New Project
               </el-button>
             </div>
 
@@ -265,12 +265,12 @@
           class="contractForm p-0 addProjectDialog"
         >
         <span slot="title" class="text-left add-groups-header ">
-          <h4 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Add Project </h4>
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create New Project </h5>
         </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-4">
               <label class="font-md"
-                >New Project Name <span style="color: #dc3545">*</span></label
+                >Project Name <span style="color: #dc3545">*</span></label
               >
               <el-input
                v-model="newProjectNameText"
