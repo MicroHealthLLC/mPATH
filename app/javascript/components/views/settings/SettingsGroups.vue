@@ -131,23 +131,6 @@
                <span slot="title" class="text-left add-groups-header">
                 <h4 class="text-dark"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h4>
               </span>
-                <span class="add-groups-action-btns">
-                  <el-button
-                    class="confirm-save-group-names btn text-light modalBtns"
-                    v-tooltip="`Save Group(s)`"
-                    @click.prevent="importGroupName"
-                    :disabled="portfolioGroups.length <= 0"
-                  >
-                    <i class="fal fa-save"></i>
-                  </el-button>
-                  <el-button
-                    @click.prevent="closeImportGroupBtn"
-                    v-tooltip="`Cancel`"
-                    class="btn bg-secondary ml-0 text-light modalBtns"
-                  >
-                    <i class="fas fa-ban"></i> 
-                  </el-button>
-                </span>
               </div>
             </template>
             <el-checkbox
@@ -169,6 +152,23 @@
                 </div>
               </div>
             </el-checkbox-group>
+            <div class="right mr-2">
+              <button
+                class="btn btn-md bg-primary text-light  modalBtns"
+                v-tooltip="`Save Group(s)`"
+                @click.prevent="importGroupName"
+                :disabled="portfolioGroups.length <= 0"
+              >
+                <i class="fal fa-save"></i>
+              </button>
+              <button
+                @click.prevent="closeImportGroupBtn"
+                v-tooltip="`Cancel`"
+                class="btn btn-md bg-secondary text-light modalBtns mr-2"
+              >
+                <i class="fas fa-ban"></i>
+              </button>
+            </div>
           </div>
         </el-dialog>
         <div class="container-fluid mt-2 mx-0">
@@ -898,10 +898,6 @@ a {
   font-size: 1.1rem;
 }
 
-/deep/.el-button.confirm-save-group-names {
-  background-color: rgba(40, 167, 69, 1);
-}
-
 label.el-checkbox {
   margin-top: 15px;
 }
@@ -931,12 +927,6 @@ div.sticky {
   /deep/.el-dialog__body {
   padding-top: 0 !important;
  }
-}
-.add-groups-action-btns{
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  display: block;
 }
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
