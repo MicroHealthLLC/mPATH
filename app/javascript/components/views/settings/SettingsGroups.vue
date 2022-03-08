@@ -67,15 +67,14 @@
           :visible.sync="dialogVisible"
           append-to-body
           center
-          class="contractForm p-0"
+          class="contractForm p-0 createNewGroup"
         >
+              <span slot="title" class="text-left add-groups-header">
+                <h5 class="text-dark"> <i class="far fa-plus-circle mr-1"></i>Create New Program Group </h5>
+              </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
-              <label class="font-md"
-                >New Group Name <span style="color: #dc3545">*</span></label
-              >
-              <el-input
-                type="textarea"
+           <el-input
                 v-model="newGroupName"
                 placeholder="Enter new Group name here"
                 rows="1"
@@ -85,27 +84,36 @@
             <div class="right mr-2">
               <button
                 @click.prevent="createNewGroup"
-                :disabled="!newGroupName"
-                class="btn btn-sm bg-primary text-light mr-2"
-                v-tooltip="`Save`"
+                v-show="newGroupName"
+                class="btn btn-md bg-primary text-light  modalBtns"
+                v-tooltip="`Save New Group`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
                 <i class="fal fa-save"></i>
               </button>
               <button
-                @click.prevent="addAnotherGroup"
-                :class="[!hideSaveBtn ? 'd-none' : '']"
-                class="btn btn-sm bg-primary text-light mr-2"
+                @click.prevent="cancelCreateGroup"
+                class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Cancel`"               
+                :class="[hideSaveBtn ? 'd-none' : '']"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Another Group
+               <i class="fas fa-ban"></i> 
+              </button>
+              <button
+                @click.prevent="addAnotherGroup"
+                 v-tooltip="`Add Another Group`"     
+                :class="[!hideSaveBtn ? 'd-none' : '']"
+                class="btn btn-md bg-primary text-light modalBtns"
+              >
+                <i class="far fa-plus-circle"></i>
               </button>
               <button
                 @click.prevent="closeAddGroupBtn"
                 v-tooltip="`Close`"
-                class="btn btn-sm bg-danger text-light"
+                class="btn btn-md bg-secondary text-light modalBtns mr-2"
                 :class="[!hideSaveBtn ? 'd-none' : '']"
               >
-                <i class="fal fa-window-close"></i>
+               <i class="fas fa-ban"></i> 
               </button>
             </div>
           </form>
@@ -120,9 +128,12 @@
           <div>
             <template>
               <div class="sticky">
-                <el-button-group>
+               <span slot="title" class="text-left add-groups-header">
+                <h4 class="text-dark"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h4>
+              </span>
+                <span class="add-groups-action-btns">
                   <el-button
-                    class="confirm-save-group-names btn text-light"
+                    class="confirm-save-group-names btn text-light modalBtns"
                     v-tooltip="`Save Group(s)`"
                     @click.prevent="importGroupName"
                     :disabled="portfolioGroups.length <= 0"
@@ -131,12 +142,12 @@
                   </el-button>
                   <el-button
                     @click.prevent="closeImportGroupBtn"
-                    v-tooltip="`Close`"
-                    class="btn mh-blue text-light"
+                    v-tooltip="`Cancel`"
+                    class="btn bg-secondary ml-0 text-light modalBtns"
                   >
-                    <i class="fal fa-window-close"></i>
+                    <i class="fas fa-ban"></i> 
                   </el-button>
-                </el-button-group>
+                </span>
               </div>
             </template>
             <el-checkbox
@@ -372,7 +383,7 @@
                     "
                     class="bg-light"
                   >
-                    <i class="fal fa-edit text-primary mr-1"></i>Edit
+                    <i class="fal fa-edit text-primary mr-1"></i>
                   </el-button>
                   <el-button
                     type="default"
@@ -462,20 +473,16 @@ export default {
       "fetchGroups",
       "fetchCurrentProject",
     ]),
-
+   cancelCreateGroup() {
+      this.dialogVisible = false;
+    },
     addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
       this.hideSaveBtn = false;
     },
     handleCheckAllChange() {
-      //  if (this.groups && this.groups.length > 0) {
-      //     let checkGroups = this.groups.map(group => group.id)
-      //     if(val){
-      //       this.SET_CHECKED_GROUPS(checkGroups);
-      //     }
       this.isIndeterminate = false;
-      //  }
     },
     reRenderTable() {
       this.componentKey += 1;
@@ -850,8 +857,7 @@ a {
   border-style: solid;
 }
 /deep/.el-dialog {
-  width: 30%;
-  border-top: solid 5px #1d336f !important;
+  width: 30%;  
 }
 .container {
   margin-left: 50px;
@@ -921,6 +927,26 @@ div.sticky {
   }
 }
 
+.createNewGroup{
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+}
+.add-groups-action-btns{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: block;
+}
+/deep/.el-dialog__close.el-icon.el-icon-close{
+  display: none;
+}
+.add-groups-header{
+  background-color: #fff;
+}
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 // :-ms-input-placeholder { /* Internet Explorer 10-11 */
 //   color: red;
 // }

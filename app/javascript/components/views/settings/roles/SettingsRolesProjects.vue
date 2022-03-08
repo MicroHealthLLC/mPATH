@@ -321,7 +321,7 @@ export default {
       data() {    
       return {
        tableData: [{
-          role: 'example-1',        
+          role: 'update-project',        
           read: true,
           write: true,
           delete: false,  
@@ -342,7 +342,7 @@ export default {
           usersWrite: true, 
           usersDelete: true, 
         }, {
-          role: 'example-2',        
+          role: 'read-project',        
           read: false,
           write: true,
           delete: false,  

@@ -246,10 +246,11 @@
           
               <el-button
                 type="default"
+                v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
                 class="bg-success text-light"
               >
-                Go To Project <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+             <i class="fas fa-arrow-alt-circle-right"></i>
               </el-button>
        
               <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -261,16 +262,18 @@
           :visible.sync="dialogVisible"
           append-to-body
           center
-          class="contractForm p-0"
+          class="contractForm p-0 addProjectDialog"
         >
+        <span slot="title" class="text-left add-groups-header ">
+          <h4 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Add Project </h4>
+        </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-4">
               <label class="font-md"
                 >New Project Name <span style="color: #dc3545">*</span></label
               >
               <el-input
-                type="textarea"
-                v-model="newProjectNameText"
+               v-model="newProjectNameText"
                 placeholder="Enter new project name"
                 rows="1"
                 name="Project Name"
@@ -300,10 +303,18 @@
             <div class="right mr-2">
               <button
                 @click.prevent="saveNewProject"
-                :disabled="!C_projectGroupFilter && newProjectNameText"
-                class="btn btn-sm bg-primary text-light mr-2"
-                >Save</button
+                v-show="C_projectGroupFilter && newProjectNameText"
+                 v-tooltip="`Save Project`"      
+                class="btn btn-md bg-primary text-light modalBtns"
+                >  <i class="far fa-save"></i></button
               >
+              <button
+                @click.prevent="cancelCreateGroup"
+                class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Cancel`"                  
+              >
+               <i class="fas fa-ban"></i> 
+              </button>
             </div>
           </form>
         </el-dialog>
@@ -386,6 +397,9 @@ export default {
       //     projectId: rows.id.toString(),          
       //   },
       // });
+    },
+    cancelCreateGroup() {
+      this.dialogVisible = false;
     },
     handleExpandChange (row, expandedRows) {
 			const id = row.id;
@@ -563,6 +577,9 @@ export default {
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 .right {
   text-align: right;
 }
@@ -609,7 +626,6 @@ a {
 }
 /deep/.el-dialog {
   width: 30%;
-  border-top: solid 5px #1d336f !important;
 }
 /deep/.el-table {
   .el-input__inner {
@@ -618,10 +634,12 @@ a {
   }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
-  background-color: #dc3545;
-  border-radius: 50%;
-  color: white;
-  padding: 2px;
-  font-size: 0.7rem;
+  display: none;
+}
+
+.addProjectDialog {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
 }
 </style>

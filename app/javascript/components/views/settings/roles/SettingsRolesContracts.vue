@@ -323,7 +323,7 @@ export default {
   data() {    
       return {
        tableData: [{
-          role: 'contract-read',        
+          role: 'update-contract',        
           read: true,
           write: true,
           delete: false,  
@@ -344,7 +344,7 @@ export default {
           usersWrite: true, 
           usersDelete: true, 
         }, {
-          role: 'contract-manager',        
+          role: 'read-contract',        
           read: false,
           write: true,
           delete: false,  
