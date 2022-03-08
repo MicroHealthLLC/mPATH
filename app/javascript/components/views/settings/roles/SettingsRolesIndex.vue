@@ -39,9 +39,9 @@
               >
               <el-button
       
-                class="bg-success text-light mb-2"
+                class="bg-primary text-light mb-2"
               >
-              <i class="fas fa-users mr-1"></i>  Add New Role
+              <i class="fas fa-users mr-1"></i>Create New Role
               </el-button>
             </div>
          

@@ -148,7 +148,7 @@ export default {
   cursor: pointer;
  } 
 .programNameWrap:hover {
-  background-color: rgba(211, 211, 211, 10%);
+  background-color: #8f510b;;
 }
 #noLine {
   text-decoration-line: none !important;
