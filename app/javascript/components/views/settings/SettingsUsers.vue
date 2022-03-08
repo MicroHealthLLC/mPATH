@@ -15,7 +15,7 @@
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
-             <i class="fas fa-users mr-1 text-secondary"></i> USERS
+             <i class="fal fa-users mr-1 text-secondary"></i> USERS
             <span
               v-if="programUsers && programUsers.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
