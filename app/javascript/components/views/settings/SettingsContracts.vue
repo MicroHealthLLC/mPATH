@@ -273,7 +273,7 @@
                 <el-button
                   v-if="_isallowedProgramSettings('delete') && scope.$index !== rowIndex"
                   type="default"
-                  v-tooltip="`Delete`"
+                  v-tooltip="`Delete Contract`"
                   @click.prevent="
                     deleteSelectedContract(scope.$index, scope.row)
                   "
