@@ -69,6 +69,10 @@
       label="Admin Role"
       width="340">
     </el-table-column>
+        <el-table-column label="Assigned Users" width="125" type="expand">
+
+          
+        </el-table-column>
     <el-table-column label="Program Admin">
       <el-table-column
         prop="read"

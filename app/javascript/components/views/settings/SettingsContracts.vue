@@ -234,7 +234,7 @@
                   v-tooltip="`Save`"
                   class="bg-primary text-light"
                 >
-                  <i class="far fa-save mr-1"></i>Save
+                  <i class="far fa-save"></i>
                 </el-button>
                 <el-button
                   type="default"
@@ -258,7 +258,7 @@
                   "
                   class="bg-light"
                 >
-                  <i class="fal fa-edit text-primary mr-1"></i>Edit
+                  <i class="fal fa-edit text-primary"></i>
                 </el-button>
                  <!-- <el-button
                   type="default"
@@ -282,11 +282,12 @@
                   <i class="far fa-trash-alt text-danger"></i>
                 </el-button>
                 <el-button
-                  type="default"               
+                  type="default" 
+                    v-tooltip="`Go To Contract`"              
                   @click.prevent="goToContract(scope.$index, scope.row)"
                   class="bg-success text-light"
-                  >Go To Contract
-                  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+                  >
+                  <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
                 <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
               </template>
@@ -302,13 +303,15 @@
           center
           class="contractForm addContract p-0"
         >
+          <span slot="title" class="text-left add-groups-header ">
+          <h4 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Add  Contract </h4>
+        </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
               <label class="font-md"
                 >Contract Name <span style="color: #dc3545">*</span></label
               >
-              <el-input
-                type="textarea"
+              <el-input            
                 v-model="contractNameText"
                 placeholder="Enter new contract name here"
                 rows="1"
@@ -319,8 +322,7 @@
               <label class="font-md"
                 >Contract Nickname <span style="color: #dc3545">*</span></label
               >
-              <el-input
-                type="textarea"
+              <el-input              
                 v-model="contractNicknameText"
                 placeholder="Enter new contract name here"
                 rows="1"
@@ -379,31 +381,27 @@
                     contractNicknameText &&
                     C_newContractGroupFilter.id
                 "
-                class="btn btn-sm bg-primary text-light mr-2"
+                class="btn btn-md bg-primary text-light modalBtns"
+                v-tooltip="`Save Contract`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
-                Save
-              </button>
-              <button
-                disabled
-                v-else
-                class="btn btn-sm bg-primary text-light mr-2"
-              >
-                Save
+               <i class="far fa-save"></i>
               </button>
               <button
                 @click.prevent="addAnotherContract"
                 :class="[!hideSaveBtn ? 'd-none' : '']"
-                class="btn btn-sm bg-primary text-light mr-2"
+                v-tooltip="`Add Another Contract`"
+                class="btn btn-md bg-primary text-light modalBtns"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Another Contract
+                <i class="far fa-plus-circle"></i> 
               </button>
               <button
                 @click.prevent="closeAddContractBtn"
-                class="btn btn-sm bg-danger text-light mr-2"
-                :class="[!hideSaveBtn ? 'd-none' : '']"
+                 class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Cancel`"     
+               
               >
-                Close
+             <i class="fas fa-ban"></i> 
               </button>
             </div>
           </form>
@@ -812,6 +810,9 @@ export default {
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 .right {
   text-align: right;
 }
@@ -885,8 +886,16 @@ a {
 }
 /deep/.el-dialog.addContract {
   width: 30%;
-  border-top: solid 5px #1d336f !important;
 }
+.addContract {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+}
+/deep/.el-dialog__close.el-icon.el-icon-close {
+  display: none;
+}
+
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;

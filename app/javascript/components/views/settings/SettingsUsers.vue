@@ -101,7 +101,7 @@
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
-        <el-table-column prop="role"  sortable label="Project Roles">
+        <el-table-column prop="role"  sortable label="Roles">
         
         </el-table-column>
         <el-table-column
@@ -115,7 +115,7 @@
             <!-- <template slot-scope="scope" > -->
               <!-- USe this attribute when functionaloty gets built in -->
                   <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-        <span v-tooltip="`Manage Project Privileges`">
+        <span v-tooltip="`Manage Privileges`">
             <i class="fas fa-user-lock"></i>               
             </span>
     
@@ -123,34 +123,7 @@
             <!-- </template> -->
         </el-table-column>   
         </el-table>
-        <el-table
-          :data="projectsTable"
-          style="width: 100%"
-          border
-          :header-cell-style="{ background: '#dda769' }"
-        >
-        <el-table-column prop="role"  sortable label="Contract Roles">
-        
-        </el-table-column>
-        <el-table-column
-            prop="projects"
-            sortable
-            filterable
-            label="Associations"
-        >        
-        </el-table-column> 
-        <el-table-column icon="el-user" align="center"  width="75">
-            <!-- <template slot-scope="scope" > -->
-              <!-- USe this attribute when functionaloty gets built in -->
-                  <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-        <span v-tooltip="`Manage Project Privileges`">
-            <i class="fas fa-user-lock"></i>               
-            </span>
-    
-            <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-            <!-- </template> -->
-        </el-table-column>   
-        </el-table>
+     
 
           </div>
         <!-- </template> -->
@@ -234,17 +207,18 @@
             <div class="col-6 py-1 text-right" style="line-height:6">
            <button
             @click.prevent="createUser"
-            class="btn btn-sm bg-primary text-light mr-2 modalBtns"
+            v-show="email && lastName && firstName"
+            class="btn btn-md bg-primary text-light modalBtns"
             v-tooltip="`Save New User`"               
           >
-          <i class="fal fa-save mr-1"></i> SAVE
+          <i class="fal fa-save"></i> 
         </button>
          <button
             @click.prevent="cancelAddNewUser"
-           class="btn btn-sm bg-secondary text-light modalBtns"
+           class="btn btn-md bg-secondary text-light ml-0 modalBtns"
             v-tooltip="`Cancel`"               
           >
-         <i class="fas fa-ban mr-1"></i> CANCEL
+         <i class="fas fa-ban"></i> 
         </button>
           </div>
         
@@ -305,17 +279,19 @@
             <div class="text-right">
               <button
                 type="default"   
-                @click.prevent="addPortfolioUsersToProgram"         
-                class="btn btn-sm btn-primary text-light mt-3 mr-2 modalBtns"
+                v-tooltip="`Save Users`"   
+                @click.prevent="addPortfolioUsersToProgram" 
+                v-if="this.portfolioUsers.length > 0"
+                class="btn btn-md btn-primary text-light mt-3 modalBtns"
                 >
-                  <i class="far fa-plus-circle mr-1"></i> Add Users to Program
+                  <i class="fal fa-save"></i> 
               </button>
                <button
                 @click.prevent="cancelAddUser"
-                class="btn btn-sm bg-secondary text-light mt-3 modalBtns"
+                class="btn btn-md bg-secondary text-light mt-3 ml-0 modalBtns"
                 v-tooltip="`Cancel`"               
               >
-               <i class="fas fa-ban mr-1"></i> CANCEL
+               <i class="fas fa-ban"></i> 
               </button>
               </div>
           </div> 
@@ -419,17 +395,17 @@
       <div class="my-3 float-right">
          <button
             @click.prevent="saveUserEdits"
-            class="btn btn-sm bg-primary text-light mr-2 modalBtns"
+            class="btn btn-md bg-primary text-light mr-2 modalBtns"
             v-tooltip="`Save New User`"               
           >
-          <i class="fal fa-save mr-1"></i>SAVE
+          <i class="fal fa-save"></i>
         </button>
           <button
             @click.prevent="cancelEdits"
-           class="btn btn-sm bg-secondary text-light modalBtns"
+           class="btn btn-md bg-secondary text-light modalBtns"
             v-tooltip="`Close`"               
           >
-         <i class="fas fa-ban mr-1"></i> CANCEL
+         <i class="fas fa-ban"></i>
         </button>
       </div>
            </form>
@@ -614,7 +590,7 @@ export default {
    },
    addUser() {
       this.dialogVisible = true; 
-      console.log(this.portfolioUsersOnly)
+      // console.log(this.portfolioUsersOnly)
     },
     openCreateUser(){
       this.newUserDialogVisible = true
