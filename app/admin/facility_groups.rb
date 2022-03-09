@@ -1,5 +1,5 @@
 ActiveAdmin.register FacilityGroup do
-  menu label: "Project Groups"
+  menu parent: "Facilities", label: "Project Groups"
   actions :all, except: [:show]
 
   permit_params do
