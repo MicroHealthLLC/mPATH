@@ -135,7 +135,7 @@
               </div>
                 <div class="col text-right">
                   <el-button
-                    class="confirm-save-group-names btn text-light modalBtns"
+                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Group(s)`"
                     @click.prevent="importGroupName"
                     :disabled="portfolioGroups.length <= 0"
