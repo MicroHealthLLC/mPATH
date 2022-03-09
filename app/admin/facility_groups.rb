@@ -6,13 +6,14 @@ ActiveAdmin.register FacilityGroup do
     permitted = [
       :name,
       :code,
-      :status
+      :status,
+      :is_portfolio
     ]
     permitted
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Groups', admin_facility_groups_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Groups', admin_facility_groups_path(is_portfolio: true))]
     if %(show edit).include?(params['action'])
       links << link_to(facility_group.name, edit_admin_facility_group_path)
     end
@@ -25,6 +26,7 @@ ActiveAdmin.register FacilityGroup do
     inputs 'Details' do
       f.input :name
       f.input :code
+      f.input :is_portfolio
       f.input :status, include_blank: false, include_hidden: false, label: "State"
     end
 
@@ -37,6 +39,7 @@ ActiveAdmin.register FacilityGroup do
     column :id
     column :name
     column :code
+    column :is_portfolio    
     tag_column "State", :status
     actions defaults: false do |facility_group|
       item "Edit", edit_admin_facility_group_path(facility_group), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
@@ -92,6 +95,7 @@ ActiveAdmin.register FacilityGroup do
 
   filter :name
   filter :code
+  filter :is_portfolio
   filter :status, label: "State", as: :select, collection: FacilityGroup.statuses
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 end
