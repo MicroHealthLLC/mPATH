@@ -77,7 +77,6 @@
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
         <el-table
           :key="componentKey"   
@@ -280,7 +279,7 @@
               />
             </div>
             <div class="form-group mx-4">
-              <label class="font-md">Group<span style="color: #dc3545">*</span></label>
+              <label class="font-md">Group</label>
               <el-select
                 class="w-100"
                 v-model="C_projectGroupFilter"
@@ -303,7 +302,7 @@
             <div class="right mr-2">
               <button
                 @click.prevent="saveNewProject"
-                v-show="C_projectGroupFilter && newProjectNameText"
+                v-show="newProjectNameText"
                  v-tooltip="`Save Project`"      
                 class="btn btn-md bg-primary text-light modalBtns"
                 >  <i class="far fa-save"></i></button
@@ -635,6 +634,9 @@ a {
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
   display: none;
+}
+h5 {
+  word-break: break-word;
 }
 
 .addProjectDialog {

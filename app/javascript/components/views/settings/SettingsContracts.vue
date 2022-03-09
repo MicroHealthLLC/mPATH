@@ -329,31 +329,8 @@
                 name="Program Name"
               />
             </div>
-            <!-- <div class="form-group mx-3">
-          <label class="font-md"
-            >Project Group Name <span style="color: #dc3545">*</span></label
-          >
-           <el-select
-           v-model="C_typeFilter"
-           class="w-100"
-           track-by="id"
-           value-key="id"         
-           clearable
-           placeholder="Select Project Group Name"
-           >
-          <el-option
-            v-for="item in getContractGroupOptions"
-            :value="item.id"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-       </div> -->
             <div class="form-group mx-3">
-              <label class="font-md"
-                >Group<span style="color: #dc3545">*</span></label
-              >
+              <label class="font-md">Group</label>
               <el-select
                 class="w-100"
                 v-model="C_newContractGroupFilter"
@@ -376,11 +353,7 @@
             <div class="right mr-2">
               <button
                 @click.prevent="saveNewContract"
-                v-if="
-                  contractNameText &&
-                    contractNicknameText &&
-                    C_newContractGroupFilter.id
-                "
+                v-if="contractNameText && contractNicknameText"
                 class="btn btn-md bg-primary text-light modalBtns"
                 v-tooltip="`Save Contract`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
@@ -599,13 +572,15 @@ export default {
 			this.expandRowKeys = id === lastId ? [] : [id];
 		},
     saveNewContract() {
-      // this.onSubmit()
+      let groupId = ""
+      if (this.C_newContractGroupFilter){
+        groupId = this.C_newContractGroupFilter.id
+      } 
       let contractData = {
         contract: {
           nickname: this.contractNicknameText,
           name: this.contractNameText,
-          // contract_status_id: null,
-          facility_group_id: this.C_newContractGroupFilter.id,
+          facility_group_id: groupId,
           project_id: this.$route.params.programId,
           contract_type_id: this.C_typeFilter,
         },
@@ -614,7 +589,7 @@ export default {
         ...contractData,
       });
       this.hideSaveBtn = true;
-      // this.fetchCurrentProject(this.$route.params.programId);
+      this.fetchCurrentProject(this.$route.params.programId);
       // console.log(contractData)
     },
     // DO NOT DELETE This async method.  It is code for firebase cloud functionality

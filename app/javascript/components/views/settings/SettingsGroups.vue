@@ -1,15 +1,8 @@
 <template>
-  <div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="row"
-  >
+  <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
-
     <div class="col-md-10">
       <div class="right-panel">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
@@ -164,7 +157,7 @@
               <div class="row">
                 <div class="col-4">
                   <el-checkbox
-                    v-for="group in portfolioGroups"
+                    v-for="group in portfolioGroups.filter(g => g.is_portfolio)"
                     :label="group.id"
                     :key="group.id"
                     >{{ group.name }}</el-checkbox
@@ -178,8 +171,7 @@
           <div
             v-loading="!contentLoaded"
             element-loading-text="Fetching your data. Please wait..."
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"
+            element-loading-spinner="el-icon-loading"         
             class="mt-2"
           >
             <el-table
@@ -211,7 +203,12 @@
                         controls-position="right"
                       >
                       </el-input>
-                      <span v-else> {{ props.row.name }}</span>
+                      <span v-else>                         
+                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
+                        {{ props.row.name }}
+                       
+
+                      </span>
                     </div>
                   </div>
                 </template>
@@ -378,9 +375,10 @@
                   </el-button>
                   <el-button
                     type="default"
-                    v-tooltip="`Edit Group Name`"
+                    v-tooltip="`Edit Program Group Name`"
                     @click.prevent="editMode(scope.$index, scope.row)"
                     v-if="
+                      !scope.row.isPortfolio &&
                       scope.$index !== rowIndex &&
                         _isallowedProgramSettings('write')
                     "
@@ -389,17 +387,20 @@
                     <i class="fal fa-edit text-primary mr-1"></i>
                   </el-button>
                   <el-button
-                    type="default"
-                    v-tooltip="`Remove Group`"
+                    type="default"                    
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
                         _isallowedProgramSettings('delete')
                     "
                     class="bg-light"
-                  >
-                    <i class="far fa-trash-alt text-danger"></i>
+                  >    
+                 
+                    <i class="fa-light fa-circle-minus text-danger" v-tooltip="`Remove Portfolio Group`" v-if="scope.row.isPortfolio"></i>                   
+                     <i class="far fa-trash-alt text-danger " v-tooltip="`Delete Program Group`" v-else></i>  
+                         
                   </el-button>
+                  
                 </template>
               </el-table-column>
               
@@ -476,6 +477,11 @@ export default {
       "fetchGroups",
       "fetchCurrentProject",
     ]),
+       tableRowClassName({row, rowIndex}) {
+        if (!row.isPortfolio) {
+          return 'warning-row';
+        } 
+    },
    cancelCreateGroup() {
       this.dialogVisible = false;
     },
@@ -509,17 +515,13 @@ export default {
     },
     openPortfolioGroup() {
       this.dialog2Visible = true;
-      // this.newGroupName = null;
-      // this.C_projectGroupFilter = null;
-    },
+     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
       // console.log(this.currentTab)
     },
     saveEdits(index, rows) {
-      // console.log(`index: ${index}`)
-      //    console.log(rows)
-      let id = rows.id;
+       let id = rows.id;
       let groupNameData = {
         newNameData: {
           name: rows.name,
@@ -535,6 +537,7 @@ export default {
     cancelEdits(index, rows) {
       this.rowIndex = null;
       this.rowId = null;
+      console.log(this.facilityGroups)
     },
     createNewGroup() {
       let groupData = {
@@ -558,17 +561,31 @@ export default {
           programId: this.$route.params.programId,
         },
       };
+      
+    if(rows.isPortfolio){
       this.$confirm(
-        `Are you sure you want to remove ${rows.name}?`,
+        `Are you sure you want to remove ${rows.name} from your program?`,
         "Confirm Remove",
         {
           confirmButtonText: "Remove",
           cancelButtonText: "Cancel",
           type: "warning",
         }
-      ).then(() => {
+       ).then(() => {
         this.updateGroup({ ...group });
       });
+      } else 
+       this.$confirm(
+        `Are you sure you want to delete ${rows.name} from your program?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+        this.updateGroup({ ...group });
+      });     
     },
     importGroupName() {
       let data = this.checkedPortfolioGroups;
@@ -677,59 +694,59 @@ export default {
       },
     },
 
-    generateData() {
-      const data = [];
-      // let newGroup = [];
-      let eachGroup = (eachGroup = this.groups.map((g) => g));
-      if (this.groups && this.groups.length > 0) {
-        for (let i = 0; i <= this.groups.length; i++) {
-          if (eachGroup[i] !== undefined) {
-            data.push({
-              key: eachGroup[i].id,
-              label: eachGroup[i].name,
-              // disabled: eachGroup[i].id == this.inheritedGroups[i]
-            });
-          }
-        }
-      }
-      return [...new Set(data)];
-    },
+    // generateData() {
+    //   const data = [];
+    //   // let newGroup = [];
+    //   let eachGroup = (eachGroup = this.groups.map((g) => g));
+    //   if (this.groups && this.groups.length > 0) {
+    //     for (let i = 0; i <= this.groups.length; i++) {
+    //       if (eachGroup[i] !== undefined) {
+    //         data.push({
+    //           key: eachGroup[i].id,
+    //           label: eachGroup[i].name,
+    //           // disabled: eachGroup[i].id == this.inheritedGroups[i]
+    //         });
+    //       }
+    //     }
+    //   }
+    //   return [...new Set(data)];
+    // },
 
-    myProgramGroups() {
-      const data = this.getCheckedPortfolioGroups;
-      if (this.groups && this.groups.length > 0) {
-        let myInheritedGroups = this.groups.filter(
-          (t) => t && t.id == data.map((t) => t)
-        );
-        for (let i = 0; i <= myInheritedGroups.length; i++) {
-          if (myInheritedGroups[i] !== undefined) {
-            data.push(myInheritedGroups[i].id);
-            console.log(myInheritedGroups[i]);
-          }
-        }
-      }
+    // myProgramGroups() {
+    //   const data = this.getCheckedPortfolioGroups;
+    //   if (this.groups && this.groups.length > 0) {
+    //     let myInheritedGroups = this.groups.filter(
+    //       (t) => t && t.id == data.map((t) => t)
+    //     );
+    //     for (let i = 0; i <= myInheritedGroups.length; i++) {
+    //       if (myInheritedGroups[i] !== undefined) {
+    //         data.push(myInheritedGroups[i].id);
+    //         console.log(myInheritedGroups[i]);
+    //       }
+    //     }
+    //   }
 
-      return [...new Set(data)];
-    },
-    transferData: {
-      get() {
-        return [...new Set(this.myProgramGroups)];
-      },
-      set(value) {
-        this.SET_TRANSFER_DATA(value);
-        if (
-          this.groups &&
-          this.groups.length > 0
-          //  this.getTransferData &&
-          //  this.getTransferData.length > 0
-        ) {
-          let newGroups = this.groups.filter((u) =>
-            this.getTransferData.includes(u.id)
-          );
-          this.SET_NEW_GROUPS([newGroups]);
-        }
-      },
-    },
+    //   return [...new Set(data)];
+    // },
+    // transferData: {
+    //   get() {
+    //     return [...new Set(this.myProgramGroups)];
+    //   },
+    //   set(value) {
+    //     this.SET_TRANSFER_DATA(value);
+    //     if (
+    //       this.groups &&
+    //       this.groups.length > 0
+    //       //  this.getTransferData &&
+    //       //  this.getTransferData.length > 0
+    //     ) {
+    //       let newGroups = this.groups.filter((u) =>
+    //         this.getTransferData.includes(u.id)
+    //       );
+    //       this.SET_NEW_GROUPS([newGroups]);
+    //     }
+    //   },
+    // },
     portfolioGroups() {
       //Removes current Program  Groups from checkbox options in Add Protfolio Group popup
       if (this.groups && this.groups.length > 0) {
@@ -891,6 +908,10 @@ a {
   background-color: #ededed;
 }
 /deep/.el-table {
+   .warning-row {
+    background: oldlace;
+  }
+
   ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: lightgray;
@@ -918,8 +939,9 @@ div.sticky {
   z-index: 10;
   background: #fff;
 }
-.addGroupsHeader {
+.addGroupsHeader, h5 {
   line-height: 2.2;
+  word-break: break-word;
 }
 
 .portfolioNames {
@@ -949,11 +971,16 @@ div.sticky {
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
-// :-ms-input-placeholder { /* Internet Explorer 10-11 */
-//   color: red;
-// }
-
-// ::-ms-input-placeholder { /* Microsoft Edge */
-//   color: red;
-// }
+.fs-75{
+font-size: .75rem;
+}
+.program-sphere {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;  
+  background: -webkit-radial-gradient(65% 15%, circle, white 1px, aqua 3%, darkblue 60%, aqua 100%); 
+  background: -moz-radial-gradient(65% 15%, circle, white 1px, aqua 3%, darkblue 60%, aqua 100%); 
+  background: -o-radial-gradient(65% 15%, circle, white 1px, aqua 3%, darkblue 60%, aqua 100%);
+  background: radial-gradient(circle at 65% 15%, white 1px, aqua 3%, darkblue 60%, aqua 100%); 
+}
 </style>

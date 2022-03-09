@@ -32,6 +32,12 @@
 # For activeadmin locales: https://github.com/activeadmin/activeadmin/blob/master/config/locales/en.yml
 
 en:
+  active_admin:
+    resources:
+      facility_group:
+        new_model: 'New Group'
+        edit_model: 'Edit Group'
+        delete_model: 'Delete Group'
   activerecord:
     models:
       region:

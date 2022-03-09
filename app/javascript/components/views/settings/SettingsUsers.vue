@@ -1,8 +1,5 @@
 <template>
-<div 
-  v-loading="!programUsers"
-  element-loading-spinner="el-icon-loading"
-  element-loading-background="rgba(0, 0, 0, 0.8)" class="row">
+<div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -69,8 +66,7 @@
     <div  
         v-loading="!programUsersLoaded"
         element-loading-text="Fetching your data. Please wait..."
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
+        element-loading-spinner="el-icon-loading"     
         class="">
         <el-table
         v-if="programUsers && programUsers.length > 0"
@@ -818,6 +814,9 @@ export default {
       box-shadow: inset 0 0 0 2px #DD9036;
     }
   }
+h5 {
+   word-break: break-word;
+}
   .rowPrivileges {
     overflow-x: auto;
   }

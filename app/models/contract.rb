@@ -15,7 +15,7 @@ class Contract < ApplicationRecord
   belongs_to :facility_group, optional: true
   belongs_to :project, optional: true
   belongs_to :contract_project, class_name: "Project", foreign_key: :project_id
-  belongs_to :contract_facility_group, class_name: "FacilityGroup", foreign_key: :facility_group_id
+  belongs_to :contract_facility_group, class_name: "FacilityGroup", foreign_key: :facility_group_id, optional: true
 
   has_many :tasks
   has_many :issues
@@ -24,7 +24,7 @@ class Contract < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   before_save :assign_default_contract_type
-  before_save :assign_default_facility_group
+  before_create :assign_default_facility_group
 
   validates_presence_of :nickname
 
