@@ -33,7 +33,7 @@
                 @click.prevent="addProject"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Project
+                <i class="far fa-plus-circle mr-1"></i> Create New Project
               </el-button>
             </div>
 
@@ -93,6 +93,11 @@
           "
           style="width: 100%"
           height="450"
+          highlight-current-row
+          :row-key="row => row.id"
+          :expand-row-keys="expandRowKeys"
+          @expand-change="handleExpandChange" 
+         :default-sort="{ prop: 'facilityName', order: 'ascending'}" 
         >
           <el-table-column prop="facilityName"  sortable label="Project">
             <template slot-scope="scope">
@@ -143,8 +148,76 @@
               ></el-input> -->
             </template>
           </el-table-column>
+     <!--BEGIN Expandable Column Containing Project User roles -->
+      <el-table-column label="Users" width="100" type="expand">
+         <template>
+          <el-table
+         :data="contractUser.filter(
+                (data) =>
+                  !searchContractUsers ||
+                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
+              )"
+          style="width: 100%"
+          height="450"
+          :default-sort="{ prop: 'last_name', order: 'ascending'}" 
 
-          <el-table-column label="Actions">
+        >
+          <el-table-column prop="user"  sortable label="Users">
+         </el-table-column>
+          <el-table-column
+            prop="roles"
+            sortable
+            filterable
+            label="Roles"
+          >
+            <!-- <template slot-scope="scope"> -->
+               <!-- <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>    -->
+
+              
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            <!-- </template> -->
+          </el-table-column>
+          <el-table-column>
+          <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchContractUsers"
+            size="mini"
+            placeholder="Search project users"            
+            >
+
+              <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          </el-table-column>
+
+         </el-table>
+         </template>
+
+         </el-table-column>
+           <!--END Expandable Column Containing Project User roles -->
+
+
+          <el-table-column label="Actions" align="right">
             <template slot-scope="scope">
               <el-button
                 type="default"
@@ -169,14 +242,15 @@
                 v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
                 class="bg-light">
                 <i class="fal fa-edit text-primary" ></i>
-               </el-button> 
+               </el-button>  
           
               <el-button
                 type="default"
+                v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
                 class="bg-success text-light"
               >
-                Go To Project <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+             <i class="fas fa-arrow-alt-circle-right"></i>
               </el-button>
        
               <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -188,16 +262,18 @@
           :visible.sync="dialogVisible"
           append-to-body
           center
-          class="contractForm p-0"
+          class="contractForm p-0 addProjectDialog"
         >
+        <span slot="title" class="text-left add-groups-header ">
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create New Project </h5>
+        </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-4">
               <label class="font-md"
-                >New Project Name <span style="color: #dc3545">*</span></label
+                >Project Name <span style="color: #dc3545">*</span></label
               >
               <el-input
-                type="textarea"
-                v-model="newProjectNameText"
+               v-model="newProjectNameText"
                 placeholder="Enter new project name"
                 rows="1"
                 name="Project Name"
@@ -227,14 +303,22 @@
             <div class="right mr-2">
               <button
                 @click.prevent="saveNewProject"
-                :disabled="!C_projectGroupFilter && newProjectNameText"
-                class="btn btn-sm bg-primary text-light mr-2"
-                >Save</button
+                v-show="C_projectGroupFilter && newProjectNameText"
+                 v-tooltip="`Save Project`"      
+                class="btn btn-md bg-primary text-light modalBtns"
+                >  <i class="far fa-save"></i></button
               >
+              <button
+                @click.prevent="cancelCreateGroup"
+                class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Cancel`"                  
+              >
+               <i class="fas fa-ban"></i> 
+              </button>
             </div>
           </form>
         </el-dialog>
-      </div>
+         </div>
     </div>
   </div>
 </template>
@@ -254,19 +338,51 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      expandRowKeys: [],
       componentKey: 0,
       programId: this.$route.params.programId,
       search: "",
       rowIndex: null,
       rowId: null,
       projectId: null, 
+      searchContractUsers:"",
       selectedProjectGroup: null,
       newProjectNameText: "",
       value: "",
+        contractUser: [
+        {          
+          user: 'John Doe',
+          roles: 'project-write, project-read',
+          last_name: 'Doe'
+        }, {
+          user: 'Bob Dole',
+          roles: 'project-write',
+          last_name: 'Dole'
+        }, {
+          user: 'Adam Smith',
+          roles: 'project-write, project-read, project-delete',
+          last_name: 'Smith'
+       }, {
+          user: 'Samantha Smith',
+          roles: 'project-write, project-read',
+          last_name: 'Smith'
+        }, {
+          user: 'Curtis Smith',
+          roles: 'project-write, project-read',
+          last_name: 'Smith'
+        }, {
+          user: 'Daisy Rivera',
+          roles: 'project-write, project-read',
+          last_name: 'Rivera'
+        }, 
+       
+        ],
      };
   },
  mounted(){
-  this.fetchGroups(this.$route.params.programId)
+    if(this.groups && this.groups.length <= 0){
+    this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapActions(["fetchFacilities", "fetchCurrentProject", "fetchGroups"]),
@@ -282,7 +398,15 @@ export default {
       //   },
       // });
     },
-  
+    cancelCreateGroup() {
+      this.dialogVisible = false;
+    },
+    handleExpandChange (row, expandedRows) {
+			const id = row.id;
+			const lastId = this.expandRowKeys[0];
+			// disable mutiple row expanded 
+			this.expandRowKeys = id === lastId ? [] : [id];
+		},  
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
@@ -453,6 +577,9 @@ export default {
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 .right {
   text-align: right;
 }
@@ -499,18 +626,20 @@ a {
 }
 /deep/.el-dialog {
   width: 30%;
-  border-top: solid 5px #1d336f !important;
 }
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;
+    font-weight: 300 !important;
   }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
-  background-color: #dc3545;
-  border-radius: 50%;
-  color: white;
-  padding: 2px;
-  font-size: 0.7rem;
+  display: none;
+}
+
+.addProjectDialog {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
 }
 </style>

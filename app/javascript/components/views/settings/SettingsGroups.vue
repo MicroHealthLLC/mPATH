@@ -46,7 +46,7 @@
                 @click.prevent="openPortfolioGroup"
                 class="bg-success text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
+                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group(s)
               </el-button>
             </div>
             <div class="col-6">
@@ -67,15 +67,14 @@
           :visible.sync="dialogVisible"
           append-to-body
           center
-          class="contractForm p-0"
+          class="contractForm p-0 createNewGroup"
         >
+              <span slot="title" class="text-left add-groups-header">
+                <h5 class="text-dark"> <i class="far fa-plus-circle mr-1"></i>Create New Program Group </h5>
+              </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
-              <label class="font-md"
-                >New Group Name <span style="color: #dc3545">*</span></label
-              >
-              <el-input
-                type="textarea"
+           <el-input
                 v-model="newGroupName"
                 placeholder="Enter new Group name here"
                 rows="1"
@@ -85,27 +84,36 @@
             <div class="right mr-2">
               <button
                 @click.prevent="createNewGroup"
-                :disabled="!newGroupName"
-                class="btn btn-sm bg-primary text-light mr-2"
-                v-tooltip="`Save`"
+                v-show="newGroupName"
+                class="btn btn-md bg-primary text-light  modalBtns"
+                v-tooltip="`Save New Group`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
-                <i class="fal fa-save mr-2"></i>
+                <i class="fal fa-save"></i>
+              </button>
+              <button
+                @click.prevent="cancelCreateGroup"
+                class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Cancel`"               
+                :class="[hideSaveBtn ? 'd-none' : '']"
+              >
+               <i class="fas fa-ban"></i> 
               </button>
               <button
                 @click.prevent="addAnotherGroup"
+                 v-tooltip="`Add Another Group`"     
                 :class="[!hideSaveBtn ? 'd-none' : '']"
-                class="btn btn-sm bg-primary text-light mr-2"
+                class="btn btn-md bg-primary text-light modalBtns"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Another Group
+                <i class="far fa-plus-circle"></i>
               </button>
               <button
                 @click.prevent="closeAddGroupBtn"
                 v-tooltip="`Close`"
-                class="btn btn-sm bg-danger text-light mr-2"
+                class="btn btn-md bg-secondary text-light modalBtns mr-2"
                 :class="[!hideSaveBtn ? 'd-none' : '']"
               >
-                <i class="fal fa-window-close"></i>
+               <i class="fas fa-ban"></i> 
               </button>
             </div>
           </form>
@@ -120,9 +128,14 @@
           <div>
             <template>
               <div class="sticky">
-                <el-button-group>
+
+              <div class="row"> 
+               <div slot="title" class="col-8 pr-0 text-left">
+                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
+              </div>
+                <div class="col text-right">
                   <el-button
-                    class="confirm-save-group-names btn text-light"
+                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Group(s)`"
                     @click.prevent="importGroupName"
                     :disabled="portfolioGroups.length <= 0"
@@ -131,12 +144,13 @@
                   </el-button>
                   <el-button
                     @click.prevent="closeImportGroupBtn"
-                    v-tooltip="`Close`"
-                    class="btn mh-blue text-light"
+                    v-tooltip="`Cancel`"
+                    class="btn bg-secondary ml-0 text-light modalBtns"
                   >
-                    <i class="fal fa-window-close"></i>
+                    <i class="fas fa-ban"></i> 
                   </el-button>
-                </el-button-group>
+                </div>
+              </div>
               </div>
             </template>
             <el-checkbox
@@ -166,11 +180,10 @@
             element-loading-text="Fetching your data. Please wait..."
             element-loading-spinner="el-icon-loading"
             element-loading-background="rgba(0, 0, 0, 0.8)"
-            class="mt-4"
+            class="mt-2"
           >
             <el-table
               v-if="tableData"
-              :header-cell-style="{ background: '#EDEDED' }"
               :data="
                 tableData
                   .filter(
@@ -182,8 +195,80 @@
               "
               style="width: 100%"
               height="475"
+              highlight-current-row
+              :default-sort="{ prop: 'name', order: 'ascending'}"  
             >
-              <el-table-column type="expand">
+          
+              <el-table-column prop="name" sortable label="Groups">
+                <template slot-scope="props">
+                  <div class="row">
+                    <div class="col-9">
+                      <el-input
+                        size="small"
+                        v-if="rowId == props.row.id"
+                        style="text-align:center"
+                        v-model="props.row.name"
+                        controls-position="right"
+                      >
+                      </el-input>
+                      <span v-else> {{ props.row.name }}</span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="Counts" width="165">
+                <template slot-scope="props">
+                  <div class="row">
+                    <div class="col">
+                      <i
+                        class="fal fa-clipboard-list mr-1 mh-green-text"
+                        v-tooltip="`Projects`"
+                      ></i>
+                      <span
+                        class="mr-4"
+                        v-if="
+                          groupProjects &&
+                            groupProjects
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupProjects &&
+                            groupProjects
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span class="mr-4" v-else>
+                        {{ 0 }}
+                      </span>
+                      <i
+                        class="far fa-file-contract mr-1 mh-orange-text"
+                        v-tooltip="`Contracts`"
+                      ></i>
+                      <span
+                        v-if="
+                          groupContracts &&
+                            groupContracts
+                              .map((t) => t.facilityGroupId)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupContracts
+                            .map((t) => t.facilityGroupId)
+                            .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span v-else>
+                        {{ 0 }}
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </el-table-column>
+                <el-table-column type="expand">
                 <template slot-scope="props">
                   <div class="container">
                     <div class="row">
@@ -265,77 +350,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="name" sortable label="Groups">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col-9">
-                      <el-input
-                        size="small"
-                        v-if="rowId == props.row.id"
-                        style="text-align:center"
-                        v-model="props.row.name"
-                        controls-position="right"
-                      >
-                      </el-input>
-                      <span v-else> {{ props.row.name }}</span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column label="Counts">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col">
-                      <i
-                        class="fal fa-clipboard-list mr-1 mh-green-text"
-                        v-tooltip="`Projects`"
-                      ></i>
-                      <span
-                        class="mr-4"
-                        v-if="
-                          groupProjects &&
-                            groupProjects
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          groupProjects &&
-                            groupProjects
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span class="mr-4" v-else>
-                        {{ 0 }}
-                      </span>
-                      <i
-                        class="far fa-file-contract mr-1 mh-orange-text"
-                        v-tooltip="`Contracts`"
-                      ></i>
-                      <span
-                        v-if="
-                          groupContracts &&
-                            groupContracts
-                              .map((t) => t.facilityGroupId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          groupContracts
-                            .map((t) => t.facilityGroupId)
-                            .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span v-else>
-                        {{ 0 }}
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-
-              <el-table-column label="Actions">
+              <el-table-column label="Actions"  align="right">
                 <template slot-scope="scope">
                   <el-button
                     type="default"
@@ -347,7 +362,7 @@
                     "
                     class="bg-primary text-light"
                   >
-                    <i class="far fa-save"></i>
+                    <i class="far fa-save mr-1"></i>Save
                   </el-button>
                   <el-button
                     type="default"
@@ -371,7 +386,7 @@
                     "
                     class="bg-light"
                   >
-                    <i class="fal fa-edit text-primary"></i>
+                    <i class="fal fa-edit text-primary mr-1"></i>
                   </el-button>
                   <el-button
                     type="default"
@@ -387,6 +402,7 @@
                   </el-button>
                 </template>
               </el-table-column>
+              
             </el-table>
           </div>
         </div>
@@ -418,23 +434,11 @@ export default {
 
     data() {    
       return {
-        currentFacility: {},
-        dialogVisible: false,
-        dialog2Visible: false,
-        isIndeterminate: true,
-        currentTab: "tab1",
-      tabs: [
-        {
-          label: "MANAGE GROUPS",
-          key: "tab1",
-          closable: false,
-        },
-        {
-          label: "TABLE",
-          key: "tab2",
-          closable: false,
-        },
-      ],
+      currentFacility: {},
+      dialogVisible: false,
+      dialog2Visible: false,
+      isIndeterminate: true,
+      currentTab: "tab1",
       contracts: null,
       currentFacilityGroup: {},
       componentKey: 0,
@@ -472,20 +476,16 @@ export default {
       "fetchGroups",
       "fetchCurrentProject",
     ]),
-
+   cancelCreateGroup() {
+      this.dialogVisible = false;
+    },
     addAnotherGroup() {
       this.C_projectGroupFilter = null;
       this.newGroupName = null;
       this.hideSaveBtn = false;
     },
     handleCheckAllChange() {
-      //  if (this.groups && this.groups.length > 0) {
-      //     let checkGroups = this.groups.map(group => group.id)
-      //     if(val){
-      //       this.SET_CHECKED_GROUPS(checkGroups);
-      //     }
       this.isIndeterminate = false;
-      //  }
     },
     reRenderTable() {
       this.componentKey += 1;
@@ -605,7 +605,10 @@ export default {
     },
   },
   mounted() {
+  if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
+    }
+   
   },
   computed: {
     ...mapGetters([
@@ -789,6 +792,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
+
           //  this.newGroupName =
         }
       },
@@ -807,6 +811,9 @@ export default {
 <style scoped lang="scss">
 .right {
   text-align: right;
+}
+.buttonWrapper {
+  border-bottom: lightgray solid 1px;
 }
 .fa-calendar {
   font-size: x-large;
@@ -853,8 +860,7 @@ a {
   border-style: solid;
 }
 /deep/.el-dialog {
-  width: 30%;
-  border-top: solid 5px #1d336f !important;
+  width: 30%;  
 }
 .container {
   margin-left: 50px;
@@ -909,6 +915,11 @@ div.sticky {
   top: 0;
   text-align: right;
   padding-top: 10px;
+  z-index: 10;
+  background: #fff;
+}
+.addGroupsHeader {
+  line-height: 2.2;
 }
 
 .portfolioNames {
@@ -924,6 +935,20 @@ div.sticky {
   }
 }
 
+.createNewGroup{
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+}
+/deep/.el-dialog__close.el-icon.el-icon-close{
+  display: none;
+}
+.add-groups-header{
+  background-color: #fff;
+}
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 // :-ms-input-placeholder { /* Internet Explorer 10-11 */
 //   color: red;
 // }

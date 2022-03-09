@@ -7,6 +7,10 @@ import SettingsProjects from "./../components/views/settings/SettingsProjects";
 import TestCloudData from "./../components/views/settings/TestCloudData";
 import SettingsContracts from "./../components/views/settings/SettingsContracts";
 import SettingsGroups from "./../components/views/settings/SettingsGroups";
+import SettingsUsers from "./../components/views/settings/SettingsUsers";
+import SettingsRolesIndex from "./../components/views/settings/roles/SettingsRolesIndex";
+// import SettingsRolesProjects from "./../components/views/settings/roles/SettingsRolesProjects"
+// import SettingsRolesContracts from "./../components/views/settings/roles/SettingsRolesContracts"
 
 import ProgramTaskForm from "./../components/views/program/ProgramTaskForm";
 import ProgramContractTaskForm from "./../components/views/program/ProgramContractTaskForm";
@@ -189,6 +193,26 @@ export default new VueRouter({
       name: "SettingsGroups",
       path: "/programs/:programId/settings/groups",
       component: SettingsGroups,
+    },
+    {
+      name: "SettingsUsers",
+      path: "/programs/:programId/settings/users",
+      component: SettingsUsers,
+    },
+    // {
+    //   name: "SettingsRolesContracts",
+    //   path: "/programs/:programId/settings/roles",
+    //   component: SettingsRolesContracts,
+    // },
+    // {
+    //   name: "SettingsRolesProjects",
+    //   path: "/programs/:programId/settings/roles",
+    //   component: SettingsRolesProjects,
+    // },
+    {
+      name: "SettingsRolesIndex",
+      path: "/programs/:programId/settings/roles",
+      component: SettingsRolesIndex,
     },
     {
       name: "SettingsView",

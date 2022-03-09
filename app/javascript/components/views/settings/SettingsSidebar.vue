@@ -1,21 +1,20 @@
 <template>
 <div class="filterbar">
-    <div class="py-1 programNameWrap">
-       <router-link :to="settingsLanding" id="noLine">
-      <div      
+    <div class="stick">
+      <div
+        @click="deselectProject"
         id="program_name"
-        class="programNameDiv smallCaps pl-2 pr-1"
+        class="programNameDiv smallCaps pl-2 pr-3"
       >
-      {{ programName }}
+        {{ programName }}
       </div>
-       </router-link>
     </div>
 
 <div id="filter_bar">
     <h5>
     <ul class="pt-2 program-name">
        <router-link :to="adminGroupsView" :class="{'d-none': !_isallowedProgramSettings('Groups', 'read') }">
-        <li class="p-3 entity">
+        <li class="p-3 mt-3 entity">
           <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Groups
         </li>
     </router-link>
@@ -29,6 +28,17 @@
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
+       <router-link :to="adminRolesView"> 
+       <li class="p-3 entity">
+        <i class="fal fa-user-lock mr-2 pr-1 bootstrap-purple-text"></i>Roles
+        </li>
+    </router-link>
+    <router-link :to="adminUsersView"> 
+       <li class="p-3 entity">
+         <i class="fal fa-users mr-2 pr-1 text-secondary"></i>Users
+        </li>
+    </router-link>
+   
     <!-- <router-link :to="adminCloudView" > 
        <li class="p-3 entity">
             <i class="fal fa-cloud mr-2 text-info"></i>     MH Data
@@ -84,6 +94,12 @@ export default {
     adminGroupsView() {
      return `/programs/${this.$route.params.programId}/settings/groups`
     },
+    adminUsersView() {
+     return `/programs/${this.$route.params.programId}/settings/users`
+    },
+    adminRolesView() {
+     return `/programs/${this.$route.params.programId}/settings/roles`
+    },
     adminCloudView() {
      return `/programs/${this.$route.params.programId}/settings/test_cloud_data`
     },
@@ -112,6 +128,13 @@ export default {
     log(e){
         // console.log(e);  
     },
+    deselectProject(e) {
+      if (e.target.id === "program_name") {
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/settings`
+        );
+      }
+    },
   }
 }
 
@@ -125,17 +148,35 @@ export default {
   width: 90%;
   transition: .4s ease;
 }
+.stick {
+  position: fixed;
+  z-index: 1;
+  color:#fff;
+  max-width: 16%;
+  background-color: #DD9036;
+}
 .programNameDiv {
   box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
-  color: #212529 !important;
+  line-height: 1.2;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   cursor: pointer;
- } 
-.programNameWrap:hover {
-  background-color: rgba(211, 211, 211, 10%);
+  &:hover {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+  }
+  &.active {
+    background-color: red !important;
+    color: #007bff;
+  }
 }
-#noLine {
-  text-decoration-line: none !important;
- }
+.programNameDiv:hover {
+  background-color: #8f510b;
+
+}
 #filter_bar {
   overflow-y: auto;
   border-radius: 4px;

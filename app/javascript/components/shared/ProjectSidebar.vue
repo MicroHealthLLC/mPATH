@@ -4,7 +4,7 @@
       <div
         @click="deselectProject"
         id="program_name"
-        class="programNameDiv smallCaps pl-2 pr-1"
+        class="programNameDiv smallCaps pl-2 pr-3"
       >
         {{ programName }}
       </div>
@@ -321,8 +321,29 @@ export default {
       font-weight: bold;
     }
   }
+  
+  .stick {
+    position: fixed;
+    z-index: 1;
+    color:#fff;
+    max-width: 15%;
+    background-color: #DD9036;
+  }
+  .stick:hover {
+    background-color: #8f510b;
+  }
   .programNameDiv {
     box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
+    line-height: 1.2;
+   display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+  }
     cursor: pointer;
     &.active {
       background-color: red !important;
@@ -330,7 +351,7 @@ export default {
     }
   }
   .programNameDiv:hover {
-    background-color: rgba(211, 211, 211, 10%);
+    background-color: #8f510b;
   }
   .fac-name {
     border-bottom: solid lightgray 0.5px;
@@ -392,11 +413,5 @@ export default {
     // white-space: nowrap;
 
   }
-
-  // .expandText:hover {
-  //   text-overflow: clip;
-  //   white-space: normal;
-  //   word-break: break-all;
-  // }
 }
 </style>

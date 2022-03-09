@@ -33,7 +33,7 @@
                 @click.prevent="addContract"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Contract
+                <i class="far fa-plus-circle mr-1"></i> Create New Contract
               </el-button>
             </div>
             <div class="col">
@@ -90,7 +90,13 @@
                 .reverse()
             "
             style="width: 100%"
+            highlight-current-row
             height="450"
+            ref="table"
+            :row-key="row => row.id"
+            :expand-row-keys="expandRowKeys"
+		      	@expand-change="handleExpandChange" 
+            :default-sort="{ prop: 'nickname', order: 'ascending'}"        
           >
             <el-table-column prop="nickname" sortable label="Contract">
               <template slot-scope="scope">
@@ -135,8 +141,88 @@
 
               </template>
             </el-table-column>
+  <!--BEGIN Expandable Column Containing Contract User roles -->
+      <el-table-column label="Users" width="100" type="expand">
+         <template>
+       <!-- <template slot-scope="scope">
+         <el-button type="text" @click="toggleExpand(scope.row)"><i class="fas fa-users mr-1"></i></el-button>
+        </template>  -->
 
-            <el-table-column label="Actions">
+      <!-- <span slot="title" class="text-left">
+       <h5 class="text-dark"> <i class="far fa-file-contract mr-1 mh-orange-text"></i> 
+        {{ contractData.nickname }}
+      </h5> -->
+      <!-- </span> -->
+         <el-table
+         :data="contractUser.filter(
+                (data) =>
+                  !searchContractUsers ||
+                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
+              )"
+          style="width: 100%"
+          height="450"
+        >
+          <el-table-column prop="user"  sortable label="Users">
+            <!-- <template slot-scope="scope">
+           
+           
+        
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="roles"
+            sortable
+            filterable
+            label="Roles"
+          >
+            <!-- <template slot-scope="scope"> -->
+               <!-- <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>    -->
+
+              
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            <!-- </template> -->
+          </el-table-column>
+          <el-table-column>
+          <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchContractUsers"
+            size="mini"
+            placeholder="Search contract users"            
+            >
+
+              <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          </el-table-column>
+
+         </el-table>
+         </template>
+
+         </el-table-column>
+           <!--END Expandable Column Containing Contract User roles -->
+
+
+            <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
                 <el-button
                   type="default"
@@ -174,11 +260,20 @@
                 >
                   <i class="fal fa-edit text-primary"></i>
                 </el-button>
+                 <!-- <el-button
+                  type="default"
+                  v-tooltip="`See Contract Users`"
+                  v-if="scope.$index !== rowIndex"
+                  @click.prevent="openUserPrivileges(scope.$index, scope.row)"
+                  class="bg-light"
+                >
+                   <i class="fas fa-users mr-1"></i>
+                </el-button> -->
 
                 <el-button
-                  v-if="_isallowedProgramSettings('delete')"
+                  v-if="_isallowedProgramSettings('delete') && scope.$index !== rowIndex"
                   type="default"
-                  v-tooltip="`Delete`"
+                  v-tooltip="`Delete Contract`"
                   @click.prevent="
                     deleteSelectedContract(scope.$index, scope.row)
                   "
@@ -187,11 +282,12 @@
                   <i class="far fa-trash-alt text-danger"></i>
                 </el-button>
                 <el-button
-                  type="default"
+                  type="default" 
+                    v-tooltip="`Go To Contract`"              
                   @click.prevent="goToContract(scope.$index, scope.row)"
                   class="bg-success text-light"
-                  >Go To Contract
-                  <i class="fas fa-arrow-alt-circle-right ml-1"></i>
+                  >
+                  <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
                 <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
               </template>
@@ -205,15 +301,17 @@
           :visible.sync="dialogVisible"
           append-to-body
           center
-          class="contractForm p-0"
+          class="contractForm addContract p-0"
         >
+          <span slot="title" class="text-left add-groups-header ">
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create New  Contract </h5>
+        </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
               <label class="font-md"
                 >Contract Name <span style="color: #dc3545">*</span></label
               >
-              <el-input
-                type="textarea"
+              <el-input            
                 v-model="contractNameText"
                 placeholder="Enter new contract name here"
                 rows="1"
@@ -224,8 +322,7 @@
               <label class="font-md"
                 >Contract Nickname <span style="color: #dc3545">*</span></label
               >
-              <el-input
-                type="textarea"
+              <el-input              
                 v-model="contractNicknameText"
                 placeholder="Enter new contract name here"
                 rows="1"
@@ -284,46 +381,122 @@
                     contractNicknameText &&
                     C_newContractGroupFilter.id
                 "
-                class="btn btn-sm bg-primary text-light mr-2"
+                class="btn btn-md bg-primary text-light modalBtns"
+                v-tooltip="`Save Contract`"
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
-                Save
-              </button>
-              <button
-                disabled
-                v-else
-                class="btn btn-sm bg-primary text-light mr-2"
-              >
-                Save
+               <i class="far fa-save"></i>
               </button>
               <button
                 @click.prevent="addAnotherContract"
                 :class="[!hideSaveBtn ? 'd-none' : '']"
-                class="btn btn-sm bg-primary text-light mr-2"
+                v-tooltip="`Add Another Contract`"
+                class="btn btn-md bg-primary text-light modalBtns"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Another Contract
+                <i class="far fa-plus-circle"></i> 
               </button>
               <button
                 @click.prevent="closeAddContractBtn"
-                class="btn btn-sm bg-danger text-light mr-2"
-                :class="[!hideSaveBtn ? 'd-none' : '']"
+                 class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Cancel`"     
+               
               >
-                Close
+             <i class="fas fa-ban"></i> 
               </button>
             </div>
           </form>
         </el-dialog>
       </div>
+
+      <el-dialog
+          :visible.sync="openUserPrivilegesDialog"
+          append-to-body
+          center
+          class="contractUsers"
+          id="contractUsers p-0"
+        >
+      <span slot="title" class="text-left">
+       <h5 class="text-dark"> <i class="far fa-file-contract mr-1 mh-orange-text"></i> 
+        {{ contractData.nickname }}
+      </h5>
+      </span>
+         <el-table
+         :data="contractUser.filter(
+                (data) =>
+                  !searchContractUsers ||
+                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
+              )"
+          style="width: 100%"
+          height="450"
+        >
+          <el-table-column prop="user"  sortable label="Users">
+            <!-- <template slot-scope="scope">
+           
+           
+        
+            </template> -->
+          </el-table-column>
+          <el-table-column
+            prop="roles"
+            sortable
+            filterable
+            label="Roles"
+          >
+            <!-- <template slot-scope="scope"> -->
+               <!-- <el-select
+                v-model="scope.row.facilityGroupId"
+                class="w-100"
+                v-if="rowId == scope.row.id"
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>    -->
+
+              
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            <!-- </template> -->
+          </el-table-column>
+          <el-table-column>
+          <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchContractUsers"
+            size="mini"
+            placeholder="Search contract users"            
+            >
+
+              <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          </el-table-column>
+
+         </el-table>
+        </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-// Compare both array objects, if obj a is also in obj b, push key 'yes' into that value[i] else, push key 'no'
+//PRIVILEGES FEATURE REQUIREMENTS
 
-// Create two empty arrays
-// Push values into array
-// Compare arrays
+//I want to see a column for roles
+//When I click on that column row, row expands to show users of that contract, as well as the roles of the users
+//
+
+
+
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
@@ -335,25 +508,52 @@ export default {
   },
   data() {
     return {
+      expandRowKeys: [],
       currentFacility: {},
       // currentContract: {},
       dialogVisible: false,
+      openUserPrivilegesDialog: false, 
+      contractData: {},
       currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
       projectNameText: "",
       search: "",
+      searchContractUsers:"",
       hideSaveBtn: false,
       contractNameText: "",
       contractNicknameText: "",
       expanded: {
         id: "",
       },
+      contractUser: [
+        {          
+          user: 'John Doe',
+          roles: 'contract-write, contract-read',
+        }, {
+          user: 'Bob Dole',
+          roles: 'contract-write'
+        }, {
+          user: 'Adam Smith',
+          roles: 'contract-write, contract-read, contract-delete',
+       }, {
+          user: 'Samantha Smith',
+          roles: 'contract-write, contract-read', 
+        }, {
+          user: 'Curtis Smith',
+          roles: 'contract-write, contract-read',
+        }, 
+       
+        ],
     };
   },
   mounted() {
+    if(this.contracts[0] && this.contracts[0].length <= 0){
     this.fetchContracts();
+    }  
+    if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapMutations([
@@ -392,6 +592,12 @@ export default {
       //   },
       // });
     },
+	  handleExpandChange (row, expandedRows) {
+			const id = row.id;
+			const lastId = this.expandRowKeys[0];
+			// disable mutiple row expanded 
+			this.expandRowKeys = id === lastId ? [] : [id];
+		},
     saveNewContract() {
       // this.onSubmit()
       let contractData = {
@@ -411,6 +617,7 @@ export default {
       // this.fetchCurrentProject(this.$route.params.programId);
       // console.log(contractData)
     },
+    // DO NOT DELETE This async method.  It is code for firebase cloud functionality
     //  async onSubmit ()  {
     //      const formData = {
     //         contractName: this.contractNameText,
@@ -423,6 +630,7 @@ export default {
     //  }
 
     saveEdits(index, rows) {
+      // console.log(rows)
       let id = rows.id;
       let contractData = {
         contract: {
@@ -433,7 +641,7 @@ export default {
           id: id,
         },
       };
-      this.setNewContractGroupFilter(rows.facility_group_id);
+      // this.setNewContractGroupFilter(rows.facility_group_id);
       this.updateContract({
         ...contractData,
         id,
@@ -487,6 +695,13 @@ export default {
       this.C_projectGroupFilter = null;
       this.contractNameText = "";
       this.contractNicknameText = "";
+    },
+    openUserPrivileges(index, rows) {
+      this.openUserPrivilegesDialog = true;
+      this.contractData = rows
+      // this.C_projectGroupFilter = null;
+      // this.contractNameText = "";
+      // this.contractNicknameText = "";
     },
   },
   computed: {
@@ -595,6 +810,9 @@ export default {
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
 .right {
   text-align: right;
 }
@@ -605,6 +823,29 @@ export default {
   color: #212529;
   font-size: 1.15rem;
 }
+.contractUsers { 
+  
+  /deep/.el-dialog{
+ width: 60% !important; 
+
+ /deep/.el-dialog__body {
+   padding-top: 0;
+ }
+
+  }
+  
+}
+/deep/.el-dialog.contractUsers{
+ width: 60% !important; 
+  }
+.contractUsers{
+ /deep/.el-dialog__body {
+   padding-top: 0;
+ }
+}
+
+
+
 .tabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
@@ -633,6 +874,9 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+/deep/.el-input__inner{
+  font-weight: 300 !important;
+}
 /deep/.el-table__row .el-input .el-input__inner {
   border-style: none;
   font-size: 16px !important;
@@ -640,10 +884,18 @@ a {
 /deep/.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
-/deep/.el-dialog {
+/deep/.el-dialog.addContract {
   width: 30%;
-  border-top: solid 5px #1d336f !important;
 }
+.addContract {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+}
+/deep/.el-dialog__close.el-icon.el-icon-close {
+  display: none;
+}
+
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;
