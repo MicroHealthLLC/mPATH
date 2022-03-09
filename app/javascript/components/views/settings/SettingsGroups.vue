@@ -128,10 +128,12 @@
           <div>
             <template>
               <div class="sticky">
-               <span slot="title" class="text-left add-groups-header">
-                <h5 class="text-dark"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
-              </span>
-                <span class="add-groups-action-btns">
+
+              <div class="row"> 
+               <div slot="title" class="col-8 pr-0 text-left">
+                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
+              </div>
+                <div class="col text-right">
                   <el-button
                     class="confirm-save-group-names btn text-light modalBtns"
                     v-tooltip="`Save Group(s)`"
@@ -147,7 +149,8 @@
                   >
                     <i class="fas fa-ban"></i> 
                   </el-button>
-                </span>
+                </div>
+              </div>
               </div>
             </template>
             <el-checkbox
@@ -912,6 +915,11 @@ div.sticky {
   top: 0;
   text-align: right;
   padding-top: 10px;
+  z-index: 10;
+  background: #fff;
+}
+.addGroupsHeader {
+  line-height: 2.2;
 }
 
 .portfolioNames {
@@ -931,12 +939,6 @@ div.sticky {
   /deep/.el-dialog__body {
   padding-top: 0 !important;
  }
-}
-.add-groups-action-btns{
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  display: block;
 }
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
