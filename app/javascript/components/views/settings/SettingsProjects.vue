@@ -77,7 +77,6 @@
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
     class="">
         <el-table
           :key="componentKey"   
@@ -635,6 +634,9 @@ a {
 }
 /deep/.el-dialog__close.el-icon.el-icon-close {
   display: none;
+}
+h5 {
+  word-break: break-word;
 }
 
 .addProjectDialog {
