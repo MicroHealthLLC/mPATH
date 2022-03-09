@@ -135,7 +135,7 @@
               </div>
                 <div class="col text-right">
                   <el-button
-                    class="confirm-save-group-names btn text-light modalBtns"
+                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Group(s)`"
                     @click.prevent="importGroupName"
                     :disabled="portfolioGroups.length <= 0"
@@ -145,7 +145,7 @@
                   <el-button
                     @click.prevent="closeImportGroupBtn"
                     v-tooltip="`Cancel`"
-                    class="btn bg-primary ml-0 text-light modalBtns"
+                    class="btn bg-secondary ml-0 text-light modalBtns"
                   >
                     <i class="fas fa-ban"></i> 
                   </el-button>
