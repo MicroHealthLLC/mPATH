@@ -145,7 +145,7 @@
                   <el-button
                     @click.prevent="closeImportGroupBtn"
                     v-tooltip="`Cancel`"
-                    class="btn bg-secondary ml-0 text-light modalBtns"
+                    class="btn bg-primary ml-0 text-light modalBtns"
                   >
                     <i class="fas fa-ban"></i> 
                   </el-button>
