@@ -44,7 +44,7 @@ const settingsStore = {
     added_program_users_loaded:true, 
     group_status: 0,
     new_user_status: 0,
-    new_contract_group_filter: [],
+    new_contract_group_filter: null,
     new_user_loaded: true,
     new_user_id: null,
     edit_user_data:[],

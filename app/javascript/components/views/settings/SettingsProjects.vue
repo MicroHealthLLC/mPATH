@@ -280,7 +280,7 @@
               />
             </div>
             <div class="form-group mx-4">
-              <label class="font-md">Group<span style="color: #dc3545">*</span></label>
+              <label class="font-md">Group</label>
               <el-select
                 class="w-100"
                 v-model="C_projectGroupFilter"

@@ -32,7 +32,7 @@
                     <i class="far fa-file-contract mr-3 mh-orange-text"></i>
                   </span>
                    <span v-if="item == 'Users'" >
-                     <i class="fas fa-users mr-3 text-secondary"></i>
+                     <i class="fal fa-users mr-3 text-secondary"></i>
                   </span>
                   <span v-if="item == 'Roles'" >
                     <i class="fal fa-user-lock mr-3 bootstrap-purple-text"></i>
