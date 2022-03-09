@@ -537,11 +537,12 @@ class User < ApplicationRecord
     project_contract_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
       # p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "settings_view", "kanban_view", "calendar_view", "portfolio_view")
+
       p_privilege = (pp_hash[pid] || {}).slice("cn_overview", "cn_tasks", "cn_notes", "cn_issues", "cn_risks", "cn_lessons")
       fids2.each do |ff|
         fph[pid][ff] = {overview: p_privilege["cn_overview"] , tasks: p_privilege["cn_tasks"], issues: p_privilege["cn_issues"] , risks: p_privilege["cn_risks"],lessons: p_privilege["cn_lessons"], notes: p_privilege["cn_notes"], contract_id: ff }
         # fph[pid][ff] = p_privilege.clone.merge!({"contract_id" => ff})
-        if p_privilege["cn_overview"].include?("R") || p_privilege["cn_tasks"].include?("R") || p_privilege["cn_notes"].include?("R") || p_privilege["cn_issues"].include?("R") || p_privilege["cn_risks"].include?("R") || p_privilege["cn_lessons"].include?("R")
+        if p_privilege.present? && (p_privilege["cn_overview"].include?("R") || p_privilege["cn_tasks"].include?("R") || p_privilege["cn_notes"].include?("R") || p_privilege["cn_issues"].include?("R") || p_privilege["cn_risks"].include?("R") || p_privilege["cn_lessons"].include?("R") )
           fph[pid][:authorized_contract_ids] << ff
         end
       end       

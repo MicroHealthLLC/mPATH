@@ -572,7 +572,7 @@ export default {
 			this.expandRowKeys = id === lastId ? [] : [id];
 		},
     saveNewContract() {
-      let groupId = null
+      let groupId = ""
       if (this.C_newContractGroupFilter){
         groupId = this.C_newContractGroupFilter.id
       } 
