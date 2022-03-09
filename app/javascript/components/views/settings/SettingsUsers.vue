@@ -15,7 +15,7 @@
             </span>
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
-             <i class="fas fa-users mr-1 text-secondary"></i> USERS
+             <i class="fal fa-users mr-1 text-secondary"></i> USERS
             <span
               v-if="programUsers && programUsers.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
@@ -165,7 +165,7 @@
         class="p-0 users"       
       >
       <span slot="title" class="text-left">
-        <h4 class="text-dark"><i class="fas fa-user-plus mr-2"></i>Add New User </h4>
+        <h5 class="text-dark"><i class="fas fa-user-plus mr-2"></i>Create New User </h5>
       </span>
       <form accept-charset="UTF-8">
        <div class="container">        
@@ -252,18 +252,19 @@
         class="p-0 users"       
       >
        <span slot="title" class="text-left">
-        <h4 class="text-dark"><i class="fas fa-users-medical mr-2"></i>Add User(s) To Program</h4>
+        <h5 class="text-dark"><i class="fas fa-users-medical mr-2"></i>Add User(s) To Program</h5>
       </span>
-      <div class="container" v-if="portfolioUsersOnly && portfolioUsersOnly.length > 0">      
+      <div class="container" >      
         <div class="row">
-          <div class="col-12">
+        
+          <div class="col-12"  v-if="portfolioUsersOnly && portfolioUsersOnly.length > 0">
           <label class="font-md mb-0">Search and select Users</label>
               <el-select
                 v-model="portfolioUsers"
                 class="w-100"
                 track-by="id"
                 value-key="id"
-                :multiple="true"
+                :multiple="true"               
                 clearable
                 placeholder="Enter name"     
                 filterable
@@ -275,7 +276,7 @@
                   :label="item.full_name"
                 >
                 </el-option>
-              </el-select>
+              </el-select>              
             <div class="text-right">
               <button
                 type="default"   
@@ -295,8 +296,29 @@
               </button>
               </div>
           </div> 
-                
+
+
+         <div class="col-12" v-else>
+             No Portfolio Users Found
+         
+         
+          <div class="text-right">
+          <button
+            @click.prevent="cancelAddUser"
+            class="btn btn-md bg-secondary text-light mt-3 ml-0 modalBtns"
+            v-tooltip="`Cancel`"               
+          >
+            <i class="fas fa-ban"></i> 
+          </button>
+         </div>   
+
+
         </div>    
+
+
+
+        </div>
+
       </div>
       </el-dialog>
 
@@ -307,7 +329,7 @@
       class="p-0 users"       
         >
       <span slot="title" class="text-left">
-        <h4 class="text-dark"> <i class="fas fa-edit mr-1"></i>Edit User </h4>
+        <h5 class="text-dark"> <i class="fas fa-edit mr-1"></i>Edit User </h5>
       </span>
       <div class="container pt-0">  
         <div class="row">

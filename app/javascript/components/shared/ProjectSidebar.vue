@@ -329,10 +329,12 @@ export default {
     max-width: 15%;
     background-color: #DD9036;
   }
+  .stick:hover {
+    background-color: #8f510b;
+  }
   .programNameDiv {
     box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
     line-height: 1.2;
-
    display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;  
@@ -349,7 +351,7 @@ export default {
     }
   }
   .programNameDiv:hover {
-    background-color: rgba(211, 211, 211, 10%);
+    background-color: #8f510b;
   }
   .fac-name {
     border-bottom: solid lightgray 0.5px;

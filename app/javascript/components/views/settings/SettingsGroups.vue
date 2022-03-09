@@ -46,7 +46,7 @@
                 @click.prevent="openPortfolioGroup"
                 class="bg-success text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group
+                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group(s)
               </el-button>
             </div>
             <div class="col-6">
@@ -908,6 +908,11 @@ div.sticky {
   top: 0;
   text-align: right;
   padding-top: 10px;
+  z-index: 10;
+  background: #fff;
+}
+.addGroupsHeader {
+  line-height: 2.2;
 }
 
 .portfolioNames {
