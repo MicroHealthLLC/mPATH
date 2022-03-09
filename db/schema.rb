@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_04_203624) do
+ActiveRecord::Schema.define(version: 2022_02_24_211409) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -244,8 +244,6 @@ ActiveRecord::Schema.define(version: 2022_03_04_203624) do
     t.string "center"
     t.integer "progress", default: 0
     t.integer "project_id"
-    t.boolean "is_portfolio", default: true
-    t.integer "user_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|

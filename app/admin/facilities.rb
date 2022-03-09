@@ -73,7 +73,7 @@ ActiveAdmin.register Facility do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
-          f.input :facility_group, include_blank: true, include_hidden: false, label: "Project Group"
+          f.input :facility_group, include_blank: false, include_hidden: false, label: "Project Group"
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden

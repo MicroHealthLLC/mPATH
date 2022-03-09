@@ -22,9 +22,6 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
   def create
     facility_group = FacilityGroup.new(facility_group_params)
     facility_group.status = :active
-    facility_group.is_portfolio = false
-    facility_group.user_id = current_user.id
-    
     if facility_group.save
       if params[:facility_group][:project_id]
         project = Project.find( params[:facility_group][:project_id])
