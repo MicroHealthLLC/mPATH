@@ -376,11 +376,7 @@
             <div class="right mr-2">
               <button
                 @click.prevent="saveNewContract"
-                v-if="
-                  contractNameText &&
-                    contractNicknameText &&
-                    C_newContractGroupFilter.id
-                "
+                v-if="contractNameText && contractNicknameText"
                 class="btn btn-md bg-primary text-light modalBtns"
                 v-tooltip="`Save Contract`"
                 :class="[hideSaveBtn ? 'd-none' : '']"

@@ -1,5 +1,5 @@
 ActiveAdmin.register FacilityGroup do
-  menu label: "Project Groups"
+  menu label: "Groups"
   actions :all, except: [:show]
 
   permit_params do
@@ -12,7 +12,7 @@ ActiveAdmin.register FacilityGroup do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Project Groups', admin_facility_groups_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Groups', admin_facility_groups_path)]
     if %(show edit).include?(params['action'])
       links << link_to(facility_group.name, edit_admin_facility_group_path)
     end
@@ -31,7 +31,7 @@ ActiveAdmin.register FacilityGroup do
     f.actions
   end
 
-  index title: 'Project Groups' do
+  index title: 'Groups' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :id

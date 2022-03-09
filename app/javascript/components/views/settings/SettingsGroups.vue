@@ -1,9 +1,6 @@
 <template>
   <div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
+ 
     class="row"
   >
     <div class="col-md-2">
@@ -179,7 +176,7 @@
             v-loading="!contentLoaded"
             element-loading-text="Fetching your data. Please wait..."
             element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"
+         
             class="mt-2"
           >
             <el-table
@@ -211,7 +208,14 @@
                         controls-position="right"
                       >
                       </el-input>
-                      <span v-else> {{ props.row.name }}</span>
+                      <span v-else> 
+                        
+                         <!-- <div v-if="!props.row.isPortfolio" class="program-sphere mr-1 d-inline-block" v-tooltip="`Program Group`"></div> -->
+                            <span v-if="!props.row.isPortfolio" v-tooltip="`Program Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
+                        {{ props.row.name }}
+                       
+
+                      </span>
                     </div>
                   </div>
                 </template>
@@ -517,9 +521,7 @@ export default {
       // console.log(this.currentTab)
     },
     saveEdits(index, rows) {
-      // console.log(`index: ${index}`)
-      //    console.log(rows)
-      let id = rows.id;
+       let id = rows.id;
       let groupNameData = {
         newNameData: {
           name: rows.name,
@@ -535,6 +537,7 @@ export default {
     cancelEdits(index, rows) {
       this.rowIndex = null;
       this.rowId = null;
+      console.log(this.facilityGroups)
     },
     createNewGroup() {
       let groupData = {
@@ -677,59 +680,59 @@ export default {
       },
     },
 
-    generateData() {
-      const data = [];
-      // let newGroup = [];
-      let eachGroup = (eachGroup = this.groups.map((g) => g));
-      if (this.groups && this.groups.length > 0) {
-        for (let i = 0; i <= this.groups.length; i++) {
-          if (eachGroup[i] !== undefined) {
-            data.push({
-              key: eachGroup[i].id,
-              label: eachGroup[i].name,
-              // disabled: eachGroup[i].id == this.inheritedGroups[i]
-            });
-          }
-        }
-      }
-      return [...new Set(data)];
-    },
+    // generateData() {
+    //   const data = [];
+    //   // let newGroup = [];
+    //   let eachGroup = (eachGroup = this.groups.map((g) => g));
+    //   if (this.groups && this.groups.length > 0) {
+    //     for (let i = 0; i <= this.groups.length; i++) {
+    //       if (eachGroup[i] !== undefined) {
+    //         data.push({
+    //           key: eachGroup[i].id,
+    //           label: eachGroup[i].name,
+    //           // disabled: eachGroup[i].id == this.inheritedGroups[i]
+    //         });
+    //       }
+    //     }
+    //   }
+    //   return [...new Set(data)];
+    // },
 
-    myProgramGroups() {
-      const data = this.getCheckedPortfolioGroups;
-      if (this.groups && this.groups.length > 0) {
-        let myInheritedGroups = this.groups.filter(
-          (t) => t && t.id == data.map((t) => t)
-        );
-        for (let i = 0; i <= myInheritedGroups.length; i++) {
-          if (myInheritedGroups[i] !== undefined) {
-            data.push(myInheritedGroups[i].id);
-            console.log(myInheritedGroups[i]);
-          }
-        }
-      }
+    // myProgramGroups() {
+    //   const data = this.getCheckedPortfolioGroups;
+    //   if (this.groups && this.groups.length > 0) {
+    //     let myInheritedGroups = this.groups.filter(
+    //       (t) => t && t.id == data.map((t) => t)
+    //     );
+    //     for (let i = 0; i <= myInheritedGroups.length; i++) {
+    //       if (myInheritedGroups[i] !== undefined) {
+    //         data.push(myInheritedGroups[i].id);
+    //         console.log(myInheritedGroups[i]);
+    //       }
+    //     }
+    //   }
 
-      return [...new Set(data)];
-    },
-    transferData: {
-      get() {
-        return [...new Set(this.myProgramGroups)];
-      },
-      set(value) {
-        this.SET_TRANSFER_DATA(value);
-        if (
-          this.groups &&
-          this.groups.length > 0
-          //  this.getTransferData &&
-          //  this.getTransferData.length > 0
-        ) {
-          let newGroups = this.groups.filter((u) =>
-            this.getTransferData.includes(u.id)
-          );
-          this.SET_NEW_GROUPS([newGroups]);
-        }
-      },
-    },
+    //   return [...new Set(data)];
+    // },
+    // transferData: {
+    //   get() {
+    //     return [...new Set(this.myProgramGroups)];
+    //   },
+    //   set(value) {
+    //     this.SET_TRANSFER_DATA(value);
+    //     if (
+    //       this.groups &&
+    //       this.groups.length > 0
+    //       //  this.getTransferData &&
+    //       //  this.getTransferData.length > 0
+    //     ) {
+    //       let newGroups = this.groups.filter((u) =>
+    //         this.getTransferData.includes(u.id)
+    //       );
+    //       this.SET_NEW_GROUPS([newGroups]);
+    //     }
+    //   },
+    // },
     portfolioGroups() {
       //Removes current Program  Groups from checkbox options in Add Protfolio Group popup
       if (this.groups && this.groups.length > 0) {
@@ -949,11 +952,16 @@ div.sticky {
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
-// :-ms-input-placeholder { /* Internet Explorer 10-11 */
-//   color: red;
-// }
-
-// ::-ms-input-placeholder { /* Microsoft Edge */
-//   color: red;
-// }
+.fs-75{
+font-size: .75rem;
+}
+.program-sphere {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;  
+  background: -webkit-radial-gradient(65% 15%, circle, white 1px, aqua 3%, darkblue 60%, aqua 100%); 
+  background: -moz-radial-gradient(65% 15%, circle, white 1px, aqua 3%, darkblue 60%, aqua 100%); 
+  background: -o-radial-gradient(65% 15%, circle, white 1px, aqua 3%, darkblue 60%, aqua 100%);
+  background: radial-gradient(circle at 65% 15%, white 1px, aqua 3%, darkblue 60%, aqua 100%); 
+}
 </style>

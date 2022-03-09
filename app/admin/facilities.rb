@@ -45,7 +45,7 @@ ActiveAdmin.register Facility do
     column :point_of_contact
     column :email
     column :phone_number
-    column "Project Group", :facility_group, nil, sortable: 'facility_groups.name' do |facility|
+    column "Group", :facility_group, nil, sortable: 'facility_groups.name' do |facility|
       if current_user.admin_write?
         link_to "#{facility.facility_group.name}", "#{edit_admin_facility_group_path(facility.facility_group)}" if facility.facility_group.present?
       else
@@ -73,7 +73,7 @@ ActiveAdmin.register Facility do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
-          f.input :facility_group, include_blank: true, include_hidden: false, label: "Project Group"
+          f.input :facility_group, include_blank: true, include_hidden: false, label: "Group"
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
@@ -114,15 +114,15 @@ ActiveAdmin.register Facility do
 
   batch_action :"Assign/Unassign Project Group", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
-    "Project Group": FacilityGroup.pluck(:name, :id)
+    "Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Project Group is updated"
+    notice = "Group is updated"
     if inputs['assign'] === 'assign'
       Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
-      notice = "Project Group is assigned"
+      notice = "Group is assigned"
     elsif inputs['assign'] === 'unassign'
       Facility.where(id: ids, facility_group_id: inputs["Facility Group"]).update_all(facility_group_id: nil)
-      notice = "Project Group is unassigned"
+      notice = "Group is unassigned"
     end
     redirect_to collection_path, notice: "#{notice}"
   end

@@ -303,7 +303,7 @@
             <div class="right mr-2">
               <button
                 @click.prevent="saveNewProject"
-                v-show="C_projectGroupFilter && newProjectNameText"
+                v-show="newProjectNameText"
                  v-tooltip="`Save Project`"      
                 class="btn btn-md bg-primary text-light modalBtns"
                 >  <i class="far fa-save"></i></button
