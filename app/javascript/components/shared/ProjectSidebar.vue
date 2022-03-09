@@ -335,7 +335,6 @@ export default {
   .programNameDiv {
     box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
     line-height: 1.2;
-
    display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;  
