@@ -1,11 +1,5 @@
 <template>
-<div
-    v-loading="!contentLoaded"
-    element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    class="row"
-  >
+<div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -38,10 +32,10 @@
               class="col-6"
               >
               <el-button
-      
+                @click.prevent="addRole"
                 class="bg-primary text-light mb-2"
               >
-              <i class="fas fa-users mr-1"></i>Create New Role
+               <i class="far fa-plus-circle mr-1"></i>Create New Role
               </el-button>
             </div>
          
@@ -344,6 +338,307 @@
      </el-tab-pane>
 </el-tabs>
     </div>
+       <el-dialog
+          :visible.sync="addRoleDialogOpen"
+          append-to-body
+          center
+          class="addRoleDialog"
+        >
+      <span slot="title" class="text-left">
+       <h5 class="text-dark">  <i class="fal fa-user-lock mr-1 bootstrap-purple-text"></i>
+       Create New Role
+      </h5>
+      <small class="pl-1 float-left"><i><strong>Instructions:</strong> Enter new role name, then assign <strong> read-write-delete</strong> values in each category.</i></small>
+      </span>
+           <el-table      
+        :data="newRoleRow"   
+       
+        >
+    <el-table-column
+      fixed
+      prop="role"
+      label="Admin Role"
+      width="220">
+    </el-table-column>
+     <el-table-column label="Program Admin">
+      <el-table-column
+        prop="read"
+        label="Read"
+        width="75">
+
+      <template slot-scope="scope">
+        <span
+        class="watch_action clickable mx-2"
+        @click.prevent.stop="programAdminRead(scope.$index, scope.row)"    
+          >
+        <span 
+        v-if="scope.row.read">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.read">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+        </span>    
+       </template>
+      </el-table-column>
+       <el-table-column
+        prop="write"
+        label="Write"
+        width="75">
+        <template slot-scope="scope">
+        <span
+        class="watch_action clickable mx-2"
+        @click.prevent.stop="programAdminWrite(scope.$index, scope.row)"    
+          >
+        <span 
+        v-if="scope.row.write">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.write">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+        </span>    
+       </template>
+      </el-table-column>
+      <el-table-column
+        prop="delete"
+        label="Delete"
+       width="75">
+       <template slot-scope="scope">
+        <span
+        class="watch_action clickable mx-2"
+        @click.prevent.stop="programAdminDelete(scope.$index, scope.row)"    
+          >
+        <span 
+        v-if="scope.row.delete">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.delete">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>
+        </span>       
+       </template>
+      </el-table-column>
+
+    </el-table-column>
+      <el-table-column label="Program Settings" >
+        <el-table-column label="Groups">
+            <el-table-column
+            prop="groupsRead"
+            label="Read"
+            width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.groupsRead">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.groupsRead">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        <el-table-column
+        prop="groupsWrite"
+        label="Write"
+        width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.groupsWrite">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.groupsWrite">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        <el-table-column
+            prop="groupsDelete"
+            label="Delete"
+           width="75">
+       <template slot-scope="scope">
+        <span 
+        v-if="scope.row.groupsDelete">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.groupsDelete">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        </el-table-column>
+
+        <el-table-column label="Projects">
+            <el-table-column
+            prop="projectsRead"
+            label="Read"
+            width="75">
+       <template slot-scope="scope">
+        <span 
+        v-if="scope.row.projectsRead">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.projectsRead">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+            
+        </el-table-column>
+        <el-table-column
+            prop="projectsWrite"
+            label="Write"
+            width="75">
+       <template slot-scope="scope">
+        <span 
+        v-if="scope.row.projectsWrite">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.projectsWrite">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+            
+        </el-table-column>
+        <el-table-column
+            prop="projectsDelete"
+            label="Delete"
+            width="75">
+       <template slot-scope="scope">
+        <span 
+        v-if="scope.row.projectsDelete">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.projectsDelete">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        </el-table-column>
+
+
+        <el-table-column label="Contracts">
+            <el-table-column
+            prop="contractsRead"
+            label="Read"
+            width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.contractsRead">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.contractsRead">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        <el-table-column
+            prop="contractsWrite"
+            label="Write"
+            width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.contractsWrite">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.contractsWrite">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        <el-table-column
+            prop="contractsDelete"
+            label="Delete"
+            width="75">
+       <template slot-scope="scope">
+        <span 
+        v-if="scope.row.contractsDelete">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.contractsDelete">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        </el-table-column>
+
+
+        <el-table-column label="Users" >
+        <el-table-column
+            prop="usersRead"
+            label="Read"
+           width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.usersRead">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.usersRead">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        <el-table-column
+            prop="usersWrite"
+            label="Write"
+            width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.usersWrite">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.usersWrite">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        <el-table-column
+            prop="usersDelete"
+            label="Delete"
+            width="75">
+        <template slot-scope="scope">
+        <span 
+        v-if="scope.row.usersDelete">
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+        </span>
+        <span 
+        v-show="!scope.row.usersDelete">
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>       
+       </template>
+        </el-table-column>
+        </el-table-column>      
+      </el-table-column>
+    </el-table>
+    <div class="text-right mt-3">
+     <el-button
+      type="default"
+      v-tooltip="`Save New Role`" 
+      class="bg-primary text-light modalBtns">               
+       <i class="far fa-save"></i>
+     </el-button>
+     <el-button 
+        type="default" 
+        v-tooltip="`Close`"   
+        @click.prevent="closeAddRole"    
+        class="bg-secondary text-light modalBtns">
+        <i class="fas fa-ban"></i>
+      </el-button>
+  
+    </div>
+        </el-dialog>
     </div>
     </div>
 
@@ -369,6 +664,7 @@ export default {
   },
     data() {    
       return {
+       addRoleDialogOpen: false, 
        tableData: [{
           role: 'program-admin',        
           read: true,
@@ -411,6 +707,28 @@ export default {
           usersRead: false, 
           usersWrite: false, 
           usersDelete: false, 
+        },],
+         newRoleRow: [{
+          role: 'Enter New Role Name',        
+          read: true,
+          write: true,
+          delete: false,  
+
+          groupsRead: true, 
+          groupsWrite: true, 
+          groupsDelete: true, 
+          
+          projectsRead: true, 
+          projectsWrite: true, 
+          projectsDelete: true, 
+          
+          contractsRead: true, 
+          contractsWrite: true, 
+          contractsDelete: true, 
+
+          usersRead: true, 
+          usersWrite: true, 
+          usersDelete: true, 
         },]
       }
   },
@@ -426,6 +744,12 @@ export default {
     },
      programAdminDelete(rows, index) {
       index.delete = !index.delete
+    },
+    addRole(){
+      this.addRoleDialogOpen = true
+    },
+    closeAddRole() {
+      this.addRoleDialogOpen = false;
     },
     handleClick(tab, event) { 
         //Route redirecting incase we want to assign url paths to each tab
@@ -477,6 +801,17 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+/deep/.el-dialog__close.el-icon.el-icon-close {
+  display: none;
+}
+.addRoleDialog {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+ /deep/.el-dialog__header{
+  padding-bottom: 0 !important;  
+ } 
+}
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
@@ -489,7 +824,7 @@ export default {
   text-align: center;
 }
 .modalBtns {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 .auto-complete-wrapper {
   justify-content: center;

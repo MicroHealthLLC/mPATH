@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_24_211409) do
+ActiveRecord::Schema.define(version: 2022_03_10_172210) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -106,13 +106,6 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_contract_client_types", charset: "utf8", force: :cascade do |t|
-    t.integer "contract_id", null: false
-    t.integer "contract_client_type_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "contract_current_pops", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -180,17 +173,17 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.bigint "contract_type_id", null: false
     t.integer "project_code"
     t.string "nickname"
-    t.bigint "contract_status_id"
-    t.bigint "contract_customer_id"
-    t.bigint "contract_vehicle_id"
-    t.bigint "contract_vehicle_number_id"
-    t.bigint "contract_number_id"
-    t.bigint "contract_classification_id"
-    t.bigint "subcontract_number_id"
-    t.bigint "contract_prime_id"
+    t.bigint "contract_status_id", null: false
+    t.bigint "contract_customer_id", null: false
+    t.bigint "contract_vehicle_id", null: false
+    t.bigint "contract_vehicle_number_id", null: false
+    t.bigint "contract_number_id", null: false
+    t.bigint "contract_classification_id", null: false
+    t.bigint "subcontract_number_id", null: false
+    t.bigint "contract_prime_id", null: false
     t.datetime "start_date"
     t.datetime "end_date"
-    t.bigint "contract_current_pop_id"
+    t.bigint "contract_current_pop_id", null: false
     t.datetime "current_pop_start_time"
     t.datetime "current_pop_end_time"
     t.integer "days_remaining"
@@ -204,10 +197,9 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.bigint "facility_group_id"
     t.bigint "project_id"
     t.string "name"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.integer "total_subcontracts", default: 0
     t.integer "contract_category_id"
+    t.integer "contract_client_type_id"
     t.text "remarks"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
@@ -215,7 +207,6 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
-    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -241,9 +232,11 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center"
+    t.string "center", default: "[]"
     t.integer "progress", default: 0
     t.integer "project_id"
+    t.boolean "is_portfolio", default: true
+    t.integer "user_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
@@ -341,8 +334,6 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -386,13 +377,11 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "important", default: false
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -704,8 +693,6 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.boolean "reportable", default: false
     t.date "closed_date"
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -803,8 +790,6 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.boolean "reportable", default: false
     t.date "closed_date"
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -836,6 +821,7 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
+    t.text "privileges"
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
