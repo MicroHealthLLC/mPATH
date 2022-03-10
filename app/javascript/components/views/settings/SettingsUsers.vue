@@ -212,7 +212,7 @@
          <button
             @click.prevent="cancelAddNewUser"
            class="btn btn-md bg-secondary text-light ml-0 modalBtns"
-            v-tooltip="`Cancel`"               
+            v-tooltip="`Close`"               
           >
          <i class="fas fa-ban"></i> 
         </button>
@@ -286,7 +286,7 @@
                <button
                 @click.prevent="cancelAddUser"
                 class="btn btn-md bg-secondary text-light mt-3 ml-0 modalBtns"
-                v-tooltip="`Cancel`"               
+                v-tooltip="`Close`"               
               >
                <i class="fas fa-ban"></i> 
               </button>
@@ -302,7 +302,7 @@
           <button
             @click.prevent="cancelAddUser"
             class="btn btn-md bg-secondary text-light mt-3 ml-0 modalBtns"
-            v-tooltip="`Cancel`"               
+            v-tooltip="`Close`"               
           >
             <i class="fas fa-ban"></i> 
           </button>

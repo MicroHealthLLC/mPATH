@@ -371,8 +371,7 @@
               <button
                 @click.prevent="closeAddContractBtn"
                  class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Cancel`"     
-               
+                v-tooltip="`Close`"                    
               >
              <i class="fas fa-ban"></i> 
               </button>
@@ -818,9 +817,6 @@ export default {
    padding-top: 0;
  }
 }
-
-
-
 .tabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;

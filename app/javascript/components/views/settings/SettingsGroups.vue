@@ -87,7 +87,7 @@
               <button
                 @click.prevent="cancelCreateGroup"
                 class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Cancel`"               
+                v-tooltip="`Close`"               
                 :class="[hideSaveBtn ? 'd-none' : '']"
               >
                <i class="fas fa-ban"></i> 
@@ -137,7 +137,7 @@
                   </el-button>
                   <el-button
                     @click.prevent="closeImportGroupBtn"
-                    v-tooltip="`Cancel`"
+                    v-tooltip="`Close`"
                     class="btn bg-secondary ml-0 text-light modalBtns"
                   >
                     <i class="fas fa-ban"></i> 
