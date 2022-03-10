@@ -935,6 +935,9 @@ div.sticky {
   }
 }
 
+.f {
+ display: none;
+}
 .createNewGroup{
   /deep/.el-dialog__body {
   padding-top: 0 !important;
