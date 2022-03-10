@@ -310,7 +310,7 @@
               <button
                 @click.prevent="cancelCreateGroup"
                 class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Cancel`"                  
+                v-tooltip="`Close`"                  
               >
                <i class="fas fa-ban"></i> 
               </button>
