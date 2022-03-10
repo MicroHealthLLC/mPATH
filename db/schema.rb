@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_10_172210) do
+ActiveRecord::Schema.define(version: 2022_02_24_211409) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -105,8 +105,8 @@ ActiveRecord::Schema.define(version: 2022_03_10_172210) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
-  
-   create_table "contract_contract_client_types", charset: "utf8", force: :cascade do |t|
+
+  create_table "contract_contract_client_types", charset: "utf8", force: :cascade do |t|
     t.integer "contract_id", null: false
     t.integer "contract_client_type_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -241,11 +241,9 @@ ActiveRecord::Schema.define(version: 2022_03_10_172210) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center",
+    t.string "center"
     t.integer "progress", default: 0
     t.integer "project_id"
-    t.boolean "is_portfolio", default: true
-    t.integer "user_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
@@ -388,8 +386,8 @@ ActiveRecord::Schema.define(version: 2022_03_10_172210) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.integer "facility_project_id"
     t.boolean "important", default: false
+    t.integer "facility_project_id"
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
     t.integer "contract_id"
