@@ -204,7 +204,7 @@
                       >
                       </el-input>
                       <span v-else>                         
-                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
+                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Only Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
                         {{ props.row.name }}
                        
 
