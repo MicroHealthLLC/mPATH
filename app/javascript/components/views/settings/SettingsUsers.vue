@@ -164,11 +164,11 @@
         <h5 class="text-dark"><i class="fas fa-user-plus mr-2"></i>Create New User </h5>
       </span>
       <form accept-charset="UTF-8">
-       <div class="container">        
-        <div class="row">       
-          <div class="col-6">
+       <div class="container">
+        <div class="row">  
+          <div class="col-12 pb-0">
             <label class="mb-0 pb-0 text-dark"
-              >First Name </label
+              >First Name<span style="color: #dc3545">*</span> </label
             >
             <el-input
               class="mb-2 pl-1"
@@ -177,22 +177,24 @@
               rows="1"
               />        
           </div>
-          <div class="col-6">
-            <label class="mb-0 pb-0 text-dark"
-                >Last Name</label
-              >
-              <el-input
-                v-model="lastName"
-                class="mb-2 pl-1"
-                placeholder="Enter Last Name"
-                rows="1"    
-              />          
-          </div>
         </div>
-        <div class="row mt-0">
-          <div class="col-6">
+        <div class="row">     
+        <div class="col-12 pb-0">
+          <label class="mb-0 pb-0 text-dark"
+              >Last Name <span style="color: #dc3545">*</span></label
+            >
+            <el-input
+              v-model="lastName"
+              class="mb-2 pl-1"
+              placeholder="Enter Last Name"
+              rows="1"    
+            />          
+        </div>
+        </div>      
+        <div class="row">
+          <div class="col-12 pb-0">
             <label class="mb-0 pb-0 text-dark"
-              >Email</label>
+              >Email<span style="color: #dc3545">*</span></label>
             <el-input
               v-model="email"
               placeholder="Enter Email"
@@ -200,45 +202,37 @@
               class="mb-2 pl-1"        
             />            
           </div>
-            <div class="col-6 py-1 text-right" style="line-height:6">
-           <button
+        </div>
+        <div class="row">
+          <div class="col-12 py-1 text-right" style="line-height:6">
+            <button
             @click.prevent="createUser"
-            v-show="email && lastName && firstName"
+            v-show="email && lastName && firstName && !createAnotherUserBtn"
             class="btn btn-md bg-primary text-light modalBtns"
             v-tooltip="`Save New User`"               
           >
           <i class="fal fa-save"></i> 
         </button>
-         <button
+        <button
+          type="default"   
+          v-tooltip="`Create another user`"     
+          @click.prevent="createAnotherUser"          
+          v-if="email && lastName && firstName && createAnotherUserBtn"
+          class="btn btn-md btn-primary text-light modalBtns"
+          >
+          <i class="far fa-plus-circle"></i>
+          </button>
+          <button
             @click.prevent="cancelAddNewUser"
-           class="btn btn-md bg-secondary text-light ml-0 modalBtns"
+            class="btn btn-md bg-secondary text-light ml-0 modalBtns"
             v-tooltip="`Close`"               
           >
-         <i class="fas fa-ban"></i> 
+          <i class="fas fa-ban"></i> 
         </button>
-          </div>
-        
+          </div>        
+        </div>
         </div>  
-        <!-- <div class="mt-3 text-right">
-          <button
-            @click.prevent="createUser"
-            class="btn btn-sm bg-primary text-light mr-2 modalBtns"
-            v-tooltip="`Save New User`"               
-          >
-          <i class="fal fa-save mr-1"></i> SAVE
-        </button>
-         <button
-            @click.prevent="cancelAddNewUser"
-           class="btn btn-sm bg-secondary text-light modalBtns"
-            v-tooltip="`Cancel`"               
-          >
-         <i class="fas fa-ban mr-1"></i> CANCEL
-        </button>
-        </div>       -->
-       </div>
-      </form>
-        
-        
+      </form>      
 
       </el-dialog>
       <el-dialog
@@ -278,10 +272,19 @@
                 type="default"   
                 v-tooltip="`Save Users`"   
                 @click.prevent="addPortfolioUsersToProgram" 
-                v-if="this.portfolioUsers.length > 0"
+                v-if="portfolioUsers.length > 0 && !addMoreUsersBtn"
                 class="btn btn-md btn-primary text-light mt-3 modalBtns"
                 >
                   <i class="fal fa-save"></i> 
+              </button>
+               <button
+                type="default"   
+                v-tooltip="`Add more users`"     
+                 @click.prevent="addMoreUsers"          
+                v-if="portfolioUsers && addMoreUsersBtn"
+                class="btn btn-md btn-primary text-light mt-3 modalBtns"
+                >
+              <i class="far fa-plus-circle"></i>
               </button>
                <button
                 @click.prevent="cancelAddUser"
@@ -540,6 +543,7 @@ export default {
         firstName:'',
         lastName:'',
         email:'',
+        addMoreUsersBtn: false, 
         rowIndex: null,
         programId: this.$route.params.programId,
         rowId: null,
@@ -555,6 +559,7 @@ export default {
         toggle: false,
         //dialogVisible used by el-dialogue popup
         dialogVisible: false,
+        createAnotherUserBtn: false, 
         editUserDialogVisible: false,
         newUserDialogVisible: false,
         privilegesProfileVisible: false
@@ -610,8 +615,18 @@ export default {
       this.dialogVisible = true; 
       // console.log(this.portfolioUsersOnly)
     },
+    addMoreUsers(){
+      this.portfolioUsers = [];
+      this.addMoreUsersBtn = false;
+    },
     openCreateUser(){
       this.newUserDialogVisible = true
+    },
+    createAnotherUser(){
+      this.createAnotherUserBtn = false;
+      this.lastName = '',
+      this.firstName = '',
+      this.email = ''   
     },
     createUser() {
       let newUserData = {
@@ -729,11 +744,8 @@ export default {
           }
           this.SET_NEW_USER_STATUS(0);
           this.fetchProgramUsers(this.$route.params.programId);
-          // this.fetchCurrentProject(this.$route.params.programId);
-          this.lastName = '',
-          this.firstName = '',
-          this.email = ''
-          this.newUserDialogVisible = false;
+          // this.fetchCurrentProject(this.$route.params.programId);          
+          this.createAnotherUserBtn = true;       
         }
       },
     },
@@ -761,11 +773,10 @@ export default {
             showClose: true,
           });
           }
-
+          this.addMoreUsersBtn = true;
           this.SET_ADD_USERS_TO_PROGRAM_STATUS(0);
-          this.fetchProgramUsers(this.programId);
-          this.portfolioUsers = [];
-          this.dialogVisible = false;
+          this.fetchProgramUsers(this.programId);         
+        
         }
       },
     },
@@ -781,6 +792,15 @@ export default {
 }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
+}
+/deep/.el-dialog {
+  width: 30%;  
+}
+.users {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+ }
 }
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
