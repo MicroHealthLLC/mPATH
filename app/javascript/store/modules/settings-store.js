@@ -103,30 +103,56 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
-    updateGroupName({ commit }, { id, newNameData }) {
-        commit("TOGGLE_GROUPS_LOADED", false);
-        let formData = new FormData();
-        // console.log(newNameData.name)
-        formData.append("facility_group[name]", newNameData.name); //Required
-        axios({
-          method: "PUT",
-          url: `${API_BASE_PATH}/facility_groups/${id}`,
-          data: formData,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
+   updateGroupName({ commit }, { id, newNameData }) {
+      commit("TOGGLE_GROUPS_LOADED", false);
+      let formData = new FormData();
+      // console.log(newNameData.name)
+      formData.append("facility_group[name]", newNameData.name); //Required
+      axios({
+        method: "PUT",
+        url: `${API_BASE_PATH}/facility_groups/${id}`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          commit("SET_GROUP_STATUS", res.status);
         })
-          .then((res) => {
-            commit("SET_GROUP", res.data.facility_groups);
-            commit("SET_GROUP_STATUS", res.status);
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_GROUPS_LOADED", true);
-          });
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
+    },
+    //
+    removeOrDeleteGroup({ commit }, { g }) {
+      commit("TOGGLE_GROUPS_LOADED", false);
+      // Utilize utility function to prep Lesson form data
+      let formData = new FormData();
+      formData.append("project_id", g.programId)
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/facility_groups/${g.id}`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_GROUP", res.data.facility_groups);
+          commit("SET_GROUP_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_GROUPS_LOADED", true);
+        });
       },
    updateGroup({ commit }, { groupData }) {
     //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
