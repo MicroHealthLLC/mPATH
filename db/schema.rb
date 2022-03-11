@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_24_211409) do
+ActiveRecord::Schema.define(version: 2022_03_10_172210) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -244,6 +244,8 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.string "center"
     t.integer "progress", default: 0
     t.integer "project_id"
+    t.boolean "is_portfolio", default: true
+    t.integer "user_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
@@ -711,6 +713,24 @@ ActiveRecord::Schema.define(version: 2022_02_24_211409) do
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
+  end
+
+  create_table "role_users", charset: "utf8", force: :cascade do |t|
+    t.integer "role_id"
+    t.integer "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "roles", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.integer "project_id"
+    t.integer "user_id"
+    t.boolean "is_portfolio", default: false
+    t.boolean "is_default", default: false
+    t.string "type_of"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "settings", charset: "utf8", force: :cascade do |t|
