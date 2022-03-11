@@ -4,6 +4,7 @@ class FacilityGroup < SortableRecord
   has_many :facility_projects, through: :facilities
   has_many :project_facility_groups
   has_many :projects, through: :project_facility_groups
+  has_many :contracts
 
   # validates :name, presence: true, uniqueness: true
 
@@ -14,6 +15,12 @@ class FacilityGroup < SortableRecord
     FacilityGroup.where(name: 'Unassigned').first
   end
   
+  def apply_unassigned_to_resource
+    unassigned = FacilityGroup.unassigned
+    contracts.update_all(facility_group_id: unassigned.id)
+    facilities.update_all(facility_group_id: unassigned.id)
+  end
+
   def set_status
     if !status
       status = :active

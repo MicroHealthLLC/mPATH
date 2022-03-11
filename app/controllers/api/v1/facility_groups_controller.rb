@@ -53,6 +53,28 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
     end
   end
 
+  def destroy
+    group = FacilityGroup.find(params[:id])
+    program = Project.find(params[:project_id])
+    
+    if program.project_groups.include?(group) 
+      if !group.is_portfolio?
+        group.apply_unassigned_to_resource
+        if group.destroy
+          render json: {message: "Group removed successfully"}, status: 200
+        else
+          render json: {errors: group.errors.full_messages}, status: 406
+        end
+      else
+        program.project_facility_groups.where(facility_group_id: group.id ).destroy_all
+        group.apply_unassigned_to_resource
+        render json: {message: "Group removed successfully"}, status: 200
+      end
+    else
+      render json: {errors: "Group is not part of current program!"}, status: 406
+    end
+  end
+
   def include_hash
     {
       facility_projects: [:facility, {

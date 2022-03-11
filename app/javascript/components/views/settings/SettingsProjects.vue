@@ -169,32 +169,7 @@
             filterable
             label="Roles"
           >
-            <!-- <template slot-scope="scope"> -->
-               <!-- <el-select
-                v-model="scope.row.facilityGroupId"
-                class="w-100"
-                v-if="rowId == scope.row.id"
-                filterable
-                track-by="id"
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-              </el-select>    -->
-
-              
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.facilityGroupName"
-              ></el-input> -->
-            <!-- </template> -->
+            
           </el-table-column>
           <el-table-column>
           <template slot="header" slot-scope="scope">
@@ -303,10 +278,19 @@
               <button
                 @click.prevent="saveNewProject"
                 v-show="newProjectNameText"
-                 v-tooltip="`Save Project`"      
+                v-tooltip="`Save Project`"    
+                :class="[hideSaveBtn ? 'd-none' : '']"  
                 class="btn btn-md bg-primary text-light modalBtns"
                 >  <i class="far fa-save"></i></button
               >
+              <button
+                @click.prevent="addAnotherProject"
+                :class="[!hideSaveBtn ? 'd-none' : '']"
+                v-tooltip="`Add Another Project`"
+                class="btn btn-md bg-primary text-light modalBtns"
+              >
+                <i class="far fa-plus-circle"></i> 
+              </button>
               <button
                 @click.prevent="cancelCreateGroup"
                 class="btn btn-md bg-secondary text-light modalBtns"
@@ -343,6 +327,7 @@ export default {
       search: "",
       rowIndex: null,
       rowId: null,
+      hideSaveBtn: false,
       projectId: null, 
       searchContractUsers:"",
       selectedProjectGroup: null,
@@ -400,6 +385,11 @@ export default {
     cancelCreateGroup() {
       this.dialogVisible = false;
     },
+    addAnotherProject() {
+      this.C_projectGroupFilter = "";
+      this.newProjectNameText = "";
+      this.hideSaveBtn = false;
+    },
     handleExpandChange (row, expandedRows) {
 			const id = row.id;
 			const lastId = this.expandRowKeys[0];
@@ -445,8 +435,8 @@ export default {
             type: "success",
             showClose: true,
           });
-          this.dialogVisible = false;
-          this.fetchCurrentProject(this.programId)
+         this.fetchCurrentProject(this.programId)
+         this.hideSaveBtn = true;
         }
       });
     },

@@ -204,7 +204,7 @@
                       >
                       </el-input>
                       <span v-else>                         
-                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
+                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Only Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
                         {{ props.row.name }}
                        
 
@@ -473,6 +473,7 @@ export default {
       "createGroup",
       "fetchFacilityGroups",
       "updateGroupName",
+      "removeOrDeleteGroup",
       "updateGroup",
       "fetchGroups",
       "fetchCurrentProject",
@@ -552,16 +553,13 @@ export default {
       this.hideSaveBtn = true;
     },
     removeGroup(index, rows) {
-      let id = [rows.id];
+      // let id = [rows.id];
       let group = {
-        groupData: {
-          ids: this.tableData
-            .map((row) => row.id)
-            .filter((r) => !id.includes(r)),
+        g: {
+          id: rows.id,
           programId: this.$route.params.programId,
-        },
-      };
-      
+          },
+       };      
     if(rows.isPortfolio){
       this.$confirm(
         `Are you sure you want to remove ${rows.name} from your program?`,
@@ -572,7 +570,7 @@ export default {
           type: "warning",
         }
        ).then(() => {
-        this.updateGroup({ ...group });
+        this.removeOrDeleteGroup({ ...group });
       });
       } else 
        this.$confirm(
@@ -584,7 +582,7 @@ export default {
           type: "warning",
         }
        ).then(() => {
-        this.updateGroup({ ...group });
+        this.removeOrDeleteGroup({ ...group });
       });     
     },
     importGroupName() {
