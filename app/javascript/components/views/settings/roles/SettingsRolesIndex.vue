@@ -353,21 +353,21 @@
        <el-table-column 
           fixed="right" 
           label="Actions"
-          class="text-center"
+          class="text-center "
           width="120">
            <template slot-scope="scope">
           <el-button
           type="default"
           v-if="showCreateRow === true && scope.$index == 0"
           @click.prevent="saveNewRole(scope.$index, scope.row)"
-           class="bg-primary btn btn-sm text-light"
+           class="bg-primary btn-sm text-light"
           >
         <i class="far fa-save"></i>
         </el-button>
         <el-button
           type="default"
           @click.prevent="test(scope.$index, scope.row)"
-          class="bg-light btn btn-sm"
+          class="bg-light btn-sm"
         >
           <i class="fal fa-edit text-primary"></i>
         </el-button>
@@ -808,7 +808,7 @@ export default {
       index.read = !index.read
     },
     showHideCreateRow(row, index){   
-      console.log(row.rowIndex)    
+      // console.log(row.rowIndex)    
         return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
     },
     programAdminWrite(rows, index) {
@@ -905,6 +905,9 @@ console.log(index)
 }
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
+/deep/.el-input__inner{
+  border: 1px solid #d9534f;
 }
 .auto-complete-wrapper {
   justify-content: center;

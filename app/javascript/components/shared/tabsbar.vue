@@ -88,7 +88,9 @@ export default {
     return this.$route.name.includes("SettingsView") ||
             this.$route.name.includes("SettingsProjects") ||
             this.$route.name.includes("SettingsContracts") ||
-            this.$route.name.includes("SettingsGroups")
+            this.$route.name.includes("SettingsGroups") ||
+            this.$route.name.includes("SettingsRolesIndex")  ||
+            this.$route.name.includes("SettingsUsers")
     },
     isCalendarView() {
       return this.$route.name.includes("Calendar");
