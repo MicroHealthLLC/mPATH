@@ -68,7 +68,8 @@
     "nth-check": "^2.0.1",
     "set-value": "^4.0.1",
     "node-forge": "^0.10.0",
-    "json-schema": "^0.4.0"
+    "json-schema": "^0.4.0",
+    "ansi-html": "https://registry.npmjs.org/ansi-html-community/-/ansi-html-community-0.0.8.tgz"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
