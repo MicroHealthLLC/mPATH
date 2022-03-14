@@ -54,9 +54,9 @@ ActiveAdmin.register FacilityGroup do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Facility Groups?" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Groups?" do |ids|
     deleted = FacilityGroup.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Facility Groups"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Groups"
   end
 
   controller do
