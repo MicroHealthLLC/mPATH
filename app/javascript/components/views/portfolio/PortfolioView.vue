@@ -4975,11 +4975,7 @@ export default {
   mounted() {
     this.fetchPortfolioPrograms();
     this.$nextTick(function() {
-      //  console.warning("mounted,  ", this.portfolioTasks.tasks.length )
-      // Code that will run only after the
-      // entire view has been rendered
-      $(this.currTab).trigger("click");
-
+     $(this.currTab).trigger("click");
       this.fetchPortfolioCounts();
       this.setFacilityProjectIds();
     });
