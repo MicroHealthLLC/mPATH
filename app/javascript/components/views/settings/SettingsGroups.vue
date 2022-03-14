@@ -171,7 +171,8 @@
           <div
             v-loading="!contentLoaded"
             element-loading-text="Fetching your data. Please wait..."
-            element-loading-spinner="el-icon-loading"         
+            element-loading-spinner="el-icon-loading"   
+            element-loading-background="rgba(0, 0, 0, 0.8)"       
             class="mt-2"
           >
             <el-table
@@ -357,9 +358,9 @@
                       scope.$index == rowIndex &&
                         _isallowedProgramSettings('write')
                     "
-                    class="bg-primary text-light"
+                    class="bg-primary btn-sm text-light"
                   >
-                    <i class="far fa-save mr-1"></i>Save
+                    <i class="far fa-save"></i>
                   </el-button>
                   <el-button
                     type="default"
@@ -369,36 +370,48 @@
                         _isallowedProgramSettings('write')
                     "
                     @click.prevent="cancelEdits(scope.$index, scope.row)"
-                    class="bg-secondary text-light"
+                    class="bg-secondary  btn-sm text-light"
                   >
                     <i class="fas fa-ban"></i>
                   </el-button>
                   <el-button
                     type="default"
-                    v-tooltip="`Edit Program Group Name`"
+                    v-tooltip="`Edit Program Group`"
                     @click.prevent="editMode(scope.$index, scope.row)"
                     v-if="
                       !scope.row.isPortfolio &&
                       scope.$index !== rowIndex &&
                         _isallowedProgramSettings('write')
                     "
-                    class="bg-light"
+                    class="bg-light btn-sm "
                   >
-                    <i class="fal fa-edit text-primary mr-1"></i>
+                    <i class="fal fa-edit text-primary"></i>
                   </el-button>
                   <el-button
-                    type="default"                    
+                    type="default" 
+                    class="bg-light btn-sm"
+                    v-tooltip="'Remove Portfolio Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        _isallowedProgramSettings('delete')
+                        _isallowedProgramSettings('delete') &&
+                        scope.row.isPortfolio
+                    "        
+                  >                  
+                    <i class="fa-light fa-circle-minus text-danger"></i>                   
+                  </el-button>
+                  <el-button
+                    type="default" 
+                    v-tooltip="'Delete Program Group'"            
+                    @click.prevent="removeGroup(scope.$index, scope.row)"
+                    v-if="
+                      scope.$index !== rowIndex &&
+                        _isallowedProgramSettings('delete') &&
+                        !scope.row.isPortfolio
                     "
-                    class="bg-light"
+                    class="bg-light btn-sm"
                   >    
-                 
-                    <i class="fa-light fa-circle-minus text-danger" v-tooltip="`Remove Portfolio Group`" v-if="scope.row.isPortfolio"></i>                   
-                     <i class="far fa-trash-alt text-danger " v-tooltip="`Delete Program Group`" v-else></i>  
-                         
+                <i class="far fa-trash-alt text-danger "></i>                           
                   </el-button>
                   
                 </template>

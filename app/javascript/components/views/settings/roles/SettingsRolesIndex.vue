@@ -56,12 +56,29 @@
     <el-table      
         :data="tableData"   
         height="450"
+        :row-class-name="showHideCreateRow"
         >
     <el-table-column
       fixed
       prop="role"
       label="Admin Role"
       width="340">
+    <template slot-scope="scope">
+  <span v-if="scope.$index == 0">
+    <el-input
+    size="small"              
+    style="font-style: italic; color: red"
+    v-model="scope.row.role"
+    controls-position="right"
+  >
+  </el-input>
+  </span>
+  <span v-else>
+    {{ scope.row.role }}
+  </span>
+
+    </template>
+
     </el-table-column>
         <el-table-column label="Assigned Users" width="125" type="expand">
 
@@ -76,6 +93,7 @@
       <template slot-scope="scope">
         <span
         class="watch_action clickable mx-2"
+      
         @click.prevent.stop="programAdminRead(scope.$index, scope.row)"    
           >
         <span 
@@ -96,6 +114,7 @@
         <template slot-scope="scope">
         <span
         class="watch_action clickable mx-2"
+       
         @click.prevent.stop="programAdminWrite(scope.$index, scope.row)"    
           >
         <span 
@@ -116,6 +135,7 @@
        <template slot-scope="scope">
         <span
         class="watch_action clickable mx-2"
+        
         @click.prevent.stop="programAdminDelete(scope.$index, scope.row)"    
           >
         <span 
@@ -137,7 +157,7 @@
             prop="groupsRead"
             label="Read"
             width="75">
-        <template slot-scope="scope">
+        <template slot-scope="scope" >
         <span 
         v-if="scope.row.groupsRead">
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -326,8 +346,34 @@
         </span>       
        </template>
         </el-table-column>
+
+        
         </el-table-column>      
       </el-table-column>
+       <el-table-column 
+          fixed="right" 
+          label="Actions"
+          class="text-center "
+          width="120">
+           <template slot-scope="scope">
+          <el-button
+          type="default"
+          v-if="showCreateRow === true && scope.$index == 0"
+          @click.prevent="saveNewRole(scope.$index, scope.row)"
+           class="bg-primary btn-sm text-light"
+          >
+        <i class="far fa-save"></i>
+        </el-button>
+        <el-button
+          type="default"
+          @click.prevent="test(scope.$index, scope.row)"
+          class="bg-light btn-sm"
+        >
+          <i class="fal fa-edit text-primary"></i>
+        </el-button>
+           </template>
+          <!-- ACtions Fixed Right -->
+         </el-table-column>
     </el-table>
     </el-tab-pane>
      <el-tab-pane class="p-3"  style="postion:relative"  label="PROJECTS">
@@ -665,7 +711,29 @@ export default {
     data() {    
       return {
        addRoleDialogOpen: false, 
+       showCreateRow: false, 
        tableData: [{
+          role: 'Enter New Role Name',        
+          read: true,
+          write: true,
+          delete: false,  
+
+          groupsRead: true, 
+          groupsWrite: true, 
+          groupsDelete: true, 
+          
+          projectsRead: true, 
+          projectsWrite: true, 
+          projectsDelete: true, 
+          
+          contractsRead: true, 
+          contractsWrite: true, 
+          contractsDelete: true, 
+
+          usersRead: true, 
+          usersWrite: true, 
+          usersDelete: true, 
+       },{
           role: 'program-admin',        
           read: true,
           write: true,
@@ -739,6 +807,10 @@ export default {
         // console.log(index) 
       index.read = !index.read
     },
+    showHideCreateRow(row, index){   
+      // console.log(row.rowIndex)    
+        return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
+    },
     programAdminWrite(rows, index) {
      index.write = !index.write
     },
@@ -746,10 +818,18 @@ export default {
       index.delete = !index.delete
     },
     addRole(){
-      this.addRoleDialogOpen = true
+      // this.addRoleDialogOpen = true
+      this.showCreateRow = !this.showCreateRow
     },
     closeAddRole() {
       this.addRoleDialogOpen = false;
+    },
+    test(rows, index){
+console.log(rows)
+console.log(index)
+    },
+  saveNewRole(rows, index){
+     this.showCreateRow = !this.showCreateRow
     },
     handleClick(tab, event) { 
         //Route redirecting incase we want to assign url paths to each tab
@@ -825,6 +905,9 @@ export default {
 }
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
+/deep/.el-input__inner{
+  border: 1px solid #d9534f;
 }
 .auto-complete-wrapper {
   justify-content: center;
