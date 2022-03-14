@@ -1,16 +1,24 @@
-class Api::V1::RolesController < ApplicationController
+class Api::V1::RolesController < AuthenticatedController
   def index
     project = Project.find(params[:project_id])
-    roles = project.roles
+    roles = project.roles.map(&:to_json)
     render json: {roles: roles}
   end
 
   def create
-    role = Role.new(roles_params)
+    role = Role.new.create_or_update_role(roles_params, current_user)
     if role.save
       render json: {message: "Role created successfully"}
     else
       render json: {errors: role.errors.full_messages}
+    end
+  end
+
+  def add_user
+    role = Role.find(params[:id])
+    role_users = params[:role_users]
+    role_users.each do |role_user_hash|
+      role.role_users.create(role_user_hash)
     end
   end
 
@@ -24,6 +32,6 @@ class Api::V1::RolesController < ApplicationController
 
   private
   def roles_params
-    params.require(:role).permit!(:id, :name, :project_id)
+    params.require(:role).permit(:id, :name, :project_id, role_privileges: [:id, :privilege, :role_type, :name])
   end
 end
