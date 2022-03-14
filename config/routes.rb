@@ -18,7 +18,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :roles
+      resources :roles do
+        member do
+          post :add_users
+        end
+      end
       
       # For Admin panel
       get '/settings', to: 'settings#index'
