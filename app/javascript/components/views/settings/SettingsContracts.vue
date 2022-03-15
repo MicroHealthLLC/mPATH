@@ -232,7 +232,7 @@
                   "
                   @click.prevent="saveEdits(scope.$index, scope.row)"
                   v-tooltip="`Save`"
-                  class="bg-primary text-light"
+                  class="bg-primary btn-sm text-light"
                 >
                   <i class="far fa-save"></i>
                 </el-button>
@@ -244,7 +244,7 @@
                       _isallowedProgramSettings('write')
                   "
                   @click.prevent="cancelEdits(scope.$index, scope.row)"
-                  class="bg-secondary text-light"
+                  class="bg-secondary btn-sm text-light"
                 >
                   <i class="fas fa-ban"></i>
                 </el-button>
@@ -256,7 +256,7 @@
                     scope.$index !== rowIndex &&
                       _isallowedProgramSettings('write')
                   "
-                  class="bg-light"
+                  class="bg-light btn-sm"
                 >
                   <i class="fal fa-edit text-primary"></i>
                 </el-button>
@@ -277,7 +277,7 @@
                   @click.prevent="
                     deleteSelectedContract(scope.$index, scope.row)
                   "
-                  class="bg-light"
+                  class="bg-light btn-sm"
                 >
                   <i class="far fa-trash-alt text-danger"></i>
                 </el-button>
@@ -285,7 +285,7 @@
                   type="default" 
                     v-tooltip="`Go To Contract`"              
                   @click.prevent="goToContract(scope.$index, scope.row)"
-                  class="bg-success text-light"
+                  class="bg-success text-light btn-sm"
                   >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>

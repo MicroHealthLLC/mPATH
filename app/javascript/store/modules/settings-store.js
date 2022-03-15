@@ -33,24 +33,38 @@ const settingsStore = {
     current_pop: [],
     contract_type_filter: 0,
     contract_group_types: {},
+
     group: {},
     groups: [],
     group_loaded: true,
     groups_loaded: true,
-    portfolio_users_loaded: true,
-    program_users_loaded: true,
-    program_users:[],
-
-    added_program_users_loaded:true, 
     group_status: 0,
-    new_user_status: 0,
-    new_contract_group_filter: null,
-    new_user_loaded: true,
-    new_user_id: null,
+
+
     edit_user_data:[],
     add_users_to_program:[],
     add_users_to_program_status:0,
-    edit_user_data_status:0
+    edit_user_data_status:0,
+    portfolio_users_loaded: true,
+    program_users_loaded: true,
+    program_users:[],
+    added_program_users_loaded:true,  
+    new_user_status: 0,
+
+    new_contract_group_filter: null,
+    new_user_loaded: true,
+    new_user_id: null,
+
+    //ROLES STATES
+    roles: [],
+    roles_loaded: true,
+    new_role_loaded: true,
+    roles_status: 0, 
+    new_role_status:0,
+
+    add_user_to_role: [],
+    add_user_to_role_loaded: true,
+    add_user_to_role_status: 0, 
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -153,7 +167,89 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
+      },  
+
+      //*****************ROLES ACTIONS BELOW*******************
+      
+      //FETCH ROLES
+      fetchRoles({ commit }, id ) {
+        commit("TOGGLE_ROLES_LOADED", false);
+     
+        axios({
+          method: "GET",
+          url: `${API_BASE_PATH}/roles?project_id=${id}`,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            commit("SET_ROLES", res.data.roles);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_ROLES_LOADED", true);
+          });
       },
+
+      //POST NEW ROLE
+      createRole({ commit }, { roleData }) {
+         
+        let formData =  newRoleData(roleData);
+
+        commit("TOGGLE_NEW_ROLE_LOADED", false);   
+         axios({
+           method: "POST",
+           url: `${API_BASE_PATH}/roles?project_id=${id}`,
+           data: formData,
+           headers: {
+             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+               .attributes["content"].value,
+           },
+         })
+           .then((res) => {
+             commit("SET_NEW_ROLE", res.data.roles);
+             console.log(res.data.roles)
+             commit("SET_NEW_ROLE_STATUS", res.status);
+           })
+           .catch((err) => {
+             console.log(err);
+           })
+           .finally(() => {
+             commit("TOGGLE_NEW_ROLE_LOADED", true);
+           });
+       },
+
+      //ADD USER TO ROLE
+     addUserToRole({ commit }, { userData }) {         
+        let formData =  userRoleData(userData);
+
+        commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", false);   
+         axios({
+           method: "POST",
+           url: `${API_BASE_PATH}/roles/${userData.roleId}/add_users`,
+           data: formData,
+           headers: {
+             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+               .attributes["content"].value,
+           },
+         })
+           .then((res) => {
+             commit("SET_ADD_USER_TO_ROLE", res.data);
+             console.log(res.data)
+             commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
+           })
+           .catch((err) => {
+             console.log(err);
+           })
+           .finally(() => {
+             commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", true);
+           });
+       },
+      //*****************ROLES ACTIONS ABOVE*******************
+
    updateGroup({ commit }, { groupData }) {
     //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
       commit("TOGGLE_GROUPS_LOADED", false);
@@ -666,9 +762,27 @@ const settingsStore = {
     TOGGLE_CONTRACT_LOADED: (state, loaded) => (state.contract_loaded = loaded),
     TOGGLE_CONTRACTS_LOADED: (state, loaded) =>
       (state.contracts_loaded = loaded),
+
+    //ROLES MUTATIONS
+    TOGGLE_ROLES_LOADED: (state, loaded) => (state.roles_loaded = loaded),
+    SET_ROLES: (state, value) => (state.roles = value),
+    TOGGLE_NEW_ROLE_LOADED: (state, loaded) => (state.new_role_loaded = loaded),
+    SET_NEW_ROLE_STATUS:(state, status) => (state.new_role_status = status),
+    TOGGLE_ADD_USER_TO_ROLE_LOADED: (state, loaded) => (state.add_user_to_role_loaded = loaded),
+    SET_ADD_USER_TO_ROLE_STATUS:(state, status) => (state.add_user_to_role_status = status),
+
+    //USERS MUTATIONS
     TOGGLE_USERS_LOADED: (state, loaded) => (state.portfolio_users_loaded = loaded),
     TOGGLE_PROGRAM_USERS_LOADED: (state, loaded) => (state.program_users_loaded = loaded),
     TOGGLE_ADDED_PROGRAM_USERS_LOADED: (state, loaded) => (state.added_program_users_loaded = loaded),
+    SET_NEW_USER_STATUS: (state, status) => (state.new_user_status = status),
+    SET_EDIT_USER_DATA: (state, value) => (state.edit_user_data = value),
+    TOGGLE_NEW_USER_LOADED: (state, loaded) => (state.new_user_loaded = loaded),
+    SET_EDIT_USER_DATA_STATUS:(state, status) => (state.edit_user_data_status = status),
+    SET_ADD_USERS_TO_PROGRAM: (state, value) => (state.add_users_to_program = value),
+    SET_ADD_USERS_TO_PROGRAM_STATUS: (state, status) => (state.add_users_to_program_status = status),
+
+
     SET_CONTRACT_GROUP_TYPES: (state, loaded) =>
       (state.contract_group_types = loaded),
     SET_CUSTOMER_AGENCIES_FILTER: (state, loaded) =>
@@ -698,20 +812,22 @@ const settingsStore = {
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
 
-    SET_NEW_USER_STATUS: (state, status) => (state.new_user_status = status),
 
-    SET_EDIT_USER_DATA: (state, value) => (state.edit_user_data = value),
-
-    TOGGLE_NEW_USER_LOADED: (state, loaded) => (state.new_user_loaded = loaded),
-    SET_EDIT_USER_DATA_STATUS:(state, status) => (state.edit_user_data_status = status),
     SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value),
-    SET_ADD_USERS_TO_PROGRAM: (state, value) => (state.add_users_to_program = value),
-    SET_ADD_USERS_TO_PROGRAM_STATUS: (state, status) => (state.add_users_to_program_status = status),
+
 
       
   },
 
   getters: {
+    //ROLES GETTERS
+    getRoles: (state) => state.roles,
+    getRolesLoaded: (state) => state.roles_loaded, 
+    newRoleStatus: (state) => state.new_role_status,
+    getAddUserToRole: (state) => state.add_user_to_role, 
+    addUserToRoleStatus: (state) => add_user_to_role_status,
+
+
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
@@ -880,4 +996,23 @@ console.log(newNameData.name)
 formData.append("facility_group[name]", newNameData.name); //Required
 }
 
+//ROLE FORM DATA
+const newRoleData = (roleData) => {
+  let formData = new FormData();
+  formData.append("name", roleData.name); //Required
+  formData.append("project_id", roleData.pId)
+  formData.append("user_id", roleData.uId)
+  formData.append("role_privileges[privilege]", roleData.rp.privilege)
+  formData.append("role_privileges[role_type]", roleData.rp.role_type)
+  formData.append("role_privileges[name]", roleData.rp.name)
+  formData.append("name", roleData.name)
+}
+
+//ADD USER TO ROLE FORM DATA
+const userRoleData = (userData) => {
+  let formData = new FormData();
+  formData.append("role_users[role_id]", userData.roleId)
+  formData.append("role_users[user_id]", userData.userId)
+  formData.append("role_users[project_id]", userData.programId)
+}
 export default settingsStore;

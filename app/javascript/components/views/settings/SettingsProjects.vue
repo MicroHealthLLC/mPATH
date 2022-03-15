@@ -198,7 +198,7 @@
                 @click="saveEdits(scope.$index, scope.row)"
                 v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')" 
                 v-tooltip="`Save`" 
-                class="bg-primary text-light">               
+                class="bg-primary btn-sm text-light">               
                <i class="far fa-save"></i>
                </el-button>
               <el-button 
@@ -206,7 +206,7 @@
                 v-tooltip="`Cancel Edit`"       
                 v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
                 @click.prevent="cancelEdits(scope.$index, scope.row)"  
-                class="bg-secondary text-light">
+                class="bg-secondary btn-sm text-light">
               <i class="fas fa-ban"></i>
                 </el-button>
               <el-button  
@@ -214,7 +214,7 @@
                 v-tooltip="`Edit Project Name or Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
-                class="bg-light">
+                class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button>  
           
@@ -222,7 +222,7 @@
                 type="default"
                 v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
-                class="bg-success text-light"
+                class="bg-success text-light btn-sm"
               >
              <i class="fas fa-arrow-alt-circle-right"></i>
               </el-button>

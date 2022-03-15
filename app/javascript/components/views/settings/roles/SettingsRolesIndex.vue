@@ -1,9 +1,13 @@
 <template>
+<!-- slkv 
+1.  Create Form
+2.  Import mapGetters and mutations  **DONE**
+3.  Create method to add new role **DONE**
+4.  Users data is object.  Users should have roles in their object, and the roles array should have the contract or project ids within the array-->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
-
     <div class="col-md-10">
           <div class="right-panel">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
@@ -44,6 +48,7 @@
       
      
     <div class="container-fluid mt-2 mx-0">
+      
     <div  
         v-loading="!contentLoaded"
         element-loading-text="Fetching your data. Please wait..."
@@ -92,8 +97,7 @@
 
       <template slot-scope="scope">
         <span
-        class="watch_action clickable mx-2"
-      
+        class="watch_action clickable mx-2"      
         @click.prevent.stop="programAdminRead(scope.$index, scope.row)"    
           >
         <span 
@@ -358,6 +362,7 @@
            <template slot-scope="scope">
           <el-button
           type="default"
+          v-tooltip="`Save edits`"
           v-if="showCreateRow === true && scope.$index == 0"
           @click.prevent="saveNewRole(scope.$index, scope.row)"
            class="bg-primary btn-sm text-light"
@@ -368,6 +373,7 @@
           type="default"
           @click.prevent="test(scope.$index, scope.row)"
           class="bg-light btn-sm"
+          v-tooltip="`Edit Role`"
         >
           <i class="fal fa-edit text-primary"></i>
         </el-button>
@@ -776,6 +782,63 @@ export default {
           usersWrite: false, 
           usersDelete: false, 
         },],
+        usersArray: [
+          {
+          id: 2,        
+          email: "",
+          first_name: "Joe",
+          last_name: "Smith", 
+          full_name:"Joe Smith", 
+          title: "",
+          roles: [
+              {
+              role_name: 'role_one',
+              role_id: 1,
+              contract_ids: [],
+              project_ids:[]
+              },{
+              role_name: 'role_two',
+              role_id: 2,
+              contract_ids: [3, 5, 6, 8, 9],
+              project_ids:[123, 56, 32, 58]
+              },{
+              role_name: 'role_three',
+              role_id: 3,
+              contract_ids: [3, 5, 6, 8, 9],
+              project_ids:[123, 56, 32, 58]
+
+              }
+          ],          
+         },{
+          id: 3,        
+          email: "",
+          first_name: "Jane",
+          last_name: "Summers", 
+          full_name:"Jane Summers", 
+          title: "",
+          roles: [
+              {
+              role_name: 'role_one',
+              role_id: 1,
+              contract_ids: [],
+              project_ids:[]
+              },{
+              role_name: 'role_two',
+              role_id: 2,
+              contract_ids: [3, 5, 6, 8, 9],
+              project_ids:[123, 56, 32, 58]
+              },{
+              role_name: 'role_three',
+              role_id: 3,
+              contract_ids: [3, 5, 6, 8, 9],
+              project_ids:[123, 56, 32, 58]
+
+              }
+          ],          
+         },
+         
+         
+         ],
          newRoleRow: [{
           role: 'Enter New Role Name',        
           read: true,
@@ -802,10 +865,30 @@ export default {
   },
   methods: {
     ...mapMutations([]),
-  ...mapActions([]),
+  ...mapActions(["fetchRoles", "createRole"]),
     programAdminRead(rows, index) {
         // console.log(index) 
       index.read = !index.read
+    },
+    createNewRole() {
+      let newRoleData = {
+        roleData: {
+           name: this.roleName,
+           uId: this.userId,
+           pId: this.$$route.params.programId,
+           rp: [
+              {
+                privilege: this.privilege,
+                role_type: this.roleType,
+                name: this.rpName, 
+              }
+           ],
+        },
+      };
+      this.createRole({
+        ...newRoleData,
+      });
+      // this.hideSaveBtn = true;
     },
     showHideCreateRow(row, index){   
       // console.log(row.rowIndex)    
@@ -825,8 +908,11 @@ export default {
       this.addRoleDialogOpen = false;
     },
     test(rows, index){
-console.log(rows)
-console.log(index)
+    
+      console.log(JSON.stringify(this.getRoles))
+// console.log(index)
+// console.log(rows)
+// console.log(index)
     },
   saveNewRole(rows, index){
      this.showCreateRow = !this.showCreateRow
@@ -841,7 +927,7 @@ console.log(index)
 
    },
   mounted() {
- 
+ this.fetchRoles(this.$route.params.programId)
   },
   computed: {
     ...mapGetters([
@@ -849,28 +935,30 @@ console.log(index)
         "currentProject",
         "getPortfolioUsers",
         "activeProjectUsers",
-        "newUserStatus"
+        "newRoleStatus",
+        "getRoles",
+        "new"
     ]),
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     },
   watch: { 
-    // newUserStatus: {
-    //   handler() {
-    //     if (this.newUserStatus == 200) {
-    //       this.$message({
-    //         message: ` ${this.firstName + this.lastName } successfully added to your program.`,
-    //         type: "success",
-    //         showClose: true,
-    //       });
-    //       this.SET_NEW_USER_STATUS(0);
-    //       this.lastName = '',
-    //       this.firstName = '',
-    //       this.email = ''
-    //     }
-    //   },
-    // },
+    newUserStatus: {
+      handler() {
+        if (this.newRoleStatus == 200) {
+          this.$message({
+            message: `successfully added to your program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_NEW_ROLE_STATUS(0);
+          // this.lastName = '',
+          // this.firstName = '',
+          // this.email = ''
+        }
+      },
+    },
    
   },
 };

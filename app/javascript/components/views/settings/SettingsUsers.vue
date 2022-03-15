@@ -4,7 +4,7 @@
       <SettingsSidebar />
     </div>
     <div class="col-md-10">
-          <div class="right-panel">
+       <div class="right-panel">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
           <el-breadcrumb-item :to="backToSettings">
             <span style="cursor:pointer"
@@ -133,7 +133,7 @@
                 type="default" 
                 v-tooltip="`Edit User info`"  
                @click.prevent="openEditUser(scope.$index, scope.row)"
-                class="bg-light">
+                class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>    
             </el-button> 
         
@@ -141,7 +141,7 @@
                   <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
             <el-button
             type="default"  
-            class="bg-light"         
+            class="bg-light btn-sm"         
              v-tooltip="`Remove User`"  
             >
             <i class="fas fa-user-slash"></i>               
@@ -435,7 +435,7 @@
         </div>    
       </div>
     </el-dialog>
-    </div>
+       </div>
 
     </div>
     
@@ -467,6 +467,18 @@
 // each table will be comprised of two columns
 //3. First Column will list Projects/Contract/or Admin
 //4. Second column will be for Roles (with "Roles" header)
+
+//GET USERS
+//USER has roles and roles have associations
+
+//ROLES LOGIC
+
+//USers array will contain user objects
+//User objext will contrain Roles array
+//User.roles array will contain role objects
+//Role objects will contain role id, role name, and contract/project arrays containing contract/project ids
+
+//In order to add role to user, POST action will send role_id, user_id, and if available, project_id or contract_id (ie, Association)
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
