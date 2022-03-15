@@ -1,7 +1,7 @@
 class Role < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :project, optional: true
-  has_many :role_users
+  has_many :role_users, dependent: :destroy
   has_many :users, through: :role_users
   has_many :role_privileges, dependent: :destroy
 

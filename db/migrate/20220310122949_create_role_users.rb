@@ -7,6 +7,7 @@ class CreateRoleUsers < ActiveRecord::Migration[6.1]
       t.integer :contract_id
       t.integer :facility_id
       t.integer :facility_project_id
+      t.integer :role_privilege_id
 
       t.timestamps
     end

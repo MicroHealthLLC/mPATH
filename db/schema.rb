@@ -731,6 +731,7 @@ ActiveRecord::Schema.define(version: 2022_03_14_213420) do
     t.integer "contract_id"
     t.integer "facility_id"
     t.integer "facility_project_id"
+    t.integer "role_privilege_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

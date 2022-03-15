@@ -5,7 +5,7 @@ class CreateRolePrivileges < ActiveRecord::Migration[6.1]
       t.string :name, null: false
       t.string :privilege
       t.string :role_type, null: false
-
+      
       t.timestamps
     end
   end

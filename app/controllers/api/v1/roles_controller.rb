@@ -8,7 +8,7 @@ class Api::V1::RolesController < AuthenticatedController
   def create
     role = Role.new.create_or_update_role(roles_params, current_user)
     if role.save
-      render json: {message: "Role created successfully"}
+      render json: {message: "Role created successfully", role: role.to_json}
     else
       render json: {errors: role.errors.full_messages}
     end
