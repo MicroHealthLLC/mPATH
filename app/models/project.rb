@@ -43,7 +43,8 @@ class Project < SortableRecord
   has_many :lesson_stages, through: :project_lesson_stages
   
   has_many :contracts, dependent: :destroy
-
+  has_many :roles, dependent: :destroy
+  
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false

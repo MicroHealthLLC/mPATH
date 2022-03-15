@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_10_172210) do
+ActiveRecord::Schema.define(version: 2022_03_14_213420) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -715,9 +715,23 @@ ActiveRecord::Schema.define(version: 2022_03_10_172210) do
     t.index ["user_id"], name: "index_risks_on_user_id"
   end
 
+  create_table "role_privileges", charset: "utf8", force: :cascade do |t|
+    t.integer "role_id", null: false
+    t.string "name", null: false
+    t.string "privilege"
+    t.string "role_type", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "role_users", charset: "utf8", force: :cascade do |t|
     t.integer "role_id"
     t.integer "user_id"
+    t.integer "project_id"
+    t.integer "contract_id"
+    t.integer "facility_id"
+    t.integer "facility_project_id"
+    t.integer "role_privilege_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
