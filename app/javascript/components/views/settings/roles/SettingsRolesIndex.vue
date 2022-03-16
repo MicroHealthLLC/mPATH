@@ -59,7 +59,7 @@
 <el-tabs class="mt-1 mr-3" type="border-card"  @tab-click="handleClick">
     <el-tab-pane class="p-3"  style="postion:relative"  label="ADMIN">
     <el-table    
-          v-if="getRoles"  
+       v-if="getRoles"  
         :data="tableData"   
         height="450"
         :row-class-name="showHideCreateRow"
@@ -392,7 +392,7 @@
 </el-tabs>
     </div>
        <el-dialog
-          :visible.sync="addRoleDialogOpen"
+          :visible.sync="showCreateRow"
           append-to-body
           center
           class="addRoleDialog"
@@ -407,11 +407,29 @@
         :data="newRoleRow"   
        
         >
-    <el-table-column
+    
+
+      <el-table-column
       fixed
       prop="role"
       label="Admin Role"
-      width="220">
+      width="340">
+    <template slot-scope="scope">
+  <span v-if="scope.row.name == `Enter Name`">
+    <el-input
+    size="small"         
+    style="font-style: italic; color: red"
+    v-model="newRoleName"
+    controls-position="right"
+  >
+  </el-input>
+  </span>
+  <span v-else>
+    <!-- {{ scope.row.name }} -->
+  </span>
+
+    </template>
+
     </el-table-column>
      <el-table-column label="Program Admin">
       <el-table-column
@@ -678,6 +696,7 @@
     <div class="text-right mt-3">
      <el-button
       type="default"
+       @click.prevent="saveNewRole"   
       v-tooltip="`Save New Role`" 
       class="bg-primary text-light modalBtns">               
        <i class="far fa-save"></i>
@@ -842,7 +861,7 @@ export default {
          
          ],
          newRoleRow: [{
-          role: 'Enter New Role Name',        
+          role: 'Enter Name',        
           read: true,
           write: true,
           delete: false,  
@@ -872,26 +891,26 @@ export default {
         // console.log(index) 
       index.read = !index.read
     },
-    createNewRole() {
-      let newRoleData = {
-        roleData: {
-           name: this.roleName,
-           uId: this.userId,
-           pId: this.$$route.params.programId,
-           rp: [
-              {
-                privilege: this.privilege,
-                role_type: this.roleType,
-                name: this.rpName, 
-              }
-           ],
-        },
-      };
-      this.createRole({
-        ...newRoleData,
-      });
-      // this.hideSaveBtn = true;
-    },
+    // createNewRole() {
+    //   let newRoleData = {
+    //     roleData: {
+    //        name: this.roleName,
+    //        uId: this.userId,
+    //        pId: this.$$route.params.programId,
+    //        rp: [
+    //           {
+    //             privilege: this.privilege,
+    //             role_type: this.roleType,
+    //             name: this.rpName, 
+    //           }
+    //        ],
+    //     },
+    //   };
+    //   this.createRole({
+    //     ...newRoleData,
+    //   });
+    //   // this.hideSaveBtn = true;
+    // },
     showHideCreateRow(row, index){   
       // console.log(row.rowIndex)    
         return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
@@ -911,15 +930,14 @@ export default {
     },
     test(rows, index){
     
-      console.log(JSON.stringify(this.getRoles))
+      console.log(rows)
+      console.log(index)
 // console.log(index)
 // console.log(rows)
 // console.log(index)
     },
   saveNewRole(rows, index){
-    // console.log(rows)
-    //  console.log(index)
-     let newRoleData = {
+        let newRoleData = {
         role: {
            name: this.newRoleName,
            uId: '',
@@ -927,35 +945,30 @@ export default {
             rp: [
               {
                 privilege: "RWD",
-                role_type: "project_analytics",
+                role_type: "program_admin",
                 name: "program_test", 
               }, 
               {
                 privilege: "RWD",
-                role_type: "project_tasks",
+                role_type: "groups",
                 name: "program_test", 
               },
               {
                 privilege: "RWD",
-                role_type: "project_issues",
+                role_type: "users",
                 name: "program_test", 
               },
               {
                 privilege: "RWD",
-                role_type: "project_risks",
+                role_type: "projects",
                 name: "program_test", 
               }, 
               {
                 privilege: "RWD",
-                role_type: "project_lessons",
+                role_type: "contracts",
                 name: "program_test", 
               },
-              {
-                privilege: "RWD",
-                role_type: "project_notes",
-                name: "program_test", 
-              }
-           ],
+            ],
         },
       };
       this.createRole({
