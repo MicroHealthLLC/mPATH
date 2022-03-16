@@ -58,7 +58,8 @@
 
 <el-tabs class="mt-1 mr-3" type="border-card"  @tab-click="handleClick">
     <el-tab-pane class="p-3"  style="postion:relative"  label="ADMIN">
-    <el-table      
+    <el-table    
+          v-if="getRoles"  
         :data="tableData"   
         height="450"
         :row-class-name="showHideCreateRow"
@@ -71,15 +72,15 @@
     <template slot-scope="scope">
   <span v-if="scope.$index == 0">
     <el-input
-    size="small"              
+    size="small"         
     style="font-style: italic; color: red"
-    v-model="scope.row.role"
+    v-model="newRoleName"
     controls-position="right"
   >
   </el-input>
   </span>
   <span v-else>
-    {{ scope.row.role }}
+    {{ scope.row.name }}
   </span>
 
     </template>
@@ -154,7 +155,7 @@
        </template>
       </el-table-column>
 
-    </el-table-column>
+    </el-table-column> -->
       <el-table-column label="Program Settings" >
         <el-table-column label="Groups">
             <el-table-column
@@ -353,8 +354,8 @@
 
         
         </el-table-column>      
-      </el-table-column>
-       <el-table-column 
+      </el-table-column> 
+        <el-table-column 
           fixed="right" 
           label="Actions"
           class="text-center "
@@ -378,8 +379,8 @@
           <i class="fal fa-edit text-primary"></i>
         </el-button>
            </template>
-          <!-- ACtions Fixed Right -->
-         </el-table-column>
+          
+         </el-table-column> 
     </el-table>
     </el-tab-pane>
      <el-tab-pane class="p-3"  style="postion:relative"  label="PROJECTS">
@@ -718,70 +719,71 @@ export default {
       return {
        addRoleDialogOpen: false, 
        showCreateRow: false, 
-       tableData: [{
-          role: 'Enter New Role Name',        
-          read: true,
-          write: true,
-          delete: false,  
+       newRoleName: "Enter New Role Name",
+      //  tableData: [{
+      //     role: 'Enter New Role Name',        
+      //     read: true,
+      //     write: true,
+      //     delete: false,  
 
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
+      //     groupsRead: true, 
+      //     groupsWrite: true, 
+      //     groupsDelete: true, 
           
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
+      //     projectsRead: true, 
+      //     projectsWrite: true, 
+      //     projectsDelete: true, 
           
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
+      //     contractsRead: true, 
+      //     contractsWrite: true, 
+      //     contractsDelete: true, 
 
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-       },{
-          role: 'program-admin',        
-          read: true,
-          write: true,
-          delete: false,  
+      //     usersRead: true, 
+      //     usersWrite: true, 
+      //     usersDelete: true, 
+      //  },{
+      //     role: 'program-admin',        
+      //     read: true,
+      //     write: true,
+      //     delete: false,  
 
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
+      //     groupsRead: true, 
+      //     groupsWrite: true, 
+      //     groupsDelete: true, 
           
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
+      //     projectsRead: true, 
+      //     projectsWrite: true, 
+      //     projectsDelete: true, 
           
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
+      //     contractsRead: true, 
+      //     contractsWrite: true, 
+      //     contractsDelete: true, 
 
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-        }, {
-          role: 'program-admin-not-users',        
-          read: false,
-          write: true,
-          delete: false,  
+      //     usersRead: true, 
+      //     usersWrite: true, 
+      //     usersDelete: true, 
+      //   }, {
+      //     role: 'program-admin-not-users',        
+      //     read: false,
+      //     write: true,
+      //     delete: false,  
 
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
+      //     groupsRead: true, 
+      //     groupsWrite: true, 
+      //     groupsDelete: true, 
           
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
+      //     projectsRead: true, 
+      //     projectsWrite: true, 
+      //     projectsDelete: true, 
           
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
+      //     contractsRead: true, 
+      //     contractsWrite: true, 
+      //     contractsDelete: true, 
 
-          usersRead: false, 
-          usersWrite: false, 
-          usersDelete: false, 
-        },],
+      //     usersRead: false, 
+      //     usersWrite: false, 
+      //     usersDelete: false, 
+      //   },],
         usersArray: [
           {
           id: 2,        
@@ -794,8 +796,8 @@ export default {
               {
               role_name: 'role_one',
               role_id: 1,
-              contract_ids: [],
-              project_ids:[]
+              contract_ids: [67, 45, 78, 99],
+              project_ids:[5, 4, 78, 90]
               },{
               role_name: 'role_two',
               role_id: 2,
@@ -902,7 +904,7 @@ export default {
     },
     addRole(){
       // this.addRoleDialogOpen = true
-      this.showCreateRow = !this.showCreateRow
+      this.showCreateRow = !this.showCreateRow     
     },
     closeAddRole() {
       this.addRoleDialogOpen = false;
@@ -915,6 +917,50 @@ export default {
 // console.log(index)
     },
   saveNewRole(rows, index){
+    // console.log(rows)
+    //  console.log(index)
+     let newRoleData = {
+        role: {
+           name: this.newRoleName,
+           uId: '',
+           pId: this.$route.params.programId,
+            rp: [
+              {
+                privilege: "RWD",
+                role_type: "project_analytics",
+                name: "program_test", 
+              }, 
+              {
+                privilege: "RWD",
+                role_type: "project_tasks",
+                name: "program_test", 
+              },
+              {
+                privilege: "RWD",
+                role_type: "project_issues",
+                name: "program_test", 
+              },
+              {
+                privilege: "RWD",
+                role_type: "project_risks",
+                name: "program_test", 
+              }, 
+              {
+                privilege: "RWD",
+                role_type: "project_lessons",
+                name: "program_test", 
+              },
+              {
+                privilege: "RWD",
+                role_type: "project_notes",
+                name: "program_test", 
+              }
+           ],
+        },
+      };
+      this.createRole({
+        ...newRoleData,
+      });
      this.showCreateRow = !this.showCreateRow
     },
     handleClick(tab, event) { 
@@ -928,6 +974,10 @@ export default {
    },
   mounted() {
  this.fetchRoles(this.$route.params.programId)
+ if (this.getRoles && this.getRoles.length > 0){
+ console.log(this.getRoles)
+ }
+
   },
   computed: {
     ...mapGetters([
@@ -942,9 +992,13 @@ export default {
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
+    tableData(){
+      if(this.getRoles.roles && this.getRoles.roles.length > 0)
+      return this.getRoles.roles
+    },
     },
   watch: { 
-    newUserStatus: {
+    newRoleStatus: {
       handler() {
         if (this.newRoleStatus == 200) {
           this.$message({
@@ -953,6 +1007,7 @@ export default {
             showClose: true,
           });
           this.SET_NEW_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId)
           // this.lastName = '',
           // this.firstName = '',
           // this.email = ''

@@ -1,15 +1,35 @@
 <template>
 <div>
-  <el-table      
+  <el-table 
+       v-if="getRoles"       
       :data="tableData"   
       height="450"
+    :row-class-name="showHideCreateRow"
       >
   <el-table-column
     fixed
     prop="role"
     label="Projects Role"
     width="250">
+
+  <template slot-scope="scope">
+  <span v-if="scope.$index == 0">
+    <el-input
+    size="small"         
+    style="font-style: italic; color: red"
+    v-model="newRoleName"
+    controls-position="right"
+  >
+  </el-input>
+  </span>
+  <span v-else>
+    {{ scope.row.name }}
+  </span>
+
+    </template>
   </el-table-column>
+
+
   <el-table-column label="Analytics">
     <el-table-column
       prop="read"
@@ -309,7 +329,32 @@
 
   </el-table-column>
 
-    
+    <el-table-column 
+      fixed="right" 
+      label="Actions"
+      class="text-center "
+      width="120">
+        <template slot-scope="scope">
+      <el-button
+      type="default"
+      v-tooltip="`Save edits`"
+      v-if="showCreateRow === true && scope.$index == 0"
+      @click.prevent="saveNewRole(scope.$index, scope.row)"
+        class="bg-primary btn-sm text-light"
+      >
+    <i class="far fa-save"></i>
+    </el-button>
+    <el-button
+      type="default"
+      @click.prevent="test(scope.$index, scope.row)"
+      class="bg-light btn-sm"
+      v-tooltip="`Edit Role`"
+    >
+      <i class="fal fa-edit text-primary"></i>
+    </el-button>
+   </template>
+      
+      </el-table-column> 
   </el-table>
 </div>
 </template>
@@ -320,58 +365,120 @@ export default {
   name: "SettingsRolesProjects",
       data() {    
       return {
-       tableData: [{
-          role: 'update-project',        
-          read: true,
-          write: true,
-          delete: false,  
+       newRoleName: "Enter New Role Name",
+       showCreateRow: false, 
+      //  tableData: [{
+      //     role: 'update-project',        
+      //     read: true,
+      //     write: true,
+      //     delete: false,  
 
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
+      //     groupsRead: true, 
+      //     groupsWrite: true, 
+      //     groupsDelete: true, 
           
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
+      //     projectsRead: true, 
+      //     projectsWrite: true, 
+      //     projectsDelete: true, 
           
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
+      //     contractsRead: true, 
+      //     contractsWrite: true, 
+      //     contractsDelete: true, 
 
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-        }, {
-          role: 'read-project',        
-          read: false,
-          write: true,
-          delete: false,  
+      //     usersRead: true, 
+      //     usersWrite: true, 
+      //     usersDelete: true, 
+      //   }, {
+      //     role: 'read-project',        
+      //     read: false,
+      //     write: true,
+      //     delete: false,  
 
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
+      //     groupsRead: true, 
+      //     groupsWrite: true, 
+      //     groupsDelete: true, 
           
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
+      //     projectsRead: true, 
+      //     projectsWrite: true, 
+      //     projectsDelete: true, 
           
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
+      //     contractsRead: true, 
+      //     contractsWrite: true, 
+      //     contractsDelete: true, 
 
-          usersRead: false, 
-          usersWrite: false, 
-          usersDelete: false, 
-        },]
+      //     usersRead: false, 
+      //     usersWrite: false, 
+      //     usersDelete: false, 
+      //   },]
       }
   },
   methods: {
     ...mapMutations([
      
     ]),
-  ...mapActions([
 
-  ]),
+  ...mapActions(["fetchRoles", "createRole"]),
+    addRole(){
+     // this.addRoleDialogOpen = true
+      this.showCreateRow = !this.showCreateRow     
+    },
+    closeAddRole() {
+      this.addRoleDialogOpen = false;
+    },
+    saveNewRole(rows, index){
+    // console.log(rows)
+    //  console.log(index)
+     let newRoleData = {
+        role: {
+           name: this.newRoleName,
+           uId: '',
+           pId: this.$route.params.programId,
+            rp: [
+              {
+                privilege: "RWD",
+                role_type: "project_analytics",
+                name: "program_test", 
+              }, 
+              {
+                privilege: "RWD",
+                role_type: "project_tasks",
+                name: "program_test", 
+              },
+              {
+                privilege: "RWD",
+                role_type: "project_issues",
+                name: "program_test", 
+              },
+              {
+                privilege: "RWD",
+                role_type: "project_risks",
+                name: "program_test", 
+              }, 
+              {
+                privilege: "RWD",
+                role_type: "project_lessons",
+                name: "program_test", 
+              },
+              {
+                privilege: "RWD",
+                role_type: "project_notes",
+                name: "program_test", 
+              }
+           ],
+        },
+      };
+      this.createRole({
+        ...newRoleData,
+      });
+     this.showCreateRow = !this.showCreateRow
+    },
+   test(rows, index){    
+      console.log(JSON.stringify(this.getRoles))
+    },
+      showHideCreateRow(row, index){   
+      // console.log(row.rowIndex)    
+        return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
+    },
    },
   mounted() {
  
@@ -382,28 +489,35 @@ export default {
         "currentProject",
         "getPortfolioUsers",
         "activeProjectUsers",
-        "newUserStatus"
+        "newUserStatus",
+        "newRoleStatus",
+        "getRoles",
     ]),
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
+      tableData(){
+      if(this.getRoles.roles && this.getRoles.roles.length > 0)
+      return this.getRoles.roles
+    },
     },
   watch: { 
-    // newUserStatus: {
-    //   handler() {
-    //     if (this.newUserStatus == 200) {
-    //       this.$message({
-    //         message: ` ${this.firstName + this.lastName } successfully added to your program.`,
-    //         type: "success",
-    //         showClose: true,
-    //       });
-    //       this.SET_NEW_USER_STATUS(0);
-    //       this.lastName = '',
-    //       this.firstName = '',
-    //       this.email = ''
-    //     }
-    //   },
-    // },
+     newRoleStatus: {
+      handler() {
+        if (this.newRoleStatus == 200) {
+          this.$message({
+            message: `successfully added to your program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_NEW_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId)
+          // this.lastName = '',
+          // this.firstName = '',
+          // this.email = ''
+        }
+      },
+    },
    
   },
 };

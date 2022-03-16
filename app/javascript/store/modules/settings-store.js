@@ -184,7 +184,8 @@ const settingsStore = {
           },
         })
           .then((res) => {
-            commit("SET_ROLES", res.data.roles);
+            commit("SET_ROLES", res.data);
+            console.log(res.data)
           })
           .catch((err) => {
             console.log(err);
@@ -195,14 +196,32 @@ const settingsStore = {
       },
 
       //POST NEW ROLE
-      createRole({ commit }, { roleData }) {
+      createRole({ commit }, { role }) {
          
-        let formData =  newRoleData(roleData);
+        // let formData =  newRoleData(roleData);
+        let formData = new FormData();
+        console.log(role)
+        formData.append("role[name]", role.name); //Required
+        formData.append("role[project_id]", role.pId)
+        formData.append("role[user_id]", role.uId)
+
+        role.rp.forEach((p) => {
+          formData.append("role[role_privileges][][privilege]", p.privilege);
+        });
+        role.rp.forEach((r) => {
+          formData.append("role[role_privileges][][role_type]", r.role_type);
+        });
+        role.rp.forEach((n) => {
+          formData.append("role[role_privileges][][name]", n.name);
+        });
+        // formData.append("role[role_privileges][privilege]", role.rp[0].privilege)
+        // formData.append("role[role_privileges][role_type]", role.rp[0].role_type)
+        // formData.append("role[role_privileges][name]", role.rp[0].name)
 
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
-           url: `${API_BASE_PATH}/roles?project_id=${id}`,
+           url: `${API_BASE_PATH}/roles`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -210,8 +229,8 @@ const settingsStore = {
            },
          })
            .then((res) => {
-             commit("SET_NEW_ROLE", res.data.roles);
-             console.log(res.data.roles)
+             commit("SET_NEW_ROLE", res.data);
+             console.log(res.data)
              commit("SET_NEW_ROLE_STATUS", res.status);
            })
            .catch((err) => {
@@ -997,16 +1016,10 @@ formData.append("facility_group[name]", newNameData.name); //Required
 }
 
 //ROLE FORM DATA
-const newRoleData = (roleData) => {
-  let formData = new FormData();
-  formData.append("name", roleData.name); //Required
-  formData.append("project_id", roleData.pId)
-  formData.append("user_id", roleData.uId)
-  formData.append("role_privileges[privilege]", roleData.rp.privilege)
-  formData.append("role_privileges[role_type]", roleData.rp.role_type)
-  formData.append("role_privileges[name]", roleData.rp.name)
-  formData.append("name", roleData.name)
-}
+// const newRoleData = (roleData) => {
+
+
+// }
 
 //ADD USER TO ROLE FORM DATA
 const userRoleData = (userData) => {
