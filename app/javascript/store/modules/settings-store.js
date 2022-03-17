@@ -208,16 +208,12 @@ const settingsStore = {
         //   formData.append("role[role_users][]", userIds);
         // });
         role.rp.forEach((p) => {
-          formData.append("role[role_privileges][privilege][]", p.privilege);
-        
+          formData.append("role[role_privileges][][privilege]", p.privilege);
+          formData.append("role[role_privileges][][role_type]", p.role_type);
+          formData.append("role[role_privileges][][name]", p.name);
         });
       
-        role.rp.forEach((r) => {
-          formData.append("role[role_privileges][role_type][]", r.role_type);
-        });
-        role.rp.forEach((n) => {
-          formData.append("role[role_privileges][name][]", n.name);
-        });
+
         // formData.append("role[role_privileges][privilege]", role.rp[0].privilege)
         // formData.append("role[role_privileges][role_type]", role.rp[0].role_type)
         // formData.append("role[role_privileges][name]", role.rp[0].name)
