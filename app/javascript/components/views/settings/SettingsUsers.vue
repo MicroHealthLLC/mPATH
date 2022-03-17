@@ -1,4 +1,19 @@
 <template>
+
+<!-- HOW TO FIVE USER A ROLE
+1.  Click Add Role
+2.  Modal with multiselect Dropdown
+3.  Every item-option is a role with an id
+4.  Map through role ids to push user id into role_users array
+5. Close modal which makes post request and updates Roles/Associations table with Roles
+6.  In Associations column, each row will display multiselect dropdown where program admin can make associations
+7.  "Make associations" is 
+8. Users already have a privileges attribute
+9.  This attribute should list contractIds with privileges and projectIds with privileges
+  
+  
+
+ -->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -107,18 +122,35 @@
             label="Associations"
         >        
         </el-table-column> 
-        <el-table-column icon="el-user" align="center"  width="75">
-            <!-- <template slot-scope="scope" > -->
-              <!-- USe this attribute when functionaloty gets built in -->
-                  <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-        <span v-tooltip="`Manage Privileges`">
-            <i class="fas fa-user-lock"></i>               
-            </span>
-    
-            <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
-            <!-- </template> -->
-        </el-table-column>   
+
+
+        <el-table-column icon="el-user" align="center"  width="120">
+          <template slot-scope="scope">
+         <el-button
+          type="default"
+          @click.prevent="addRoleToUser(scope.$index, scope.row)"
+          v-tooltip="`Add Role`"
+          class="bg-primary btn-sm text-light"
+          >    
+          
+          <i class="fa-solid fa-user-unlock"></i>          
+         </el-button>
+      
+         <el-button
+          type="default"
+          @click.prevent="associateUserRole(scope.$index, scope.row)"
+          v-tooltip="`Manage Associations`"
+          class="bg-light btn-sm"
+          >    
+          
+        <i class="fa-regular fa-gears"></i> 
+         </el-button>
+          </template>
+         
+     
+        </el-table-column>    
         </el-table>
+
      
 
           </div>
@@ -604,6 +636,12 @@ export default {
         //  this.$router.push({ name: "SettingsRolesProjects" })
         // }    
    
+    },
+    addRoleToUser(index, rows){
+      console.log(rows)
+    },
+    associateUserRole(index, rows){
+      console.log(rows)
     },
    addPortfolioUsersToProgram(){
      if (this.portfolioUsers && this.portfolioUsers.length > 0) {

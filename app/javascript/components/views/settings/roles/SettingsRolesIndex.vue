@@ -385,6 +385,9 @@
 
 
 
+
+
+
        <el-table    
         v-else  
         :data="firstRole"   
@@ -851,7 +854,7 @@ export default {
       }
   },
   methods: {
-    ...mapMutations([]),
+    ...mapMutations(["SET_NEW_ROLE_STATUS"]),
   ...mapActions(["fetchRoles", "createRole"]),
     programAdminRead(rows, index) {
         // console.log(index) 
@@ -907,6 +910,7 @@ export default {
         role: {
            name: this.newRoleName,
            uId: '',
+          //  role_users: [{}],
            pId: this.$route.params.programId,
             rp: [
               {

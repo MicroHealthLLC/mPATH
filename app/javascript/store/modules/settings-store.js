@@ -204,15 +204,19 @@ const settingsStore = {
         formData.append("role[name]", role.name); //Required
         formData.append("role[project_id]", role.pId)
         formData.append("role[user_id]", role.uId)
-
+        // role.role_users.forEach((userIds) => {
+        //   formData.append("role[role_users][]", userIds);
+        // });
         role.rp.forEach((p) => {
-          formData.append("role[role_privileges][][privilege]", p.privilege);
+          formData.append("role[role_privileges][privilege][]", p.privilege);
+        
         });
+      
         role.rp.forEach((r) => {
-          formData.append("role[role_privileges][][role_type]", r.role_type);
+          formData.append("role[role_privileges][role_type][]", r.role_type);
         });
         role.rp.forEach((n) => {
-          formData.append("role[role_privileges][][name]", n.name);
+          formData.append("role[role_privileges][name][]", n.name);
         });
         // formData.append("role[role_privileges][privilege]", role.rp[0].privilege)
         // formData.append("role[role_privileges][role_type]", role.rp[0].role_type)
@@ -1027,5 +1031,7 @@ const userRoleData = (userData) => {
   formData.append("role_users[role_id]", userData.roleId)
   formData.append("role_users[user_id]", userData.userId)
   formData.append("role_users[project_id]", userData.programId)
+  formData.append("role_users[facility_id]", userData.projectId)
+  formData.append("role_users[contract_id]", userData.contractId)
 }
 export default settingsStore;
