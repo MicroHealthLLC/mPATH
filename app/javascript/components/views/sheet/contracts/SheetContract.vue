@@ -162,7 +162,9 @@
                    <el-input
                       name="Total Subcontracts"  
                       v-model="contract.total_subcontracts"
-                      type="text"
+                      v-validate="'numeric|min_value:0'"
+                      type="number"
+                      min=0
                       placeholder="Contract Nickname"                                   
                       :disabled="!_isallowed('write')"
                     />
