@@ -554,35 +554,42 @@ class User < ApplicationRecord
 
   def project_privileges_hash
     user = self
-    pv = user.project_privileges
-    ph = {}
-    project_ids_with_privileges = []
-    pv.each do |p|
-      pids = p.project_ids.map(&:to_s)
-      project_ids_with_privileges = project_ids_with_privileges + pids
-      module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
-      module_permissions.transform_values{|v| v.delete(""); v}
-
-      pids.each do |pid|
-        ph[pid.to_s] = module_permissions
+    if user.roles.size > 0
+      program_admin_roles = user.roles.joins(:role_privileges).where("role_privileges.role_type = ?", "program_admin")
+    else
+      
+      pv = user.project_privileges
+      ph = {}
+      project_ids_with_privileges = []
+      pv.each do |p|
+        pids = p.project_ids.map(&:to_s)
+        project_ids_with_privileges = project_ids_with_privileges + pids
+        module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
+        module_permissions.transform_values{|v| v.delete(""); v}
+  
+        pids.each do |pid|
+          ph[pid.to_s] = module_permissions
+        end
       end
+  
+      project_ids_with_privileges = project_ids_with_privileges.compact.uniq
+      user_project_ids = user.project_ids.map(&:to_s)
+      remaining_project_ids = user_project_ids - project_ids_with_privileges
+      
+      # if remaining_project_ids.any?
+      #   user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
+      #   user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
+      #   user_privilege_attributes = user_privilege_attributes.reject{|k,v| v.nil? }.transform_values{|v| v.delete(""); v.chars}
+  
+      #   remaining_project_ids.each do |pid|
+      #     ph[pid.to_s] = user_privilege_attributes
+      #   end
+      # end
+  
+      ph.with_indifferent_access
     end
 
-    project_ids_with_privileges = project_ids_with_privileges.compact.uniq
-    user_project_ids = user.project_ids.map(&:to_s)
-    remaining_project_ids = user_project_ids - project_ids_with_privileges
-    
-    # if remaining_project_ids.any?
-    #   user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
-    #   user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
-    #   user_privilege_attributes = user_privilege_attributes.reject{|k,v| v.nil? }.transform_values{|v| v.delete(""); v.chars}
 
-    #   remaining_project_ids.each do |pid|
-    #     ph[pid.to_s] = user_privilege_attributes
-    #   end
-    # end
-
-    ph.with_indifferent_access
   end
 
   #This will build has like this

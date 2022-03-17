@@ -19,7 +19,7 @@ class Role < ApplicationRecord
     else
       role = self
     end
-    
+  
     role.name = p_role[:name]
     role.is_portfolio = false
     role.project_id = p_role[:project_id]
