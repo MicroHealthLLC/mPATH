@@ -184,8 +184,8 @@ const settingsStore = {
           },
         })
           .then((res) => {
-            commit("SET_ROLES", res.data);
-            console.log(res.data)
+            commit("SET_ROLES", res.data.roles);
+            console.log(res.data.roles)
           })
           .catch((err) => {
             console.log(err);

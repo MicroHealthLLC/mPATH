@@ -1,9 +1,9 @@
 <template>
-<!-- slkv 
-1.  Create Form
-2.  Import mapGetters and mutations  **DONE**
-3.  Create method to add new role **DONE**
-4.  Users data is object.  Users should have roles in their object, and the roles array should have the contract or project ids within the array-->
+<!-- 
+1.  Change button method handle
+2.  On click, default text will be replaced by input box
+
+-->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -50,23 +50,23 @@
     <div class="container-fluid mt-2 mx-0">
       
     <div  
-        v-loading="!contentLoaded"
-        element-loading-text="Fetching your data. Please wait..."
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
-        class="">
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="">
 
 <el-tabs class="mt-1 mr-3" type="border-card"  @tab-click="handleClick">
     <el-tab-pane class="p-3"  style="postion:relative"  label="ADMIN">
     <el-table    
-       v-if="getRoles"  
+        v-if="tableData && tableData.length > 0"  
         :data="tableData"   
         height="450"
         :row-class-name="showHideCreateRow"
         >
     <el-table-column
       fixed
-      prop="role"
+      prop="name"
       label="Admin Role"
       width="340">
     <template slot-scope="scope">
@@ -78,7 +78,7 @@
     controls-position="right"
   >
   </el-input>
-  </span>
+  </span> 
   <span v-else>
     {{ scope.row.name }}
   </span>
@@ -382,40 +382,22 @@
           
          </el-table-column> 
     </el-table>
-    </el-tab-pane>
-     <el-tab-pane class="p-3"  style="postion:relative"  label="PROJECTS">
-          <SettingsRolesProjects/>
-     </el-tab-pane>
-      <el-tab-pane class="p-3"  style="postion:relative"  label="CONTRACTS">
-          <SettingsRolesContracts/>
-     </el-tab-pane>
-</el-tabs>
-    </div>
-       <el-dialog
-          :visible.sync="showCreateRow"
-          append-to-body
-          center
-          class="addRoleDialog"
-        >
-      <span slot="title" class="text-left">
-       <h5 class="text-dark">  <i class="fal fa-user-lock mr-1 bootstrap-purple-text"></i>
-       Create New Role
-      </h5>
-      <small class="pl-1 float-left"><i><strong>Instructions:</strong> Enter new role name, then assign <strong> read-write-delete</strong> values in each category.</i></small>
-      </span>
-           <el-table      
-        :data="newRoleRow"   
-       
-        >
-    
 
-      <el-table-column
+
+
+       <el-table    
+        v-else  
+        :data="firstRole"   
+        height="450"
+        :row-class-name="showHideCreateRow"
+        >
+    <el-table-column
       fixed
       prop="role"
       label="Admin Role"
       width="340">
-    <template slot-scope="scope">
-  <span v-if="scope.row.name == `Enter Name`">
+ <template slot-scope="scope">
+  <span>
     <el-input
     size="small"         
     style="font-style: italic; color: red"
@@ -424,14 +406,14 @@
   >
   </el-input>
   </span>
-  <span v-else>
-    <!-- {{ scope.row.name }} -->
-  </span>
-
-    </template>
+ </template>
 
     </el-table-column>
-     <el-table-column label="Program Admin">
+        <el-table-column label="Assigned Users" width="125" type="expand">
+
+          
+        </el-table-column>
+    <el-table-column label="Program Admin">
       <el-table-column
         prop="read"
         label="Read"
@@ -439,7 +421,7 @@
 
       <template slot-scope="scope">
         <span
-        class="watch_action clickable mx-2"
+        class="watch_action clickable mx-2"      
         @click.prevent.stop="programAdminRead(scope.$index, scope.row)"    
           >
         <span 
@@ -460,6 +442,7 @@
         <template slot-scope="scope">
         <span
         class="watch_action clickable mx-2"
+       
         @click.prevent.stop="programAdminWrite(scope.$index, scope.row)"    
           >
         <span 
@@ -480,6 +463,7 @@
        <template slot-scope="scope">
         <span
         class="watch_action clickable mx-2"
+        
         @click.prevent.stop="programAdminDelete(scope.$index, scope.row)"    
           >
         <span 
@@ -494,14 +478,14 @@
        </template>
       </el-table-column>
 
-    </el-table-column>
+    </el-table-column> -->
       <el-table-column label="Program Settings" >
         <el-table-column label="Groups">
             <el-table-column
             prop="groupsRead"
             label="Read"
             width="75">
-        <template slot-scope="scope">
+        <template slot-scope="scope" >
         <span 
         v-if="scope.row.groupsRead">
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -690,27 +674,49 @@
         </span>       
        </template>
         </el-table-column>
+
+        
         </el-table-column>      
-      </el-table-column>
-    </el-table>
-    <div class="text-right mt-3">
-     <el-button
-      type="default"
-       @click.prevent="saveNewRole"   
-      v-tooltip="`Save New Role`" 
-      class="bg-primary text-light modalBtns">               
-       <i class="far fa-save"></i>
-     </el-button>
-     <el-button 
-        type="default" 
-        v-tooltip="`Close`"   
-        @click.prevent="closeAddRole"    
-        class="bg-secondary text-light modalBtns">
-        <i class="fas fa-ban"></i>
-      </el-button>
-  
+      </el-table-column> 
+
+
+        <el-table-column 
+          fixed="right" 
+          label="Actions"
+          class="text-center "
+          width="120">
+           <template slot-scope="scope">
+          <el-button
+          type="default"
+          v-tooltip="`Save edits`"
+          v-if="showCreateRow === true && scope.$index == 0"
+          @click.prevent="saveNewRole(scope.$index, scope.row)"
+           class="bg-primary btn-sm text-light"
+          >
+        <i class="far fa-save"></i>
+        </el-button>
+        <el-button
+          type="default"
+          @click.prevent="test(scope.$index, scope.row)"
+          class="bg-light btn-sm"
+          v-tooltip="`Edit Role`"
+        >
+          <i class="fal fa-edit text-primary"></i>
+        </el-button>
+           </template>
+          
+         </el-table-column> 
+    </el-table> 
+    </el-tab-pane>
+     <el-tab-pane class="p-3"  style="postion:relative"  label="PROJECTS">
+          <SettingsRolesProjects/>
+     </el-tab-pane>
+      <el-tab-pane class="p-3"  style="postion:relative"  label="CONTRACTS">
+          <SettingsRolesContracts/>
+     </el-tab-pane>
+</el-tabs>
     </div>
-        </el-dialog>
+      
     </div>
     </div>
 
@@ -739,70 +745,30 @@ export default {
        addRoleDialogOpen: false, 
        showCreateRow: false, 
        newRoleName: "Enter New Role Name",
-      //  tableData: [{
-      //     role: 'Enter New Role Name',        
-      //     read: true,
-      //     write: true,
-      //     delete: false,  
+        firstRole: [
+          {
+          role: 'Enter New Role Name',        
+          read: true,
+          write: true,
+          delete: false,  
 
-      //     groupsRead: true, 
-      //     groupsWrite: true, 
-      //     groupsDelete: true, 
+          groupsRead: true, 
+          groupsWrite: true, 
+          groupsDelete: true, 
           
-      //     projectsRead: true, 
-      //     projectsWrite: true, 
-      //     projectsDelete: true, 
+          projectsRead: true, 
+          projectsWrite: true, 
+          projectsDelete: true, 
           
-      //     contractsRead: true, 
-      //     contractsWrite: true, 
-      //     contractsDelete: true, 
+          contractsRead: true, 
+          contractsWrite: true, 
+          contractsDelete: true, 
 
-      //     usersRead: true, 
-      //     usersWrite: true, 
-      //     usersDelete: true, 
-      //  },{
-      //     role: 'program-admin',        
-      //     read: true,
-      //     write: true,
-      //     delete: false,  
-
-      //     groupsRead: true, 
-      //     groupsWrite: true, 
-      //     groupsDelete: true, 
-          
-      //     projectsRead: true, 
-      //     projectsWrite: true, 
-      //     projectsDelete: true, 
-          
-      //     contractsRead: true, 
-      //     contractsWrite: true, 
-      //     contractsDelete: true, 
-
-      //     usersRead: true, 
-      //     usersWrite: true, 
-      //     usersDelete: true, 
-      //   }, {
-      //     role: 'program-admin-not-users',        
-      //     read: false,
-      //     write: true,
-      //     delete: false,  
-
-      //     groupsRead: true, 
-      //     groupsWrite: true, 
-      //     groupsDelete: true, 
-          
-      //     projectsRead: true, 
-      //     projectsWrite: true, 
-      //     projectsDelete: true, 
-          
-      //     contractsRead: true, 
-      //     contractsWrite: true, 
-      //     contractsDelete: true, 
-
-      //     usersRead: false, 
-      //     usersWrite: false, 
-      //     usersDelete: false, 
-      //   },],
+          usersRead: true, 
+          usersWrite: true, 
+          usersDelete: true, 
+         }
+        ],
         usersArray: [
           {
           id: 2,        
@@ -1006,8 +972,8 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData(){
-      if(this.getRoles.roles && this.getRoles.roles.length > 0)
-      return this.getRoles.roles
+      if(this.getRoles && this.getRoles.length > 0)
+      return this.getRoles
     },
     },
   watch: { 
