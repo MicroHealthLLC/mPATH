@@ -259,7 +259,7 @@ ActiveAdmin.register Facility do
   end
 
   filter :creator_id, as: :select, collection: -> {User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}
-  filter :facility_group, label: "Project Group"
+  filter :facility_group, label: "Group"
   filter :facility_name, label: "Project Name"
   filter :address
   filter :point_of_contact
