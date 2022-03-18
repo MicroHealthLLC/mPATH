@@ -56,8 +56,8 @@ en:
         one: Program Type
         other: Program Types
       facility_group:
-        one: Project Group
-        other: Project Groups
+        one: Group
+        other: Groups
     attributes:
       task:
         text: "Name"
