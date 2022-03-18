@@ -11,6 +11,11 @@
   |var contract_privilegs = "#{JSON.generate(current_user.contract_privileges_hash)}";
   |var project_privilegs = "#{JSON.generate(current_user.facility_privileges_hash)}";
   |var program_settings_privileges = "#{JSON.generate(current_user.program_settings_privileges_hash)}";
+
+  |var program_privilegs_by_role = "#{JSON.generate(current_user.project_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var contract_privilegs_by_role = "#{JSON.generate(current_user.contract_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var project_privilegs_by_role = "#{JSON.generate(current_user.facility_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var program_settings_privileges_roles = "#{JSON.generate(current_user.program_settings_privileges_hash_by_role(program_ids: [@program_id]))}";
   |var privilege = "#{JSON.generate(current_user.privilege_hash)}";
   |var preferences = "#{JSON.generate(current_user.get_preferences.value )}";
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";

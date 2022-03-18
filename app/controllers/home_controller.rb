@@ -10,6 +10,10 @@ class HomeController < AuthenticatedController
   end
 
   def settings
+    @program_id = params[:all].split("/")[1]
+    if !current_user.authorized_programs.pluck(:id).include?(@program_id.to_i)
+      raise CanCan::AccessDenied      
+    end
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
@@ -17,8 +21,8 @@ class HomeController < AuthenticatedController
   end
 
   def dataviewer
-    program_id = params[:all].split("/")[1]
-    if !current_user.authorized_programs.pluck(:id).include?(program_id.to_i)
+    @program_id = params[:all].split("/")[1]
+    if !current_user.authorized_programs.pluck(:id).include?(@program_id.to_i)
       raise CanCan::AccessDenied      
     end
     
