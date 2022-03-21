@@ -1,10 +1,15 @@
 <template>
 <div>
-  <el-table 
+  <!-- <el-table 
     v-if="getRoles"       
     :data="tableData"   
     height="450"
     :row-class-name="showHideCreateRow"
+      > -->
+  <el-table 
+   :data="hardCodedData"   
+    height="450"
+  
       >
   <el-table-column
     fixed
@@ -367,49 +372,49 @@ export default {
       return {
        newRoleName: "Enter New Role Name",
        showCreateRow: false, 
-      //  tableData: [{
-      //     role: 'update-project',        
-      //     read: true,
-      //     write: true,
-      //     delete: false,  
+       hardCodedData: [{
+          role: 'update-project',        
+          read: true,
+          write: true,
+          delete: false,  
 
-      //     groupsRead: true, 
-      //     groupsWrite: true, 
-      //     groupsDelete: true, 
+          groupsRead: true, 
+          groupsWrite: true, 
+          groupsDelete: true, 
           
-      //     projectsRead: true, 
-      //     projectsWrite: true, 
-      //     projectsDelete: true, 
+          projectsRead: true, 
+          projectsWrite: true, 
+          projectsDelete: true, 
           
-      //     contractsRead: true, 
-      //     contractsWrite: true, 
-      //     contractsDelete: true, 
+          contractsRead: true, 
+          contractsWrite: true, 
+          contractsDelete: true, 
 
-      //     usersRead: true, 
-      //     usersWrite: true, 
-      //     usersDelete: true, 
-      //   }, {
-      //     role: 'read-project',        
-      //     read: false,
-      //     write: true,
-      //     delete: false,  
+          usersRead: true, 
+          usersWrite: true, 
+          usersDelete: true, 
+        }, {
+          role: 'read-project',        
+          read: false,
+          write: true,
+          delete: false,  
 
-      //     groupsRead: true, 
-      //     groupsWrite: true, 
-      //     groupsDelete: true, 
+          groupsRead: true, 
+          groupsWrite: true, 
+          groupsDelete: true, 
           
-      //     projectsRead: true, 
-      //     projectsWrite: true, 
-      //     projectsDelete: true, 
+          projectsRead: true, 
+          projectsWrite: true, 
+          projectsDelete: true, 
           
-      //     contractsRead: true, 
-      //     contractsWrite: true, 
-      //     contractsDelete: true, 
+          contractsRead: true, 
+          contractsWrite: true, 
+          contractsDelete: true, 
 
-      //     usersRead: false, 
-      //     usersWrite: false, 
-      //     usersDelete: false, 
-      //   },]
+          usersRead: false, 
+          usersWrite: false, 
+          usersDelete: false, 
+        },]
       }
   },
   methods: {
