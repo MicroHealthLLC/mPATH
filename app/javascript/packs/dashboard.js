@@ -95,6 +95,27 @@ Vue.prototype.$programSettingPrivileges = programSettingPrivileges
 
 Vue.prototype.$preferences = preferences
 
+Vue.prototype.checkPrivileges = (page, salut, route) => {
+  console.log("*****************")
+  console.log(page)
+  
+  if(page == "issue_form"){
+    if (route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.issues.includes(s);
+    } else {
+      let fPrivilege = Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return false //fPrivilege.issues.includes(s); 
+    }
+  }
+  return false;
+}
+
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({
   router,
