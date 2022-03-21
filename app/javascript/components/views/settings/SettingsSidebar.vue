@@ -109,6 +109,8 @@ export default {
         'setShowAdminBtn',
         ]),
      _isallowed(salut) {
+                     return this.checkPrivileges("SettingsSidebar", salut, this.$route)
+
       let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]

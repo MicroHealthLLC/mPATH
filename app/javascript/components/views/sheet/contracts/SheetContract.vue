@@ -845,6 +845,8 @@ export default {
       }
     },
     _isallowed(salut) {
+                    return this.checkPrivileges("SheetContract", salut, this.$route)
+
       var programId = this.$route.params.programId
       var contractId = this.$route.params.contractId
       let fPrivilege = this.$contractPrivileges[programId][contractId]

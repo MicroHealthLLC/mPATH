@@ -165,6 +165,8 @@
       ]),
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
+                    return this.checkPrivileges("risk_show", salut, this.$route)
+
       var programId = this.$route.params.programId;
       var projectId = this.$route.params.projectId
       let fPrivilege = this.$projectPrivileges[programId][projectId]

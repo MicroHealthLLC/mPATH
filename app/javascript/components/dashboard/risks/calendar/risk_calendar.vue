@@ -467,6 +467,8 @@
         'updateWatchedTasks'
       ]), 
     _isallowed(salut) {
+                    return this.checkPrivileges("risk_calender", salut, this.$route)
+
        if (this.$route.params.contractId) {
           // return this.defaultPrivileges
           let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    

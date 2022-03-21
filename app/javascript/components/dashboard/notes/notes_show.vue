@@ -79,6 +79,8 @@
         'setTaskForManager'
       ]),
        _isallowed(salut) {
+                       return this.checkPrivileges("notes_show", salut, this.$route)
+
        if (this.$route.params.contractId) {
           // return this.defaultPrivileges
           let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    

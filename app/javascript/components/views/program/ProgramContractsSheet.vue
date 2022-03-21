@@ -536,6 +536,8 @@ export default {
      ]), 
    ...mapActions([]),
     _isallowed(salut) {
+                    return this.checkPrivileges("ProgramContractsSheet", salut, this.$route)
+
         let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]

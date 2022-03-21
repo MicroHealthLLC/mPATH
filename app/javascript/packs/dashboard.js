@@ -112,7 +112,427 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
       let s = permissionHash[salut]
       return false //fPrivilege.issues.includes(s); 
     }
+  }else if(page == "task_sheet"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+
+  }else if(page == "facility_show"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.tasks.includes(s);
+
+  }else if(page == "issue_calendar"){
+
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.issues.includes(s); 
+
+  }else if(page == "issue_index"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.issues.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.issues.includes(s); 
+    }
+  }else if(page == "issue_sheets_index"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.issues.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.issues.includes(s); 
+    }
+  }else if(page == "ContractLessonForm"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s); 
+    }
+
+  }else if(page == "LessonForm"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s); 
+    }
+
+  }else if(page == "contract_notes_form"){
+    let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return fPrivilege.notes.includes(s);
+  }else if(page == "notes_form"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s); 
+    }
+  }else if(page == "notes_index"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s); 
+    }
+  }else if(page == "notes_sheets_index"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s); 
+    }
+
+  }else if(page == "notes_sheets"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s); 
+    }
+
+  }else if(page == "notes_show"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.notes.includes(s); 
+    }
+  }else if(page == "risk_form"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s); 
+    }
+  }else if(page == "risk_index"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s); 
+    }
+  }else if(page == "risk_show"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.risks.includes(s); 
+  }else if(page == "risk_calendar"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s); 
+    }
+  }else if(page == "risk_sheets_index"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.risks.includes(s); 
+    }
+  }else if(page == "task_calendar"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.tasks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.tasks.includes(s); 
+    }
+  }else if(page == "task_form"){
+    if (this.$route.params.contractId) {
+      //  console.log("yes, contract route")      
+        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+      // console.log(fPrivilege.tasks.includes(s))
+        return fPrivilege.tasks.includes(s);
+      } else if (this.$route.params.projectId) {
+        // console.log("project route")
+        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        //  console.log(fPrivilege.tasks.includes(s))
+        return fPrivilege.tasks.includes(s); 
+      }
+  }else if(page == "task_index"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.tasks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.tasks.includes(s); 
+    }
+  }else if(page == "task_sheets_index"){
+    if (this.$route.params.contractId) {
+      // return this.defaultPrivileges
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.tasks.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.tasks.includes(s); 
+    }
+  }else if(page == "LessonContextMenu"){
+    if (this.$route.params.contractId) {
+      return this.defaultPrivileges      
+    } else {
+    let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return fPrivilege.lessons.includes(s); 
+    } 
+  }else if(page == "KanbanIssues"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.issues.includes(s); 
+  }else if(page == "KanbanRisks"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.risks.includes(s); 
+  }else if(page == "KanbanTasks"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.tasks.includes(s); 
+  }else if(page == "MapAnalytics"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.overview.includes(s);  
+  }else if(page == "MapLessons"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.lessons.includes(s); 
+  }else if(page == "MapOverview"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.overview.includes(s);   
+  }else if(page == "MapProject"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.overview.includes(s); 
+  }else if(page == "portfolio_issue_form"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.issues.includes(s); 
+  }else if(page == "portfolio_lesson_form"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.lessons.includes(s);  
+  }else if(page == "portfolio_risk_form"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.risks.includes(s); 
+  }else if(page == "portfolio_task_form"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.tasks.includes(s); 
+  }else if(page == "ProgramContractsSheet"){
+    let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return pPrivilege.contracts.includes(s);  
+  }else if(page == "ProgramView"){
+    let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return pPrivilege.contracts.includes(s);
+  }else if(page == "SettingsSidebar"){
+    let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return pPrivilege.contracts.includes(s);   
+  }else if(page == "SettingsView"){
+    let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return pPrivilege.contracts.includes(s);
+  }else if(page == "SheetAnalytics"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    // console.log(fPrivilege)
+    return  fPrivilege.overview.includes(s); 
+  }else if(page == "SheetLessons"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.lessons.includes(s);   
+  }else if(page == "SheetProject"){
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return  fPrivilege.overview.includes(s);  
+  }else if(page == "ContractAnalytics"){
+    var programId = this.$route.params.programId;
+    var contractId = this.$route.params.contractId
+    let fPrivilege = this.$contractPrivileges[programId][contractId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    // console.log(fPrivilege)
+    return  fPrivilege.overview.includes(s);
+  }else if(page == "ContractLessons"){
+    if (this.$route.params.contractId) {
+      let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s);
+    } else {
+      let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s); 
+    }
+  }else if(page == "SheetContract"){
+    var programId = this.$route.params.programId
+    var contractId = this.$route.params.contractId
+    let fPrivilege = this.$contractPrivileges[programId][contractId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return fPrivilege.overview.includes(s);
   }
+
+
+
+
+
+
   return false;
 }
 

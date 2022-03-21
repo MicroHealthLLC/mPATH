@@ -120,6 +120,8 @@
         'updateContractNote'
       ]),
      _isallowed(salut) {
+             return this.checkPrivileges("contract_notes_form", salut, this.$route)
+
         let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]

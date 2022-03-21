@@ -266,6 +266,8 @@ export default {
       'setHideBriefed',
     ]),
     _isallowed(salut) {
+                    return this.checkPrivileges("task_index", salut, this.$route)
+
        if (this.$route.params.contractId) {
           // return this.defaultPrivileges
           let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    

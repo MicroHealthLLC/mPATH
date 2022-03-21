@@ -111,6 +111,8 @@ export default {
   methods: {
     ...mapMutations(["setProjectGroupFilter"]),
       _isallowed(salut) {
+                      return this.checkPrivileges("SettingsView", salut, this.$route)
+
       let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]

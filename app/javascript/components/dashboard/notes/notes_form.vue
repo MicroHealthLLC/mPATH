@@ -141,6 +141,8 @@
         }
       },
      _isallowed(salut) {
+             return this.checkPrivileges("notes_form", salut, this.$route)
+
        if (this.$route.params.contractId) {
           let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}

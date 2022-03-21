@@ -152,6 +152,8 @@ export default {
       }   
     },
      _isallowed(salut) {
+                     return this.checkPrivileges("LessonContextMenu", salut, this.$route)
+
        if (this.$route.params.contractId) {
           return this.defaultPrivileges      
         } else {
