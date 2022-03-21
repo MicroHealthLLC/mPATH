@@ -152,4 +152,13 @@ contract_client_types.each do |name|
   end
 end
 
+puts "Adding default system roles"
+roles = ["user"]
+roles.each do |name|
+  Role.find_or_create_by(name: name) do |s|
+    s.name = name
+    s.is_portfolio = true
+  end
+end
+
 puts "Seeds completed.."

@@ -15,7 +15,9 @@ class User < ApplicationRecord
   has_many :facility_privileges, dependent: :destroy
   has_many :project_privileges, dependent: :destroy
   has_many :contracts
-
+  has_many :role_users, dependent: :destroy
+  has_many :roles, through: :role_users
+  has_many :role_privileges, through: :roles
   validates :first_name, :last_name, presence: true
   validate :password_complexity
   before_commit :set_color, on: :create
@@ -551,7 +553,7 @@ class User < ApplicationRecord
   end
 
   def project_privileges_hash
-    user = self
+    user = self     
     pv = user.project_privileges
     ph = {}
     project_ids_with_privileges = []
@@ -581,6 +583,7 @@ class User < ApplicationRecord
     # end
 
     ph.with_indifferent_access
+
   end
 
   #This will build has like this
@@ -643,6 +646,57 @@ class User < ApplicationRecord
 
     ph.with_indifferent_access
   end
+
+  def facility_privileges_hash_by_role(program_ids: [])
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    project_hash = []
+    role_users = user.role_users.where.not(facility_project_id: nil)
+    project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    role_users.each do |role_user|
+      h = {}
+      if role_user.facility_project_id && project_role_privileges[role_user.role_id]
+        h[:facility_project_id] = role_user.facility_project_id 
+        h[:privileges] = project_role_privileges[role_user.role_id].map(&:privilege)
+      end
+      project_hash << h if h.present?
+    end
+    project_hash
+  end
+
+  def contract_privileges_hash_by_role(program_ids: [])
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    contarct_hash = []
+    role_users = user.role_users.where.not(contract_id: nil)
+    contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    role_users.each do |role_user|
+      h = {}
+      if role_user.contract_id
+        h[:contract_id] = role_user.contract_id 
+        h[:privileges] = contract_role_privileges[role_user.role_id].map(&:privilege)
+      end
+      contarct_hash << h if h.present?
+    end
+    contarct_hash
+  end
+
+  def project_privileges_hash_by_role(program_ids: [])
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).pluck(:id)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_ADMIN_PRIVILEGS_ROLE_TYPES)
+    role_privileges.as_json(only: [:name, :privilege, :role_type])
+  end
+
+  def program_settings_privileges_hash_by_role(program_ids: [])
+    user = self
+    program_ids = user.project_ids if !program_ids.any?
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).pluck(:id)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
+    role_privileges.as_json(only: [:name, :privilege, :role_type])
+  end 
+
 
   def authorized_contract_ids(project_ids: [])
     # if project_ids.any?
