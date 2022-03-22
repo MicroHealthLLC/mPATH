@@ -35,6 +35,6 @@ class Api::V1::RolesController < AuthenticatedController
     params.permit(role_users: [:role_id, :user_id, :project_id, :contract_id, :facility_id, :facility_project_id])
   end
   def roles_params
-    params.require(:role).permit(:id, :name, :project_id, role_privileges: [:id, :privilege, :role_type, :name])
+    params.require(:role).permit(:id, :name, :project_id, :type_of, role_privileges: [:id, :privilege, :role_type, :name])
   end
 end
