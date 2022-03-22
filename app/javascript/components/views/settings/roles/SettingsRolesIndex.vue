@@ -1,4 +1,6 @@
 <template>
+<!-- FIX:
+After saving role, privileges are not resetting -->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -14,9 +16,9 @@
           <h4 class="mt-4 ml-3">
             <i class="fal fa-user-lock mr-1 bootstrap-purple-text"></i> Roles
             <span  
-              v-if="tableData"          
+              v-if="getRoles"          
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-              >{{ tableData.length - 1 }}
+              >{{ getRoles.length }}
             </span>
          
           </h4>
@@ -44,15 +46,25 @@
      
     <div class="container-fluid mt-2 mx-0">
       
-  <div  
-  v-loading="!contentLoaded"
+<div  
+  v-loading="!getRolesLoaded"
   element-loading-text="Fetching your data. Please wait..."
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(0, 0, 0, 0.8)"
   class="">
 
 <el-tabs class="mt-1 mr-3" type="border-card"  @tab-click="handleClick">
-    <el-tab-pane class="p-3"  style="postion:relative"  label="ADMIN">
+    <el-tab-pane class="p-3"  style="postion:relative">
+       <template
+        slot="label"
+        class="text-right"      
+        v-if="true"  
+         >
+       ADMIN
+        <span class="badge badge-secondary badge-pill">
+          <span v-if="tableData">{{ tableData.length }}</span>        
+        </span>
+    </template>
     <el-table    
         v-if="tableData && tableData.length > 0"  
         :data="tableData"   
@@ -67,7 +79,8 @@
     <template slot-scope="scope">
   <span v-if="scope.$index == 0">
     <el-input
-    size="small"         
+    size="small"   
+    placeholder="Enter New Role Name"      
     style="font-style: italic; color: red"
     v-model="newRoleName"
     controls-position="right"
@@ -105,19 +118,16 @@
         </span>
      </span> 
 
+     <span v-if="scope.$index !== 0">
         <span 
-        v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[0]"  
-        >
-        <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type == 'program_admin') && 
+        v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'program_admin' && 
         scope.row.role_privileges.map(t => t.privilege)[0].includes('R')"  
         >
+          <!-- {{}} -->
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
  
          </span>
-       <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type == 'program_admin') && 
-        !scope.row.role_privileges.map(t => t.privilege)[0].includes('R')">
+       <span v-else>      
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>   
         </span>    
@@ -145,19 +155,15 @@
        
         </span>        
       
+       <span v-if="scope.$index !== 0">
         <span 
-        v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[0]"  
-        >
-        <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type == 'program_admin') && 
+        v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'program_admin' && 
         scope.row.role_privileges.map(t => t.privilege)[0].includes('W')"  
         >
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
  
          </span>
-       <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type == 'program_admin') && 
-        !scope.row.role_privileges.map(t => t.privilege)[0].includes('W')">
+        <span v-else>
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>   
         </span>    
@@ -185,19 +191,15 @@
        
         </span>  
         
-         <span 
-        v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[0]"  
-        >
+       <span v-if="scope.$index !== 0">
         <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type == 'program_admin') && 
+        v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'program_admin' && 
         scope.row.role_privileges.map(t => t.privilege)[0].includes('D')"  
         >
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
  
-         </span>
-       <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type == 'program_admin') && 
-        !scope.row.role_privileges.map(t => t.privilege)[0].includes('D')">
+        </span>
+        <span v-else>
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>   
         </span>    
@@ -208,15 +210,12 @@
 
     </el-table-column> 
       <el-table-column label="Program Settings" >
-
-        <!-- 1.  Bring all methods to this column, 
-        2.  Bring all methods to Scripts -->
-<el-table-column label="Groups">
+    <el-table-column label="Groups">
     <el-table-column
     prop="groupsRead"
     label="Read"
     width="75">
-<template slot-scope="scope" >
+  <template slot-scope="scope" >
 
 
 <span
@@ -232,19 +231,15 @@
   </span>
 </span>
 
-   <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[1]"  
-    >
+  <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'groups') && 
+    v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
     scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'groups') && 
-    !scope.row.role_privileges.map(t => t.privilege)[1].includes('R')">
+   <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span>    
@@ -267,19 +262,15 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>
     </span>
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[1]"  
-    >
+   <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'groups') && 
+    v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
     scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'groups') && 
-    !scope.row.role_privileges.map(t => t.privilege)[1].includes('W')">
+    <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span>    
@@ -302,19 +293,15 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>
     </span>
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[1]"  
-    >
+   <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'groups') && 
+    v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
     scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'groups') && 
-    !scope.row.role_privileges.map(t => t.privilege)[1].includes('D')">
+   <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span>      
@@ -342,19 +329,15 @@
   <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
   </span>
 </span>
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[2]"  
-    >
+   <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'projects') && 
-    scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
+    v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
+    scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'projects') && 
-    !scope.row.role_privileges.map(t => t.privilege)[2].includes('R')">
+   <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span>      
@@ -381,177 +364,154 @@
   <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
   </span>
 </span>
-     <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[2]"  
-    >
+   <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'projects') && 
-    scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'projects') && 
-    !scope.row.role_privileges.map(t => t.privilege)[2].includes('W')">
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
-       </template>
-            
-        </el-table-column>
-        <el-table-column
-          prop="projectsDelete"
-          label="Delete"
-          width="75">
-       <template slot-scope="scope">
-
-
-    <span
-    @click.prevent.stop="projectsDelete(scope.$index, scope.row)"
-    v-if="scope.$index == 0"
-    >
-
-      <span v-if="isProjectsDelete">
-      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-      </span>
-        <span v-if="!isProjectsDelete">
-      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-      </span>
-    </span>
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[2]"  
-    >
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'projects') && 
-    scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'projects') && 
-    !scope.row.role_privileges.map(t => t.privilege)[2].includes('D')">
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
-
-       </template>
-        </el-table-column>
-        </el-table-column>
-
-
-        <el-table-column label="Contracts">
-        <el-table-column
-        prop="contractsRead"
-        label="Read"
-        width="75">
-    <template slot-scope="scope">
-
-       <span @click.prevent.stop="contractsRead(scope.$index, scope.row)" v-if="scope.$index == 0">
-         <span v-if="isContractsRead">
-          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-          </span>
-            <span v-if="!isContractsRead">
-          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-          </span>
-        </span>
-
-    <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[3]"  
-    >
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'contracts') && 
-    scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'contracts') && 
-    !scope.row.role_privileges.map(t => t.privilege)[3].includes('R')">
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
-
-
-
-       </template>
-        </el-table-column>
-        <el-table-column
-            prop="contractsWrite"
-            label="Write"
-            width="75">
-        <template slot-scope="scope">
-          <span
-          @click.prevent.stop="contractsWrite(scope.$index, scope.row)"
-          v-if="scope.$index == 0"
-          >
-          <span v-if="isContractsWrite">
-          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-          </span>
-            <span v-if="!isContractsWrite">
-          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-          </span>
-        </span>
-
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[3]"  
-    >
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'contracts') && 
+    v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
     scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'contracts') && 
-    !scope.row.role_privileges.map(t => t.privilege)[3].includes('W')">
+   <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span> 
-
-            
-          
        </template>
-        </el-table-column>
-        <el-table-column
-            prop="role_privileges"
-            label="Delete"
-            width="75">
-       <template slot-scope="scope">
+            
+  </el-table-column>
+  <el-table-column
+    prop="projectsDelete"
+    label="Delete"
+    width="75">
+  <template slot-scope="scope">
 
 
-   <span @click.prevent.stop="contractsDelete(scope.$index, scope.row)" v-if="scope.$index == 0">
+<span
+@click.prevent.stop="projectsDelete(scope.$index, scope.row)"
+v-if="scope.$index == 0"
+>
 
-          <span v-if="isContractsDelete">
-          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-          </span>
-        <span v-if="!isContractsDelete">
-          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-          </span>
-     </span>
+<span v-if="isProjectsDelete">
+<i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+</span>
+  <span v-if="!isProjectsDelete">
+<i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+</span>
+</span>
+<span v-if="scope.$index !== 0">
+<span 
+v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
+scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
+>
+<i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+</span>
+ <span v-else>
+<i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+</span>   
+</span> 
+
+  </template>
+  </el-table-column>
+  </el-table-column>
+
+
+  <el-table-column label="Contracts">
+  <el-table-column
+  prop="contractsRead"
+  label="Read"
+  width="75">
+<template slot-scope="scope">
+
+  <span @click.prevent.stop="contractsRead(scope.$index, scope.row)" v-if="scope.$index == 0">
+    <span v-if="isContractsRead">
+    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+    </span>
+      <span v-if="!isContractsRead">
+    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+    </span>
+  </span>
+
+  <span v-if="scope.$index !== 0">
   <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[3]"  
+  v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts' && 
+  scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
+  >
+  <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+  </span>
+  <span v-else>
+  <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+  </span>   
+  </span> 
+
+
+
+  </template>
+  </el-table-column>
+  <el-table-column
+      prop="contractsWrite"
+      label="Write"
+      width="75">
+  <template slot-scope="scope">
+    <span
+    @click.prevent.stop="contractsWrite(scope.$index, scope.row)"
+    v-if="scope.$index == 0"
     >
+    <span v-if="isContractsWrite">
+    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+    </span>
+      <span v-if="!isContractsWrite">
+    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+    </span>
+  </span>
+
+    <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'contracts') && 
-    scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
+    v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts'  && 
+    scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
-      </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'contracts') && 
-    !scope.row.role_privileges.map(t => t.privilege)[3].includes('D')">
+    </span>
+    <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
-   </span> 
-     
-       </template>
-        </el-table-column>
-        </el-table-column>
+    </span> 
+  </template>
+  </el-table-column>
+  <el-table-column
+      prop="role_privileges"
+      label="Delete"
+      width="75">
+  <template slot-scope="scope">
+
+
+<span @click.prevent.stop="contractsDelete(scope.$index, scope.row)" v-if="scope.$index == 0">
+
+    <span v-if="isContractsDelete">
+    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+    </span>
+  <span v-if="!isContractsDelete">
+    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+    </span>
+</span>
+  <span v-if="scope.$index !== 0">
+    <span 
+    v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts'  && 
+    scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
+    >
+    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+    </span>
+   <span v-else>
+    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+    </span>   
+    </span> 
+
+  </template>
+  </el-table-column>
+  </el-table-column>
 
 
         <el-table-column label="Users" >
@@ -574,19 +534,15 @@
           </span>
           </span>
 
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[4]"  
-    >
+    <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'users') && 
-    scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
+    v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
+    scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'users') && 
-    !scope.row.role_privileges.map(t => t.privilege)[4].includes('R')">
+    <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span> 
@@ -613,19 +569,15 @@
         </span>
 
      
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[4]"  
-    >
+    <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'users') && 
-    scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
+    v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
+    scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'users') && 
-    !scope.row.role_privileges.map(t => t.privilege)[4].includes('W')">
+   <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span> 
@@ -651,19 +603,15 @@
           </span>
         </span>
 
-  <span 
-    v-if="scope.$index !== 0 && scope.row.role_privileges.map(t => t.privilege)[4]"  
-    >
+    <span v-if="scope.$index !== 0">
     <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'users') && 
-    scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
+    v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
+    scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
     >
     <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type == 'users') && 
-    !scope.row.role_privileges.map(t => t.privilege)[4].includes('D')">
+   <span v-else>
     <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
     </span>   
    </span> 
@@ -683,16 +631,27 @@
           <el-button
           type="default"
           v-tooltip="`Save edits`"
-          v-if="showCreateRow === true && scope.$index == 0"
+          v-if="showCreateRow === true && scope.$index == 0 && newRoleName"
           @click.prevent="saveNewRole(scope.$index, scope.row)"
            class="bg-primary btn-sm text-light"
           >
         <i class="far fa-save"></i>
         </el-button>
+       <el-button
+          type="default"
+          @click.prevent="cancelCreateRole(scope.$index, scope.row)"
+          v-if="showCreateRow === true && scope.$index == 0"
+          class="bg-secondary btn-sm text-light ml-1"
+          v-tooltip="`Cancel`"                  
+        >
+          <i class="fas fa-ban"></i> 
+         </el-button>
         <el-button
           type="default"
           @click.prevent="test(scope.$index, scope.row)"
+          v-if="!scope.$index == 0"
           class="bg-light btn-sm"
+          disabled
           v-tooltip="`Edit Role`"
         >
           <i class="fal fa-edit text-primary"></i>
@@ -715,7 +674,8 @@
  <template slot-scope="scope">
   <span>
     <el-input
-    size="small"         
+    size="small"      
+    placeholder="Enter New Role Name"   
     style="font-style: italic; color: red"
     v-model="newRoleName"
     controls-position="right"
@@ -1006,13 +966,24 @@
           type="default"
           v-tooltip="`Save edits`"
           v-if="showCreateRow === true && scope.$index == 0"
+        
           @click.prevent="saveNewRole(scope.$index, scope.row)"
            class="bg-primary btn-sm text-light"
           >
         <i class="far fa-save"></i>
         </el-button>
+       <el-button
+          type="default"
+          @click.prevent="cancelCreateRole(scope.$index, scope.row)"
+          v-if="showCreateRow === true && scope.$index == 0"
+          class="bg-secondary btn-sm text-light"
+          v-tooltip="`Cancel`"                  
+        >
+          <i class="fas fa-ban"></i> 
+         </el-button>
         <el-button
           type="default"
+          v-if="!scope.$index == 0"
           @click.prevent="test(scope.$index, scope.row)"
           class="bg-light btn-sm"
           v-tooltip="`Edit Role`"
@@ -1024,11 +995,31 @@
          </el-table-column> 
     </el-table> 
     </el-tab-pane>
-     <el-tab-pane class="p-3"  style="postion:relative"  label="PROJECTS">
-          <SettingsRolesProjects/>
+     <el-tab-pane class="p-3"  style="postion:relative">
+        <template
+        slot="label"
+        class="text-right"      
+        v-if="true"  
+         >
+      PROJECTS
+        <span class="badge badge-secondary badge-pill">
+          <span v-if="tableCounts && tableCounts.n">{{ tableCounts.n.projects }}</span>        
+        </span>
+    </template>
+          <SettingsRolesProjects />
      </el-tab-pane>
-      <el-tab-pane class="p-3"  style="postion:relative"  label="CONTRACTS">
-          <SettingsRolesContracts/>
+      <el-tab-pane class="p-3"  style="postion:relative">
+     <template
+        slot="label"
+        class="text-right"      
+        v-if="true"  
+         >
+    CONTRACTS
+        <span class="badge badge-secondary badge-pill">
+          <span v-if="tableCounts && tableCounts.n">{{ tableCounts.n.contracts  }}</span>        
+        </span>
+    </template>
+          <SettingsRolesContracts />
      </el-tab-pane>
 </el-tabs>
     </div>
@@ -1059,7 +1050,6 @@ export default {
     data() {    
       return {
         addRoleDialogOpen: false, 
-        showCreateRow: false, 
         isProgramAdminRead: true,
         isProgramAdminWrite: true,
         isProgramAdminDelete: true,
@@ -1080,7 +1070,7 @@ export default {
         isUsersWrite: true,
         isUsersDelete: true,
 
-       newRoleName: "Enter New Role Name",
+       newRoleName: "",
         firstRole: [
           {
           role: 'Enter New Role Name',        
@@ -1110,33 +1100,11 @@ export default {
         groupsPriv: [],
         projectsPriv: [],
         contractsPriv: [],
-        usersPriv: [],
-        newRoleRow: [{
-          role: 'Enter Name',        
-          read: true,
-          write: true,
-          delete: false,  
-
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
-          
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
-          
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
-
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-        },]
+        usersPriv: [],     
       }
   },
   methods: {
-    ...mapMutations(["SET_NEW_ROLE_STATUS"]),
+    ...mapMutations(["SET_NEW_ROLE_STATUS", "SET_SHOW_CREATE_ROW"]),
   ...mapActions(["fetchRoles", "createRole"]),
     programAdminRead() {
       this.isProgramAdminRead = !this.isProgramAdminRead  
@@ -1289,59 +1257,57 @@ export default {
       // console.log(row.rowIndex)    
         return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
     },
-    addRole(){
-      // this.addRoleDialogOpen = true
-      this.showCreateRow = !this.showCreateRow  
-     console.log(this.getRoles)  
-    },
     closeAddRole() {
       this.addRoleDialogOpen = false;
     },
-    test(rows, index){
-    
+    test(rows, index){    
       console.log(rows)
       console.log(index)
-// console.log(index)
-// console.log(rows)
-// console.log(index)
     },
+ addRole() {
+    this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
+   },
+  cancelCreateRole() {
+    this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
+  },
   saveNewRole(rows, index){
-     console.log(`program: ${this.programAdminPriv}`)
-  console.log(`groups: ${this.groupsPriv}`)
-    console.log(`projects: ${this.projectsPriv}`)
-       console.log(`contracts: ${this.contractsPriv}`)
-          console.log(`users: ${this.usersPriv}`)
+  //    console.log(`program: ${this.programAdminPriv}`)
+  // console.log(`groups: ${this.groupsPriv}`)
+  //   console.log(`projects: ${this.projectsPriv}`)
+  //      console.log(`contracts: ${this.contractsPriv}`)
+  //         console.log(`users: ${this.usersPriv}`)
         let newRoleData = {
         role: {
            name: this.newRoleName,
            uId: '',
+           type: 'admin',
           //  role_users: [{}],
            pId: this.$route.params.programId,
             rp: [
               {
                 privilege: this.programAdminPriv.join(''),
                 role_type: "program_admin",
-                name: "program_test", 
+                name: this.newRoleName, 
               }, 
               {
                 privilege: this.groupsPriv.join(''),
                 role_type: "groups",
-                name: "program_test", 
+                name: this.newRoleName, 
               },
               {
                 privilege: this.usersPriv.join(''),
                 role_type: "users",
-                name: "program_test", 
+                name: this.newRoleName, 
               },
               {
                 privilege: this.projectsPriv.join(''),
                 role_type: "projects",
-                name: "program_test", 
+                name: this.newRoleName, 
               }, 
               {
                 privilege: this.contractsPriv.join(''),
                 role_type: "contracts",
-                name: "program_test", 
+                name: this.newRoleName, 
               },
             ],
         },
@@ -1349,10 +1315,15 @@ export default {
       this.createRole({
         ...newRoleData,
       });
-     this.showCreateRow = !this.showCreateRow
+    this.newRoleName = ""
+    this.SET_SHOW_CREATE_ROW(!this.showCreateRow)
     
     },
     handleClick(tab, event) { 
+          
+          //  if(tab._data.index == 1){
+          //     console.log("HI")
+          //  }
         //Route redirecting incase we want to assign url paths to each tab
         // if(tab.index == 1) {
         //  this.$router.push({ name: "SettingsRolesProjects" })
@@ -1361,12 +1332,8 @@ export default {
     },
 
    },
-  mounted() {
+mounted() {
  this.fetchRoles(this.$route.params.programId)
- if (this.getRoles && this.getRoles.length > 0){   
-  console.log(this.getRoles)
- }
-
  if (this.isProgramAdminRead && this.isProgramAdminWrite && this.isProgramAdminDelete ) {
       this.programAdminPriv.push(..."R") 
       this.programAdminPriv.push(..."W")  
@@ -1393,18 +1360,15 @@ export default {
       this.usersPriv.push(..."W")     
       this.usersPriv.push(..."D")       
     }
- console.log(`program: ${this.programAdminPriv}`)
-  console.log(`groups: ${this.groupsPriv}`)
-    console.log(`projects: ${this.projectsPriv}`)
-       console.log(`contracts: ${this.contractsPriv}`)
-          console.log(`users: ${this.usersPriv}`)
   },
   computed: {
     ...mapGetters([
         "contentLoaded",
+        "getRolesLoaded",
         "currentProject",
         "getPortfolioUsers",
         "activeProjectUsers",
+        "showCreateRow",
         "newRoleStatus",
         "getRoles",
         "new"
@@ -1413,27 +1377,87 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData(){
-      if(this.getRoles && this.getRoles.length > 0)
-      return this.getRoles
-    },
-    },
+      if(this.getRoles && this.getRoles.length > 0){
+        return this.getRoles.filter(role => role.type_of == 'admin' || role.type_of == '' )
+        }  
+       },
+    tableCounts(){
+      if(this.getRoles && this.getRoles.length > 0){
+        return  {
+          n:{
+             contracts: this.getRoles.filter(role => role.type_of == 'contracts').length, 
+            projects: this.getRoles.filter(role => role.type_of == 'projects').length
+          }           
+         }       
+        }  
+       } 
+     },
   watch: { 
 
     newRoleStatus: {
       handler() {
         if (this.newRoleStatus == 200) {
           this.$message({
-            message: `${this.newRoleName} successfully added to your program.`,
+            message: `New role successfully added to your program.`,
             type: "success",
             showClose: true,
           });
           this.SET_NEW_ROLE_STATUS(0);
-          this.fetchRoles(this.$route.params.programId)
-          this.newRoleName = "Enter New Role Name"
-          // this.lastName = '',
-          // this.firstName = '',
-          // this.email = ''
+          this.fetchRoles(this.$route.params.programId)  
+          this.isProgramAdminRead = true,
+          this.isProgramAdminWrite = true,
+          this.isProgramAdminDelete = true
+  
+          this.isGroupsRead = true,
+          this.isGroupsWrite = true,
+          this.isGroupsDelete = true,
+
+          this.isProjectsRead = true,
+          this.isProjectsWrite = true,
+          this.isProjectsDelete =  true,
+
+          this.isContractsRead = true,
+          this.isContractsWrite = true,
+          this.isContractsDelete = true,
+
+          this.isUsersRead = true,
+          this.isUsersWrite = true,
+          this.isUsersDelete = true,
+
+          this.programAdminPriv = []
+          this.groupsPriv = [],
+          this.projectsPriv = [],
+          this.contractsPriv = [],
+          this.usersPriv = []
+
+        if (this.isProgramAdminRead && this.isProgramAdminWrite && this.isProgramAdminDelete ) {
+          this.programAdminPriv.push(..."R") 
+          this.programAdminPriv.push(..."W")  
+          this.programAdminPriv.push(..."D") 
+                
         }
+       if (this.isGroupsRead && this.isGroupsWrite && this.isGroupsDelete) {
+            this.groupsPriv.push(..."R")     
+            this.groupsPriv.push(..."W")     
+            this.groupsPriv.push(..."D")       
+          }
+        if (this.isProjectsRead && this.isProjectsWrite && this.isProjectsDelete) {
+            this.projectsPriv.push(..."R")     
+            this.projectsPriv.push(..."W")     
+            this.projectsPriv.push(..."D")       
+        }
+        if (this.isContractsRead && this.isContractsWrite && this.isContractsDelete) {
+          this.contractsPriv.push(..."R")     
+          this.contractsPriv.push(..."W")     
+          this.contractsPriv.push(..."D")       
+        }
+        if (this.isUsersRead && this.isUsersWrite && this.isUsersDelete) {
+            this.usersPriv.push(..."R")     
+            this.usersPriv.push(..."W")     
+            this.usersPriv.push(..."D")       
+          }
+
+          }
       },
     },
    
