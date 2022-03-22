@@ -101,7 +101,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
   
   if(page == "issue_form"){
     if (route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -139,7 +138,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
 
   }else if(page == "issue_index"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -152,7 +150,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "issue_sheets_index"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -246,7 +243,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
 
   }else if(page == "notes_show"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -259,7 +255,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "risk_form"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -272,7 +267,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "risk_index"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -292,7 +286,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     return  fPrivilege.risks.includes(s); 
   }else if(page == "risk_calendar"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -305,7 +298,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "risk_sheets_index"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -318,7 +310,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "task_calendar"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -331,23 +322,18 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "task_form"){
     if (this.$route.params.contractId) {
-      //  console.log("yes, contract route")      
         let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-      // console.log(fPrivilege.tasks.includes(s))
         return fPrivilege.tasks.includes(s);
       } else if (this.$route.params.projectId) {
-        // console.log("project route")
         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
         let permissionHash = {"write": "W", "read": "R", "delete": "D"}
         let s = permissionHash[salut]
-        //  console.log(fPrivilege.tasks.includes(s))
         return fPrivilege.tasks.includes(s); 
       }
   }else if(page == "task_index"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -360,7 +346,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     }
   }else if(page == "task_sheets_index"){
     if (this.$route.params.contractId) {
-      // return this.defaultPrivileges
       let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
@@ -483,7 +468,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     let fPrivilege = this.$projectPrivileges[programId][projectId]
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let s = permissionHash[salut]
-    // console.log(fPrivilege)
     return  fPrivilege.overview.includes(s); 
   }else if(page == "SheetLessons"){
     var programId = this.$route.params.programId;
@@ -505,7 +489,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     let fPrivilege = this.$contractPrivileges[programId][contractId]
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let s = permissionHash[salut]
-    // console.log(fPrivilege)
     return  fPrivilege.overview.includes(s);
   }else if(page == "ContractLessons"){
     if (this.$route.params.contractId) {
@@ -527,11 +510,6 @@ Vue.prototype.checkPrivileges = (page, salut, route) => {
     let s = permissionHash[salut]
     return fPrivilege.overview.includes(s);
   }
-
-
-
-
-
 
   return false;
 }

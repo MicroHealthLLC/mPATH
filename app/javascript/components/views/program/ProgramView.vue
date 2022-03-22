@@ -2005,12 +2005,12 @@ export default {
         'setHideBriefed',
       ]),
      _isallowed(salut) {
-                     return this.checkPrivileges("ProgramView", salut, this.$route)
+        return this.checkPrivileges("ProgramView", salut, this.$route)
 
-      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return pPrivilege.contracts.includes(s);     
+      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return pPrivilege.contracts.includes(s);     
     },
     showContractStats(){
      if(this.getShowProjectStats == false){

@@ -120,12 +120,12 @@
         'updateContractNote'
       ]),
      _isallowed(salut) {
-             return this.checkPrivileges("contract_notes_form", salut, this.$route)
+        return this.checkPrivileges("contract_notes_form", salut, this.$route)
 
-        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.notes.includes(s);
+        // let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return fPrivilege.notes.includes(s);
      },
       addFile(files) {
       files.forEach((file) => {

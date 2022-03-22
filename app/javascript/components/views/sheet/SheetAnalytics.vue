@@ -985,15 +985,15 @@ export default {
       console.log(e)
     },
      _isallowed(salut) {
-                     return this.checkPrivileges("SettingAnalytics", salut, this.$route)
+        return this.checkPrivileges("SettingAnalytics", salut, this.$route)
 
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        // console.log(fPrivilege)
-        return  fPrivilege.overview.includes(s);    
+        // var programId = this.$route.params.programId;
+        // var projectId = this.$route.params.projectId
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // // console.log(fPrivilege)
+        // return  fPrivilege.overview.includes(s);    
           
     },
     isBlockedStatus(status) {

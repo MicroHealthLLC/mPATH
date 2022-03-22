@@ -107,19 +107,19 @@
         'deleteContractNote'
       ]),
      _isallowed(salut) {
-                     return this.checkPrivileges("notes_sheets", salut, this.$route)
+        return this.checkPrivileges("notes_sheets", salut, this.$route)
 
-       if (this.$route.params.contractId) {
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.notes.includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.notes.includes(s); 
-        }
+      //  if (this.$route.params.contractId) {
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s); 
+      //   }
      },
      editNoteMode() {
         if (this.contract) {      

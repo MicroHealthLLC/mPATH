@@ -574,20 +574,20 @@
         'setHideBriefed',
       ]),
     _isallowed(salut) {
-            return this.checkPrivileges("issue_sheets_index", salut, this.$route)
+      return this.checkPrivileges("issue_sheets_index", salut, this.$route)
 
-       if (this.$route.params.contractId) {
-          // return this.defaultPrivileges
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.issues.includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.issues.includes(s); 
-        }
+      //  if (this.$route.params.contractId) {
+      //     // return this.defaultPrivileges
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.issues.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.issues.includes(s); 
+      //   }
      },
       sort:function(s) {
       //if s == current sort, reverse

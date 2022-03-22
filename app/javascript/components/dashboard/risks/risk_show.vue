@@ -165,14 +165,14 @@
       ]),
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-                    return this.checkPrivileges("risk_show", salut, this.$route)
+        return this.checkPrivileges("risk_show", salut, this.$route)
 
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
+      // var programId = this.$route.params.programId;
+      // var projectId = this.$route.params.projectId
+      // let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return  fPrivilege.risks.includes(s); 
     },
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
