@@ -694,7 +694,13 @@ class User < ApplicationRecord
     program_ids = user.project_ids if !program_ids.any?
     role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).pluck(:id)
     role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
-    role_privileges.as_json(only: [:name, :privilege, :role_type])
+    # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
+    # role_privileges.as_json(only: [:name, :privilege, :role_type])
+    hash = {}
+    role_privileges.each do |rp|
+      hash[rp.role_type] = rp.privilege.chars
+    end
+    hash
   end 
 
 
