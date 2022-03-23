@@ -356,10 +356,8 @@ export default {
       if (!this._isallowed("write") || !this.DV_updated) return;
       this.DV_updated = false;
       let data = {
-        facility: {
-          statusId: this.statusId,
-          dueDate: this.dueDate,
-        },
+        statusId: this.statusId,
+        dueDate: this.dueDate,
       };
       // Used to update state
       let updatedFacility = Object.assign(this.facility, {
