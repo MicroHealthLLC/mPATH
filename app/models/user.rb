@@ -748,6 +748,9 @@ class User < ApplicationRecord
   # end
 
   def has_permission?(action: "read", resource: , program: nil, project: nil, project_privileges_hash: {}, facility_privileges_hash: {} )
+
+    return has_permission_by_role?({action: "read", resource: resource, program: program, project: project})
+
     begin
       program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
       project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
@@ -770,7 +773,50 @@ class User < ApplicationRecord
     return result
   end
 
+  def has_permission_by_role?(args)
+
+    program = args[:program]
+    project = args[:project]
+    action = args[:action]
+    contract = args[:contract]
+    resource = args[:resource]
+
+    begin
+      user = self
+      action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+      
+      if contract
+        program_id = contract.project_id.to_s
+        contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
+
+        role_ids = user.role_users.where(project_id: program_id, contract_id: project_id).pluck(:role_id)
+        role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+      else
+        program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
+        project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+
+        role_ids = user.role_users.where(project_id: program_id, facility_id: project_id).pluck(:role_id)
+        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+      end
+
+      role_privileges = RolePrivilege.where(role_id: role_ids, role_type: role_type).pluck(:privilege).flatten.join.chars.uniq
+
+      result = false
+      short_action_code = action_code_hash[action]
+
+      result = role_privileges.include?(short_action_code)
+
+    rescue Exception => e
+      puts "Exception in  User#has_permission_by_role? #{e.message}"
+      result = false
+    end
+    return result
+  end
+
   def has_contract_permission?(action: "read", resource: , contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
+
+    return has_permission_by_role?({action: "read", resource: resource , contract: nil})
+
     begin
       contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
       contract_id = contract.id.to_s
