@@ -5,6 +5,7 @@ import { API_BASE_PATH } from "./../../mixins/utils";
 const settingsStore = {
   state: () => ({
     show_admin_btn: false,
+    show_create_row: false, 
     user_status: true,
     edit_contract_sheet: false, 
     contract_table: [],
@@ -185,7 +186,7 @@ const settingsStore = {
         })
           .then((res) => {
             commit("SET_ROLES", res.data.roles);
-            console.log(res.data.roles)
+            // console.log(res.data.roles)
           })
           .catch((err) => {
             console.log(err);
@@ -197,26 +198,17 @@ const settingsStore = {
 
       //POST NEW ROLE
       createRole({ commit }, { role }) {
-         
-        // let formData =  newRoleData(roleData);
         let formData = new FormData();
         console.log(role)
         formData.append("role[name]", role.name); //Required
         formData.append("role[project_id]", role.pId)
+        formData.append("role[type_of]", role.type)
         formData.append("role[user_id]", role.uId)
-        // role.role_users.forEach((userIds) => {
-        //   formData.append("role[role_users][]", userIds);
-        // });
         role.rp.forEach((p) => {
           formData.append("role[role_privileges][][privilege]", p.privilege);
           formData.append("role[role_privileges][][role_type]", p.role_type);
           formData.append("role[role_privileges][][name]", p.name);
         });
-      
-
-        // formData.append("role[role_privileges][privilege]", role.rp[0].privilege)
-        // formData.append("role[role_privileges][role_type]", role.rp[0].role_type)
-        // formData.append("role[role_privileges][name]", role.rp[0].name)
 
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
@@ -230,7 +222,7 @@ const settingsStore = {
          })
            .then((res) => {
              commit("SET_NEW_ROLE", res.data);
-             console.log(res.data)
+            //  console.log(res.data)
              commit("SET_NEW_ROLE_STATUS", res.status);
            })
            .catch((err) => {
@@ -772,6 +764,8 @@ const settingsStore = {
     setNewContractGroupFilter: (state, loaded) =>
       (state.new_contract_group_filter = loaded),
     SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
+
+    SET_SHOW_CREATE_ROW: (state, value) => (state.show_create_row = value),
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
@@ -844,8 +838,8 @@ const settingsStore = {
     getRolesLoaded: (state) => state.roles_loaded, 
     newRoleStatus: (state) => state.new_role_status,
     getAddUserToRole: (state) => state.add_user_to_role, 
-    addUserToRoleStatus: (state) => add_user_to_role_status,
-
+    addUserToRoleStatus: (state) => state.add_user_to_role_status,
+    showCreateRow: (state) => state.show_create_row,
 
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,

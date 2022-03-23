@@ -136,7 +136,7 @@
         <div class="row pt-0 pb-2" :class="{'addHeight': !project.address}">
           <div class="col pt-0 text-right">
           <button 
-            :disabled="!project.pointOfContact"
+            :disabled="!project.pointOfContact && (project.email || project.phoneNumber)"
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>

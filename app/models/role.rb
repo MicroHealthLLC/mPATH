@@ -25,7 +25,7 @@ class Role < ApplicationRecord
     role.project_id = p_role[:project_id]
     role.user_id = user.id
     role.is_default = false
-    role.type_of = ""
+    role.type_of = p_role[:type_of]
     return role if !role.save
     role_privileges = role.role_privileges
     ( p_role[:role_privileges] || []).each do |p_role_privilege|
