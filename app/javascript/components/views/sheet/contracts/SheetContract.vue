@@ -209,7 +209,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select or enter status"
+                      placeholder="Select or enter Customer Entity Type"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -236,7 +236,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select or enter Vehicle"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -261,7 +261,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      placeholder="Select or enter Prime IDIQ/Vehicle Contract Number"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -290,7 +290,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      placeholder="Select or enter Prime Contract Number / Task Order / PO Number"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -317,7 +317,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Subcontract Number / PO Number"
+                      placeholder="Select or enter Subcontract Number / PO Number"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -344,7 +344,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Prime"
+                      placeholder="Select or enter Prime"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -367,7 +367,7 @@
                       allow-create
                       clearable
                       default-first-option
-                      placeholder="Select or enter status"
+                      placeholder="Select or enter Status"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
