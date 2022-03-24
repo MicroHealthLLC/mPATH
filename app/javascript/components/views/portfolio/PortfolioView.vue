@@ -4922,6 +4922,7 @@ export default {
       activeName: "tasks",
       dialogVisible: false,
       taskRow: {},
+      dynamicArray: [],
       taskArray: [],
       taskCount: null,
       issueArray: [],
@@ -6550,7 +6551,7 @@ export default {
     //   return this.portfolioPrograms;
     // },
     C_categories() {
-      let category = this.taskArray;
+      let category = this.dynamicArray;
       return [
         ...new Set(
           category
@@ -7289,6 +7290,7 @@ export default {
       handler() {
         if (this.portfolioTasksLoaded) {
           this.taskArray = this.portfolioTasks.tasks;
+          this.dynamicArray = this.portfolioTasks.tasks;
           this.taskLastPage = this.portfolioTasks.last_page;
           this.taskCount = this.portfolioTasks.total_count;
           let currCount = this.portfolioTasks.tasks.length;
@@ -7310,6 +7312,7 @@ export default {
       handler() {
         if (this.portfolioIssuesLoaded) {
           this.issueArray = this.portfolioIssues.issues;
+          this.dynamicArray = this.portfolioIssues.issues;
           this.issueLastPage = this.portfolioIssues.last_page;
           this.issueCount = this.portfolioIssues.total_count;
           let currCount = this.portfolioIssues.issues.length;
@@ -7334,6 +7337,7 @@ export default {
       handler() {
         if (this.portfolioRisksLoaded) {
           this.riskArray = this.portfolioRisks.risks;
+          this.dynamicArray = this.portfolioRisks.risks;
           this.riskLastPage = this.portfolioRisks.last_page;
           this.riskCount = this.portfolioRisks.total_count;
           let currCount = this.portfolioRisks.risks.length;
@@ -7356,6 +7360,7 @@ export default {
       handler() {
         if (this.portfolioLessonsLoaded) {
           this.lessonArray = this.portfolioLessons.lessons;
+          this.dynamicArray = this.portfolioLessons.lessons;
           this.lessonLastPage = this.portfolioLessons.last_page;
           this.lessonCount = this.portfolioLessons.total_count;
           let currCount = this.portfolioLessons.lessons.length;
