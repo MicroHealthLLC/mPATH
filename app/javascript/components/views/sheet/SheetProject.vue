@@ -136,12 +136,14 @@
         <div class="row pt-0 pb-2" :class="{'addHeight': !project.address}">
           <div class="col pt-0 text-right">
           <button 
+            v-if="_isallowed('write')"
             :disabled="!project.pointOfContact && (project.email || project.phoneNumber)"
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>
             <button 
             :class="{'d-none': !edit}"
+              v-if="_isallowed('write')"
               class="btn btn-info text-light mt-1 btn-sm apply-btn"                  
             @click.prevent="editBtn">Update
             </button>
@@ -162,6 +164,7 @@
                 placeholder="Enter Point of Contact name"
                 name="Poc"
                 :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -199,6 +202,7 @@
                 placeholder="Enter Point of Contact phone number"
                 name="phoneNo"
                :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -219,6 +223,7 @@
                 placeholder="Enter Point of Contact email"
                 name="email"
                 :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
