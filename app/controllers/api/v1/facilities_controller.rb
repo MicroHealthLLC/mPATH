@@ -19,12 +19,14 @@ class Api::V1::FacilitiesController < AuthenticatedController
   def update
     # @facility_project.update(facility_project_params)
     @facility = Facility.find(params[:id])
-    if(params[:facility][:facility_group_name] && params[:facility][:facility_group_name] != 'undfined')
-      @facility.facility_group.update(name: params[:facility][:facility_group_name])
-    end
-    if params[:facility]
+    if params[:facility].present?
+      if(params[:facility][:facility_group_name] && params[:facility][:facility_group_name] != 'undfined')
+        @facility.facility_group.update(name: params[:facility][:facility_group_name])
+      end
       @facility.update(facility_params)
     end
+    @facility_project = @facility.facility_projects.find_by(project_id: params[:project_id])
+    @facility_project&.update(status_id: params[:status_id], due_date: params[:due_date])
     render json: {facility: @facility.as_json}
   end
 
