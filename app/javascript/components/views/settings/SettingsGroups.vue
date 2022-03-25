@@ -69,7 +69,7 @@
             <div class="form-group mx-3">
            <el-input
                 v-model="newGroupName"
-                placeholder="Enter new Group name here"
+                placeholder="Enter new Group Name"
                 rows="1"
                 name="Group Name"
               />
