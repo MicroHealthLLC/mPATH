@@ -155,7 +155,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
             </template>
           </el-table-column>
      <!--BEGIN Expandable Column Containing Project User roles -->
-      <el-table-column label="Users" width="100" type="expand">
+      <!-- <el-table-column label="Users" width="100" type="expand">
           <template slot-scope="scope">
         <div class="container-fluid p-2">
 
@@ -242,9 +242,9 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               label="Users">
               <template slot-scope="scope">
               <span v-if="projId && projId == scope.row.facility_id">
-                {{ scope.row.user_full_name }}
+                {{ scope.row.user_full_name }} -->
                   <!-- {{ scope.row.role_id}} -->          
-              </span>
+              <!-- </span>
               </template>
 
             </el-table-column>
@@ -254,7 +254,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               label="Roles">
               <template slot-scope="scope">
               <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
-                  {{ scope.row.role_name }}  
+                  {{ scope.row.role_name }}   -->
                <!-- <el-select
               v-model="scope.row.role_name"
               filterable
@@ -274,12 +274,12 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               </el-option> -->
             <!-- </el-select>  -->
             
-              </span>
+              <!-- </span>
               </template>
 
-            </el-table-column>
+            </el-table-column> -->
 
-    <el-table-column
+    <!-- <el-table-column
   
         align="right">
         <template slot="header" slot-scope="scope">
@@ -287,7 +287,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
             v-model="searchRoleUsers"
             size="mini"
             placeholder="Enter User or Role Name"/>
-        </template>
+        </template> -->
         <!-- <template slot-scope="scope">
           <el-button
             size="mini"
@@ -297,7 +297,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
             type="danger"
             @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template> -->
-      </el-table-column>
+      <!-- </el-table-column>
         
           </el-table> 
          </el-collapse-item>
@@ -307,7 +307,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
           </div>
          </template>
 
-         </el-table-column>
+         </el-table-column> -->
            <!--END Expandable Column Containing Project User roles -->
 
 
@@ -336,6 +336,14 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                 v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
+               </el-button>  
+                 <el-button  
+                type="default" 
+                v-tooltip="`Add User(s) to Project`"
+                @click.prevent="addUserRole(scope.$index, scope.row)" 
+                v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
+                class="bg-primary text-light btn-sm">
+             <i class="fas fa-users-medical mr-1"></i>
                </el-button>  
           
               <el-button
@@ -421,6 +429,177 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
             </div>
           </form>
         </el-dialog>
+
+
+         <el-dialog
+          :visible.sync="rolesVisible"
+          append-to-body
+          center
+          class="contractForm p-0 addUserRole"
+        >
+         <div class="container-fluid p-2">
+
+             <div class="pl-4 mt-0 row">
+            <div class="col-5 pt-0">
+             <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
+             <el-select
+              v-model="projectRoleUsers"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in programUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.fullName"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Select Role for User(s) </label>
+             <el-select
+              v-model="projectRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'projects')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div>
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+                <el-button
+                type="default"
+                @click="saveProjectUserRole()"
+                v-if="projectRoleNames && projectRoleUsers"
+                v-tooltip="`Confirm`" 
+                class="bg-primary btn-sm text-light mr-2">               
+                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm
+               </el-button>
+      
+              </div>             
+             
+            </div>
+      
+      <div class="mt-4 row">
+        <div class="col-12 pt-0">
+ 
+        <!-- <el-collapse id="" class=""  v-if="projectUsers && projectUsers.length > 0">
+            <el-collapse-item title="SEE PROJECT'S USERS AND ROLES" name="1"> -->
+          <el-table
+            v-if="projectUsers && projectUsers.length > 0"
+            :header-cell-style="{ background: '#EDEDED' }"
+            :data="projectUsers.filter(
+                  (data) =>
+                    !searchRoleUsers || 
+                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
+                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                )"           
+            height="450"
+            width="auto"
+            class="px-4"
+            > 
+           <el-table-column  prop="user_full_name"
+              sortable
+              filterable
+              label="Users">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.facility_id">
+                {{ scope.row.user_full_name }}
+                  <!-- {{ scope.row.role_id}} -->          
+              </span>
+              </template>
+
+            </el-table-column>
+            <el-table-column  prop="role_name"
+              sortable
+              filterable
+              label="Roles">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
+                  {{ scope.row.role_name }}  
+               <!-- <el-select
+              v-model="scope.row.role_name"
+              filterable
+              multiple
+              class="w-70"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Roles"          
+            > -->
+             <!-- <el-option
+                v-for="item in projectUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.role_name"
+              > 
+              </el-option> -->
+            <!-- </el-select>  -->
+            
+              </span>
+              </template>
+
+            </el-table-column>
+
+    <el-table-column
+  
+        align="right">
+        <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchRoleUsers"
+            size="mini"
+            placeholder="Enter User or Role Name"/>
+        </template>
+        <!-- <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+        </template> -->
+      </el-table-column>
+        
+          </el-table> 
+          <span  class="pl-4" v-else>
+            No Users Assigned
+          </span>
+
+          <div class="right mt-3">
+               <button
+                @click.prevent="closeUserRoles"
+                class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Close`"                  
+              >
+               <i class="fas fa-ban"></i> 
+              </button>
+            </div>
+         <!-- </el-collapse-item>
+        </el-collapse>  -->
+        </div>
+      </div>
+          </div>
+      
+        </el-dialog>
          </div>
     </div>
   </div>
@@ -441,6 +620,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      rolesVisible: false,
       expandRowKeys: [],      
       componentKey: 0,
       programId: this.$route.params.programId,
@@ -513,6 +693,9 @@ export default {
     cancelCreateGroup() {
       this.dialogVisible = false;
     },
+    closeUserRoles() {
+      this.rolesVisible = false;
+    },
     addAnotherProject() {
       this.C_projectGroupFilter = "";
       this.newProjectNameText = "";
@@ -524,7 +707,11 @@ export default {
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
       //Commenting out setter.  Useful if we want saved users to populate dropdown upon loading
       // this.SET_PROJECT_ROLE_USERS(this.assignedUsers)
-		},  
+		}, 
+    addUserRole(index, rows) {
+      this.rolesVisible = true
+      this.projId = rows.id
+    },
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
@@ -836,9 +1023,6 @@ a {
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;
 }
-/deep/.el-dialog {
-  width: 30%;
-}
 /deep/.el-table {
   .el-input__inner {
     font-size: 16px !important;
@@ -851,10 +1035,28 @@ a {
 h5 {
   word-break: break-word;
 }
+.addProjectDialog {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+
+
+}
+.addUserRole {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+ /deep/.el-dialog {
+  width: 55%;
+  }
+}
 
 .addProjectDialog {
   /deep/.el-dialog__body {
   padding-top: 0 !important;
  }
+ /deep/.el-dialog {
+  width: 30%;
+}
 }
 </style>
