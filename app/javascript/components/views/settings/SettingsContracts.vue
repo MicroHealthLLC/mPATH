@@ -112,7 +112,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              filterable
+              sortable
+	      filterable
               label="Group"
             >
               <template slot-scope="scope">
