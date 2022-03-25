@@ -655,7 +655,7 @@ export default {
       });
     },
     addAnotherContract() {
-      this.C_projectGroupFilter = null;
+      this.C_projectGroupFilter = "";
       this.contractNameText = "";
       this.contractNicknameText = "";
       this.hideSaveBtn = false;
