@@ -1,7 +1,7 @@
 class Api::V1::RolesController < AuthenticatedController
   def index
     project = Project.find(params[:project_id])
-    roles = project.roles.map(&:to_json)
+    roles = project.roles.includes([:role_privileges, {role_users: :user}]).map(&:to_json)
     render json: {roles: roles}
   end
 
