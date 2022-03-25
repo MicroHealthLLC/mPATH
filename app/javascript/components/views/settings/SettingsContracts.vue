@@ -33,7 +33,7 @@
                 @click.prevent="addContract"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Create New Contract
+                <i class="far fa-plus-circle mr-1"></i> Create Contract
               </el-button>
             </div>
             <div class="col">
@@ -304,7 +304,7 @@
           class="contractForm addContract p-0"
         >
           <span slot="title" class="text-left add-groups-header ">
-          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create New Contract </h5>
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create Contract </h5>
         </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
