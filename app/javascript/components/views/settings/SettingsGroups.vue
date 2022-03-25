@@ -33,7 +33,7 @@
                 @click.prevent="addGroup"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Create New Group
+                <i class="far fa-plus-circle mr-1"></i> Create Group
               </el-button>
               <el-button
                 @click.prevent="openPortfolioGroup"
@@ -63,7 +63,7 @@
           class="contractForm p-0 createNewGroup"
         >
               <span slot="title" class="text-left add-groups-header">
-                <h5 class="text-dark"> <i class="far fa-plus-circle mr-1"></i>Create New Program Group </h5>
+                <h5 class="text-dark"> <i class="far fa-plus-circle mr-1"></i>Create Program Group </h5>
               </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">

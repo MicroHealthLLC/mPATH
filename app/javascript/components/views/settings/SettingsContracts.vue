@@ -33,7 +33,7 @@
                 @click.prevent="addContract"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Create New Contract
+                <i class="far fa-plus-circle mr-1"></i> Create Contract
               </el-button>
             </div>
             <div class="col">
@@ -143,80 +143,159 @@
             </el-table-column>
   <!--BEGIN Expandable Column Containing Contract User roles -->
       <el-table-column label="Users" width="100" type="expand">
-         <template>
-       <!-- <template slot-scope="scope">
-         <el-button type="text" @click="toggleExpand(scope.row)"><i class="fas fa-users mr-1"></i></el-button>
-        </template>  -->
+        <template slot-scope="scope">
+        <div class="container-fluid p-2">
 
-      <!-- <span slot="title" class="text-left">
-       <h5 class="text-dark"> <i class="far fa-file-contract mr-1 mh-orange-text"></i> 
-        {{ contractData.nickname }}
-      </h5> -->
-      <!-- </span> -->
-         <el-table
-         :data="contractUser.filter(
-                (data) =>
-                  !searchContractUsers ||
-                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
-              )"
-          style="width: 100%"
-          height="450"
-        >
-          <el-table-column prop="user"  sortable label="Users">
-            <!-- <template slot-scope="scope">
-           
-           
-        
-            </template> -->
-          </el-table-column>
-          <el-table-column
-            prop="roles"
-            sortable
-            filterable
-            label="Roles"
-          >
-            <!-- <template slot-scope="scope"> -->
-               <!-- <el-select
-                v-model="scope.row.facilityGroupId"
-                class="w-100"
-                v-if="rowId == scope.row.id"
-                filterable
-                track-by="id"
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-              </el-select>    -->
+             <div class="pl-4 mt-0 row">
+            <div class="col-5 pt-0">
+             <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
+             <el-select
+              v-model="contractRoleUsers"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in programUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.fullName"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Select Role for User(s) </label>
+             <el-select
+              v-model="contractRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div>
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+                <el-button
+                type="default"
+                @click="saveContractUserRole()"
+                v-if="contractRoleNames && contractRoleUsers"
+                v-tooltip="`Confirm`" 
+                class="bg-primary btn-sm text-light mr-2">               
+                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm
+               </el-button>
+      
+              </div>
 
               
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.facilityGroupName"
-              ></el-input> -->
-            <!-- </template> -->
-          </el-table-column>
-          <el-table-column>
-          <template slot="header" slot-scope="scope">
+             
+            </div>
+      
+      <div class="mt-2 row">
+        <div class="col-10 pt-0">
+ 
+        <el-collapse id="" class="" v-if="contractUsers && contractUsers.length > 0">
+            <el-collapse-item title="SEE PROJECT'S USERS AND ROLES" name="1">
+          <el-table
+            v-if="contractUsers && contractUsers.length > 0"
+            :header-cell-style="{ background: '#EDEDED' }"
+            :data="contractUsers.filter(
+                  (data) =>
+                    !searchRoleUsers || 
+                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
+                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                )"           
+            height="450"
+            width="auto"
+            class="px-4"
+            > 
+           <el-table-column  prop="user_full_name"
+              sortable
+              filterable
+              label="Users">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.facility_id">
+                {{ scope.row.user_full_name }}
+                  <!-- {{ scope.row.role_id}} -->          
+              </span>
+              </template>
+
+            </el-table-column>
+            <el-table-column  prop="role_name"
+              sortable
+              filterable
+              label="Roles">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
+                  {{ scope.row.role_name }}  
+               <!-- <el-select
+              v-model="scope.row.role_name"
+              filterable
+              multiple
+              class="w-70"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Roles"          
+            > -->
+             <!-- <el-option
+                v-for="item in projectUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.role_name"
+              > 
+              </el-option> -->
+            <!-- </el-select>  -->
+            
+              </span>
+              </template>
+
+            </el-table-column>
+
+    <el-table-column
+  
+        align="right">
+        <template slot="header" slot-scope="scope">
           <el-input
-            v-model="searchContractUsers"
+            v-model="searchRoleUsers"
             size="mini"
-            placeholder="Search contract users"            
-            >
-
-              <el-button slot="prepend" icon="el-icon-search"></el-button>
-          </el-input>
+            placeholder="Enter User or Role Name"/>
         </template>
-          </el-table-column>
-
-         </el-table>
+        <!-- <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+        </template> -->
+      </el-table-column>
+        
+          </el-table> 
+         </el-collapse-item>
+        </el-collapse> 
+        </div>
+      </div>
+          </div>
          </template>
+
 
          </el-table-column>
            <!--END Expandable Column Containing Contract User roles -->
@@ -387,74 +466,7 @@
           class="contractUsers"
           id="contractUsers p-0"
         >
-      <span slot="title" class="text-left">
-       <h5 class="text-dark"> <i class="far fa-file-contract mr-1 mh-orange-text"></i> 
-        {{ contractData.nickname }}
-      </h5>
-      </span>
-         <el-table
-         :data="contractUser.filter(
-                (data) =>
-                  !searchContractUsers ||
-                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
-              )"
-          style="width: 100%"
-          height="450"
-        >
-          <el-table-column prop="user"  sortable label="Users">
-            <!-- <template slot-scope="scope">
-           
-           
-        
-            </template> -->
-          </el-table-column>
-          <el-table-column
-            prop="roles"
-            sortable
-            filterable
-            label="Roles"
-          >
-            <!-- <template slot-scope="scope"> -->
-               <!-- <el-select
-                v-model="scope.row.facilityGroupId"
-                class="w-100"
-                v-if="rowId == scope.row.id"
-                filterable
-                track-by="id"
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-              </el-select>    -->
-
-              
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.facilityGroupName"
-              ></el-input> -->
-            <!-- </template> -->
-          </el-table-column>
-          <el-table-column>
-          <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchContractUsers"
-            size="mini"
-            placeholder="Search contract users"            
-            >
-
-              <el-button slot="prepend" icon="el-icon-search"></el-button>
-          </el-input>
-        </template>
-          </el-table-column>
-
-         </el-table>
+   
         </el-dialog>
     </div>
   </div>
@@ -489,7 +501,9 @@ export default {
       currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
+      projId: null, 
       projectNameText: "",
+      searchRoleUsers: '',
       search: "",
       searchContractUsers:"",
       hideSaveBtn: false,
@@ -497,32 +511,14 @@ export default {
       contractNicknameText: "",
       expanded: {
         id: "",
-      },
-      contractUser: [
-        {          
-          user: 'John Doe',
-          roles: 'contract-write, contract-read',
-        }, {
-          user: 'Bob Dole',
-          roles: 'contract-write'
-        }, {
-          user: 'Adam Smith',
-          roles: 'contract-write, contract-read, contract-delete',
-       }, {
-          user: 'Samantha Smith',
-          roles: 'contract-write, contract-read', 
-        }, {
-          user: 'Curtis Smith',
-          roles: 'contract-write, contract-read',
-        }, 
-       
-        ],
+      },    
     };
   },
   mounted() {
     if(this.contracts[0] && this.contracts[0].length <= 0){
     this.fetchContracts();
     }  
+    this.fetchRoles(this.$route.params.programId)
     if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
     }
@@ -536,6 +532,9 @@ export default {
       "setContractTypeFilter",
       "setNewContractGroupFilter",
       "SET_CONTRACT_GROUP_TYPES",
+      "SET_ADD_USER_TO_ROLE_STATUS", 
+      "SET_CONTRACT_ROLE_USERS",
+       "SET_CONTRACT_ROLE_NAMES"   
     ]),
     ...mapActions([
       "fetchCurrentProject",
@@ -544,6 +543,8 @@ export default {
       "fetchGroups",
       "updateContract",
       "deleteContract",
+      "addUserToRole", 
+      "fetchRoles"
     ]),
     _isallowedProgramSettings(salut) {
       let pPrivilege = this.$programSettingPrivileges[
@@ -552,6 +553,19 @@ export default {
       let permissionHash = { write: "W", read: "R", delete: "D" };
       let s = permissionHash[salut];
       return pPrivilege.admin_contracts.includes(s);
+    },
+  saveContractUserRole(index, rows){
+    let contractUserRoleData = {
+          userData: {
+            roleId: this.contractRoleNames.id,
+            userId: this.contractRoleUsers.id,
+            programId: this.$route.params.programId, 
+            projectId: this.projId          
+         },
+      };
+      this.addUserToRole({
+        ...contractUserRoleData,
+      });
     },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
@@ -565,10 +579,10 @@ export default {
       // });
     },
 	  handleExpandChange (row, expandedRows) {
-			const id = row.id;
+			this.projId = row.id;
 			const lastId = this.expandRowKeys[0];
 			// disable mutiple row expanded 
-			this.expandRowKeys = id === lastId ? [] : [id];
+			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
 		},
     saveNewContract() {
       let groupId = ""
@@ -687,6 +701,10 @@ export default {
       "contractStatus",
       "contracts",
       "groups",
+      "getRoles",
+      "addUserToRoleStatus",
+      "getContractRoleUsers",
+      "getContractRoleNames",
       "getTransferData",
       "getContractTable",
       "getProjectGroupFilter",
@@ -749,6 +767,40 @@ export default {
         // console.log(value)
         this.setGroupFilter(value);
       },
+    },    
+    contractUsers(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+      if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
+    programUsers(){
+      if (this.currentProject){
+         if (this.currentProject.users && this.currentProject.users.length > 0){
+           return this.currentProject.users.filter(t => t)
+       }
+      }       
+    },
+    contractRoleUsers: {     
+     get() {
+       return this.getContractRoleUsers
+      },
+      set(value) {
+         this.SET_CONTRACT_ROLE_USERS(value)
+         console.log(value)
+        }      
+    },
+    contractRoleNames: {     
+     get() {
+       return this.getContractRoleNames
+      },
+      set(value) {
+         this.SET_CONTRACT_ROLE_NAMES(value)
+         console.log(value)
+        }      
     },
 
     C_newContractGroupFilter: {
@@ -776,6 +828,21 @@ export default {
         }
       },
     },
+      addUserToRoleStatus: {
+      handler() {
+        if (this.addUserToRoleStatus == 204) {
+          this.$message({
+            message: `Succesfully added user/role to project.`,
+            type: "success",
+            showClose: true,
+          });         
+          this.SET_ADD_USER_TO_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId)  
+         this.SET_CONTRACT_ROLE_NAMES([])
+          this.SET_CONTRACT_ROLE_USERS([])
+        }
+      },
+    },
   },
 };
 </script>
@@ -787,8 +854,14 @@ export default {
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
+/deep/.el-collapse-item__header {
+  padding-left: 1.5rem;
+}
 .right {
   text-align: right;
+}
+/deep/.el-table__header, .el-table{
+  width: auto !important;
 }
 .fa-calendar {
   font-size: x-large;

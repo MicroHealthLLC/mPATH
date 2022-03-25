@@ -1,5 +1,12 @@
 <template>
-  <div class="row">
+<!-- 
+  GET SUccess message after saving
+  Update without refresh
+ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
+
+
+ -->
+ <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -33,7 +40,7 @@
                 @click.prevent="addProject"
                 class="bg-primary text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Create New Project
+                <i class="far fa-plus-circle mr-1"></i> Create Project
               </el-button>
             </div>
 
@@ -149,42 +156,155 @@
           </el-table-column>
      <!--BEGIN Expandable Column Containing Project User roles -->
       <el-table-column label="Users" width="100" type="expand">
-         <template>
-          <el-table
-         :data="contractUser.filter(
-                (data) =>
-                  !searchContractUsers ||
-                  data.user.toLowerCase().includes(searchContractUsers.toLowerCase())
-              )"
-          style="width: 100%"
-          height="450"
-          :default-sort="{ prop: 'last_name', order: 'ascending'}" 
+          <template slot-scope="scope">
+        <div class="container-fluid p-2">
 
-        >
-          <el-table-column prop="user"  sortable label="Users">
-         </el-table-column>
-          <el-table-column
-            prop="roles"
-            sortable
-            filterable
-            label="Roles"
-          >
-            
-          </el-table-column>
-          <el-table-column>
-          <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchContractUsers"
-            size="mini"
-            placeholder="Search project users"            
+             <div class="pl-4 mt-0 row">
+            <div class="col-5 pt-0">
+             <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
+             <el-select
+              v-model="projectRoleUsers"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
             >
+              <el-option
+                v-for="item in programUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.fullName"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Select Role for User(s) </label>
+             <el-select
+              v-model="projectRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'projects')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div>
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+                <el-button
+                type="default"
+                @click="saveProjectUserRole()"
+                v-if="projectRoleNames && projectRoleUsers"
+                v-tooltip="`Confirm`" 
+                class="bg-primary btn-sm text-light mr-2">               
+                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm
+               </el-button>
+      
+              </div>             
+             
+            </div>
+      
+      <div class="mt-2 row">
+        <div class="col-10 pt-0">
+ 
+        <el-collapse id="" class=""  v-if="projectUsers && projectUsers.length > 0">
+            <el-collapse-item title="SEE PROJECT'S USERS AND ROLES" name="1">
+          <el-table
+            v-if="projectUsers && projectUsers.length > 0"
+            :header-cell-style="{ background: '#EDEDED' }"
+            :data="projectUsers.filter(
+                  (data) =>
+                    !searchRoleUsers || 
+                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
+                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                )"           
+            height="450"
+            width="auto"
+            class="px-4"
+            > 
+           <el-table-column  prop="user_full_name"
+              sortable
+              filterable
+              label="Users">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.facility_id">
+                {{ scope.row.user_full_name }}
+                  <!-- {{ scope.row.role_id}} -->          
+              </span>
+              </template>
 
-              <el-button slot="prepend" icon="el-icon-search"></el-button>
-          </el-input>
+            </el-table-column>
+            <el-table-column  prop="role_name"
+              sortable
+              filterable
+              label="Roles">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
+                  {{ scope.row.role_name }}  
+               <!-- <el-select
+              v-model="scope.row.role_name"
+              filterable
+              multiple
+              class="w-70"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Roles"          
+            > -->
+             <!-- <el-option
+                v-for="item in projectUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.role_name"
+              > 
+              </el-option> -->
+            <!-- </el-select>  -->
+            
+              </span>
+              </template>
+
+            </el-table-column>
+
+    <el-table-column
+  
+        align="right">
+        <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchRoleUsers"
+            size="mini"
+            placeholder="Enter User or Role Name"/>
         </template>
-          </el-table-column>
-
-         </el-table>
+        <!-- <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+        </template> -->
+      </el-table-column>
+        
+          </el-table> 
+         </el-collapse-item>
+        </el-collapse> 
+        </div>
+      </div>
+          </div>
          </template>
 
          </el-table-column>
@@ -239,7 +359,7 @@
           class="contractForm p-0 addProjectDialog"
         >
         <span slot="title" class="text-left add-groups-header ">
-          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create New Project </h5>
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create Project </h5>
         </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-4">
@@ -321,12 +441,14 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      expandRowKeys: [],
+      expandRowKeys: [],      
       componentKey: 0,
       programId: this.$route.params.programId,
       search: "",
+      searchRoleUsers: '',
       rowIndex: null,
       rowId: null,
+      projId: null, 
       hideSaveBtn: false,
       projectId: null, 
       searchContractUsers:"",
@@ -367,20 +489,26 @@ export default {
     if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
     }
+    //Move fetchRole back to row click method
+  this.fetchRoles(this.$route.params.programId)
   },
   methods: {
-    ...mapActions(["fetchFacilities", "fetchCurrentProject", "fetchGroups"]),
-    ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
-    goToProject(index, rows) {  
+    ...mapActions([
+      "fetchFacilities", 
+      "fetchCurrentProject", 
+      "fetchGroups", 
+      "addUserToRole", 
+      "fetchRoles"
+      ]),
+    ...mapMutations([
+      "setProjectGroupFilter", 
+      "setGroupFilter", 
+      "SET_ADD_USER_TO_ROLE_STATUS", 
+      "SET_PROJECT_ROLE_USERS",
+       "SET_PROJECT_ROLE_NAMES"      
+      ]),
+      goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
-      // router.push more efficient but programPrivileges errors persist unless reload
-      // this.$router.push({
-      //   name: "SheetProject",
-      //   params: {
-      //     programId: this.$route.params.programId,
-      //     projectId: rows.id.toString(),          
-      //   },
-      // });
     },
     cancelCreateGroup() {
       this.dialogVisible = false;
@@ -391,20 +519,27 @@ export default {
       this.hideSaveBtn = false;
     },
     handleExpandChange (row, expandedRows) {
-			const id = row.id;
+			this.projId = row.id;
 			const lastId = this.expandRowKeys[0];
-			// disable mutiple row expanded 
-			this.expandRowKeys = id === lastId ? [] : [id];
+			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
+      //Commenting out setter.  Useful if we want saved users to populate dropdown upon loading
+      // this.SET_PROJECT_ROLE_USERS(this.assignedUsers)
 		},  
     addProject() {
       this.dialogVisible = true;
       this.C_projectGroupFilter = null;
       this.newProjectNameText = "";
+
+      // FOR TESTING....ERASE THIS CONSOLE LOG BEFRORE RELEASE
+    if (this.projectData && this.projectData.length > 0) {
+     console.log(this.projectData)
+   }
+
     },
     editMode(index, rows) {
       this.rowIndex = index
       this.rowId = rows.id
-    },
+     },
     saveNewProject(e) {
       e.preventDefault();
       let formData = new FormData();
@@ -443,6 +578,24 @@ export default {
   cancelEdits(index, rows) {
        this.rowIndex = null;
        this.rowId = null;
+       
+    },
+  saveProjectUserRole(index, rows){
+    // let userIds = []
+    // userIds.push(this.projectRoleUsers.map(t => t.id)) 
+    
+    // console.log(this.projectRoleNames)
+    let projectUserRoleData = {
+          userData: {
+            roleId: this.projectRoleNames.id,
+            userId: this.projectRoleUsers.id,
+            programId: this.$route.params.programId, 
+            projectId: this.projId          
+         },
+      };
+      this.addUserToRole({
+        ...projectUserRoleData,
+      });
     },
     saveEdits(index, rows) {
       let updatedProjectName = rows.facilityName;
@@ -489,13 +642,19 @@ export default {
       "facilities",
       "facilityGroups",
       "groups",
+      "getRoles",
+      "getRolesLoaded",
       "getTransferData",
       "getNewGroups",
       "tableData",
+      "projectUserRoles",
       "getProjectGroupFilter",
+      "getProjectRoleUsers",
+       "getProjectRoleNames",
       "getGroupFilter",
       "facilityGroupFacilities",
       "filteredFacilityGroups",
+       "addUserToRoleStatus"
     ]),
     // Filter for Projects Table
     C_groupFilter: {
@@ -507,6 +666,23 @@ export default {
         this.setGroupFilter(value);
       },
     },
+    projectUsers(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+      if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
+    programUsers(){
+      if (this.currentProject){
+         if (this.currentProject.users && this.currentProject.users.length > 0){
+           return this.currentProject.users.filter(t => t)
+       }
+      }       
+    },
+  
     groupList() {
      if (
         this.groups &&        
@@ -541,6 +717,30 @@ export default {
         this.setProjectGroupFilter(value);
       },
     },
+    // assignedUsers(){
+       //Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
+    //   if(this.programUsers && this.projectUsers && this.projectUsers.length > 0){
+    //     return this.programUsers.filter(t => this.projectUsers.map(t => t.user_id).includes(t.id))
+    //   }
+    // },
+    projectRoleUsers: {     
+     get() {
+       return this.getProjectRoleUsers
+      },
+      set(value) {
+         this.SET_PROJECT_ROLE_USERS(value)
+         console.log(value)
+        }      
+    },
+    projectRoleNames: {     
+     get() {
+       return this.getProjectRoleNames
+      },
+      set(value) {
+         this.SET_PROJECT_ROLE_NAMES(value)
+         console.log(value)
+        }      
+    },
     projectData() {
       if (
         // this.projectsLoaded &&
@@ -558,6 +758,23 @@ export default {
       }
     },
   },
+   watch: { 
+    addUserToRoleStatus: {
+      handler() {
+        if (this.addUserToRoleStatus == 204) {
+          this.$message({
+            message: `Succesfully added user/role to project.`,
+            type: "success",
+            showClose: true,
+          });         
+          this.SET_ADD_USER_TO_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId)  
+           this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_PROJECT_ROLE_USERS([])
+        }
+      },
+    },   
+  },
  
 };
 </script>
@@ -571,6 +788,9 @@ export default {
 }
 .right {
   text-align: right;
+}
+/deep/.el-collapse-item__header {
+  padding-left: 1.5rem;
 }
 .fa-calendar {
   font-size: x-large;
@@ -609,6 +829,9 @@ a {
 }
 /deep/.el-table__row .el-input .el-input__inner {
   border-style: none;
+}
+/deep/.el-table__header, .el-table{
+  width: auto !important;
 }
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;

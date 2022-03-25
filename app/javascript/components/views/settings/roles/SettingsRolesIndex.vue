@@ -36,7 +36,7 @@ After saving role, privileges are not resetting -->
                 @click.prevent="addRole"
                 class="bg-primary text-light mb-2"
               >
-               <i class="far fa-plus-circle mr-1"></i>Create New Role
+               <i class="far fa-plus-circle mr-1"></i>Create Role
               </el-button>
             </div>
          
