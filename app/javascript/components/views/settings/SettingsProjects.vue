@@ -248,7 +248,7 @@
               >
               <el-input
                v-model="newProjectNameText"
-                placeholder="Enter new project name"
+                placeholder="Enter New Project Name"
                 rows="1"
                 name="Project Name"
               />
@@ -263,7 +263,7 @@
                 clearable
                 filterable
                 name="Project Group"
-                placeholder="Select Group"
+                placeholder="Search and select Group"
               >
                 <el-option
                   v-for="item in groupList"
