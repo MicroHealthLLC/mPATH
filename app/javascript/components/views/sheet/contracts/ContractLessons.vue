@@ -413,17 +413,19 @@ export default {
       this.$refs.menu.open(e);
     },
     _isallowed(salut) {
-      if (this.$route.params.contractId) {
-        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.lessons.includes(s);
-      } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.lessons.includes(s); 
-      }
+        return this.checkPrivileges("ContractLessons", salut, this.$route)
+
+      // if (this.$route.params.contractId) {
+      //   let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.lessons.includes(s);
+      // } else {
+      //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return fPrivilege.lessons.includes(s); 
+      // }
      },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    

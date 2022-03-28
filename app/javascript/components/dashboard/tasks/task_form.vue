@@ -1427,21 +1427,23 @@ export default {
       };
     },
     _isallowed(salut) {
-       if (this.$route.params.contractId) {
-        //  console.log("yes, contract route")      
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-        // console.log(fPrivilege.tasks.includes(s))
-          return fPrivilege.tasks.includes(s);
-        } else if (this.$route.params.projectId) {
-          // console.log("project route")
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          //  console.log(fPrivilege.tasks.includes(s))
-          return fPrivilege.tasks.includes(s); 
-        }
+      return this.checkPrivileges("task_form", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //   //  console.log("yes, contract route")      
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //   // console.log(fPrivilege.tasks.includes(s))
+      //     return fPrivilege.tasks.includes(s);
+      //   } else if (this.$route.params.projectId) {
+      //     // console.log("project route")
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     //  console.log(fPrivilege.tasks.includes(s))
+      //     return fPrivilege.tasks.includes(s); 
+      //   }
      },
     selectedStage(item) {
       if (this._isallowed("write")) {
