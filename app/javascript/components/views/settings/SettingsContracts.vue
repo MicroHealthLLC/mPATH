@@ -670,7 +670,7 @@ export default {
       });
     },
     addAnotherContract() {
-      this.C_projectGroupFilter = "";
+      this.C_newContractGroupFilter = null;
       this.contractNameText = "";
       this.contractNicknameText = "";
       this.hideSaveBtn = false;
@@ -681,7 +681,7 @@ export default {
     },
     addContract() {
       this.dialogVisible = true;
-      this.C_projectGroupFilter = null;
+      this.C_newContractGroupFilter = null;
       this.contractNameText = "";
       this.contractNicknameText = "";
     },
