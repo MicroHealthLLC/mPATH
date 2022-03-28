@@ -508,6 +508,9 @@ class User < ApplicationRecord
   #This will build has like this
   # {<project_id> : { <contract_id>: { <all_perissions> } }
   def contract_privileges_hash
+
+    # return {}
+
     user = self
     cp = user.contract_privileges
     
@@ -553,6 +556,9 @@ class User < ApplicationRecord
   end
 
   def project_privileges_hash
+
+    # return {}
+
     user = self     
     pv = user.project_privileges
     ph = {}
@@ -589,6 +595,9 @@ class User < ApplicationRecord
   #This will build has like this
   # {<project_id> : { <facility_id>: { <all_perissions> } }
   def facility_privileges_hash
+
+    # return {}
+
     user = self
     fp = user.facility_privileges
     
@@ -625,6 +634,9 @@ class User < ApplicationRecord
   #This will build has like this
   # {<project_id> : { <facility_id>: { <all_perissions> } }
   def program_settings_privileges_hash
+
+    return {}
+
     user = self
     pv = user.project_privileges
     ph = {}
@@ -704,20 +716,21 @@ class User < ApplicationRecord
   end 
 
 
-  def authorized_contract_ids(project_ids: [])
+  def authorized_contract_ids(project_ids: []) 
+    # c_ids = []
+    # cph = self.contract_privileges_hash
     # if project_ids.any?
-    #   self.contract_privileges.where(project_id: project_ids).pluck(:contract_ids).flatten.compact
+    #   project_ids.map{|pid| c_ids += cph[pid][:authorized_contract_ids] }
     # else
-    #   self.contract_privileges.pluck(:contract_ids).flatten.compact
+    #   cph.map{|pid, h| c_ids += h[:authorized_contract_ids] }
     # end
-    c_ids = []
-    cph = self.contract_privileges_hash
+    # c_ids
+    user = self
+    contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.contract_id is not null and users.id = ? and role_privileges.privilege like ?", user.id, "%R%").distinct.pluck(:contract_id)
     if project_ids.any?
-      project_ids.map{|pid| c_ids += cph[pid][:authorized_contract_ids] }
-    else
-      cph.map{|pid, h| c_ids += h[:authorized_contract_ids] }
+      contract_ids = Contract.where(project_id: project_ids, id: contract_ids).pluck(:id)
     end
-    c_ids
+    contract_ids
   end
 
   def authorized_contracts(project_ids: [])
@@ -751,26 +764,26 @@ class User < ApplicationRecord
 
     return has_permission_by_role?({action: "read", resource: resource, program: program, project: project})
 
-    begin
-      program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
-      project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
-      action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
-      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
-      result = false
-      short_action_code = action_code_hash[action]
-      if pph[program_id]
-        fph = facility_privileges_hash.present? ? facility_privileges_hash : self.facility_privileges_hash
-        if fph[program_id][project_id]
-          result = fph[program_id][project_id][resource].include?(short_action_code)
-        else
-          result = pph[program_id][resource].include?(short_action_code)
-        end        
-      end
-    rescue Exception => e
-      puts "Exception in  User#has_permission? #{e.message}"
-      result = false
-    end
-    return result
+    # begin
+    #   program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
+    #   project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+    #   action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+    #   pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+    #   result = false
+    #   short_action_code = action_code_hash[action]
+    #   if pph[program_id]
+    #     fph = facility_privileges_hash.present? ? facility_privileges_hash : self.facility_privileges_hash
+    #     if fph[program_id][project_id]
+    #       result = fph[program_id][project_id][resource].include?(short_action_code)
+    #     else
+    #       result = pph[program_id][resource].include?(short_action_code)
+    #     end        
+    #   end
+    # rescue Exception => e
+    #   puts "Exception in  User#has_permission? #{e.message}"
+    #   result = false
+    # end
+    # return result
   end
 
   def has_permission_by_role?(args)
@@ -815,31 +828,31 @@ class User < ApplicationRecord
 
   def has_contract_permission?(action: "read", resource: , contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
 
-    return has_permission_by_role?({action: "read", resource: resource , contract: nil})
+    return has_permission_by_role?({action: "read", resource: resource , contract: contract})
 
-    begin
-      contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
-      contract_id = contract.id.to_s
-      program_id = contract.project_id.to_s
+    # begin
+    #   contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
+    #   contract_id = contract.id.to_s
+    #   program_id = contract.project_id.to_s
       
-      action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
-      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
-      result = false
-      short_action_code = action_code_hash[action]
+    #   action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+    #   pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+    #   result = false
+    #   short_action_code = action_code_hash[action]
 
-      if pph[program_id]
-        fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash[program_id]
-        if fph[contract_id]
-          result = fph[contract_id][resource].include?(short_action_code)
-        else
-          result = pph[resource].include?(short_action_code)
-        end       
-      end
-    rescue Exception => e
-      puts "Exception in  User#has_contract_permission? #{e.message}"
-      result = false
-    end
-    return result
+    #   if pph[program_id]
+    #     fph = contract_privileges_hash.present? ? contract_privileges_hash : self.contract_privileges_hash[program_id]
+    #     if fph[contract_id]
+    #       result = fph[contract_id][resource].include?(short_action_code)
+    #     else
+    #       result = pph[resource].include?(short_action_code)
+    #     end       
+    #   end
+    # rescue Exception => e
+    #   puts "Exception in  User#has_contract_permission? #{e.message}"
+    #   result = false
+    # end
+    # return result
   end
 
   def allowed?(view)
