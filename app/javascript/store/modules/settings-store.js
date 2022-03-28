@@ -66,6 +66,14 @@ const settingsStore = {
     add_user_to_role: [],
     add_user_to_role_loaded: true,
     add_user_to_role_status: 0, 
+   
+    //PROJECT USER ROLES
+    project_role_users: [],
+    project_role_names: [],
+
+     //CONTRACT USER ROLES
+     contract_role_users: [],
+     contract_role_names: [],
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -199,7 +207,7 @@ const settingsStore = {
       //POST NEW ROLE
       createRole({ commit }, { role }) {
         let formData = new FormData();
-        console.log(role)
+        // console.log(role)
         formData.append("role[name]", role.name); //Required
         formData.append("role[project_id]", role.pId)
         formData.append("role[type_of]", role.type)
@@ -235,9 +243,25 @@ const settingsStore = {
 
       //ADD USER TO ROLE
      addUserToRole({ commit }, { userData }) {         
-        let formData =  userRoleData(userData);
-
-        commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", false);   
+        // let formData =  userRoleData(userData);
+        console.log(userData)
+        let formData = new FormData();
+        // formData.append("role_users[][role_id]", userData.roleId)
+        formData.append("role_users[][user_id]", userData.userId)
+        //  userData.userId.forEach((ids) => {
+        //   formData.append("role_users[][user_id]", ids);
+        // });
+        formData.append("role_users[][project_id]", userData.programId)
+        if(userData.roleId){
+          formData.append("role_users[][role_id]", userData.roleId)
+        }
+        if(userData.projectId){
+          formData.append("role_users[][facility_id]", userData.projectId)
+        }
+        if(userData.contractId){
+          formData.append("role_users[][contract_id]", userData.contractId)
+        }
+        commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
            url: `${API_BASE_PATH}/roles/${userData.roleId}/add_users`,
@@ -248,8 +272,9 @@ const settingsStore = {
            },
          })
            .then((res) => {
-             commit("SET_ADD_USER_TO_ROLE", res.data);
-             console.log(res.data)
+            //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
+            commit("SET_NEW_ROLE", res);
+            console.log(res)
              commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
            })
            .catch((err) => {
@@ -756,6 +781,7 @@ const settingsStore = {
   },
 
   mutations: {
+
     setShowAdminBtn: (state, value) => (state.show_admin_btn = value),  
     setContractTypeFilter: (state, value) =>
       (state.contract_type_filter = value),
@@ -763,6 +789,12 @@ const settingsStore = {
     setGroupFilter: (state, value) => (state.group_filter = value),
     setNewContractGroupFilter: (state, loaded) =>
       (state.new_contract_group_filter = loaded),
+
+    SET_PROJECT_ROLE_USERS: (state, value) => (state.project_role_users = value),
+    SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
+    SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
+    SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
+
     SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
 
     SET_SHOW_CREATE_ROW: (state, value) => (state.show_create_row = value),
@@ -835,6 +867,14 @@ const settingsStore = {
   getters: {
     //ROLES GETTERS
     getRoles: (state) => state.roles,
+    getProjectRoleUsers: (state) => state.project_role_users,
+    getProjectRoleNames: (state) => state.project_role_names,
+
+    getContractRoleUsers: (state) => state.contract_role_users,
+    getContractRoleNames: (state) => state.contract_role_names,
+
+
+
     getRolesLoaded: (state) => state.roles_loaded, 
     newRoleStatus: (state) => state.new_role_status,
     getAddUserToRole: (state) => state.add_user_to_role, 
@@ -1016,12 +1056,12 @@ formData.append("facility_group[name]", newNameData.name); //Required
 // }
 
 //ADD USER TO ROLE FORM DATA
-const userRoleData = (userData) => {
-  let formData = new FormData();
-  formData.append("role_users[role_id]", userData.roleId)
-  formData.append("role_users[user_id]", userData.userId)
-  formData.append("role_users[project_id]", userData.programId)
-  formData.append("role_users[facility_id]", userData.projectId)
-  formData.append("role_users[contract_id]", userData.contractId)
-}
+// const userRoleData = (userData) => {
+//   let formData = new FormData();
+//   formData.append("role_users[role_id]", userData.roleId)
+//   formData.append("role_users[user_id]", userData.userId)
+//   formData.append("role_users[project_id]", userData.programId)
+//   formData.append("role_users[facility_id]", userData.projectId)
+//   formData.append("role_users[contract_id]", userData.contractId)
+// }
 export default settingsStore;
