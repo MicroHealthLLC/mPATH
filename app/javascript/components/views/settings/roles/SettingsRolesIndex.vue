@@ -1,6 +1,9 @@
 <template>
-<!-- FIX:
-After saving role, privileges are not resetting -->
+<!--
+NEXT TASK:  Add users to program admin roles
+1. Add button to Add Users to role
+2. Create three different "Create Role states per tab"
+ -->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />

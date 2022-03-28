@@ -246,11 +246,10 @@ const settingsStore = {
         // let formData =  userRoleData(userData);
         console.log(userData)
         let formData = new FormData();
-        // formData.append("role_users[][role_id]", userData.roleId)
-        formData.append("role_users[][user_id]", userData.userId)
-        //  userData.userId.forEach((ids) => {
-        //   formData.append("role_users[][user_id]", ids);
-        // });
+        //  formData.append("role_users[][user_id]", userData.userId)
+         userData.userId.forEach((ids) => {
+          formData.append("role_users[][user_id]", ids);
+        });
         formData.append("role_users[][project_id]", userData.programId)
         if(userData.roleId){
           formData.append("role_users[][role_id]", userData.roleId)

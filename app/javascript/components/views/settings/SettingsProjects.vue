@@ -447,6 +447,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               filterable           
               class="w-100"
               clearable
+              multiple
               track-by="id"
               value-key="id"
               placeholder="Search and select Project Users"          
@@ -768,14 +769,14 @@ export default {
        
     },
   saveProjectUserRole(index, rows){
-    // let userIds = []
-    // userIds.push(this.projectRoleUsers.map(t => t.id)) 
+    let userIds = []
+     userIds.push(this.projectRoleUsers.map(t => t.id)) 
     
     // console.log(this.projectRoleNames)
     let projectUserRoleData = {
           userData: {
             roleId: this.projectRoleNames.id,
-            userId: this.projectRoleUsers.id,
+            userId: userIds,
             programId: this.$route.params.programId, 
             projectId: this.projId          
          },

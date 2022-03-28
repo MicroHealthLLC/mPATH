@@ -95,6 +95,9 @@
             .reverse()
         "
         highlight-current-row
+        :row-key="row => row.id"
+        :expand-row-keys="expandRowKeys"
+        @expand-change="handleExpandChange" 
         style="width: 100%"
         height="450"
         :default-sort="{ prop: 'last_name', order: 'ascending'}"  
@@ -107,12 +110,19 @@
          <el-table-column type="expand" label="Privileges" width="100">
        <div class="">
         <el-table
-          :data="projectsTable"
+          :data="projectUsers"
           style="width: 100%"
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
-        <el-table-column prop="role"  sortable label="Roles">
+        <el-table-column prop="role_name"  sortable label="Roles">
+            <template slot-scope="scope">
+              <span v-if="scope.row.user_full_name">
+              {{ scope.row.user_full_name }} {{ scope.row.user_id }}
+              {{ projUserId}}
+              </span>
+
+            </template>
         
         </el-table-column>
         <el-table-column
@@ -521,11 +531,12 @@ export default {
     SettingsSidebar,
     FormTabs
   },
-
-
     data() {    
       return {
         search:"",
+        expandRowKeys: [],
+        projId: null, 
+        projUserId: null, 
         autoCompleteSearch:"",
          currentTab: "tab1",
             tabs: [
@@ -556,34 +567,6 @@ export default {
           // form_fields: ["Checklists"],
         },      
       ],
-        projectsTable: [
-        {          
-          role: 'project-read', 
-          projects: 'Project A, Project B, Project C'
-        }, {
-          role: 'project-write', 
-          projects: 'Project D, Project E, Project F'
-        }, {
-           role: 'project-delete', 
-          projects: 'Project D, Project E, Project F'
-       }, {
-          role: 'project-admin', 
-          projects: 'Project D, Project E, Project F'
-        }, 
-        {          
-          role: 'contract-read', 
-          contracts: 'Contract A, Contract B, Contract C'
-        }, {
-          role: 'contract-write', 
-          contracts: 'Contract D, Contract E, Contract F'
-        }, {
-           role: 'contract-delete', 
-          contracts: 'Contract D, Contract E, Contract F'
-       }, {
-          role: 'contract-admin', 
-          contracts: 'Contract D, Contract E, Contract F'
-        }, 
-        ],
         firstName:'',
         lastName:'',
         email:'',
@@ -621,12 +604,24 @@ export default {
     ]),
   ...mapActions([
     "fetchPortfolioUsers", 
-    "fetchProgramUsers", 
+    "fetchProgramUsers",
+    "fetchRoles",
     "fetchCurrentProject",
     "createNewUser", 
     "updateUserData", 
     "addUsersToProgram"
     ]),
+    handleExpandChange(row, expandedRows) {
+      if(this.getRoles && this.getRoles.length <= 0){
+        this.fetchRoles(this.$route.params.programId)
+      }
+			this.projId = row.id;
+      this.projUserId = row.id
+			const lastId = this.expandRowKeys[0];
+			// disable mutiple row expanded 
+			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
+      // console.log(this.programUsers)
+		},
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
     },
@@ -753,13 +748,14 @@ export default {
         "getPortfolioUsers",
         "activeProjectUsers",
         "newUserStatus",
+        "getRoles",
         "getNewUserId",
         "getAddedUsersToProgram",
         "addedUsersToProgramStatus",
-         "editUserDataStatus",
-         "portfolioUsersLoaded",
-         "programUsers",
-         "programUsersLoaded"
+        "editUserDataStatus",
+        "portfolioUsersLoaded",
+        "programUsers",
+        "programUsersLoaded"
     ]),
     portfolioUsersOnly(){
     if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
@@ -769,6 +765,15 @@ export default {
         return this.getPortfolioUsers.filter(u => !programUserIds.includes(u.id) )     
       }     
      },
+   projectUsers(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+      if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
