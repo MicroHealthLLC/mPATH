@@ -696,7 +696,7 @@ class User < ApplicationRecord
   def project_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
-    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).pluck(:id)
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
     role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_ADMIN_PRIVILEGS_ROLE_TYPES)
     role_privileges.as_json(only: [:name, :privilege, :role_type])
   end
@@ -704,7 +704,7 @@ class User < ApplicationRecord
   def program_settings_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
-    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).pluck(:id)
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
     role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
     # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
     # role_privileges.as_json(only: [:name, :privilege, :role_type])
@@ -797,19 +797,19 @@ class User < ApplicationRecord
     begin
       user = self
       action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
-      
+
       if contract
         program_id = contract.project_id.to_s
         contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
 
         role_ids = user.role_users.where(project_id: program_id, contract_id: project_id).pluck(:role_id)
-        role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
         project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
 
         role_ids = user.role_users.where(project_id: program_id, facility_id: project_id).pluck(:role_id)
-        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+        role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       end
 
       role_privileges = RolePrivilege.where(role_id: role_ids, role_type: role_type).pluck(:privilege).flatten.join.chars.uniq
