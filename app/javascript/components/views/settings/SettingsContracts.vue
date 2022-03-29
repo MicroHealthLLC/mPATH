@@ -154,6 +154,7 @@
               filterable           
               class="w-100"
               clearable
+              multiple
               track-by="id"
               value-key="id"
               placeholder="Search and select Project Users"          
@@ -230,7 +231,7 @@
               filterable
               label="Users">
               <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id">
+              <span v-if="projId && projId == scope.row.contract_id">
                 {{ scope.row.user_full_name }}
                   <!-- {{ scope.row.role_id}} -->          
               </span>
@@ -242,7 +243,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
+              <span v-if="projId && projId == scope.row.contract_id && scope.row.role_name">
                   {{ scope.row.role_name }}  
                <!-- <el-select
               v-model="scope.row.role_name"
@@ -555,12 +556,13 @@ export default {
       return pPrivilege.admin_contracts.includes(s);
     },
   saveContractUserRole(index, rows){
+    let userIds = this.contractRoleUsers.map(t => t.id)
     let contractUserRoleData = {
           userData: {
-            roleId: this.contractRoleNames.id,
-            userId: this.contractRoleUsers.id,
+            roleId:    this.contractRoleNames.id,
+            userId:    userIds,
             programId: this.$route.params.programId, 
-            projectId: this.projId          
+            contractId: this.projId          
          },
       };
       this.addUserToRole({
@@ -772,7 +774,7 @@ export default {
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
       if (this.projId)  {
-            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.contract_id)
         } else return [].concat.apply([], roleUsers)
        
       }
