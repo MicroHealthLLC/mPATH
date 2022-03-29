@@ -137,7 +137,7 @@
           <div class="col pt-0 text-right">
           <button 
             v-if="_isallowed('write')"
-            :disabled="!project.pointOfContact && (project.email || project.phoneNumber)"
+            :disabled="disableSave(project.pointOfContact, project.email, project.phoneNumber)"
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>
@@ -412,6 +412,14 @@ export default {
       this.$nextTick(() => {
         this.DV_updated = true;
       });
+    },
+    disableSave(name, email, phone) {
+      if(!name)
+        if(phone || email)
+          return true;
+        else if(!phone && !email)
+          return false;
+      return false;
     },
   },
   computed: {
