@@ -26,8 +26,7 @@
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
             <div
-              class="col-6"
-              :class="{ 'd-none': !_isallowedProgramSettings('write') }"
+              class="col-6"             
             >
               <el-button
                 @click.prevent="addGroup"
@@ -355,8 +354,7 @@
                     v-tooltip="`Save`"
                     @click.prevent="saveEdits(scope.$index, scope.row)"
                     v-if="
-                      scope.$index == rowIndex &&
-                        _isallowedProgramSettings('write')
+                      scope.$index == rowIndex
                     "
                     class="bg-primary btn-sm text-light"
                   >
@@ -366,8 +364,7 @@
                     type="default"
                     v-tooltip="`Cancel Edit`"
                     v-if="
-                      scope.$index == rowIndex &&
-                        _isallowedProgramSettings('write')
+                      scope.$index == rowIndex 
                     "
                     @click.prevent="cancelEdits(scope.$index, scope.row)"
                     class="bg-secondary  btn-sm text-light"
@@ -380,8 +377,7 @@
                     @click.prevent="editMode(scope.$index, scope.row)"
                     v-if="
                       !scope.row.isPortfolio &&
-                      scope.$index !== rowIndex &&
-                        _isallowedProgramSettings('write')
+                      scope.$index !== rowIndex 
                     "
                     class="bg-light btn-sm "
                   >
@@ -394,7 +390,6 @@
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        _isallowedProgramSettings('delete') &&
                         scope.row.isPortfolio
                     "        
                   >                  
@@ -406,7 +401,6 @@
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        _isallowedProgramSettings('delete') &&
                         !scope.row.isPortfolio
                     "
                     class="bg-light btn-sm"
@@ -623,15 +617,15 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    _isallowedProgramSettings(salut) {
-      return this.checkPrivileges("SettingsGroups", salut, this.$route)
-      // let pPrivilege = this.$programSettingPrivileges[
-      //   this.$route.params.programId
-      // ];
-      // let permissionHash = { write: "W", read: "R", delete: "D" };
-      // let s = permissionHash[salut];
-      // return pPrivilege.admin_groups.includes(s);
-    },
+    // _isallowedProgramSettings(salut) {
+    //   // return this.checkPrivileges("SettingsGroups", salut, this.$route)
+    //   let pPrivilege = this.$programSettingPrivileges[
+    //     this.$route.params.programId
+    //   ];
+    //   let permissionHash = { write: "W", read: "R", delete: "D" };
+    //   let s = permissionHash[salut];
+    //   return pPrivilege.admin_groups.includes(s);
+    // },
   },
   mounted() {
   if(this.groups && this.groups.length <= 0){

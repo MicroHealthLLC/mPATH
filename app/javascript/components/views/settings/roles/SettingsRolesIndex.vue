@@ -1321,7 +1321,7 @@ export default {
      console.log(`program: ${this.programAdminPriv}`)
     },
   groupsRead() {
- this.isGroupsRead =  !this.isGroupsRead
+    this.isGroupsRead =  !this.isGroupsRead
   if(this.isGroupsRead && !this.groupsPriv.map(t => t).includes("R") ){
     this.groupsPriv.push(..."R")
   } else if (!this.isGroupsRead) {

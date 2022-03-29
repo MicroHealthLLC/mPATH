@@ -13,18 +13,18 @@
 <div id="filter_bar">
     <h5>
     <ul class="pt-2 program-name">
-       <router-link :to="adminGroupsView" :class="{'d-none': !_isallowedProgramSettings('Groups', 'read') }">
+       <router-link :to="adminGroupsView">
         <li class="p-3 mt-3 entity">
           <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Groups
         </li>
     </router-link>
-    <router-link :to="adminProjectsView" :class="{'d-none': !_isallowedProgramSettings('Projects', 'read') }">
+    <router-link :to="adminProjectsView" >
         <li class="p-3 entity">
           <i class="fal fa-clipboard-list mr-3 mh-green-text"></i> Projects
         </li>
     </router-link>
     <router-link :to="adminContractsView"> 
-       <li class="p-3 entity" :class="{'d-none': !_isallowedProgramSettings('Contracts', 'read') }">
+       <li class="p-3 entity">
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
@@ -109,21 +109,21 @@ export default {
         'setShowAdminBtn',
         ]),
      _isallowed(salut) {
-        return this.checkPrivileges("SettingsSidebar", salut, this.$route)
+        // return this.checkPrivileges("SettingsSidebar", salut, this.$route)
 
-      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      // let s = permissionHash[salut]
-      // return pPrivilege.contracts.includes(s);     
-    },
-    _isallowedProgramSettings(settingType, salut) {
-      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let settingTypeHash = {"Groups": "admin_groups", "Contracts": "admin_contracts", "Projects": "admin_facilities"}
       let s = permissionHash[salut]
-      let type = settingTypeHash[settingType]
-      return pPrivilege[type].includes(s);
+      return pPrivilege.contracts.includes(s);     
     },
+    // _isallowedProgramSettings(settingType, salut) {
+    //   let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let settingTypeHash = {"Groups": "admin_groups", "Contracts": "admin_contracts", "Projects": "admin_facilities"}
+    //   let s = permissionHash[salut]
+    //   let type = settingTypeHash[settingType]
+    //   return pPrivilege[type].includes(s);
+    // },
     toggleAdminFilter() {
       this.setShowAdminBtn(!this.getShowAdminBtn)
     },
