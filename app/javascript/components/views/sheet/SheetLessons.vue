@@ -451,12 +451,14 @@ export default {
       this.$refs.menu.open(e);
     },
    _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.lessons.includes(s);      
+        return this.checkPrivileges("SheetLessons", salut, this.$route)
+
+        // var programId = this.$route.params.programId;
+        // var projectId = this.$route.params.projectId
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return  fPrivilege.lessons.includes(s);      
     },
     toggleImportant(){
       this.setHideImportant(!this.getHideImportant)    

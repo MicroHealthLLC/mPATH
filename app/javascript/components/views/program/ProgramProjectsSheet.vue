@@ -175,27 +175,6 @@
          
             
           </el-table-column>
-          <el-table-column
-            prop="status"
-            sortable
-             width="100"
-            filterable
-            label="Status"
-          >
-            <template slot-scope="scope">
-              <!-- <el-input
-                size="small"
-                style="text-align:center"
-                v-model="scope.row.status"
-              ></el-input> -->
-            <span v-if="scope.row.status" style="text-transform: capitalize">
-               {{ scope.row.status }}
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-            
-            </template>
-          </el-table-column>
-
           <el-table-column label="Actions"  width="300">
             <template slot-scope="scope">
               <!-- <el-button

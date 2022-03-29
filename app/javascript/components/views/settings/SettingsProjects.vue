@@ -219,7 +219,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               >
               <el-input
                v-model="newProjectNameText"
-                placeholder="Enter new project name"
+                placeholder="Enter New Project Name"
                 rows="1"
                 name="Project Name"
               />
@@ -234,7 +234,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                 clearable
                 filterable
                 name="Project Group"
-                placeholder="Select Group"
+                placeholder="Search and select Group"
               >
                 <el-option
                   v-for="item in groupList"

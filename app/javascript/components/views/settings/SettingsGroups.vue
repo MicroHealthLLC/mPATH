@@ -69,7 +69,7 @@
             <div class="form-group mx-3">
            <el-input
                 v-model="newGroupName"
-                placeholder="Enter new Group name here"
+                placeholder="Enter new Group Name"
                 rows="1"
                 name="Group Name"
               />
@@ -624,12 +624,13 @@ export default {
       console.log(tab, event);
     },
     _isallowedProgramSettings(salut) {
-      let pPrivilege = this.$programSettingPrivileges[
-        this.$route.params.programId
-      ];
-      let permissionHash = { write: "W", read: "R", delete: "D" };
-      let s = permissionHash[salut];
-      return pPrivilege.admin_groups.includes(s);
+      return this.checkPrivileges("SettingsGroups", salut, this.$route)
+      // let pPrivilege = this.$programSettingPrivileges[
+      //   this.$route.params.programId
+      // ];
+      // let permissionHash = { write: "W", read: "R", delete: "D" };
+      // let s = permissionHash[salut];
+      // return pPrivilege.admin_groups.includes(s);
     },
   },
   mounted() {

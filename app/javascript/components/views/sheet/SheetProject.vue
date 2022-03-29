@@ -136,12 +136,14 @@
         <div class="row pt-0 pb-2" :class="{'addHeight': !project.address}">
           <div class="col pt-0 text-right">
           <button 
-            :disabled="!project.pointOfContact"
+            v-if="_isallowed('write')"
+            :disabled="disableSave(project.pointOfContact, project.email, project.phoneNumber)"
             :class="{'d-none': edit}"
             class="btn btn-primary text-light mt-1 btn-sm apply-btn"        
             @click.prevent="updateContactInfo">Save</button>
             <button 
             :class="{'d-none': !edit}"
+              v-if="_isallowed('write')"
               class="btn btn-info text-light mt-1 btn-sm apply-btn"                  
             @click.prevent="editBtn">Update
             </button>
@@ -162,6 +164,7 @@
                 placeholder="Enter Point of Contact name"
                 name="Poc"
                 :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -199,6 +202,7 @@
                 placeholder="Enter Point of Contact phone number"
                 name="phoneNo"
                :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -219,6 +223,7 @@
                 placeholder="Enter Point of Contact email"
                 name="email"
                 :class="{'nonEditMode' : edit }"
+                :disabled="!_isallowed('write')"
               />
           </p>
         </div>
@@ -356,10 +361,8 @@ export default {
       if (!this._isallowed("write") || !this.DV_updated) return;
       this.DV_updated = false;
       let data = {
-        facility: {
-          statusId: this.statusId,
-          dueDate: this.dueDate,
-        },
+        statusId: this.statusId,
+        dueDate: this.dueDate,
       };
       // Used to update state
       let updatedFacility = Object.assign(this.facility, {
@@ -389,12 +392,14 @@ export default {
         });
     },
      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return  fPrivilege.overview.includes(s);      
+        return this.checkPrivileges("SheetProject", salut, this.$route)
+
+        // var programId = this.$route.params.programId;
+        // var projectId = this.$route.params.projectId
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return  fPrivilege.overview.includes(s);      
     }, 
     isBlockedStatus(status) {
       return (
@@ -407,6 +412,14 @@ export default {
       this.$nextTick(() => {
         this.DV_updated = true;
       });
+    },
+    disableSave(name, email, phone) {
+      if(!name)
+        if(phone || email)
+          return true;
+        else if(!phone && !email)
+          return false;
+      return false;
     },
   },
   computed: {

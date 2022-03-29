@@ -222,10 +222,8 @@ export default {
       if (!this._isallowed("write") || !this.DV_updated) return;
       this.DV_updated = false;
       let data = {
-        facility: {
-          statusId: this.statusId,
-          dueDate: this.dueDate,
-        },
+        statusId: this.statusId,
+        dueDate: this.dueDate,
       };
       // Used to update state
       let updatedFacility = Object.assign(this.facility, {
@@ -301,12 +299,14 @@ export default {
       });
     },
    _isallowed(salut) {
-    var programId = this.$route.params.programId;
-    var projectId = this.$route.params.projectId
-    let fPrivilege = this.$projectPrivileges[programId][projectId]
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    return  fPrivilege.overview.includes(s);      
+      return this.checkPrivileges("MapProject", salut, this.$route)
+
+    // var programId = this.$route.params.programId;
+    // var projectId = this.$route.params.projectId
+    // let fPrivilege = this.$projectPrivileges[programId][projectId]
+    // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    // let s = permissionHash[salut]
+    // return  fPrivilege.overview.includes(s);      
     },
   },
   computed: {
