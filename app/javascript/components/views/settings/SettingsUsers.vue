@@ -95,6 +95,9 @@
             .reverse()
         "
         highlight-current-row
+        :row-key="row => row.id"
+        :expand-row-keys="expandRowKeys"
+        @expand-change="handleExpandChange" 
         style="width: 100%"
         height="450"
         :default-sort="{ prop: 'last_name', order: 'ascending'}"  
@@ -104,59 +107,7 @@
      
      
         <!--BEGIN Expandable Column Containing Priveleges Info -->
-         <el-table-column type="expand" label="Privileges" width="100">
-       <div class="">
-        <el-table
-          :data="projectsTable"
-          style="width: 100%"
-          border
-          :header-cell-style="{ background: '#EDEDED' }"
-        >
-        <el-table-column prop="role"  sortable label="Roles">
-        
-        </el-table-column>
-        <el-table-column
-            prop="projects"
-            sortable
-            filterable
-            label="Associations"
-        >        
-        </el-table-column> 
-
-
-        <el-table-column icon="el-user" align="center"  width="120">
-          <template slot-scope="scope">
-         <el-button
-          type="default"
-          @click.prevent="addRoleToUser(scope.$index, scope.row)"
-          v-tooltip="`Add Role`"
-          class="bg-primary btn-sm text-light"
-          >    
-          
-          <i class="fa-solid fa-user-unlock"></i>          
-         </el-button>
-      
-         <el-button
-          type="default"
-          @click.prevent="associateUserRole(scope.$index, scope.row)"
-          v-tooltip="`Manage Associations`"
-          class="bg-light btn-sm"
-          >    
-          
-        <i class="fa-regular fa-gears"></i> 
-         </el-button>
-          </template>
-         
-     
-        </el-table-column>    
-        </el-table>
-
-     
-
-          </div>
-        <!-- </template> -->
-        </el-table-column>
-        <!-- END Expandable Column Containing Priveleges Info -->
+         <!-- END Expandable Column Containing Priveleges Info -->
 
 
         <el-table-column label="Actions"  align="right">
@@ -168,16 +119,24 @@
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>    
             </el-button> 
+            <el-button  
+            type="default" 
+            v-tooltip="`Manage User Privileges`"
+            @click.prevent="openUserRoleDialog(scope.$index, scope.row)" 
+            v-if="scope.$index !== rowIndex"
+            class="bg-primary text-light btn-sm">
+              <i class="fal fa-user-lock mr-1 text-light"></i> 
+            </el-button>  
         
         <!-- USe this attribute when functionaloty gets built in -->
                   <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-            <el-button
+            <!-- <el-button
             type="default"  
             class="bg-light btn-sm"         
              v-tooltip="`Remove User`"  
             >
             <i class="fas fa-user-slash"></i>               
-            </el-button>
+            </el-button> -->
     
             <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
             </template>
@@ -473,6 +432,214 @@
         </div>    
       </div>
     </el-dialog>
+
+      <el-dialog
+      :visible.sync="openUserRoles"
+      append-to-body
+      center
+      class="p-0 userRoles"       
+        >
+      <span slot="title" class="text-left add-groups-header ">
+        <h5 style="color:#383838" v-if="userData"> 
+          <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i>  {{ userData.full_name }}
+        </h5> 
+     </span>
+      <div class="container-fluid p-2">
+         <div class="mt-0 row">
+            <div class="col-5 pt-0">
+             <label class="font-md mb-0 d-flex">Assign Project Role </label>
+             <el-select
+              v-model="projectRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Role"          
+            >
+             <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'projects')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Associate Projects to Role </label>
+             <el-select
+              v-model="associatedProjects"
+              multiple
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Projects to Associate"          
+            >
+              <el-option
+                v-for="item in projectNames"
+                :value="item"
+                :key="item.id"
+                :label="item.facilityName"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div>
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+                <el-button
+                type="default"    
+                @click="saveProjectUserRole()"          
+                v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
+                v-tooltip="`Confirm`" 
+               class="bg-light btn-sm">               
+               <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm
+               </el-button>     
+              </div>             
+             
+            </div>
+           <div class="mt-3 row" v-if="_isallowed('read')">
+            <div class="col-5 pt-0">
+             <label class="font-md mb-0 d-flex">Assign Contract Role </label>
+             <el-select
+              v-model="contractRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select role"          
+            >
+             <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
+             <el-select
+              v-model="associatedContracts"
+              filterable           
+              class="w-100"
+              multiple
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Contracts to Associate"          
+            >
+              <el-option
+                v-for="item in contractNames"
+                :value="item"
+                :key="item.id"
+                :label="item.nickname"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div>
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+               <el-button
+                type="default"
+                @click="saveContractUserRole()"
+                v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
+                v-tooltip="`Confirm`" 
+                class="bg-light btn-sm">           
+               <i class="far fa-file-contract mr-1 mh-orange-text"></i> Confirm 
+               </el-button> 
+      
+              </div>             
+             
+            </div>
+      
+      <div class="mt-4 row">
+        <div class="col-12 pt-0">
+        <el-table
+          v-if="projectUsers && projectUsers.length > 0"
+          :data="projectUsers.filter(
+                  (data) =>
+                    !searchRoleUsers || 
+                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                )"    
+          style="width: 100%"
+          border
+          :header-cell-style="{ background: '#EDEDED' }"
+        >
+          <!-- || data.facility_id == projectNames.map(t => t.id).facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase()) -->
+          <!-- || 
+                    this.currentProject.facilities.filter(t => t.facilityId == data.facility_id).map(n => n.facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase())) -->
+     
+      
+        <el-table-column prop="role_name"  sortable label="Roles">
+            <template slot-scope="scope">
+              <span v-if="scope.row.facility_id">
+             <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{scope.row.role_name}}   
+              </span>
+              <span v-if="scope.row.contract_id">
+               <i class="far fa-file-contract mr-1 mh-orange-text"></i>  {{scope.row.role_name}}
+               </span>
+
+
+            </template>
+        
+        </el-table-column>
+        <el-table-column
+            prop="projects"
+            sortable
+            filterable
+            label="Associations"
+        >      
+           <template slot-scope="scope">
+              <span v-if="scope.row.facility_id && projectNames">
+               {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t.facilityName)[0]}}
+                 <!-- {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t)}} -->
+              </span>
+                 <span v-if="scope.row.contract_id && contractNames">
+                 {{ contractNames.filter(t => t.id == scope.row.contract_id).map(t => t.nickname)[0]  }}
+              </span>
+
+            </template>
+
+
+        </el-table-column> 
+    <el-table-column
+  
+        align="right">
+        <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchRoleUsers"
+            size="mini"
+            placeholder="Search User Roles"/>
+        </template>
+          </el-table-column>
+       </el-table>
+        <span v-else>
+          No Roles Assigned To This User
+        </span>
+          <div class="text-right mt-3">
+               <button
+                @click.prevent="closeUserRoles"
+                class="btn btn-md bg-secondary text-light modalBtns"
+                v-tooltip="`Close`"                  
+              >
+               <i class="fas fa-ban"></i> 
+              </button>
+            </div>
+        </div>
+      </div>
+     </div>
+      </el-dialog>
        </div>
 
     </div>
@@ -482,42 +649,6 @@
 </template>
 
 <script>
-//DEVELOPMENT NOTES FEB 2022 (Erase After Release)
-// Create route for SettingsUsers
-//1. Create table with all Program Users
-//2. Table should have search bar 
-//3. Table rows should be editable
-//4  Table rows should have two buttons (Btn 1: Edit button, Btn 2: Privileges Settings btn )
-//5. When I click on row edit button, modal should contain personal info form
-//6. When I click on row privileges button, I should be redirected to Privileges page of the indivudual user
-
-//ADD USER DIALOG BOX
-
-//1.  I want to search for users by first name or last name
-//2.  I want search box to autopopulate my entry incase I don't know the entire spelling
-//    The search box should have a "add name" button next to it so I can click on button and add name to the list if users I want to add to my program
-//3.  I want a collapsed box that opens directory of names just incase I forget the spelling of a name
-//4. 
-
-//PRIVILEGES
-//1. This will consist of editable tables
-//2. An Admin Table?, Projects Table, and Contracts Table
-// each table will be comprised of two columns
-//3. First Column will list Projects/Contract/or Admin
-//4. Second column will be for Roles (with "Roles" header)
-
-//GET USERS
-//USER has roles and roles have associations
-
-//ROLES LOGIC
-
-//USers array will contain user objects
-//User objext will contrain Roles array
-//User.roles array will contain role objects
-//Role objects will contain role id, role name, and contract/project arrays containing contract/project ids
-
-//In order to add role to user, POST action will send role_id, user_id, and if available, project_id or contract_id (ie, Association)
-
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import FormTabs from "../../shared/FormTabs.vue"
@@ -527,11 +658,13 @@ export default {
     SettingsSidebar,
     FormTabs
   },
-
-
     data() {    
       return {
         search:"",
+        expandRowKeys: [],
+        projId: null, 
+        userData: null, 
+        searchRoleUsers: '',
         autoCompleteSearch:"",
          currentTab: "tab1",
             tabs: [
@@ -562,34 +695,6 @@ export default {
           // form_fields: ["Checklists"],
         },      
       ],
-        projectsTable: [
-        {          
-          role: 'project-read', 
-          projects: 'Project A, Project B, Project C'
-        }, {
-          role: 'project-write', 
-          projects: 'Project D, Project E, Project F'
-        }, {
-           role: 'project-delete', 
-          projects: 'Project D, Project E, Project F'
-       }, {
-          role: 'project-admin', 
-          projects: 'Project D, Project E, Project F'
-        }, 
-        {          
-          role: 'contract-read', 
-          contracts: 'Contract A, Contract B, Contract C'
-        }, {
-          role: 'contract-write', 
-          contracts: 'Contract D, Contract E, Contract F'
-        }, {
-           role: 'contract-delete', 
-          contracts: 'Contract D, Contract E, Contract F'
-       }, {
-          role: 'contract-admin', 
-          contracts: 'Contract D, Contract E, Contract F'
-        }, 
-        ],
         firstName:'',
         lastName:'',
         email:'',
@@ -609,6 +714,7 @@ export default {
         toggle: false,
         //dialogVisible used by el-dialogue popup
         dialogVisible: false,
+        openUserRoles: false, 
         createAnotherUserBtn: false, 
         editUserDialogVisible: false,
         newUserDialogVisible: false,
@@ -622,17 +728,72 @@ export default {
     "SET_ADD_USERS_TO_PROGRAM",
     "SET_PROGRAM_USERS",
     "SET_ADD_USERS_TO_PROGRAM_STATUS",
-    "SET_EDIT_USER_DATA_STATUS"
+    "SET_EDIT_USER_DATA_STATUS",
+    "SET_PROJECT_ROLE_NAMES",
+    "SET_CONTRACT_ROLE_NAMES",
+    "SET_ASSOCIATED_CONTRACTS",
+    "SET_ASSOCIATED_PROJECTS",
+    "SET_ADD_USER_TO_ROLE_STATUS"
 
     ]),
   ...mapActions([
     "fetchPortfolioUsers", 
-    "fetchProgramUsers", 
+    "fetchProgramUsers",
+    "fetchRoles",
+    "addUserToRole",
     "fetchCurrentProject",
     "createNewUser", 
     "updateUserData", 
     "addUsersToProgram"
     ]),
+    handleExpandChange(row, expandedRows) {   
+			this.projId = row.id;
+      this.projUserObj = row
+			const lastId = this.expandRowKeys[0];
+			// disable mutiple row expanded 
+			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];  
+      // if (this.projectUsers && this.projectUsers.length > 0) {
+          console.log(this.contractNames)
+      // }
+   
+		},
+  _isallowed(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+  },
+  saveProjectUserRole(index, rows){
+    let projectIds = this.associatedProjects.map(t => t.facilityId)
+    let projectUserRoleData = {
+          userData: {
+            roleId: this.projectRoleNames.id,
+            userId: this.projId,
+            programId: this.$route.params.programId, 
+            projectId: projectIds, 
+            userRoles: true        
+         },
+      };
+      this.addUserToRole({
+        ...projectUserRoleData,
+      });
+   
+    },
+    saveContractUserRole(index, rows){
+    let contractIds = this.associatedContracts.map(t => t.id)
+    let projectUserRoleData = {
+          userData: {
+            roleId: this.contractRoleNames.id,
+            userId: this.projId,
+            programId: this.$route.params.programId, 
+            contractId: contractIds, 
+            userRoles: true        
+         },
+      };
+      this.addUserToRole({
+        ...projectUserRoleData,
+      });
+    },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
     },
@@ -678,6 +839,15 @@ export default {
     openCreateUser(){
       this.newUserDialogVisible = true
     },
+    openUserRoleDialog(index, rows){
+      this.projId = rows.id
+      this.fetchRoles(this.$route.params.programId)     
+      this.openUserRoles = true    
+      this.userData = rows       
+    },
+    closeUserRoles() {
+      this.openUserRoles = false;
+    },
     createAnotherUser(){
       this.createAnotherUserBtn = false;
       this.lastName = '',
@@ -701,7 +871,8 @@ export default {
     openEditUser(index, rows){
       this.editUserDialogVisible = true;
       this.rowUser = rows
-      console.log(rows)
+      // console.log(rows)
+       console.log(this.projectUsers.length)
     },
    saveUserEdits() {
     let editUserData = {
@@ -751,6 +922,7 @@ export default {
     if (this.getPortfolioUsers.length <= 0)    {
       this.fetchPortfolioUsers()
     }  
+
   },
   computed: {
     ...mapGetters([
@@ -759,13 +931,19 @@ export default {
         "getPortfolioUsers",
         "activeProjectUsers",
         "newUserStatus",
+        "getRoles",
         "getNewUserId",
+        "getProjectRoleNames",
+        "getContractRoleNames",
+        "getAssociatedProjects",
+        "getAssociatedContracts",
         "getAddedUsersToProgram",
         "addedUsersToProgramStatus",
-         "editUserDataStatus",
-         "portfolioUsersLoaded",
-         "programUsers",
-         "programUsersLoaded"
+        "editUserDataStatus",
+        "portfolioUsersLoaded",
+        "programUsers",
+        "programUsersLoaded",
+        "addUserToRoleStatus"
     ]),
     portfolioUsersOnly(){
     if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
@@ -775,6 +953,66 @@ export default {
         return this.getPortfolioUsers.filter(u => !programUserIds.includes(u.id) )     
       }     
      },
+   projectRoleNames: {     
+     get() {
+       return this.getProjectRoleNames
+      },
+      set(value) {
+         this.SET_PROJECT_ROLE_NAMES(value)
+         console.log(value)
+        }      
+    },
+   associatedProjects: {     
+      get() {
+       return this.getAssociatedProjects
+      },
+      set(value) {
+         this.SET_ASSOCIATED_PROJECTS(value)
+         console.log(value)
+        }      
+    },
+    associatedContracts: {     
+     get() {
+       return this.getAssociatedContracts
+      },
+     set(value) {
+        this.SET_ASSOCIATED_CONTRACTS(value)
+         console.log(value)
+      }      
+    },
+   contractRoleNames: {     
+     get() {
+       return this.getContractRoleNames
+      },
+      set(value) {
+         this.SET_CONTRACT_ROLE_NAMES(value)
+         console.log(value)
+        }      
+    },
+    projectNames(){
+      if(this.currentProject)
+      if (this.currentProject.facilities && this.currentProject.facilities.length > 0)
+
+      {
+       return this.currentProject.facilities.map(t => t)
+      }
+    },
+    contractNames(){
+      if(this.currentProject)
+      if (this.currentProject.contracts && this.currentProject.contracts.length > 0)
+      {
+        return this.currentProject.contracts.map(t => t)
+      }
+    },
+   projectUsers(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+       if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
@@ -836,6 +1074,23 @@ export default {
         }
       },
     },
+    addUserToRoleStatus: {
+      handler() {
+        if (this.addUserToRoleStatus == 204) {
+          this.$message({
+            message: `Succesfully assigned user to role(s)role.`,
+            type: "success",
+            showClose: true,
+          });  
+          this.fetchRoles(this.$route.params.programId)         
+          this.SET_ADD_USER_TO_ROLE_STATUS(0);         
+          this.SET_ASSOCIATED_PROJECTS([])
+          this.SET_ASSOCIATED_CONTRACTS([])
+          this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_CONTRACT_ROLE_NAMES([])
+        }
+      },
+    },   
    
   },
 };
@@ -867,6 +1122,14 @@ export default {
 /deep/.el-table th.el-table__cell > .cell, .priviLabel {
   color: #212529;
   font-size: 1.1rem;
+}
+.userRoles {
+  /deep/.el-dialog__body {
+  padding-top: 0 !important;
+ }
+ /deep/.el-dialog {
+  width: 55%;
+  }
 }
 .modalBtns {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);

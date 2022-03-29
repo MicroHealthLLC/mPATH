@@ -142,167 +142,7 @@
 
               </template>
             </el-table-column>
-  <!--BEGIN Expandable Column Containing Contract User roles -->
-      <el-table-column label="Users" width="100" type="expand">
-        <template slot-scope="scope">
-        <div class="container-fluid p-2">
-
-             <div class="pl-4 mt-0 row">
-            <div class="col-5 pt-0">
-             <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
-             <el-select
-              v-model="contractRoleUsers"
-              filterable           
-              class="w-100"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Project Users"          
-            >
-              <el-option
-                v-for="item in programUsers"
-                :value="item"
-                :key="item.id"
-                :label="item.fullName"
-              >
-              </el-option>
-            </el-select>
-              </div>
-           <div class="col-5 pt-0">
-              <label class="font-md mb-0 d-flex">Select Role for User(s) </label>
-             <el-select
-              v-model="contractRoleNames"
-              filterable           
-              class="w-100"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Project Users"          
-            >
-              <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
-                :value="item"
-                :key="item.id"
-                :label="item.name"
-              >
-              </el-option>
-            </el-select>
-          
-             
-              </div>
-                <div class="col-2 pt-0">
-              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                              
-                <el-button
-                type="default"
-                @click="saveContractUserRole()"
-                v-if="contractRoleNames && contractRoleUsers"
-                v-tooltip="`Confirm`" 
-                class="bg-primary btn-sm text-light mr-2">               
-                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm
-               </el-button>
-      
-              </div>
-
-              
-             
-            </div>
-      
-      <div class="mt-2 row">
-        <div class="col-10 pt-0">
- 
-        <el-collapse id="" class="" v-if="contractUsers && contractUsers.length > 0">
-            <el-collapse-item title="SEE PROJECT'S USERS AND ROLES" name="1">
-          <el-table
-            v-if="contractUsers && contractUsers.length > 0"
-            :header-cell-style="{ background: '#EDEDED' }"
-            :data="contractUsers.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
-                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"           
-            height="450"
-            width="auto"
-            class="px-4"
-            > 
-           <el-table-column  prop="user_full_name"
-              sortable
-              filterable
-              label="Users">
-              <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id">
-                {{ scope.row.user_full_name }}
-                  <!-- {{ scope.row.role_id}} -->          
-              </span>
-              </template>
-
-            </el-table-column>
-            <el-table-column  prop="role_name"
-              sortable
-              filterable
-              label="Roles">
-              <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
-                  {{ scope.row.role_name }}  
-               <!-- <el-select
-              v-model="scope.row.role_name"
-              filterable
-              multiple
-              class="w-70"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Project Roles"          
-            > -->
-             <!-- <el-option
-                v-for="item in projectUsers"
-                :value="item"
-                :key="item.id"
-                :label="item.role_name"
-              > 
-              </el-option> -->
-            <!-- </el-select>  -->
-            
-              </span>
-              </template>
-
-            </el-table-column>
-
-    <el-table-column
-  
-        align="right">
-        <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Enter User or Role Name"/>
-        </template>
-        <!-- <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-        </template> -->
-      </el-table-column>
-        
-          </el-table> 
-         </el-collapse-item>
-        </el-collapse> 
-        </div>
-      </div>
-          </div>
-         </template>
-
-
-         </el-table-column>
-           <!--END Expandable Column Containing Contract User roles -->
-
-
-            <el-table-column label="Actions" align="right">
+           <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
                 <el-button
                   type="default"
@@ -339,18 +179,16 @@
                   class="bg-light btn-sm"
                 >
                   <i class="fal fa-edit text-primary"></i>
-                </el-button>
-                 <!-- <el-button
-                  type="default"
-                  v-tooltip="`See Contract Users`"
-                  v-if="scope.$index !== rowIndex"
-                  @click.prevent="openUserPrivileges(scope.$index, scope.row)"
-                  class="bg-light"
-                >
-                   <i class="fas fa-users mr-1"></i>
-                </el-button> -->
-
-                <el-button
+                  </el-button>
+                  <el-button  
+                  type="default" 
+                  v-tooltip="`Add User(s) to Project`"
+                  @click.prevent="addUserRole(scope.$index, scope.row)" 
+                  v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
+                  class="bg-primary text-light btn-sm">
+                   <i class="fas fa-users-medical mr-1"></i>
+                </el-button>  
+                       <el-button
                   v-if="_isallowedProgramSettings('delete') && scope.$index !== rowIndex"
                   type="default"
                   v-tooltip="`Delete Contract`"
@@ -467,6 +305,143 @@
           class="contractUsers"
           id="contractUsers p-0"
         >
+        <span slot="title" class="text-left add-groups-header ">
+        <h5 style="color:#383838" v-if="contractData"> 
+            <i class="far fa-file-contract mr-1 mb-2 mh-orange-text"></i>  {{ contractData.nickname }}
+        </h5> 
+        </span>
+           <div class="container-fluid p-2">
+
+             <div class="pl-4 mt-0 row">
+            <div class="col-5 pt-0">
+             <label class="font-md mb-0 d-flex">Add User(s) To Contract</label>
+             <el-select
+              v-model="contractRoleUsers"
+              filterable           
+              class="w-100"
+              clearable
+              multiple
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in programUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.fullName"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Select Role for User(s) </label>
+             <el-select
+              v-model="contractRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Project Users"          
+            >
+              <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div>
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+                <el-button
+                type="default"
+                @click="saveContractUserRole()"
+                v-if="contractRoleNames && contractRoleUsers"
+                v-tooltip="`Confirm`" 
+                class="bg-light btn-sm">                 
+               <i class="far fa-file-contract mr-2 mh-orange-text"></i> Confirm
+               </el-button>
+      
+              </div>
+
+              
+             
+            </div>
+      
+      <div class="mt-4 row">
+        <div class="col-10 pt-0"> 
+           <el-table
+            v-if="contractUsers && contractUsers.length > 0"
+            :header-cell-style="{ background: '#EDEDED' }"
+            :data="contractUsers.filter(
+                  (data) =>
+                    !searchRoleUsers || 
+                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
+                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                )"           
+            height="450"
+            width="auto"
+            class="pl-4"
+            > 
+           <el-table-column  prop="user_full_name"
+              sortable
+              filterable
+              label="Users">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.contract_id">
+                {{ scope.row.user_full_name }}
+                  <!-- {{ scope.row.role_id}} -->          
+              </span>
+              </template>
+
+            </el-table-column>
+            <el-table-column  prop="role_name"
+              sortable
+              filterable
+              label="Roles">
+              <template slot-scope="scope">
+              <span v-if="projId && projId == scope.row.contract_id && scope.row.role_name">
+                  {{ scope.row.role_name }}  
+          
+              </span>
+              </template>
+
+            </el-table-column>
+
+        <el-table-column
+  
+        align="right">
+        <template slot="header" slot-scope="scope">
+          <el-input
+            v-model="searchRoleUsers"
+            size="mini"
+            placeholder="Enter User or Role Name"/>
+        </template>
+         </el-table-column>
+        
+          </el-table>     
+        <span  class="pl-4" v-else>
+            No Users Assigned
+          </span>
+
+          <div class="right mt-3">
+          <button
+          @click.prevent="closeUserRoles"
+          class="btn btn-md bg-secondary text-light modalBtns"
+          v-tooltip="`Close`"                  
+        >
+          <i class="fas fa-ban"></i> 
+        </button>
+            </div>   
+        </div>
+      </div>
+          </div>
    
         </el-dialog>
     </div>
@@ -474,14 +449,6 @@
 </template>
 
 <script>
-//PRIVILEGES FEATURE REQUIREMENTS
-
-//I want to see a column for roles
-//When I click on that column row, row expands to show users of that contract, as well as the roles of the users
-//
-
-
-
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
@@ -495,10 +462,11 @@ export default {
     return {
       expandRowKeys: [],
       currentFacility: {},
+      contractData: null, 
       // currentContract: {},
       dialogVisible: false,
       openUserPrivilegesDialog: false, 
-      contractData: {},
+      // contractData: {},
       currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
@@ -556,17 +524,26 @@ export default {
       return pPrivilege.admin_contracts.includes(s);
     },
   saveContractUserRole(index, rows){
+    let userIds = this.contractRoleUsers.map(t => t.id)
     let contractUserRoleData = {
           userData: {
-            roleId: this.contractRoleNames.id,
-            userId: this.contractRoleUsers.id,
+            roleId:    this.contractRoleNames.id,
+            userId:    userIds,
             programId: this.$route.params.programId, 
-            projectId: this.projId          
+            contractId: this.projId          
          },
       };
       this.addUserToRole({
         ...contractUserRoleData,
       });
+    },
+   closeUserRoles() {
+   this.openUserPrivilegesDialog = false;
+    },
+    addUserRole(index, rows) {
+      this.openUserPrivilegesDialog = true
+      this.projId = rows.id
+      this.contractData = rows
     },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
@@ -773,7 +750,7 @@ export default {
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
       if (this.projId)  {
-            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.contract_id)
         } else return [].concat.apply([], roleUsers)
        
       }

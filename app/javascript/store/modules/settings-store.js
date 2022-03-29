@@ -74,6 +74,9 @@ const settingsStore = {
      //CONTRACT USER ROLES
      contract_role_users: [],
      contract_role_names: [],
+
+     associated_projects : [],
+     associated_contracts: []
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -240,27 +243,44 @@ const settingsStore = {
              commit("TOGGLE_NEW_ROLE_LOADED", true);
            });
        },
-
       //ADD USER TO ROLE
      addUserToRole({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
         console.log(userData)
         let formData = new FormData();
-        // formData.append("role_users[][role_id]", userData.roleId)
-        formData.append("role_users[][user_id]", userData.userId)
-        //  userData.userId.forEach((ids) => {
-        //   formData.append("role_users[][user_id]", ids);
-        // });
-        formData.append("role_users[][project_id]", userData.programId)
-        if(userData.roleId){
-          formData.append("role_users[][role_id]", userData.roleId)
+        if (userData.userRoles){
+          if (userData.projectId){
+            userData.projectId.forEach((ids) => {
+            formData.append("role_users[][user_id]", userData.userId);
+            formData.append("role_users[][project_id]", userData.programId)
+            formData.append("role_users[][role_id]", userData.roleId)  
+            formData.append("role_users[][facility_id]", ids)  
+            });
+          } if (userData.contractId){
+            userData.contractId.forEach((ids) => {
+            formData.append("role_users[][user_id]", userData.userId);
+            formData.append("role_users[][project_id]", userData.programId)
+            formData.append("role_users[][role_id]", userData.roleId)      
+            formData.append("role_users[][contract_id]", ids)      
+            });
+          } 
+         }  else {
+            userData.userId.forEach((ids) => {
+            formData.append("role_users[][user_id]", ids);
+            formData.append("role_users[][project_id]", userData.programId)
+            if(userData.roleId){
+            formData.append("role_users[][role_id]", userData.roleId)
+            }
+            if(userData.projectId){
+            formData.append("role_users[][facility_id]", userData.projectId)
+            }
+            if(userData.contractId){
+            formData.append("role_users[][contract_id]", userData.contractId)
+            }
+            });
+
         }
-        if(userData.projectId){
-          formData.append("role_users[][facility_id]", userData.projectId)
-        }
-        if(userData.contractId){
-          formData.append("role_users[][contract_id]", userData.contractId)
-        }
+       
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
@@ -795,6 +815,9 @@ const settingsStore = {
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
     SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
 
+    SET_ASSOCIATED_PROJECTS: (state, value) => (state.associated_projects = value),
+    SET_ASSOCIATED_CONTRACTS: (state, value) => (state.associated_contracts = value),
+
     SET_EDIT_CONTRACT_SHEET: (state, value) => (state.edit_contract_sheet = value),
 
     SET_SHOW_CREATE_ROW: (state, value) => (state.show_create_row = value),
@@ -873,7 +896,8 @@ const settingsStore = {
     getContractRoleUsers: (state) => state.contract_role_users,
     getContractRoleNames: (state) => state.contract_role_names,
 
-
+    getAssociatedProjects: (state) => state.associated_projects,
+    getAssociatedContracts: (state) => state.associated_contracts,
 
     getRolesLoaded: (state) => state.roles_loaded, 
     newRoleStatus: (state) => state.new_role_status,
