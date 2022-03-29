@@ -28,7 +28,7 @@
         </el-breadcrumb>
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <div class="col" v-if="_isallowedProgramSettings('write')">
+            <div class="col">
               <el-button
                 @click.prevent="addContract"
                 class="bg-primary text-light mb-2"
@@ -79,7 +79,7 @@
         class=""
         >
           <el-table
-            v-if="tableData && _isallowedProgramSettings('read')"    
+            v-if="tableData"    
             :data="
               tableData
                 .filter(
@@ -147,8 +147,7 @@
                 <el-button
                   type="default"
                   v-if="
-                    scope.$index == rowIndex &&
-                      _isallowedProgramSettings('write')
+                    scope.$index == rowIndex 
                   "
                   @click.prevent="saveEdits(scope.$index, scope.row)"
                   v-tooltip="`Save`"
@@ -160,8 +159,7 @@
                   type="default"
                   v-tooltip="`Cancel Edit`"
                   v-if="
-                    scope.$index == rowIndex &&
-                      _isallowedProgramSettings('write')
+                    scope.$index == rowIndex
                   "
                   @click.prevent="cancelEdits(scope.$index, scope.row)"
                   class="bg-secondary btn-sm text-light"
@@ -173,8 +171,7 @@
                   v-tooltip="`Edit Contract Name or Change Group`"
                   @click.prevent="editMode(scope.$index, scope.row)"
                   v-if="
-                    scope.$index !== rowIndex &&
-                      _isallowedProgramSettings('write')
+                    scope.$index !== rowIndex
                   "
                   class="bg-light btn-sm"
                 >
@@ -184,12 +181,12 @@
                   type="default" 
                   v-tooltip="`Add User(s) to Project`"
                   @click.prevent="addUserRole(scope.$index, scope.row)" 
-                  v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
+                  v-if="scope.$index !== rowIndex"
                   class="bg-primary text-light btn-sm">
                    <i class="fas fa-users-medical mr-1"></i>
                 </el-button>  
                        <el-button
-                  v-if="_isallowedProgramSettings('delete') && scope.$index !== rowIndex"
+                  v-if="scope.$index !== rowIndex"
                   type="default"
                   v-tooltip="`Delete Contract`"
                   @click.prevent="
@@ -515,14 +512,14 @@ export default {
       "addUserToRole", 
       "fetchRoles"
     ]),
-    _isallowedProgramSettings(salut) {
-      let pPrivilege = this.$programSettingPrivileges[
-        this.$route.params.programId
-      ];
-      let permissionHash = { write: "W", read: "R", delete: "D" };
-      let s = permissionHash[salut];
-      return pPrivilege.admin_contracts.includes(s);
-    },
+    // _isallowedProgramSettings(salut) {
+    //   let pPrivilege = this.$programSettingPrivileges[
+    //     this.$route.params.programId
+    //   ];
+    //   let permissionHash = { write: "W", read: "R", delete: "D" };
+    //   let s = permissionHash[salut];
+    //   return pPrivilege.admin_contracts.includes(s);
+    // },
   saveContractUserRole(index, rows){
     let userIds = this.contractRoleUsers.map(t => t.id)
     let contractUserRoleData = {

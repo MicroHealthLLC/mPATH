@@ -1,11 +1,4 @@
 <template>
-<!-- 
-  GET SUccess message after saving
-  Update without refresh
-ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
-
-
- -->
  <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -35,7 +28,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
 
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <div class="col" v-if="_isallowedProgramSettings('write')">
+            <div class="col" >
               <el-button
                 @click.prevent="addProject"
                 class="bg-primary text-light mb-2"
@@ -159,7 +152,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               <el-button
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
-                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')" 
+                v-if="scope.$index == rowIndex" 
                 v-tooltip="`Save`" 
                 class="bg-primary btn-sm text-light">               
                <i class="far fa-save"></i>
@@ -167,7 +160,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
               <el-button 
                 type="default" 
                 v-tooltip="`Cancel Edit`"       
-                v-if="scope.$index == rowIndex && _isallowedProgramSettings('write')"
+                v-if="scope.$index == rowIndex"
                 @click.prevent="cancelEdits(scope.$index, scope.row)"  
                 class="bg-secondary btn-sm text-light">
               <i class="fas fa-ban"></i>
@@ -176,7 +169,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                 type="default" 
                 v-tooltip="`Edit Project Name or Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
+                v-if="scope.$index !== rowIndex "
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button>  
@@ -184,7 +177,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                 type="default" 
                 v-tooltip="`Add User(s) to Project`"
                 @click.prevent="addUserRole(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex && _isallowedProgramSettings('write')"
+                v-if="scope.$index !== rowIndex "
                 class="bg-primary text-light btn-sm">
              <i class="fas fa-users-medical mr-1"></i>
                </el-button>  
@@ -656,12 +649,12 @@ export default {
         }
       });
     },
-    _isallowedProgramSettings(salut) {
-      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return pPrivilege.admin_facilities.includes(s);
-    },
+    // _isallowedProgramSettings(salut) {
+    //   let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let s = permissionHash[salut]
+    //   return pPrivilege.admin_facilities.includes(s);
+    // },
   },
   computed: {
     ...mapGetters([

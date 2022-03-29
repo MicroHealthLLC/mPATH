@@ -1,19 +1,5 @@
 <template>
 
-<!-- HOW TO FIVE USER A ROLE
-1.  Click Add Role
-2.  Modal with multiselect Dropdown
-3.  Every item-option is a role with an id
-4.  Map through role ids to push user id into role_users array
-5. Close modal which makes post request and updates Roles/Associations table with Roles
-6.  In Associations column, each row will display multiselect dropdown where program admin can make associations
-7.  "Make associations" is 
-8. Users already have a privileges attribute
-9.  This attribute should list contractIds with privileges and projectIds with privileges
-  
-  
-
- -->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />

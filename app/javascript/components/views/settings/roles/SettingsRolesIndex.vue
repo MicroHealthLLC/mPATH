@@ -72,6 +72,7 @@ NEXT TASK:  Add users to program admin roles
         v-if="tableData && tableData.length > 0"  
         :data="tableData"   
         height="450"
+        class="crudRow"
         :row-class-name="showHideCreateRow"
         >
     <el-table-column
@@ -210,427 +211,444 @@ NEXT TASK:  Add users to program admin roles
 
        </template>
       </el-table-column>
-
     </el-table-column> 
-      <el-table-column label="Program Settings" >
-    <el-table-column label="Groups">
-    <el-table-column
-    prop="groupsRead"
-    label="Read"
-    width="75">
-  <template slot-scope="scope" >
+   
+   
+    <el-table-column label="Program Settings">
+   
+          <el-table-column label="Groups">
+              <el-table-column
+              prop="groupsRead"
+              label="Read"
+              width="75">
+            <template slot-scope="scope" >
 
-
-<span
- @click.prevent.stop="groupsRead(scope.$index, scope.row)"
- v-if="scope.$index == 0"
->
-
-  <span v-if="isGroupsRead">
-  <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-  </span>
-    <span v-if="!isGroupsRead">
-  <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-  </span>
-</span>
-
-  <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
-    scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span>    
-
-  </template>
-  </el-table-column>
-  <el-table-column
-  prop="groupsWrite"
-  label="Write"
-  width="75">
-  <template slot-scope="scope">
-    <span
-    @click.prevent.stop="groupsWrite(scope.$index, scope.row)"
-    v-if="scope.$index == 0"
-    >
-      <span v-if="isGroupsWrite">
-      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-      </span>
-        <span v-if="!isGroupsWrite">
-      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-      </span>
-    </span>
-   <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
-    scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-    <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span>    
-
-  </template>
-  </el-table-column>
-  <el-table-column
-    prop="groupsDelete"
-    label="Delete"
-    width="75">
-<template slot-scope="scope">
-    <span
-    @click.prevent.stop="groupsDelete(scope.$index, scope.row)"
-    v-if="scope.$index == 0"
-    >
-      <span v-if="isGroupsDelete">
-      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-      </span>
-        <span v-if="!isGroupsDelete">
-      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-      </span>
-    </span>
-   <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
-    scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span>      
-
-      </template>
-  </el-table-column>
- </el-table-column>
-
-<el-table-column label="Projects">
-<el-table-column
-  prop="projectsRead"
-  label="Read"
-  width="75">
-<template slot-scope="scope">
-
-<span
- @click.prevent.stop="projectsRead(scope.$index, scope.row)"
- v-if="scope.$index == 0"
->
-
-  <span v-if="isProjectsRead">
-  <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-  </span>
-    <span v-if="!isProjectsRead">
-  <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-  </span>
-</span>
-   <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
-    scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span>      
-
-      
-   </template>
-            
-</el-table-column>
-<el-table-column
-    prop="projectsWrite"
-    label="Write"
-    width="75">
-<template slot-scope="scope">
-
-<span
- @click.prevent.stop="projectsWrite(scope.$index, scope.row)"
- v-if="scope.$index == 0"
->
-
-  <span v-if="isProjectsWrite">
-  <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-  </span>
-    <span v-if="!isProjectsWrite">
-  <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-  </span>
-</span>
-   <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
-    scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-      </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
-       </template>
-            
-  </el-table-column>
-  <el-table-column
-    prop="projectsDelete"
-    label="Delete"
-    width="75">
-  <template slot-scope="scope">
-
-
-<span
-@click.prevent.stop="projectsDelete(scope.$index, scope.row)"
-v-if="scope.$index == 0"
->
-
-<span v-if="isProjectsDelete">
-<i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-</span>
-  <span v-if="!isProjectsDelete">
-<i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-</span>
-</span>
-<span v-if="scope.$index !== 0">
-<span 
-v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
-scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
->
-<i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-</span>
- <span v-else>
-<i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-</span>   
-</span> 
-
-  </template>
-  </el-table-column>
-  </el-table-column>
-
-
-  <el-table-column label="Contracts">
-  <el-table-column
-  prop="contractsRead"
-  label="Read"
-  width="75">
-<template slot-scope="scope">
-
-  <span @click.prevent.stop="contractsRead(scope.$index, scope.row)" v-if="scope.$index == 0">
-    <span v-if="isContractsRead">
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-    </span>
-      <span v-if="!isContractsRead">
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>
-  </span>
-
-  <span v-if="scope.$index !== 0">
-  <span 
-  v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts' && 
-  scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
-  >
-  <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-  </span>
-  <span v-else>
-  <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-  </span>   
-  </span> 
-
-
-
-  </template>
-  </el-table-column>
-  <el-table-column
-      prop="contractsWrite"
-      label="Write"
-      width="75">
-  <template slot-scope="scope">
-    <span
-    @click.prevent.stop="contractsWrite(scope.$index, scope.row)"
-    v-if="scope.$index == 0"
-    >
-    <span v-if="isContractsWrite">
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-    </span>
-      <span v-if="!isContractsWrite">
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>
-  </span>
-
-    <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts'  && 
-    scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-    </span>
-    <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-    </span> 
-  </template>
-  </el-table-column>
-  <el-table-column
-      prop="role_privileges"
-      label="Delete"
-      width="75">
-  <template slot-scope="scope">
-
-
-<span @click.prevent.stop="contractsDelete(scope.$index, scope.row)" v-if="scope.$index == 0">
-
-    <span v-if="isContractsDelete">
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-    </span>
-  <span v-if="!isContractsDelete">
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>
-</span>
-  <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts'  && 
-    scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
-    </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-    </span> 
-
-  </template>
-  </el-table-column>
-  </el-table-column>
-
-
-        <el-table-column label="Users" >
-        <el-table-column
-            prop="usersRead"
-            label="Read"
-           width="75">
-        <template slot-scope="scope">
 
           <span
-          @click.prevent.stop="usersRead(scope.$index, scope.row)"
+          @click.prevent.stop="groupsRead(scope.$index, scope.row)"
           v-if="scope.$index == 0"
           >
 
-          <span v-if="isUsersRead">
-          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-          </span>
-            <span v-if="!isUsersRead">
-          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-          </span>
+            <span v-if="isGroupsRead">
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+            </span>
+              <span v-if="!isGroupsRead">
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>
           </span>
 
-    <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
-    scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+            <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
+              scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
-      </span>
-    <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
- 
-       </template>
-        </el-table-column>
-        <el-table-column
-            prop="usersWrite"
+                </span>
+            <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+            </span>    
+
+            </template>
+            
+            
+            
+            
+            </el-table-column>
+            
+            <el-table-column
+            prop="groupsWrite"
             label="Write"
             width="75">
-        <template slot-scope="scope">
+            <template slot-scope="scope">
+              <span
+              @click.prevent.stop="groupsWrite(scope.$index, scope.row)"
+              v-if="scope.$index == 0"
+              >
+                <span v-if="isGroupsWrite">
+                <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+                </span>
+                  <span v-if="!isGroupsWrite">
+                <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+                </span>
+              </span>
+            <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
+              scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
-           <span
-          @click.prevent.stop="usersWrite(scope.$index, scope.row)"
-          v-if="scope.$index == 0"
-          >
+                </span>
+              <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+            </span>    
 
-          <span v-if="isUsersWrite">
-          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-          </span>
-            <span v-if="!isUsersWrite">
-          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-          </span>
-        </span>
+            </template>
+            </el-table-column>
+          
+            <el-table-column
+              prop="groupsDelete"
+              label="Delete"
+              width="75">
+          <template slot-scope="scope">
+              <span
+              @click.prevent.stop="groupsDelete(scope.$index, scope.row)"
+              v-if="scope.$index == 0"
+              >
+                <span v-if="isGroupsDelete">
+                <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+                </span>
+                  <span v-if="!isGroupsDelete">
+                <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+                </span>
+              </span>
+            <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'groups' && 
+              scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
-     
-    <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
-    scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+                </span>
+            <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+            </span>      
 
-      </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
- 
-       </template>
-        </el-table-column>
-        <el-table-column
-            prop="usersDelete"
-            label="Delete"
+                </template>
+            </el-table-column>
+          
+          </el-table-column>
+
+          <el-table-column label="Projects">
+
+
+          <el-table-column
+            prop="projectsRead"
+            label="Read"
             width="75">
-        <template slot-scope="scope">
+          <template slot-scope="scope">
 
           <span
-          @click.prevent.stop="usersDelete(scope.$index, scope.row)"
+          @click.prevent.stop="projectsRead(scope.$index, scope.row)"
           v-if="scope.$index == 0"
           >
-          
-          <span v-if="isUsersDelete">
+
+            <span v-if="isProjectsRead">
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+            </span>
+              <span v-if="!isProjectsRead">
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>
+          </span>
+            <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
+              scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+                </span>
+            <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+            </span>      
+
+                
+            </template>
+                      
+          </el-table-column>
+          <el-table-column
+              prop="projectsWrite"
+              label="Write"
+              width="75">
+          <template slot-scope="scope">
+
+          <span
+          @click.prevent.stop="projectsWrite(scope.$index, scope.row)"
+          v-if="scope.$index == 0"
+          >
+
+            <span v-if="isProjectsWrite">
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+            </span>
+              <span v-if="!isProjectsWrite">
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>
+          </span>
+            <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
+              scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+                </span>
+            <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+            </span> 
+                </template>
+                      
+            </el-table-column>
+            <el-table-column
+              prop="projectsDelete"
+              label="Delete"
+              width="75">
+            <template slot-scope="scope">
+
+
+          <span
+          @click.prevent.stop="projectsDelete(scope.$index, scope.row)"
+          v-if="scope.$index == 0"
+          >
+
+          <span v-if="isProjectsDelete">
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
           </span>
-            <span v-if="!isUsersDelete">
+            <span v-if="!isProjectsDelete">
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
           </span>
+          </span>
+          <span v-if="scope.$index !== 0">
+          <span 
+          v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects' && 
+          scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
+          >
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+          </span>
+          <span v-else>
+          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+          </span>   
+          </span> 
+
+            </template>
+            </el-table-column>
+          
+          
+          </el-table-column>
+
+
+          <el-table-column label="Contracts">
+            <el-table-column
+            prop="contractsRead"
+            label="Read"
+            width="75">
+          <template slot-scope="scope">
+
+            <span @click.prevent.stop="contractsRead(scope.$index, scope.row)" v-if="scope.$index == 0">
+              <span v-if="isContractsRead">
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+              </span>
+                <span v-if="!isContractsRead">
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>
+            </span>
+
+            <span v-if="scope.$index !== 0">
+            <span 
+            v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts' && 
+            scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
+            >
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+            </span>
+            <span v-else>
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>   
+            </span> 
+
+
+
+            </template>
+            </el-table-column>
+            <el-table-column
+                prop="contractsWrite"
+                label="Write"
+                width="75">
+            <template slot-scope="scope">
+              <span
+              @click.prevent.stop="contractsWrite(scope.$index, scope.row)"
+              v-if="scope.$index == 0"
+              >
+              <span v-if="isContractsWrite">
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+              </span>
+                <span v-if="!isContractsWrite">
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>
+            </span>
+
+              <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts'  && 
+              scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+              </span>
+              <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+              </span> 
+            </template>
+            </el-table-column>
+            <el-table-column
+                prop="contractsDelete"
+                label="Delete"
+                width="75">
+            <template slot-scope="scope">
+
+
+          <span @click.prevent.stop="contractsDelete(scope.$index, scope.row)" v-if="scope.$index == 0">
+
+              <span v-if="isContractsDelete">
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+              </span>
+            <span v-if="!isContractsDelete">
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>
+          </span>
+            <span v-if="scope.$index !== 0">
+              <span 
+              v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts'  && 
+              scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
+              >
+              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+              </span>
+            <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+              </span> 
+
+            </template>
+            </el-table-column>
+          
+          </el-table-column>
+
+
+          <el-table-column label="Users" >
+          <el-table-column
+              prop="usersRead"
+              label="Read"
+            width="75">
+          <template slot-scope="scope">
+
+            <span
+            @click.prevent.stop="usersRead(scope.$index, scope.row)"
+            v-if="scope.$index == 0"
+            >
+
+            <span v-if="isUsersRead">
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+            </span>
+              <span v-if="!isUsersRead">
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>
+            </span>
+
+      <span v-if="scope.$index !== 0">
+      <span 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
+      scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
+      >
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
         </span>
+      <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+    </span> 
+  
+        </template>
+          </el-table-column>
+          <el-table-column
+              prop="usersWrite"
+              label="Write"
+              width="75">
+          <template slot-scope="scope">
 
-    <span v-if="scope.$index !== 0">
-    <span 
-    v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
-    scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
-    >
-    <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+            <span
+            @click.prevent.stop="usersWrite(scope.$index, scope.row)"
+            v-if="scope.$index == 0"
+            >
 
-      </span>
-   <span v-else>
-    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-    </span>   
-   </span> 
- 
-       </template>
-        </el-table-column>
+            <span v-if="isUsersWrite">
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+            </span>
+              <span v-if="!isUsersWrite">
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>
+          </span>
 
+      
+      <span v-if="scope.$index !== 0">
+      <span 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
+      scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
+      >
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+        </span>
+    <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+    </span> 
+  
+        </template>
+          </el-table-column>
+          <el-table-column
+              prop="usersDelete"
+              label="Delete"
+              width="75">
+          <template slot-scope="scope">
+
+            <span
+            @click.prevent.stop="usersDelete(scope.$index, scope.row)"
+            v-if="scope.$index == 0"
+            >
+            
+            <span v-if="isUsersDelete">
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
+            </span>
+              <span v-if="!isUsersDelete">
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>
+          </span>
+
+      <span v-if="scope.$index !== 0">
+      <span 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'users'  && 
+      scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
+      >
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+
+        </span>
+    <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+    </span> 
+  
+        </template>
+          </el-table-column>
+
+          
+          </el-table-column>      
         
-        </el-table-column>      
-      </el-table-column> 
-        <el-table-column 
+    </el-table-column> 
+       
+       
+        <el-table-column label="Actions"
           fixed="right" 
-          label="Actions"
+          width="115"         
           class="text-center "
-          width="120">
-           <template slot-scope="scope">
+         >
+          <template slot-scope="scope">
           <el-button
           type="default"
           v-tooltip="`Save edits`"
@@ -639,8 +657,8 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
            class="bg-primary btn-sm text-light"
           >
         <i class="far fa-save"></i>
-        </el-button>
-       <el-button
+          </el-button>
+          <el-button
           type="default"
           @click.prevent="cancelCreateRole(scope.$index, scope.row)"
           v-if="showCreateRow === true && scope.$index == 0"
@@ -648,8 +666,8 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
           v-tooltip="`Cancel`"                  
         >
           <i class="fas fa-ban"></i> 
-         </el-button>
-        <el-button
+          </el-button>
+          <el-button
           type="default"
           @click.prevent="test(scope.$index, scope.row)"
           v-if="!scope.$index == 0"
@@ -658,18 +676,21 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
           v-tooltip="`Edit Role`"
         >
           <i class="fal fa-edit text-primary"></i>
-        </el-button>
+          </el-button>
           <el-button  
             type="default" 
             v-tooltip="`Add User(s) to this Role`"
             @click.prevent="addUserRole(scope.$index, scope.row)"               
             class="bg-primary text-light btn-sm">
           <i class="fas fa-users-medical mr-1"></i>
-            </el-button>  
-           </template>
-          
+          </el-button>  
+          </template>
+        
          </el-table-column> 
-    </el-table>
+
+
+      </el-table>
+      
        <el-table    
         v-else  
         :data="firstRole"   
@@ -680,7 +701,7 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
       fixed
       prop="role"
       label="Admin Role"
-      width="340">
+      width="345">
  <template slot-scope="scope">
   <span>
     <el-input
@@ -1037,7 +1058,7 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
           :visible.sync="rolesVisible"
           append-to-body
           center
-          class="contractForm p-0 addUserRole"
+          class="contractForm p-0 addUserRole user-role-modal"
         >
        <span slot="title" class="text-left add-groups-header ">
         <h5 style="color:#383838" v-if="roleRowData"> 
@@ -1070,15 +1091,14 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
               </div>
          
                 <div class="col-2 pt-0">
-              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                              
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>                              
                 <el-button
                 type="default"
                 @click="saveProjectUserRole()"
                 v-if="adminRoleUsers && adminRoleUsers.length > 0"
                 v-tooltip="`Confirm`" 
                 class="bg-light btn-sm">               
-                 <i class="fal fa-user-lock mr-2 mb-2 bootstrap-purple-text"></i>  Confirm
+                 <i class="fal fa-user-lock mr-1 bootstrap-purple-text"></i> Confirm
                </el-button>
       
               </div>             
@@ -1088,15 +1108,14 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
         <div class="col-12 pt-0">
  
             <el-table
-            v-if="projectUsers && projectUsers.length > 0"
+            v-if="adminUsers"
             :header-cell-style="{ background: '#EDEDED' }"
-            :data="projectUsers.filter(
+            :data="adminUsers.filter(
                   (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
-                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                    !searchRoleUsers ||
+                    data.role_users.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
                 )"           
-            height="450"
+            height="300"
             width="auto"
             class="pl-4"
             > 
@@ -1105,14 +1124,14 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
               filterable
               label="Users">
               <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id">
-                {{ scope.row.user_full_name }}
+              <span v-if="scope.row.role_users && roleId && roleId == scope.row.id">
+                {{ JSON.stringify(scope.row.role_users.map(t => t.user_full_name)).replace(/]|[['"]/g, ' ')}}
                   <!-- {{ scope.row.role_id}} -->          
               </span>
               </template>
 
             </el-table-column>
-            <el-table-column  prop="role_name"
+            <!-- <el-table-column  prop="role_name"
               sortable
               filterable
               label="Roles">
@@ -1124,7 +1143,7 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
               </span>
               </template>
 
-            </el-table-column>
+            </el-table-column> -->
 
     <el-table-column
   
@@ -1133,7 +1152,7 @@ scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"
           <el-input
             v-model="searchRoleUsers"
             size="mini"
-            placeholder="Enter User or Role Name"/>
+            placeholder="Search Users"/>
         </template>
         <!-- <template slot-scope="scope">
           <el-button
@@ -1197,6 +1216,7 @@ export default {
       return {
         rolesVisible: false, 
         roleId: null, 
+        searchRoleUsers:'',
         roleRowData: null, 
         addRoleDialogOpen: false, 
         isProgramAdminRead: true,
@@ -1253,7 +1273,7 @@ export default {
       }
   },
   methods: {
-    ...mapMutations(["SET_NEW_ROLE_STATUS", "SET_SHOW_CREATE_ROW", "SET_PROJECT_ROLE_USERS"]),
+    ...mapMutations(["SET_NEW_ROLE_STATUS", "SET_SHOW_CREATE_ROW", "SET_PROJECT_ROLE_USERS", "SET_ADD_USER_TO_ROLE_STATUS"]),
   ...mapActions(["fetchRoles", "createRole", "addUserToRole"]),
     programAdminRead() {
       this.isProgramAdminRead = !this.isProgramAdminRead  
@@ -1274,34 +1294,13 @@ export default {
             programId: this.$route.params.programId,            
          },
       };
+      // console.log(projectUserRoleData)
       this.addUserToRole({
         ...projectUserRoleData,
       });
     },
-    projectUsers(){
-      if(this.getRoles && this.getRoles.length > 0 ){   
-        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-      if (this.projId)  {
-            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
-        } else return [].concat.apply([], roleUsers)
-       
-      }
-    },
-    //  noUsers(){
-    //   if(this.getRoles && this.getRoles.length > 0 ){   
-    //    if (this.getRoles.map(t => t.role_users).filter(t => t.length <= 0) && this.roleId){
-    //       let roles = this.getRoles.map(t => t)
-    //        return [].concat.apply([], roles).filter(t => this.roleId == t.id)
-    //    }
-    //       if (this.getRoles.map(t => t.role_users).filter(t => t.length > 0) && this.roleId){
-    //       let roles = this.getRoles.map(t => t)
-    //        return [].concat.apply([], roles).filter(t => this.roleId == t.id)
-    //    }
 
-   
-    //   }
-    // },
-    programAdminWrite() {
+     programAdminWrite() {
       this.isProgramAdminWrite = !this.isProgramAdminWrite 
      if(this.isProgramAdminWrite && !this.programAdminPriv.map(t => t).includes("W") ){
        this.programAdminPriv.push(..."W")
@@ -1322,7 +1321,7 @@ export default {
      console.log(`program: ${this.programAdminPriv}`)
     },
   groupsRead() {
- this.isGroupsRead =  !this.isGroupsRead
+    this.isGroupsRead =  !this.isGroupsRead
   if(this.isGroupsRead && !this.groupsPriv.map(t => t).includes("R") ){
     this.groupsPriv.push(..."R")
   } else if (!this.isGroupsRead) {
@@ -1332,10 +1331,11 @@ export default {
 
     },
    addUserRole(index, rows) {
-     console.log(rows)
+    // console.log(this.adminUsers)
       this.rolesVisible = true
       this.roleId = rows.id
       this.roleRowData = rows
+      //  console.log(this.adminUsers)
     },
    groupsWrite() {
       this.isGroupsWrite = !this.isGroupsWrite
@@ -1583,6 +1583,14 @@ mounted() {
        }
       }       
     },
+    adminUsers(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+      //  let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+      if (this.roleId)  {
+            return [].concat.apply([], this.getRoles).filter(t => this.roleId == t.id)
+        } else return [].concat.apply([], this.getRoles)       
+      }
+    },
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
@@ -1716,12 +1724,24 @@ mounted() {
 //   font-size: .9rem;
   text-align: center;
 }
+.user-role-modal {
+/deep/.el-table__header, .el-table{
+  width: auto !important;
+ }
+}
+
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
-/deep/.el-input__inner{
+.crudRow{
+  /deep/.el-input__inner{
   border: 1px solid #d9534f;
 }
+
+}
+
+
+
 .auto-complete-wrapper {
   justify-content: center;
   align-items: center;
