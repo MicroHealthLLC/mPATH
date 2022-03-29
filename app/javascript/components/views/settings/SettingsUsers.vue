@@ -130,13 +130,13 @@
         
         <!-- USe this attribute when functionaloty gets built in -->
                   <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
-            <el-button
+            <!-- <el-button
             type="default"  
             class="bg-light btn-sm"         
              v-tooltip="`Remove User`"  
             >
             <i class="fas fa-user-slash"></i>               
-            </el-button>
+            </el-button> -->
     
             <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
             </template>
@@ -439,7 +439,7 @@
         </h5> 
      </span>
       <div class="container-fluid p-2">
-         <div class="pl-4 mt-0 row">
+         <div class="mt-0 row">
             <div class="col-5 pt-0">
              <label class="font-md mb-0 d-flex">Assign Project Role </label>
              <el-select
@@ -489,16 +489,15 @@
                 <el-button
                 type="default"    
                 @click="saveProjectUserRole()"          
-                v-if="projectRoleNames && associatedProjects"
+                v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
                 v-tooltip="`Confirm`" 
-                class="bg-primary btn-sm text-light mr-2">               
-                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm
-               </el-button>
-      
+               class="bg-light btn-sm">               
+               <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm
+               </el-button>     
               </div>             
              
             </div>
-                <div class="pl-4 mt-0 row">
+           <div class="mt-3 row" v-if="_isallowed('read')">
             <div class="col-5 pt-0">
              <label class="font-md mb-0 d-flex">Assign Contract Role </label>
              <el-select
@@ -548,10 +547,10 @@
                <el-button
                 type="default"
                 @click="saveContractUserRole()"
-                v-if="contractRoleNames && associatedContracts"
+                v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
                 v-tooltip="`Confirm`" 
-                class="bg-primary btn-sm text-light mr-2">               
-                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm 
+                class="bg-light btn-sm">           
+               <i class="far fa-file-contract mr-1 mh-orange-text"></i> Confirm 
                </el-button> 
       
               </div>             
@@ -571,7 +570,11 @@
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
-        
+          <!-- || data.facility_id == projectNames.map(t => t.id).facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase()) -->
+          <!-- || 
+                    this.currentProject.facilities.filter(t => t.facilityId == data.facility_id).map(n => n.facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase())) -->
+     
+      
         <el-table-column prop="role_name"  sortable label="Roles">
             <template slot-scope="scope">
               <span v-if="scope.row.facility_id">
@@ -593,11 +596,11 @@
         >      
            <template slot-scope="scope">
               <span v-if="scope.row.facility_id && projectNames">
-               {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t.facilityName)}}
+               {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t.facilityName)[0]}}
                  <!-- {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t)}} -->
               </span>
                  <span v-if="scope.row.contract_id && contractNames">
-                 {{ contractNames.filter(t => t.id == scope.row.contract_id).map(t => t.nickname)  }}
+                 {{ contractNames.filter(t => t.id == scope.row.contract_id).map(t => t.nickname)[0]  }}
               </span>
 
             </template>
@@ -614,33 +617,7 @@
             placeholder="Search User Roles"/>
         </template>
           </el-table-column>
-
-        <!-- <el-table-column icon="el-user" align="center"  width="120">
-          <template slot-scope="scope">
-         <el-button
-          type="default"
-          @click.prevent="addRoleToUser(scope.$index, scope.row)"
-          v-tooltip="`Add Role`"
-          class="bg-primary btn-sm text-light"
-          >    
-          
-          <i class="fa-solid fa-user-unlock"></i>          
-         </el-button>
-      
-         <el-button
-          type="default"
-          @click.prevent="associateUserRole(scope.$index, scope.row)"
-          v-tooltip="`Manage Associations`"
-          class="bg-light btn-sm"
-          >    
-          
-        <i class="fa-regular fa-gears"></i> 
-         </el-button>
-          </template>
-         
-     
-        </el-table-column>     -->
-        </el-table>
+       </el-table>
         <span v-else>
           No Roles Assigned To This User
         </span>
@@ -774,6 +751,12 @@ export default {
       // }
    
 		},
+  _isallowed(salut) {
+      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return pPrivilege.contracts.includes(s);     
+  },
   saveProjectUserRole(index, rows){
     let projectIds = this.associatedProjects.map(t => t.facilityId)
     let projectUserRoleData = {
@@ -788,6 +771,7 @@ export default {
       this.addUserToRole({
         ...projectUserRoleData,
       });
+   
     },
     saveContractUserRole(index, rows){
     let contractIds = this.associatedContracts.map(t => t.id)
@@ -850,10 +834,10 @@ export default {
       this.newUserDialogVisible = true
     },
     openUserRoleDialog(index, rows){
-      // console.log(rows)
-      this.openUserRoles = true
       this.projId = rows.id
-      this.userData = rows
+      this.fetchRoles(this.$route.params.programId)     
+      this.openUserRoles = true    
+      this.userData = rows       
     },
     closeUserRoles() {
       this.openUserRoles = false;
@@ -881,7 +865,8 @@ export default {
     openEditUser(index, rows){
       this.editUserDialogVisible = true;
       this.rowUser = rows
-      console.log(rows)
+      // console.log(rows)
+       console.log(this.projectUsers.length)
     },
    saveUserEdits() {
     let editUserData = {
@@ -931,9 +916,7 @@ export default {
     if (this.getPortfolioUsers.length <= 0)    {
       this.fetchPortfolioUsers()
     }  
-    // if(this.getRoles && this.getRoles.length <= 0){
-        this.fetchRoles(this.$route.params.programId)
-    // }
+
   },
   computed: {
     ...mapGetters([
@@ -1092,12 +1075,13 @@ export default {
             message: `Succesfully assigned user to role(s)role.`,
             type: "success",
             showClose: true,
-          });         
-          this.SET_ADD_USER_TO_ROLE_STATUS(0);
-          this.fetchRoles(this.$route.params.programId)  
+          });  
+          this.fetchRoles(this.$route.params.programId)         
+          this.SET_ADD_USER_TO_ROLE_STATUS(0);         
           this.SET_ASSOCIATED_PROJECTS([])
           this.SET_ASSOCIATED_CONTRACTS([])
           this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_CONTRACT_ROLE_NAMES([])
         }
       },
     },   

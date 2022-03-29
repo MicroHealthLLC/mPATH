@@ -147,7 +147,11 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                <span v-else>  
               {{ scope.row.facilityGroupName }}
                </span>
-            
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
             </template>
           </el-table-column>
           <el-table-column label="Actions" align="right">
@@ -276,6 +280,11 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
           center
           class="contractForm p-0 addUserRole"
         >
+       <span slot="title" class="text-left add-groups-header ">
+        <h5 style="color:#383838" v-if="projectRowData"> 
+            <i class="fal fa-clipboard-list mr-1 mb-2 mh-green-text"></i> {{ projectRowData.facilityName }}
+        </h5> 
+        </span>
          <div class="container-fluid p-2">
 
              <div class="pl-4 mt-0 row">
@@ -331,7 +340,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                 v-if="projectRoleNames && projectRoleUsers"
                 v-tooltip="`Confirm`" 
                 class="bg-primary btn-sm text-light mr-2">               
-                <i class="fa-solid fa-user-unlock mr-1"></i>Confirm
+                 <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>  Confirm
                </el-button>
       
               </div>             
@@ -354,7 +363,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
                 )"           
             height="450"
             width="auto"
-            class="px-4"
+            class="pl-4"
             > 
            <el-table-column  prop="user_full_name"
               sortable
@@ -406,7 +415,7 @@ ADD ROLES DROPDOWN COMPONENT TO BEGIN SELECTING AND SAVING DYNAMIC ROLE IDs
           <el-input
             v-model="searchRoleUsers"
             size="mini"
-            placeholder="Search User or Role Name"/>
+            placeholder="Enter User or Role Name"/>
         </template>
         <!-- <template slot-scope="scope">
           <el-button
@@ -469,6 +478,7 @@ export default {
       rowIndex: null,
       rowId: null,
       projId: null, 
+      projectRowData: null, 
       hideSaveBtn: false,
       projectId: null, 
       searchContractUsers:"",
@@ -551,6 +561,7 @@ export default {
     addUserRole(index, rows) {
       this.rolesVisible = true
       this.projId = rows.id
+      this.projectRowData = rows
     },
     addProject() {
       this.dialogVisible = true;
