@@ -187,8 +187,11 @@
             <label class="mb-0 pb-0 text-dark"
               >Email<span style="color: #dc3545">*</span></label>
             <el-input
+              name="email"
               v-model="email"
               placeholder="Enter Email"
+              v-validate="'email'"
+              :class="{ 'error': errors.has('email') }"
               rows="1"  
               class="mb-2 pl-1"        
             />            
@@ -370,10 +373,13 @@
                <label class="mb-0 pb-0 text-dark"
                 >Email</label>
                <el-input
+                name="email"
                 v-model="rowUser.email"
+                v-validate="'email'"
                 placeholder="Enter updated email here"
                 rows="1"  
                 class="mb-2 pl-1"        
+                :class="{ 'error': errors.has('email') }"
               />
 
                <label class="mb-0 pb-0 text-dark"

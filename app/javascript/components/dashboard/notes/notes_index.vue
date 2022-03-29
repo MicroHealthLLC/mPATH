@@ -86,17 +86,19 @@
         'setMyActionsFilter'
       ]),
      _isallowed(salut) {
-       if (this.$route.params.contractId) {
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.notes.includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut]
-          return fPrivilege.notes.includes(s); 
-        }
+        return this.checkPrivileges("notes_index", salut, this.$route)
+
+      //  if (this.$route.params.contractId) {
+      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s);
+      //   } else {
+      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
+      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //     let s = permissionHash[salut]
+      //     return fPrivilege.notes.includes(s); 
+      //   }
      },
       addNewNote() {
         if (this.from == "manager_view") {

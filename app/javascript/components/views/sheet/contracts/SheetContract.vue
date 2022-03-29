@@ -162,7 +162,9 @@
                    <el-input
                       name="Total Subcontracts"  
                       v-model="contract.total_subcontracts"
-                      type="text"
+                      v-validate="'numeric|min_value:0'"
+                      type="number"
+                      min=0
                       placeholder="Contract Nickname"                                   
                       :disabled="!_isallowed('write')"
                     />
@@ -207,7 +209,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select or enter status"
+                      placeholder="Select or enter Customer Entity Type"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -234,7 +236,7 @@
                       value-key="id"
                       allow-create
                       default-first-option
-                      placeholder="Select Vehicle"
+                      placeholder="Select or enter Vehicle"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -259,7 +261,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      placeholder="Select or enter Prime IDIQ/Vehicle Contract Number"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -288,7 +290,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Prime IDIQ/Vehicle Contract Number"
+                      placeholder="Select or enter Prime Contract Number / Task Order / PO Number"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -315,7 +317,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Subcontract Number / PO Number"
+                      placeholder="Select or enter Subcontract Number / PO Number"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -342,7 +344,7 @@
                       clearable
                       allow-create
                       default-first-option
-                      placeholder="Select Prime"
+                      placeholder="Select or enter Prime"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -365,7 +367,7 @@
                       allow-create
                       clearable
                       default-first-option
-                      placeholder="Select or enter status"
+                      placeholder="Select or enter Status"
                       :disabled="!_isallowed('write')"
                     >
                       <el-option
@@ -843,12 +845,13 @@ export default {
       }
     },
     _isallowed(salut) {
-      var programId = this.$route.params.programId
-      var contractId = this.$route.params.contractId
-      let fPrivilege = this.$contractPrivileges[programId][contractId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.overview.includes(s);
+      return this.checkPrivileges("SheetContract", salut, this.$route)
+      // var programId = this.$route.params.programId
+      // var contractId = this.$route.params.contractId
+      // let fPrivilege = this.$contractPrivileges[programId][contractId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return fPrivilege.overview.includes(s);
     },
   },
   computed: {

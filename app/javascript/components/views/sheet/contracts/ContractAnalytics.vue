@@ -984,13 +984,15 @@ export default {
       });
     },
      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var contractId = this.$route.params.contractId
-        let fPrivilege = this.$contractPrivileges[programId][contractId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        // console.log(fPrivilege)
-        return  fPrivilege.overview.includes(s);
+        return this.checkPrivileges("ContractAnalytics", salut, this.$route)
+
+        // var programId = this.$route.params.programId;
+        // var contractId = this.$route.params.contractId
+        // let fPrivilege = this.$contractPrivileges[programId][contractId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // // console.log(fPrivilege)
+        // return  fPrivilege.overview.includes(s);
           
     },
   },

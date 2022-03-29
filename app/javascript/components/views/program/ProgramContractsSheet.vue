@@ -536,10 +536,12 @@ export default {
      ]), 
    ...mapActions([]),
     _isallowed(salut) {
-        let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return pPrivilege.contracts.includes(s);     
+        return this.checkPrivileges("ProgramContractsSheet", salut, this.$route)
+
+        // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return pPrivilege.contracts.includes(s);     
       },
     goToContract(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing

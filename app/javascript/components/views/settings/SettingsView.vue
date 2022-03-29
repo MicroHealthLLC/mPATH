@@ -19,6 +19,7 @@
               :key="index" 
               style="width:350px"   
               @click.prevent="adminRoute(index)"
+              :class="{ 'd-none': !_isallowedProgramSettings('write', item) }"
             >
               <div>
                 <div class="p-2" style="font-size:3.5rem">
@@ -111,10 +112,12 @@ export default {
   methods: {
     ...mapMutations(["setProjectGroupFilter"]),
       _isallowed(salut) {
-      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return pPrivilege.contracts.includes(s);     
+          return this.checkPrivileges("SettingsView", salut, this.$route)
+
+      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return pPrivilege.contracts.includes(s);     
     },
      adminRoute(index) {
       // console.log(event, index, "This")
@@ -149,13 +152,14 @@ export default {
         );
       }
     },
-    _isallowedProgramSettings(settingType, salut) {
-      let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let settingTypeHash = {"Groups": "admin_groups", "Contracts": "admin_contracts", "Projects": "admin_facilities"}
-      let s = permissionHash[salut]
-      let type = settingTypeHash[settingType]
-      return pPrivilege[type].includes(s);
+    _isallowedProgramSettings(salut, settingType) {
+      return this.checkPrivileges("SettingsView", salut, this.$route, {settingType: settingType} )
+      // let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let settingTypeHash = {"Groups": "admin_groups", "Contracts": "admin_contracts", "Projects": "admin_facilities"}
+      // let s = permissionHash[salut]
+      // let type = settingTypeHash[settingType]
+      // return pPrivilege[type].includes(s);
     },
    },
   computed: {

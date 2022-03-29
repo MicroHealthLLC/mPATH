@@ -112,7 +112,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              filterable
+              sortable
+	      filterable
               label="Group"
             >
               <template slot-scope="scope">
@@ -221,7 +222,7 @@
           class="contractForm addContract p-0"
         >
           <span slot="title" class="text-left add-groups-header ">
-          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create New  Contract </h5>
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create Contract </h5>
         </span>
           <form accept-charset="UTF-8">
             <div class="form-group mx-3">
@@ -230,7 +231,7 @@
               >
               <el-input            
                 v-model="contractNameText"
-                placeholder="Enter new contract name here"
+                placeholder="Enter New Contract Name"
                 rows="1"
                 name="Program Name"
               />
@@ -241,7 +242,7 @@
               >
               <el-input              
                 v-model="contractNicknameText"
-                placeholder="Enter new contract name here"
+                placeholder="Enter New Contract Nickname"
                 rows="1"
                 name="Program Name"
               />
@@ -256,7 +257,7 @@
                 clearable
                 filterable
                 name="Project Group"
-                placeholder="Select Group"
+                placeholder="Search and select Group"
               >
                 <el-option
                   v-for="item in groupList"
@@ -646,7 +647,7 @@ export default {
       });
     },
     addAnotherContract() {
-      this.C_projectGroupFilter = null;
+      this.C_newContractGroupFilter = null;
       this.contractNameText = "";
       this.contractNicknameText = "";
       this.hideSaveBtn = false;
@@ -657,7 +658,7 @@ export default {
     },
     addContract() {
       this.dialogVisible = true;
-      this.C_projectGroupFilter = null;
+      this.C_newContractGroupFilter = null;
       this.contractNameText = "";
       this.contractNicknameText = "";
     },
