@@ -18,6 +18,7 @@
   |var program_settings_privileges_roles = "#{JSON.generate(current_user.program_settings_privileges_hash_by_role(program_ids: [@program_id]))}";
   |var privilege = "#{JSON.generate(current_user.privilege_hash)}";
   |var preferences = "#{JSON.generate(current_user.get_preferences.value )}";
+  |var project_facility_hash = "#{JSON.generate(generate_project_facility_hash )}";
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
 
 = javascript_pack_tag "dashboard", async: true

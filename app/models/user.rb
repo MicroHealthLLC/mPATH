@@ -665,25 +665,25 @@ class User < ApplicationRecord
   def facility_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
-    project_hash = []
+    project_hash = {}
     role_users = user.role_users.where.not(facility_project_id: nil)
     project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
     all_facility_projects = FacilityProject.where(id: role_users.map(&:facility_project_id).compact.uniq ) 
     facility_project_hash = all_facility_projects.group_by{|fp| fp.id}.transform_values{|values| values.map{|v| [v.project_id, v.facility_id] }.flatten.compact }
 
     role_users.each do |role_user|
-      h = {}
+      
       fp_id = role_user.facility_project_id
       if  fp_id && (role_privilegs = project_role_privileges[role_user.role_id])
-        h2 = {project_id: facility_project_hash[fp_id][0], facility_id: facility_project_hash[fp_id][1] }
+        h2 = {}
         role_privilegs.each do |rp|          
           h2[rp.role_type] = rp.privilege&.chars
         end
-        h[role_user.facility_project_id] = h2
+        project_hash[fp_id] = h2
       end
-      project_hash << h.with_indifferent_access if h.present?
+      # project_hash << h.with_indifferent_access if h.present?
     end
-    project_hash
+    project_hash.with_indifferent_access
   end
   
   # This will generate array of hash like this
@@ -691,7 +691,7 @@ class User < ApplicationRecord
   def contract_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
-    contarct_hash = []
+    contarct_hash = {}
     role_users = user.role_users.where.not(contract_id: nil)
     contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
     role_users.each do |role_user|
@@ -701,11 +701,11 @@ class User < ApplicationRecord
         role_privilegs.each do |rp|          
           h2[rp.role_type] = rp.privilege&.chars
         end
-        h[role_user.facility_project_id] = h2
+        contarct_hash[role_user.contract_id] = h2
       end
-      contarct_hash << h.with_indifferent_access if h.present?
+      # contarct_hash << h.with_indifferent_access if h.present?
     end
-    contarct_hash
+    contarct_hash.with_indifferent_access
   end
 
   def project_privileges_hash_by_role(program_ids: [])
@@ -741,7 +741,7 @@ class User < ApplicationRecord
     # end
     # c_ids
     user = self
-    contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.contract_id is not null and users.id = ? and role_privileges.privilege like ?", user.id, "%R%").distinct.pluck(:contract_id)
+    contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.contract_id is not null and users.id = ? ", user.id).distinct.pluck(:contract_id)
     if project_ids.any?
       contract_ids = Contract.where(project_id: project_ids, id: contract_ids).pluck(:id)
     end

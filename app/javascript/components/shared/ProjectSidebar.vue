@@ -215,7 +215,7 @@ export default {
       this.$emit("on-expand-facility-group", group);
     },
     _isallowedContracts(salut, c) {
-        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts"})
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.id})
 
         // let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
         // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
