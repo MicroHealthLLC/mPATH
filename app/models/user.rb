@@ -659,23 +659,35 @@ class User < ApplicationRecord
     ph.with_indifferent_access
   end
 
+  # This will generate array of hash like this
+  # e.g [{1441=>{:project_id=>9, :facility_id=>1438, "project_analytics"=>["R", "W"], "project_notes"=>["R", "W"]}}]
+  # {<facility_project_id>=>{<role types>=><privileges array>}} e.g. {1441=>{"project_notes"=>["R", "W"]}}
   def facility_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
     project_hash = []
     role_users = user.role_users.where.not(facility_project_id: nil)
     project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    all_facility_projects = FacilityProject.where(id: role_users.map(&:facility_project_id).compact.uniq ) 
+    facility_project_hash = all_facility_projects.group_by{|fp| fp.id}.transform_values{|values| values.map{|v| [v.project_id, v.facility_id] }.flatten.compact }
+
     role_users.each do |role_user|
       h = {}
-      if role_user.facility_project_id && project_role_privileges[role_user.role_id]
-        h[:facility_project_id] = role_user.facility_project_id 
-        h[:privileges] = project_role_privileges[role_user.role_id].map(&:privilege)
+      fp_id = role_user.facility_project_id
+      if  fp_id && (role_privilegs = project_role_privileges[role_user.role_id])
+        h2 = {project_id: facility_project_hash[fp_id][0], facility_id: facility_project_hash[fp_id][1] }
+        role_privilegs.each do |rp|          
+          h2[rp.role_type] = rp.privilege&.chars
+        end
+        h[role_user.facility_project_id] = h2
       end
-      project_hash << h if h.present?
+      project_hash << h.with_indifferent_access if h.present?
     end
     project_hash
   end
-
+  
+  # This will generate array of hash like this
+  # {<contract id>=>{<role types>=><privileges array>}} e.g. {1441=>{"contract_notes"=>["R", "W"]}}
   def contract_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
@@ -684,11 +696,14 @@ class User < ApplicationRecord
     contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
     role_users.each do |role_user|
       h = {}
-      if role_user.contract_id
-        h[:contract_id] = role_user.contract_id 
-        h[:privileges] = contract_role_privileges[role_user.role_id].map(&:privilege)
+      if role_user.contract_id && (role_privilegs = contract_role_privileges[role_user.role_id])
+        h2 = {}
+        role_privilegs.each do |rp|          
+          h2[rp.role_type] = rp.privilege&.chars
+        end
+        h[role_user.facility_project_id] = h2
       end
-      contarct_hash << h if h.present?
+      contarct_hash << h.with_indifferent_access if h.present?
     end
     contarct_hash
   end
@@ -712,7 +727,7 @@ class User < ApplicationRecord
     role_privileges.each do |rp|
       hash[rp.role_type] = rp.privilege.chars
     end
-    hash
+    hash.with_indifferent_access
   end 
 
 
