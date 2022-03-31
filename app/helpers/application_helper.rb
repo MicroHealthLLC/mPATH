@@ -8,4 +8,8 @@ module ApplicationHelper
     link_to text, "tel:#{groups.join '-'}"
   end
 
+  def generate_project_facility_hash
+    FacilityProject.where(project_id: current_user.authorized_programs.pluck(:id)).group_by{|fp| fp.project_id}.transform_values{|fps| fps.map{|f| {facility_id: f.facility_id, facility_project_id: f.id } } }
+  end
+
 end

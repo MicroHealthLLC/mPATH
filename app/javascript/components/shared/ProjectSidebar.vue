@@ -215,18 +215,21 @@ export default {
       this.$emit("on-expand-facility-group", group);
     },
     _isallowedContracts(salut, c) {
-        let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.id})
+
+        // let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
     },
     _isallowedProgramSettings(salut) {
-        let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return pPrivilege.admin_groups.includes(s) ||
-               pPrivilege.admin_contracts.includes(s) ||
-               pPrivilege.admin_facilities.includes(s);
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
+        // let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return pPrivilege.admin_groups.includes(s) ||
+        //        pPrivilege.admin_contracts.includes(s) ||
+        //        pPrivilege.admin_facilities.includes(s);
     },
     toggleAdminView() {
         // this.setShowAdminBtn(!this.getShowAdminBtn);

@@ -70,7 +70,7 @@ class Api::V1::LessonsController < AuthenticatedController
     if params[:project_id] && params[:facility_id]
       facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       
-      role_users = role_users.joins(:user, {role: :role_privileges}).where("role_privileges.privilege like ? and role_users.project_id = ? and role_users.facility_id = ?", "%R%", params[:project_id], project[:facility_id] ).distinct
+      role_users = role_users.joins(:user, {role: :role_privileges}).where("role_privileges.privilege like ? and role_users.facility_project_id = ?", "%R%", facility_project.id ).distinct
       
       if !role_users.any?
         response_hash = {lessons: lessons, errors: "You are not authorized!"}
