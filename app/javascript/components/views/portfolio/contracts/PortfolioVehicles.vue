@@ -16,12 +16,12 @@
     <el-table-column
       label="Vehicle Full Name"
       width="250"
-      prop="type">
+      prop="fullname">
     </el-table-column>
       <el-table-column
-      label="SINS or Subcategories"
-      width="250"
-      prop="type">
+      label="SINS or Subcategories"      
+      width="200"
+      prop="sins">
     </el-table-column>
      <el-table-column
       label="Contracting Agency"
@@ -30,18 +30,18 @@
     </el-table-column>
   <el-table-column
       label="Vehicle Type"
-      width="175"
+      width="125"
       prop="name">
     </el-table-column>
      <el-table-column
       label="Contract Number"
-      width="175"
+      width="125"
       prop="startdate">
     </el-table-column>
      <el-table-column
       label="Ceiling"
-      width="175"
-      prop="startdate">
+      width="125"
+      prop="ceiling">
     </el-table-column>
 
     <el-table-column
@@ -106,9 +106,63 @@ export default {
           code: 123, 
           type: 'FFP', 
           value: "$7,343,342.45",
+          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
           primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
           startdate: '2016-05-03',
           name: 'Tom',
+          ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          type: 'FFP', 
+          startdate: '2016-05-02',
+          value: "$7,343,342.45",
+          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          name: 'John',
+          primesub: "Prime",
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-04',
+          type: 'T&M', 
+          primesub: "Sub",
+            fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          value: "$5,643.45",
+          name: 'Morgan',
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-01',
+          name: 'Jessy',
+          type: 'T&M', 
+          value: "$17,343,342.45",
+          primesub: "Prime",
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-03',
+          name: 'Tom',
+          value: "$6,343,342.45",
+            fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          primesub: "Prime",
+          type: 'T&M', 
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+           code: 123, 
+           startdate:'2016-05-02',
+          name: 'John',
+          primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
+          value: "$7,343,342.45",
+          type: 'T&M', 
+            ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -117,14 +171,19 @@ export default {
           value: "$7,343,342.45",
           name: 'John',
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
+          ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-04',
           type: 'T&M', 
           primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
+          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
           value: "$5,643.45",
           name: 'Morgan',
+            ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -133,6 +192,8 @@ export default {
           type: 'T&M', 
           value: "$17,343,342.45",
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
+          ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -140,31 +201,27 @@ export default {
           name: 'Tom',
           value: "$6,343,342.45",
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           type: 'T&M', 
+          ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
            startdate:'2016-05-02',
           name: 'John',
           primesub: "Sub",
-           value: "$7,343,342.45",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
           value: "$7,343,342.45",
-          name: 'John',
-          primesub: "Prime",
+          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins: "8(a), SDVOSB, SB",
+          type: 'T&M', 
           address: 'No. 189, Grove St, Los Angeles'
         }, {
-          code: 123, 
+           code: 123, 
           startdate: '2016-05-04',
-          type: 'T&M', 
-          primesub: "Sub",
-          value: "$5,643.45",
           name: 'Morgan',
+          value: "$7,343,342.45",
+          primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -173,6 +230,7 @@ export default {
           type: 'T&M', 
           value: "$17,343,342.45",
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -181,14 +239,16 @@ export default {
           value: "$6,343,342.45",
           primesub: "Prime",
           type: 'T&M', 
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
            startdate:'2016-05-02',
           name: 'John',
           primesub: "Sub",
-           value: "$7,343,342.45",
+          value: "$7,343,342.45",
           type: 'T&M', 
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
@@ -196,37 +256,7 @@ export default {
           name: 'Morgan',
           value: "$7,343,342.45",
           primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-           value: "$7,343,342.45",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-          startdate: '2016-05-04',
-          name: 'Morgan',
-          value: "$7,343,342.45",
-          primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -234,6 +264,7 @@ export default {
           name: 'Jessy',
           value: "$7,343,342.45",
           primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'       
         }],
         search: '',
@@ -279,6 +310,11 @@ export default {
     width: 100%;
   }
 /deep/.el-table {
+    font-size: 13px !important;
+    th.el-table__cell>.cell {
+      word-break: break-word;
+      font-size: .88rem;
+    }
     th {
       color: #383838;
     }

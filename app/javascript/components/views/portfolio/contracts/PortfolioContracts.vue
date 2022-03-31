@@ -33,7 +33,7 @@
     style="width: 95%">
     <el-table-column
       label="Code"
-      width="50"
+      width="55"
       prop="code">
     </el-table-column>
     <el-table-column
@@ -402,6 +402,7 @@ export default {
   }
 
 /deep/.el-table {
+    font-size: 13px !important;
 
     th.el-table__cell>.cell {
       word-break: break-word;
