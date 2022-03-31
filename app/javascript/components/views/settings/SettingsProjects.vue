@@ -332,7 +332,7 @@
                 @click="saveProjectUserRole()"
                 v-if="projectRoleNames && projectRoleUsers"
                 v-tooltip="`Confirm`" 
-                class="bg-primary btn-sm text-light mr-2">               
+                class="bg-ligh btn-sm mr-1">               
                  <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>  Confirm
                </el-button>
       
@@ -363,7 +363,7 @@
               filterable
               label="Users">
               <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id">
+              <span v-if="projId && projId == scope.row.facility_project_id">
                 {{ scope.row.user_full_name }}
                   <!-- {{ scope.row.role_id}} -->          
               </span>
@@ -375,7 +375,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_id && scope.row.role_name">
+              <span v-if="projId && projId == scope.row.facility_project_id && scope.row.role_name">
                   {{ scope.row.role_name }}  
                <!-- <el-select
               v-model="scope.row.role_name"
@@ -545,7 +545,7 @@ export default {
       this.hideSaveBtn = false;
     },
     handleExpandChange (row, expandedRows) {
-			this.projId = row.id;
+			this.projId = row.facilityProjectId;
 			const lastId = this.expandRowKeys[0];
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
       //Commenting out setter.  Useful if we want saved users to populate dropdown upon loading
@@ -553,8 +553,9 @@ export default {
 		}, 
     addUserRole(index, rows) {
       this.rolesVisible = true
-      this.projId = rows.id
+      this.projId = rows.facilityProjectId
       this.projectRowData = rows
+      console.log(rows)
     },
     addProject() {
       this.dialogVisible = true;
@@ -692,7 +693,7 @@ export default {
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
       if (this.projId)  {
-            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_id)
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_project_id)
         } else return [].concat.apply([], roleUsers)
        
       }

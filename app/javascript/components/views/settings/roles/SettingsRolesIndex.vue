@@ -3,6 +3,9 @@
 NEXT TASK:  Add users to program admin roles
 1. Add button to Add Users to role
 2. Create three different "Create Role states per tab"
+
+3. PRogram Admin should be one value
+User/Roles header
  -->
 <div class="row">
     <div class="col-md-2">
@@ -680,6 +683,7 @@ NEXT TASK:  Add users to program admin roles
           <el-button  
             type="default" 
             v-tooltip="`Add User(s) to this Role`"
+            v-if="!scope.$index == 0"
             @click.prevent="addUserRole(scope.$index, scope.row)"               
             class="bg-primary text-light btn-sm">
           <i class="fas fa-users-medical mr-1"></i>

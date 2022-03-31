@@ -467,7 +467,7 @@
               <el-option
                 v-for="item in projectNames"
                 :value="item"
-                :key="item.id"
+                :key="item.facilityProjectId"
                 :label="item.facilityName"
               >
               </el-option>
@@ -569,7 +569,7 @@
       
         <el-table-column prop="role_name"  sortable label="Roles">
             <template slot-scope="scope">
-              <span v-if="scope.row.facility_id">
+              <span v-if="scope.row.facility_project_id">
              <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{scope.row.role_name}}   
               </span>
               <span v-if="scope.row.contract_id">
@@ -587,8 +587,8 @@
             label="Associations"
         >      
            <template slot-scope="scope">
-              <span v-if="scope.row.facility_id && projectNames">
-               {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t.facilityName)[0]}}
+              <span v-if="scope.row.facility_project_id && projectNames">
+               {{ projectNames.filter(t => t.facilityProjectId == scope.row.facility_project_id).map(t => t.facilityName)[0]}}
                  <!-- {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t)}} -->
               </span>
                  <span v-if="scope.row.contract_id && contractNames">
@@ -750,7 +750,7 @@ export default {
       return pPrivilege.contracts.includes(s);     
   },
   saveProjectUserRole(index, rows){
-    let projectIds = this.associatedProjects.map(t => t.facilityId)
+    let projectIds = this.associatedProjects.map(t => t.facilityProjectId)
     let projectUserRoleData = {
           userData: {
             roleId: this.projectRoleNames.id,
@@ -830,6 +830,7 @@ export default {
       this.fetchRoles(this.$route.params.programId)     
       this.openUserRoles = true    
       this.userData = rows       
+      console.log(this.projectNames)
     },
     closeUserRoles() {
       this.openUserRoles = false;
