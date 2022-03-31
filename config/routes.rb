@@ -104,7 +104,11 @@ Rails.application.routes.draw do
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
       get "/portfolio/tab_counts", to: "portfolio#tab_counts"
+      get "/portfolio/contracts", to: "portfolio#contracts"
       # get "/projects/:id", to: "projects#show"
+
+      # Portfolio Contracts
+   
 
       # Filter data
       get "/filter_data/programs", to: "filter_data#programs"
