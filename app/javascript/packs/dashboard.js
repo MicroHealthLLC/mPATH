@@ -229,12 +229,14 @@ Vue.prototype.findFacilityProjectId = (programId, projectId) => {
 Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
   console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
 
+  let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+  let s = permissionHash[salut]
+  let program_id = route.params.programId
+  let contract_id = route.params.contractId
+  let project_id = route.params.projectId
+
   if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    let program_id = route.params.programId
-    let contract_id = route.params.contractId
-    let project_id = route.params.projectId
+
 
     if (contract_id) {
 
@@ -250,7 +252,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     }
   }else if(["ProjectSidebar"].includes(page)){
 
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
     
     if(extraData["method"] == "isallowedProgramSettings"){
@@ -268,11 +269,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     }
 
   }else if(["ContractLessons", "SheetLessons", "portfolio_lesson_form", "MapLessons", "LessonContextMenu", "ContractLessonForm", "LessonForm"].includes(page) ){
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    let program_id = route.params.programId
-    let contract_id = route.params.contractId
-    let project_id = route.params.projectId
 
     if (contract_id) {
 
@@ -287,11 +283,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     }
 
   }else if( ["notes_show", "notes_sheets", "contract_notes_form", "notes_form", "notes_index","notes_sheets_index"].includes(page) ){
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    let program_id = route.params.programId
-    let contract_id = route.params.contractId
-    let project_id = route.params.projectId
 
     if (contract_id) {
 
@@ -306,11 +297,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     }
 
   }else if( ["KanbanRisks", "risk_sheets_index", "risk_calendar", "risk_index", "risk_show", "risk_form"].includes(page) ){
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    let program_id = route.params.programId
-    let contract_id = route.params.contractId
-    let project_id = route.params.projectId
 
     if (contract_id) {
 
@@ -325,11 +311,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     }
 
   }else if(["portfolio_task_form", "KanbanTasks", "task_sheet", "facility_show", "task_sheets_index", "task_index", "task_calendar", "task_form"].includes(page) ){
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    let program_id = route.params.programId
-    let contract_id = route.params.contractId
-    let project_id = route.params.projectId
 
     if (contract_id) {
 
@@ -337,25 +318,12 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       return contract_privileges && contract_privileges.contract_tasks && contract_privileges.contract_tasks.includes(s);
 
     } else {
-
       let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
-      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]             
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
       return facility_project_privileges && facility_project_privileges.project_tasks && facility_project_privileges.project_tasks.includes(s);
     }
 
   }else if( ["SheetContract", "MapAnalytics", "MapOverview", "MapProject", "SheetAnalytics", "SheetProject", "ContractAnalytics"].includes(page)){
-    // var programId = route.params.programId;
-    // var projectId = route.params.projectId
-    // let fPrivilege = Vue.prototype.$projectPrivileges[programId][projectId]
-    // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    // let s = permissionHash[salut]
-    // return  fPrivilege.overview.includes(s);
-    
-    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    let s = permissionHash[salut]
-    let program_id = route.params.programId
-    let contract_id = route.params.contractId
-    let project_id = route.params.projectId
 
     if (contract_id) {
 
@@ -365,18 +333,16 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     } else {
 
       let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
-      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]             
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
       return facility_project_privileges && facility_project_privileges.project_analytics && facility_project_privileges.project_analytics.includes(s);
     }
-
-
 
   }else if( ["ProgramContractsSheet", "ProgramView","SettingsSidebar" ].includes(page)){
     let pPrivilege = Vue.prototype.$programPrivileges[route.params.programId]        
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let s = permissionHash[salut]
     return pPrivilege.contracts.includes(s);
-    
+
   }else if( ["SettingsView", "SettingsGroups" ].includes(page)){
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
