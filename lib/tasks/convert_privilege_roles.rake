@@ -3,8 +3,7 @@ task :convert_privilege_roles => :environment do
   
   PROJECT_PRIVILEGS_ROLE_TYPES = ["project_analytics", "project_tasks", "project_issues", "project_risks", "project_lessons", "project_notes"]
   CONTRACT_PRIVILEGS_ROLE_TYPES = ["contract_analytics", "contract_tasks", "contract_issues", "contract_risks", "contract_lessons", "contract_notes"]
-  PROGRAM_ADMIN_PRIVILEGS_ROLE_TYPES = ["program_admin"]
-  PROGRAM_SETTINGS_ROLE_TYPES = ["program_setting_groups", "program_setting_users", "program_setting_projects", "program_setting_contracts" ]
+  PROGRAM_SETTINGS_ROLE_TYPES = ["program_setting_groups", "program_setting_users_roles", "program_setting_projects", "program_setting_contracts" ]
 
   def create_project_privileges_roles
     new_roles = []
@@ -16,7 +15,7 @@ task :convert_privilege_roles => :environment do
         new_roles << program_admin_role
         
         program_admin_role_privilege = program_admin_role.role_privileges.create([
-          {name: "program_admin", privilege: "RWD",role_type: "program_admin"}
+          {name: "program_setting_users_roles", privilege: "RWD",role_type: "program_setting_users_roles"}
         ])
         user_id = pp.user_id
         assign_roles = []
@@ -130,6 +129,15 @@ task :convert_privilege_roles => :environment do
       end
     end
   end
+
+  puts "----- Creating Project Privilegs Roles -----"
+  create_project_privileges_roles
+
+  puts "----- Creating Facility Privileges Roles -----"
+  create_facility_privileges_roles
+
+  puts "----- Creating Contract Privileges Roles -----"
+  create_contract_privileges_roles
 
   def show_project_privilege_count
     roles_count = 0
