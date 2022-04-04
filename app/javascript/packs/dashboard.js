@@ -227,7 +227,7 @@ Vue.prototype.findFacilityProjectId = (programId, projectId) => {
   return facilityProjectId;
 } 
 Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
-  // console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
+  console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
 
   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
   let s = permissionHash[salut]
@@ -253,9 +253,8 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
   }else if(["ProjectSidebar"].includes(page)){
 
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
-    
     if(extraData["method"] == "isallowedProgramSettings"){
-      return pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(permissionHash[salut]) && pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(permissionHash[salut]) && pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(permissionHash[salut]) &&  pPrivileges['program_setting_users']  && pPrivileges['program_setting_users'].includes(permissionHash[salut])
+      return pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(permissionHash[salut]) || pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(permissionHash[salut]) || pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(permissionHash[salut]) ||  pPrivileges['program_setting_users_roles']  && pPrivileges['program_setting_users_roles'].includes(permissionHash[salut])
     
     }else if(extraData["method"] == "isallowedContracts"){
       
@@ -342,13 +341,9 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let s = permissionHash[salut]
     return pPrivilege.contracts.includes(s);
-<<<<<<< HEAD
     
   }else if( ["SettingsView"].includes(page)){
-=======
 
-  }else if( ["SettingsView", "SettingsGroups" ].includes(page)){
->>>>>>> f8514c401a3a7bbd6665f39e67523f2de26b2c10
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
 
@@ -359,7 +354,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       return true
     }else if(extraData['settingType'] == 'Projects'  && pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(permissionHash[salut])){
       return true
-    }else if(extraData['settingType'] == 'Users'  && pPrivileges['program_setting_users']  && pPrivileges['program_setting_users'].includes(permissionHash[salut])){
+    }else if(extraData['settingType'] == 'Users'  && pPrivileges['program_setting_users_roles']  && pPrivileges['program_setting_users_roles'].includes(permissionHash[salut])){
       return true
     }
 

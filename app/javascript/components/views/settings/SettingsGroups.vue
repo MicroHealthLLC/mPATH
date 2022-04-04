@@ -627,7 +627,7 @@ export default {
     _isallowed(salut) {
       console.log(salut)
         console.log(this.$route)
-      return this.checkPrivileges("SettingsGroups", salut, this.$route)
+      return this.checkPrivileges("SettingsGroups", salut, this.$route, {})
       // let pPrivilege = this.$programSettingPrivileges[
       //   this.$route.params.programId
       // ];
