@@ -4,6 +4,7 @@ class Role < ApplicationRecord
   has_many :role_users, dependent: :destroy
   has_many :users, through: :role_users
   has_many :role_privileges, dependent: :destroy
+  accepts_nested_attributes_for :role_privileges
 
   def to_json(options = {})
     hash = self.attributes
@@ -19,24 +20,19 @@ class Role < ApplicationRecord
     else
       role = self
     end
-  
-    role.name = p_role[:name]
-    role.is_portfolio = false
-    role.project_id = p_role[:project_id]
-    role.user_id = user.id
-    role.is_default = false
-    role.type_of = p_role[:type_of]
-    return role if !role.save
-    role_privileges = role.role_privileges
-    ( p_role[:role_privileges] || []).each do |p_role_privilege|
-      p_role_privilege.merge!({role_id: role.id})
-      if p_role_privilege[:id]
-        rp = role_privileges.detect{|rp| rp.id == p_role_privilege[:id]}
-        rp.update(p_role_privilege)
-      else
-        RolePrivilege.create(p_role_privilege)
-      end
+
+    role.transaction do
+      role.name = p_role[:name]
+      role.is_portfolio = false
+      role.project_id = p_role[:project_id]
+      role.user_id = user.id
+      role.is_default = false
+      role.type_of = p_role[:type_of]
+      p_role_privileges = p_role[:role_privileges] || []
+      role.role_privileges_attributes = p_role_privileges if p_role_privileges.any?
+      role.save
     end
+
     role
   end
 

@@ -1291,22 +1291,22 @@ export default {
             rp: [
               {
                 privilege: this.groupsPriv.join(''),
-                role_type: "groups",
+                role_type: "program_setting_groups",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.usersPriv.join(''),
-                role_type: "users",
+                role_type: "program_setting_users_roles",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.projectsPriv.join(''),
-                role_type: "projects",
+                role_type: "program_setting_projects",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.contractsPriv.join(''),
-                role_type: "contracts",
+                role_type: "program_setting_contracts",
                 name: this.newRoleName, 
               },
             ],

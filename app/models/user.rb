@@ -708,11 +708,11 @@ class User < ApplicationRecord
     contarct_hash.with_indifferent_access
   end
 
-  def project_privileges_hash_by_role(program_ids: [])
+  def project_privileges_hash_by_role(program_ids: [])    
     user = self
     program_ids = user.project_ids if !program_ids.any?
     role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
-    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_ADMIN_PRIVILEGS_ROLE_TYPES)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES)
     role_privileges.as_json(only: [:name, :privilege, :role_type])
   end
 
@@ -822,8 +822,9 @@ class User < ApplicationRecord
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
         project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+        facility_project_id = FacilityProject.where(project_id: program_id, facility_id: project_id).first&.id
 
-        role_ids = user.role_users.where(project_id: program_id, facility_id: project_id).pluck(:role_id)
+        role_ids = user.role_users.where(facility_project_id: facility_project_id).pluck(:role_id)
         role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       end
 
