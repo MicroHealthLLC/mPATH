@@ -26,21 +26,32 @@
         </el-breadcrumb>
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <!-- <div
-              class="col-6"
-              :class="{ 'd-none': !_isallowedProgramSettings('write') }"
-            > -->
-               <div
+                     <!-- <div
               class="col-6"
               >
               <el-button
                 @click.prevent="openCreateUser"
+                v-if="_isallowed('write')"
                 class="bg-primary text-light mb-2"
               >
                <i class="fas fa-user-plus mr-1"></i> Create New User
               </el-button>
                <el-button
                 @click.prevent="addUser"
+                  v-if="_isallowed('write')"
+                class="bg-success text-light mb-2"
+              > -->
+                <div
+              class="col-6"
+              >
+              <el-button
+                @click.prevent="openCreateUser"             
+                class="bg-primary text-light mb-2"
+              >
+               <i class="fas fa-user-plus mr-1"></i> Create New User
+              </el-button>
+               <el-button
+                @click.prevent="addUser"                  
                 class="bg-success text-light mb-2"
               >
             <i class="fas fa-users-medical mr-1"></i> Add User(s) to Program
@@ -64,11 +75,17 @@
       
      
     <div class="container-fluid mt-2 mx-0">
-    <div  
+    <!-- <div  
+        v-loading="!programUsersLoaded"
+        v-if="_isallowed('read')"
+        element-loading-text="Fetching your data. Please wait..."
+        element-loading-spinner="el-icon-loading"     
+        class=""> -->
+         <div  
         v-loading="!programUsersLoaded"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"     
-        class="">
+        class=""> 
         <el-table
         v-if="programUsers && programUsers.length > 0"
        :data="
@@ -130,6 +147,9 @@
       
         </el-table>
     </div>
+       <!-- <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
+       </div> -->
     </div>
       <el-dialog
         :visible.sync="newUserDialogVisible"
@@ -431,7 +451,7 @@
         </h5> 
      </span>
       <div class="container-fluid p-2">
-         <div class="mt-0 row">
+            <div class="mt-0 row">
             <div class="col-5 pt-0">
              <label class="font-md mb-0 d-flex">Assign Project Role </label>
              <el-select
@@ -484,12 +504,12 @@
                 v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
                 v-tooltip="`Confirm`" 
                class="bg-light btn-sm">               
-               <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm
+               <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Project Role
                </el-button>     
               </div>             
              
             </div>
-           <div class="mt-3 row" v-if="_isallowed('read')">
+           <div class="my-3 row">
             <div class="col-5 pt-0">
              <label class="font-md mb-0 d-flex">Assign Contract Role </label>
              <el-select
@@ -542,13 +562,72 @@
                 v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
                 v-tooltip="`Confirm`" 
                 class="bg-light btn-sm">           
-               <i class="far fa-file-contract mr-1 mh-orange-text"></i> Confirm 
+               <i class="far fa-file-contract mr-1 mh-orange-text"></i> Confirm Contract Role
                </el-button> 
       
               </div>             
              
             </div>
+           <div class="mt-0 row">
+            <div class="col-5 text-center pt-0">
+             <label class="font-md mb-0 d-flex">Assign Admin Role </label>
+             <el-select
+              v-model="adminRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select role"          
+            >
+             <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'admin')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+              </div>
+           <!-- <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
+             <el-select
+              v-model="associatedContracts"
+              filterable           
+              class="w-100"
+              multiple
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Contracts to Associate"          
+            >
+              <el-option
+                v-for="item in contractNames"
+                :value="item"
+                :key="item.id"
+                :label="item.nickname"
+              >
+              </el-option>
+            </el-select>
+          
+             
+              </div> -->
+                <div class="col-2 pt-0">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
+                              
+               <el-button
+                type="default"
+                @click="saveAdminUserRole()"
+                v-if="adminRoleNames"
+                v-tooltip="`Confirm`" 
+                class="bg-light btn-sm">           
+        
+              <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>Confirm Admin Role 
+               </el-button> 
       
+              </div>             
+             
+            </div>
       <div class="mt-4 row">
         <div class="col-12 pt-0">
         <el-table
@@ -572,8 +651,11 @@
               <span v-if="scope.row.facility_project_id">
              <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{scope.row.role_name}}   
               </span>
-              <span v-if="scope.row.contract_id">
+              <span v-else-if="scope.row.contract_id">
                <i class="far fa-file-contract mr-1 mh-orange-text"></i>  {{scope.row.role_name}}
+               </span>
+                 <span v-else>
+             <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>  {{scope.row.role_name}}
                </span>
 
 
@@ -716,6 +798,7 @@ export default {
     "SET_ADD_USERS_TO_PROGRAM_STATUS",
     "SET_EDIT_USER_DATA_STATUS",
     "SET_PROJECT_ROLE_NAMES",
+    "SET_ADMIN_ROLE_NAMES",
     "SET_CONTRACT_ROLE_NAMES",
     "SET_ASSOCIATED_CONTRACTS",
     "SET_ASSOCIATED_PROJECTS",
@@ -743,12 +826,9 @@ export default {
       // }
    
 		},
-  _isallowed(salut) {
-      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return pPrivilege.contracts.includes(s);     
-  },
+   _isallowed(salut) {
+      return this.checkPrivileges("SettingsUsers", salut, this.$route)
+   },
   saveProjectUserRole(index, rows){
     let projectIds = this.associatedProjects.map(t => t.facilityProjectId)
     let projectUserRoleData = {
@@ -756,7 +836,7 @@ export default {
             roleId: this.projectRoleNames.id,
             userId: this.projId,
             programId: this.$route.params.programId, 
-            projectId: projectIds, 
+            projectIds: projectIds, 
             userRoles: true        
          },
       };
@@ -772,10 +852,24 @@ export default {
             roleId: this.contractRoleNames.id,
             userId: this.projId,
             programId: this.$route.params.programId, 
-            contractId: contractIds, 
+            contractIds: contractIds, 
             userRoles: true        
          },
       };
+      this.addUserToRole({
+        ...projectUserRoleData,
+      });
+    },
+   saveAdminUserRole(index, rows){
+    let projectUserRoleData = {
+          userData: {
+            roleId: this.adminRoleNames.id,
+            userId: this.projId,
+            programId: this.$route.params.programId,      
+            adminRole: true        
+         },
+      };
+      // console.log(projectUserRoleData)
       this.addUserToRole({
         ...projectUserRoleData,
       });
@@ -922,6 +1016,7 @@ export default {
         "getNewUserId",
         "getProjectRoleNames",
         "getContractRoleNames",
+        "getAdminRoleNames",
         "getAssociatedProjects",
         "getAssociatedContracts",
         "getAddedUsersToProgram",
@@ -973,6 +1068,15 @@ export default {
       },
       set(value) {
          this.SET_CONTRACT_ROLE_NAMES(value)
+         console.log(value)
+        }      
+    },
+   adminRoleNames: {     
+     get() {
+       return this.getAdminRoleNames
+      },
+      set(value) {
+         this.SET_ADMIN_ROLE_NAMES(value)
          console.log(value)
         }      
     },
@@ -1074,6 +1178,7 @@ export default {
           this.SET_ASSOCIATED_PROJECTS([])
           this.SET_ASSOCIATED_CONTRACTS([])
           this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_ADMIN_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_NAMES([])
         }
       },

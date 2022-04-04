@@ -26,16 +26,19 @@
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
             <div
-              class="col-6"             
-            >
+              class="col-6"  
+                    
+            > 
               <el-button
                 @click.prevent="addGroup"
+                 v-if="_isallowed('write')"    
                 class="bg-primary text-light mb-2"
               >
                 <i class="far fa-plus-circle mr-1"></i> Create Group
               </el-button>
               <el-button
                 @click.prevent="openPortfolioGroup"
+                 v-if="_isallowed('write')"    
                 class="bg-success text-light mb-2"
               >
                 <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group(s)
@@ -169,6 +172,7 @@
         <div class="container-fluid mt-2 mx-0">
           <div
             v-loading="!contentLoaded"
+            v-if="_isallowed('read')"
             element-loading-text="Fetching your data. Please wait..."
             element-loading-spinner="el-icon-loading"   
             element-loading-background="rgba(0, 0, 0, 0.8)"       
@@ -413,6 +417,9 @@
               
             </el-table>
           </div>
+            <div v-else class="text-danger mx-2 mt-5">
+              <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
+            </div>
         </div>
       </div>
       <!-- <div class="col-md-8" > -->
@@ -617,15 +624,17 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    // _isallowedProgramSettings(salut) {
-    //   // return this.checkPrivileges("SettingsGroups", salut, this.$route)
-    //   let pPrivilege = this.$programSettingPrivileges[
-    //     this.$route.params.programId
-    //   ];
-    //   let permissionHash = { write: "W", read: "R", delete: "D" };
-    //   let s = permissionHash[salut];
-    //   return pPrivilege.admin_groups.includes(s);
-    // },
+    _isallowed(salut) {
+      console.log(salut)
+        console.log(this.$route)
+      return this.checkPrivileges("SettingsGroups", salut, this.$route)
+      // let pPrivilege = this.$programSettingPrivileges[
+      //   this.$route.params.programId
+      // ];
+      // let permissionHash = { write: "W", read: "R", delete: "D" };
+      // let s = permissionHash[salut];
+      // return pPrivilege.admin_groups.includes(s);
+    },
   },
   mounted() {
   if(this.groups && this.groups.length <= 0){

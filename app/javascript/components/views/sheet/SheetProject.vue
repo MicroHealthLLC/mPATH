@@ -392,6 +392,7 @@ export default {
         });
     },
      _isallowed(salut) {
+       console.log(this.$route)
         return this.checkPrivileges("SheetProject", salut, this.$route)
 
         // var programId = this.$route.params.programId;

@@ -227,7 +227,7 @@ Vue.prototype.findFacilityProjectId = (programId, projectId) => {
   return facilityProjectId;
 } 
 Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
-  console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
+  // console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
 
   if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
@@ -377,13 +377,14 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     let s = permissionHash[salut]
     return pPrivilege.contracts.includes(s);
     
-  }else if( ["SettingsView", "SettingsGroups" ].includes(page)){
+  }else if( ["SettingsView"].includes(page)){
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
 
     if(extraData['settingType'] == 'Groups' && pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(permissionHash[salut])){
-      return true
+      console.log(`Groups setting type ${extraData}`)
     }else if(extraData['settingType'] == 'Contracts' && pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(permissionHash[salut])){
+      console.log(`contracts setting type ${extraData}`)
       return true
     }else if(extraData['settingType'] == 'Projects'  && pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(permissionHash[salut])){
       return true
