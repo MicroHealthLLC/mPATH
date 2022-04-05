@@ -13,6 +13,10 @@ class Role < ApplicationRecord
     hash
   end
 
+  def self.default_roles
+    where(is_default: true)
+  end
+
   def create_or_update_role(params, user)
     p_role = params
     if params[:id]

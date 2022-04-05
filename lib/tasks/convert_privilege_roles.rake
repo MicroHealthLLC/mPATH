@@ -25,6 +25,9 @@ task :convert_privilege_roles => :environment do
     RoleUser.import(role_users)
   end
 
+  puts "----- Assigning Default Roles -----"
+  assign_default_roles_to_users
+
   def create_project_privileges_roles
     new_roles = []
     ProjectPrivilege.all.each do |pp|
@@ -150,14 +153,14 @@ task :convert_privilege_roles => :environment do
     end
   end
 
-  puts "----- Creating Project Privilegs Roles -----"
-  create_project_privileges_roles
+  # puts "----- Creating Project Privilegs Roles -----"
+  # create_project_privileges_roles
 
-  puts "----- Creating Facility Privileges Roles -----"
-  create_facility_privileges_roles
+  # puts "----- Creating Facility Privileges Roles -----"
+  # create_facility_privileges_roles
 
-  puts "----- Creating Contract Privileges Roles -----"
-  create_contract_privileges_roles
+  # puts "----- Creating Contract Privileges Roles -----"
+  # create_contract_privileges_roles
 
   def show_project_privilege_count
     roles_count = 0
