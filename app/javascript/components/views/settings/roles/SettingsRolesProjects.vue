@@ -4,6 +4,7 @@
   v-if="tableData && tableData.length > 0"  
   :data="tableData"   
   height="450"
+  class="crudRow"
  :row-class-name="showHideCreateRow"
   >
   <el-table-column
@@ -1561,6 +1562,11 @@ if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+ .crudRow{
+  /deep/.el-input__inner{
+  border: 1px solid #d9534f;
+  }
+ }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
@@ -1594,6 +1600,7 @@ if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
       box-shadow: inset 0 0 0 2px #DD9036;
     }
   }
+
   .results {
     position: absolute;
     max-height: 300px;

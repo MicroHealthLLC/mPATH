@@ -925,10 +925,11 @@
             :header-cell-style="{ background: '#EDEDED' }"
             :data="adminUsers.filter(
                   (data) =>
-                    !searchRoleUsers 
-                )"           
-            height="300"  
-            :load="log(adminUsers.map(t => t.user_full_name))"         
+                    !searchRoleUsers || 
+                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
+                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                )"     
+            height="300"                
             width="auto"
             class="pl-4"
             > 
@@ -937,8 +938,11 @@
               filterable
               label="Users">
               <template slot-scope="scope">
+                <!-- <span>
+                {{ scope.row  }}  -->
               <span v-if="scope.row && roleId && roleId == scope.row.role_id">
-                {{ JSON.stringify(scope.row.map(t => t.user_full_name)).replace(/]|[['"]/g, ' ')}}
+                {{scope.row.user_full_name }}
+                <!-- {{ JSON.stringify(scope.row.user_full_name).replace(/]|[['"]/g, ' ') }} -->
                   <!-- {{ scope.row.role_id}} -->          
               </span>
               </template>
@@ -965,7 +969,7 @@
           <el-input
             v-model="searchRoleUsers"
             size="mini"
-            placeholder="Search Users"/>
+            placeholder="Search Users in this Role"/>
         </template>
         <!-- <template slot-scope="scope">
           <el-button
@@ -1092,11 +1096,11 @@ export default {
     // console.log(e)
   },
    saveProjectUserRole(index, rows){
-    let userIds = this.adminRoleUsers.map(t => t.id)
+    let user_ids = this.adminRoleUsers.map(t => t.id)
     let projectUserRoleData = {
           userData: {
             roleId: this.roleId,
-            userId: userIds,
+            userIds: user_ids,
             programId: this.$route.params.programId,            
          },
       };
@@ -1105,27 +1109,6 @@ export default {
         ...projectUserRoleData,
       });
     },
-
-    //  programAdminWrite() {
-    //   this.isProgramAdminWrite = !this.isProgramAdminWrite 
-    //  if(this.isProgramAdminWrite && !this.programAdminPriv.map(t => t).includes("W") ){
-    //    this.programAdminPriv.push(..."W")
-    //   } else if (!this.isProgramAdminWrite) {
-    //      this.programAdminPriv = this.programAdminPriv.filter(l => l !== "W")
-    //      }
-    //   console.log(`program: ${this.programAdminPriv}`)
-    // },
-    // programAdminDelete() {
-    //   this.isProgramAdminDelete = !this.isProgramAdminDelete
-    // if(this.isProgramAdminDelete && !this.programAdminPriv.map(t => t).includes("D") ){
-    //    this.programAdminPriv.push(..."D")
-    //   } else if (!this.isProgramAdminDelete) {
-    //      this.programAdminPriv = this.programAdminPriv.filter(l => l !== "D")
-    //      }
-      
-      
-    //  console.log(`program: ${this.programAdminPriv}`)
-    // },
   groupsRead() {
     this.isGroupsRead =  !this.isGroupsRead
   if(this.isGroupsRead && !this.groupsPriv.map(t => t).includes("R") ){
@@ -1384,12 +1367,21 @@ mounted() {
        }
       }       
     },
+    // adminUsers(){
+    //   if(this.getRoles && this.getRoles.length > 0 ){   
+    //   //  let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+    //   if (this.roleId)  {
+    //         return [].concat.apply([], this.getRoles.role_users.filter(t => t.length > 0 && this.role_id == t.id))
+    //     } else return [].concat.apply([], this.getRoles)       
+    //   }
+    // },
     adminUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
-      //  let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
       if (this.roleId)  {
-            return [].concat.apply([], this.getRoles.role_users.filter(t => t.length > 0 && this.role_id == t.id))
-        } else return [].concat.apply([], this.getRoles)       
+            return [].concat.apply([], roleUsers).filter(t => this.roleId == t.role_id)
+        } else return [].concat.apply([], roleUsers)
+       
       }
     },
      backToSettings() {
