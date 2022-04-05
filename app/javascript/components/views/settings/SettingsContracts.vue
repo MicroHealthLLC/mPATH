@@ -520,7 +520,7 @@ export default {
     ]),
        _isallowed(salut) {
       //  console.log(this.$route)
-        return this.checkPrivileges("SettingsContracts", salut, this.$route)
+        return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
 
         // var programId = this.$route.params.programId;
         // var projectId = this.$route.params.projectId

@@ -656,8 +656,7 @@ export default {
       });
     },
     _isallowed(salut) {
-         console.log(salut)
-      return this.checkPrivileges("SettingsProjects", salut, this.$route)
+      return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
    }, 
   },
   computed: {
