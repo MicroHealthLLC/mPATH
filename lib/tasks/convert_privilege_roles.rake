@@ -5,6 +5,26 @@ task :convert_privilege_roles => :environment do
   CONTRACT_PRIVILEGS_ROLE_TYPES = ["contract_analytics", "contract_tasks", "contract_issues", "contract_risks", "contract_lessons", "contract_notes"]
   PROGRAM_SETTINGS_ROLE_TYPES = ["program_setting_groups", "program_setting_users_roles", "program_setting_projects", "program_setting_contracts" ]
 
+
+  def assign_default_roles_to_users
+    role_ids = Role.where(name: ["untitled role-1", "untitled role-2", "untitled role-3"]).pluck(:id)
+    role_users = []
+    users = User.includes(:role_users, :projects)
+    users.in_batches(of: 500) do |users|
+      users.find_each do |user|
+        next if user.role_users.where("role_users.role_id in (?)", role_ids).count > 0
+
+        project_ids = user.project_ids
+        project_ids.each do |pid|
+          role_ids.each do |role_id|          
+            role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
+          end
+        end
+      end
+    end
+    RoleUser.import(role_users)
+  end
+
   def create_project_privileges_roles
     new_roles = []
     ProjectPrivilege.all.each do |pp|

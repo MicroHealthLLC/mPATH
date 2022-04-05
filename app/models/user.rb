@@ -681,8 +681,28 @@ class User < ApplicationRecord
         end
         project_hash[fp_id] = h2
       end
-      # project_hash << h.with_indifferent_access if h.present?
     end
+
+    # If user has program admin role and do not have project privilege role
+    # then we will provide full privilege for project associated with that program
+    # but if user has defined project privilege role and assigned to user then 
+    # it will overwrite those privileges
+    program_ids.each do |pid|
+      if has_program_setting_role?(pid)
+        pph = project_privileges_hash_by_role(program_ids: [pid])
+        all_facility_project_ids = FacilityProject.where(project_id: pid).pluck(:id)
+        all_facility_project_ids.each do |fp_id2|
+          if !project_hash[fp_id2]
+            h2 = {}
+            RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.each do |role_type|          
+              h2[role_type] = ["R", "W", "D"]
+            end
+            project_hash[fp_id2] = h2
+          end
+        end
+      end
+    end
+
     project_hash.with_indifferent_access
   end
   
@@ -712,8 +732,22 @@ class User < ApplicationRecord
     user = self
     program_ids = user.project_ids if !program_ids.any?
     role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
-    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
     role_privileges.as_json(only: [:name, :privilege, :role_type])
+  end
+
+  def has_program_setting_role?(program_id)
+    user = self
+    role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_id).distinct.pluck(:id)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
+    # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
+    # role_privileges.as_json(only: [:name, :privilege, :role_type])
+    has_access = false
+    role_privileges.each do |rp|
+      has_access = (rp.privilege.chars & ["R", "W", "D"]).size > 0
+      break if has_access
+    end
+    has_access
   end
 
   def program_settings_privileges_hash_by_role(program_ids: [])

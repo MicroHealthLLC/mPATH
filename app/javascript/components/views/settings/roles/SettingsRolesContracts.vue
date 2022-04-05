@@ -1364,32 +1364,32 @@ notesDelete() {
             rp: [
               {
                 privilege: this.analyticsPriv.join(''),
-                role_type: "contracts_analytics",
+                role_type: "contract_analytics",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.tasksPriv.join(''),
-                role_type: "contracts_tasks",
+                role_type: "contract_tasks",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.issuesPriv.join(''),
-                role_type: "contracts_issues",
+                role_type: "contract_issues",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.risksPriv.join(''),
-                role_type: "contracts_risks",
+                role_type: "contract_risks",
                 name: this.newRoleName, 
               }, 
              {
                 privilege: this.notesPriv.join(''),
-                role_type: "contracts_notes",
+                role_type: "contract_notes",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.lessonsPriv.join(''),
-                role_type: "contracts_lessons",
+                role_type: "contract_lessons",
                 name: this.newRoleName, 
               },
             ],

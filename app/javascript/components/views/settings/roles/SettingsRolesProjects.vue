@@ -1363,32 +1363,32 @@ notesDelete() {
             rp: [
               {
                 privilege: this.analyticsPriv.join(''),
-                role_type: "projects_analytics",
+                role_type: "project_analytics",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.tasksPriv.join(''),
-                role_type: "projects_tasks",
+                role_type: "project_tasks",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.issuesPriv.join(''),
-                role_type: "projects_issues",
+                role_type: "project_issues",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.risksPriv.join(''),
-                role_type: "projects_risks",
+                role_type: "project_risks",
                 name: this.newRoleName, 
               }, 
              {
                 privilege: this.notesPriv.join(''),
-                role_type: "projects_notes",
+                role_type: "project_notes",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.lessonsPriv.join(''),
-                role_type: "projects_lessons",
+                role_type: "project_lessons",
                 name: this.newRoleName, 
               },
             ],
