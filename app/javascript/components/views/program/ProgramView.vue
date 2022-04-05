@@ -1416,7 +1416,7 @@
             <template slot="label" class="text-right">
               LESSONS LEARNED
               <span class="badge badge-secondary badge-pill">
-                {{  programLessonsCount.total_count  }}
+                {{  filteredLessons.filtered.lessons.length  }}
               </span>
             </template>
             <ProgramLessons />
@@ -1498,6 +1498,7 @@ export default {
     'portfolioPrograms',
     "lessonsLoaded",
     "projectLessons",
+    "programLessons",
     "programLessonsCount",
     'projects',
     "facilities",
@@ -1725,6 +1726,79 @@ export default {
     ProgramView() {
      return `/programs/${this.$route.params.programId}/dataviewer`
     },
+    filteredLessons() {
+     let programLessonsObj = [];
+      if(!this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.project_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+
+      let lessons = programLessonsObj
+      .filter(lesson => {
+      if (this.projectGroupsFilter && this.projectGroupsFilter.length > 0) {
+         this.facility_project_ids = [];
+         let val = this.projectGroupsFilter
+         for(let k = 0; k < val.length; k++){
+        if(val[k].program_id){
+        this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_group_id){
+         this.facility_project_ids = this.facility_project_ids.concat(val[k].all_facility_project_ids)
+        }else if(val[k].project_id){
+        this.facility_project_ids.push(val[k].facility_project_id)
+        }
+      }
+       return this.facility_project_ids.includes(lesson.facility_project_id)
+      } else return true
+        }).filter((l) => {
+          if (this.searchLessons !== "") {
+            return (
+              l.title.toLowerCase().match(this.searchLessons.toLowerCase()) ||
+              (l.category && l.category
+                .toLowerCase()
+                .match(this.searchLessons.toLowerCase())) ||
+              l.project_group
+                .toLowerCase()
+                .match(this.searchLessons.toLowerCase()) ||
+              l.added_by.toLowerCase().match(this.searchLessons.toLowerCase())
+            );
+          } else return true;
+        })
+        .filter((l) => {
+          if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
+            let category = this.programCategoriesFilter.map((t) => t);
+            return category.includes(l.category);
+          } else return true;
+        })
+
+      return {
+        unfiltered: {
+          lessons,
+        },
+        filtered : {
+          lessons: lessons.filter(lesson => {
+            if (this.getHideDraft) {
+              return !lesson.draft
+            } else return true
+        }).filter(lesson => {
+          if (this.getHideComplete) {
+            return lesson.draft
+          } else return true
+        }).filter(lesson => {
+          if (this.getHideBriefed && !this.getHideImportant ) {
+            return lesson.reportable
+          }
+          if (this.getHideBriefed && this.getHideImportant) {
+            return lesson.reportable + lesson.important
+          } else return true
+        }).filter(lesson => {
+          if (this.getHideImportant && !this.getHideBriefed) {
+            return lesson.important
+          } if (this.getHideImportant && this.getHideBriefed) {
+            return lesson.important + lesson.reportable
+        } else return true
+        })
+      }
+    }
+   },
     filteredTasks() {
      let allTasks = this.filteredAllTasks
      if (this.getShowProjectStats){
