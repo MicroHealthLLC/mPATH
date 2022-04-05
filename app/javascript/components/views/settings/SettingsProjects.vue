@@ -31,6 +31,7 @@
             <div class="col" >
               <el-button
                 @click.prevent="addProject"
+                v-if="_isallowed('write')"
                 class="bg-primary text-light mb-2"
               >
                 <i class="far fa-plus-circle mr-1"></i> Create Project
@@ -77,6 +78,7 @@
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
+    v-if="_isallowed('read')"
     class="">
         <el-table
           :key="componentKey"   
@@ -196,6 +198,9 @@
           </el-table-column>
         </el-table>
    </div>
+       <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
+       </div>
         <el-dialog
           :visible.sync="dialogVisible"
           append-to-body
@@ -611,7 +616,7 @@ export default {
     let projectUserRoleData = {
           userData: {
             roleId: this.projectRoleNames.id,
-            userId: userIds,
+            userIds: userIds,
             programId: this.$route.params.programId, 
             projectId: this.projId          
          },
@@ -650,12 +655,9 @@ export default {
         }
       });
     },
-    // _isallowedProgramSettings(salut) {
-    //   let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return pPrivilege.admin_facilities.includes(s);
-    // },
+    _isallowed(salut) {
+      return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
+   }, 
   },
   computed: {
     ...mapGetters([

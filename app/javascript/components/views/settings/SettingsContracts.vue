@@ -30,6 +30,7 @@
           <div class="row px-0">
             <div class="col">
               <el-button
+                v-if="_isallowed('write')"
                 @click.prevent="addContract"
                 class="bg-primary text-light mb-2"
               >
@@ -77,6 +78,7 @@
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)" 
         class=""
+         v-if="_isallowed('read')"
         >
           <el-table
             v-if="tableData"    
@@ -209,6 +211,10 @@
             </el-table-column>
           </el-table>
         </div>
+        <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
+       </div>
+
         <!-- <span v-else class="mt-5">
           NO DATA TO DISPLAY
         </span> -->
@@ -512,6 +518,17 @@ export default {
       "addUserToRole", 
       "fetchRoles"
     ]),
+       _isallowed(salut) {
+      //  console.log(this.$route)
+        return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
+
+        // var programId = this.$route.params.programId;
+        // var projectId = this.$route.params.projectId
+        // let fPrivilege = this.$projectPrivileges[programId][projectId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return  fPrivilege.overview.includes(s);      
+    }, 
     // _isallowedProgramSettings(salut) {
     //   let pPrivilege = this.$programSettingPrivileges[
     //     this.$route.params.programId
@@ -525,7 +542,7 @@ export default {
     let contractUserRoleData = {
           userData: {
             roleId:    this.contractRoleNames.id,
-            userId:    userIds,
+            userIds:    userIds,
             programId: this.$route.params.programId, 
             contractId: this.projId          
          },

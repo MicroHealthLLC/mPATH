@@ -75,6 +75,10 @@ const settingsStore = {
      contract_role_users: [],
      contract_role_names: [],
 
+       //ADMIN USER ROLES
+      admin_role_users: [],
+      admin_role_names: [],
+
      associated_projects : [],
      associated_contracts: []
   }),
@@ -246,25 +250,34 @@ const settingsStore = {
       //ADD USER TO ROLE
      addUserToRole({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
-        console.log(userData)
+        // console.log(userData)
         let formData = new FormData();
-        if (userData.userRoles){
-          if (userData.projectId){
-            userData.projectId.forEach((ids) => {
+     
+          if (userData.projectIds){
+            userData.projectIds.forEach((ids) => {
             formData.append("role_users[][user_id]", userData.userId);
             formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)  
             formData.append("role_users[][facility_project_id]", ids)  
             });
-          } if (userData.contractId){
-            userData.contractId.forEach((ids) => {
+          } 
+          
+          if (userData.contractIds){
+            userData.contractIds.forEach((ids) => {
             formData.append("role_users[][user_id]", userData.userId);
             formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)      
             formData.append("role_users[][contract_id]", ids)      
             });
           } 
-         }  else {
+
+         if (userData.adminRole) {
+            formData.append("role_users[][user_id]", userData.userId);
+            formData.append("role_users[][project_id]", userData.programId);
+            formData.append("role_users[][role_id]", userData.roleId)
+          } 
+         
+          if (userData.userIds) {
             userData.userId.forEach((ids) => {
             formData.append("role_users[][user_id]", ids);
             formData.append("role_users[][project_id]", userData.programId)
@@ -279,7 +292,7 @@ const settingsStore = {
             }
             });
 
-        }
+          }
        
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
@@ -815,6 +828,9 @@ const settingsStore = {
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
     SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
 
+    SET_ADMIN_ROLE_USERS: (state, value) => (state.admin_role_users = value),
+    SET_ADMIN_ROLE_NAMES: (state, value) => (state.admin_role_names = value),
+
     SET_ASSOCIATED_PROJECTS: (state, value) => (state.associated_projects = value),
     SET_ASSOCIATED_CONTRACTS: (state, value) => (state.associated_contracts = value),
 
@@ -895,6 +911,9 @@ const settingsStore = {
 
     getContractRoleUsers: (state) => state.contract_role_users,
     getContractRoleNames: (state) => state.contract_role_names,
+
+    getAdminRoleUsers: (state) => state.admin_role_users,
+    getAdminRoleNames: (state) => state.admin_role_names,
 
     getAssociatedProjects: (state) => state.associated_projects,
     getAssociatedContracts: (state) => state.associated_contracts,
