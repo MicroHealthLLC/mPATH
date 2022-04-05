@@ -852,18 +852,23 @@ class User < ApplicationRecord
         program_id = contract.project_id.to_s
         contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
 
-        role_ids = user.role_users.where(project_id: program_id, contract_id: project_id).pluck(:role_id)
+        # role_ids = user.role_users.where(project_id: program_id, contract_id: contract_id).pluck(:role_id)
+        role_ids = user.role_users.select{|ru| ru.project_id == program_id &&  ru.contract_id == contract_id }.map(&:role_id).compact.uniq
         role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
         project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
-        facility_project_id = FacilityProject.where(project_id: program_id, facility_id: project_id).first&.id
-
-        role_ids = user.role_users.where(facility_project_id: facility_project_id).pluck(:role_id)
+        # facility_project_id = FacilityProject.where(project_id: program_id, facility_id: project_id).first&.id
+        facility_project_id = user.facility_projects.detect{|fp| fp.project_id == program_id.to_i && fp.facility_id == project_id.to_i}.id
+        
+        # role_ids = user.role_users.where(facility_project_id: facility_project_id).pluck(:role_id)
+        role_ids = user.role_users.select{|ru| ru.facility_project_id == facility_project_id}.map(&:role_id).compact.uniq
         role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       end
 
-      role_privileges = RolePrivilege.where(role_id: role_ids, role_type: role_type).pluck(:privilege).flatten.join.chars.uniq
+      # role_privileges = RolePrivilege.where(role_id: role_ids, role_type: role_type).pluck(:privilege).flatten.join.chars.uniq
+      
+      role_privileges = user.role_privileges.select{|rp| role_ids.include?(rp.role_id) && rp.role_type == role_type}.map(&:privilege).compact.flatten.join.chars.uniq
 
       result = false
       short_action_code = action_code_hash[action]
