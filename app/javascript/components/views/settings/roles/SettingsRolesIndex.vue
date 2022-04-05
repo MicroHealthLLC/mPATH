@@ -1088,18 +1088,8 @@ export default {
   methods: {
     ...mapMutations(["SET_NEW_ROLE_STATUS", "SET_SHOW_CREATE_ROW", "SET_PROJECT_ROLE_USERS", "SET_ADD_USER_TO_ROLE_STATUS"]),
   ...mapActions(["fetchRoles", "createRole", "addUserToRole"]),
-    // programAdminRead() {
-    //   this.isProgramAdminRead = !this.isProgramAdminRead  
-    //   if(this.isProgramAdminRead && !this.programAdminPriv.map(t => t).includes("R") ){
-    //      this.programAdminPriv.push(..."R")
-    //   } else if (!this.isProgramAdminRead) {
-    //      this.programAdminPriv = this.programAdminPriv.filter(t => t !== "R")
-    //   }
-    //    console.log(`program: ${this.programAdminPriv}`)
-
-    // },
   log(e){
-    console.log(e)
+    // console.log(e)
   },
    saveProjectUserRole(index, rows){
     let userIds = this.adminRoleUsers.map(t => t.id)
