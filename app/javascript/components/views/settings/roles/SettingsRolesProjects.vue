@@ -51,7 +51,7 @@
 
     <span v-if="scope.$index !== 0">
         <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'projects_analytics' && 
+        v-if="scope.row.role_privileges.map(t => t.role_type)[0] == project.analytics && 
         scope.row.role_privileges.map(t => t.privilege)[0].includes('R')"  
         > 
           <!-- {{ scope.row.role_privileges.map(t => t.role_type)[0]}}  = 'projects_analytics'  -->
@@ -85,7 +85,7 @@
       v-if="scope.$index !== 0"  
       >
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'projects_analytics' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[0] == project.analytics && 
       scope.row.role_privileges.map(t => t.privilege)[0].includes('W')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -115,7 +115,7 @@
 
        <span v-if="scope.$index !== 0">
           <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'projects_analytics' && 
+          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == project.analytics && 
           scope.row.role_privileges.map(t => t.privilege)[0].includes('D')"  
           >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i> 
@@ -149,7 +149,7 @@
 
         <span v-if="scope.$index !== 0">
           <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'projects_tasks' && 
+          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == project.tasks && 
           scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
           >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -179,7 +179,7 @@
 
         <span v-if="scope.$index !== 0 ">
           <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'projects_tasks' && 
+          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == project.tasks && 
           scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
           >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -209,7 +209,7 @@
 
         <span v-if="scope.$index !== 0">
           <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'projects_tasks' && 
+          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == project.tasks && 
           scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
           >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -244,7 +244,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'projects_issues' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == project.issues && 
       scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -274,7 +274,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'projects_issues' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[2] ==  project.issues && 
       scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -305,7 +305,7 @@
     <span 
       v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'projects_issues' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == project.issues && 
       scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -340,7 +340,7 @@
 
     <span v-if="scope.$index !== 0" >
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects_risks' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == project.risks && 
       scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -370,7 +370,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects_risks' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == project.risks && 
       scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -400,7 +400,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'projects_risks' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == project.risks && 
       scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -435,7 +435,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'projects_notes' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == project.notes && 
       scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -465,7 +465,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'projects_notes' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == project.notes && 
       scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -495,7 +495,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'projects_notes' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == project.notes && 
       scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -530,7 +530,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == 'projects_lessons' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == project.lessons && 
       scope.row.role_privileges.map(t => t.privilege)[5].includes('R')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -560,7 +560,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == 'projects_lessons' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[5] ==  project.lessons && 
       scope.row.role_privileges.map(t => t.privilege)[5].includes('W')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -590,7 +590,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == 'projects_lessons' && 
+      v-if="scope.row.role_privileges.map(t => t.role_type)[5] ==  project.lessons && 
       scope.row.role_privileges.map(t => t.privilege)[5].includes('D')"  
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
@@ -1363,32 +1363,32 @@ notesDelete() {
             rp: [
               {
                 privilege: this.analyticsPriv.join(''),
-                role_type: "projects_analytics",
+                role_type: "project_analytics",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.tasksPriv.join(''),
-                role_type: "projects_tasks",
+                role_type: "project_tasks",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.issuesPriv.join(''),
-                role_type: "projects_issues",
+                role_type: "project_issues",
                 name: this.newRoleName, 
               },
               {
                 privilege: this.risksPriv.join(''),
-                role_type: "projects_risks",
+                role_type: "project_risks",
                 name: this.newRoleName, 
               }, 
              {
                 privilege: this.notesPriv.join(''),
-                role_type: "projects_notes",
+                role_type: "project_notes",
                 name: this.newRoleName, 
               }, 
               {
                 privilege: this.lessonsPriv.join(''),
-                role_type: "projects_lessons",
+                role_type: "project_lessons",
                 name: this.newRoleName, 
               },
             ],
@@ -1397,6 +1397,7 @@ notesDelete() {
       this.createRole({
         ...newRoleData,
       });
+      console.log(this.project.tasks)
       this.newRoleName = ""
       this.SET_SHOW_CREATE_ROW(!this.showCreateRow)
       this.newRoleName = ""
@@ -1464,11 +1465,10 @@ notesDelete() {
     }
     },
     handleClick(tab, event) { 
-      console.log(tab)
-        // Route redirecting incase we want to assign url paths to each tab
+             // Route redirecting incase we want to assign url paths to each tab
         // if(tab.index == 1) {
         //  this.$router.push({ name: "SettingsRolesProjects" })
-        // }    
+        // }   
    
     },
 
@@ -1517,6 +1517,16 @@ if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
         "getRoles",
         "showCreateRow"
     ]),
+    project(){
+      return {
+        analytics: 'project_analytics',
+        tasks: 'project_tasks',
+        issues: 'project_issues',
+        risks: 'project_risks',
+        lessons: 'project_lessons',
+        notes: 'project_notes'
+      }
+    },
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
