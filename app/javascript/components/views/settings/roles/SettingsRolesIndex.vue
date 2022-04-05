@@ -921,14 +921,14 @@
         <div class="col-12 pt-0">
  
             <el-table
-            v-if="adminUsers"
+            v-if="adminUsers && adminUsers.length > 0"
             :header-cell-style="{ background: '#EDEDED' }"
             :data="adminUsers.filter(
                   (data) =>
-                    !searchRoleUsers ||
-                    data.role_users.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
+                    !searchRoleUsers 
                 )"           
-            height="300"
+            height="300"  
+            :load="log(adminUsers.map(t => t.user_full_name))"         
             width="auto"
             class="pl-4"
             > 
@@ -937,8 +937,8 @@
               filterable
               label="Users">
               <template slot-scope="scope">
-              <span v-if="scope.row.role_users && roleId && roleId == scope.row.id">
-                {{ JSON.stringify(scope.row.role_users.map(t => t.user_full_name)).replace(/]|[['"]/g, ' ')}}
+              <span v-if="scope.row && roleId && roleId == scope.row.role_id">
+                {{ JSON.stringify(scope.row.map(t => t.user_full_name)).replace(/]|[['"]/g, ' ')}}
                   <!-- {{ scope.row.role_id}} -->          
               </span>
               </template>
@@ -1098,6 +1098,9 @@ export default {
     //    console.log(`program: ${this.programAdminPriv}`)
 
     // },
+  log(e){
+    console.log(e)
+  },
    saveProjectUserRole(index, rows){
     let userIds = this.adminRoleUsers.map(t => t.id)
     let projectUserRoleData = {
@@ -1148,7 +1151,7 @@ export default {
       this.rolesVisible = true
       this.roleId = rows.id
       this.roleRowData = rows
-      //  console.log(this.adminUsers)
+       console.log(this.adminUsers)
     },
    groupsWrite() {
       this.isGroupsWrite = !this.isGroupsWrite
@@ -1395,7 +1398,7 @@ mounted() {
       if(this.getRoles && this.getRoles.length > 0 ){   
       //  let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
       if (this.roleId)  {
-            return [].concat.apply([], this.getRoles).filter(t => this.roleId == t.id)
+            return [].concat.apply([], this.getRoles.role_users.filter(t => t.length > 0 && this.role_id == t.id))
         } else return [].concat.apply([], this.getRoles)       
       }
     },
