@@ -153,9 +153,9 @@ contract_client_types.each do |name|
 end
 
 puts "Adding default system roles"
-roles = ["untitled role-1", "untitled role-2", "untitled role-3"]
+roles = ["update-project"]
 all_role_privileges_hash = []
-RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES.each do |role_privilege|
+RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.each do |role_privilege|
   all_role_privileges_hash << {name: role_privilege, privilege: "RWD",role_type: role_privilege}
 end
 roles.each do |name|
@@ -163,7 +163,7 @@ roles.each do |name|
     s.name = name
     s.is_portfolio = true
     s.is_default = true
-    s.type_of = "admin"
+    s.type_of = "project"
     s.role_privileges_attributes = all_role_privileges_hash
   end
 end

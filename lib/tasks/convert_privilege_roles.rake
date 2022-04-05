@@ -7,17 +7,23 @@ task :convert_privilege_roles => :environment do
 
 
   def assign_default_roles_to_users
-    role_ids = Role.where(name: ["untitled role-1", "untitled role-2", "untitled role-3"]).pluck(:id)
+    role_ids = Role.where(name: ["update-project"]).pluck(:id)
     role_users = []
-    users = User.includes(:role_users, :projects)
+    users = User.includes(:role_users, :projects, :facility_projects)
     users.in_batches(of: 500) do |users|
       users.find_each do |user|
         next if user.role_users.where("role_users.role_id in (?)", role_ids).count > 0
 
-        project_ids = user.project_ids
-        project_ids.each do |pid|
+        # project_ids = user.project_ids
+        # project_ids.each do |pid|
+        #   role_ids.each do |role_id|          
+        #     role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
+        #   end
+        # end
+        facility_project_ids = user.facility_project_ids
+        facility_project_ids.each do |fid|
           role_ids.each do |role_id|          
-            role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
+            role_users << RoleUser.new(user_id: user.id, role_id: role_id, facility_project_id: fid)
           end
         end
       end

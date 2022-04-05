@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :project_users, dependent: :destroy
   has_many :projects, through: :project_users
   has_many :facilities
+  has_many :facility_projects, through: :projects
   has_many :risks
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
