@@ -612,11 +612,11 @@ export default {
        
     },
   saveProjectUserRole(index, rows){
-    let userIds = this.projectRoleUsers.map(t => t.id)
+    let user_ids = this.projectRoleUsers.map(t => t.id)
     let projectUserRoleData = {
           userData: {
             roleId: this.projectRoleNames.id,
-            userIds: userIds,
+            userIds: user_ids,
             programId: this.$route.params.programId, 
             projectId: this.projId          
          },

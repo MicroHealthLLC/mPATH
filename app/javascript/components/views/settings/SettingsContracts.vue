@@ -538,11 +538,11 @@ export default {
     //   return pPrivilege.admin_contracts.includes(s);
     // },
   saveContractUserRole(index, rows){
-    let userIds = this.contractRoleUsers.map(t => t.id)
+    let user_ids = this.contractRoleUsers.map(t => t.id)
     let contractUserRoleData = {
           userData: {
             roleId:    this.contractRoleNames.id,
-            userIds:    userIds,
+            userIds:    user_ids,
             programId: this.$route.params.programId, 
             contractId: this.projId          
          },

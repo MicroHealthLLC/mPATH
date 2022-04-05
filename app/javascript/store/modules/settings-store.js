@@ -278,7 +278,7 @@ const settingsStore = {
           } 
          
           if (userData.userIds) {
-            userData.userId.forEach((ids) => {
+            userData.userIds.forEach((ids) => {
             formData.append("role_users[][user_id]", ids);
             formData.append("role_users[][project_id]", userData.programId)
             if(userData.roleId){
