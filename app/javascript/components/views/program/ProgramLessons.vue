@@ -1105,7 +1105,7 @@ export default {
         })
         .filter((l) => {
           if (this.programCategoriesFilter && this.programCategoriesFilter.length > 0) {
-            let category = this.programCategoriesFilter.map((t) => t);
+            let category = this.programCategoriesFilter.map((t) => t.name);
             return category.includes(l.category);
           } else return true;
         })
