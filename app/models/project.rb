@@ -49,16 +49,45 @@ class Project < SortableRecord
 
   validates_uniqueness_of :name, case_sensitive: false
   validates :name, presence: true
+  validate :check_min_program_admins
 
   before_create :set_uuid
   after_save :grant_access_to_admins
   after_save :add_not_started_status
+
+  # Program admins are those who has any of RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES roles for this program
+  # i.e. check Role#get_program_admins 
+  attr_accessor :admin_program_admins
 
   def as_json(options=nil)
     json = super(options)
     json.merge(
       project_type: self.project_type.try(:name)
     ).as_json
+  end
+
+  def check_min_program_admins
+    if self.persisted?
+      role_id = Role.program_admin_role.id
+      role_user_count = RoleUser.where(role_id: role_id, project_id: self.id).count
+      if role_user_count < 1
+        self.errors.add(:base, "There must be atleast one program admin assigned")
+        return false
+      end
+    else
+      if admin_program_admins.reject { |c| c.empty? }.size < 1
+        self.errors.add(:base, "There must be atleast one program admin assigned")
+        return false
+      end
+    end
+  end
+
+  def get_program_admins
+    role_id = Role.program_admin_role.id
+    User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
+  end
+  def get_program_admin_ids
+    get_program_admins.pluck(:id)
   end
 
   def total_progress

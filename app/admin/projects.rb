@@ -68,7 +68,7 @@ ActiveAdmin.register Project do
           f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
-          f.input :admin_program_admins, label: 'Program Admins', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admins ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          f.input :admin_program_admins, label: 'Program Admins', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
         end
       end
 
@@ -146,13 +146,13 @@ ActiveAdmin.register Project do
       # super
       p_params = permitted_params[:project]
       user_ids = p_params.delete("user_ids")
-      project_admins = p_params.delete("admin_program_admins")
+      # project_admins = p_params.delete("admin_program_admins")
       project = Project.new(p_params)
       if project.save
         project.user_ids = project.user_ids + user_ids if user_ids.present?
-        users = User.where(id: project_admins)
+        users = User.where(id: project.admin_program_admins)
         role_users = []
-        role_id = Role.where(name: "program-admin").first.id
+        role_id = Role.program_admin_role.id
         users.each do |user|
           role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: project.id)
         end
@@ -174,6 +174,26 @@ ActiveAdmin.register Project do
           user.remove_all_privileges(resource.id)
         end if removed_user_ids.any?
       end
+      p_params = permitted_params[:project]
+
+      role_id = Role.program_admin_role.id
+
+      p_project_admin_ids = p_params.delete("admin_program_admins").reject { |c| c.empty? }.map(&:to_i)
+      existing_program_admin_ids = resource.get_program_admin_ids
+
+      all_project_admin_ids = (p_project_admin_ids + existing_program_admin_ids).uniq
+      new_project_admin_ids = (all_project_admin_ids - existing_program_admin_ids).uniq
+      remove_project_admin_ids = (all_project_admin_ids - p_project_admin_ids).uniq
+
+      role_users = []
+      users = User.where(id: new_project_admin_ids)
+      users.each do |user|
+        role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: resource.id)
+      end
+      RoleUser.import(role_users)
+      
+      RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
+
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
         block.call(success, failure) if block

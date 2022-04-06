@@ -688,21 +688,21 @@ class User < ApplicationRecord
     # then we will provide full privilege for project associated with that program
     # but if user has defined project privilege role and assigned to user then 
     # it will overwrite those privileges
-    program_ids.each do |pid|
-      if has_program_setting_role?(pid)
-        pph = project_privileges_hash_by_role(program_ids: [pid])
-        all_facility_project_ids = FacilityProject.where(project_id: pid).pluck(:id)
-        all_facility_project_ids.each do |fp_id2|
-          if !project_hash[fp_id2]
-            h2 = {}
-            RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.each do |role_type|          
-              h2[role_type] = ["R", "W", "D"]
-            end
-            project_hash[fp_id2] = h2
-          end
-        end
-      end
-    end
+    # program_ids.each do |pid|
+    #   if has_program_setting_role?(pid)
+    #     pph = project_privileges_hash_by_role(program_ids: [pid])
+    #     all_facility_project_ids = FacilityProject.where(project_id: pid).pluck(:id)
+    #     all_facility_project_ids.each do |fp_id2|
+    #       if !project_hash[fp_id2]
+    #         h2 = {}
+    #         RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.each do |role_type|          
+    #           h2[role_type] = ["R", "W", "D"]
+    #         end
+    #         project_hash[fp_id2] = h2
+    #       end
+    #     end
+    #   end
+    # end
 
     project_hash.with_indifferent_access
   end

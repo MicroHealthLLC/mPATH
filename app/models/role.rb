@@ -13,6 +13,10 @@ class Role < ApplicationRecord
     hash
   end
 
+  def self.program_admin_role
+    Role.where(name: "program-admin").first
+  end
+
   def self.default_roles
     where(is_default: true)
   end
