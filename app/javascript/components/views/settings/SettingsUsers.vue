@@ -48,7 +48,7 @@
                 @click.prevent="openCreateUser"             
                 class="bg-primary text-light mb-2"
               >
-               <i class="fas fa-user-plus mr-1"></i> Create New User
+               <i class="fas fa-user-plus mr-1"></i> Create User
               </el-button>
                <el-button
                 @click.prevent="addUser"                  
@@ -124,7 +124,7 @@
             </el-button> 
             <el-button  
             type="default" 
-            v-tooltip="`Manage User Privileges`"
+            v-tooltip="`Manage User Roles`"
             @click.prevent="openUserRoleDialog(scope.$index, scope.row)" 
             v-if="scope.$index !== rowIndex"
             class="bg-primary text-light btn-sm">
@@ -446,190 +446,56 @@
       class="p-0 userRoles"       
         >
       <span slot="title" class="text-left add-groups-header ">
-        <h5 style="color:#383838" v-if="userData"> 
-          <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i>  {{ userData.full_name }}
-        </h5> 
+        <h5 style="color:#383838"> 
+          <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i> <b>Assigned Roles 
+            
+             </b>
+              <span class="badge badge-secondary badge-pill">
+          <span v-if="projectUsers">{{ projectUsers.length }}</span>        
+        </span>
+        </h5>       
      </span>
-      <div class="container-fluid p-2">
-            <div class="mt-0 row">
-            <div class="col-5 pt-0">
-             <label class="font-md mb-0 d-flex">Assign Project Role </label>
-             <el-select
-              v-model="projectRoleNames"
-              filterable           
-              class="w-100"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Role"          
-            >
-             <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'projects')"
-                :value="item"
-                :key="item.id"
-                :label="item.name"
+     <div class="roleUser mh-orange text-light" v-if="userData">
+         <span class="p-2"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
+     </div>
+    
+     
+        <div class="mb-3">
+        <el-button-group>
+          <el-button 
+          type="default"
+          v-tooltip="`Assign Project Role`"
+          class="bg-light btn-sm"
+          @click.prevent="assignProjectRole"   
               >
-              </el-option>
-            </el-select>
-              </div>
-           <div class="col-5 pt-0">
-              <label class="font-md mb-0 d-flex">Associate Projects to Role </label>
-             <el-select
-              v-model="associatedProjects"
-              multiple
-              filterable           
-              class="w-100"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Projects to Associate"          
-            >
-              <el-option
-                v-for="item in projectNames"
-                :value="item"
-                :key="item.facilityProjectId"
-                :label="item.facilityName"
+          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>      
+              Assign Project Role
+          </el-button>
+              <el-button 
+          type="default"
+          class="bg-light btn-sm"
+          v-tooltip="`Assign Project Role`"
+          @click.prevent="assignContractRole"   
               >
-              </el-option>
-            </el-select>
-          
-             
-              </div>
-                <div class="col-2 pt-0">
-              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                              
-                <el-button
-                type="default"    
-                @click="saveProjectUserRole()"          
-                v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
-                v-tooltip="`Confirm`" 
-               class="bg-light btn-sm">               
-               <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Project Role
-               </el-button>     
-              </div>             
-             
-            </div>
-           <div class="my-3 row">
-            <div class="col-5 pt-0">
-             <label class="font-md mb-0 d-flex">Assign Contract Role </label>
-             <el-select
-              v-model="contractRoleNames"
-              filterable           
-              class="w-100"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select role"          
-            >
-             <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
-                :value="item"
-                :key="item.id"
-                :label="item.name"
-              >
-              </el-option>
-            </el-select>
-              </div>
-           <div class="col-5 pt-0">
-              <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
-             <el-select
-              v-model="associatedContracts"
-              filterable           
-              class="w-100"
-              multiple
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Contracts to Associate"          
-            >
-              <el-option
-                v-for="item in contractNames"
-                :value="item"
-                :key="item.id"
-                :label="item.nickname"
-              >
-              </el-option>
-            </el-select>
-          
-             
-              </div>
-                <div class="col-2 pt-0">
-              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                              
-               <el-button
-                type="default"
-                @click="saveContractUserRole()"
-                v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
-                v-tooltip="`Confirm`" 
-                class="bg-light btn-sm">           
-               <i class="far fa-file-contract mr-1 mh-orange-text"></i> Confirm Contract Role
-               </el-button> 
-      
-              </div>             
-             
-            </div>
-           <div class="mt-0 row">
-            <div class="col-5 text-center pt-0">
-             <label class="font-md mb-0 d-flex">Assign Admin Role </label>
-             <el-select
-              v-model="adminRoleNames"
-              filterable           
-              class="w-100"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select role"          
-            >
-             <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'admin')"
-                :value="item"
-                :key="item.id"
-                :label="item.name"
-              >
-              </el-option>
-            </el-select>
-              </div>
-           <!-- <div class="col-5 pt-0">
-              <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
-             <el-select
-              v-model="associatedContracts"
-              filterable           
-              class="w-100"
-              multiple
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Contracts to Associate"          
-            >
-              <el-option
-                v-for="item in contractNames"
-                :value="item"
-                :key="item.id"
-                :label="item.nickname"
-              >
-              </el-option>
-            </el-select>
-          
-             
-              </div> -->
-                <div class="col-2 pt-0">
-              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                              
-               <el-button
-                type="default"
-                @click="saveAdminUserRole()"
-                v-if="adminRoleNames"
-                v-tooltip="`Confirm`" 
-                class="bg-light btn-sm">           
+          <i class="far fa-file-contract mr-1 mh-orange-text"></i>
+              Assign Contract Role
+          </el-button>
+          <el-button 
+          type="default"
+          class="bg-light btn-sm"
+          v-tooltip="`Assign Project Role`"
+          @click.prevent="assignAdminRole"   
+           >
+          <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>   
+              Assign Admin Role
+          </el-button>            
+        </el-button-group>
+        </div>
         
-              <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>Confirm Admin Role 
-               </el-button> 
-      
-              </div>             
-             
-            </div>
-      <div class="mt-4 row">
-        <div class="col-12 pt-0">
+        <div
+        v-loading="!getRolesLoaded"
+        element-loading-spinner="el-icon-loading"   
+         >
         <el-table
           v-if="projectUsers && projectUsers.length > 0"
           :data="projectUsers.filter(
@@ -638,6 +504,7 @@
                     data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
                 )"    
           style="width: 100%"
+          height="375"
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
@@ -688,25 +555,249 @@
           <el-input
             v-model="searchRoleUsers"
             size="mini"
-            placeholder="Search User Roles"/>
+            placeholder="Search All Roles Assigned"/>
         </template>
           </el-table-column>
        </el-table>
         <span v-else>
           No Roles Assigned To This User
         </span>
-          <div class="text-right mt-3">
-               <button
-                @click.prevent="closeUserRoles"
-                class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Close`"                  
-              >
-               <i class="fas fa-ban"></i> 
-              </button>
-            </div>
+
+        </div>
+      
+       <!-- PROJECT ROLES DIALOG -->
+      <el-dialog
+      :visible.sync="assignProle"
+      append-to-body
+      center
+      class="p-0 users"       
+        >
+     <!-- <div class="roleUser" v-if="userData">
+         <span class="p-3"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
+     </div> -->
+      <div class="mt-0 row">
+      <div class="col-12 pt-0">
+        <label class="font-md mb-0 d-flex">Assign Project Role </label>
+        <el-select
+        v-model="projectRoleNames"
+        filterable           
+        class="w-100"
+        clearable
+        track-by="id"
+        value-key="id"
+        placeholder="Search and select Role"          
+      >
+        <el-option
+          v-for="item in getRoles.filter(t => t.type_of == 'projects')"
+          :value="item"
+          :key="item.id"
+          :label="item.name"
+        >
+        </el-option>
+      </el-select>
         </div>
       </div>
+     <div class="mt-2 row">
+      <div class="col-12 pt-0">
+        <label class="font-md mb-0 d-flex">Associate Projects to Role </label>
+        <el-select
+        v-model="associatedProjects"
+        multiple
+        filterable           
+        class="w-100"
+        clearable
+        track-by="id"
+        value-key="id"
+        placeholder="Search and select Projects to Associate"          
+      >
+        <el-option
+          v-for="item in projectNames"
+          :value="item"
+          :key="item.facilityProjectId"
+          :label="item.facilityName"
+        >
+        </el-option>
+      </el-select>
+    
+      </div>
+        </div>
+     <div class="mt-2 row">
+      <div class="col pt-1">        
+          <el-button
+          type="default"    
+          @click="saveProjectUserRole()"          
+          v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
+          v-tooltip="`Confirm`" 
+          class="bg-light btn-sm">               
+          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Role
+          </el-button>
+      </div>
+     <div class="col text-right pt-1">      
+         <el-button
+          type="default"   
+          @click.prevent="closeProjectRoles"
+          class="btn btn-sm bg-secondary text-light modalBtns"
+          v-tooltip="`Close`"                  
+          >
+            <i class="fas fa-ban"></i> 
+        </el-button>   
+          </div>
+        </div>  
+           
+       </el-dialog>
+          <!-- CONTRACT ROLES DIALOG -->
+     <el-dialog
+      :visible.sync="assignCrole"
+      append-to-body
+      center
+      class="p-0 users"       
+        >
+     <!-- <div class="roleUser" v-if="userData">
+         <span class="p-3"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
+     </div> -->
+      <div class="mt-0 row">
+      <div class="col-12 pt-0">
+         <label class="font-md mb-0 d-flex">Assign Contract Role </label>
+             <el-select
+              v-model="contractRoleNames"
+              filterable           
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select role"          
+            >
+             <el-option
+                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
+                :value="item"
+                :key="item.id"
+                :label="item.name"
+              >
+              </el-option>
+            </el-select>
+        </div>
+      </div>
+     <div class="mt-2 row">
+      <div class="col-12 pt-0">
+          <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
+             <el-select
+              v-model="associatedContracts"
+              filterable           
+              class="w-100"
+              multiple
+              clearable
+              track-by="id"
+              value-key="id"
+              placeholder="Search and select Contracts to Associate"          
+            >
+              <el-option
+                v-for="item in contractNames"
+                :value="item"
+                :key="item.id"
+                :label="item.nickname"
+              >
+              </el-option>
+            </el-select>
+    
+      </div>
+        </div>
+     <div class="mt-2 row">
+      <div class="col pt-1">        
+          <el-button
+          type="default"    
+          @click="saveContractUserRole()"
+          v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
+          v-tooltip="`Confirm`" 
+          class="bg-light btn-sm">               
+            <i class="far fa-file-contract mr-1 mh-orange-text"></i>Confirm Role
+          </el-button>
+      </div>
+     <div class="col text-right pt-1">      
+         <el-button
+          type="default"   
+          @click.prevent="closeContractRoles"
+          class="btn btn-sm bg-secondary text-light modalBtns"
+          v-tooltip="`Close`"                  
+          >
+            <i class="fas fa-ban"></i> 
+        </el-button>   
+          </div>
+        </div>  
+           
+     </el-dialog>
+            <!-- ADMIN ROLES DIALOG -->
+
+     <el-dialog
+      :visible.sync="assignArole"
+      append-to-body
+      center
+      class="p-0 users"       
+        >
+     <!-- <div class="roleUser" v-if="userData">
+         <span class="p-3"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
+     </div> -->
+      <div class="mt-0 row">
+      <div class="col-12 pt-0">
+         <label class="font-md mb-0 d-flex">Assign Admin Role </label>
+          <el-select
+          v-model="adminRoleNames"
+          filterable           
+          class="w-100"
+          clearable
+          track-by="id"
+          value-key="id"
+          placeholder="Search and select role"          
+        >
+          <el-option
+            v-for="item in getRoles.filter(t => t.type_of == 'admin')"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+          >
+          </el-option>
+        </el-select>
+       
+        </div>
+      </div>
+  
+     <div class="mt-2 row">
+      <div class="col pt-1">        
+          <el-button
+           type="default"
+            @click="saveAdminUserRole()"
+            v-if="adminRoleNames"
+          v-tooltip="`Confirm`" 
+          class="bg-light btn-sm">               
+            <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i> Confirm Role
+          </el-button>
+      </div>
+     <div class="col text-right pt-1">      
+         <el-button
+          type="default"   
+          @click.prevent="closeAdminRoles"
+          class="btn btn-sm bg-secondary text-light modalBtns"
+          v-tooltip="`Close`"                  
+          >
+            <i class="fas fa-ban"></i> 
+        </el-button>   
+          </div>
+        </div>  
+           
+    </el-dialog>
+
+
+
+
+      <div class="text-right mt-3">
+        <button
+        @click.prevent="closeUserRoles"
+        class="btn btn-sm bg-secondary text-light modalBtns"
+        v-tooltip="`Close`"                  
+      >
+        <i class="fas fa-ban"></i> 
+      </button>
      </div>
+     
       </el-dialog>
        </div>
 
@@ -783,7 +874,10 @@ export default {
         //dialogVisible used by el-dialogue popup
         dialogVisible: false,
         openUserRoles: false, 
-        createAnotherUserBtn: false, 
+        createAnotherUserBtn: false,
+        assignProle: false, 
+        assignCrole: false, 
+        assignArole: false, 
         editUserDialogVisible: false,
         newUserDialogVisible: false,
         privilegesProfileVisible: false
@@ -822,7 +916,7 @@ export default {
 			// disable mutiple row expanded 
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];  
       // if (this.projectUsers && this.projectUsers.length > 0) {
-          console.log(this.contractNames)
+          // console.log(this.contractNames)
       // }
    
 		},
@@ -910,7 +1004,17 @@ export default {
    },
    addUser() {
       this.dialogVisible = true; 
+      
       // console.log(this.portfolioUsersOnly)
+    },
+    assignProjectRole() {
+      this.assignProle = true; 
+    },
+    assignContractRole() {
+      this.assignCrole = true; 
+    },
+    assignAdminRole() {
+      this.assignArole = true; 
     },
     addMoreUsers(){
       this.portfolioUsers = [];
@@ -921,13 +1025,24 @@ export default {
     },
     openUserRoleDialog(index, rows){
       this.projId = rows.id
-      this.fetchRoles(this.$route.params.programId)     
+      if(this.getRoles && this.getRoles.length <= 0){
+      this.fetchRoles(this.$route.params.programId) 
+      }    
       this.openUserRoles = true    
       this.userData = rows       
-      console.log(this.projectNames)
+      // console.log(this.projectNames)
     },
     closeUserRoles() {
       this.openUserRoles = false;
+    },
+    closeProjectRoles(){
+      this.assignProle = false;
+    },
+    closeContractRoles(){
+      this.assignCrole = false;
+    },
+    closeAdminRoles(){
+      this.assignArole = false;
     },
     createAnotherUser(){
       this.createAnotherUserBtn = false;
@@ -953,7 +1068,7 @@ export default {
       this.editUserDialogVisible = true;
       this.rowUser = rows
       // console.log(rows)
-       console.log(this.projectUsers.length)
+      //  console.log(this.projectUsers.length)
     },
    saveUserEdits() {
     let editUserData = {
@@ -1013,6 +1128,7 @@ export default {
         "activeProjectUsers",
         "newUserStatus",
         "getRoles",
+        "getRolesLoaded",
         "getNewUserId",
         "getProjectRoleNames",
         "getContractRoleNames",
@@ -1041,7 +1157,7 @@ export default {
       },
       set(value) {
          this.SET_PROJECT_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
    associatedProjects: {     
@@ -1050,7 +1166,7 @@ export default {
       },
       set(value) {
          this.SET_ASSOCIATED_PROJECTS(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     associatedContracts: {     
@@ -1059,7 +1175,7 @@ export default {
       },
      set(value) {
         this.SET_ASSOCIATED_CONTRACTS(value)
-         console.log(value)
+        //  console.log(value)
       }      
     },
    contractRoleNames: {     
@@ -1068,7 +1184,7 @@ export default {
       },
       set(value) {
          this.SET_CONTRACT_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
    adminRoleNames: {     
@@ -1077,7 +1193,7 @@ export default {
       },
       set(value) {
          this.SET_ADMIN_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     projectNames(){
@@ -1098,6 +1214,33 @@ export default {
    projectUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+       if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
+   adminRoles(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.type_of == 'admin' && t.role_users).filter(t => t.length > 0)
+       if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
+    projectRoles(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.type_of == 'projects' && t.role_users).filter(t => t.length > 0)
+       if (this.projId)  {
+            return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
+        } else return [].concat.apply([], roleUsers)
+       
+      }
+    },
+   contractRoles(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let roleUsers = this.getRoles.map(t => t.type_of == 'contracts' && t.role_users).filter(t => t.length > 0)
        if (this.projId)  {
             return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
         } else return [].concat.apply([], roleUsers)
@@ -1173,6 +1316,7 @@ export default {
             type: "success",
             showClose: true,
           });  
+          this.assignProle = false;
           this.fetchRoles(this.$route.params.programId)         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);         
           this.SET_ASSOCIATED_PROJECTS([])
@@ -1193,6 +1337,11 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+.roleUser {
+  position:absolute;
+  right: 0;
+  top:0;
+}
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
@@ -1204,6 +1353,7 @@ export default {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
  }
+
 }
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
@@ -1221,6 +1371,9 @@ export default {
  }
  /deep/.el-dialog {
   width: 55%;
+  }
+/deep/.el-dialog__header {
+  padding-bottom: 0 !important;
   }
 }
 .modalBtns {
