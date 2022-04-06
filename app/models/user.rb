@@ -765,6 +765,9 @@ class User < ApplicationRecord
     hash.with_indifferent_access
   end 
 
+  def programs_with_program_admin_role
+    role_users.where()
+  end
 
   def authorized_contract_ids(project_ids: []) 
     # c_ids = []
@@ -776,7 +779,9 @@ class User < ApplicationRecord
     # end
     # c_ids
     user = self
-    contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.contract_id is not null and users.id = ? ", user.id).distinct.pluck(:contract_id)
+    # contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.contract_id is not null and role_users.user_id = ? ", user.id).distinct.pluck(:contract_id)
+    role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:contract_id)
     if project_ids.any?
       contract_ids = Contract.where(project_id: project_ids, id: contract_ids).pluck(:id)
     end
