@@ -318,7 +318,7 @@ class Project < SortableRecord
 
     all_user_ids = all_user_ids.compact.uniq
 
-    all_users = User.includes(:organization).where(id: all_user_ids ).active
+    all_users = User.includes(:organization, :facility_projects, :role_users, :role_privileges).where(id: all_user_ids ).active
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
