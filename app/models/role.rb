@@ -9,8 +9,12 @@ class Role < ApplicationRecord
   def to_json(options = {})
     hash = self.attributes
     hash[:role_privileges] = self.role_privileges.as_json
-    hash[:role_users] = self.role_users.map(&:to_json)
+    hash[:role_users] = self.role_users.includes(:user).map(&:to_json)
     hash
+  end
+
+  def self.default_roles
+    where(is_default: true)
   end
 
   def create_or_update_role(params, user)

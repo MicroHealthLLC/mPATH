@@ -5,6 +5,35 @@ task :convert_privilege_roles => :environment do
   CONTRACT_PRIVILEGS_ROLE_TYPES = ["contract_analytics", "contract_tasks", "contract_issues", "contract_risks", "contract_lessons", "contract_notes"]
   PROGRAM_SETTINGS_ROLE_TYPES = ["program_setting_groups", "program_setting_users_roles", "program_setting_projects", "program_setting_contracts" ]
 
+
+  def assign_default_roles_to_users
+    role_ids = Role.where(name: ["update-project"]).pluck(:id)
+    role_users = []
+    users = User.includes(:role_users, :projects, :facility_projects)
+    users.in_batches(of: 500) do |users|
+      users.find_each do |user|
+        next if user.role_users.where("role_users.role_id in (?)", role_ids).count > 0
+
+        # project_ids = user.project_ids
+        # project_ids.each do |pid|
+        #   role_ids.each do |role_id|          
+        #     role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
+        #   end
+        # end
+        facility_project_ids = user.facility_project_ids
+        facility_project_ids.each do |fid|
+          role_ids.each do |role_id|          
+            role_users << RoleUser.new(user_id: user.id, role_id: role_id, facility_project_id: fid)
+          end
+        end
+      end
+    end
+    RoleUser.import(role_users)
+  end
+
+  puts "----- Assigning Default Roles -----"
+  assign_default_roles_to_users
+
   def create_project_privileges_roles
     new_roles = []
     ProjectPrivilege.all.each do |pp|
@@ -130,14 +159,14 @@ task :convert_privilege_roles => :environment do
     end
   end
 
-  puts "----- Creating Project Privilegs Roles -----"
-  create_project_privileges_roles
+  # puts "----- Creating Project Privilegs Roles -----"
+  # create_project_privileges_roles
 
-  puts "----- Creating Facility Privileges Roles -----"
-  create_facility_privileges_roles
+  # puts "----- Creating Facility Privileges Roles -----"
+  # create_facility_privileges_roles
 
-  puts "----- Creating Contract Privileges Roles -----"
-  create_contract_privileges_roles
+  # puts "----- Creating Contract Privileges Roles -----"
+  # create_contract_privileges_roles
 
   def show_project_privilege_count
     roles_count = 0

@@ -8,6 +8,7 @@ ActiveAdmin.register Project do
       :description,
       :project_type_id,
       :status,
+      admin_program_admins: [],
       user_ids: [],
       facility_ids: [],
       status_ids: [],
@@ -67,6 +68,7 @@ ActiveAdmin.register Project do
           f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
+          f.input :admin_program_admins, label: 'Program Admins', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admins ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
         end
       end
 
@@ -144,9 +146,18 @@ ActiveAdmin.register Project do
       # super
       p_params = permitted_params[:project]
       user_ids = p_params.delete("user_ids")
+      project_admins = p_params.delete("admin_program_admins")
       project = Project.new(p_params)
       if project.save
         project.user_ids = project.user_ids + user_ids if user_ids.present?
+        users = User.where(id: project_admins)
+        role_users = []
+        role_id = Role.where(name: "program-admin").first.id
+        users.each do |user|
+          role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: project.id)
+        end
+        RoleUser.import(role_users)
+        
         redirect_to admin_projects_path , notice: "Program created Successfully"
       else
         # render :new
