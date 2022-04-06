@@ -161,10 +161,47 @@ roles = [
     role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
   },
   {
+    role_type: "read-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contrib-project", 
+    type_of: 'project',
+    role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
+    role_type: "update-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "read-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
+  },
+  {
+    role_type: "contrib-contract", 
+    type_of: 'contract',
+    role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
+  },
+
+  {
     role_type: "program-admin",
     type_of: 'admin',
     role_privileges: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
-    }
+  },
+  {
+    role_type: "program-admin-not-users",
+    type_of: 'admin',
+    role_privileges: (RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_users_roles"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
+  {
+    role_type: "program-admin-not-contract",
+    type_of: 'admin',
+    role_privileges: ( RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES - ["program_setting_contracts"]).map{ |role_privilege| {name: role_privilege, privilege: "RWD",role_type: role_privilege} }
+  },
 ]
 
 roles.each do |role_hash|

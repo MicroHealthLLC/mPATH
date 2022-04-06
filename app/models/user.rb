@@ -213,7 +213,7 @@ class User < ApplicationRecord
 
   def allowed_navigation_tabs(right = 'R')
     nagivation_tabs = ["sheets_view", "map_view", "settings_view", "gantt_view", "kanban_view", "calendar_view", "members"]
-    nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys
+    self.privilege ? nagivation_tabs & self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys : []
   end
 
   def build_navigation_tabs_for_profile
