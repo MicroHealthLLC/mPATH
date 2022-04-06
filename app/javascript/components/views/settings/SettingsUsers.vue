@@ -447,26 +447,55 @@
         >
       <span slot="title" class="text-left add-groups-header ">
         <h5 style="color:#383838"> 
-          <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i> <b> Manage User Roles </b>
+          <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i> <b>Assigned Roles 
+            
+             </b>
+              <span class="badge badge-secondary badge-pill">
+          <span v-if="projectUsers">{{ projectUsers.length }}</span>        
+        </span>
         </h5>       
      </span>
      <div class="roleUser mh-orange text-light" v-if="userData">
          <span class="p-2"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
      </div>
-     <el-tabs class="mt-1 mr-3" type="border-card"  @tab-click="handleClick">
-    <el-tab-pane class="p-3"  style="postion:relative">
-       <template
-        slot="label"
-        class="text-right"      
-        v-if="true"  
+    
+     
+        <div class="mb-3">
+        <el-button-group>
+          <el-button 
+          type="default"
+          v-tooltip="`Assign Project Role`"
+          class="bg-light btn-sm"
+          @click.prevent="assignProjectRole"   
+              >
+          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>      
+              Assign Project Role
+          </el-button>
+              <el-button 
+          type="default"
+          class="bg-light btn-sm"
+          v-tooltip="`Assign Project Role`"
+          @click.prevent="assignContractRole"   
+              >
+          <i class="far fa-file-contract mr-1 mh-orange-text"></i>
+              Assign Contract Role
+          </el-button>
+          <el-button 
+          type="default"
+          class="bg-light btn-sm"
+          v-tooltip="`Assign Project Role`"
+          @click.prevent="assignAdminRole"   
+           >
+          <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>   
+              Assign Admin Role
+          </el-button>            
+        </el-button-group>
+        </div>
+        
+        <div
+        v-loading="!getRolesLoaded"
+        element-loading-spinner="el-icon-loading"   
          >
-     ALL ROLES ASSIGNED
-        <span class="badge badge-secondary badge-pill">
-          <!-- <span v-if="tableData">{{ tableData.length }}</span>         -->
-        </span>
-    </template>
-        <!-- <div class="mt-4 row">
-        <div class="col-12 pt-0"> -->
         <el-table
           v-if="projectUsers && projectUsers.length > 0"
           :data="projectUsers.filter(
@@ -475,7 +504,7 @@
                     data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
                 )"    
           style="width: 100%"
-          height="400"
+          height="375"
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
@@ -533,24 +562,11 @@
         <span v-else>
           No Roles Assigned To This User
         </span>
+
+        </div>
       
-        <!-- </div>
-      </div> -->
-
-    </el-tab-pane>
-
-  <el-tab-pane class="p-3"  style="postion:relative">
-       <template
-        slot="label"
-        class="text-right"      
-        v-if="true"  
-         >
-     PROJECT ROLES
-        <span class="badge badge-secondary badge-pill">
-          <!-- <span v-if="tableData">{{ tableData.length }}</span>         -->
-        </span>
-    </template>
-     <el-dialog
+       <!-- PROJECT ROLES DIALOG -->
+      <el-dialog
       :visible.sync="assignProle"
       append-to-body
       center
@@ -613,7 +629,7 @@
           v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
           v-tooltip="`Confirm`" 
           class="bg-light btn-sm">               
-          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Project Role
+          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Role
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -628,85 +644,20 @@
           </div>
         </div>  
            
-         </el-dialog>
-         <div class="mb-2">
-         <button
-          type="default"   
-          v-tooltip="`Assign Project Role`"     
-          @click.prevent="assignProjectRole"       
-          class="btn btn-sm btn-primary text-light modalBtns"
-          >
-          <i class="far fa-plus-circle mr-1"></i>Assign Role
-          </button>
-         </div>
-       <el-table
-          v-if="projectRoles && projectRoles.length > 0"
-          :data="projectRoles.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"    
-          style="width: 100%"
-          height="400"
-          border
-          :header-cell-style="{ background: '#EDEDED' }"
+       </el-dialog>
+          <!-- CONTRACT ROLES DIALOG -->
+     <el-dialog
+      :visible.sync="assignCrole"
+      append-to-body
+      center
+      class="p-0 users"       
         >
-         
-        <el-table-column prop="role_name"  sortable label="Roles">
-            <template slot-scope="scope">
-              <span v-if="scope.row.facility_project_id">
-             <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{scope.row.role_name}}   
-              </span>
-            </template>
-        
-        </el-table-column>
-        <el-table-column
-            prop="projects"
-            sortable
-            filterable
-            label="Associations"
-        >      
-           <template slot-scope="scope">
-              <span v-if="scope.row.facility_project_id && projectNames">
-               {{ projectNames.filter(t => t.facilityProjectId == scope.row.facility_project_id).map(t => t.facilityName)[0]}}
-                 <!-- {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t)}} -->
-              </span>               
-
-            </template>
-
-
-        </el-table-column>  
-    <el-table-column
-  
-        align="right">
-        <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Search Project Roles Assigned"/>
-        </template>
-          </el-table-column>
-       </el-table>
-        <span v-else>
-          No Project Roles Assigned To This User
-        </span>
-  </el-tab-pane>
-
-
-   <el-tab-pane class="p-3"  style="postion:relative">
-     <template
-        slot="label"
-        class="text-right"      
-        v-if="true"  
-         >
-     CONTRACT ROLES
-        <span class="badge badge-secondary badge-pill">
-          <!-- <span v-if="tableData">{{ tableData.length }}</span>         -->
-        </span>
-    </template>
-           <div class="my-3 row">
-            <div class="col-5 pt-0">
-             <label class="font-md mb-0 d-flex">Assign Contract Role </label>
+     <!-- <div class="roleUser" v-if="userData">
+         <span class="p-3"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
+     </div> -->
+      <div class="mt-0 row">
+      <div class="col-12 pt-0">
+         <label class="font-md mb-0 d-flex">Assign Contract Role </label>
              <el-select
               v-model="contractRoleNames"
               filterable           
@@ -724,9 +675,11 @@
               >
               </el-option>
             </el-select>
-              </div>
-           <div class="col-5 pt-0">
-              <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
+        </div>
+      </div>
+     <div class="mt-2 row">
+      <div class="col-12 pt-0">
+          <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
              <el-select
               v-model="associatedContracts"
               filterable           
@@ -745,94 +698,47 @@
               >
               </el-option>
             </el-select>
-          
-             
-              </div>
-                <div class="col-2 pt-0">
-              <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                              
-               <el-button
-                type="default"
-                @click="saveContractUserRole()"
-                v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
-                v-tooltip="`Confirm`" 
-                class="bg-light btn-sm">           
-               <i class="far fa-file-contract mr-1 mh-orange-text"></i> Confirm Contract Role
-               </el-button> 
-      
-              </div>             
-             
-            </div>
-       <el-table
-          v-if="contractRoles && contractRoles.length > 0"
-          :data="contractRoles.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"    
-          style="width: 100%"
-          height="400"
-          border
-          :header-cell-style="{ background: '#EDEDED' }"
+    
+      </div>
+        </div>
+     <div class="mt-2 row">
+      <div class="col pt-1">        
+          <el-button
+          type="default"    
+          @click="saveContractUserRole()"
+          v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
+          v-tooltip="`Confirm`" 
+          class="bg-light btn-sm">               
+            <i class="far fa-file-contract mr-1 mh-orange-text"></i>Confirm Role
+          </el-button>
+      </div>
+     <div class="col text-right pt-1">      
+         <el-button
+          type="default"   
+          @click.prevent="closeContractRoles"
+          class="btn btn-sm bg-secondary text-light modalBtns"
+          v-tooltip="`Close`"                  
+          >
+            <i class="fas fa-ban"></i> 
+        </el-button>   
+          </div>
+        </div>  
+           
+     </el-dialog>
+            <!-- ADMIN ROLES DIALOG -->
+
+     <el-dialog
+      :visible.sync="assignArole"
+      append-to-body
+      center
+      class="p-0 users"       
         >
-          <!-- || data.facility_id == projectNames.map(t => t.id).facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase()) -->
-          <!-- || 
-                    this.currentProject.facilities.filter(t => t.facilityId == data.facility_id).map(n => n.facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase())) -->
-     
-      
-        <el-table-column prop="role_name"  sortable label="Roles">
-            <template slot-scope="scope">           
-               <span v-if="scope.row.contract_id">
-               <i class="far fa-file-contract mr-1 mh-orange-text"></i>  {{scope.row.role_name}}
-               </span>
-            </template>
-        
-        </el-table-column>
-        <el-table-column
-            prop="projects"
-            sortable
-            filterable
-            label="Associations"
-        >      
-           <template slot-scope="scope">
-              <span v-if="scope.row.contract_id && contractNames">
-                 {{ contractNames.filter(t => t.id == scope.row.contract_id).map(t => t.nickname)[0]  }}
-              </span>
-            </template>
-
-
-        </el-table-column>  
-    <el-table-column
-  
-        align="right">
-        <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Search Contract Roles Assigned"/>
-        </template>
-          </el-table-column>
-       </el-table>
-        <span v-else>
-          No Contract Roles Assigned 
-        </span>
-
-   </el-tab-pane>
-
-  <el-tab-pane class="p-3"  style="postion:relative">
-       <template
-        slot="label"
-        class="text-right"      
-        v-if="true"  
-         >
-     ADMIN ROLES
-        <span class="badge badge-secondary badge-pill">
-          <!-- <span v-if="tableData">{{ tableData.length }}</span>         -->
-        </span>
-    </template>
-        <div class="mt-0 row">
-        <div class="col-5 text-center pt-0">
-          <label class="font-md mb-0 d-flex">Assign Admin Role </label>
+     <!-- <div class="roleUser" v-if="userData">
+         <span class="p-3"> <i class="fas fa-user mr-1"></i> {{ userData.full_name }}  </span>
+     </div> -->
+      <div class="mt-0 row">
+      <div class="col-12 pt-0">
+         <label class="font-md mb-0 d-flex">Assign Admin Role </label>
           <el-select
           v-model="adminRoleNames"
           filterable           
@@ -850,83 +756,38 @@
           >
           </el-option>
         </el-select>
-          </div>
-        <!-- <div class="col-5 pt-0">
-          <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
-          <el-select
-          v-model="associatedContracts"
-          filterable           
-          class="w-100"
-          multiple
-          clearable
-          track-by="id"
-          value-key="id"
-          placeholder="Search and select Contracts to Associate"          
-        >
-          <el-option
-            v-for="item in contractNames"
-            :value="item"
-            :key="item.id"
-            :label="item.nickname"
-          >
-          </el-option>
-        </el-select>
-      
-          
-          </div> -->
-            <div class="col-2 pt-0">
-          <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
-                          
-            <el-button
-            type="default"
+       
+        </div>
+      </div>
+  
+     <div class="mt-2 row">
+      <div class="col pt-1">        
+          <el-button
+           type="default"
             @click="saveAdminUserRole()"
             v-if="adminRoleNames"
-            v-tooltip="`Confirm`" 
-            class="bg-light btn-sm">           
-    
-          <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>Confirm Admin Role 
-            </el-button> 
-  
-          </div>             
-          
-        </div>
+          v-tooltip="`Confirm`" 
+          class="bg-light btn-sm">               
+            <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i> Confirm Role
+          </el-button>
+      </div>
+     <div class="col text-right pt-1">      
+         <el-button
+          type="default"   
+          @click.prevent="closeAdminRoles"
+          class="btn btn-sm bg-secondary text-light modalBtns"
+          v-tooltip="`Close`"                  
+          >
+            <i class="fas fa-ban"></i> 
+        </el-button>   
+          </div>
+        </div>  
+           
+    </el-dialog>
 
-         <el-table
-          v-if="adminRoles && adminRoles.length > 0"
-          :data="adminRoles.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"    
-          style="width: 100%"
-          height="400"
-          border
-          :header-cell-style="{ background: '#EDEDED' }"
-        >
-       <el-table-column prop="role_name"  sortable label="Roles">
-            <template slot-scope="scope">           
-               <span v-if="!scope.row.contract_id && !scope.row.facility_project_id">
-                <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>  {{scope.row.role_name}}
-               </span>
-            </template>
-        
-        </el-table-column>
-      
-    <el-table-column  
-        align="right">
-        <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Search Admin Roles Assigned"/>
-        </template>
-          </el-table-column>
-       </el-table>
-        <span v-else>
-          No Admin Roles Assigned 
-        </span>
-      </el-tab-pane>
-     </el-tabs>
+
+
+
       <div class="text-right mt-3">
         <button
         @click.prevent="closeUserRoles"
@@ -1055,7 +916,7 @@ export default {
 			// disable mutiple row expanded 
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];  
       // if (this.projectUsers && this.projectUsers.length > 0) {
-          console.log(this.contractNames)
+          // console.log(this.contractNames)
       // }
    
 		},
@@ -1143,6 +1004,7 @@ export default {
    },
    addUser() {
       this.dialogVisible = true; 
+      
       // console.log(this.portfolioUsersOnly)
     },
     assignProjectRole() {
@@ -1163,16 +1025,24 @@ export default {
     },
     openUserRoleDialog(index, rows){
       this.projId = rows.id
-      this.fetchRoles(this.$route.params.programId)     
+      if(this.getRoles && this.getRoles.length <= 0){
+      this.fetchRoles(this.$route.params.programId) 
+      }    
       this.openUserRoles = true    
       this.userData = rows       
-      console.log(this.projectNames)
+      // console.log(this.projectNames)
     },
     closeUserRoles() {
       this.openUserRoles = false;
     },
     closeProjectRoles(){
       this.assignProle = false;
+    },
+    closeContractRoles(){
+      this.assignCrole = false;
+    },
+    closeAdminRoles(){
+      this.assignArole = false;
     },
     createAnotherUser(){
       this.createAnotherUserBtn = false;
@@ -1198,7 +1068,7 @@ export default {
       this.editUserDialogVisible = true;
       this.rowUser = rows
       // console.log(rows)
-       console.log(this.projectUsers.length)
+      //  console.log(this.projectUsers.length)
     },
    saveUserEdits() {
     let editUserData = {
@@ -1258,6 +1128,7 @@ export default {
         "activeProjectUsers",
         "newUserStatus",
         "getRoles",
+        "getRolesLoaded",
         "getNewUserId",
         "getProjectRoleNames",
         "getContractRoleNames",
@@ -1286,7 +1157,7 @@ export default {
       },
       set(value) {
          this.SET_PROJECT_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
    associatedProjects: {     
@@ -1295,7 +1166,7 @@ export default {
       },
       set(value) {
          this.SET_ASSOCIATED_PROJECTS(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     associatedContracts: {     
@@ -1304,7 +1175,7 @@ export default {
       },
      set(value) {
         this.SET_ASSOCIATED_CONTRACTS(value)
-         console.log(value)
+        //  console.log(value)
       }      
     },
    contractRoleNames: {     
@@ -1313,7 +1184,7 @@ export default {
       },
       set(value) {
          this.SET_CONTRACT_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
    adminRoleNames: {     
@@ -1322,7 +1193,7 @@ export default {
       },
       set(value) {
          this.SET_ADMIN_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     projectNames(){
@@ -1482,6 +1353,7 @@ export default {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
  }
+
 }
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
@@ -1499,6 +1371,9 @@ export default {
  }
  /deep/.el-dialog {
   width: 55%;
+  }
+/deep/.el-dialog__header {
+  padding-bottom: 0 !important;
   }
 }
 .modalBtns {

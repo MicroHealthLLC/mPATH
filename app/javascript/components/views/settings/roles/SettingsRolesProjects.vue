@@ -1359,7 +1359,7 @@ notesDelete() {
         role: {
            name: this.newRoleName,
            uId: '',
-           type: 'projects',
+           type: 'project',
            pId: this.$route.params.programId,
             rp: [
               {
@@ -1533,7 +1533,8 @@ if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
     },
      tableData(){
       if(this.getRoles && this.getRoles.length > 0){
-        return this.getRoles.filter(role => role.type_of == 'projects')
+        console.log(this.getRoles)
+        return this.getRoles.filter(role => role.type_of == 'project')
         }  
        } 
     },

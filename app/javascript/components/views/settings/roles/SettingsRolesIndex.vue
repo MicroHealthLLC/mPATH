@@ -93,10 +93,7 @@
     </template>
 
     </el-table-column>
-   
-   
-    <el-table-column label="Program Settings">
-   
+ 
           <el-table-column label="Groups">
               <el-table-column
               prop="groupsRead"
@@ -518,7 +515,7 @@
         </template>
           </el-table-column>          
           </el-table-column>               
-    </el-table-column> 
+ 
 
      <el-table-column label="Actions"
           fixed="right"  
@@ -596,8 +593,6 @@
  </template>
 
     </el-table-column>
-         
-      <el-table-column label="Program Settings" >
         <el-table-column label="Groups">
             <el-table-column
             prop="groupsRead"
@@ -645,7 +640,6 @@
        </template>
         </el-table-column>
         </el-table-column>
-
         <el-table-column label="Projects">
             <el-table-column
             prop="projectsRead"
@@ -695,8 +689,6 @@
        </template>
         </el-table-column>
         </el-table-column>
-
-
         <el-table-column label="Contracts">
             <el-table-column
             prop="contractsRead"
@@ -744,8 +736,6 @@
        </template>
         </el-table-column>
         </el-table-column>
-
-
         <el-table-column label="Users / Roles" >
         <el-table-column
             prop="usersRead"
@@ -795,12 +785,7 @@
 
         
         </el-table-column>      
-
-      
-      </el-table-column> 
-
-
-        <el-table-column 
+       <el-table-column 
           fixed="right" 
           label="Actions"
           class="text-center"
@@ -1389,6 +1374,7 @@ mounted() {
     },
     tableData(){
       if(this.getRoles && this.getRoles.length > 0){
+        console.log(this.getRoles)
         return this.getRoles.filter(role => role.type_of == 'admin' || role.type_of == '' )
         }  
        },
@@ -1397,7 +1383,7 @@ mounted() {
         return  {
           n:{
              contracts: this.getRoles.filter(role => role.type_of == 'contracts').length, 
-            projects: this.getRoles.filter(role => role.type_of == 'projects').length
+            projects: this.getRoles.filter(role => role.type_of == 'project').length
           }           
          }       
         }  
