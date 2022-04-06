@@ -121,7 +121,7 @@
               <template slot-scope="scope">
 
                 <el-select
-                v-model="scope.row.facilityGroupId"
+                v-model="scope.row.facility_group_id"
                 class="w-100"
                 v-if="rowId == scope.row.id"
                 filterable
@@ -138,7 +138,7 @@
                 </el-option>
               </el-select>        
             <span v-else>
-          {{ facilityGroups.find((c) => c.id == scope.row.facilityGroupId).name }}
+          {{ facilityGroups.find((c) => c.id == scope.row.facility_group_id).name }}
 
             </span>
 
@@ -181,7 +181,7 @@
                   </el-button>
                   <el-button  
                   type="default" 
-                  v-tooltip="`Add User(s) to Project`"
+                  v-tooltip="`Add User(s) to Contract`"
                   @click.prevent="addUserRole(scope.$index, scope.row)" 
                   v-if="scope.$index !== rowIndex"
                   class="bg-primary text-light btn-sm">
@@ -487,9 +487,8 @@ export default {
     };
   },
   mounted() {
-    if(this.contracts[0] && this.contracts[0].length <= 0){
-    this.fetchContracts();
-    }  
+
+    this.fetchContracts(this.$route.params.programId);
     this.fetchRoles(this.$route.params.programId)
     if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
@@ -518,26 +517,10 @@ export default {
       "addUserToRole", 
       "fetchRoles"
     ]),
-       _isallowed(salut) {
-      //  console.log(this.$route)
+    _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
-
-        // var programId = this.$route.params.programId;
-        // var projectId = this.$route.params.projectId
-        // let fPrivilege = this.$projectPrivileges[programId][projectId]
-        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        // let s = permissionHash[salut]
-        // return  fPrivilege.overview.includes(s);      
     }, 
-    // _isallowedProgramSettings(salut) {
-    //   let pPrivilege = this.$programSettingPrivileges[
-    //     this.$route.params.programId
-    //   ];
-    //   let permissionHash = { write: "W", read: "R", delete: "D" };
-    //   let s = permissionHash[salut];
-    //   return pPrivilege.admin_contracts.includes(s);
-    // },
-  saveContractUserRole(index, rows){
+   saveContractUserRole(index, rows){
     let user_ids = this.contractRoleUsers.map(t => t.id)
     let contractUserRoleData = {
           userData: {
@@ -580,7 +563,7 @@ export default {
       let groupId = ""
       if (this.C_newContractGroupFilter){
         groupId = this.C_newContractGroupFilter.id
-      } 
+      } amplify
       let contractData = {
         contract: {
           nickname: this.contractNicknameText,
@@ -616,7 +599,7 @@ export default {
         contract: {
           nickname: rows.nickname,
           name: rows.name,
-          facility_group_id: rows.facilityGroupId,
+          facility_group_id: rows.facility_group_id,
           project_id: this.$route.params.programId,
           id: id,
         },
@@ -671,6 +654,9 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
+                if(this.contracts && this.contracts[0] && this.contracts[0].length > 0){
+      console.log(this.contracts[0])
+    }
       this.dialogVisible = true;
       this.C_newContractGroupFilter = null;
       this.contractNameText = "";
@@ -709,11 +695,11 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData() {
-      if (this.currentProject && this.currentProject.contracts.length > 0 && this.facilityGroups) {
+     if (this.contracts[0] && this.contracts[0].length > 0 && this.facilityGroups) {
         let groups = this.facilityGroups.map(g => g.id)
-        let contracts = this.currentProject.contracts.map(cp => cp)
+        let contracts = this.contracts[0].map(cp => cp)
         let programContracts = contracts.filter((u) =>
-            groups.includes(u.facilityGroupId)
+            groups.includes(u.facility_group_id)
         );
         let contractData = programContracts
           .map((t) => t)
@@ -730,7 +716,7 @@ export default {
         return contractData;
       }
     },
-    groupList() {
+   groupList() {
     if (
         this.groups &&
         this.groups.length > 0 &&
@@ -815,7 +801,7 @@ export default {
             showClose: true,
           });
           this.SET_CONTRACT_STATUS(0);
-          this.fetchContracts();
+          this.fetchContracts(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
         }
       },

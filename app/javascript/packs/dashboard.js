@@ -227,7 +227,7 @@ Vue.prototype.findFacilityProjectId = (programId, projectId) => {
   return facilityProjectId;
 } 
 Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
-  console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
+  // console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
 
   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
   let s = permissionHash[salut]
@@ -247,7 +247,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
 
       let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
       let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
-      console.log("facility_project_id", facility_project_id)          
+      // console.log("facility_project_id", facility_project_id)          
       return facility_project_privileges && facility_project_privileges.project_issues && facility_project_privileges.project_issues.includes(s);
     }
   }else if(["ProjectSidebar"].includes(page)){

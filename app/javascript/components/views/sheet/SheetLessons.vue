@@ -249,7 +249,7 @@
         <!-- Lessons Per Page Toggle -->
         <div
           v-if="filteredLessons.filtered.lessons.length > 0"
-          class="float-right mb-4 mt-2 font-sm"
+          class="text-right mb-4 mt-2 font-sm"
         >
           <div class="simple-select d-inline-block text-right font-sm">
             <span>Displaying </span>
