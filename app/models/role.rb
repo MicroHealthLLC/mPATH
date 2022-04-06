@@ -5,14 +5,14 @@ class Role < ApplicationRecord
   has_many :users, through: :role_users
   has_many :role_privileges, dependent: :destroy
   accepts_nested_attributes_for :role_privileges
-
+  
   def to_json(options = {})
     hash = self.attributes
     hash[:role_privileges] = self.role_privileges.as_json
     hash[:role_users] = self.role_users.includes(:user).map(&:to_json)
     hash
   end
-
+  
   def self.program_admin_role
     Role.where(name: "program-admin").first
   end

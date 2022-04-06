@@ -14,7 +14,13 @@ class RolePrivilege < ApplicationRecord
   belongs_to :role
   validate :check_privileges, on: :create
   validates :role_type, inclusion: { in: ALL_ROLE_TYPES, message: "%{value} is not a valid role type" }
+  validate :prevent_default_role_update, on: :update
 
+  def prevent_default_role_update
+    if self.role.is_default?
+      self.errors.add(:base, "Can't modify default role privileges")
+    end
+  end
   def check_privileges
     role = self.role
     if role.role_privileges.exists?(role_type: self.role_type)
