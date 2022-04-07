@@ -464,7 +464,6 @@
         <el-button-group>
           <el-button 
           type="default"
-          v-tooltip="`Assign Project Role`"
           class="bg-light btn-sm"
           @click.prevent="assignProjectRole"   
               >
@@ -474,16 +473,14 @@
               <el-button 
           type="default"
           class="bg-light btn-sm"
-          v-tooltip="`Assign Project Role`"
-          @click.prevent="assignContractRole"   
+         @click.prevent="assignContractRole"   
               >
           <i class="far fa-file-contract mr-1 mh-orange-text"></i>
               Assign Contract Role
           </el-button>
           <el-button 
           type="default"
-          class="bg-light btn-sm"
-          v-tooltip="`Assign Project Role`"
+          class="bg-light btn-sm"        
           @click.prevent="assignAdminRole"   
            >
           <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>   
@@ -605,7 +602,7 @@
         placeholder="Search and select Role"          
       >
         <el-option
-          v-for="item in getRoles.filter(t => t.type_of == 'projects')"
+          v-for="item in getRoles.filter(t => t.type_of == 'project' && t.name !=='crud-row-project-20220407')"
           :value="item"
           :key="item.id"
           :label="item.name"
@@ -685,7 +682,7 @@
               placeholder="Search and select role"          
             >
              <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
+                v-for="item in getRoles.filter(t => t.type_of == 'contract' && t.name !=='crud-row-contract-20220407')"
                 :value="item"
                 :key="item.id"
                 :label="item.name"
@@ -766,7 +763,7 @@
           placeholder="Search and select role"          
         >
           <el-option
-            v-for="item in getRoles.filter(t => t.type_of == 'admin')"
+            v-for="item in getRoles.filter(t => t.type_of == 'admin' && t.name !== 'crud-row-admin')"
             :value="item"
             :key="item.id"
             :label="item.name"
@@ -801,10 +798,6 @@
         </div>  
            
     </el-dialog>
-
-
-
-
       <div class="text-right mt-3">
         <button
         @click.prevent="closeUserRoles"
@@ -1264,7 +1257,7 @@ export default {
   //   },
     projectRoles(){
       if(this.getRoles && this.getRoles.length > 0 ){   
-        let roleUsers = this.getRoles.map(t => t.type_of == 'projects' && t.role_users).filter(t => t.length > 0)
+        let roleUsers = this.getRoles.map(t => t.type_of == 'project' && t.role_users).filter(t => t.length > 0)
        if (this.projId)  {
             return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
         } else return [].concat.apply([], roleUsers)
@@ -1273,7 +1266,7 @@ export default {
     },
    contractRoles(){
       if(this.getRoles && this.getRoles.length > 0 ){   
-        let roleUsers = this.getRoles.map(t => t.type_of == 'contracts' && t.role_users).filter(t => t.length > 0)
+        let roleUsers = this.getRoles.map(t => t.type_of == 'contract' && t.role_users).filter(t => t.length > 0)
        if (this.projId)  {
             return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
         } else return [].concat.apply([], roleUsers)

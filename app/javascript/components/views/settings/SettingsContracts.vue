@@ -73,7 +73,7 @@
           </div>
         </div>
         <div       
-        v-loading="!contentLoaded"
+        v-loading="!contractsLoaded"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)" 
@@ -349,9 +349,10 @@
               placeholder="Search and select Project Users"          
             >
               <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'contracts')"
+                v-for="item in getRoles.filter(t => t.type_of == 'contract' && t.name !== 'crud-row-contract-20220407')"
                 :value="item"
                 :key="item.id"
+                :load="log(item)"
                 :label="item.name"
               >
               </el-option>
@@ -520,6 +521,9 @@ export default {
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
+    log(e){
+      console.log(e)
+    },
    saveContractUserRole(index, rows){
     let user_ids = this.contractRoleUsers.map(t => t.id)
     let contractUserRoleData = {
@@ -816,7 +820,7 @@ export default {
           });         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
-         this.SET_CONTRACT_ROLE_NAMES([])
+          this.SET_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
         }
       },

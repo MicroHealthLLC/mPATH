@@ -1344,6 +1344,7 @@ notesDelete() {
       return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
   },
  cancelCreateRole(rows, index) {
+  //  console.log(this.table)
     this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
    },
     closeAddRole() {

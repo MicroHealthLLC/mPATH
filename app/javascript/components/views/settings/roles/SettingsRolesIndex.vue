@@ -14,9 +14,11 @@
           <h4 class="mt-4 ml-3">
             <i class="fal fa-user-lock mr-1 bootstrap-purple-text"></i> Roles
             <span  
-              v-if="getRoles"          
+              v-if="getRoles && getRoles.length > 0"          
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-              >{{ getRoles.length }}
+              >
+              <!-- -3 value to account for crud roles at index 0 that are not in use -->
+              {{ getRoles.length - 3 }}
             </span>
          
           </h4>
@@ -60,7 +62,7 @@
          >
        ADMIN
         <span class="badge badge-secondary badge-pill">
-          <span v-if="tableData">{{ tableData.length }}</span>        
+          <span v-if="tableData">{{ tableData.length - 1 }}</span>        
         </span>
     </template>
     <el-table    
@@ -200,7 +202,6 @@
             </el-table-column>
           
           </el-table-column>
-
           <el-table-column label="Projects">
 
 
@@ -309,8 +310,6 @@
           
           
           </el-table-column>
-
-
           <el-table-column label="Contracts">
             <el-table-column
             prop="contractsRead"
@@ -408,8 +407,6 @@
             </el-table-column>
           
           </el-table-column>
-
-
           <el-table-column label="Users/Roles" >
           <el-table-column
               prop="usersRead"
@@ -1295,12 +1292,6 @@ export default {
    },
 mounted() {
  this.fetchRoles(this.$route.params.programId)
-//  if (this.isProgramAdminRead && this.isProgramAdminWrite && this.isProgramAdminDelete ) {
-//       this.programAdminPriv.push(..."R") 
-//       this.programAdminPriv.push(..."W")  
-//       this.programAdminPriv.push(..."D") 
-             
-//      }
  if (this.isGroupsRead && this.isGroupsWrite && this.isGroupsDelete) {
       this.groupsPriv.push(..."R")     
       this.groupsPriv.push(..."W")     
@@ -1352,14 +1343,6 @@ mounted() {
        }
       }       
     },
-    // adminUsers(){
-    //   if(this.getRoles && this.getRoles.length > 0 ){   
-    //   //  let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-    //   if (this.roleId)  {
-    //         return [].concat.apply([], this.getRoles.role_users.filter(t => t.length > 0 && this.role_id == t.id))
-    //     } else return [].concat.apply([], this.getRoles)       
-    //   }
-    // },
     adminUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
@@ -1382,8 +1365,9 @@ mounted() {
       if(this.getRoles && this.getRoles.length > 0){
         return  {
           n:{
-             contracts: this.getRoles.filter(role => role.type_of == 'contracts').length, 
-            projects: this.getRoles.filter(role => role.type_of == 'project').length
+            // -1 value after length to account for crud row at index 0 that isn't used
+             contracts: this.getRoles.filter(role => role.type_of == 'contract').length -1 , 
+            projects: this.getRoles.filter(role => role.type_of == 'project').length - 1
           }           
          }       
         }  
