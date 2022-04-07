@@ -319,7 +319,7 @@
               placeholder="Search and select Project Users"          
             >
               <el-option
-                v-for="item in getRoles.filter(t => t.type_of == 'projects')"
+                v-for="item in getRoles.filter(t => t.type_of == 'project')"
                 :value="item"
                 :key="item.id"
                 :label="item.name"

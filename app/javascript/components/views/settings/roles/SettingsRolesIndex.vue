@@ -1295,12 +1295,6 @@ export default {
    },
 mounted() {
  this.fetchRoles(this.$route.params.programId)
-//  if (this.isProgramAdminRead && this.isProgramAdminWrite && this.isProgramAdminDelete ) {
-//       this.programAdminPriv.push(..."R") 
-//       this.programAdminPriv.push(..."W")  
-//       this.programAdminPriv.push(..."D") 
-             
-//      }
  if (this.isGroupsRead && this.isGroupsWrite && this.isGroupsDelete) {
       this.groupsPriv.push(..."R")     
       this.groupsPriv.push(..."W")     
@@ -1352,14 +1346,6 @@ mounted() {
        }
       }       
     },
-    // adminUsers(){
-    //   if(this.getRoles && this.getRoles.length > 0 ){   
-    //   //  let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-    //   if (this.roleId)  {
-    //         return [].concat.apply([], this.getRoles.role_users.filter(t => t.length > 0 && this.role_id == t.id))
-    //     } else return [].concat.apply([], this.getRoles)       
-    //   }
-    // },
     adminUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
@@ -1382,7 +1368,7 @@ mounted() {
       if(this.getRoles && this.getRoles.length > 0){
         return  {
           n:{
-             contracts: this.getRoles.filter(role => role.type_of == 'contracts').length, 
+             contracts: this.getRoles.filter(role => role.type_of == 'contract').length, 
             projects: this.getRoles.filter(role => role.type_of == 'project').length
           }           
          }       
