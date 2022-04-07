@@ -73,7 +73,7 @@
           </div>
         </div>
         <div       
-        v-loading="!contentLoaded"
+        v-loading="!contractsLoaded"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)" 
@@ -349,10 +349,10 @@
               placeholder="Search and select Project Users"          
             >
               <el-option
-                v-for="item, i in getRoles.filter(t => t.type_of == 'contract')"
+                v-for="item in getRoles.filter(t => t.type_of == 'contract' && t.name !== 'crud-row-contract-20220407')"
                 :value="item"
                 :key="item.id"
-                :load="log(item, i)"
+                :load="log(item)"
                 :label="item.name"
               >
               </el-option>
