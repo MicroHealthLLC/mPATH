@@ -484,7 +484,7 @@
 
     <span v-if="scope.$index !== 0">
      <span 
-        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.notes)"
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.notes)"
        >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
