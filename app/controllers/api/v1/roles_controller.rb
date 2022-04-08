@@ -1,4 +1,21 @@
 class Api::V1::RolesController < AuthenticatedController
+  before_action :check_permission
+
+  def check_permission
+    action = nil
+    if ["index", "show" ].include?(params[:action]) 
+      action = "read"
+    elsif ["create", "update"].include?(params[:action]) 
+      action = "write"
+    elsif ["destroy"].include?(params[:action]) 
+      action = "delete"
+    end
+    
+    program_id = params[:program_id] ? params[:program_id] : params[:role][:program_id]
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id)
+  end
+
   def index
     project = Project.find(params[:project_id])
     roles = project.roles.includes([:role_privileges, {role_users: :user}]).map(&:to_json)
@@ -24,11 +41,23 @@ class Api::V1::RolesController < AuthenticatedController
   end
 
   def update
-
+    role = Role.new.create_or_update_role(roles_params, current_user)
+    if role.persisted?
+      render json: {message: "Role created successfully", role: role.to_json}
+    else
+      render json: {errors: role.errors.full_messages}, status: 422
+    end
   end
 
   def destroy
-    
+    role = Role.find_by(id: params[:id], project_id: params[:program_id] )
+    if !role
+      raise ActiveRecord::RecordNotFound, "Role Not found"
+    elsif role.validate && role.destroy
+      render json: {message: "Role deleted successfully!!", role: role.to_json}
+    else
+      render json: {errors: role.errors.full_messages}, status: 422
+    end
   end
 
   private
