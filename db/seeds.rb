@@ -166,7 +166,7 @@ roles = [
     role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
   },
   {
-    role_type: "contrib-project", 
+    role_type: "contribute-project", 
     type_of: 'project',
     role_privileges: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
   },
@@ -182,7 +182,7 @@ roles = [
     role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "R",role_type: role_privilege} }
   },
   {
-    role_type: "contrib-contract", 
+    role_type: "contribute-contract", 
     type_of: 'contract',
     role_privileges: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.map{ |role_privilege| {name: role_privilege, privilege: "RW",role_type: role_privilege} }
   },

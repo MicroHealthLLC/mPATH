@@ -51,11 +51,9 @@
     </span>
 
      <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == contract.analytics && 
-          scope.row.role_privileges.map(t => t.privilege)[0].includes('R')"  
-          >
-          <!-- {{ scope.row.role_privileges.map(t => t.role_type)[0]}} -->
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.analytics)"
+        >   
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -83,10 +81,9 @@
     </span>
 
    <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[0] == contract.analytics && 
-      scope.row.role_privileges.map(t => t.privilege)[0].includes('W')"  
-      >
+    <span 
+      v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.analytics)"
+    >   
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -113,10 +110,9 @@
     </span>
 
         <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == contract.analytics && 
-          scope.row.role_privileges.map(t => t.privilege)[0].includes('D')"  
-          >
+         <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.analytics)"
+        >   
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -147,10 +143,9 @@
     </span>
 
          <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == contract.tasks && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
-          >
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.tasks)"
+        >   
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -178,9 +173,8 @@
 
          <span v-if="scope.$index !== 0">
           <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == contract.tasks && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
-          >
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.tasks)"
+        >  
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -207,10 +201,9 @@
     </span>
 
         <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == contract.tasks && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
-          >
+         <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.tasks)"
+        >  
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -242,10 +235,9 @@
     </span>
 
       <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] ==  contract.issues && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
-      >
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.issues)"
+        >  
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -272,10 +264,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == contract.issues && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
-      >
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.issues)"
+        >  
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -303,8 +294,7 @@
 
       <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == contract.issues && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.issues)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -338,8 +328,7 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == contract.risks && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.risks)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -368,8 +357,7 @@
 
      <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == contract.risks && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.risks)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -397,9 +385,8 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == contract.risks && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
+     <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.risks)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -432,9 +419,8 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == contract.notes && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
+    <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.notes)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -462,9 +448,8 @@
     </span>
 
        <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == contract.notes && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
+    <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.notes)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -492,9 +477,8 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == contract.notes && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.notes)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -527,9 +511,8 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == contract.lessons && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('R')"  
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.lessons)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -557,9 +540,8 @@
     </span>
 
       <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == contract.lessons && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('W')"  
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.lessons)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -587,9 +569,8 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == contract.lessons && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('D')"  
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.lessons)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -611,7 +592,7 @@
         <template slot-scope="scope">
       <el-button
       type="default"
-      v-tooltip="`Save edits`"
+      v-tooltip="`Save role`"
       v-if="showCreateRow === true && scope.$index == 0 && newRoleName"
       @click.prevent="saveNewRole(scope.$index, scope.row)"
         class="bg-primary btn-sm text-light"
@@ -1025,7 +1006,7 @@
         <template slot-scope="scope">
       <el-button
       type="default"
-      v-tooltip="`Save edits`"
+      v-tooltip="`Save role`"
       v-if="showCreateRow === true && scope.$index == 0"
       @click.prevent="saveNewRole(scope.$index, scope.row)"
       class="bg-primary btn-sm text-light"
