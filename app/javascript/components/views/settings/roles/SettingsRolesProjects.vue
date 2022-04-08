@@ -52,10 +52,8 @@
 
     <span v-if="scope.$index !== 0">
         <span 
-        v-if="scope.row.role_privileges.map(t => t.role_type)[0] == project.analytics && 
-        scope.row.role_privileges.map(t => t.privilege)[0].includes('R')"  
-        > 
-          <!-- {{ scope.row.role_privileges.map(t => t.role_type)[0]}}  = 'projects_analytics'  -->
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.analytics)"
+        >         
         <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
         </span>
@@ -86,8 +84,7 @@
       v-if="scope.$index !== 0"  
       >
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[0] == project.analytics && 
-      scope.row.role_privileges.map(t => t.privilege)[0].includes('W')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.analytics)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -115,10 +112,13 @@
     </span>
 
        <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == project.analytics && 
-          scope.row.role_privileges.map(t => t.privilege)[0].includes('D')"  
-          >
+          <!-- <span 
+            v-if="scope.row.role_privileges.map(t => t.role_type == project.analytics) &&
+           scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"
+          > -->
+       <span 
+            v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.analytics)"
+                >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i> 
   
           </span>
@@ -149,10 +149,9 @@
     </span>
 
         <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == project.tasks && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
-          >
+       <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.tasks)"
+       >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -179,10 +178,9 @@
       </span>
 
         <span v-if="scope.$index !== 0 ">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == project.tasks && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
-          >
+      <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.tasks)"
+       >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -209,10 +207,9 @@
     </span>
 
         <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == project.tasks && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
-          >
+       <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.tasks)"
+       >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -244,10 +241,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == project.issues && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
-      >
+     <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.issues)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -274,10 +270,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] ==  project.issues && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
-      >
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.issues)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -305,10 +300,9 @@
 
     <span 
       v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == project.issues && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
-      >
+       <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.issues)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -340,10 +334,9 @@
     </span>
 
     <span v-if="scope.$index !== 0" >
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == project.risks && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
-      >
+        <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.risks)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -370,10 +363,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == project.risks && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
-      >
+     <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.risks)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -400,10 +392,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == project.risks && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
-      >
+        <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.risks)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -435,10 +426,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == project.notes && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
-      >
+    <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.notes)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -466,11 +456,9 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == project.notes && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
-      >
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.notes)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
       </span>
      <span v-else>
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
@@ -495,10 +483,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == project.notes && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
-      >
+     <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.notes)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -531,9 +518,8 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == project.lessons && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('R')"  
-      >
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.lessons)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -561,9 +547,8 @@
 
     <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] ==  project.lessons && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('W')"  
-      >
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.lessons)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -590,10 +575,9 @@
     </span>
 
     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] ==  project.lessons && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('D')"  
-      >
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.lessons)"
+       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>

@@ -62,7 +62,7 @@
          >
        ADMIN
         <span class="badge badge-secondary badge-pill">
-          <span v-if="tableData">{{ tableData.length - 1 }}</span>        
+          <span v-if="tableData && tableData.length >= 1 ">{{ tableData.length - 1 }}</span>        
         </span>
     </template>
     <el-table    
@@ -100,15 +100,12 @@
               <el-table-column
               prop="groupsRead"
               label="Read"
-              width="75">
+              width="85">
             <template slot-scope="scope" >
-
-
           <span
           @click.prevent.stop="groupsRead(scope.$index, scope.row)"
           v-if="scope.$index == 0"
           >
-
             <span v-if="isGroupsRead">
             <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
             </span>
@@ -118,12 +115,10 @@
           </span>
 
             <span v-if="scope.$index !== 0">
-              <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'program_setting_groups' && 
-              scope.row.role_privileges.map(t => t.privilege)[0].includes('R')"  
-              >
-              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
+             <span 
+                  v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_groups')"
+                >            
+               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
                 </span>
             <span v-else>
               <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
@@ -140,7 +135,7 @@
             <el-table-column
             prop="groupsWrite"
             label="Write"
-            width="75">
+            width="85">
             <template slot-scope="scope">
               <span
               @click.prevent.stop="groupsWrite(scope.$index, scope.row)"
@@ -154,10 +149,9 @@
                 </span>
               </span>
             <span v-if="scope.$index !== 0">
-              <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'program_setting_groups' && 
-              scope.row.role_privileges.map(t => t.privilege)[0].includes('W')"  
-              >
+               <span 
+                  v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_groups')"
+                >
               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
                 </span>
@@ -172,7 +166,7 @@
             <el-table-column
               prop="groupsDelete"
               label="Delete"
-              width="75">
+            width="85">
           <template slot-scope="scope">
               <span
               @click.prevent.stop="groupsDelete(scope.$index, scope.row)"
@@ -186,10 +180,9 @@
                 </span>
               </span>
             <span v-if="scope.$index !== 0">
-              <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'program_setting_groups' && 
-              scope.row.role_privileges.map(t => t.privilege)[0].includes('D')"  
-              >
+                <span 
+                  v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_groups')"
+                >
               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
                 </span>
@@ -208,7 +201,7 @@
           <el-table-column
             prop="projectsRead"
             label="Read"
-            width="75">
+           width="85">
           <template slot-scope="scope">
 
           <span
@@ -225,11 +218,9 @@
           </span>
             <span v-if="scope.$index !== 0">
               <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'program_setting_projects' && 
-              scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
+                 v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_projects')"
               >
-              <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>        
                 </span>
             <span v-else>
               <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
@@ -243,7 +234,7 @@
           <el-table-column
               prop="projectsWrite"
               label="Write"
-              width="75">
+            width="85">
           <template slot-scope="scope">
 
           <span
@@ -260,8 +251,7 @@
           </span>
             <span v-if="scope.$index !== 0">
               <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'program_setting_projects'  && 
-              scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
+              v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_projects')"
               >
               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -276,7 +266,7 @@
             <el-table-column
               prop="projectsDelete"
               label="Delete"
-              width="75">
+             width="85">
             <template slot-scope="scope">
 
 
@@ -294,8 +284,7 @@
           </span>
           <span v-if="scope.$index !== 0">
           <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'program_setting_projects' && 
-          scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
+           v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_projects')"
           >
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -314,7 +303,7 @@
             <el-table-column
             prop="contractsRead"
             label="Read"
-            width="75">
+            width="85">
           <template slot-scope="scope">
 
             <span @click.prevent.stop="contractsRead(scope.$index, scope.row)" v-if="scope.$index == 0">
@@ -327,12 +316,10 @@
             </span>
 
             <span v-if="scope.$index !== 0">
-            <span 
-            v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'program_setting_contracts'  && 
-            scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
-            >
-            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-
+            <span        
+              v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_contracts')"
+             >
+             <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>    
             </span>
             <span v-else>
             <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
@@ -346,7 +333,7 @@
             <el-table-column
                 prop="contractsWrite"
                 label="Write"
-                width="75">
+               width="85">
             <template slot-scope="scope">
               <span
               @click.prevent.stop="contractsWrite(scope.$index, scope.row)"
@@ -362,8 +349,7 @@
 
               <span v-if="scope.$index !== 0">
               <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'program_setting_contracts'  && 
-              scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
+              v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_contracts')"
               >
               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -377,10 +363,8 @@
             <el-table-column
                 prop="contractsDelete"
                 label="Delete"
-                width="75">
+                width="85">
             <template slot-scope="scope">
-
-
           <span @click.prevent.stop="contractsDelete(scope.$index, scope.row)" v-if="scope.$index == 0">
 
               <span v-if="isContractsDelete">
@@ -392,8 +376,7 @@
           </span>
             <span v-if="scope.$index !== 0">
               <span 
-              v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'program_setting_contracts' && 
-              scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
+               v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_contracts')"
               >
               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -411,7 +394,7 @@
           <el-table-column
               prop="usersRead"
               label="Read"
-            width="75">
+             width="85">
           <template slot-scope="scope">
 
             <span
@@ -428,9 +411,8 @@
             </span>
 
       <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'program_setting_users_roles' && 
-      scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
+       <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_users_roles')"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -445,7 +427,7 @@
           <el-table-column
               prop="usersWrite"
               label="Write"
-              width="75">
+             width="85">
           <template slot-scope="scope">
 
             <span
@@ -464,8 +446,7 @@
       
       <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'program_setting_users_roles'  && 
-      scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_users_roles')"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -480,7 +461,7 @@
           <el-table-column
               prop="usersDelete"
               label="Delete"
-              width="75">
+             width="85">
           <template slot-scope="scope">
 
             <span
@@ -498,8 +479,7 @@
 
       <span v-if="scope.$index !== 0">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'program_setting_users_roles'  && 
-      scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_users_roles')"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -522,7 +502,7 @@
           <template slot-scope="scope">
           <el-button
           type="default"
-          v-tooltip="`Save edits`"
+          v-tooltip="`Save role`"
           v-if="showCreateRow === true && scope.$index == 0 && newRoleName"
           @click.prevent="saveNewRole(scope.$index, scope.row)"
            class="bg-primary btn-sm text-light"
@@ -594,7 +574,7 @@
             <el-table-column
             prop="groupsRead"
             label="Read"
-            width="75">
+         width="85">
         <template slot-scope="scope" >
         <span 
         v-if="scope.row.groupsRead">
@@ -609,7 +589,7 @@
         <el-table-column
         prop="groupsWrite"
         label="Write"
-        width="75">
+        width="85">
         <template slot-scope="scope">
         <span 
         v-if="scope.row.groupsWrite">
@@ -624,7 +604,7 @@
         <el-table-column
             prop="groupsDelete"
             label="Delete"
-           width="75">
+           width="85">
        <template slot-scope="scope">
         <span 
         v-if="scope.row.groupsDelete">
@@ -641,7 +621,7 @@
             <el-table-column
             prop="projectsRead"
             label="Read"
-            width="75">
+           width="85">
        <template slot-scope="scope">
         <span 
         v-if="scope.row.projectsRead">
@@ -657,7 +637,7 @@
         <el-table-column
             prop="projectsWrite"
             label="Write"
-            width="75">
+            width="85">
        <template slot-scope="scope">
         <span 
         v-if="scope.row.projectsWrite">
@@ -673,7 +653,7 @@
         <el-table-column
             prop="projectsDelete"
             label="Delete"
-            width="75">
+            width="85">
        <template slot-scope="scope">
         <span 
         v-if="scope.row.projectsDelete">
@@ -690,7 +670,7 @@
             <el-table-column
             prop="contractsRead"
             label="Read"
-            width="75">
+             width="85">
         <template slot-scope="scope">
         <span 
         v-if="scope.row.contractsRead">
@@ -705,7 +685,7 @@
         <el-table-column
             prop="contractsWrite"
             label="Write"
-            width="75">
+            width="85">
         <template slot-scope="scope">
         <span 
         v-if="scope.row.contractsWrite">
@@ -720,7 +700,7 @@
         <el-table-column
             prop="contractsDelete"
             label="Delete"
-            width="75">
+             width="85">
        <template slot-scope="scope">
         <span 
         v-if="scope.row.contractsDelete">
@@ -737,7 +717,7 @@
         <el-table-column
             prop="usersRead"
             label="Read"
-           width="75">
+            width="85">
         <template slot-scope="scope">
         <span 
         v-if="scope.row.usersRead">
@@ -752,7 +732,7 @@
         <el-table-column
             prop="usersWrite"
             label="Write"
-            width="75">
+            width="85">
         <template slot-scope="scope">
         <span 
         v-if="scope.row.usersWrite">
@@ -767,7 +747,7 @@
         <el-table-column
             prop="usersDelete"
             label="Delete"
-            width="75">
+            width="85">
         <template slot-scope="scope">
         <span 
         v-if="scope.row.usersDelete">
@@ -790,7 +770,7 @@
            <template slot-scope="scope">
           <el-button
           type="default"
-          v-tooltip="`Save edits`"
+          v-tooltip="`Save role`"
           v-if="showCreateRow === true && scope.$index == 0"
         
           @click.prevent="saveNewRole(scope.$index, scope.row)"
