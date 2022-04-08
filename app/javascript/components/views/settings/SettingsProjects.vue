@@ -177,7 +177,7 @@
                </el-button>  
                  <el-button  
                 type="default" 
-                v-tooltip="`Add User(s) to Project`"
+                v-tooltip="`Manager User(s)`"
                 @click.prevent="addUserRole(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex "
                 class="bg-primary text-light btn-sm">
