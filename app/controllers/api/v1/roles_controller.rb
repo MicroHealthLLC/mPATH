@@ -7,7 +7,7 @@ class Api::V1::RolesController < AuthenticatedController
       action = "read"
     elsif ["create", "update"].include?(params[:action]) 
       action = "write"
-    elsif ["destroy"].include?(params[:action]) 
+    elsif ["destroy", "remove_role"].include?(params[:action]) 
       action = "delete"
     end
     
@@ -19,7 +19,7 @@ class Api::V1::RolesController < AuthenticatedController
   def index
     project = Project.find(params[:project_id])
     roles = project.roles.includes([:role_privileges, {role_users: :user}]).map(&:to_json)
-    roles += Role.default_roles.map(&:to_json)
+    roles += Role.includes([:role_privileges, {role_users: :user}]).default_roles.map(&:to_json)
     render json: {roles: roles}
   end
 
@@ -39,6 +39,39 @@ class Api::V1::RolesController < AuthenticatedController
       role.role_users.create(role_user_hash)
     end
   end
+
+  def remove_role
+    project = Project.find(params[:project_id])
+
+    if params[:role_from_users]
+      role = Role.find(params[:role_id])
+      user_ids = User.where(id: params[:user_ids]).pluck(:id)
+      RoleUser.where(role_id: role.id, user_id: user_ids, project_id: project.id).destroy_all
+    elsif params[:user_from_roles]
+      user = User.find(params[:user_id])
+      role_ids = Role.where(id: params[:role_ids]).pluck(:id)
+      RoleUser.where(role_id: role_ids, user_id: user.id, project_id: project.id).destroy_all
+    elsif params[:role_from_projects]
+      role = Role.find(params[:role_id])
+      facility_project_ids = FacilityProject.where(id: params[:facility_project_ids]).pluck(:id)
+      RoleUser.where(role_id: role.id, facility_project_id: facility_project_ids).destroy_all
+    elsif params[:role_from_contractss]
+      role = Role.find(params[:role_id])
+      contract_ids = Contract.where(id: params[:contract_ids]).pluck(:id)
+      RoleUser.where(role_id: role.id, contract_id: contract_ids).destroy_all
+    elsif params[:project_from_roles]
+      role_ids = Role.find(params[:role_ids])
+      facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
+      RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id).destroy_all
+    elsif params[:contract_from_roles]
+      role_ids = Role.find(params[:role_ids])
+      contract_id = Contract.where(id: params[:contract_id]).pluck(:id)
+      RoleUser.where(role_id: role_ids, contract_id: contract_id).destroy_all
+    end
+
+  end
+
+
 
   def update
     role = Role.new.create_or_update_role(roles_params, current_user)

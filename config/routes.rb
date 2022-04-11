@@ -19,6 +19,9 @@ Rails.application.routes.draw do
       end
 
       resources :roles do
+        collection do
+          post :remove_role
+        end
         member do
           post :add_users
         end
