@@ -11,7 +11,7 @@ class Api::V1::RolesController < AuthenticatedController
       action = "delete"
     end
     
-    program_id = params[:program_id] ? params[:program_id] : params[:role][:program_id]
+    program_id = params[:project_id] ? params[:project_id] : params[:role][:project_id]
 
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id)
   end
