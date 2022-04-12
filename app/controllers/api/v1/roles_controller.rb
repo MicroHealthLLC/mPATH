@@ -45,26 +45,26 @@ class Api::V1::RolesController < AuthenticatedController
 
     if params[:role_from_users]
       role = Role.find(params[:role_id])
-      user_ids = User.where(id: params[:user_ids]).pluck(:id)
+      user_ids = User.where(id: params[:user_id]).pluck(:id)
       RoleUser.where(role_id: role.id, user_id: user_ids, project_id: project.id).destroy_all
     elsif params[:user_from_roles]
       user = User.find(params[:user_id])
-      role_ids = Role.where(id: params[:role_ids]).pluck(:id)
+      role_ids = Role.where(id: params[:role_id]).pluck(:id)
       RoleUser.where(role_id: role_ids, user_id: user.id, project_id: project.id).destroy_all
     elsif params[:role_from_projects]
       role = Role.find(params[:role_id])
-      facility_project_ids = FacilityProject.where(id: params[:facility_project_ids]).pluck(:id)
+      facility_project_ids = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
       RoleUser.where(role_id: role.id, facility_project_id: facility_project_ids).destroy_all
-    elsif params[:role_from_contractss]
+    elsif params[:role_from_contracts]
       role = Role.find(params[:role_id])
-      contract_ids = Contract.where(id: params[:contract_ids]).pluck(:id)
+      contract_ids = Contract.where(id: params[:contract_id]).pluck(:id)
       RoleUser.where(role_id: role.id, contract_id: contract_ids).destroy_all
     elsif params[:project_from_roles]
-      role_ids = Role.find(params[:role_ids])
+      role_ids = Role.find(params[:role_id])
       facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
       RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id).destroy_all
     elsif params[:contract_from_roles]
-      role_ids = Role.find(params[:role_ids])
+      role_ids = Role.find(params[:role_id])
       contract_id = Contract.where(id: params[:contract_id]).pluck(:id)
       RoleUser.where(role_id: role_ids, contract_id: contract_id).destroy_all
     end
