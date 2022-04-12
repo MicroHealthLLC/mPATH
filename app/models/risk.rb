@@ -27,6 +27,7 @@ class Risk < ApplicationRecord
   after_save :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
   after_destroy :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
 
+  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
 
   attr_accessor :file_links
 
@@ -49,7 +50,11 @@ class Risk < ApplicationRecord
 
     append :text => " - Copy"
   end
-  
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:exclude_closed_in]
+  end
+
   def update_facility_project
     if self.previous_changes.keys.include?("progress")
       fp = facility_project
