@@ -625,15 +625,7 @@ export default {
       console.log(tab, event);
     },
     _isallowed(salut) {
-      console.log(salut)
-        console.log(this.$route)
-      return this.checkPrivileges("SettingsGroups", salut, this.$route, {settingType: "Groups"})
-      // let pPrivilege = this.$programSettingPrivileges[
-      //   this.$route.params.programId
-      // ];
-      // let permissionHash = { write: "W", read: "R", delete: "D" };
-      // let s = permissionHash[salut];
-      // return pPrivilege.admin_groups.includes(s);
+     return this.checkPrivileges("SettingsGroups", salut, this.$route, {settingType: "Groups"})    
     },
   },
   mounted() {

@@ -1518,7 +1518,7 @@ if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
     },
      tableData(){
       if(this.getRoles && this.getRoles.length > 0){
-        console.log(this.getRoles)
+        // console.log(this.getRoles)
         return this.getRoles.filter(role => role.type_of == 'project')
         }  
        } 

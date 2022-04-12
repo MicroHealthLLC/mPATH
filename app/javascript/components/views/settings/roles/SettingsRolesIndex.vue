@@ -1,4 +1,13 @@
+
+
 <template>
+<!-- 
+Clicking edit button will create event
+If edit event is in progress, privilege values will display accordingly 
+
+
+
+ -->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -88,14 +97,23 @@
   >
   </el-input>
   </span> 
+ <span v-if="scope.$index == currentRow && isEditting">
+    <el-input
+    size="small"   
+    placeholder="Update Role Name"      
+    style="font-style: italic; color: red"
+    v-model="scope.row.name"
+    controls-position="right"
+  >
+  </el-input>
+  </span> 
   <span v-else>
     {{ scope.row.name }}
   </span>
 
     </template>
 
-    </el-table-column>
- 
+    </el-table-column> 
           <el-table-column label="Groups">
               <el-table-column
               prop="groupsRead"
@@ -114,7 +132,22 @@
             </span>
           </span>
 
-            <span v-if="scope.$index !== 0">
+            <span v-if="scope.$index !== 0 && !isEditting">
+             <span 
+                  v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_groups')"
+                >            
+               <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+                </span>
+            <span v-else>
+              <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+              </span>   
+            </span>    
+
+           <span 
+           v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+           @click.prevent.stop="groupsRead(scope.$index, scope.row)"
+           
+            >
              <span 
                   v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_groups')"
                 >            
@@ -126,10 +159,6 @@
             </span>    
 
             </template>
-            
-            
-            
-            
             </el-table-column>
             
             <el-table-column
@@ -503,12 +532,14 @@
           <el-button
           type="default"
           v-tooltip="`Save role`"
-          v-if="showCreateRow === true && scope.$index == 0 && newRoleName"
+          v-if="(showCreateRow === true && scope.$index == 0 && newRoleName) || 
+          (isEditting && currentRow == scope.$index)"
           @click.prevent="saveNewRole(scope.$index, scope.row)"
            class="bg-primary btn-sm text-light"
           >
         <i class="far fa-save"></i>
           </el-button>
+    
           <el-button
           type="default"
           @click.prevent="cancelCreateRole(scope.$index, scope.row)"
@@ -520,18 +551,27 @@
           </el-button>
           <el-button
           type="default"
-          @click.prevent="test(scope.$index, scope.row)"
-          v-if="!scope.$index == 0"
-          class="bg-light btn-sm"
-          disabled
+          @click.prevent="editRole(scope.$index, scope.row)"
+          v-if="!scope.$index == 0 && !isEditting"
+          class="bg-light btn-sm"   
           v-tooltip="`Edit Role`"
         >
           <i class="fal fa-edit text-primary"></i>
           </el-button>
+
+          <el-button
+          type="default"
+          @click.prevent="cancelEditRole(scope.$index, scope.row)"
+          v-if="!scope.$index == 0 && isEditting && currentRow == scope.$index"
+         class="bg-secondary btn-sm text-light ml-1"
+          v-tooltip="`Cancel Edit`"                  
+        >
+          <i class="fas fa-ban"></i> 
+          </el-button>
           <el-button  
             type="default" 
-            v-tooltip="`Add User(s) to this Role`"
-            v-if="!scope.$index == 0"
+            v-tooltip="`Manage Admin Role User(s)`"
+            v-if="!scope.$index == 0 && !isEditting"
             @click.prevent="addUserRole(scope.$index, scope.row)"               
             class="bg-primary text-light btn-sm">
           <i class="fas fa-users-medical mr-1"></i>
@@ -995,6 +1035,8 @@ export default {
       return {
         rolesVisible: false, 
         roleId: null, 
+        isEditting: false, 
+        currentRow: null, 
         searchRoleUsers:'',
         roleRowData: null, 
         addRoleDialogOpen: false, 
@@ -1052,8 +1094,18 @@ export default {
       }
   },
   methods: {
-    ...mapMutations(["SET_NEW_ROLE_STATUS", "SET_SHOW_CREATE_ROW", "SET_PROJECT_ROLE_USERS", "SET_ADD_USER_TO_ROLE_STATUS"]),
-  ...mapActions(["fetchRoles", "createRole", "addUserToRole"]),
+   ...mapMutations([
+      "SET_NEW_ROLE_STATUS",
+      "SET_UPDATED_ROLE_STATUS",
+      "SET_SHOW_CREATE_ROW", 
+      "SET_PROJECT_ROLE_USERS", 
+      "SET_ADD_USER_TO_ROLE_STATUS"
+      ]),
+    ...mapActions([
+      "fetchRoles", 
+      "createRole", 
+      "addUserToRole", 
+      "updateRole"]),
   log(e){
     // console.log(e)
   },
@@ -1072,12 +1124,12 @@ export default {
       });
     },
   groupsRead() {
-    this.isGroupsRead =  !this.isGroupsRead
-  if(this.isGroupsRead && !this.groupsPriv.map(t => t).includes("R") ){
-    this.groupsPriv.push(..."R")
-  } else if (!this.isGroupsRead) {
-      this.groupsPriv = this.groupsPriv.filter(t => t !== "R")
-  }
+   this.isGroupsRead =  !this.isGroupsRead
+      if(this.isGroupsRead && !this.groupsPriv.map(t => t).includes("R") ){
+        this.groupsPriv.push(..."R")
+      } else if (!this.isGroupsRead) {
+          this.groupsPriv = this.groupsPriv.filter(t => t !== "R")
+      }
     console.log(`groups: ${this.groupsPriv}`)
 
     },
@@ -1200,9 +1252,14 @@ export default {
     closeAddRole() {
       this.addRoleDialogOpen = false;
     },
-    test(rows, index){    
-      console.log(rows)
-      console.log(index)
+  editRole(index, rowData){    
+      this.isEditting = true
+      this.currentRow = index
+      console.log(rowData)
+    },
+    cancelEditRole(index, rows){    
+      this.isEditting = false
+      this.currentRow = index      
     },
  addRole() {
     this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
@@ -1213,13 +1270,53 @@ export default {
   cancelCreateRole() {
     this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
   },
-  saveNewRole(rows, index){
-  //    console.log(`program: ${this.programAdminPriv}`)
+  saveNewRole(index, rowData){
+      console.log(rowData)
+  // console.log(`program: ${this.programAdminPriv}`)
   // console.log(`groups: ${this.groupsPriv}`)
   //   console.log(`projects: ${this.projectsPriv}`)
   //      console.log(`contracts: ${this.contractsPriv}`)
   //         console.log(`users: ${this.usersPriv}`)
-        let newRoleData = {
+     
+    let roleData = {};     
+    if(rowData.id && index !== 0){
+       roleData = {
+        role: {
+           name: rowData.name,
+           id: rowData.id, 
+           uId: rowData.user_id,
+           pId: this.$route.params.programId,
+           type: 'admin',
+           rp: [
+              {
+                privilege: this.groupsPriv.join(''),
+                role_type: "program_setting_groups",
+                name: rowData.name, 
+              },
+              {
+                privilege: this.usersPriv.join(''),
+                role_type: "program_setting_users_roles",
+                name: rowData.name, 
+              },
+              {
+                privilege: this.projectsPriv.join(''),
+                role_type: "program_setting_projects",
+                name: rowData.name, 
+              }, 
+              {
+                privilege: this.contractsPriv.join(''),
+                role_type: "program_setting_contracts",
+                name: rowData.name, 
+              },
+            ],
+        },
+       }  
+     this.updateRole({
+        ...roleData,
+      }); 
+      console.log(roleData)
+     } else    {
+       let roleData = {
         role: {
            name: this.newRoleName,
            uId: '',
@@ -1249,15 +1346,15 @@ export default {
               },
             ],
         },
-      };
+      };   
       this.createRole({
-        ...newRoleData,
+        ...roleData,
       });
-    this.newRoleName = ""
-    this.SET_SHOW_CREATE_ROW(!this.showCreateRow)
-    
+        this.newRoleName = ""
+        this.SET_SHOW_CREATE_ROW(!this.showCreateRow)
+     }    
     },
-    handleClick(tab, event) { 
+     handleClick(tab, event) { 
           
           //  if(tab._data.index == 1){
           //     console.log("HI")
@@ -1304,6 +1401,7 @@ mounted() {
         "addUserToRoleStatus",
         "showCreateRow",
         "newRoleStatus",
+        "updatedRoleStatus",
         "getRoles",
         "new"
     ]),
@@ -1337,7 +1435,7 @@ mounted() {
     },
     tableData(){
       if(this.getRoles && this.getRoles.length > 0){
-        console.log(this.getRoles)
+        console.log(this.getRoles.filter(role => role.type_of == 'admin' || role.type_of == '' ))
         return this.getRoles.filter(role => role.type_of == 'admin' || role.type_of == '' )
         }  
        },
@@ -1418,6 +1516,25 @@ mounted() {
             this.usersPriv.push(..."D")       
           }
 
+          }
+      },
+    },
+    updatedRoleStatus: {
+      handler() {
+        if (this.updatedRoleStatus == 200) {
+          this.$message({
+            message: `Role successfully updated.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_UPDATED_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId)  
+          this.currentRow = null
+          // this.isProgramAdminRead = true,
+          // this.isProgramAdminWrite = true,
+          // this.isProgramAdminDelete = true
+  
+      
           }
       },
     },
