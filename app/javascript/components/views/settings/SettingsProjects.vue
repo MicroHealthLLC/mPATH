@@ -177,7 +177,7 @@
                </el-button>  
                  <el-button  
                 type="default" 
-                v-tooltip="`Manager User(s)`"
+                v-tooltip="`Manage User(s)`"
                 @click.prevent="addUserRole(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex "
                 class="bg-primary text-light btn-sm">
