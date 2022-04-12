@@ -23,8 +23,8 @@ class Role < ApplicationRecord
 
   def to_json(options = {})
     hash = self.attributes
-    hash[:role_privileges] = role_privileges.as_json
-    hash[:role_users] = role_users.includes(:user).map(&:to_json)
+    hash[:role_privileges] = self.role_privileges.as_json
+    hash[:role_users] = self.role_users.map(&:to_json)
     hash
   end
   

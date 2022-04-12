@@ -18,8 +18,8 @@ class Api::V1::RolesController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    roles = project.roles.includes([:role_privileges, {role_users: :user}]).map(&:to_json)
-    roles += Role.includes([:role_privileges, {role_users: :user}]).default_roles.map(&:to_json)
+    roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map(&:to_json)
+    roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.map(&:to_json)
     render json: {roles: roles}
   end
 
@@ -70,8 +70,6 @@ class Api::V1::RolesController < AuthenticatedController
     end
 
   end
-
-
 
   def update
     role = Role.new.create_or_update_role(roles_params, current_user)
