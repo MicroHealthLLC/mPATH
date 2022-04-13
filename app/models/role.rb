@@ -6,6 +6,21 @@ class Role < ApplicationRecord
   has_many :role_privileges, dependent: :destroy
   accepts_nested_attributes_for :role_privileges
   
+  validate :prevent_default_role_update, on: [:update, :destroy]
+
+  def prevent_default_role_update
+    if is_default
+      self.errors.add(:base, "Can not update default role.")
+      return false
+    end
+    return true
+  end
+
+  def destroy
+    raise "Can not destroy default role." if !prevent_default_role_update
+    super
+  end
+
   def to_json(options = {})
     hash = self.attributes
     hash[:role_privileges] = self.role_privileges.as_json

@@ -41,7 +41,7 @@ const settingsStore = {
     groups_loaded: true,
     group_status: 0,
 
-
+    is_editting_role: false,
     edit_user_data:[],
     add_users_to_program:[],
     add_users_to_program_status:0,
@@ -58,10 +58,15 @@ const settingsStore = {
 
     //ROLES STATES
     roles: [],
+    role: {},
     roles_loaded: true,
     new_role_loaded: true,
     roles_status: 0, 
     new_role_status:0,
+    updated_role_status: 0,
+    updated_project_role_status: 0,
+    updated_contract_role_status: 0,
+
 
     add_user_to_role: [],
     add_user_to_role_loaded: true,
@@ -236,9 +241,58 @@ const settingsStore = {
            },
          })
            .then((res) => {
-             commit("SET_NEW_ROLE", res.data);
+             commit("SET_ROLE", res.data);
             //  console.log(res.data)
              commit("SET_NEW_ROLE_STATUS", res.status);
+           })
+           .catch((err) => {
+             console.log(err);
+           })
+           .finally(() => {
+             commit("TOGGLE_NEW_ROLE_LOADED", true);
+           });
+       },
+       // UPDATE ROLE
+
+       updateRole({ commit }, { role }) {
+        let formData = new FormData();
+        // console.log(role)
+        formData.append("role[name]", role.name); //Required
+        formData.append("role[id]", role.id); //Required
+        formData.append("role[project_id]", role.pId)
+        formData.append("role[type_of]", role.type)
+        formData.append("role[user_id]", role.uId)
+        role.rp.forEach((p) => {
+          formData.append("role[role_privileges][][privilege]", p.privilege);
+          formData.append("role[role_privileges][][role_type]", p.role_type);
+          formData.append("role[role_privileges][][name]", p.name);
+          formData.append("role[role_privileges][][id]", p.id);
+        });
+
+        commit("TOGGLE_NEW_ROLE_LOADED", false);   
+         axios({
+           method: "PUT",
+           url: `${API_BASE_PATH}/roles/${role.id}`,
+           data: formData,
+           headers: {
+             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+               .attributes["content"].value,
+           },
+         })
+           .then((res) => {
+            //  commit("SET_ROLE", res.data);
+             commit("SET_ROLE", res.data);
+            // console.log(res.data.role.type_of)
+            if (res.data && res.data.role.type_of == "admin" ){
+              commit("SET_UPDATED_ROLE_STATUS", res.status);
+            }
+            if (res.data && res.data.role.type_of == "project" ){
+              commit("SET_UPDATED_PROJECT_ROLE_STATUS", res.status);
+            }
+            if (res.data && res.data.role.type_of == "contract" ){
+              commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
+            }
+                    
            })
            .catch((err) => {
              console.log(err);
@@ -823,6 +877,9 @@ const settingsStore = {
     setNewContractGroupFilter: (state, loaded) =>
       (state.new_contract_group_filter = loaded),
 
+    
+
+    SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) => (state.project_role_users = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
@@ -850,8 +907,12 @@ const settingsStore = {
     //ROLES MUTATIONS
     TOGGLE_ROLES_LOADED: (state, loaded) => (state.roles_loaded = loaded),
     SET_ROLES: (state, value) => (state.roles = value),
+    SET_ROLE: (state, value) => (state.role = value),
     TOGGLE_NEW_ROLE_LOADED: (state, loaded) => (state.new_role_loaded = loaded),
     SET_NEW_ROLE_STATUS:(state, status) => (state.new_role_status = status),
+    SET_UPDATED_ROLE_STATUS:(state, status) => (state.updated_role_status = status),
+    SET_UPDATED_PROJECT_ROLE_STATUS:(state, status) => (state.updated_project_role_status = status),
+    SET_UPDATED_CONTRACT_ROLE_STATUS:(state, status) => (state.updated_contract_role_status = status),
     TOGGLE_ADD_USER_TO_ROLE_LOADED: (state, loaded) => (state.add_user_to_role_loaded = loaded),
     SET_ADD_USER_TO_ROLE_STATUS:(state, status) => (state.add_user_to_role_status = status),
 
@@ -905,9 +966,12 @@ const settingsStore = {
 
   getters: {
     //ROLES GETTERS
+    getRole: (state) => state.role,
     getRoles: (state) => state.roles,
     getProjectRoleUsers: (state) => state.project_role_users,
     getProjectRoleNames: (state) => state.project_role_names,
+
+    isEdittingRole: (state) => state.is_editting_role, 
 
     getContractRoleUsers: (state) => state.contract_role_users,
     getContractRoleNames: (state) => state.contract_role_names,
@@ -920,6 +984,9 @@ const settingsStore = {
 
     getRolesLoaded: (state) => state.roles_loaded, 
     newRoleStatus: (state) => state.new_role_status,
+    updatedRoleStatus: (state) => state.updated_role_status,
+    updatedProjectRoleStatus: (state) => state.updated_project_role_status,
+    updatedContractRoleStatus: (state) => state.updated_contract_role_status,
     getAddUserToRole: (state) => state.add_user_to_role, 
     addUserToRoleStatus: (state) => state.add_user_to_role_status,
     showCreateRow: (state) => state.show_create_row,

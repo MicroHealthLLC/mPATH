@@ -352,7 +352,6 @@
                 v-for="item in getRoles.filter(t => t.type_of == 'contract' && t.name !== 'crud-row-contract-20220407')"
                 :value="item"
                 :key="item.id"
-                :load="log(item)"
                 :label="item.name"
               >
               </el-option>
@@ -522,7 +521,7 @@ export default {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
     log(e){
-      console.log(e)
+      // console.log(e)
     },
    saveContractUserRole(index, rows){
     let user_ids = this.contractRoleUsers.map(t => t.id)
