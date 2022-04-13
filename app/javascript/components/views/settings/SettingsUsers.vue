@@ -1215,11 +1215,13 @@ export default {
       }
     },
     contractNames(){
-      if(this.currentProject)
-      if (this.currentProject.contracts && this.currentProject.contracts.length > 0)
-      {
-        return this.currentProject.contracts.map(t => t)
+      if(this.currentProject){
+        if (this.currentProject.contracts && this.currentProject.contracts.length > 0){
+          console.log(_.groupBy(this.currentProject.contracts, 'id'))
+          return this.currentProject.contracts.map(t => t)
+        }
       }
+
     },
    projectUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
