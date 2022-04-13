@@ -263,6 +263,7 @@ const settingsStore = {
           formData.append("role[role_privileges][][privilege]", p.privilege);
           formData.append("role[role_privileges][][role_type]", p.role_type);
           formData.append("role[role_privileges][][name]", p.name);
+          formData.append("role[role_privileges][][id]", p.id);
         });
 
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
@@ -276,6 +277,7 @@ const settingsStore = {
            },
          })
            .then((res) => {
+            //  commit("SET_ROLE", res.data);
              commit("SET_ROLE", res.data);
             console.log(res.data)
              commit("SET_UPDATED_ROLE_STATUS", res.status);
