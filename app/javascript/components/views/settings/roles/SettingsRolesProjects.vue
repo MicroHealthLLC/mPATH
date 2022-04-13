@@ -35,7 +35,7 @@
   </el-input>
   </span>
   <span v-else>
-    <span v-if="
+    <span v-show="
       scope.row.name == 'update-project' ||
       scope.row.name == 'read-project' ||
       scope.row.name == 'contribute-project'"
