@@ -1,13 +1,6 @@
 
 
 <template>
-<!-- 
-Clicking edit button will create event
-If edit event is in progress, privilege values will display accordingly 
-
-
-
- -->
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -109,6 +102,12 @@ If edit event is in progress, privilege values will display accordingly
   </el-input>
   </span> 
   <span v-else>
+    <span v-if="
+      scope.row.name == 'program-admin-not-users' ||
+      scope.row.name == 'program-admin' ||
+      scope.row.name == 'program-admin-not-contract'"      
+      style="color: #dc3545; font-size: 15px">*
+    </span>    
     {{ scope.row.name }}
   </span>
 
@@ -677,11 +676,14 @@ If edit event is in progress, privilege values will display accordingly
           <i class="fas fa-ban"></i> 
           </el-button>
           <el-button
-          type="default"
-          @click.prevent="editRole(scope.$index, scope.row)"
-          v-if="!scope.$index == 0 && !isEditting"
-          class="bg-light btn-sm"   
-          v-tooltip="`Edit Role`"
+            type="default"
+            @click.prevent="editRole(scope.$index, scope.row)"
+            v-if="!scope.$index == 0 && !isEditting && 
+            scope.row.name !== 'program-admin-not-users' &&
+            scope.row.name !== 'program-admin' &&
+            scope.row.name !== 'program-admin-not-contract'"
+            class="bg-light btn-sm"   
+            v-tooltip="`Edit Role`"
         >
           <i class="fal fa-edit text-primary"></i>
           </el-button>
@@ -967,6 +969,7 @@ If edit event is in progress, privilege values will display accordingly
           
          </el-table-column> 
     </el-table> 
+    
     </el-tab-pane>
      <el-tab-pane class="p-3"  style="postion:relative">
         <template
@@ -994,6 +997,9 @@ If edit event is in progress, privilege values will display accordingly
     </template>
           <SettingsRolesContracts />
      </el-tab-pane>
+      <h6 class="mt-2 mb-0 text-right" style="color: gray; font-size: 13px">
+        <span style="color: #dc3545; font-size: 15px">*</span> Default roles cannot be edited.
+      </h6>
 </el-tabs>
     </div>
           <el-dialog
@@ -1151,6 +1157,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "../SettingsSidebar.vue";
 import SettingsRolesProjects from "./SettingsRolesProjects.vue"
 import SettingsRolesContracts from "./SettingsRolesContracts.vue"
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 export default {
   name: "SettingsRolesIndex",
   components: {
@@ -1162,6 +1169,7 @@ export default {
       return {
         rolesVisible: false, 
         roleId: null, 
+        updatedAdminRole: null, 
         isEditting: false, 
         currentRow: null, 
         searchRoleUsers:'',
@@ -1380,82 +1388,94 @@ export default {
         console.log(this.groupsPriv)
         // GROUPS
       if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_groups')){
-         this.isGroupsRead =  !this.isGroupsRead        
+         this.isGroupsRead =  false;    
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_groups')) {
-          this.groupsPriv.push(..."R")
+          this.groupsPriv.push(..."R");
+           this.isGroupsRead = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_groups')) {
-         this.isGroupsWrite =  !this.isGroupsWrite
+         this.isGroupsWrite =  false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_groups')) {
           this.groupsPriv.push(..."W")
+           this.isGroupsWrite = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_groups')){
-         this.isGroupsDelete =  !this.isGroupsDelete
+         this.isGroupsDelete =  false;
       }
       if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_groups')){
-          this.groupsPriv.push(..."D")
+          this.groupsPriv.push(..."D");
+          this.isGroupsDelete = true;
       }
 
       // PROJECTS
       if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_projects')){
-         this.isProjectsRead = !this.isProjectsRead     
+         this.isProjectsRead = false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_projects')) {
-          this.projectsPriv.push(..."R")
+          this.projectsPriv.push(..."R");
+          this.isProjectsRead = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_projects')) {
-         this.isProjectsWrite =  !this.isProjectsWrite
+         this.isProjectsWrite = false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_projects')) {
-        this.projectsPriv.push(..."W")
+        this.projectsPriv.push(..."W");
+        this.isProjectsWrite = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_projects')){
-         this.isProjectsDelete =  !this.isProjectsDelete
+         this.isProjectsDelete =  false;
       }
       if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_projects')){
-         this.projectsPriv.push(..."D")
+         this.projectsPriv.push(..."D");
+         this.isProjectsDelete = true;
       }
 
       //CONTRACTS
       if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_contracts')){
-         this.isContractsRead =  !this.isContractsRead   
+         this.isContractsRead =  false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_contracts')) {
-          this.contractsPriv.push(..."R")
+          this.contractsPriv.push(..."R");
+           this.isContractsRead = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_contracts')) {
-         this.isContractsWrite =  !this.isContractsWrite 
+         this.isContractsWrite = false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_contracts')) {
-           this.contractsPriv.push(..."W")
+           this.contractsPriv.push(..."W");
+           this.isContractsWrite = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_contracts')){
-         this.isContractsDelete = !this.isContractsDelete
+         this.isContractsDelete = false;
       }
       if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_contracts')){
-           this.contractsPriv.push(..."D")
+           this.contractsPriv.push(..."D");
+           this.isContractsDelete = true;
       }
 
             //Users
       if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_users_roles')){
-         this.isUsersRead =  !this.isUsersRead
+         this.isUsersRead = false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_users_roles')) {
-          this.usersPriv.push(..."R")
+          this.usersPriv.push(..."R");
+          this.isUsersRead = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_users_roles')) {
-         this.isUsersWrite = !this.isUsersWrite
+         this.isUsersWrite = false;
       } 
       if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('program_setting_users_roles')) {
-           this.usersPriv.push(..."W")
+          this.usersPriv.push(..."W");
+          this.isUsersWrite = true;
       }
       if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_users_roles')){
-         this.isUsersDelete = !this.isUsersDelete
+         this.isUsersDelete = false;
       }
       if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('program_setting_users_roles')){
-          this.usersPriv.push(..."D")
+          this.usersPriv.push(..."D");
+          this.isUsersDelete = true;
       }
 
     },
@@ -1545,13 +1565,6 @@ export default {
     this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
   },
   saveNewRole(index, rowData){
-      console.log(rowData)
-  // console.log(`program: ${this.programAdminPriv}`)
-  // console.log(`groups: ${this.groupsPriv}`)
-  //   console.log(`projects: ${this.projectsPriv}`)
-  //      console.log(`contracts: ${this.contractsPriv}`)
-  //         console.log(`users: ${this.usersPriv}`)
-     
     let roleData = {};     
     if(rowData.id && index !== 0){   
        roleData = {
@@ -1711,7 +1724,6 @@ mounted() {
        } 
      },
   watch: { 
-
     newRoleStatus: {
       handler() {
         if (this.newRoleStatus == 200) {
@@ -1786,6 +1798,7 @@ mounted() {
             type: "success",
             showClose: true,
           });
+          console.log("updatedRole in Admin")
           this.SET_UPDATED_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
           this.currentRow = null;
