@@ -567,7 +567,7 @@ export default {
       let groupId = ""
       if (this.C_newContractGroupFilter){
         groupId = this.C_newContractGroupFilter.id
-      } amplify
+      }
       let contractData = {
         contract: {
           nickname: this.contractNicknameText,
