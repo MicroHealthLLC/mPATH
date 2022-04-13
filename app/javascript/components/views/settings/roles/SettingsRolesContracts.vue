@@ -34,7 +34,13 @@
   >
   </el-input>
   </span>
-  <span v-else>
+  <span v-else>     
+    <span v-show="
+      scope.row.name == 'update-contract' ||
+      scope.row.name == 'read-contract' ||
+      scope.row.name == 'contribute-contract'"
+      style="color: #dc3545; font-size: 15px">*
+    </span>   
     {{ scope.row.name }}
   </span>
 

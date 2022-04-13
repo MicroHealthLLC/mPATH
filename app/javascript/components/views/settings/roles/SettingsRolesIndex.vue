@@ -102,7 +102,7 @@
   </el-input>
   </span> 
   <span v-else>
-    <span v-if="
+    <span v-show="
       scope.row.name == 'program-admin-not-users' ||
       scope.row.name == 'program-admin' ||
       scope.row.name == 'program-admin-not-contract'"      
