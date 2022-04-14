@@ -296,4 +296,5 @@ ActiveAdmin.register Risk do
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, "data-placeholder" => "Select Checklist user" }
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
+  filter :exclude_closed, as: :check_boxes, collection: [['Exclude Closed Items', true]], label: ''
 end

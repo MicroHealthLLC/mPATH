@@ -24,6 +24,8 @@ class Task < ApplicationRecord
 
   attr_accessor :file_links
 
+  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+
   amoeba do
     include_association :task_type
     include_association :task_stage
@@ -40,6 +42,10 @@ class Task < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:exclude_closed_in]
   end
 
   def self.params_to_permit
