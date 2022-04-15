@@ -128,7 +128,10 @@ class User < ApplicationRecord
   
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
-    Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    project_ids = FacilityProject.where(id: self.role_users.pluck(:facility_project_id).compact.uniq ).pluck(:project_id).uniq
+    project_ids = ( project_ids + self.role_users.pluck(:project_id) ).compact.uniq
+    Project.where(id: project_ids ).active.distinct
   end
 
   def full_name
@@ -756,18 +759,12 @@ class User < ApplicationRecord
     program_ids = user.project_ids if !program_ids.any?
     role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_ids).distinct.pluck(:id)
     role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
-    # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
-    # role_privileges.as_json(only: [:name, :privilege, :role_type])
     hash = {}
     role_privileges.each do |rp|
       hash[rp.role_type] = rp.privilege.chars
     end
     hash.with_indifferent_access
   end 
-
-  def programs_with_program_admin_role
-    role_users.where()
-  end
 
   def authorized_contract_ids(project_ids: []) 
     # c_ids = []
