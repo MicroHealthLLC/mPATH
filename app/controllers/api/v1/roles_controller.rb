@@ -1,5 +1,5 @@
 class Api::V1::RolesController < AuthenticatedController
-  before_action :check_permission
+  before_action :check_permission, except: [:add_users]
 
   def check_permission
     action = nil
