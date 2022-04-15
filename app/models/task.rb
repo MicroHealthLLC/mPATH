@@ -25,6 +25,7 @@ class Task < ApplicationRecord
   attr_accessor :file_links
 
   scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_inactive_in, -> (dummy) { where.not(facility_project: { projects: { status: 0 } }).or(where.not(facility_project: { facilities: { status: 0 } })) }
 
   amoeba do
     include_association :task_type
@@ -45,7 +46,7 @@ class Task < ApplicationRecord
   end
 
   def self.ransackable_scopes(_auth_object = nil)
-    [:exclude_closed_in]
+    [:exclude_closed_in, :exclude_inactive_in]
   end
 
   def self.params_to_permit

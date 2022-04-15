@@ -239,6 +239,7 @@ ActiveAdmin.register Task do
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   filter :exclude_closed, as: :check_boxes, collection: [['Exclude Closed Items', true]], label: ''
+  filter :exclude_inactive, as: :check_boxes, collection: [['Exclude Inactive Items', true]], label: ''
 
   controller do
     before_action :check_readability, only: [:index, :show]
