@@ -75,6 +75,7 @@ const settingsStore = {
     //PROJECT USER ROLES
     project_role_users: [],
     project_role_names: [],
+    users_project_roles: [],
 
      //CONTRACT USER ROLES
      contract_role_users: [],
@@ -351,7 +352,80 @@ const settingsStore = {
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
-           url: `${API_BASE_PATH}/roles/${userData.roleId}/add_users`,
+           url: `${API_BASE_PATH}/roles/${userData.roleId}/add_users?project_id=${userData.programId}`,
+           data: formData,
+           headers: {
+             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+               .attributes["content"].value,
+           },
+         })
+           .then((res) => {
+            //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
+            commit("SET_NEW_ROLE", res);
+            console.log(res)
+             commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
+           })
+           .catch((err) => {
+             console.log(err);
+           })
+           .finally(() => {
+             commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", true);
+           });
+       },
+       //REMOVE USER FROM ROLE OR PROJECT OR CONTRACT
+      removeUserRole({ commit }, { userData }) {         
+        // let formData =  userRoleData(userData);
+        // console.log(userData)
+        let formData = new FormData();
+     
+          if (userData.roleIds){
+                formData.append("role_from_projects", true);   
+                userData.roleIds.forEach((ids) => {        
+                formData.append("user_id", userData.userId);
+                formData.append("project_id", userData.programId)
+                formData.append("role_id[]", ids)      
+                formData.append("facility_project_id", userData.facProjIds)  
+                })         
+           } 
+          
+           if (userData.contractIds){
+             formData.append("contract_from_roles", true);
+                userData.contractIds.forEach((ids) => {
+                formData.append("user_id", userData.userId);
+                formData.append("project_id", userData.programId)
+                formData.append("role_id", userData.roleId)      
+                formData.append("contract_id[]", ids)      
+                });
+            } 
+
+          if (userData.adminRole) {
+              formData.append("role_users[][user_id]", userData.userId);
+              formData.append("role_users[][project_id]", userData.programId);
+              formData.append("role_users[][role_id]", userData.roleId)
+            } 
+         
+            if (userData.userIds) {
+              formData.append("role_from_users", true);
+                userData.userIds.forEach((ids) => {
+                formData.append("user_id[]", ids);
+                formData.append("project_id", userData.programId)
+                if(userData.roleId){
+                formData.append("role_id", userData.roleId)
+                }
+                if(userData.projectId){
+                formData.append("facility_project_id", userData.projectId)
+                }
+                if(userData.contractId){
+                formData.append("contract_id", userData.contractId)
+                }
+                });
+
+            }
+       
+        commit("TOGGLE_NEW_ROLE_LOADED", false);   
+         axios({
+           method: "POST",
+           url: `${API_BASE_PATH}/roles/remove_role`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -881,6 +955,7 @@ const settingsStore = {
 
     SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) => (state.project_role_users = value),
+    SET_USERS_PROJECT_ROLES: (state, value) => (state.users_project_roles = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
     SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
@@ -969,6 +1044,7 @@ const settingsStore = {
     getRole: (state) => state.role,
     getRoles: (state) => state.roles,
     getProjectRoleUsers: (state) => state.project_role_users,
+    getUsersProjectRoles: (state) => state.users_project_roles,
     getProjectRoleNames: (state) => state.project_role_names,
 
     isEdittingRole: (state) => state.is_editting_role, 
