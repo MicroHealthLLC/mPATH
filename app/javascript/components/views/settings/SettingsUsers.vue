@@ -115,6 +115,14 @@
 
         <el-table-column label="Actions"  align="right">
             <template slot-scope="scope" >
+            <el-button
+              type="default"
+              v-tooltip="`Manage User Roles`"
+              @click.prevent="openUserRoleDialog(scope.$index, scope.row)"
+              v-if="scope.$index !== rowIndex"
+              class="bg-primary text-light btn-sm">
+              <i class="fal fa-user-lock mr-1 text-light"></i>
+            </el-button>
             <el-button  
                 type="default" 
                 v-tooltip="`Edit User info`"  
@@ -122,15 +130,6 @@
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>    
             </el-button> 
-            <el-button  
-            type="default" 
-            v-tooltip="`Manage User Roles`"
-            @click.prevent="openUserRoleDialog(scope.$index, scope.row)" 
-            v-if="scope.$index !== rowIndex"
-            class="bg-primary text-light btn-sm">
-              <i class="fal fa-user-lock mr-1 text-light"></i> 
-            </el-button>  
-        
         <!-- USe this attribute when functionaloty gets built in -->
                   <!-- @click.prevent="removeUser(scope.$index, scope.row)"    -->
             <!-- <el-button
