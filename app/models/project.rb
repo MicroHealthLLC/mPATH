@@ -55,9 +55,18 @@ class Project < SortableRecord
   after_save :grant_access_to_admins
   after_save :add_not_started_status
 
+  scope :program_admins_contains, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}%").map(&:project_id)) }
+  scope :program_admins_equals, -> (email) { where(id: RoleUser.joins(:user).where("users.email=?", email).map(&:project_id)) }
+  scope :program_admins_ends_with, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}").map(&:project_id)) }
+  scope :program_admins_starts_with, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "#{email}%").map(&:project_id)) }
+
   # Program admins are those who has any of RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES roles for this program
   # i.e. check Role#get_program_admins 
   attr_accessor :admin_program_admins
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:program_admins_equals, :program_admins_ends_with, :program_admins_starts_with, :program_admins_contains]
+  end
 
   def as_json(options=nil)
     json = super(options)
