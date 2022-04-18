@@ -358,12 +358,13 @@
                     !searchRoleUsers || 
                     data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
                     data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"           
-            height="450"
-            width="auto"
-            class="pl-4"
-            > 
+                )"          
+        
+            height="375"
+            width="100%"
+             > 
            <el-table-column  prop="user_full_name"
+             width="200"
               sortable
               filterable
               label="Users">
@@ -376,6 +377,7 @@
 
             </el-table-column>
             <el-table-column  prop="role_name"
+               width="675"
               sortable
               filterable
               label="Roles">
@@ -407,23 +409,32 @@
             </el-table-column>
 
     <el-table-column
-  
-        align="right">
-        <template slot="header" slot-scope="scope">
+        width="125"
+      >
+        <!-- <template slot="header" slot-scope="scope">
           <el-input
             v-model="searchRoleUsers"
             size="mini"
             placeholder="Enter User or Role Name"/>
-        </template>
-        <!-- <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template> -->
+        <template slot-scope="scope">
+               <el-button  
+                type="default" 
+                v-tooltip="`Remove User from Project`"
+                @click.prevent="removeUser(scope.$index, scope.row)" 
+               
+                class="bg-light btn-sm">
+                <i class="fas fa-user-slash"></i>     
+               </el-button>  
+                 <el-button  
+                type="default" 
+                v-tooltip="`Manage Assigned Role(s)`"
+                @click.prevent="manageAssignedRole(scope.$index, scope.row)" 
+             
+                class="bg-primary text-light btn-sm">
+               <i class="fal fa-user-gear mr-1 text-light"></i> 
+               </el-button>  
+        </template>
       </el-table-column>
         
           </el-table> 
@@ -526,7 +537,8 @@ export default {
       "fetchCurrentProject", 
       "fetchGroups", 
       "addUserToRole", 
-      "fetchRoles"
+      "fetchRoles",
+      "removeUserRole"
       ]),
     ...mapMutations([
       "setProjectGroupFilter", 
@@ -537,6 +549,24 @@ export default {
       ]),
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
+    },
+    removeUser(index, rowData){
+      let role_ids =this.projectRoleNames.map(t => t.id)
+      let projectUserRoleData = {
+              userData: {
+                roleIds: role_ids,
+                userId: rowData.user_id,
+                programId: this.$route.params.programId, 
+                facProjId: rowData.facility_project_id,
+                projectId: true        
+            },
+          };
+          this.removeUserRole({
+            ...projectUserRoleData,
+          });
+    },
+    manageAssignedRole(index, rowData){
+
     },
     cancelCreateGroup() {
       this.dialogVisible = false;
@@ -553,14 +583,15 @@ export default {
 			this.projId = row.facilityProjectId;
 			const lastId = this.expandRowKeys[0];
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
-      //Commenting out setter.  Useful if we want saved users to populate dropdown upon loading
-      // this.SET_PROJECT_ROLE_USERS(this.assignedUsers)
+   
+      
 		}, 
     addUserRole(index, rows) {
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
-      console.log(rows)
+      // this.SET_PROJECT_ROLE_USERS(this.assignedUsers)
+      console.log(this.projectUsers)
     },
     addProject() {
       this.dialogVisible = true;
@@ -743,7 +774,7 @@ export default {
       },
     },
     // assignedUsers(){
-       //Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
+    //   //  Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
     //   if(this.programUsers && this.projectUsers && this.projectUsers.length > 0){
     //     return this.programUsers.filter(t => this.projectUsers.map(t => t.user_id).includes(t.id))
     //   }
@@ -855,9 +886,9 @@ a {
 /deep/.el-table__row .el-input .el-input__inner {
   border-style: none;
 }
-/deep/.el-table__header, .el-table{
-  width: auto !important;
-}
+// /deep/.el-table__header, .el-table{
+//   width: auto !important;
+// }
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;
 }
