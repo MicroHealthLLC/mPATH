@@ -51,6 +51,13 @@ ActiveAdmin.register Project do
         "<span>#{project.project_type&.name}</span>".html_safe
       end
     end
+    column "Program Admins", :get_program_admins do |project|
+      if current_user.admin_write?
+        project.get_program_admins
+      else
+        "<span>#{project.get_program_admins.map(&:full_name).join(', ')}</span>".html_safe
+      end
+    end
     tag_column "State", :status
     actions defaults: false do |project|
       item "Edit", edit_admin_project_path(project), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
