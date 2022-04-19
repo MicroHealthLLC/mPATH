@@ -9,15 +9,21 @@ class RoleUser < ApplicationRecord
   validate :check_valid_data, :check_duplication
 
   def check_duplication
-    if facility_project_id && RoleUser.where(user_id: user_id, role_id: role_id, facility_project_id: facility_project_id).exists?
-       self.errors.add(:base, "Role is already assigned to same project")
-       return false
-    elsif contract_id && RoleUser.where(user_id: user_id, role_id: role_id, contract_id: contract_id).exists?
-      self.errors.add(:base, "Role is already assigned to same contract")
-      return false
-    elsif project_id && RoleUser.where(user_id: user_id, role_id: role_id, project_id: project_id).exists?
-      self.errors.add(:base, "Role is already assigned to same program")
-      return false
+    if facility_project_id
+      if RoleUser.where(user_id: user_id, role_id: role_id, facility_project_id: facility_project_id).exists?
+        self.errors.add(:base, "Role is already assigned to same project")
+        return false
+      end
+    elsif contract_id
+      if RoleUser.where(user_id: user_id, role_id: role_id, contract_id: contract_id).exists?
+        self.errors.add(:base, "Role is already assigned to same contract")
+        return false
+      end
+    elsif project_id
+      if RoleUser.where(user_id: user_id, role_id: role_id, project_id: project_id).exists?
+        self.errors.add(:base, "Role is already assigned to same program")
+        return false
+      end
     end
   end
 
