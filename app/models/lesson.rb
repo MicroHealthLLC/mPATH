@@ -424,8 +424,6 @@ class Lesson < ApplicationRecord
 
     lesson.transaction do
       lesson.save
-      lesson.add_link_attachment(params)
-      lesson.remove_attachment(destroy_file_ids)
 
       if notes_attributes.present?
         existing_notes = self.notes
@@ -516,6 +514,13 @@ class Lesson < ApplicationRecord
       lesson.assign_users(params)
 
     end
+    
+    # NOTE: This is not working inside the Transaction block.
+    # Reproduce: Create new lesson with file and link both and it is giving an error
+    # Error performing ActiveStorage::AnalyzeJob ActiveStorage::FileNotFoundError (ActiveStorage::FileNotFoundError):
+    lesson.add_link_attachment(params)
+    lesson.remove_attachment(destroy_file_ids)
+
     lesson.persisted?  ? Lesson.includes(Lesson.lesson_preload_array).find(lesson.id) : lesson
   end
 
@@ -532,12 +537,16 @@ class Lesson < ApplicationRecord
   end
 
   def add_link_attachment(params = {})
-    link_files = params[:file_links]
-    if link_files && link_files.any?
-      link_files.each do |f|
-        next if !f.present? || f.nil? || !valid_url?(f)
-        self.lesson_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+    begin
+      link_files = params[:file_links]
+      if link_files && link_files.any?
+        link_files.each do |f|
+          next if !f.present? || f.nil? || !valid_url?(f)
+          self.lesson_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+        end
       end
+    rescue Exception => e
+      puts "Exception in link processing: #{e.message}"
     end
   end
 

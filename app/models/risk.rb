@@ -516,8 +516,6 @@ class Risk < ApplicationRecord
     risk.transaction do
       risk.save
 
-      risk.add_link_attachment(params)
-
       if user_ids && user_ids.present?
         risk_users_obj = []
         user_ids.each do |uid|
@@ -597,6 +595,7 @@ class Risk < ApplicationRecord
       risk.assign_users(params)
 
     end
+    risk.add_link_attachment(params)
 
     risk.reload
   end
