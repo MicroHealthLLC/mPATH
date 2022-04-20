@@ -38,6 +38,11 @@ class Api::V1::RolesController < AuthenticatedController
     role_users.each do |role_user_hash|
       role.role_users.create(role_user_hash)
     end
+    if role.persisted?
+      render json: {message: "User added to role successfully!!", role: role.to_json}
+    else
+      render json: {errors: role.errors.full_messages}, status: 422
+    end
   end
 
   def remove_role
@@ -60,15 +65,25 @@ class Api::V1::RolesController < AuthenticatedController
       contract_ids = Contract.where(id: params[:contract_id]).pluck(:id)
       RoleUser.where(role_id: role.id, contract_id: contract_ids).destroy_all
     elsif params[:project_from_roles]
-      role_ids = Role.find(params[:role_id])
+      role_ids = Role.where(id: params[:role_id]).pluck(:id)
       facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
       RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id).destroy_all
     elsif params[:contract_from_roles]
-      role_ids = Role.find(params[:role_id])
+      role_ids = Role.where(id: params[:role_id]).pluck(:id)
       contract_id = Contract.where(id: params[:contract_id]).pluck(:id)
       RoleUser.where(role_id: role_ids, contract_id: contract_id).destroy_all
+    elsif params[:users_from_project_role]
+      role_ids = Role.where(id: params[:role_id]).pluck(:id)
+      user_ids = User.where(id: params[:user_id]).pluck(:id)
+      facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
+      RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id, user_id: user_ids).destroy_all
+    elsif params[:users_from_contract_role]
+      role_ids = Role.where(id: params[:role_id]).pluck(:id)
+      user_ids = User.where(id: params[:user_id]).pluck(:id)
+      contract_id = Contract.where(id: params[:contract_id]).pluck(:id)
+      RoleUser.where(role_id: role_ids, contract_id: contract_id, user_id: user_ids).destroy_all
     end
-
+    render json: {message: "Successfully removed role!!"}
   end
 
   def update

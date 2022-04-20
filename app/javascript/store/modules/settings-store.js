@@ -72,12 +72,15 @@ const settingsStore = {
     add_user_to_role_loaded: true,
     add_user_to_role_status: 0, 
     remove_role_status: 0,
+    remove_project_role_status: 0,
+    remove_admin_role_status: 0,
     role_removed: true, 
    
     //PROJECT USER ROLES
     project_role_users: [],
-    project_role_names: [],
     users_project_roles: [],
+    project_role_names: [],
+    assigned_project_users: [],
     users_contract_roles: [],
 
      //CONTRACT USER ROLES
@@ -381,47 +384,48 @@ const settingsStore = {
         let formData = new FormData();
      
           if (userData.projectIds){
-                formData.append("role_from_projects", true);   
-                userData.projectIds.forEach((ids) => {        
-                formData.append("user_id", userData.userId);
-                formData.append("project_id", userData.programId)
-                formData.append("role_id", userData.roleId)      
-                formData.append("facility_project_id[]", ids)  
-                })         
+              formData.append("role_from_projects", true);   
+              userData.projectIds.forEach((ids) => {        
+              formData.append("user_id", userData.userId);
+              formData.append("project_id", userData.programId)
+              formData.append("role_id", userData.roleId)      
+              formData.append("facility_project_id[]", ids)  
+              })         
            } 
           
            if (userData.contractIds){
-             formData.append("contract_from_roles", true);
-                userData.contractIds.forEach((ids) => {
-                formData.append("user_id", userData.userId);
-                formData.append("project_id", userData.programId)
-                formData.append("role_id", userData.roleId)      
-                formData.append("contract_id[]", ids)      
-                });
+              formData.append("contract_from_roles", true);
+              userData.contractIds.forEach((ids) => {
+              formData.append("user_id", userData.userId);
+              formData.append("project_id", userData.programId)
+              formData.append("role_id", userData.roleId)      
+              formData.append("contract_id[]", ids)      
+              });
             } 
             if (userData.adminRole){
-                 formData.append("role_from_users", true);             
-                 formData.append("user_id[]", userData.userId);
-                 formData.append("project_id", userData.programId)
-                 formData.append("role_id", userData.roleId)            
+              formData.append("role_from_users", true);             
+              formData.append("user_id[]", userData.userId);
+              formData.append("project_id", userData.programId)
+              formData.append("role_id", userData.roleId)            
              } 
          
-            if (userData.userIds) {
-              formData.append("role_from_users", true);
-                userData.userIds.forEach((ids) => {
-                formData.append("user_id[]", ids);
-                formData.append("project_id", userData.programId)
-                if(userData.roleId){
-                formData.append("role_id", userData.roleId)
-                }
-                if(userData.projectId){
-                formData.append("facility_project_id", userData.projectId)
-                }
-                if(userData.contractId){
-                formData.append("contract_id", userData.contractId)
-                }
-                });
-
+              if (userData.userIds) {
+              // formData.append("role_from_users", true);
+              userData.userIds.forEach((ids) => {
+              formData.append("user_id[]", ids);
+              // formData.append("project_id", userData.programId)
+              if(userData.roleId){
+              formData.append("role_id", userData.roleId)
+              }
+              if(userData.projectId){
+              formData.append("users_from_project_role", true);   
+              formData.append("facility_project_id", userData.projectId)
+              }
+              if(userData.contractId){
+              formData.append("users_from_contract_role", true);   
+              formData.append("contract_id", userData.contractId)
+               }
+              });
             }
        
         commit("TOGGLE_ROLE_REMOVED", false);   
@@ -437,7 +441,9 @@ const settingsStore = {
            .then((res) => {
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
             commit("SET_NEW_ROLE", res);
-            console.log(res)
+            console.log(res.data)
+             commit("SET_REMOVE_ADMIN_ROLE_STATUS", res.status);
+             commit("SET_REMOVE_PROJECT_ROLE_STATUS", res.status);
              commit("SET_REMOVE_ROLE_STATUS", res.status);
            })
            .catch((err) => {
@@ -957,6 +963,7 @@ const settingsStore = {
 
     SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) => (state.project_role_users = value),
+    SET_ASSIGNED_PROJECT_USERS: (state, value) => (state.assigned_project_users = value),
     SET_USERS_PROJECT_ROLES: (state, value) => (state.users_project_roles = value),
     SET_USERS_CONTRACT_ROLES: (state, value) => (state.users_contract_roles = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
@@ -994,6 +1001,8 @@ const settingsStore = {
     TOGGLE_ADD_USER_TO_ROLE_LOADED: (state, loaded) => (state.add_user_to_role_loaded = loaded),
     SET_ADD_USER_TO_ROLE_STATUS:(state, status) => (state.add_user_to_role_status = status),
     SET_REMOVE_ROLE_STATUS:(state, status) => (state.remove_role_status = status),
+    SET_REMOVE_PROJECT_ROLE_STATUS:(state, status) => (state.remove_project_role_status = status),
+    SET_REMOVE_ADMIN_ROLE_STATUS:(state, status) => (state.remove_admin_role_status = status),
     TOGGLE_ROLE_REMOVED: (state, loaded) => (state.role_removed = loaded),
 
 
@@ -1050,6 +1059,7 @@ const settingsStore = {
     getRole: (state) => state.role,
     getRoles: (state) => state.roles,
     getProjectRoleUsers: (state) => state.project_role_users,
+    getAssignedProjectUsers: (state) => state.assigned_project_users,
     getUsersProjectRoles: (state) => state.users_project_roles,
     getUsersContractRoles: (state) => state.users_contract_roles,
 
@@ -1074,6 +1084,8 @@ const settingsStore = {
     getAddUserToRole: (state) => state.add_user_to_role, 
     addUserToRoleStatus: (state) => state.add_user_to_role_status,
     removeRoleStatus: (state) => state.remove_role_status,
+    removeAdminRoleStatus: (state) => state.remove_admin_role_status,
+    removeProjectRoleStatus: (state) => state.remove_project_role_status,
     showCreateRow: (state) => state.show_create_row,
 
     contract: (state) => state.contract,
