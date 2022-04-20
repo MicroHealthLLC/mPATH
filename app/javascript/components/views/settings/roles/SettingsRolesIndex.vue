@@ -27,13 +27,10 @@
         </el-breadcrumb>
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <!-- <div
+            <div
               class="col-6"
-              :class="{ 'd-none': !_isallowedProgramSettings('write') }"
-            > -->
-               <div
-              class="col-6"
-              >
+              :class="{ 'd-none': !_isallowed('write') }"
+            >               
               <el-button
                 @click.prevent="addRole"
                 class="bg-primary text-light mb-2"
@@ -50,6 +47,7 @@
       
 <div  
   v-loading="!getRolesLoaded"
+  v-if="_isallowed('read')"
   element-loading-text="Fetching your data. Please wait..."
   element-loading-spinner="el-icon-loading"
   element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -655,6 +653,14 @@
           class="text-center"
          >
           <template slot-scope="scope">
+           <el-button  
+            type="default" 
+            v-tooltip="`Manage Admin Role User(s)`"
+            v-if="!scope.$index == 0 && !isEditting"
+            @click.prevent="addUserRole(scope.$index, scope.row)"               
+            class="bg-primary text-light btn-sm">
+          <i class="fas fa-users-medical mr-1"></i>
+          </el-button>  
           <el-button
             type="default"
             v-tooltip="`Manage Admin Role User(s)`"
@@ -1002,6 +1008,10 @@
       </h6>
 </el-tabs>
     </div>
+        <div v-else class="text-danger mx-2 mt-5">
+        <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
+       </div>
+
           <el-dialog
           :visible.sync="rolesVisible"
           append-to-body
@@ -1013,9 +1023,9 @@
             <i class="fal fa-user-lock mr-2 mb-2 bootstrap-purple-text"></i>{{ roleRowData.name }}
         </h5> 
         </span>
-         <div class="container-fluid p-2">
+         <div class="container-fluid p-0">
 
-             <div class="pl-4 mt-0 row">
+             <div class="mt-0 row">
             <div class="col-9 pt-0">
              <label class="font-md mb-0 d-flex">Add User(s) to this Role </label>
              <el-select
@@ -1044,29 +1054,40 @@
                 type="default"
                 @click="saveProjectUserRole()"
                 v-if="adminRoleUsers && adminRoleUsers.length > 0"
-                v-tooltip="`Confirm`" 
-                class="bg-light btn-sm">               
-                 <i class="fal fa-user-lock mr-1 bootstrap-purple-text"></i> Confirm
+                v-tooltip="`Save`" 
+                class="bg-primary btn-sm text-light"
+                >
+               <i class="far fa-save"></i>
                </el-button>
       
-              </div>             
-             
+              </div> 
             </div>
+
+            <!-- <div class="mt-0 row">
+            <div class="col-5 text-right">
+            <el-input
+            type="search"
+            placeholder="Search Roles"
+            aria-label="Search"
+            class="w-100"
+            aria-describedby="search-addon"
+            v-model="searchRoleUsers"
+            data-cy=""
+          >
+            <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+          </div>
+             </div> -->
                <div class="mt-4 row">
         <div class="col-12 pt-0">
  
             <el-table
             v-if="adminUsers && adminUsers.length > 0"
             :header-cell-style="{ background: '#EDEDED' }"
-            :data="adminUsers.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
-                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"     
+            :data="adminUsers"     
             height="300"                
             width="auto"
-            class="pl-4"
+            class=""
             > 
            <el-table-column  prop="user_full_name"
               sortable
@@ -1100,21 +1121,38 @@
     <el-table-column
   
         align="right">
-        <template slot="header" slot-scope="scope">
+        <!-- <template slot="header" slot-scope="scope">
           <el-input
             v-model="searchRoleUsers"
             size="mini"
             placeholder="Search Users in this Role"/>
-        </template>
-        <!-- <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
         </template> -->
+        <template slot-scope="scope">
+           <el-button
+            type="default"
+            @click="saveRemoveUsers(scope.$index, scope.row)"
+            v-if="isEditingRoles   && scope.$index == rowIndex_1"
+            v-tooltip="`Save`" 
+            class="bg-primary btn-sm text-light">               
+            <i class="far fa-save"></i>
+               </el-button>
+          <el-button  
+          type="default" 
+          v-if="scope.$index !== rowIndex_1"
+          v-tooltip="`Remove User from role`"
+          @click.prevent="editUsers(scope.$index, scope.row)"           
+          class="bg-danger text-light btn-sm">
+         <i class="fal fa-user-lock mr-1 text-light"></i> 
+          </el-button>  
+            <el-button  
+            type="default" 
+            v-if="isEditingRoles && scope.$index == rowIndex_1"
+            v-tooltip="`Cancel`"
+            @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
+          class="btn btn-sm bg-secondary text-light">
+            <i class="fas fa-ban"></i> 
+          </el-button>  
+        </template> 
       </el-table-column>
         
           </el-table> 
@@ -1169,8 +1207,12 @@ export default {
       return {
         rolesVisible: false, 
         roleId: null, 
+        removedUserName: null, 
         updatedAdminRole: null, 
-        isEditting: false, 
+        isEditting: false,
+        rowIndex_1 : null, 
+        isEditingRoles: false,
+        roleRowId: null, 
         currentRow: null, 
         searchRoleUsers:'',
         roleRowData: null, 
@@ -1199,7 +1241,6 @@ export default {
           read: true,
           write: true,
           delete: false,  
-
 
           groupsRead: true, 
           groupsWrite: true, 
@@ -1231,16 +1272,22 @@ export default {
       "SET_UPDATED_ROLE_STATUS",
       "SET_SHOW_CREATE_ROW", 
       "SET_PROJECT_ROLE_USERS", 
-      "SET_ADD_USER_TO_ROLE_STATUS"
+      "SET_ADD_USER_TO_ROLE_STATUS",
+      "SET_REMOVE_ADMIN_ROLE_STATUS"
       ]),
     ...mapActions([
       "fetchRoles", 
       "createRole", 
       "addUserToRole", 
-      "updateRole"]),
+      "updateRole",
+      "removeUserRole"      
+      ]),
   log(e){
     // console.log(e)
   },
+    _isallowed(salut) {
+     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
+    },
    saveProjectUserRole(index, rows){
     let user_ids = this.adminRoleUsers.map(t => t.id)
     let projectUserRoleData = {
@@ -1255,7 +1302,30 @@ export default {
         ...projectUserRoleData,
       });
     },
-
+   saveRemoveUsers(index, rowData){  
+     this.removedUserName = rowData.user_full_name
+    let projectUserRoleData = {
+          userData: {
+            roleId: rowData.role_id,   
+            programId: this.$route.params.programId,          
+            userId: [rowData.user_id],   
+            adminRole: true, 
+        },
+      };  
+      this.removeUserRole({
+        ...projectUserRoleData,
+      });     
+    },
+   editUsers(index, rowData){
+     this.rowIndex_1 = index;
+     this.roleRowId = rowData
+     this.isEditingRoles = true;
+    },
+   cancelEditRoles(index, rowData){
+    this.isEditingRoles = false;
+    this.roleRowId = null;
+    this.rowIndex_1 = null;
+    },
    addUserRole(index, rows) {
     // console.log(this.adminUsers)
       this.rolesVisible = true
@@ -1676,6 +1746,7 @@ mounted() {
         "newRoleStatus",
         "updatedRoleStatus",
         "getRoles",
+        "removeAdminRoleStatus",
         "new"
     ]),
     adminRoleUsers: {     
@@ -1696,11 +1767,20 @@ mounted() {
     },
     adminUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
-        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-      if (this.roleId)  {
-            return [].concat.apply([], roleUsers).filter(t => this.roleId == t.role_id)
-        } else return [].concat.apply([], roleUsers)
-       
+        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0) 
+        let data = [].concat.apply([], roleUsers).filter(t => {
+          if(this.roleId){
+            return  this.roleId == t.role_id
+          }
+        }).filter((user) => {
+           if (this.searchRoleUsers !== '' && user) {
+            // console.log(task)
+            return (            
+               user.user_full_name.toLowerCase().match(this.searchRoleUsers.toLowerCase()) 
+            ) 
+           } else return true
+        }) 
+       return data
       }
     },
      backToSettings() {
@@ -1806,9 +1886,9 @@ mounted() {
          }
       },
     },
-      addUserToRoleStatus: {
+    addUserToRoleStatus: {
       handler() {
-        if (this.addUserToRoleStatus == 204) {
+        if (this.addUserToRoleStatus == 204 || this.addUserToRoleStatus == 200) {
           this.$message({
             message: `Succesfully added user/role to project.`,
             type: "success",
@@ -1819,7 +1899,22 @@ mounted() {
           this.SET_PROJECT_ROLE_USERS([])
         }
       },
-    },   
+    }, 
+     removeAdminRoleStatus: {
+      handler() {
+        if (this.removeAdminRoleStatus == 200 || this.removeAdminRoleStatus == 204) {
+          this.$message({
+            message: `Succesfully removed Admin role from ${this.removedUserName} .`,
+            type: "success",
+            showClose: true,
+          });  
+          this.fetchRoles(this.$route.params.programId)   
+          this.SET_REMOVE_ADMIN_ROLE_STATUS(0);   
+          this.isEditingRoles = false;
+          this.rowIndex_1 = null;
+        }
+      },
+    },     
    
   },
 };

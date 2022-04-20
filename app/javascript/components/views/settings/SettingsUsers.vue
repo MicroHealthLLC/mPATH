@@ -1,5 +1,4 @@
 <template>
-
 <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
@@ -26,23 +25,9 @@
         </el-breadcrumb>
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-                     <!-- <div
+             <div
               class="col-6"
-              >
-              <el-button
-                @click.prevent="openCreateUser"
-                v-if="_isallowed('write')"
-                class="bg-primary text-light mb-2"
-              >
-               <i class="fas fa-user-plus mr-1"></i> Create New User
-              </el-button>
-               <el-button
-                @click.prevent="addUser"
-                  v-if="_isallowed('write')"
-                class="bg-success text-light mb-2"
-              > -->
-                <div
-              class="col-6"
+               v-if="_isallowed('write')"
               >
               <el-button
                 @click.prevent="openCreateUser"             
@@ -75,14 +60,9 @@
       
      
     <div class="container-fluid mt-2 mx-0">
-    <!-- <div  
+      <div  
         v-loading="!programUsersLoaded"
-        v-if="_isallowed('read')"
-        element-loading-text="Fetching your data. Please wait..."
-        element-loading-spinner="el-icon-loading"     
-        class=""> -->
-         <div  
-        v-loading="!programUsersLoaded"
+         v-if="_isallowed('read')"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"     
         class=""> 
@@ -146,9 +126,9 @@
       
         </el-table>
     </div>
-       <!-- <div v-else class="text-danger mx-2 mt-5">
+       <div v-else class="text-danger mx-2 mt-5">
         <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
-       </div> -->
+       </div>
     </div>
       <el-dialog
         :visible.sync="newUserDialogVisible"
@@ -449,7 +429,7 @@
           <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i> 
           <b>Assigned Roles</b>
           <span class="badge badge-secondary badge-pill">
-          <span v-if="projectUsers">{{ projectUsers.length }}</span>        
+          <span v-if="projectUsers">{{ projectUsers.roleIds.length }}</span>        
         </span>
         </h5>       
      </span>
@@ -501,77 +481,160 @@
           </el-input>
           </div>
         </div>
-    
-     
-        
-        <div
+       <div
         v-loading="!getRolesLoaded"
+        style="width: 100%"
         element-loading-spinner="el-icon-loading"   
          >
         <el-table
-          v-if="projectUsers && projectUsers.length > 0"
-          :data="projectUsers.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"    
-          style="width: 100%"
+          v-if="projectUsers && projectUsers.data && projectUsers.roleIds.length > 0"
+          :data="projectUsers.roleIds"        
           height="375"
+          class="usersTable"
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
-          <!-- || data.facility_id == projectNames.map(t => t.id).facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase()) -->
-          <!-- || 
-                    this.currentProject.facilities.filter(t => t.facilityId == data.facility_id).map(n => n.facilityName.toLowerCase().includes(searchRoleUsers.toLowerCase())) -->
-     
       
-        <el-table-column prop="role_name"  sortable label="Roles"  width="300">
+          <el-table-column prop="role_name"  sortable label="Roles"  width="200">
             <template slot-scope="scope">
-              <span v-if="scope.row.facility_project_id">
-             <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>  {{scope.row.role_name}}   
-              </span>
-              <span v-else-if="scope.row.contract_id">
-               <i class="far fa-file-contract mr-1 mh-orange-text"></i>  {{scope.row.role_name}}
-               </span>
-                 <span v-else>
-             <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>  {{scope.row.role_name}}
-               </span>
-
-
+                         
+             <!-- ADMIN ROLE ICON 
+             <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>  
+                          PROJECT ROLE ICON 
+             <i class="fal fa-clipboard-list mr-1 mh-green-text"></i> 
+                        CONTRACT ROLE ICON 
+             <i class="far fa-file-contract mr-1 mh-orange-text"></i>   
+                                                                              --> 
+                <span v-if="projectUsers.data.map(t => t.role_id == scope.row)" >               
+                    
+                   {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }} 
+                </span>                  
             </template>
         
-        </el-table-column>
-        <el-table-column
-            width="700"
-            prop="projects"
-            sortable
-            filterable
-            label="Associations"
-        >      
+          </el-table-column>
+          <el-table-column
+              width="600"
+              prop="projects"
+              sortable
+              filterable
+              label="Associations"
+          >       
            <template slot-scope="scope">
-              <span v-if="scope.row.facility_project_id && projectNames">
-               {{ projectNames.filter(t => t.facilityProjectId == scope.row.facility_project_id).map(t => t.facilityName)[0]}}
-                 <!-- {{ projectNames.filter(t => t.facilityId == scope.row.facility_id).map(t => t)}} -->
+             <span v-if="scope.$index !== rowIndex_1" >        
+              <span  v-for="(item, i) in projectUsers.data" :key="i">    
+                <span v-if="(item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row" class="projectNames">   
+                    <!-- {{ JSON.stringify(projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName)).replace(/[\[\]"]+/g,' ')}}  -->
+                  {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
+                </span>
+                <span v-if="(item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row" class="projectNames" >  
+     
+                  {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).join()}}
+                </span>
               </span>
-                 <span v-if="scope.row.contract_id && contractNames">
-                 {{ contractNames.filter(t => t.id == scope.row.contract_id).map(t => t.nickname)[0]  }}
-              </span>
+           
+             </span>
+             <span v-if="isEditingRoles && scope.$index == rowIndex_1" >
+           <el-select
+              v-model="projectRoleUsers"
+              v-if="!isEditingContractRoles"
+              filterable
+              multiple
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"
+                    
+            > 
+            <el-option
+                v-for="item in projectNames"
+                :value="item"
+                :key="item.facilityProjectId"
+                :label="item.facilityName"
+              > 
+              </el-option> 
+             </el-select>  
+             <el-select
+              v-model="contractRoleUsers"
+              v-if="isEditingContractRoles"
+              filterable
+              multiple
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"             
+            > 
+            <el-option
+                v-for="item in contractNames"
+                :value="item"
+                :key="item.id"
+                :label="item.nickname"
+              > 
+              </el-option> 
+             </el-select>  
+             </span>
+             <span v-if="isEditingContractRoles && scope.$index == rowIndex_1" >
+     
+             <el-select
+              v-model="contractRoleUsers"         
+              filterable
+              multiple
+              class="w-100"
+              clearable
+              track-by="id"
+              value-key="id"             
+            > 
+            <el-option
+                v-for="item in contractNames"
+                :value="item"
+                :key="item.id"
+                :label="item.nickname"
+              > 
+              </el-option> 
+             </el-select>  
+             </span>
+          </template>
 
-            </template>
 
-
-        </el-table-column> 
-    <!-- <el-table-column
-  
-        align="right">
-        <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Search All Roles Assigned"/>
-        </template>
-          </el-table-column> -->
-       </el-table>
+          </el-table-column> 
+          <el-table-column
+          width="125"
+        >
+          <!-- <template slot="header" slot-scope="scope">
+            <el-input
+              v-model="searchRoleUsers"
+              size="mini"
+              placeholder="Enter User or Role Name"/>
+          </template> -->
+                <template slot-scope="scope">
+                <el-button  
+                  type="default"          
+                  v-if="(isEditingRoles || isEditingAdminRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
+                  @click.prevent="removeRoles(scope.$index, scope.row)" 
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
+                </el-button>  
+                  <el-button  
+                  type="default" 
+                  v-tooltip="`Remove Association(s)`"
+                  @click.prevent="editRoles(scope.$index, scope.row)" 
+                  v-if="scope.$index !== rowIndex_1"
+                  class="bg-danger text-light btn-sm">
+                <i class="fal fa-user-lock mr-1 text-light"></i> 
+                <!-- <i class="fal fa-user-gear mr-1 text-light"></i>  -->
+                </el-button>  
+                  <el-button  
+                  type="default" 
+                  v-if="(isEditingRoles || isEditingAdminRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
+                class="btn btn-sm bg-secondary text-light">
+                  <i class="fas fa-ban"></i> 
+                </el-button>  
+          </template>
+          </el-table-column>
+        
+        </el-table>
         <span v-else>
           No Roles Assigned To This User
         </span>
@@ -635,14 +698,14 @@
       </div>
         </div>
      <div class="mt-2 row">
-      <div class="col pt-1">        
-          <el-button
+      <div class="col pt-1">    
+         <el-button
           type="default"    
           @click="saveProjectUserRole()"          
           v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
-          v-tooltip="`Confirm`" 
-          class="bg-light btn-sm">               
-          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Role
+          v-tooltip="`Save`" 
+          class="btn btn-sm bg-primary text-light">               
+          <i class="fal fa-save"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -720,9 +783,9 @@
           type="default"    
           @click="saveContractUserRole()"
           v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
-          v-tooltip="`Confirm`" 
-          class="bg-light btn-sm">               
-            <i class="far fa-file-contract mr-1 mh-orange-text"></i>Confirm Role
+          v-tooltip="`Save`" 
+            class="btn btn-sm bg-primary">               
+          <i class="fal fa-save"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -779,9 +842,9 @@
            type="default"
             @click="saveAdminUserRole()"
             v-if="adminRoleNames"
-          v-tooltip="`Confirm`" 
-          class="bg-light btn-sm">               
-            <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i> Confirm Role
+          v-tooltip="`Save`" 
+           class="btn btn-sm bg-primary text-light">               
+          <i class="fal fa-save"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -820,6 +883,7 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
 import FormTabs from "../../shared/FormTabs.vue"
+import { faSlash } from '@fortawesome/free-solid-svg-icons';
 export default {
   name: "SettingsUsers",
   components: {
@@ -829,7 +893,12 @@ export default {
     data() {    
       return {
         search:"",
+        roleRowId: null,
+        isEditingRoles: false, 
         expandRowKeys: [],
+        isEditingAdminRoles: false, 
+        isEditingContractRoles: false, 
+        editRoleRowData: null,
         projId: null, 
         userData: null, 
         searchRoleUsers: '',
@@ -868,6 +937,7 @@ export default {
         email:'',
         addMoreUsersBtn: false, 
         rowIndex: null,
+        rowIndex_1: null,
         programId: this.$route.params.programId,
         rowId: null,
         addedUsers: [],
@@ -905,7 +975,10 @@ export default {
     "SET_CONTRACT_ROLE_NAMES",
     "SET_ASSOCIATED_CONTRACTS",
     "SET_ASSOCIATED_PROJECTS",
-    "SET_ADD_USER_TO_ROLE_STATUS"
+    "SET_ADD_USER_TO_ROLE_STATUS",
+    "SET_USERS_PROJECT_ROLES",
+    "SET_USERS_CONTRACT_ROLES",
+     "SET_REMOVE_ROLE_STATUS"
 
     ]),
   ...mapActions([
@@ -916,8 +989,12 @@ export default {
     "fetchCurrentProject",
     "createNewUser", 
     "updateUserData", 
+    "removeUserRole",
     "addUsersToProgram"
     ]),
+    log(e){
+      // console.log(e)
+    },  
     handleExpandChange(row, expandedRows) {   
 			this.projId = row.id;
       this.projUserObj = row
@@ -930,8 +1007,81 @@ export default {
    
 		},
    _isallowed(salut) {
-      return this.checkPrivileges("SettingsUsers", salut, this.$route)
+      return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
    },
+   removeRoles(index, rowData){     
+      let projIds = this.projectRoleUsers.map(t => t.facilityProjectId);
+      let cIds = this.contractRoleUsers.map(t => t.id);
+      let assignedContracts =  this.assignedUserContracts.map(t => t.id); 
+      let aCids =  assignedContracts.filter(t => !cIds.includes(t));
+      let assigned =  this.assignedUserProjects.map(t => t.facilityProjectId);   
+      let ids = assigned.filter(t => !projIds.includes(t));
+ 
+      if (this.isEditingRoles) {
+      let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  userId: this.userData.id,
+                  programId: this.$route.params.programId, 
+                  projectIds: ids,   
+              },
+            };
+            console.log(projectUserRoleData)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });
+      }
+      if (this.isEditingContractRoles) {
+      let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  userId: this.userData.id,
+                  programId: this.$route.params.programId, 
+                  contractIds: aCids,   
+              },
+            };
+            console.log(projectUserRoleData)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });
+      } 
+      if (this.isEditingAdminRoles) {
+        let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  userId: [this.userData.id],
+                  programId: this.$route.params.programId, 
+                  adminRole: true, 
+              },
+            };
+            console.log(projectUserRoleData)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });
+      }          
+    },
+  editRoles(index, rowData){
+    this.roleRowId = rowData   
+    this.editRoleRowData = rowData;
+    this.rowIndex_1 = index;
+    this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)
+    this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
+    if (this.assignedUserContracts.length > 0 ){
+       this.isEditingContractRoles = true;
+     } 
+    if (this.assignedUserProjects.length > 0){
+        this.isEditingRoles = true;
+     }
+    if (!this.isEditingContractRoles && !this.isEditingContractRoles  ){
+       this.isEditingAdminRoles = true;
+       }
+  },
+    cancelEditRoles(index, rowData){
+    this.isEditingRoles = false
+    this.isEditingContractRoles = false;
+    this.isEditingAdminRoles = false;
+    this.rowIndex_1 = null;
+  },
   saveProjectUserRole(index, rows){
     let projectIds = this.associatedProjects.map(t => t.facilityProjectId)
     let projectUserRoleData = {
@@ -1038,8 +1188,11 @@ export default {
       this.fetchRoles(this.$route.params.programId) 
       }    
       this.openUserRoles = true    
-      this.userData = rows       
-      // console.log(this.projectNames)
+      this.userData = rows    
+
+      // console.log(this.userData)
+     
+     
     },
     closeUserRoles() {
       this.openUserRoles = false;
@@ -1150,8 +1303,12 @@ export default {
         "portfolioUsersLoaded",
         "programUsers",
         "programUsersLoaded",
-        "addUserToRoleStatus"
+        "addUserToRoleStatus",
+        "getUsersProjectRoles",
+        "getUsersContractRoles",
+         "removeRoleStatus"
     ]),
+
     portfolioUsersOnly(){
     if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
           this.programUsers && this.programUsers.length > 0
@@ -1214,16 +1371,19 @@ export default {
       }
     },
     contractNames(){
-      if(this.currentProject)
-      if (this.currentProject.contracts && this.currentProject.contracts.length > 0)
-      {
-        return this.currentProject.contracts.map(t => t)
+      if(this.currentProject){
+        if (this.currentProject.contracts && this.currentProject.contracts.length > 0){
+          console.log(_.groupBy(this.currentProject.contracts, 'id'))
+          return this.currentProject.contracts.map(t => t)
+        }
       }
+
     },
    projectUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)         
         let data = [].concat.apply([], roleUsers).filter(t => {
+            
           if (this.projId)  {
              return this.projId == t.user_id
            } else return true
@@ -1231,19 +1391,68 @@ export default {
            if (this.searchRoleUsers !== '' && role) {
             // console.log(task)
             return (            
-               role.role_name.toLowerCase().match(this.searchRoleUsers.toLowerCase())
-              //  ||
-              // this.contractNames.filter(t => t.id == role.contract_id).map(t => t.nickname).toLowerCase().match(this.searchRoleUsers.toLowerCase()) ||
-              // this.projectNames.filter(t => t.id == role.project_id).map(t => t.facilityName).toLowerCase().match(this.searchRoleUsers.toLowerCase())
-              //   .toLowerCase()
-              //   .match(this.searchRoleUsers.toLowerCase()) ||
+               role.role_name.toLowerCase().match(this.searchRoleUsers.toLowerCase()) 
             ) 
         } else return true
         })
-        return data
+         return {
+            
+                  data: data,
+                  dataRow: data.filter(t => this.roleRowId == t.role_id),
+                  roleIds: _.uniq(data.map(t => t.role_id)),     
+                  roleNames: _.uniq(data.map(t => t.role_name))                 
+                }      
+             
 
-      }
-      
+      }     
+        
+    },
+  assignedUserProjects(){
+    if (this.projectNames && this.projectNames.length > 0){ 
+          let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
+          let tableProjectIds = ids.map(t => t.facility_project_id)
+          let filteredProjects = this.projectNames.filter(t => tableProjectIds.includes(t.facilityProjectId) )
+          console.log(filteredProjects)
+          return filteredProjects   
+      } 
+      // Thursday Night Notes:  Add filter to filter out projects not associated to row
+    },
+   assignedUserContracts(){
+    if (this.contractNames && this.contractNames.length > 0){ 
+          let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
+          let tableContractIds = ids.map(t => t.contract_id)
+          let filteredContracts = this.contractNames.filter(t => tableContractIds.includes(t.id) )
+          console.log(filteredContracts)
+          return filteredContracts   
+      } 
+      // Thursday Night Notes:  Add filter to filter out projects not associated to row
+    },
+  projectRoleUsers: {     
+     get() {
+       return this.getUsersProjectRoles
+      },
+      set(value) {
+         this.SET_USERS_PROJECT_ROLES(value)
+         console.log(value)
+        }      
+    },
+   contractRoleUsers: {     
+     get() {
+       return this.getUsersContractRoles
+      },
+      set(value) {
+         this.SET_USERS_CONTRACT_ROLES(value)
+         console.log(value)
+        }      
+    },
+    adminRoleUsers: {     
+     get() {
+       return this.getUsersContractRoles
+      },
+      set(value) {
+         this.SET_USERS_CONTRACT_ROLES(value)
+         console.log(value)
+        }      
     },
   //  adminRoles(){
   //     if(this.getRoles && this.getRoles.length > 0 ){   
@@ -1335,13 +1544,15 @@ export default {
     },
     addUserToRoleStatus: {
       handler() {
-        if (this.addUserToRoleStatus == 204) {
+        if (this.addUserToRoleStatus == 204  || this.addUserToRoleStatus == 200) {
           this.$message({
-            message: `Succesfully assigned user to role(s)role.`,
+            message: `Succesfully assigned user to role(s).`,
             type: "success",
             showClose: true,
           });  
           this.assignProle = false;
+          this.assignCrole = false;
+          this.assignArole = false;
           this.fetchRoles(this.$route.params.programId)         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);         
           this.SET_ASSOCIATED_PROJECTS([])
@@ -1352,12 +1563,41 @@ export default {
         }
       },
     },   
+     removeRoleStatus: {
+      handler() {
+        if (this.removeRoleStatus == 204 || this.removeRoleStatus == 200) {
+          this.$message({
+            message: `Succesfully removed association(s) from role.`,
+            type: "success",
+            showClose: true,
+          });  
+          // this.assignProle = false;
+          this.fetchRoles(this.$route.params.programId)   
+          this.SET_REMOVE_ROLE_STATUS(0);   
+          this.isEditingRoles = false;
+          this.isEditingContractRoles = false;
+          this.isEditingAdminRoles = false;
+          this.rowIndex_1 = null;
+        }
+      },
+    },   
    
   },
 };
 </script>
 
 <style scoped lang="scss">
+.projectNames{
+  // background-color: #F8F9FA;
+  border-radius: .25rem;
+  margin-right: 2px;
+  padding: 1px 3px ;
+  border: solid lightgray .75px;
+}
+
+/deep/.el-table__body-wrapper {
+  overflow-y: visible;
+}
 .right-panel {
   height: calc(100vh - 100px);
   overflow-y: auto;
@@ -1370,6 +1610,21 @@ export default {
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }
+ 
+  /deep/.el-table.usersTable {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+   {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+   }
+  }
+
+
+
 /deep/.el-dialog {
   width: 30%;  
 }

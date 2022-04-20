@@ -208,7 +208,7 @@
                       >
                       </el-input>
                       <span v-else>                         
-                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Only Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
+                       <span v-if="props.row.isPortfolio" v-tooltip="`Portfolio Group`"><i class="fas fa-circle mr-2 text-primary fs-50"></i></span> 
                         {{ props.row.name }}
                        
 
@@ -978,8 +978,8 @@ div.sticky {
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
-.fs-75{
-font-size: .75rem;
+.fs-50{
+font-size: .50rem;
 }
 .program-sphere {
   width: 10px;

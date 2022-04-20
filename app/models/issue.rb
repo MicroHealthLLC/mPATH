@@ -23,6 +23,10 @@ class Issue < ApplicationRecord
 
   attr_accessor :file_links
 
+  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
+  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
+  scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
+
   amoeba do
     include_association :issue_type
     include_association :issue_stage
@@ -42,6 +46,10 @@ class Issue < ApplicationRecord
     include_association :sub_risks
 
     append :title => " - Copy"
+  end
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:exclude_inactive_in]
   end
 
   def lesson_json
