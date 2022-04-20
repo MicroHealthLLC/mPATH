@@ -283,10 +283,10 @@
             <i class="fal fa-clipboard-list mr-1 mb-2 mh-green-text"></i> {{ projectRowData.facilityName }}
         </h5> 
         </span>
-         <div class="container-fluid p-2">
+         <div class="container-fluid p-0">
 
-             <div class="pl-4 mt-0 row">
-            <div class="col-5 pt-0">
+             <div class="pl-3 mt-0 row">
+            <div class="col-5 pt-0 pl-0">
              <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
              <el-select
               v-model="projectRoleUsers"
@@ -336,9 +336,9 @@
                 type="default"
                 @click="saveProjectUserRole()"
                 v-if="projectRoleNames && projectRoleUsers"
-                v-tooltip="`Confirm`" 
-                class="bg-ligh btn-sm mr-1">               
-                 <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>  Confirm
+                v-tooltip="`Save`" 
+                class="bg-primary btn-sm text-light">               
+               <i class="far fa-save"></i>
                </el-button>
       
               </div>             
@@ -347,66 +347,66 @@
       
       <div class="mt-4 row">
         <div class="col-12 pt-0">
- 
-        <!-- <el-collapse id="" class=""  v-if="projectUsers && projectUsers.length > 0">
-            <el-collapse-item title="SEE PROJECT'S USERS AND ROLES" name="1"> -->
-          <el-table
-            v-if="projectUsers && projectUsers.length > 0"
+         <el-table
+             v-if="projectUsers && projectUsers.roleIds && projectUsers.roleIds.length > 0"
             :header-cell-style="{ background: '#EDEDED' }"
-            :data="projectUsers.filter(
-                  (data) =>
-                    !searchRoleUsers || 
-                    data.role_name.toLowerCase().includes(searchRoleUsers.toLowerCase()) ||
-                    data.user_full_name.toLowerCase().includes(searchRoleUsers.toLowerCase())
-                )"          
-        
+            :data="projectUsers.roleIds"        
             height="375"
             width="100%"
              > 
-           <el-table-column  prop="user_full_name"
-             width="200"
-              sortable
-              filterable
-              label="Users">
-              <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_project_id">
-                {{ scope.row.user_full_name }}
-                  <!-- {{ scope.row.role_id}} -->          
-              </span>
-              </template>
-
-            </el-table-column>
-            <el-table-column  prop="role_name"
-               width="675"
+               <el-table-column  prop="role_name"
+               width="200"
               sortable
               filterable
               label="Roles">
               <template slot-scope="scope">
-              <span v-if="projId && projId == scope.row.facility_project_id && scope.row.role_name">
-                  {{ scope.row.role_name }}  
-               <!-- <el-select
-              v-model="scope.row.role_name"
-              filterable
-              multiple
-              class="w-70"
-              clearable
-              track-by="id"
-              value-key="id"
-              placeholder="Search and select Project Roles"          
-            > -->
-             <!-- <el-option
-                v-for="item in projectUsers"
-                :value="item"
-                :key="item.id"
-                :label="item.role_name"
-              > 
-              </el-option> -->
-            <!-- </el-select>  -->
-            
-              </span>
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row)" >  
+                 {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
+                  <!-- {{ scope.row}}   -->
+                </span>
               </template>
 
             </el-table-column>
+           <el-table-column  
+             width="675"
+              sortable
+              filterable
+              label="Users">
+              <template slot-scope="scope">
+               <span v-if="scope.$index !== rowIndex_1" >        
+              <span  v-for="(item, i) in projectUsers.data" :key="i">    
+                <span v-if="(item.user_id && programUsers.map(t => t.id == item.user_id)) && item.role_id == scope.row" class="userNames" >   
+                 {{ programUsers.filter(t => item.user_id == t.id).map(t => t.fullName).join()}}                
+                </span>               
+              </span>
+           
+             </span>
+             <span v-if="isEditingRoles && scope.$index == rowIndex_1" >
+             <el-select
+              v-model="assignedProjectUsers" 
+              :disabled="assignedProjectUsers && assignedProjectUsers.length <= 0"
+              filterable           
+              class="w-100"
+              clearable
+              multiple
+              track-by="id"
+              value-key="id"
+              placeholder="No Users Assigned to this Project"          
+            >
+              <el-option
+                v-for="item in programUsers"
+                :value="item"
+                :key="item.id"
+                :label="item.fullName"
+              >
+              </el-option>
+            </el-select>
+         
+             </span>
+              </template>
+
+            </el-table-column>
+          
 
     <el-table-column
         width="125"
@@ -418,29 +418,38 @@
             placeholder="Enter User or Role Name"/>
         </template> -->
         <template slot-scope="scope">
-               <el-button  
-                type="default" 
-                v-tooltip="`Remove User from Project`"
-                @click.prevent="removeUser(scope.$index, scope.row)" 
-               
-                class="bg-light btn-sm">
-                <i class="fas fa-user-slash"></i>     
-               </el-button>  
-                 <el-button  
-                type="default" 
-                v-tooltip="`Manage Assigned Role(s)`"
-                @click.prevent="manageAssignedRole(scope.$index, scope.row)" 
-             
-                class="bg-primary text-light btn-sm">
-               <i class="fal fa-user-gear mr-1 text-light"></i> 
-               </el-button>  
+           <el-button
+            type="default"
+            @click="saveRemoveUsers(scope.$index, scope.row)"
+            v-if="isEditingRoles   && scope.$index == rowIndex_1"
+            v-tooltip="`Save`" 
+            class="bg-primary btn-sm text-light">               
+            <i class="far fa-save"></i>
+               </el-button>
+          <el-button  
+          type="default" 
+          v-if="scope.$index !== rowIndex_1"
+          v-tooltip="`Remove User(s) from Project`"
+          @click.prevent="editUsers(scope.$index, scope.row)"           
+          class="bg-danger text-light btn-sm">
+         <i class="fal fa-user-lock mr-1 text-light"></i> 
+          </el-button>  
+            <el-button  
+            type="default" 
+            v-if="isEditingRoles && scope.$index == rowIndex_1"
+            v-tooltip="`Cancel`"
+            @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
+          class="btn btn-sm bg-secondary text-light">
+            <i class="fas fa-ban"></i> 
+          </el-button>  
+           
         </template>
       </el-table-column>
         
           </el-table> 
-          <span  class="pl-4" v-else>
+          <span  class="" v-else>
             No Users Assigned
-          </span>
+          </span> 
 
           <div class="right mt-3">
                <button
@@ -477,10 +486,14 @@ export default {
   props: ["currentFacility", "facility"],
   data() {
     return {
+      userids: null, 
       dialogVisible: false,
       rolesVisible: false,
+      isEditingRoles: false, 
       expandRowKeys: [],      
       componentKey: 0,
+      rowIndex_1: null, 
+      roleRowId: null,
       programId: this.$route.params.programId,
       search: "",
       searchRoleUsers: '',
@@ -545,34 +558,48 @@ export default {
       "setGroupFilter", 
       "SET_ADD_USER_TO_ROLE_STATUS", 
       "SET_PROJECT_ROLE_USERS",
-       "SET_PROJECT_ROLE_NAMES"      
+      "SET_ASSIGNED_PROJECT_USERS",
+      "SET_REMOVE_PROJECT_ROLE_STATUS",
+      "SET_PROJECT_ROLE_NAMES"      
       ]),
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
     },
-    removeUser(index, rowData){
-      let role_ids =this.projectRoleNames.map(t => t.id)
-      let projectUserRoleData = {
-              userData: {
-                roleIds: role_ids,
-                userId: rowData.user_id,
-                programId: this.$route.params.programId, 
-                facProjId: rowData.facility_project_id,
-                projectId: true        
-            },
-          };
-          this.removeUserRole({
-            ...projectUserRoleData,
-          });
+    editUsers(index, rowData){
+        this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
+        this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
+        this.rowIndex_1 = index;
+        this.roleRowId = rowData
+        this.isEditingRoles = true;
     },
-    manageAssignedRole(index, rowData){
-
+    saveRemoveUsers(index, rowData){     
+      let user_ids = this.assignedProjectUsers.map(t => t.id);
+      let assigned =  this.assignedUsers.map(t => t.id);   
+      let ids = assigned.filter(t => !user_ids.includes(t)); 
+      let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  projectId: this.projId,
+                  programId: this.$route.params.programId, 
+                  userIds: ids,   
+              },
+            };
+            console.log(projectUserRoleData)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });     
+    },
+    cancelEditRoles(index, rowData){
+    this.isEditingRoles = false;
+    this.roleRowId = null;
+    this.rowIndex_1 = null;
     },
     cancelCreateGroup() {
       this.dialogVisible = false;
     },
     closeUserRoles() {
       this.rolesVisible = false;
+      this.isEditingRoles = false;
     },
     addAnotherProject() {
       this.C_projectGroupFilter = "";
@@ -582,16 +609,12 @@ export default {
     handleExpandChange (row, expandedRows) {
 			this.projId = row.facilityProjectId;
 			const lastId = this.expandRowKeys[0];
-			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
-   
-      
+			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];        
 		}, 
     addUserRole(index, rows) {
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
-      // this.SET_PROJECT_ROLE_USERS(this.assignedUsers)
-      console.log(this.projectUsers)
     },
     addProject() {
       this.dialogVisible = true;
@@ -710,7 +733,9 @@ export default {
       "getGroupFilter",
       "facilityGroupFacilities",
       "filteredFacilityGroups",
-       "addUserToRoleStatus"
+      "addUserToRoleStatus",
+      "getAssignedProjectUsers",
+      "removeProjectRoleStatus"
     ]),
     // Filter for Projects Table
     C_groupFilter: {
@@ -722,14 +747,24 @@ export default {
         this.setGroupFilter(value);
       },
     },
-    projectUsers(){
-      if(this.getRoles && this.getRoles.length > 0 ){   
-        let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-      if (this.projId)  {
-            return [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_project_id)
-        } else return [].concat.apply([], roleUsers)
-       
-      }
+projectUsers(){
+  if(this.getRoles && this.getRoles.length > 0 ){   
+    let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+    if (this.projId)  {
+      let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_project_id)   
+      const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
+          { 
+            ...acc, 
+            [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
+          }
+      ), {});
+          console.log(reducedRoles)
+          return {
+                  data: groupByRoles,
+                  roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
+                  }
+      } else return [].concat.apply([], roleUsers)       
+    }
     },
     programUsers(){
       if (this.currentProject){
@@ -773,18 +808,28 @@ export default {
         this.setProjectGroupFilter(value);
       },
     },
-    // assignedUsers(){
+    assignedUsers(){
     //   //  Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
-    //   if(this.programUsers && this.projectUsers && this.projectUsers.length > 0){
-    //     return this.programUsers.filter(t => this.projectUsers.map(t => t.user_id).includes(t.id))
-    //   }
-    // },
+      if(this.programUsers && this.projectUsers && this.projectUsers.data && this.projectUsers.data.length > 0){        
+        let tableUserIds = this.userids.map(t => t.user_id)      
+        return this.programUsers.filter(t => tableUserIds.includes(t.id))        
+      }
+    },
     projectRoleUsers: {     
      get() {
        return this.getProjectRoleUsers
       },
       set(value) {
          this.SET_PROJECT_ROLE_USERS(value)
+         console.log(value)
+        }      
+    },
+    assignedProjectUsers: {     
+     get() {
+       return this.getAssignedProjectUsers
+      },
+      set(value) {
+         this.SET_ASSIGNED_PROJECT_USERS(value)
          console.log(value)
         }      
     },
@@ -817,7 +862,7 @@ export default {
    watch: { 
     addUserToRoleStatus: {
       handler() {
-        if (this.addUserToRoleStatus == 204) {
+        if (this.addUserToRoleStatus == 204 || this.addUserToRoleStatus == 200) {
           this.$message({
             message: `Succesfully added user/role to project.`,
             type: "success",
@@ -829,13 +874,35 @@ export default {
           this.SET_PROJECT_ROLE_USERS([])
         }
       },
-    },   
+    },  
+    removeProjectRoleStatus: {
+      handler() {
+        if (this.removeProjectRoleStatus == 204  || this.removeProjectRoleStatus == 200) {
+          this.$message({
+            message: `Succesfully removed user(s) from role.`,
+            type: "success",
+            showClose: true,
+          });  
+          this.fetchRoles(this.$route.params.programId)   
+          this.SET_REMOVE_PROJECT_ROLE_STATUS(0);   
+          this.isEditingRoles = false;
+          this.rowIndex_1 = null;
+         }
+      },
+    },    
   },
  
 };
 </script>
 
 <style scoped lang="scss">
+.userNames{
+  // background-color: #F8F9FA;
+  border-radius: .25rem;
+  margin-right: 2px;
+  padding: 1px 3px ;
+  border: solid lightgray .75px;
+}
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
 }

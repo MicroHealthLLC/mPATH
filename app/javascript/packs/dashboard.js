@@ -342,7 +342,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     let s = permissionHash[salut]
     return pPrivilege.contracts.includes(s);
 
-  }else if( ["SettingsView", "SettingsGroups", "SettingsProjects", "SettingsContracts" ].includes(page)){
+  }else if( ["SettingsView", "SettingsGroups", "SettingsProjects", "SettingsContracts", "SettingsUsers", "SettingsRolesIndex" ].includes(page)){
     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
 

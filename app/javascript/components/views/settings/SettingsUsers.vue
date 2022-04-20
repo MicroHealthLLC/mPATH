@@ -25,23 +25,9 @@
         </el-breadcrumb>
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-                     <!-- <div
+             <div
               class="col-6"
-              >
-              <el-button
-                @click.prevent="openCreateUser"
-                v-if="_isallowed('write')"
-                class="bg-primary text-light mb-2"
-              >
-               <i class="fas fa-user-plus mr-1"></i> Create New User
-              </el-button>
-               <el-button
-                @click.prevent="addUser"
-                  v-if="_isallowed('write')"
-                class="bg-success text-light mb-2"
-              > -->
-                <div
-              class="col-6"
+               v-if="_isallowed('write')"
               >
               <el-button
                 @click.prevent="openCreateUser"             
@@ -74,14 +60,9 @@
       
      
     <div class="container-fluid mt-2 mx-0">
-    <!-- <div  
+      <div  
         v-loading="!programUsersLoaded"
-        v-if="_isallowed('read')"
-        element-loading-text="Fetching your data. Please wait..."
-        element-loading-spinner="el-icon-loading"     
-        class=""> -->
-         <div  
-        v-loading="!programUsersLoaded"
+         v-if="_isallowed('read')"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"     
         class=""> 
@@ -146,9 +127,9 @@
       
         </el-table>
     </div>
-       <!-- <div v-else class="text-danger mx-2 mt-5">
+       <div v-else class="text-danger mx-2 mt-5">
         <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
-       </div> -->
+       </div>
     </div>
       <el-dialog
         :visible.sync="newUserDialogVisible"
@@ -542,11 +523,11 @@
            <template slot-scope="scope">
              <span v-if="scope.$index !== rowIndex_1" >        
               <span  v-for="(item, i) in projectUsers.data" :key="i">    
-                <span v-if="(item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row" >   
+                <span v-if="(item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row" class="projectNames">   
                     <!-- {{ JSON.stringify(projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName)).replace(/[\[\]"]+/g,' ')}}  -->
                   {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
                 </span>
-                <span v-if="(item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row" >  
+                <span v-if="(item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row" class="projectNames" >  
      
                   {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).join()}}
                 </span>
@@ -627,20 +608,19 @@
           </template> -->
                 <template slot-scope="scope">
                 <el-button  
-                  type="default" 
-                  v-tooltip="`Confirm`"
+                  type="default"          
                   v-if="(isEditingRoles || isEditingAdminRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
                   @click.prevent="removeRoles(scope.$index, scope.row)" 
-                
-                  class="bg-danger btn-sm">
-                <i class="fal fa-user-lock text-light"></i>
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
                 </el-button>  
                   <el-button  
                   type="default" 
                   v-tooltip="`Remove Association(s)`"
                   @click.prevent="editRoles(scope.$index, scope.row)" 
                   v-if="scope.$index !== rowIndex_1"
-                  class="bg-primary text-light btn-sm">
+                  class="bg-danger text-light btn-sm">
                 <i class="fal fa-user-lock mr-1 text-light"></i> 
                 <!-- <i class="fal fa-user-gear mr-1 text-light"></i>  -->
                 </el-button>  
@@ -719,14 +699,14 @@
       </div>
         </div>
      <div class="mt-2 row">
-      <div class="col pt-1">        
-          <el-button
+      <div class="col pt-1">    
+         <el-button
           type="default"    
           @click="saveProjectUserRole()"          
           v-if="projectRoleNames && associatedProjects && associatedProjects.length > 0"
-          v-tooltip="`Confirm`" 
-          class="bg-light btn-sm">               
-          <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>Confirm Role
+          v-tooltip="`Save`" 
+          class="btn btn-sm bg-primary text-light">               
+          <i class="fal fa-save"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -804,9 +784,9 @@
           type="default"    
           @click="saveContractUserRole()"
           v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
-          v-tooltip="`Confirm`" 
-          class="bg-light btn-sm">               
-            <i class="far fa-file-contract mr-1 mh-orange-text"></i>Confirm Role
+          v-tooltip="`Save`" 
+            class="btn btn-sm bg-primary">               
+          <i class="fal fa-save"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -863,9 +843,9 @@
            type="default"
             @click="saveAdminUserRole()"
             v-if="adminRoleNames"
-          v-tooltip="`Confirm`" 
-          class="bg-light btn-sm">               
-            <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i> Confirm Role
+          v-tooltip="`Save`" 
+           class="btn btn-sm bg-primary text-light">               
+          <i class="fal fa-save"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -1028,7 +1008,7 @@ export default {
    
 		},
    _isallowed(salut) {
-      return this.checkPrivileges("SettingsUsers", salut, this.$route)
+      return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
    },
    removeRoles(index, rowData){     
       let projIds = this.projectRoleUsers.map(t => t.facilityProjectId);
@@ -1565,7 +1545,7 @@ export default {
     },
     addUserToRoleStatus: {
       handler() {
-        if (this.addUserToRoleStatus == 204) {
+        if (this.addUserToRoleStatus == 204  || this.addUserToRoleStatus == 200) {
           this.$message({
             message: `Succesfully assigned user to role(s).`,
             type: "success",
@@ -1586,7 +1566,7 @@ export default {
     },   
      removeRoleStatus: {
       handler() {
-        if (this.removeRoleStatus == 204) {
+        if (this.removeRoleStatus == 204 || this.removeRoleStatus == 200) {
           this.$message({
             message: `Succesfully removed association(s) from role.`,
             type: "success",
@@ -1599,12 +1579,6 @@ export default {
           this.isEditingContractRoles = false;
           this.isEditingAdminRoles = false;
           this.rowIndex_1 = null;
-          // this.SET_ADD_USER_TO_ROLE_STATUS(0);         
-          // this.SET_ASSOCIATED_PROJECTS([])
-          // this.SET_ASSOCIATED_CONTRACTS([])
-          // this.SET_PROJECT_ROLE_NAMES([])
-          // this.SET_ADMIN_ROLE_NAMES([])
-          // this.SET_CONTRACT_ROLE_NAMES([])
         }
       },
     },   
@@ -1614,6 +1588,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.projectNames{
+  // background-color: #F8F9FA;
+  border-radius: .25rem;
+  margin-right: 2px;
+  padding: 1px 3px ;
+  border: solid lightgray .75px;
+}
 
 /deep/.el-table__body-wrapper {
   overflow-y: visible;

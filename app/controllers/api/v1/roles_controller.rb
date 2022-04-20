@@ -76,7 +76,6 @@ class Api::V1::RolesController < AuthenticatedController
       role_ids = Role.where(id: params[:role_id]).pluck(:id)
       user_ids = User.where(id: params[:user_id]).pluck(:id)
       facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
-      binding.pry
       RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id, user_id: user_ids).destroy_all
     elsif params[:users_from_contract_role]
       role_ids = Role.where(id: params[:role_id]).pluck(:id)
