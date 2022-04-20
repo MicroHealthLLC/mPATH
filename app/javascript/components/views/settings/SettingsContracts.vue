@@ -148,6 +148,14 @@
               <template slot-scope="scope">
                 <el-button
                   type="default"
+                  v-tooltip="`Manage User(s)`"
+                  @click.prevent="addUserRole(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex"
+                  class="bg-primary text-light btn-sm">
+                    <i class="fas fa-users-medical mr-1"></i>
+                </el-button>
+                <el-button
+                  type="default"
                   v-if="
                     scope.$index == rowIndex 
                   "
@@ -179,14 +187,6 @@
                 >
                   <i class="fal fa-edit text-primary"></i>
                   </el-button>
-                  <el-button  
-                  type="default" 
-                  v-tooltip="`Manage User(s)`"
-                  @click.prevent="addUserRole(scope.$index, scope.row)" 
-                  v-if="scope.$index !== rowIndex"
-                  class="bg-primary text-light btn-sm">
-                   <i class="fas fa-users-medical mr-1"></i>
-                </el-button>  
                        <el-button
                   v-if="scope.$index !== rowIndex"
                   type="default"

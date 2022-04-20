@@ -153,6 +153,14 @@
             <template slot-scope="scope">
               <el-button
                 type="default"
+                v-tooltip="`Manage User(s)`"
+                @click.prevent="addUserRole(scope.$index, scope.row)"
+                v-if="scope.$index !== rowIndex"
+                class="bg-primary text-light btn-sm">
+                <i class="fas fa-users-medical mr-1"></i>
+              </el-button>
+              <el-button
+                type="default"
                 @click="saveEdits(scope.$index, scope.row)"
                 v-if="scope.$index == rowIndex" 
                 v-tooltip="`Save`" 
@@ -175,15 +183,6 @@
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button>  
-                 <el-button  
-                type="default" 
-                v-tooltip="`Manage User(s)`"
-                @click.prevent="addUserRole(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex "
-                class="bg-primary text-light btn-sm">
-             <i class="fas fa-users-medical mr-1"></i>
-               </el-button>  
-          
               <el-button
                 type="default"
                 v-tooltip="`Go to Project`"

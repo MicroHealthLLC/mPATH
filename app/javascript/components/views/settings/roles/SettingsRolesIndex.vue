@@ -662,6 +662,14 @@
           <i class="fas fa-users-medical mr-1"></i>
           </el-button>  
           <el-button
+            type="default"
+            v-tooltip="`Manage Admin Role User(s)`"
+            v-if="!scope.$index == 0 && !isEditting"
+            @click.prevent="addUserRole(scope.$index, scope.row)"
+            class="bg-primary text-light btn-sm">
+            <i class="fas fa-users-medical mr-1"></i>
+          </el-button>
+          <el-button
           type="default"
           v-tooltip="`Save role`"
           v-if="(showCreateRow === true && scope.$index == 0 && newRoleName) || 
@@ -703,7 +711,6 @@
         >
           <i class="fas fa-ban"></i> 
           </el-button>
-         
           </template>
         
     </el-table-column> 
