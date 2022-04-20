@@ -159,6 +159,7 @@ ActiveAdmin.register Project do
       if project.save
         project.user_ids = project.user_ids + user_ids if user_ids.present?
         users = User.where(id: project.admin_program_admins)
+        project.user_ids = (project.user_ids + users.pluck(:id) ).compact.uniq if users.any?
         role_users = []
         role_id = Role.program_admin_role.id
         users.each do |user|
@@ -202,6 +203,9 @@ ActiveAdmin.register Project do
       
       RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
 
+      params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s) ) if remove_project_admin_ids.any?
+      params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s) ) if new_project_admin_ids.any?
+      
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
         block.call(success, failure) if block
