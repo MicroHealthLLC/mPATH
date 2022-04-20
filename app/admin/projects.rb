@@ -75,7 +75,7 @@ ActiveAdmin.register Project do
           f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
-          f.input :admin_program_admins, label: 'Program Admins', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          f.input :admin_program_admins, label: 'Program Admins*', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
         end
       end
 

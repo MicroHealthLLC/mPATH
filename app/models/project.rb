@@ -80,12 +80,12 @@ class Project < SortableRecord
       role_id = Role.program_admin_role.id
       role_user_count = RoleUser.where(role_id: role_id, project_id: self.id).count
       if role_user_count < 1
-        self.errors.add(:base, "There must be atleast one program admin assigned")
+        self.errors.add(:base, "There must be at least one program admin assigned")
         return false
       end
     else
       if admin_program_admins.reject { |c| c.empty? }.size < 1
-        self.errors.add(:base, "There must be atleast one program admin assigned")
+        self.errors.add(:base, "There must be at least one program admin assigned")
         return false
       end
     end
