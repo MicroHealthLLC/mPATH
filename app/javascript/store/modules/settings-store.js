@@ -402,7 +402,7 @@ const settingsStore = {
               formData.append("contract_id[]", ids)      
               });
             } 
-            if (userData.adminRole){
+            if (userData.adminRole || userData.adminRoleIndex){
               formData.append("role_from_users", true);             
               formData.append("user_id[]", userData.userId);
               formData.append("project_id", userData.programId)
@@ -441,10 +441,21 @@ const settingsStore = {
            .then((res) => {
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
             commit("SET_NEW_ROLE", res);
-            console.log(res.data)
+            if(userData.projectIds || userData.contractIds || userData.adminRole ){
+              console.log("removed from ProgramSettingUsers")
+              commit("SET_REMOVE_ROLE_STATUS", res.status);
+            }
+            if(userData.adminRoleIndex ){
+              console.log("removed from ProgramSettingRoles")
              commit("SET_REMOVE_ADMIN_ROLE_STATUS", res.status);
-             commit("SET_REMOVE_PROJECT_ROLE_STATUS", res.status);
-             commit("SET_REMOVE_ROLE_STATUS", res.status);
+            }
+
+             if (userData.userIds && userData.projectId){
+              console.log("removed from ProgramSettingProjects")
+              commit("SET_REMOVE_PROJECT_ROLE_STATUS", res.status);
+             }
+           
+           
            })
            .catch((err) => {
              console.log(err);

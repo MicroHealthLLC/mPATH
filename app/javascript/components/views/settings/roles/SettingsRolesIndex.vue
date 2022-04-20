@@ -653,15 +653,7 @@
           class="text-center"
          >
           <template slot-scope="scope">
-           <el-button  
-            type="default" 
-            v-tooltip="`Manage Admin Role User(s)`"
-            v-if="!scope.$index == 0 && !isEditting"
-            @click.prevent="addUserRole(scope.$index, scope.row)"               
-            class="bg-primary text-light btn-sm">
-          <i class="fas fa-users-medical mr-1"></i>
-          </el-button>  
-          <el-button
+           <el-button
             type="default"
             v-tooltip="`Manage Admin Role User(s)`"
             v-if="!scope.$index == 0 && !isEditting"
@@ -678,16 +670,6 @@
            class="bg-primary btn-sm text-light"
           >
         <i class="far fa-save"></i>
-          </el-button>
-    
-          <el-button
-          type="default"
-          @click.prevent="cancelCreateRole(scope.$index, scope.row)"
-          v-if="showCreateRow === true && scope.$index == 0"
-          class="bg-secondary btn-sm text-light ml-1"
-          v-tooltip="`Cancel`"                  
-        >
-          <i class="fas fa-ban"></i> 
           </el-button>
           <el-button
             type="default"
@@ -1079,15 +1061,16 @@
           </div>
              </div> -->
                <div class="mt-4 row">
-        <div class="col-12 pt-0">
- 
-            <el-table
-            v-if="adminUsers && adminUsers.length > 0"
-            :header-cell-style="{ background: '#EDEDED' }"
-            :data="adminUsers"     
-            height="300"                
-            width="auto"
-            class=""
+        <div class="col-12 pt-0"> 
+          <el-table
+             v-loading="!getRolesLoaded"
+             element-loading-spinner="el-icon-loading"       
+             v-if="adminUsers && adminUsers.length > 0"
+             :header-cell-style="{ background: '#EDEDED' }"
+             :data="adminUsers"     
+             height="300"                
+             width="auto"
+             class=""
             > 
            <el-table-column  prop="user_full_name"
               sortable
@@ -1156,7 +1139,7 @@
       </el-table-column>
         
           </el-table> 
-          <span  class="pl-4" v-else>
+          <span  class="" v-else>
             No Users Assigned
           </span>
 
@@ -1309,7 +1292,7 @@ export default {
             roleId: rowData.role_id,   
             programId: this.$route.params.programId,          
             userId: [rowData.user_id],   
-            adminRole: true, 
+            adminRoleIndex: true, 
         },
       };  
       this.removeUserRole({
@@ -1630,6 +1613,7 @@ export default {
  },
  closeUserRoles() {
       this.rolesVisible = false;
+      this.SET_PROJECT_ROLE_USERS([])
   },
   cancelCreateRole() {
     this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
