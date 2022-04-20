@@ -55,9 +55,18 @@ class Project < SortableRecord
   after_save :grant_access_to_admins
   after_save :add_not_started_status
 
+  scope :program_admins_contains, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}%").map(&:project_id)) }
+  scope :program_admins_equals, -> (email) { where(id: RoleUser.joins(:user).where("users.email=?", email).map(&:project_id)) }
+  scope :program_admins_ends_with, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}").map(&:project_id)) }
+  scope :program_admins_starts_with, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "#{email}%").map(&:project_id)) }
+
   # Program admins are those who has any of RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES roles for this program
   # i.e. check Role#get_program_admins 
   attr_accessor :admin_program_admins
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:program_admins_equals, :program_admins_ends_with, :program_admins_starts_with, :program_admins_contains]
+  end
 
   def as_json(options=nil)
     json = super(options)
@@ -71,12 +80,12 @@ class Project < SortableRecord
       role_id = Role.program_admin_role.id
       role_user_count = RoleUser.where(role_id: role_id, project_id: self.id).count
       if role_user_count < 1
-        self.errors.add(:base, "There must be atleast one program admin assigned")
+        self.errors.add(:base, "There must be at least one program admin assigned")
         return false
       end
     else
       if admin_program_admins.reject { |c| c.empty? }.size < 1
-        self.errors.add(:base, "There must be atleast one program admin assigned")
+        self.errors.add(:base, "There must be at least one program admin assigned")
         return false
       end
     end

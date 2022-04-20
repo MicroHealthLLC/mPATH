@@ -51,6 +51,13 @@ ActiveAdmin.register Project do
         "<span>#{project.project_type&.name}</span>".html_safe
       end
     end
+    column "Program Admins", :get_program_admins do |project|
+      if current_user.admin_write?
+        project.get_program_admins
+      else
+        "<span>#{project.get_program_admins.map(&:full_name).join(', ')}</span>".html_safe
+      end
+    end
     tag_column "State", :status
     actions defaults: false do |project|
       item "Edit", edit_admin_project_path(project), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
@@ -68,7 +75,7 @@ ActiveAdmin.register Project do
           f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
-          f.input :admin_program_admins, label: 'Program Admins', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          f.input :admin_program_admins, label: 'Program Admins*', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
         end
       end
 
@@ -106,6 +113,7 @@ ActiveAdmin.register Project do
   filter :name
   filter :project_type, label: "Program Type"
   filter :status, as: :select, collection: Project.statuses, label: "State"
+  filter :program_admins, as: :string, label: "Program Admins"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
