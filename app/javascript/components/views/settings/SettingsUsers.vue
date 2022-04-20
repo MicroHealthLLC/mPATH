@@ -542,6 +542,7 @@
               class="w-100"
               clearable
               track-by="id"
+              placeholder="No projects assigned to this role"   
               value-key="id"
                     
             > 
@@ -560,6 +561,7 @@
               multiple
               class="w-100"
               clearable
+               placeholder="No contracts assigned to this role"  
               track-by="id"
               value-key="id"             
             > 

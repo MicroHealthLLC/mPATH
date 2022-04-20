@@ -347,7 +347,9 @@
       <div class="mt-4 row">
         <div class="col-12 pt-0">
          <el-table
-             v-if="projectUsers && projectUsers.roleIds && projectUsers.roleIds.length > 0"
+            v-loading="!getRolesLoaded"
+            element-loading-spinner="el-icon-loading" 
+            v-if="projectUsers && projectUsers.roleIds && projectUsers.roleIds.length > 0"
             :header-cell-style="{ background: '#EDEDED' }"
             :data="projectUsers.roleIds"        
             height="375"
@@ -599,6 +601,7 @@ export default {
     closeUserRoles() {
       this.rolesVisible = false;
       this.isEditingRoles = false;
+      this.SET_PROJECT_ROLE_USERS([])
     },
     addAnotherProject() {
       this.C_projectGroupFilter = "";
