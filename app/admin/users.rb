@@ -126,7 +126,6 @@ ActiveAdmin.register User do
         f.inputs 'Access' do
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
-            p.input :settings_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "settings_view")
             p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
             p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
             p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
