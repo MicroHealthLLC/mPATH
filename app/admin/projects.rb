@@ -81,8 +81,8 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Program Details' do
-          input :users, label: 'Users in Program', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :facilities, label: 'Projects in Program', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # input :users, label: 'Users in Program', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # input :facilities, label: 'Projects in Program', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :statuses, label: 'Statuses in Program', as: :select, collection:  options_for_select( Status.all.map{|u| [u.name, u.id]}, f.object.status_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :task_stages, label: 'Task Stages in Program', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :task_types, label: 'Process Areas in Program', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
@@ -159,6 +159,7 @@ ActiveAdmin.register Project do
       if project.save
         project.user_ids = project.user_ids + user_ids if user_ids.present?
         users = User.where(id: project.admin_program_admins)
+        project.user_ids = (project.user_ids + users.pluck(:id)).compact.uniq if users.any?
         role_users = []
         role_id = Role.program_admin_role.id
         users.each do |user|
@@ -201,6 +202,9 @@ ActiveAdmin.register Project do
       RoleUser.import(role_users)
       
       RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
+
+      params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s)) if remove_project_admin_ids.any?
+      params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)) if new_project_admin_ids.any?
 
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
