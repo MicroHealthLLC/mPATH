@@ -487,7 +487,7 @@
         element-loading-spinner="el-icon-loading"   
          >
         <el-table
-          v-if="projectUsers && projectUsers.data && projectUsers.roleIds.length > 0"
+          v-if="projectUsers &&  projectNames && projectUsers.data && projectUsers.roleIds.length > 0"
           :data="projectUsers.roleIds"        
           height="375"
           class="usersTable"
@@ -522,11 +522,12 @@
            <template slot-scope="scope">
              <span v-if="scope.$index !== rowIndex_1" >        
               <span  v-for="(item, i) in projectUsers.data" :key="i">    
-                <span v-if="(item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row" class="projectNames">   
-                    <!-- {{ JSON.stringify(projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName)).replace(/[\[\]"]+/g,' ')}}  -->
+                <span v-if="(item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row &&
+                  projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).length > 0" class="projectNames">   
                   {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
                 </span>
-                <span v-if="(item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row" class="projectNames" >  
+                <span v-if="contractNames && (item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row &&                  
+                  contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).length > 0" class="projectNames" >  
      
                   {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).join()}}
                 </span>
@@ -537,14 +538,15 @@
            <el-select
               v-model="projectRoleUsers"
               v-if="!isEditingContractRoles"
+              :popper-append-to-body="false"
               filterable
               multiple
-              class="w-100"
+              class="w-100 el-popper"
               clearable
               track-by="id"
               placeholder="No projects assigned to this role"   
               value-key="id"
-                    
+              popper-class="select-popper"                    
             > 
             <el-option
                 v-for="item in projectNames"
@@ -554,36 +556,21 @@
               > 
               </el-option> 
              </el-select>  
-             <el-select
-              v-model="contractRoleUsers"
-              v-if="isEditingContractRoles"
-              filterable
-              multiple
-              class="w-100"
-              clearable
-               placeholder="No contracts assigned to this role"  
-              track-by="id"
-              value-key="id"             
-            > 
-            <el-option
-                v-for="item in contractNames"
-                :value="item"
-                :key="item.id"
-                :label="item.nickname"
-              > 
-              </el-option> 
-             </el-select>  
+      
              </span>
              <span v-if="isEditingContractRoles && scope.$index == rowIndex_1" >
      
              <el-select
-              v-model="contractRoleUsers"         
+              v-model="contractRoleUsers" 
+              v-if="!isEditingRoles"        
               filterable
               multiple
-              class="w-100"
+              class="w-100 el-popper"
               clearable
               track-by="id"
-              value-key="id"             
+              value-key="id"
+              :popper-append-to-body="false"
+              popper-class="select-popper"                 
             > 
             <el-option
                 v-for="item in contractNames"
@@ -1068,10 +1055,10 @@ export default {
     this.rowIndex_1 = index;
     this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)
     this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
-    if (this.assignedUserContracts.length > 0 ){
+    if (this.assignedUserContracts && this.assignedUserContracts.length > 0 ){
        this.isEditingContractRoles = true;
      } 
-    if (this.assignedUserProjects.length > 0){
+    if (this.assignedUserProjects && this.assignedUserProjects.length > 0){
         this.isEditingRoles = true;
      }
     if (!this.isEditingContractRoles && !this.isEditingContractRoles  ){
@@ -1595,6 +1582,11 @@ export default {
   margin-right: 2px;
   padding: 1px 3px ;
   border: solid lightgray .75px;
+}
+/deep/.el-popper {
+  .select-popper {
+    display: none;
+  }
 }
 
 /deep/.el-table__body-wrapper {

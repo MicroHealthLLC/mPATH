@@ -328,7 +328,7 @@
           
              
               </div>
-                <div class="col-2 pt-0">
+                <div class="col-2 pt-0 text-right">
               <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>
                               
                 <el-button
@@ -376,7 +376,9 @@
               <template slot-scope="scope">
                <span v-if="scope.$index !== rowIndex_1" >        
               <span  v-for="(item, i) in projectUsers.data" :key="i">    
-                <span v-if="(item.user_id && programUsers.map(t => t.id == item.user_id)) && item.role_id == scope.row" class="userNames" >   
+                <span v-if="(item.user_id && programUsers.map(t => t.id == item.user_id)) && item.role_id == scope.row &&
+                  
+                  programUsers.filter(t => item.user_id == t.id).map(t => t.fullName).length > 0" class="userNames" >   
                  {{ programUsers.filter(t => item.user_id == t.id).map(t => t.fullName).join()}}                
                 </span>               
               </span>
@@ -386,8 +388,10 @@
              <el-select
               v-model="assignedProjectUsers" 
               :disabled="assignedProjectUsers && assignedProjectUsers.length <= 0"
-              filterable           
-              class="w-100"
+              filterable                         
+              class="w-100 el-popper"
+              :popper-append-to-body="false"
+              popper-class="select-popper"   
               clearable
               multiple
               track-by="id"
@@ -410,6 +414,7 @@
           
 
     <el-table-column
+        align="right"
         width="125"
       >
         <!-- <template slot="header" slot-scope="scope">
@@ -898,6 +903,11 @@ projectUsers(){
 </script>
 
 <style scoped lang="scss">
+/deep/.el-popper {
+  .select-popper {
+    display: none;
+  }
+}
 .userNames{
   // background-color: #F8F9FA;
   border-radius: .25rem;

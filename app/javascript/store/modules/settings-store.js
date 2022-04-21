@@ -73,6 +73,7 @@ const settingsStore = {
     add_user_to_role_status: 0, 
     remove_role_status: 0,
     remove_project_role_status: 0,
+    remove_contract_role_status: 0,
     remove_admin_role_status: 0,
     role_removed: true, 
    
@@ -81,6 +82,7 @@ const settingsStore = {
     users_project_roles: [],
     project_role_names: [],
     assigned_project_users: [],
+    assigned_contract_users: [],
     users_contract_roles: [],
 
      //CONTRACT USER ROLES
@@ -454,7 +456,11 @@ const settingsStore = {
               console.log("removed from ProgramSettingProjects")
               commit("SET_REMOVE_PROJECT_ROLE_STATUS", res.status);
              }
-           
+
+             if (userData.userIds && userData.contractId){
+              console.log("removed from ProgramSettingContracts")
+              commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
+             }           
            
            })
            .catch((err) => {
@@ -968,13 +974,13 @@ const settingsStore = {
     setContractTable: (state, value) => (state.contract_table = value),
     setGroupFilter: (state, value) => (state.group_filter = value),
     setNewContractGroupFilter: (state, loaded) =>
-      (state.new_contract_group_filter = loaded),
-
-    
+      (state.new_contract_group_filter = loaded),    
 
     SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) => (state.project_role_users = value),
     SET_ASSIGNED_PROJECT_USERS: (state, value) => (state.assigned_project_users = value),
+    SET_ASSIGNED_CONTRACT_USERS: (state, value) => (state.assigned_contract_users = value),
+    
     SET_USERS_PROJECT_ROLES: (state, value) => (state.users_project_roles = value),
     SET_USERS_CONTRACT_ROLES: (state, value) => (state.users_contract_roles = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
@@ -1013,6 +1019,7 @@ const settingsStore = {
     SET_ADD_USER_TO_ROLE_STATUS:(state, status) => (state.add_user_to_role_status = status),
     SET_REMOVE_ROLE_STATUS:(state, status) => (state.remove_role_status = status),
     SET_REMOVE_PROJECT_ROLE_STATUS:(state, status) => (state.remove_project_role_status = status),
+    SET_REMOVE_CONTRACT_ROLE_STATUS:(state, status) => (state.remove_contract_role_status = status),
     SET_REMOVE_ADMIN_ROLE_STATUS:(state, status) => (state.remove_admin_role_status = status),
     TOGGLE_ROLE_REMOVED: (state, loaded) => (state.role_removed = loaded),
 
@@ -1071,6 +1078,7 @@ const settingsStore = {
     getRoles: (state) => state.roles,
     getProjectRoleUsers: (state) => state.project_role_users,
     getAssignedProjectUsers: (state) => state.assigned_project_users,
+    getAssignedContractUsers: (state) => state.assigned_contract_users,
     getUsersProjectRoles: (state) => state.users_project_roles,
     getUsersContractRoles: (state) => state.users_contract_roles,
 
@@ -1097,6 +1105,7 @@ const settingsStore = {
     removeRoleStatus: (state) => state.remove_role_status,
     removeAdminRoleStatus: (state) => state.remove_admin_role_status,
     removeProjectRoleStatus: (state) => state.remove_project_role_status,
+    removeContractRoleStatus: (state) => state.remove_contract_role_status,
     showCreateRow: (state) => state.show_create_row,
 
     contract: (state) => state.contract,
