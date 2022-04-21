@@ -71,10 +71,11 @@
         height="450"
         class="crudRow"
         :row-class-name="showHideCreateRow"
+        
         >
     <el-table-column
       fixed
-      prop="name"
+     prop="name"
       label="Admin Role"
       width="340">
     <template slot-scope="scope">
