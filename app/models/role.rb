@@ -7,6 +7,7 @@ class Role < ApplicationRecord
   accepts_nested_attributes_for :role_privileges
   
   validate :prevent_default_role_update, on: [:update, :destroy]
+  validates :name, presence: true, acceptance: {message: "must be present in Role"}
 
   def prevent_default_role_update
     if is_default
@@ -28,7 +29,7 @@ class Role < ApplicationRecord
     hash
   end
   
-  def self.program_admin_role
+  def self.program_admin_user_role
     Role.where(name: "program-admin").first
   end
 
