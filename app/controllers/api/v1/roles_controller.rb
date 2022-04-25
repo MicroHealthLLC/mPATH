@@ -21,6 +21,7 @@ class Api::V1::RolesController < AuthenticatedController
     project = Project.find(params[:project_id])
     roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map(&:to_json)
     roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.map(&:to_json)
+    
     render json: {roles: roles}
   end
 
