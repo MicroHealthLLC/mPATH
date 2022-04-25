@@ -19,9 +19,15 @@ class Api::V1::RolesController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map(&:to_json)
-    roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.map(&:to_json)
-    
+
+    if params[:page] == "user_tab_role_assign"
+      roles = project.roles.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :contract ] }]).map{|r| r.to_json( params)}
+      roles += Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :contract] }]).default_roles.map{|r| r.to_json( params)}
+    else
+      roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map(&:to_json)
+      roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.map(&:to_json)  
+    end
+
     render json: {roles: roles}
   end
 
