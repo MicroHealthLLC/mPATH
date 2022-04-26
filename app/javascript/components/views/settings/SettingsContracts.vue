@@ -73,7 +73,7 @@
           </div>
         </div>
         <div       
-        v-loading="!contractsLoaded && tableData && tableData.length < 0"
+        v-loading="!contractsLoaded"
         element-loading-text="Fetching your data. Please wait..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)" 
@@ -328,7 +328,7 @@
               placeholder="Search and select Project Users"          
             >
               <el-option
-                v-for="item in programUsers"
+                v-for="item in viableContractUsers"
                 :value="item"
                 :key="item.id"
                 :label="item.fullName"
@@ -545,7 +545,6 @@ export default {
     };
   },
   mounted() {
-
     this.fetchContracts(this.$route.params.programId);
     this.fetchRoles(this.$route.params.programId)
     if(this.groups && this.groups.length <= 0){
@@ -883,6 +882,13 @@ export default {
        }
       }       
     },
+   viableContractUsers(){
+      if (this.programUsers && this.contractUsers && this.contractUsers.data){
+        let assignedUserIds = this.contractUsers.data.map(t => t.user_id)
+        console.log(this.programUsers.filter(t => !assignedUserIds.includes(t.id)))
+        return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
+      }       
+   }, 
     contractRoleUsers: {     
      get() {
        return this.getContractRoleUsers
