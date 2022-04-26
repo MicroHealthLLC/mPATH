@@ -8,6 +8,18 @@ class RoleUser < ApplicationRecord
 
   validate :check_valid_data, :check_duplication
 
+  def check_only_single_admin_role
+    user = self.user
+    role = self.role
+    if project_id && role.is_admin_role?
+      role_users = RoleUser.includes(:role_privileges).where(user_id: user_id, project_id: project_id, "role_privileges.role_type" => RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES )
+      if role_users.size > 0
+        role_users.first.update(role_id: self.role_id)
+        return true
+      end
+    end
+  end
+
   def check_duplication
     user = self.user
     role = self.role

@@ -45,9 +45,11 @@ class Api::V1::RolesController < AuthenticatedController
     role_users = role_users_params["role_users"]
     errors = []
     role_users.each do |role_user_hash|
-      role_user  = role.role_users.create(role_user_hash)
-      if !role_user.persisted?
-        errors += role_user.errors.full_messages
+      role_user  = role.role_users.new(role_user_hash)
+      if !role_user.check_only_single_admin_role
+        if !role_user.save
+          errors += role_user.errors.full_messages
+        end
       end
     end
     if !errors.any?

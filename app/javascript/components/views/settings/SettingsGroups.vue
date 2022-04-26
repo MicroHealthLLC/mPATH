@@ -252,13 +252,13 @@
                         v-if="
                           groupContracts &&
                             groupContracts
-                              .map((t) => t.facilityGroupId)
+                              .map((t) => t.facility_group_id)
                               .filter((t) => t == props.row.id).length
                         "
                       >
                         {{
                           groupContracts
-                            .map((t) => t.facilityGroupId)
+                            .map((t) => t.facility_group_id)
                             .filter((t) => t == props.row.id).length
                         }}
                       </span>
@@ -318,13 +318,13 @@
                             v-if="
                               groupContracts &&
                                 groupContracts
-                                  .map((t) => t.facilityGroupId)
+                                  .map((t) => t.facility_group_id)
                                   .filter((t) => t == props.row.id).length
                             "
                             class="badge badge-secondary badge-pill pill"
                             >{{
                               groupContracts
-                                .map((t) => t.facilityGroupId)
+                                .map((t) => t.facility_group_id)
                                 .filter((t) => t == props.row.id).length
                             }}
                           </span>
@@ -338,7 +338,7 @@
                           <ul class="pl-3">
                             <li
                               v-for="(item, i) in groupContracts.filter(
-                                (t) => t.facilityGroupId == props.row.id
+                                (t) => t.facility_group_id == props.row.id
                               )"
                               :key="i"
                             >
@@ -454,7 +454,6 @@ export default {
       dialog2Visible: false,
       isIndeterminate: true,
       currentTab: "tab1",
-      contracts: null,
       currentFacilityGroup: {},
       componentKey: 0,
       confirmTransfer: false,
@@ -490,6 +489,7 @@ export default {
       "removeOrDeleteGroup",
       "updateGroup",
       "fetchGroups",
+      "fetchContracts",
       "fetchCurrentProject",
     ]),
        tableRowClassName({row, rowIndex}) {
@@ -632,13 +632,14 @@ export default {
   if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
     }
-   
+    this.fetchContracts(this.$route.params.programId);  
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "facilities",
       "groups",
+      "contracts",
       "groupStatus",
       "getNewGroups",
       "getTransferData",
@@ -776,15 +777,22 @@ export default {
         return this.facilities;
       }
     },
-    groupContracts() {
-      if (
-        this.currentProject &&
-        this.currentProject.contracts &&
-        this.currentProject.contracts.length > 0
-      ) {
-        return this.currentProject.contracts;
+  groupContracts() {
+     if (this.contracts && this.contracts[0] && this.contracts[0].length > 0) {
+          console.log(this.contracts[0])
+          return this.contracts[0];
       }
     },
+    // groupContracts() {
+      // contracts array no longer in currentProject response
+    //   if (
+    //     this.currentProject &&
+    //     this.currentProject.contracts &&
+    //     this.currentProject.contracts.length > 0
+    //   ) {
+    //     return this.currentProject.contracts;
+    //   }
+    // },
     C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;

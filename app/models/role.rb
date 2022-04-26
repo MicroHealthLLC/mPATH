@@ -33,6 +33,10 @@ class Role < ApplicationRecord
     hash
   end
   
+  def is_admin_role?
+    role_privileges.where(role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES).count > 0
+  end
+
   def self.program_admin_user_role
     Role.where(name: "program-admin").first
   end
