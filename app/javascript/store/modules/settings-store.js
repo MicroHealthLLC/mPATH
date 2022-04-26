@@ -84,6 +84,7 @@ const settingsStore = {
     assigned_project_users: [],
     assigned_contract_users: [],
     users_contract_roles: [],
+    users_admin_roles: [],
 
      //CONTRACT USER ROLES
      contract_role_users: [],
@@ -520,12 +521,12 @@ const settingsStore = {
           commit("TOGGLE_CONTRACT_LOADED", true);
         });
     },
-    fetchContracts({ commit }) {
+    fetchContracts({ commit }, id) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts.json`,
+        url: `${API_BASE_PATH}/contracts?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -983,6 +984,7 @@ const settingsStore = {
     
     SET_USERS_PROJECT_ROLES: (state, value) => (state.users_project_roles = value),
     SET_USERS_CONTRACT_ROLES: (state, value) => (state.users_contract_roles = value),
+    SET_USERS_ADMIN_ROLES: (state, value) => (state.users_admin_roles = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
     SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
@@ -1064,12 +1066,7 @@ const settingsStore = {
     SET_PROGRAM_USERS: (state, value) => (state.program_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
-
-
     SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value),
-
-
-      
   },
 
   getters: {
@@ -1081,6 +1078,7 @@ const settingsStore = {
     getAssignedContractUsers: (state) => state.assigned_contract_users,
     getUsersProjectRoles: (state) => state.users_project_roles,
     getUsersContractRoles: (state) => state.users_contract_roles,
+    getUsersAdminRoles: (state) => state.users_admin_roles,
 
     getProjectRoleNames: (state) => state.project_role_names,
 

@@ -298,7 +298,8 @@
               placeholder="Search and select Project Users"          
             >
               <el-option
-                v-for="item in programUsers"
+                v-for="item in viableProjectUsers"
+                :load="log(viableProjectUsers)"
                 :value="item"
                 :key="item.id"
                 :label="item.fullName"
@@ -571,6 +572,9 @@ export default {
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
     },
+    log(e){
+      console.log(e)
+    },
     editUsers(index, rowData){
         this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
         this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
@@ -590,7 +594,7 @@ export default {
                   userIds: ids,   
               },
             };
-            console.log(projectUserRoleData)
+            // console.log(projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });     
@@ -619,6 +623,10 @@ export default {
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];        
 		}, 
     addUserRole(index, rows) {
+      if (this.assignedUsers){
+     console.log( this.assignedUsers.map(t => t))
+      }
+ 
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
@@ -759,17 +767,33 @@ projectUsers(){
     let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
     if (this.projId)  {
       let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_project_id)   
+      // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
+      //     { 
+      //       ...acc, 
+      //       [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
+      //     }
+      // ), {});
+      //     console.log(reducedRoles)
+          return {
+                  data: groupByRoles,
+                  roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
+                  }
+      } else return [].concat.apply([], roleUsers)       
+    }
+    },
+  myRolesTable(){
+  if(this.getRoles && this.getRoles.length > 0 ){   
+    let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+    if (this.projId)  {
+      let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.facility_project_id)   
       const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
           { 
             ...acc, 
             [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
           }
       ), {});
-          console.log(reducedRoles)
-          return {
-                  data: groupByRoles,
-                  roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
-                  }
+      // console.log(reducedRoles)
+          return reducedRoles      
       } else return [].concat.apply([], roleUsers)       
     }
     },
@@ -780,7 +804,6 @@ projectUsers(){
        }
       }       
     },
-  
     groupList() {
      if (
         this.groups &&        
@@ -817,18 +840,25 @@ projectUsers(){
     },
     assignedUsers(){
     //   //  Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
-      if(this.programUsers && this.projectUsers && this.projectUsers.data && this.projectUsers.data.length > 0){        
+      if(this.userids && this.programUsers && this.projectUsers && this.projectUsers.data && this.projectUsers.data.length > 0){        
         let tableUserIds = this.userids.map(t => t.user_id)      
         return this.programUsers.filter(t => tableUserIds.includes(t.id))        
       }
     },
+   viableProjectUsers(){
+      if (this.programUsers && this.projectUsers && this.projectUsers.data){
+        let assignedUserIds = this.projectUsers.data.map(t => t.user_id)
+        console.log(this.programUsers.filter(t => !assignedUserIds.includes(t.id)))
+        return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
+      }       
+    }, 
     projectRoleUsers: {     
      get() {
        return this.getProjectRoleUsers
       },
       set(value) {
          this.SET_PROJECT_ROLE_USERS(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     assignedProjectUsers: {     
@@ -837,7 +867,7 @@ projectUsers(){
       },
       set(value) {
          this.SET_ASSIGNED_PROJECT_USERS(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     projectRoleNames: {     
@@ -846,7 +876,7 @@ projectUsers(){
       },
       set(value) {
          this.SET_PROJECT_ROLE_NAMES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     projectData() {

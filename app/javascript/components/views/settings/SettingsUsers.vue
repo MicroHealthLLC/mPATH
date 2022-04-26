@@ -3,7 +3,7 @@
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
-    <div class="col-md-10">
+    <div class="col-md-10" :load="log(assignedAdminRoles)">
        <div class="right-panel">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
           <el-breadcrumb-item :to="backToSettings">
@@ -463,7 +463,7 @@
           @click.prevent="assignAdminRole"   
            >
           <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>   
-              Assign Admin Role
+              Manage Admin Role
           </el-button>            
         </el-button-group>
           </div>
@@ -487,10 +487,11 @@
         element-loading-spinner="el-icon-loading"   
          >
         <el-table
-          v-if="projectUsers &&  projectNames && projectUsers.data && projectUsers.roleIds.length > 0"
+          v-if="projectUsers && projectUsers.data && projectUsers.roleIds.length > 0"
           :data="projectUsers.roleIds"        
           height="375"
           class="usersTable"
+          width="100%"
           border
           :header-cell-style="{ background: '#EDEDED' }"
         >
@@ -513,7 +514,7 @@
         
           </el-table-column>
           <el-table-column
-              width="600"
+              width="675"
               prop="projects"
               sortable
               filterable
@@ -522,7 +523,7 @@
            <template slot-scope="scope">
              <span v-if="scope.$index !== rowIndex_1" >        
               <span  v-for="(item, i) in projectUsers.data" :key="i">    
-                <span v-if="(item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row &&
+                <span v-if="projectNames && (item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row &&
                   projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).length > 0" class="projectNames">   
                   {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
                 </span>
@@ -587,6 +588,7 @@
           </el-table-column> 
           <el-table-column
           width="125"
+          align="right"
         >
           <!-- <template slot="header" slot-scope="scope">
             <el-input
@@ -597,7 +599,7 @@
                 <template slot-scope="scope">
                 <el-button  
                   type="default"          
-                  v-if="(isEditingRoles || isEditingAdminRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
+                  v-if="(isEditingRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
                   @click.prevent="removeRoles(scope.$index, scope.row)" 
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light">               
@@ -614,7 +616,7 @@
                 </el-button>  
                   <el-button  
                   type="default" 
-                  v-if="(isEditingRoles || isEditingAdminRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
+                  v-if="(isEditingRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
                   v-tooltip="`Cancel`"
                   @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
                 class="btn btn-sm bg-secondary text-light">
@@ -676,7 +678,7 @@
         placeholder="Search and select Projects to Associate"          
       >
         <el-option
-          v-for="item in projectNames"
+          v-for="item in filteredProjects"
           :value="item"
           :key="item.facilityProjectId"
           :label="item.facilityName"
@@ -756,7 +758,7 @@
               placeholder="Search and select Contracts to Associate"          
             >
               <el-option
-                v-for="item in contractNames"
+                v-for="item in filteredContracts"
                 :value="item"
                 :key="item.id"
                 :label="item.nickname"
@@ -803,9 +805,9 @@
      </div> -->
       <div class="mt-0 row">
       <div class="col-12 pt-0">
-         <label class="font-md mb-0 d-flex">Assign Admin Role </label>
+         <label class="font-md mb-0 d-flex">Manage Admin Role </label>
           <el-select
-          v-model="adminRoleNames"
+          v-model="adminRoleUsers"
           filterable           
           class="w-100"
           clearable
@@ -830,7 +832,7 @@
           <el-button
            type="default"
             @click="saveAdminUserRole()"
-            v-if="adminRoleNames"
+            v-if="adminRoleUsers"
           v-tooltip="`Save`" 
            class="btn btn-sm bg-primary text-light">               
           <i class="fal fa-save"></i>
@@ -849,7 +851,14 @@
         </div>  
            
     </el-dialog>
-      <div class="text-right mt-3">
+       <div class="row mt-2">
+    <div class="col-9 text-left">
+      <span v-if="assignedAdminRoles">
+      <i class="fa-solid fa-user-shield bootstrap-purple-text"   v-tooltip="`Admin Role`" ></i>   
+        {{ assignedAdminRoles[0].name }}
+      </span>
+    </div>
+      <div class="col text-right">
         <button
         @click.prevent="closeUserRoles"
         class="btn btn-sm bg-secondary text-light modalBtns"
@@ -858,6 +867,7 @@
         <i class="fas fa-ban"></i> 
       </button>
      </div>
+       </div>
      
       </el-dialog>
        </div>
@@ -967,7 +977,8 @@ export default {
     "SET_ADD_USER_TO_ROLE_STATUS",
     "SET_USERS_PROJECT_ROLES",
     "SET_USERS_CONTRACT_ROLES",
-     "SET_REMOVE_ROLE_STATUS"
+    "SET_USERS_ADMIN_ROLES",
+    "SET_REMOVE_ROLE_STATUS"
 
     ]),
   ...mapActions([
@@ -982,7 +993,7 @@ export default {
     "addUsersToProgram"
     ]),
     log(e){
-      // console.log(e)
+      console.log(e)
     },  
     handleExpandChange(row, expandedRows) {   
 			this.projId = row.id;
@@ -998,16 +1009,13 @@ export default {
    _isallowed(salut) {
       return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
    },
-   removeRoles(index, rowData){     
-      let projIds = this.projectRoleUsers.map(t => t.facilityProjectId);
-      let cIds = this.contractRoleUsers.map(t => t.id);
-      let assignedContracts =  this.assignedUserContracts.map(t => t.id); 
-      let aCids =  assignedContracts.filter(t => !cIds.includes(t));
-      let assigned =  this.assignedUserProjects.map(t => t.facilityProjectId);   
-      let ids = assigned.filter(t => !projIds.includes(t));
+   removeRoles(index, rowData){   
  
       if (this.isEditingRoles) {
-      let projectUserRoleData = {
+        let projIds = this.projectRoleUsers.map(t => t.facilityProjectId); 
+        let assigned =  this.assignedUserProjects.map(t => t.facilityProjectId);   
+        let ids = assigned.filter(t => !projIds.includes(t));
+        let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
                   userId: this.userData.id,
@@ -1021,7 +1029,10 @@ export default {
             });
       }
       if (this.isEditingContractRoles) {
-      let projectUserRoleData = {
+        let cIds = this.contractRoleUsers.map(t => t.id);
+        let assignedContracts =  this.assignedUserContracts.map(t => t.id); 
+        let aCids =  assignedContracts.filter(t => !cIds.includes(t));
+        let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
                   userId: this.userData.id,
@@ -1034,41 +1045,44 @@ export default {
               ...projectUserRoleData,
             });
       } 
-      if (this.isEditingAdminRoles) {
-        let projectUserRoleData = {
-                userData: {
-                  roleId: rowData,
-                  userId: [this.userData.id],
-                  programId: this.$route.params.programId, 
-                  adminRole: true, 
-              },
-            };
-            console.log(projectUserRoleData)
-            this.removeUserRole({
-              ...projectUserRoleData,
-            });
-      }          
+      // if (this.isEditingAdminRoles) {
+      //   let projectUserRoleData = {
+      //           userData: {
+      //             roleId: rowData,
+      //             userId: [this.userData.id],
+      //             programId: this.$route.params.programId, 
+      //             adminRole: true, 
+      //         },
+      //       };
+      //       console.log(projectUserRoleData)
+      //       this.removeUserRole({
+      //         ...projectUserRoleData,
+      //       });
+      // }          
     },
   editRoles(index, rowData){
     this.roleRowId = rowData   
     this.editRoleRowData = rowData;
     this.rowIndex_1 = index;
-    this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)
-    this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
+    this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)   
+   this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
     if (this.assignedUserContracts && this.assignedUserContracts.length > 0 ){
        this.isEditingContractRoles = true;
      } 
     if (this.assignedUserProjects && this.assignedUserProjects.length > 0){
         this.isEditingRoles = true;
      }
-    if (!this.isEditingContractRoles && !this.isEditingContractRoles  ){
-       this.isEditingAdminRoles = true;
-       }
+    // if (this.assignedAdminRoles && this.assignedAdminRoles.length > 0  ){
+    //    this.isEditingAdminRoles = true;
+    //    }
+  },
+  editAdminRole(){
+    this.isEditingAdminRoles = true
   },
     cancelEditRoles(index, rowData){
     this.isEditingRoles = false
     this.isEditingContractRoles = false;
-    this.isEditingAdminRoles = false;
+    // this.isEditingAdminRoles = false;
     this.rowIndex_1 = null;
   },
   saveProjectUserRole(index, rows){
@@ -1105,7 +1119,7 @@ export default {
    saveAdminUserRole(index, rows){
     let projectUserRoleData = {
           userData: {
-            roleId: this.adminRoleNames.id,
+            roleId: this.adminRoleUsers.id,
             userId: this.projId,
             programId: this.$route.params.programId,      
             adminRole: true        
@@ -1132,29 +1146,27 @@ export default {
     associateUserRole(index, rows){
       console.log(rows)
     },
-   addPortfolioUsersToProgram(){
-     if (this.portfolioUsers && this.portfolioUsers.length > 0) {
-      let uIds = []
-       for(let i = 0; i < this.portfolioUsers.length; i++) {
-            uIds.push(this.portfolioUsers[i].id)
-       }     
-      // console.log(uIds)
-      let addedUsersAr = {
-        addedUsers: {
-           programId: this.programId,
-           userIds: uIds,      
-        },
-      };
-     this.addUsersToProgram({
-        ...addedUsersAr,
-      });
-     }
-   },
-   addUser() {
-      this.dialogVisible = true; 
-      
-      // console.log(this.portfolioUsersOnly)
+    addPortfolioUsersToProgram(){
+      if (this.portfolioUsers && this.portfolioUsers.length > 0) {
+        let uIds = []
+        for(let i = 0; i < this.portfolioUsers.length; i++) {
+              uIds.push(this.portfolioUsers[i].id)
+        }     
+        // console.log(uIds)
+        let addedUsersAr = {
+          addedUsers: {
+            programId: this.programId,
+            userIds: uIds,      
+          },
+        };
+      this.addUsersToProgram({
+          ...addedUsersAr,
+        });
+      }
     },
+    addUser() {
+      this.dialogVisible = true; 
+     },
     assignProjectRole() {
       this.assignProle = true; 
     },
@@ -1162,7 +1174,10 @@ export default {
       this.assignCrole = true; 
     },
     assignAdminRole() {
-      this.assignArole = true; 
+      this.assignArole = true;   
+    if (this.assignedAdminRoles && this.getRoles.length > 0){
+      this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])
+      }   
     },
     addMoreUsers(){
       this.portfolioUsers = [];
@@ -1178,9 +1193,10 @@ export default {
       }    
       this.openUserRoles = true    
       this.userData = rows    
-
-      // console.log(this.userData)
-     
+     // console.log(this.userData)
+    // if (this.assignedAdminRoles && this.getRoles.length > 0){
+    //   this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])
+    //   }   
      
     },
     closeUserRoles() {
@@ -1194,6 +1210,10 @@ export default {
     },
     closeAdminRoles(){
       this.assignArole = false;
+      this.SET_USERS_ADMIN_ROLES([])      
+    },
+    closeEditAdminRoles(){
+      this.isEditingAdminRoles = false;
     },
     createAnotherUser(){
       this.createAnotherUserBtn = false;
@@ -1295,6 +1315,7 @@ export default {
         "addUserToRoleStatus",
         "getUsersProjectRoles",
         "getUsersContractRoles",
+        "getUsersAdminRoles",
          "removeRoleStatus"
     ]),
 
@@ -1354,10 +1375,16 @@ export default {
     projectNames(){
       if(this.currentProject)
       if (this.currentProject.facilities && this.currentProject.facilities.length > 0)
-
       {
        return this.currentProject.facilities.map(t => t)
       }
+    },
+    filteredProjects(){
+      if( this.projectUsers &&  this.projectUsers.data && this.projectNames && this.projectNames.length > 0){
+        let roleProjectIds = this.projectUsers.data.map(t => t.facility_project_id)
+        // console.log(this.projectNames)
+         return this.projectNames.filter(t => !roleProjectIds.includes(t.facilityProjectId))
+      }    
     },
     contractNames(){
       if(this.currentProject){
@@ -1367,6 +1394,19 @@ export default {
         }
       }
 
+    },
+  filteredContracts(){
+      if( this.projectUsers &&  this.projectUsers.data && this.contractNames && this.contractNames.length > 0){
+        let roleProjectIds = this.projectUsers.data.map(t => t.contract_id)
+        // console.log(this.projectNames)
+         return this.contractNames.filter(t => !roleProjectIds.includes(t.contractId))
+      }    
+    },
+    admin_role_names(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let adminRoles = this.getRoles.filter(t => t.type_of == "admin")
+       return adminRoles
+      }
     },
    projectUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
@@ -1384,18 +1424,15 @@ export default {
             ) 
         } else return true
         })
-         return {
-            
+         return {                
                   data: data,
                   dataRow: data.filter(t => this.roleRowId == t.role_id),
                   roleIds: _.uniq(data.map(t => t.role_id)),     
                   roleNames: _.uniq(data.map(t => t.role_name))                 
                 }      
-             
-
-      }     
-        
+         }           
     },
+
   assignedUserProjects(){
     if (this.projectNames && this.projectNames.length > 0){ 
           let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
@@ -1405,6 +1442,17 @@ export default {
           return filteredProjects   
       } 
       // Thursday Night Notes:  Add filter to filter out projects not associated to row
+    },
+  assignedAdminRoles(){
+    if (this.admin_role_names && this.admin_role_names.length > 0){ 
+         let ids = this.projectUsers.data.map(t => t.role_id)
+       let filteredAdminRoles = this.admin_role_names.filter(t => ids.includes(t.id) )
+         return filteredAdminRoles
+      } 
+      // Thursday Night Notes:  Add filter to filter out projects not associated to row
+      // Notes for 4/25:  Do not set this property else user won't be able to set new value
+      // Consider not hardcoding this value and make it dynamic
+      // Maybe, make it value based on user Data
     },
    assignedUserContracts(){
     if (this.contractNames && this.contractNames.length > 0){ 
@@ -1436,10 +1484,10 @@ export default {
     },
     adminRoleUsers: {     
      get() {
-       return this.getUsersContractRoles
+       return this.getUsersAdminRoles 
       },
       set(value) {
-         this.SET_USERS_CONTRACT_ROLES(value)
+         this.SET_USERS_ADMIN_ROLES(value)
          console.log(value)
         }      
     },
@@ -1531,6 +1579,13 @@ export default {
         }
       },
     },
+  //  getUsersAdminRoles:{
+  //     handler() {
+  //       if(this.openUserRoles && this.assignedAdminRoles ){       
+  //         this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])  
+  //       }
+  //     }
+  //   },
     addUserToRoleStatus: {
       handler() {
         if (this.addUserToRoleStatus == 204  || this.addUserToRoleStatus == 200) {
@@ -1542,6 +1597,7 @@ export default {
           this.assignProle = false;
           this.assignCrole = false;
           this.assignArole = false;
+          this.SET_USERS_ADMIN_ROLES([])  
           this.fetchRoles(this.$route.params.programId)         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);         
           this.SET_ASSOCIATED_PROJECTS([])
@@ -1565,7 +1621,7 @@ export default {
           this.SET_REMOVE_ROLE_STATUS(0);   
           this.isEditingRoles = false;
           this.isEditingContractRoles = false;
-          this.isEditingAdminRoles = false;
+          // this.isEditingAdminRoles = false;
           this.rowIndex_1 = null;
         }
       },

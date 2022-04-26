@@ -1008,9 +1008,9 @@
         </span>
          <div class="container-fluid p-0">
 
-             <div class="mt-0 row">
-            <div class="col-9 pt-0">
-             <label class="font-md mb-0 d-flex">Add User(s) to this Role </label>
+            <div class="mt-0 row">
+            <div class="col-9 py-0">
+             <label class="font-md mb-0 d-flex">Add User(s) to this Role  </label>
              <el-select
               v-model="adminRoleUsers"
               filterable           
@@ -1022,7 +1022,7 @@
               placeholder="Search and select Users for this Role"          
             >
               <el-option
-                v-for="item in programUsers"
+                v-for="item in viableAdminUsers"
                 :value="item"
                 :key="item.id"
                 :label="item.fullName"
@@ -1031,7 +1031,7 @@
             </el-select>
               </div>
          
-                <div class="col-2 pt-0">
+                <div class="col-3 text-right pt-0">
               <label class="font-md mb-0 d-flex" style="visibility:hidden">|</label>                              
                 <el-button
                 type="default"
@@ -1061,8 +1061,9 @@
           </el-input>
           </div>
              </div> -->
-               <div class="mt-4 row">
-        <div class="col-12 pt-0"> 
+          <div class="mt-4 row">
+          <div class="col-12 pt-0"> 
+          <span class="text-danger"><em>Note: Users may only be assigned one Admin role per program.</em> </span>
           <el-table
              v-loading="!getRolesLoaded"
              element-loading-spinner="el-icon-loading"       
@@ -1267,7 +1268,7 @@ export default {
       "removeUserRole"      
       ]),
   log(e){
-    // console.log(e)
+    console.log(e)
   },
     _isallowed(salut) {
      return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
@@ -1750,6 +1751,21 @@ mounted() {
        }
       }       
     },
+    allAdminUsers(){
+      if(this.getRoles && this.getRoles.length > 0 ){   
+        let adminRolesOnly = this.getRoles.filter(t => t.type_of == 'admin')
+        let roleUsers = adminRolesOnly.map(t => t.role_users).filter(t => t.length > 0) 
+        let data = [].concat.apply([], roleUsers).filter((user) => {
+           if (this.searchRoleUsers !== '' && user) {
+            // console.log(task)
+            return (            
+               user.user_full_name.toLowerCase().match(this.searchRoleUsers.toLowerCase()) 
+            ) 
+           } else return true
+        }) 
+       return data
+      }
+    },
     adminUsers(){
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0) 
@@ -1768,6 +1784,13 @@ mounted() {
        return data
       }
     },
+   viableAdminUsers(){
+      if (this.programUsers && this.adminUsers){
+        let assignedUserIds = this.allAdminUsers.map(t => t.user_id)
+        console.log(this.programUsers.filter(t => !assignedUserIds.includes(t.id)))
+        return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
+      }       
+    }, 
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
