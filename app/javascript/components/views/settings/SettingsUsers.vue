@@ -3,7 +3,7 @@
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
-    <div class="col-md-10" :load="log(assignedAdminRoles)">
+    <div class="col-md-10" >
        <div class="right-panel">
         <el-breadcrumb separator-class="el-icon-arrow-right" class="mt-3 mb-4">
           <el-breadcrumb-item :to="backToSettings">
@@ -853,7 +853,7 @@
     </el-dialog>
        <div class="row mt-2">
     <div class="col-9 text-left">
-      <span v-if="assignedAdminRoles">
+      <span v-if="assignedAdminRoles && assignedAdminRoles[0]">
       <i class="fa-solid fa-user-shield bootstrap-purple-text"   v-tooltip="`Admin Role`" ></i>   
         {{ assignedAdminRoles[0].name }}
       </span>
@@ -992,10 +992,7 @@ export default {
     "removeUserRole",
     "addUsersToProgram"
     ]),
-    log(e){
-      console.log(e)
-    },  
-    handleExpandChange(row, expandedRows) {   
+   handleExpandChange(row, expandedRows) {   
 			this.projId = row.id;
       this.projUserObj = row
 			const lastId = this.expandRowKeys[0];
@@ -1023,7 +1020,7 @@ export default {
                   projectIds: ids,   
               },
             };
-            console.log(projectUserRoleData)
+            // console.log(projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });
@@ -1040,7 +1037,7 @@ export default {
                   contractIds: aCids,   
               },
             };
-            console.log(projectUserRoleData)
+            // console.log(projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });
@@ -1389,7 +1386,7 @@ export default {
     contractNames(){
       if(this.currentProject){
         if (this.currentProject.contracts && this.currentProject.contracts.length > 0){
-          console.log(_.groupBy(this.currentProject.contracts, 'id'))
+          // console.log(_.groupBy(this.currentProject.contracts, 'id'))
           return this.currentProject.contracts.map(t => t)
         }
       }
@@ -1438,7 +1435,7 @@ export default {
           let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
           let tableProjectIds = ids.map(t => t.facility_project_id)
           let filteredProjects = this.projectNames.filter(t => tableProjectIds.includes(t.facilityProjectId) )
-          console.log(filteredProjects)
+          // console.log(filteredProjects)
           return filteredProjects   
       } 
       // Thursday Night Notes:  Add filter to filter out projects not associated to row
@@ -1449,17 +1446,13 @@ export default {
        let filteredAdminRoles = this.admin_role_names.filter(t => ids.includes(t.id) )
          return filteredAdminRoles
       } 
-      // Thursday Night Notes:  Add filter to filter out projects not associated to row
-      // Notes for 4/25:  Do not set this property else user won't be able to set new value
-      // Consider not hardcoding this value and make it dynamic
-      // Maybe, make it value based on user Data
-    },
+   },
    assignedUserContracts(){
     if (this.contractNames && this.contractNames.length > 0){ 
           let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
           let tableContractIds = ids.map(t => t.contract_id)
           let filteredContracts = this.contractNames.filter(t => tableContractIds.includes(t.id) )
-          console.log(filteredContracts)
+          // console.log(filteredContracts)
           return filteredContracts   
       } 
       // Thursday Night Notes:  Add filter to filter out projects not associated to row
@@ -1470,7 +1463,7 @@ export default {
       },
       set(value) {
          this.SET_USERS_PROJECT_ROLES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
    contractRoleUsers: {     
@@ -1479,7 +1472,7 @@ export default {
       },
       set(value) {
          this.SET_USERS_CONTRACT_ROLES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
     adminRoleUsers: {     
@@ -1488,7 +1481,7 @@ export default {
       },
       set(value) {
          this.SET_USERS_ADMIN_ROLES(value)
-         console.log(value)
+        //  console.log(value)
         }      
     },
   //  adminRoles(){

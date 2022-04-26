@@ -299,7 +299,6 @@
             >
               <el-option
                 v-for="item in viableProjectUsers"
-                :load="log(viableProjectUsers)"
                 :value="item"
                 :key="item.id"
                 :label="item.fullName"
@@ -573,7 +572,7 @@ export default {
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
     },
     log(e){
-      console.log(e)
+      // console.log(e)
     },
     editUsers(index, rowData){
         this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
@@ -848,8 +847,7 @@ projectUsers(){
    viableProjectUsers(){
       if (this.programUsers && this.projectUsers && this.projectUsers.data){
         let assignedUserIds = this.projectUsers.data.map(t => t.user_id)
-        console.log(this.programUsers.filter(t => !assignedUserIds.includes(t.id)))
-        return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
+       return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
       }       
     }, 
     projectRoleUsers: {     
