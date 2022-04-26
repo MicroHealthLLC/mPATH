@@ -7,6 +7,7 @@ class Role < ApplicationRecord
   accepts_nested_attributes_for :role_privileges
   
   validate :prevent_default_role_update, on: [:update, :destroy]
+  validates :name, presence: true, acceptance: {message: "must be present in Role"}
 
   def prevent_default_role_update
     if is_default
@@ -23,12 +24,16 @@ class Role < ApplicationRecord
 
   def to_json(options = {})
     hash = self.attributes
+    if options[:page] == "user_tab_role_assign"
+      hash[:facility_projects] = self.role_users.map(&:facility_project).compact.uniq.map{|f| {id: f.id, name: f.facility.facility_name} }
+      hash[:contracts] = self.role_users.map(&:contract).compact.uniq.map{|f| {id: f.id, name: f.nickname} }
+    end
     hash[:role_privileges] = self.role_privileges.as_json
     hash[:role_users] = self.role_users.map(&:to_json)
     hash
   end
   
-  def self.program_admin_role
+  def self.program_admin_user_role
     Role.where(name: "program-admin").first
   end
 

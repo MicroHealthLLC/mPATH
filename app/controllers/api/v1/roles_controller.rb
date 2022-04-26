@@ -2,6 +2,7 @@ class Api::V1::RolesController < AuthenticatedController
   before_action :check_permission
 
   def check_permission
+    raise(CanCan::AccessDenied) if !params[:project_id]
     action = nil
     if ["index", "show" ].include?(params[:action]) 
       action = "read"
@@ -11,15 +12,22 @@ class Api::V1::RolesController < AuthenticatedController
       action = "delete"
     end
     
-    program_id = params[:project_id] ? params[:project_id] : params[:role][:project_id]
+    program_id = params[:project_id]
 
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id)
   end
 
   def index
     project = Project.find(params[:project_id])
-    roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map(&:to_json)
-    roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.map(&:to_json)
+
+    if params[:page] == "user_tab_role_assign"
+      roles = project.roles.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :contract ] }]).map{|r| r.to_json( params)}
+      roles += Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :contract] }]).default_roles.map{|r| r.to_json( params)}
+    else
+      roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map(&:to_json)
+      roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.map(&:to_json)  
+    end
+
     render json: {roles: roles}
   end
 
@@ -35,13 +43,17 @@ class Api::V1::RolesController < AuthenticatedController
   def add_users
     role = Role.find(params[:id])
     role_users = role_users_params["role_users"]
+    errors = []
     role_users.each do |role_user_hash|
-      role.role_users.create(role_user_hash)
+      role_user  = role.role_users.create(role_user_hash)
+      if !role_user.persisted?
+        errors += role_user.errors.full_messages
+      end
     end
-    if role.persisted?
+    if !errors.any?
       render json: {message: "User added to role successfully!!", role: role.to_json}
     else
-      render json: {errors: role.errors.full_messages}, status: 422
+      render json: {errors: errors.compact.uniq}, status: 422
     end
   end
 
@@ -89,7 +101,7 @@ class Api::V1::RolesController < AuthenticatedController
   def update
     role = Role.new.create_or_update_role(roles_params, current_user)
     if role.persisted?
-      render json: {message: "Role created successfully", role: role.to_json}
+      render json: {message: "Role updated successfully", role: role.to_json}
     else
       render json: {errors: role.errors.full_messages}, status: 422
     end

@@ -885,8 +885,7 @@ export default {
    viableContractUsers(){
       if (this.programUsers && this.contractUsers && this.contractUsers.data){
         let assignedUserIds = this.contractUsers.data.map(t => t.user_id)
-        console.log(this.programUsers.filter(t => !assignedUserIds.includes(t.id)))
-        return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
+       return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
       }       
    }, 
     contractRoleUsers: {     

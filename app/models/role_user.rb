@@ -9,19 +9,24 @@ class RoleUser < ApplicationRecord
   validate :check_valid_data, :check_duplication
 
   def check_duplication
+    user = self.user
+    role = self.role
     if facility_project_id
       if RoleUser.where(user_id: user_id, role_id: role_id, facility_project_id: facility_project_id).exists?
-        self.errors.add(:base, "Role is already assigned to same project")
+        facility = self.facility_project.facility
+        self.errors.add(:base, "#{role.name} is already assigned to #{facility.facility_name} to user #{user.full_name}")
         return false
       end
     elsif contract_id
       if RoleUser.where(user_id: user_id, role_id: role_id, contract_id: contract_id).exists?
-        self.errors.add(:base, "Role is already assigned to same contract")
+        contract = self.contract
+        self.errors.add(:base, "#{role.name} is already assigned to #{contract.name} to user #{user.full_name}")
         return false
       end
     elsif project_id
       if RoleUser.where(user_id: user_id, role_id: role_id, project_id: project_id).exists?
-        self.errors.add(:base, "Role is already assigned to same program")
+        project = self.project
+        self.errors.add(:base, "#{role.name} is already assigned to #{project.name} to user #{user.full_name}")
         return false
       end
     end
@@ -30,6 +35,16 @@ class RoleUser < ApplicationRecord
   def check_valid_data
     if !facility_project_id && !contract_id && !project_id
       self.errors.add(:base, "One of the facility project, contract or project must be assigned!")
+    end
+  end
+
+  def check_authorized_data
+    if project_id
+      user = self.user
+      project = self.project
+      if !self.user.project_ids.include?(self.project_id)
+        self.errors.add(:base, "Can't add role because #{user.name} is not part of #{project.name}")
+      end
     end
   end
 
