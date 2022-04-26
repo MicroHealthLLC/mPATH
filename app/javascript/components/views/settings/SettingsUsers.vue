@@ -837,6 +837,14 @@
            class="btn btn-sm bg-primary text-light">               
           <i class="fal fa-save"></i>
           </el-button>
+           <el-button
+           type="default"
+            @click="removeRoles()"
+            v-if="!adminRoleUsers && assignedAdminRoles &&  assignedAdminRoles[0]"
+            v-tooltip="`Remove Admin Role from User`" 
+           class="btn btn-sm bg-danger text-light">               
+        <i class="fal fa-user-lock mr-1 text-light"></i> 
+          </el-button>
       </div>
      <div class="col text-right pt-1">      
          <el-button
@@ -851,7 +859,7 @@
         </div>  
            
     </el-dialog>
-       <div class="row mt-2">
+       <div class="row mt-3">
     <div class="col-9 text-left">
       <span v-if="assignedAdminRoles && assignedAdminRoles[0]">
       <i class="fa-solid fa-user-shield bootstrap-purple-text"   v-tooltip="`Admin Role`" ></i>   
@@ -1031,47 +1039,44 @@ export default {
         let aCids =  assignedContracts.filter(t => !cIds.includes(t));
         let projectUserRoleData = {
                 userData: {
-                  roleId: rowData,
+                  roleId: this.adminRoleUsers.id,
                   userId: this.userData.id,
                   programId: this.$route.params.programId, 
                   contractIds: aCids,   
               },
             };
-            // console.log(projectUserRoleData)
+            console.log("editAdmin in progress", this.isEditingContractRoles)
             this.removeUserRole({
               ...projectUserRoleData,
             });
       } 
-      // if (this.isEditingAdminRoles) {
-      //   let projectUserRoleData = {
-      //           userData: {
-      //             roleId: rowData,
-      //             userId: [this.userData.id],
-      //             programId: this.$route.params.programId, 
-      //             adminRole: true, 
-      //         },
-      //       };
-      //       console.log(projectUserRoleData)
-      //       this.removeUserRole({
-      //         ...projectUserRoleData,
-      //       });
-      // }          
+      if (this.isEditingAdminRoles) {
+        let projectUserRoleData = {
+                userData: {
+                  roleId: this.assignedAdminRoles[0].id,
+                  userId: [this.userData.id],
+                  programId: this.$route.params.programId, 
+                  adminRole: true, 
+              },
+            };
+            console.log(projectUserRoleData )
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });
+      }          
     },
   editRoles(index, rowData){
     this.roleRowId = rowData   
     this.editRoleRowData = rowData;
     this.rowIndex_1 = index;
     this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)   
-   this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
+    this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
     if (this.assignedUserContracts && this.assignedUserContracts.length > 0 ){
        this.isEditingContractRoles = true;
      } 
     if (this.assignedUserProjects && this.assignedUserProjects.length > 0){
         this.isEditingRoles = true;
      }
-    // if (this.assignedAdminRoles && this.assignedAdminRoles.length > 0  ){
-    //    this.isEditingAdminRoles = true;
-    //    }
   },
   editAdminRole(){
     this.isEditingAdminRoles = true
@@ -1079,7 +1084,7 @@ export default {
     cancelEditRoles(index, rowData){
     this.isEditingRoles = false
     this.isEditingContractRoles = false;
-    // this.isEditingAdminRoles = false;
+    this.isEditingAdminRoles = false;
     this.rowIndex_1 = null;
   },
   saveProjectUserRole(index, rows){
@@ -1171,7 +1176,8 @@ export default {
       this.assignCrole = true; 
     },
     assignAdminRole() {
-      this.assignArole = true;   
+      this.assignArole = true;  
+      this.isEditingAdminRoles = true; 
     if (this.assignedAdminRoles && this.getRoles.length > 0){
       this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])
       }   
@@ -1405,9 +1411,27 @@ export default {
        return adminRoles
       }
     },
-   projectUsers(){
+    associatedRoles(){
       if(this.getRoles && this.getRoles.length > 0 ){   
+        let adminRoles = this.getRoles.filter(t => t.type_of == "project" || t.type_of == "contract" )
+       return adminRoles
+      }
+    },
+    filteredAdminRoleUsers(){
+      if(this.admin_role_names &&  this.admin_role_names.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)         
+        let data = [].concat.apply([], roleUsers).filter(t => {
+            
+          if (this.projId)  {
+             return this.projId == t.user_id
+           } else return true        
+        })
+         return  data  
+      }       
+    },
+   projectUsers(){
+      if(this.associatedRoles && this.associatedRoles.length > 0 ){   
+        let roleUsers = this.associatedRoles.map(t => t.role_users).filter(t => t.length > 0)         
         let data = [].concat.apply([], roleUsers).filter(t => {
             
           if (this.projId)  {
@@ -1429,7 +1453,6 @@ export default {
                 }      
          }           
     },
-
   assignedUserProjects(){
     if (this.projectNames && this.projectNames.length > 0){ 
           let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
@@ -1441,8 +1464,8 @@ export default {
       // Thursday Night Notes:  Add filter to filter out projects not associated to row
     },
   assignedAdminRoles(){
-    if (this.admin_role_names && this.admin_role_names.length > 0){ 
-         let ids = this.projectUsers.data.map(t => t.role_id)
+    if (this.filteredAdminRoleUsers && this.admin_role_names && this.admin_role_names.length > 0){ 
+         let ids = this.filteredAdminRoleUsers.map(t => t.role_id)
        let filteredAdminRoles = this.admin_role_names.filter(t => ids.includes(t.id) )
          return filteredAdminRoles
       } 
@@ -1609,12 +1632,12 @@ export default {
             type: "success",
             showClose: true,
           });  
-          // this.assignProle = false;
+          this.assignArole = false;
           this.fetchRoles(this.$route.params.programId)   
           this.SET_REMOVE_ROLE_STATUS(0);   
           this.isEditingRoles = false;
           this.isEditingContractRoles = false;
-          // this.isEditingAdminRoles = false;
+          this.isEditingAdminRoles = false;
           this.rowIndex_1 = null;
         }
       },
