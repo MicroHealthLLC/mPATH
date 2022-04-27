@@ -141,13 +141,13 @@ ActiveAdmin.register User do
         end
       end
 
-      tab 'Programs' do
+      # tab 'Programs' do
 
-        f.inputs 'Assign Program Privileges' do
+      #   f.inputs 'Assign Program Privileges' do
 
-          render(partial:'admin/project_privileges/index', locals: {user: user})
+      #     render(partial:'admin/project_privileges/index', locals: {user: user})
           
-          project_select_options = user.active_admin_facility_project_select_options
+      #     project_select_options = user.active_admin_facility_project_select_options
 
           # f.has_many :project_privileges,
           #   heading: '',
@@ -165,7 +165,7 @@ ActiveAdmin.register User do
           #   b.input :notes, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "notes")
           #   b.input :lessons, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "lessons")
           # end
-        end
+        # end
 
         # f.inputs 'Assign Programs' do
         #   # f.input :projects, label: 'Programs', as: :select, include_blank: false
@@ -191,16 +191,16 @@ ActiveAdmin.register User do
         #   p.input :admin, as: :hidden
         #   p.input :lessons, as: :hidden
         # end
-      end
+      # end
 
 
 
-      tab 'Projects' do
-        f.inputs 'Assign Project Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
+      # tab 'Projects' do
+      #   f.inputs 'Assign Project Privileges' do
+      #     project_select_options = user.active_admin_facility_project_select_options
+      #     user_privileges = f.object.privilege || Privilege.new
 
-          render(partial:'admin/facility_privileges/list_facility_privileges', locals: {user: user})
+      #     render(partial:'admin/facility_privileges/list_facility_privileges', locals: {user: user})
 
           # f.has_many :facility_privileges,
           #   heading: '',
@@ -218,8 +218,8 @@ ActiveAdmin.register User do
           #   b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
 
           # end
-        end
-      end
+      #   end
+      # end
       # tab 'Contracts' do
       #   f.inputs 'Assign Contract Privileges' do
       #     project_select_options = user.active_admin_facility_project_select_options

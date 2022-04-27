@@ -246,7 +246,7 @@
                   v-for="item in portfolioUsersOnly"
                   :value="item"
                   :key="item.id"
-                  :label="item.full_name"
+                  :label="item.name || item.full_name"
                 >
                 </el-option>
               </el-select>              
@@ -1175,7 +1175,8 @@ export default {
     },
     addUser() {
       this.dialogVisible = true; 
-      console.log(this.portfolioUsersOnly)
+      // console.log(this.portfolioUsersOnly)
+      //  console.log(this.programUsers)
      },
     assignProjectRole() {
       this.assignProle = true; 
@@ -1569,7 +1570,8 @@ export default {
           this.SET_NEW_USER_STATUS(0);
           this.fetchProgramUsers(this.$route.params.programId);
           // this.fetchCurrentProject(this.$route.params.programId);          
-          this.createAnotherUserBtn = true;       
+          this.createAnotherUserBtn = true;   
+          // this.dialogVisible = false;    
         }
       },
     },
