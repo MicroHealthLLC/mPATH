@@ -7,7 +7,7 @@ class Role < ApplicationRecord
   accepts_nested_attributes_for :role_privileges
   
   validate :prevent_default_role_update, on: [:update, :destroy]
-  validates :name, presence: true, acceptance: {message: "must be present in Role"}
+  validates :name, presence: true #, acceptance: {message: "must be present in Role"}
 
   def prevent_default_role_update
     if is_default
@@ -64,7 +64,6 @@ class Role < ApplicationRecord
       role.role_privileges_attributes = p_role_privileges if p_role_privileges.any?
       role.save
     end
-
     role
   end
 
