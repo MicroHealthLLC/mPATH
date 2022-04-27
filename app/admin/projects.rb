@@ -161,7 +161,7 @@ ActiveAdmin.register Project do
         users = User.where(id: project.admin_program_admins)
         project.user_ids = (project.user_ids + users.pluck(:id)).compact.uniq if users.any?
         role_users = []
-        role_id = Role.program_admin_role.id
+        role_id = Role.program_admin_user_role.id
         users.each do |user|
           role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: project.id)
         end
@@ -185,7 +185,7 @@ ActiveAdmin.register Project do
       end
       p_params = permitted_params[:project]
 
-      role_id = Role.program_admin_role.id
+      role_id = Role.program_admin_user_role.id
 
       p_project_admin_ids = p_params.delete("admin_program_admins").reject { |c| c.empty? }.map(&:to_i)
       existing_program_admin_ids = resource.get_program_admin_ids
