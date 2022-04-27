@@ -1141,9 +1141,9 @@
       </el-table-column>
         
           </el-table> 
-          <span  class="" v-else>
+          <p class="mt-2" v-else>
             No Users Assigned
-          </span>
+          </p>
 
           <div class="text-right mt-3">
                <button
