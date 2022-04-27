@@ -226,8 +226,12 @@
       <div class="container" >      
         <div class="row">
         
-          <div class="col-12"  v-if="portfolioUsersOnly && portfolioUsersOnly.length > 0">
-          <label class="font-md mb-0">Search and select Users</label>
+          <div class="col-12"  v-if="portfolioUsersOnly">
+          <label class="font-md mb-0">Select from
+             <span class="badge badge-secondary badge-pill pill"> {{portfolioUsersOnly.length}}
+            </span>
+              Portfolio Users
+            </label>
               <el-select
                 v-model="portfolioUsers"
                 class="w-100"
@@ -457,14 +461,14 @@
           <i class="far fa-file-contract mr-1 mh-orange-text"></i>
               Assign Contract Role
           </el-button>
-          <el-button 
+          <!-- <el-button 
           type="default"
           class="bg-light btn-sm"        
           @click.prevent="assignAdminRole"   
            >
           <i class="fa-solid fa-user-shield mr-1 bootstrap-purple-text"></i>   
               Manage Admin Role
-          </el-button>            
+          </el-button>             -->
         </el-button-group>
           </div>
           <div class="col-5 text-right">
@@ -1014,6 +1018,9 @@ export default {
    _isallowed(salut) {
       return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
    },
+  //  log(e){
+  //    console.log(`portfolioUsers only data:  ${e}` )
+  //  },
    removeRoles(index, rowData){   
  
       if (this.isEditingRoles) {
@@ -1168,6 +1175,7 @@ export default {
     },
     addUser() {
       this.dialogVisible = true; 
+      console.log(this.portfolioUsersOnly)
      },
     assignProjectRole() {
       this.assignProle = true; 
@@ -1323,6 +1331,7 @@ export default {
     ]),
 
     portfolioUsersOnly(){
+      //line 231
     if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
           this.programUsers && this.programUsers.length > 0
           ){  
