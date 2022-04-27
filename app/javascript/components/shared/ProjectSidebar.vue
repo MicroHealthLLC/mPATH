@@ -232,10 +232,11 @@ export default {
         //        pPrivilege.admin_facilities.includes(s);
     },
     toggleAdminView() {
+      window.location.pathname = `/programs/${this.$route.params.programId}/settings`
         // this.setShowAdminBtn(!this.getShowAdminBtn);
-         this.$router.push(
-        `/programs/${this.$route.params.programId}/settings`
-        );
+        //  this.$router.push(
+        // `/programs/${this.$route.params.programId}/settings`
+        // );
 
       },
      handleClose(done) {
