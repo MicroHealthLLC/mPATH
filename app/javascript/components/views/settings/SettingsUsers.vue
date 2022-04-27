@@ -246,7 +246,7 @@
                   v-for="item in portfolioUsersOnly"
                   :value="item"
                   :key="item.id"
-                  :label="item.full_name"
+                  :label="item.name || item.full_name"
                 >
                 </el-option>
               </el-select>              
@@ -1176,6 +1176,7 @@ export default {
     addUser() {
       this.dialogVisible = true; 
       console.log(this.portfolioUsersOnly)
+       console.log(this.programUsers)
      },
     assignProjectRole() {
       this.assignProle = true; 
