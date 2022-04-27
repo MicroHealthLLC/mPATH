@@ -64,7 +64,6 @@ class Role < ApplicationRecord
       role.role_privileges_attributes = p_role_privileges if p_role_privileges.any?
       role.save
     end
-    binding.pry
     role
   end
 
