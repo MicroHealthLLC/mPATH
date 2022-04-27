@@ -128,7 +128,8 @@ class User < ApplicationRecord
   
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
-    Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    self.projects
   end
 
   def full_name
@@ -451,8 +452,24 @@ class User < ApplicationRecord
     Ability.new(self).permissions
   end
 
-  def admin?
-    superadmin? || privilege.admin.include?("R")
+  def admin?(params = {})
+    # superadmin? || privilege.admin.include?("R")
+    if superadmin?
+      return true
+    elsif params[:project_id]
+      return is_program_admin?(params[:project_id])
+    else
+      return false
+    end
+  end
+
+  def is_program_admin?(program_id)
+    program = self.projects.where(id: program_id).active.first
+    if program
+      return program.get_program_admin_ids.include?(self.id)
+    else
+      return false
+    end
   end
 
   def initialize(*args)

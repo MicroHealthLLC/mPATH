@@ -52,7 +52,7 @@ class Project < SortableRecord
   validate :check_min_program_admins
 
   before_create :set_uuid
-  after_save :grant_access_to_admins
+  # after_save :grant_access_to_admins
   after_save :add_not_started_status
 
   scope :program_admins_contains, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}%").map(&:project_id)) }
@@ -95,6 +95,7 @@ class Project < SortableRecord
     role_id = Role.program_admin_user_role.id
     User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
   end
+
   def get_program_admin_ids
     get_program_admins.pluck(:id)
   end
