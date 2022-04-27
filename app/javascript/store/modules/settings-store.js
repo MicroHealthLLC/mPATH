@@ -269,7 +269,7 @@ const settingsStore = {
         // console.log(role)
         formData.append("role[name]", role.name); //Required
         formData.append("role[id]", role.id); //Required
-        formData.append("role[project_id]", role.pId)
+        formData.append("project_id", role.pId)
         formData.append("role[type_of]", role.type)
         formData.append("role[user_id]", role.uId)
         role.rp.forEach((p) => {

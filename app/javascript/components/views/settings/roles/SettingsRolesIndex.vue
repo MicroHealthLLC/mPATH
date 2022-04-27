@@ -1268,7 +1268,7 @@ export default {
       "removeUserRole"      
       ]),
   log(e){
-    console.log(e)
+    // console.log(e)
   },
     _isallowed(salut) {
      return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
@@ -1325,7 +1325,7 @@ export default {
       } else if (!this.isGroupsRead) {
           this.groupsPriv = this.groupsPriv.filter(t => t !== "R")
       } 
-     console.log(`groups: ${this.groupsPriv}`)
+    //  console.log(`groups: ${this.groupsPriv}`)
    },
    groupsWrite(index, rowData) {
     this.isGroupsWrite = !this.isGroupsWrite;
@@ -1334,7 +1334,7 @@ export default {
       } else if (!this.isGroupsWrite) {
           this.groupsPriv = this.groupsPriv.filter(t => t !== "W")
       }
-     console.log(`groups: ${this.groupsPriv}`)
+    //  console.log(`groups: ${this.groupsPriv}`)
    },
    groupsDelete(index, rowData) {
       this.isGroupsDelete = !this.isGroupsDelete;
@@ -1343,7 +1343,7 @@ export default {
       } else if (!this.isGroupsDelete) {
           this.groupsPriv = this.groupsPriv.filter(t => t !== "D")
       }
-     console.log(`groups: ${this.groupsPriv}`)
+    //  console.log(`groups: ${this.groupsPriv}`)
    },
    projectsRead(index, rowData) {
      this.isProjectsRead = !this.isProjectsRead;
@@ -1352,7 +1352,7 @@ export default {
       } else if (!this.isProjectsRead) {
           this.projectsPriv = this.projectsPriv.filter(t => t !== "R")
       } 
-     console.log(`projects: ${this.projectsPriv}`)
+    //  console.log(`projects: ${this.projectsPriv}`)
    },
    projectsWrite(index, rowData) {
      this.isProjectsWrite = !this.isProjectsWrite;
@@ -1361,7 +1361,7 @@ export default {
       } else if (!this.isProjectsWrite) {
           this.projectsPriv = this.projectsPriv.filter(t => t !== "W")
       } 
-     console.log(`projects: ${this.projectsPriv}`)
+    //  console.log(`projects: ${this.projectsPriv}`)
    },
    projectsDelete(index, rowData) {
      this.isProjectsDelete = !this.isProjectsDelete;
@@ -1370,7 +1370,7 @@ export default {
       } else if (!this.isProjectsDelete) {
           this.projectsPriv = this.projectsPriv.filter(t => t !== "D")
       } 
-     console.log(`projects: ${this.projectsPriv}`)  
+    //  console.log(`projects: ${this.projectsPriv}`)  
    },
    contractsRead(index, rowData) {
      this.isContractsRead = !this.isContractsRead;
@@ -1379,7 +1379,7 @@ export default {
       } else if (!this.isContractsRead) {
           this.contractsPriv = this.contractsPriv.filter(t => t !== "R")
       } 
-     console.log(`contracts: ${this.contractsPriv}`)
+    //  console.log(`contracts: ${this.contractsPriv}`)
    },
    contractsWrite(index, rowData) {
      this.isContractsWrite = !this.isContractsWrite;
@@ -1388,7 +1388,7 @@ export default {
       } else if (!this.isContractsWrite) {
           this.contractsPriv = this.contractsPriv.filter(t => t !== "W")
       } 
-     console.log(`contracts: ${this.contractsPriv}`)
+    //  console.log(`contracts: ${this.contractsPriv}`)
    },
    contractsDelete(index, rowData) {
        this.isContractsDelete = !this.isContractsDelete;
@@ -1397,7 +1397,7 @@ export default {
       } else if (!this.isContractsDelete) {
           this.contractsPriv = this.contractsPriv.filter(t => t !== "D")
       } 
-     console.log(`contracts: ${this.contractsPriv}`)
+    //  console.log(`contracts: ${this.contractsPriv}`)
    },
    usersRead(index, rowData) {
      this.isUsersRead = !this.isUsersRead;
@@ -1406,7 +1406,7 @@ export default {
       } else if (!this.isUsersRead) {
           this.usersPriv = this.usersPriv.filter(t => t !== "R")
       } 
-     console.log(`users: ${this.usersPriv}`)
+    //  console.log(`users: ${this.usersPriv}`)
     },
    usersWrite(index, rowData) {
      this.isUsersWrite = !this.isUsersWrite;
@@ -1415,7 +1415,7 @@ export default {
       } else if (!this.isUsersWrite) {
           this.usersPriv = this.usersPriv.filter(t => t !== "W")
       } 
-         console.log(`users: ${this.usersPriv}`)
+        //  console.log(`users: ${this.usersPriv}`)
     },
     usersDelete(index, rowData) {
     this.isUsersDelete = !this.isUsersDelete;
@@ -1424,7 +1424,7 @@ export default {
       } else if (!this.isUsersDelete) {
           this.usersPriv = this.usersPriv.filter(t => t !== "D")
       } 
-         console.log(`users: ${this.usersPriv}`)
+        //  console.log(`users: ${this.usersPriv}`)
     },
     showHideCreateRow(row, index){   
       // console.log(row.rowIndex)    
@@ -1440,7 +1440,7 @@ export default {
       this.usersPriv = [],  
       this.isEditting = true
       this.currentRow = index
-        console.log(this.groupsPriv)
+        // console.log(this.groupsPriv)
         // GROUPS
       if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('program_setting_groups')){
          this.isGroupsRead =  false;    
@@ -1663,7 +1663,7 @@ export default {
      this.updateRole({
         ...roleData,
       }); 
-      console.log(roleData)
+      // console.log(roleData)
      } else    {
        let roleData = {
         role: {
