@@ -77,7 +77,7 @@ class Project < SortableRecord
 
   def check_min_program_admins
     if self.persisted?
-      role_id = Role.program_admin_role.id
+      role_id = Role.program_admin_user_role.id
       role_user_count = RoleUser.where(role_id: role_id, project_id: self.id).count
       if role_user_count < 1
         self.errors.add(:base, "There must be at least one program admin assigned")
@@ -92,7 +92,7 @@ class Project < SortableRecord
   end
 
   def get_program_admins
-    role_id = Role.program_admin_role.id
+    role_id = Role.program_admin_user_role.id
     User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
   end
   def get_program_admin_ids
