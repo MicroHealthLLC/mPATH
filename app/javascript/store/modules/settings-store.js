@@ -243,7 +243,7 @@ const settingsStore = {
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
-           url: `${API_BASE_PATH}/roles`,
+           url: `${API_BASE_PATH}/roles?project_id=${role.pId}`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
