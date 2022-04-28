@@ -453,8 +453,7 @@ class User < ApplicationRecord
   end
 
   def admin?(params = {})
-    # superadmin? || privilege.admin.include?("R")
-    if superadmin?
+    if superadmin? || privilege.admin.include?("R")
       return true
     elsif params[:project_id]
       return is_program_admin?(params[:project_id])
