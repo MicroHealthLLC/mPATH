@@ -1,11 +1,19 @@
 <template>
 <div>
+  <div :class="{ 'd-none': !_isallowed('write') }">               
+  <el-button
+    @click.prevent="addProjectRole"
+    :disabled="isEditting"
+    class="bg-primary text-light mb-3"
+  >
+    <i class="far fa-plus-circle mr-1"></i>Create Role
+  </el-button>
+    </div>
  <el-table 
   v-if="tableData && tableData.length > 0"  
   :data="tableData"   
   height="450"
   class="crudRow"
- :row-class-name="showHideCreateRow"
   >
   <el-table-column
     fixed
@@ -14,26 +22,16 @@
     width="250">
 
   <template slot-scope="scope">
-  <span v-if="scope.$index == currentRow && isEditting">
+ <span v-if="(scope.$index == currentRow && isEditting) || (scope.$index == 0 && isEditting && scope.row.newRow)">
     <el-input
     size="small"   
-    placeholder="Update Role Name"      
+    placeholder="Enter Role Name"      
     style="font-style: italic; color: red"
     v-model="scope.row.name"
     controls-position="right"
   >
   </el-input>
   </span> 
-  <span v-else-if="scope.$index == 0">
-    <el-input
-    size="small"         
-    style="font-style: italic; color: red"
-    v-model="newRoleName"
-    placeholder="Enter New Role Name"
-    controls-position="right"
-  >
-  </el-input>
-  </span>
   <span v-else>
     <span v-show="
       scope.row.name == 'update-project' ||
@@ -54,19 +52,7 @@
       width="75">
 
     <template slot-scope="scope">
-
-    <span 
-      @click.prevent.stop="analyticsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.analytics)"
         >         
@@ -78,7 +64,7 @@
         </span>   
     </span> 
     <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="analyticsRead(scope.$index, scope.row)"      
       >
       <span v-if="isAnalyticsRead">  
@@ -96,7 +82,7 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-       <span 
+       <!-- <span 
       @click.prevent.stop="analyticsWrite(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isAnalyticsWrite">
@@ -105,11 +91,9 @@
          <span v-if="!isAnalyticsWrite">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-    <span 
-      v-if="scope.$index !== 0 && currentRow !== scope.$index"  
-      >
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.analytics)"
       >
@@ -122,7 +106,7 @@
     </span>  
 
        <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="analyticsWrite(scope.$index, scope.row)"      
       >
       <span v-if="isAnalyticsWrite">  
@@ -139,7 +123,7 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-       <span 
+       <!-- <span 
       @click.prevent.stop="analyticsDelete(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isAnalyticsDelete">
@@ -148,9 +132,9 @@
          <span v-if="!isAnalyticsDelete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-       <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
             v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.analytics)"
                 >
@@ -163,7 +147,7 @@
       </span>
 
       <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="analyticsDelete(scope.$index, scope.row)"      
       >
       <span v-if="isAnalyticsDelete">  
@@ -184,7 +168,7 @@
       width="75">
 
     <template slot-scope="scope">
-       <span 
+    <!-- <span 
       @click.prevent.stop="tasksRead(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isTasksRead">
@@ -193,9 +177,9 @@
          <span v-if="!isTasksRead">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-      <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.tasks)"
         >
@@ -207,7 +191,7 @@
             </span>   
       </span>  
       <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+       v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="tasksRead(scope.$index, scope.row)"      
       >
       <span v-if="isTasksRead">  
@@ -224,7 +208,7 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-        <span 
+        <!-- <span 
         @click.prevent.stop="tasksWrite(scope.$index, scope.row)"
         v-if="scope.$index == 0">
         <span v-if="isTasksWrite">
@@ -233,9 +217,9 @@
           <span v-if="!isTasksWrite">
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
           </span>
-        </span>
+        </span> -->
 
-        <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+          <span v-if="currentRow !== scope.$index && !scope.row.newRow">
           <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.tasks)"
        >
@@ -247,7 +231,7 @@
           </span>   
         </span>  
         <span 
-          v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+          v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
           @click.prevent.stop="tasksWrite(scope.$index, scope.row)"      
           >
         <span v-if="isTasksWrite">  
@@ -264,7 +248,7 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-      <span 
+      <!-- <span 
       @click.prevent.stop="tasksDelete(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isTasksDelete">
@@ -273,9 +257,9 @@
          <span v-if="!isTasksDelete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-      </span>
+      </span> -->
 
-       <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+       <span v-if="currentRow !== scope.$index && !scope.row.newRow">
        <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.tasks)"
        >
@@ -288,7 +272,7 @@
        </span> 
 
       <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+       v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="tasksDelete(scope.$index, scope.row)"      
       >
       <span v-if="isTasksDelete">  
@@ -310,7 +294,7 @@
       width="75">
 
     <template slot-scope="scope">
-      <span 
+      <!-- <span 
       @click.prevent.stop="issuesRead(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isIssuesRead">
@@ -319,9 +303,9 @@
          <span v-if="!isIssuesRead">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-    <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
      <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.issues)"
        >
@@ -333,7 +317,7 @@
       </span>   
     </span> 
      <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+     v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="issuesRead(scope.$index, scope.row)"      
       >
       <span v-if="isIssuesRead">  
@@ -350,7 +334,7 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-     <span 
+     <!-- <span 
       @click.prevent.stop="issuesWrite(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isIssuesWrite">
@@ -359,9 +343,9 @@
          <span v-if="!isIssuesWrite">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-      <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
     <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.issues)"
         >
@@ -373,7 +357,7 @@
         </span>   
       </span>    
       <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="issuesWrite(scope.$index, scope.row)"      
       >
       <span v-if="isIssuesWrite">  
@@ -390,7 +374,7 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-       <span 
+       <!-- <span 
       @click.prevent.stop="issuesDelete(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isIssuesDelete">
@@ -399,10 +383,10 @@
          <span v-if="!isIssuesDelete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+       </span> -->
 
-      <span 
-        v-if="scope.$index !== 0 && currentRow !== scope.$index">
+    
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.issues)"
         >
@@ -414,7 +398,7 @@
         </span>   
       </span> 
       <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="issuesDelete(scope.$index, scope.row)"      
       >
       <span v-if="isIssuesDelete">  
@@ -436,7 +420,7 @@
       width="75">
 
     <template slot-scope="scope">
-    <span 
+    <!-- <span 
       @click.prevent.stop="risksRead(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isRisksRead">
@@ -445,9 +429,9 @@
          <span v-if="!isRisksRead">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-    <span v-if="scope.$index !== 0 && currentRow !== scope.$index" >
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.risks)"
        >
@@ -459,7 +443,7 @@
       </span>   
     </span> 
         <span 
-        v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
         @click.prevent.stop="risksRead(scope.$index, scope.row)"      
         >
         <span v-if="isRisksRead">  
@@ -476,7 +460,7 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-      <span 
+      <!-- <span 
       @click.prevent.stop="risksWrite(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isRisksWrite">
@@ -485,9 +469,9 @@
          <span v-if="!isRisksWrite">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-       <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+       <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.risks)"
         >
@@ -499,7 +483,7 @@
         </span>   
        </span>
        <span 
-        v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
         @click.prevent.stop="risksWrite(scope.$index, scope.row)"      
         >
         <span v-if="isRisksWrite">  
@@ -516,7 +500,7 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-        <span 
+    <!-- <span 
       @click.prevent.stop="risksDelete(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isRisksDelete">
@@ -525,9 +509,9 @@
          <span v-if="!isRisksDelete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-        <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+         <span v-if="currentRow !== scope.$index && !scope.row.newRow">
             <span 
             v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.risks)"
           >
@@ -539,7 +523,7 @@
           </span>   
         </span> 
         <span 
-        v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+         v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
         @click.prevent.stop="risksDelete(scope.$index, scope.row)"      
         >
         <span v-if="isRisksDelete">  
@@ -561,7 +545,7 @@
       width="75">
 
     <template slot-scope="scope">
-     <span 
+     <!-- <span 
       @click.prevent.stop="notesRead(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isNotesRead">
@@ -570,9 +554,9 @@
          <span v-if="!isNotesRead">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-        <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+        <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
             v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.notes)"
           >
@@ -584,7 +568,7 @@
           </span>   
         </span>
         <span 
-        v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
         @click.prevent.stop="notesRead(scope.$index, scope.row)"      
         >
         <span v-if="isNotesRead">  
@@ -601,7 +585,7 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-       <span 
+       <!-- <span 
       @click.prevent.stop="notesWrite(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isNotesWrite">
@@ -610,9 +594,9 @@
          <span v-if="!isNotesWrite">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-      <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+        <span v-if="currentRow !== scope.$index && !scope.row.newRow">
         <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.notes)"
         >
@@ -623,7 +607,7 @@
         </span>   
       </span> 
       <span 
-        v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
         @click.prevent.stop="notesWrite(scope.$index, scope.row)"      
         >
         <span v-if="isNotesWrite">  
@@ -640,7 +624,7 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-       <span 
+       <!-- <span 
       @click.prevent.stop="notesDelete(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isNotesDelete">
@@ -649,9 +633,9 @@
          <span v-if="!isNotesDelete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-      <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
           v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.notes)"
         >
@@ -663,7 +647,7 @@
         </span>   
       </span> 
       <span 
-        v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+           v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
         @click.prevent.stop="notesDelete(scope.$index, scope.row)"      
         >
         <span v-if="isNotesDelete">  
@@ -685,7 +669,7 @@
       width="75">
 
     <template slot-scope="scope">
-       <span 
+       <!-- <span 
       @click.prevent.stop="lessonsRead(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isLessonsRead">
@@ -694,9 +678,9 @@
          <span v-if="!isLessonsRead">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-     <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(project.lessons)"
        >
@@ -708,7 +692,7 @@
       </span>   
      </span> 
      <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="lessonsRead(scope.$index, scope.row)"      
       >
       <span v-if="isLessonsRead">  
@@ -725,7 +709,7 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-          <span 
+      <!-- <span 
       @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isLessonsWrite">
@@ -734,9 +718,9 @@
          <span v-if="!isLessonsWrite">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-    <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(project.lessons)"
        >
@@ -748,7 +732,7 @@
       </span>   
     </span> 
     <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"      
       >
       <span v-if="isLessonsWrite">  
@@ -765,7 +749,7 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-          <span 
+      <!-- <span 
       @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"
       v-if="scope.$index == 0">
        <span v-if="isLessonsDelete">
@@ -774,9 +758,9 @@
          <span v-if="!isLessonsDelete">
         <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
         </span>
-    </span>
+    </span> -->
 
-    <span v-if="scope.$index !== 0 && currentRow !== scope.$index">
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
    <span 
         v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(project.lessons)"
        >
@@ -788,7 +772,7 @@
       </span>   
     </span> 
       <span 
-      v-if="scope.$index !== 0 && isEditting && currentRow == scope.$index"
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
       @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"      
       >
       <span v-if="isLessonsDelete">  
@@ -813,26 +797,18 @@
     <el-button
       type="default"
       v-tooltip="`Save role`"
-      v-if="(showCreateRow === true && scope.$index == 0 && newRoleName) || 
-      (isEditting && currentRow == scope.$index)"
+      v-if="(isEditting && currentRow == scope.$index) || 
+      (scope.$index == 0 && isEditting && scope.row.newRow) && scope.row.name"
       @click.prevent="saveNewRole(scope.$index, scope.row)"
         class="bg-primary btn-sm text-light"
       >
     <i class="far fa-save"></i>
       </el-button>
+   
     <el-button
-       type="default"
-      @click.prevent="cancelCreateRole(scope.$index, scope.row)"
-      v-if="showCreateRow === true && scope.$index == 0"
-      class="bg-secondary btn-sm text-light ml-1 "
-      v-tooltip="`Cancel`"                  
-    >
-      <i class="fas fa-ban"></i> 
-    </el-button>
-        <el-button
       type="default"
       @click.prevent="editRole(scope.$index, scope.row)"
-      v-if="!scope.$index == 0 && !isEditting &&
+      v-if="!isEditting &&
       scope.row.name !== 'update-project' &&
       scope.row.name !== 'read-project' && 
       scope.row.name !== 'contribute-project'"
@@ -845,439 +821,26 @@
       <el-button
       type="default"
       @click.prevent="cancelEditRole(scope.$index, scope.row)"
-      v-if="!scope.$index == 0 && isEditting && currentRow == scope.$index"
+      v-if="isEditting && currentRow == scope.$index"
       class="bg-secondary btn-sm text-light ml-1"
       v-tooltip="`Cancel Edit`"                  
     >
       <i class="fas fa-ban"></i> 
       </el-button>
-    <!-- <el-button
+      <el-button
       type="default"
-      @click.prevent="test(scope.$index, scope.row)"
-      v-if="!scope.$index == 0"
-      disabled
+      @click.prevent="cancelCreateRole(scope.$index, scope.row)"
+      v-if="scope.$index == 0 && isEditting && scope.row.newRow"
       class="bg-light btn-sm"
-      v-tooltip="`Edit Role`"
-    >
-      <i class="fal fa-edit text-primary"></i>
-    </el-button> -->
-   </template>
+      v-tooltip="`Cancel Create`"                  
+      >
+      <i class="far fa-trash-alt text-danger"></i>
+     </el-button>
+    </template>
       
       </el-table-column> 
   </el-table>
-     <el-table    
-        v-else  
-        :data="firstRole"   
-        height="450"
-        :row-class-name="showHideCreateRow"
-        >
-    <el-table-column
-    fixed
-    prop="role"
-    label="Projects Role"
-    width="250">
-
-  <template slot-scope="scope">
-  <span >
-    <el-input
-    size="small"    
-    placeholder="Enter New Role Name"     
-    style="font-style: italic; color: red"
-    v-model="newRoleName"
-    controls-position="right"
-  >
-  </el-input>
-  </span>
-  
-
-    </template>
-  </el-table-column>
-
-  <el-table-column label="Analytics">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-
-    <span 
-      @click.prevent.stop="analyticsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="analyticsWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="analyticsDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-   <el-table-column label="Tasks">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="tasksRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="tasksWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="tasksDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Issues">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="issuesRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-     <span 
-      @click.prevent.stop="issuesWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-  
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="issuesDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Risks">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-    <span 
-      @click.prevent.stop="risksRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="risksWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-        <span 
-      @click.prevent.stop="risksDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Notes">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-     <span 
-      @click.prevent.stop="notesRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="notesWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="notesDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Lessons">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="lessonsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-          <span 
-      @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-          <span 
-      @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-  
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-    <el-table-column 
-      fixed="right" 
-      label="Actions"
-      class="text-center "
-      width="120">
-        <template slot-scope="scope">
-      <el-button
-      type="default"
-      v-tooltip="`Save edits`"
-      v-if="showCreateRow === true && scope.$index == 0"
-      @click.prevent="saveNewRole(scope.$index, scope.row)"
-      class="bg-primary btn-sm text-light"
-      >
-    <i class="far fa-save"></i>
-    </el-button>
-    <el-button
-       type="default"
-      @click.prevent="cancelCreateRole(scope.$index, scope.row)"
-      v-if="showCreateRow === true && scope.$index == 0"
-      class="bg-secondary btn-sm text-light"
-      v-tooltip="`Cancel`"                  
-    >
-      <i class="fas fa-ban"></i> 
-    </el-button>
-    <!-- <el-button
-      type="default"
-       v-if="showCreateRow === false && scope.$index !== 0"
-      @click.prevent="test(scope.$index, scope.row)"
-      class="bg-light btn-sm"
-      v-tooltip="`Edit Role`"
-    >
-      <i class="fal fa-edit text-primary"></i>
-    </el-button> -->
-   </template>
-      
-      </el-table-column> 
-    </el-table> 
+ 
 </div>
 </template>
 
@@ -1314,61 +877,13 @@ export default {
         isLessonsWrite: true,
         isLessonsDelete: true,
 
-       newRoleName: "",
-        firstRole: [
-          {
-          role: 'Enter New Role Name',        
-          read: true,
-          write: true,
-          delete: false,  
-
-
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
-          
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
-          
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
-
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-         }
-        ],
         analyticsPriv: [],
         tasksPriv: [],
         issuesPriv: [],
         risksPriv: [],
         lessonsPriv: [],
         notesPriv: [],
-        newRoleRow: [{
-          role: 'Enter Name',        
-          read: true,
-          write: true,
-          delete: false,  
-
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
-          
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
-          
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
-
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-        },]
-      }
+       }
   },
   methods: {
     ...mapMutations([
@@ -1381,6 +896,9 @@ export default {
        "createRole",
        "updateRole"
        ]),
+  _isallowed(salut) {
+     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
+  },
   analyticsRead(index, rowData) {
     this.isAnalyticsRead = !this.isAnalyticsRead;
       if(this.isAnalyticsRead && (!this.analyticsPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('project_analytics')) ){
@@ -1698,6 +1216,80 @@ export default {
     }
 
   },
+  addProjectRole() {
+    // this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
+     this.tableData.unshift({     
+        name: "",
+        newRow: true, 
+        role_privileges: [],
+        role_users: [],
+        type_of: "project",
+      });
+        this.isEditting = true;
+        this.isAnalyticsRead = true,
+        this.isAnalyticsWrite = true,
+        this.isAnalyticsDelete = true,
+
+        this.isTasksRead = true,
+        this.isTasksWrite = true,
+        this.isTasksDelete = true,
+
+        this.isIssuesRead = true,
+        this.isIssuesWrite = true,
+        this.isIssuesDelete = true,
+
+        this.isRisksRead = true,
+        this.isRisksWrite = true,
+        this.isRisksDelete = true,
+
+        this.isNotesRead = true,
+        this.isNotesWrite = true,
+        this.isNotesDelete = true,
+
+        this.isLessonsRead = true,
+        this.isLessonsWrite = true,
+        this.isLessonsDelete = true,
+
+        this.analyticsPriv = [],
+        this.tasksPriv = [],
+        this.issuesPriv = [],
+        this.risksPriv = [],
+        this.lessonsPriv = [],
+        this.notesPriv = []
+            
+      if (this.isAnalyticsRead && this.isAnalyticsWrite && this.isAnalyticsDelete ) {
+          this.analyticsPriv.push(..."R") 
+          this.analyticsPriv.push(..."W")  
+          this.analyticsPriv.push(..."D") 
+                  
+          }
+      if (this.isTasksRead && this.isTasksWrite && this.isTasksDelete) {
+          this.tasksPriv.push(..."R")     
+          this.tasksPriv.push(..."W")     
+          this.tasksPriv.push(..."D")       
+        }
+      if (this.isIssuesRead && this.isIssuesWrite && this.isIssuesDelete) {
+          this.issuesPriv.push(..."R")     
+          this.issuesPriv.push(..."W")     
+          this.issuesPriv.push(..."D")       
+        }
+      if (this.isRisksRead && this.isRisksWrite && this.isRisksDelete) {
+          this.risksPriv.push(..."R")     
+          this.risksPriv.push(..."W")     
+          this.risksPriv.push(..."D")       
+        }
+      if (this.isLessonsRead && this.isLessonsWrite && this.isLessonsDelete) {
+          this.lessonsPriv.push(..."R")     
+          this.lessonsPriv.push(..."W")     
+          this.lessonsPriv.push(..."D")       
+        }
+      if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
+          this.notesPriv.push(..."R")     
+          this.notesPriv.push(..."W")     
+          this.notesPriv.push(..."D")       
+      }
+  
+ },
   cancelEditRole(index, rowData){    
     this.isEditting = false;
     this.currentRow = null;
@@ -1763,15 +1355,17 @@ export default {
           this.isNotesDelete = !this.isNotesDelete
       }
   },
-  cancelCreateRole(rows, index) {
-   this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
-   },
+  cancelCreateRole(){
+    this.tableData.shift({});
+    this.isEditting = false
+    this.currentRow = null 
+  },  
   closeAddRole() {
     this.addRoleDialogOpen = false;
   },
   saveNewRole(index, rowData){
     let roleData = {};  
-     if (rowData.id && index !== 0){
+     if (rowData.id){
         roleData = {
         role: {
            name: rowData.name,
@@ -1822,11 +1416,12 @@ export default {
       this.updateRole({
         ...roleData,
       }); 
+        
            console.log(roleData)
       } else {
         let newRoleData = {
         role: {
-           name: this.newRoleName,
+           name:  rowData.name,
            uId: '',
            type: 'project',
            pId: this.$route.params.programId,
@@ -1834,32 +1429,32 @@ export default {
               {
                 privilege: this.analyticsPriv.join(''),
                 role_type: "project_analytics",
-                name: this.newRoleName, 
+                name:  rowData.name, 
               }, 
               {
                 privilege: this.tasksPriv.join(''),
                 role_type: "project_tasks",
-                name: this.newRoleName, 
+                name:  rowData.name, 
               },
               {
                 privilege: this.issuesPriv.join(''),
                 role_type: "project_issues",
-                name: this.newRoleName, 
+                name:  rowData.name, 
               },
               {
                 privilege: this.risksPriv.join(''),
                 role_type: "project_risks",
-                name: this.newRoleName, 
+                name:  rowData.name, 
               }, 
              {
                 privilege: this.notesPriv.join(''),
                 role_type: "project_notes",
-                name: this.newRoleName, 
+                name:  rowData.name, 
               }, 
               {
                 privilege: this.lessonsPriv.join(''),
                 role_type: "project_lessons",
-                name: this.newRoleName, 
+                name:  rowData.name, 
               },
             ],
         },
@@ -1867,20 +1462,18 @@ export default {
       this.createRole({
         ...newRoleData,
       });
-     this.newRoleName = ""
-      this.SET_SHOW_CREATE_ROW(!this.showCreateRow)
-      }     
+
+      }   
+          this.isEditting = false;
+          this.currentRow = null;  
  
     },
-    handleClick(tab, event) { 
-             // Route redirecting incase we want to assign url paths to each tab
-        // if(tab.index == 1) {
-        //  this.$router.push({ name: "SettingsRolesProjects" })
-        // }   
-   
+   handleClick(tab, event) { 
+    if(tab){
+        this.isEditting = false;
+      }  
     },
-
-   },
+  },
   mounted() {
     this.fetchRoles(this.$route.params.programId)
   },
@@ -1926,79 +1519,11 @@ export default {
           });
           this.SET_NEW_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)
+         
          }
       },
     },
-      showCreateRow:{
-       handler() {
-        if(this.showCreateRow){
-        //Resetting privilege default state for new Roles
-        this.isAnalyticsRead = true,
-        this.isAnalyticsWrite = true,
-        this.isAnalyticsDelete = true,
-
-        this.isTasksRead = true,
-        this.isTasksWrite = true,
-        this.isTasksDelete = true,
-
-        this.isIssuesRead = true,
-        this.isIssuesWrite = true,
-        this.isIssuesDelete = true,
-
-        this.isRisksRead = true,
-        this.isRisksWrite = true,
-        this.isRisksDelete = true,
-
-        this.isNotesRead = true,
-        this.isNotesWrite = true,
-        this.isNotesDelete = true,
-
-        this.isLessonsRead = true,
-        this.isLessonsWrite = true,
-        this.isLessonsDelete = true,
-
-        this.analyticsPriv = [],
-        this.tasksPriv = [],
-        this.issuesPriv = [],
-        this.risksPriv = [],
-        this.lessonsPriv = [],
-        this.notesPriv = []
-            
-      if (this.isAnalyticsRead && this.isAnalyticsWrite && this.isAnalyticsDelete ) {
-          this.analyticsPriv.push(..."R") 
-          this.analyticsPriv.push(..."W")  
-          this.analyticsPriv.push(..."D") 
-                  
-          }
-      if (this.isTasksRead && this.isTasksWrite && this.isTasksDelete) {
-          this.tasksPriv.push(..."R")     
-          this.tasksPriv.push(..."W")     
-          this.tasksPriv.push(..."D")       
-        }
-      if (this.isIssuesRead && this.isIssuesWrite && this.isIssuesDelete) {
-          this.issuesPriv.push(..."R")     
-          this.issuesPriv.push(..."W")     
-          this.issuesPriv.push(..."D")       
-        }
-      if (this.isRisksRead && this.isRisksWrite && this.isRisksDelete) {
-          this.risksPriv.push(..."R")     
-          this.risksPriv.push(..."W")     
-          this.risksPriv.push(..."D")       
-        }
-      if (this.isLessonsRead && this.isLessonsWrite && this.isLessonsDelete) {
-          this.lessonsPriv.push(..."R")     
-          this.lessonsPriv.push(..."W")     
-          this.lessonsPriv.push(..."D")       
-        }
-      if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
-          this.notesPriv.push(..."R")     
-          this.notesPriv.push(..."W")     
-          this.notesPriv.push(..."D")       
-      }
-          }
-       }
-
-     },
+ 
     updatedProjectRoleStatus: {
     handler() {
       if (this.updatedProjectRoleStatus == 200) {
