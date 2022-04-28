@@ -75,7 +75,7 @@ ActiveAdmin.register Project do
           f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
-          f.input :admin_program_admins, label: 'Program Admins*', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          f.input :admin_program_admins, label: 'Program Admins*', as: :select, collection: options_for_select(  User.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
         end
       end
 
@@ -199,13 +199,15 @@ ActiveAdmin.register Project do
       users.each do |user|
         role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: resource.id)
       end
-      RoleUser.import(role_users)
+      RoleUser.import(role_users) if role_users.any?
       
-      RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
-
-      params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s)) if remove_project_admin_ids.any?
-      params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)) if new_project_admin_ids.any?
-
+      if (resource.reload.get_program_admin_ids.size > remove_project_admin_ids.size)
+        RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
+   
+        params[:project][:user_ids] = [] if !params[:project][:user_ids] # in case no user is added in program and adding admin users
+        params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s)) if remove_project_admin_ids.any?
+        params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)) if new_project_admin_ids.any?
+      end
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
         block.call(success, failure) if block
