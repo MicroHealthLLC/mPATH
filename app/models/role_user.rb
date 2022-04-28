@@ -8,6 +8,17 @@ class RoleUser < ApplicationRecord
 
   validate :check_valid_data, :check_duplication
 
+  after_create :create_program_admin_record
+
+  def create_program_admin_record
+    admin_role = Role.program_admin_user_role
+    if self.project_id && admin_role && (self.role_id == admin_role.id)
+      if !self.project.user_ids.include?(self.user_id)
+        ProjectUser.create(user_id: self.user_id, project_id: self.project_id)
+      end
+    end
+  end
+
   def check_only_single_admin_role
     user = self.user
     role = self.role

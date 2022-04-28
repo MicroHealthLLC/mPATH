@@ -95,6 +95,7 @@ class Project < SortableRecord
     role_id = Role.program_admin_user_role.id
     User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
   end
+
   def get_program_admin_ids
     get_program_admins.pluck(:id)
   end

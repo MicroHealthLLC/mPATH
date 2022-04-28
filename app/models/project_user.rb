@@ -1,7 +1,7 @@
 class ProjectUser < ApplicationRecord
   belongs_to :user
   belongs_to :project
-  after_create :provide_program_privileges
+  # after_create :provide_program_privileges
   after_destroy :remove_program_privileges
 
   def remove_program_privileges
