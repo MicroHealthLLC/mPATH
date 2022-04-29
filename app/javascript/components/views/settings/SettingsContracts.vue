@@ -81,7 +81,8 @@
          v-if="_isallowed('read')"
         >
           <el-table
-            v-if="tableData && tableData.length > 0"    
+            v-if="tableData && tableData.length > 0"  
+            :load="log(tableData)"  
             :data="
               tableData
                 .filter(
@@ -581,7 +582,7 @@ export default {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
     log(e){
-      // console.log('contractROleUser:',  e)
+      console.log('tableData:',  e)
     },
     editUsers(index, rowData){
       this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)

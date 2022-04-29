@@ -761,7 +761,7 @@
                 v-for="item in viableAdminUsers"
                 :value="item"
                 :key="item.id"
-                :label="item.fullName || item.name"
+                :label="item.full_name || item.name"
               >
               </el-option>
             </el-select>
@@ -967,7 +967,8 @@ export default {
       "SET_REMOVE_ADMIN_ROLE_STATUS"
       ]),
     ...mapActions([
-      "fetchRoles", 
+      "fetchRoles",
+      "fetchProgramUsers",
       "createRole", 
       "addUserToRole", 
       "updateRole",
@@ -1018,7 +1019,9 @@ export default {
     this.rowIndex_1 = null;
     },
    addUserRole(index, rows) {
-    // console.log(this.adminUsers)
+     if (this.programUsers.length < 1){
+      this.fetchProgramUsers(this.$route.params.programId);         
+      }
       this.rolesVisible = true
       this.roleId = rows.id
       this.roleRowData = rows
@@ -1429,6 +1432,7 @@ mounted() {
     ...mapGetters([
         "contentLoaded",
         "getRolesLoaded",
+         "programUsers",
         "currentProject",
         "getPortfolioUsers",
         "activeProjectUsers",
@@ -1450,10 +1454,10 @@ mounted() {
          console.log(value)
         }      
     },
-    programUsers(){
-      if (this.currentProject){
-         if (this.currentProject.users && this.currentProject.users.length > 0){
-           return this.currentProject.users.filter(t => t)
+    programRoleUsers(){
+      if (this.programUsers){
+         if (this.programUsers.length > 0){
+           return this.programUsers.map(t => t)
        }
       }       
     },
@@ -1491,10 +1495,10 @@ mounted() {
       }
     },
    viableAdminUsers(){
-      if (this.programUsers && this.adminUsers){
+      if (this.programRoleUsers && this.adminUsers){
         let assignedUserIds = this.allAdminUsers.map(t => t.user_id)
-        // console.log(this.programUsers.filter(t => !assignedUserIds.includes(t.id)))
-        return this.programUsers.filter(t => !assignedUserIds.includes(t.id))
+        // console.log(this.programRoleUsers.filter(t => !assignedUserIds.includes(t.id)))
+        return this.programRoleUsers.filter(t => !assignedUserIds.includes(t.id))
       }       
     }, 
      backToSettings() {
