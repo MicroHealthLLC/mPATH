@@ -317,6 +317,7 @@ const settingsStore = {
         // console.log(userData)
         let formData = new FormData();     
           if (userData.projectIds){
+            formData.append("project_id", userData.programId)
             userData.projectIds.forEach((ids) => {
             formData.append("role_users[][user_id]", userData.userId);
             // formData.append("role_users[][project_id]", userData.programId)
@@ -326,6 +327,7 @@ const settingsStore = {
           } 
           
           if (userData.contractIds){
+            formData.append("project_id", userData.programId)
             userData.contractIds.forEach((ids) => {
             formData.append("role_users[][user_id]", userData.userId);
             // formData.append("role_users[][project_id]", userData.programId)

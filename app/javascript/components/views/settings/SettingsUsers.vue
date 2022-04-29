@@ -997,6 +997,7 @@ export default {
     "fetchPortfolioUsers", 
     "fetchProgramUsers",
     "fetchRoles",
+    "fetchContracts",
     "addUserToRole",
     "fetchCurrentProject",
     "createNewUser", 
@@ -1183,6 +1184,9 @@ export default {
     },
     assignContractRole() {
       this.assignCrole = true; 
+      if (this.contracts && this.contracts[0] < 1){
+        this.fetchContracts(this.$route.params.programId)
+      }
     },
     assignAdminRole() {
       this.assignArole = true;  
@@ -1307,6 +1311,7 @@ export default {
     ...mapGetters([
         "contentLoaded",
         "currentProject",
+        "contracts",
         "getPortfolioUsers",
         "activeProjectUsers",
         "newUserStatus",
@@ -1400,10 +1405,10 @@ export default {
       }    
     },
     contractNames(){
-      if(this.currentProject){
-        if (this.currentProject.contracts && this.currentProject.contracts.length > 0){
+      if(this.contracts && this.contracts[0]){
+        if (this.contracts[0].length > 0){
           // console.log(_.groupBy(this.currentProject.contracts, 'id'))
-          return this.currentProject.contracts.map(t => t)
+          return this.contracts[0].map(t => t)
         }
       }
 
@@ -1449,19 +1454,22 @@ export default {
            } else return true
         }).filter((role) => {
            if (this.searchRoleUsers !== '' && role) {
-            // console.log(task)
+           
             return (            
                role.role_name.toLowerCase().match(this.searchRoleUsers.toLowerCase()) 
             ) 
         } else return true
         })
+         console.log(data)
          return {                
                   data: data,
                   dataRow: data.filter(t => this.roleRowId == t.role_id),
-                  roleIds: _.uniq(data.map(t => t.role_id)),     
+                  roleIds: _.uniq(data.filter(t => t.project_id == this.$route.params.programId).map(t => t.role_id)),     
                   roleNames: _.uniq(data.map(t => t.role_name))                 
                 }      
-         }           
+         }   
+         
+       
     },
   assignedUserProjects(){
     if (this.projectNames && this.projectNames.length > 0){ 

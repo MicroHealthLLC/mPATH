@@ -851,7 +851,8 @@
            <el-button
             type="default"
             @click="saveRemoveUsers(scope.$index, scope.row)"
-            v-if="isEditingRoles   && scope.$index == rowIndex_1"
+            v-if="isEditingRoles && scope.$index == rowIndex_1 && adminUsers.length > 1"
+            :disabled="adminUsers.length < 2"
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light">               
             <i class="far fa-save"></i>
@@ -1475,7 +1476,7 @@ mounted() {
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0) 
         let data = [].concat.apply([], roleUsers).filter(t => {
-          if(this.roleId){
+          if(this.roleId && t.project_id == this.$route.params.programId ){
             return  this.roleId == t.role_id
           }
         }).filter((user) => {
