@@ -21,8 +21,9 @@ ActiveAdmin.register RoleUser do
     column :user
     column :project
     column :contract
+    column :role
     column :facility_project do |role_user|
-      link_to "#{role_user.facility_project.facility.facility_name}", "#{edit_admin_role_user_path(role_user)}" if role_user.facility_project_id
+       role_user.facility_project ? link_to("#{role_user.facility_project.facility.facility_name}", "#{admin_facility_path(role_user.facility_project.facility)}") : nil
     end
     actions defaults: false do |role|
       item "Edit", edit_admin_role_user_path(role), title: 'Edit', class: "member_link edit_link"
@@ -39,6 +40,10 @@ ActiveAdmin.register RoleUser do
     before_action :check_readability, only: [:index, :show]
     # before_action :check_order, only: [:index]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+    
+    def scoped_collection
+      super.includes [{facility_project: :facility }, :contract, :project, :user]
+    end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?

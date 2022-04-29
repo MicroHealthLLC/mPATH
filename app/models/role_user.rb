@@ -6,8 +6,10 @@ class RoleUser < ApplicationRecord
   belongs_to :contract, optional: true
   belongs_to :project, optional: true
 
-  validate :check_valid_data, :check_duplication
-
+  validate :check_valid_data
+  validate :check_duplication, on: :create
+  validates :project_id, presence: true
+  
   after_create :create_program_admin_record
 
   def create_program_admin_record

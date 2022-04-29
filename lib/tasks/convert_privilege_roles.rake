@@ -20,10 +20,12 @@ task :convert_privilege_roles => :environment do
         #     role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
         #   end
         # end
-        facility_project_ids = user.facility_project_ids
-        facility_project_ids.each do |fid|
-          role_ids.each do |role_id|          
-            role_users << RoleUser.new(user_id: user.id, role_id: role_id, facility_project_id: fid)
+        facility_projects = user.facility_projects
+
+        facility_projects.each do |fp|
+          role_ids.each do |role_id|
+            project_id = fp.project_id
+            role_users << RoleUser.new(user_id: user.id, role_id: role_id, facility_project_id: fp.id, project_id: project_id)
           end
         end
       end
