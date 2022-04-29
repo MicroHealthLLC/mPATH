@@ -748,8 +748,9 @@
             </el-select>
         </div>
       </div>
-     <div class="mt-2 row">
+     <div class="mt-3 row">
       <div class="col-12 pt-0">
+        <span v-if="filteredContracts && filteredContracts.length > 0">
           <label class="font-md mb-0 d-flex">Associate Contracts to Role </label>
              <el-select
               v-model="associatedContracts"
@@ -769,8 +770,13 @@
               >
               </el-option>
             </el-select>
+        </span>
+        <span class="mt-3" v-else>
+          User has role(s) assigned to all contracts.  To change role, first remove association.
+        </span>
     
       </div>
+
         </div>
      <div class="mt-2 row">
       <div class="col pt-1">        
@@ -780,7 +786,7 @@
           v-if="contractRoleNames && associatedContracts && associatedContracts.length > 0"
           v-tooltip="`Save`" 
             class="btn btn-sm bg-primary">               
-          <i class="fal fa-save"></i>
+          <i class="fal fa-save text-light"></i>
           </el-button>
       </div>
      <div class="col text-right pt-1">      
@@ -1019,9 +1025,9 @@ export default {
    _isallowed(salut) {
       return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
    },
-  //  log(e){
-  //    console.log(`portfolioUsers only data:  ${e}` )
-  //  },
+   log(e){
+     console.log(`contracts:  ${e}` )
+   },
    removeRoles(index, rowData){   
  
       if (this.isEditingRoles) {
@@ -1047,31 +1053,33 @@ export default {
         let aCids =  assignedContracts.filter(t => !cIds.includes(t));
         let projectUserRoleData = {
                 userData: {
-                  roleId: this.adminRoleUsers.id,
+                  roleId: rowData,
                   userId: this.userData.id,
                   programId: this.$route.params.programId, 
                   contractIds: aCids,   
               },
             };
             console.log("editAdmin in progress", this.isEditingContractRoles)
+              console.log("data", projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });
       } 
-      if (this.isEditingAdminRoles) {
-        let projectUserRoleData = {
-                userData: {
-                  roleId: this.assignedAdminRoles[0].id,
-                  userId: [this.userData.id],
-                  programId: this.$route.params.programId, 
-                  adminRole: true, 
-              },
-            };
-            console.log(projectUserRoleData )
-            this.removeUserRole({
-              ...projectUserRoleData,
-            });
-      }          
+      
+      // if (this.isEditingAdminRoles) {
+      //   let projectUserRoleData = {
+      //           userData: {
+      //             roleId: this.assignedAdminRoles[0].id,
+      //             userId: [this.userData.id],
+      //             programId: this.$route.params.programId, 
+      //             adminRole: true, 
+      //         },
+      //       };
+      //       console.log(projectUserRoleData )
+      //       this.removeUserRole({
+      //         ...projectUserRoleData,
+      //       });
+      // }          
     },
   editRoles(index, rowData){
     this.roleRowId = rowData   
@@ -1182,11 +1190,8 @@ export default {
     assignProjectRole() {
       this.assignProle = true; 
     },
-    assignContractRole() {
-      this.assignCrole = true; 
-      if (this.contracts && this.contracts[0] < 1){
-        this.fetchContracts(this.$route.params.programId)
-      }
+    assignContractRole() {     
+      this.assignCrole = true;
     },
     assignAdminRole() {
       this.assignArole = true;  
@@ -1210,9 +1215,9 @@ export default {
       this.openUserRoles = true    
       this.userData = rows    
      // console.log(this.userData)
-    // if (this.assignedAdminRoles && this.getRoles.length > 0){
-    //   this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])
-    //   }   
+   
+      this.fetchContracts(this.$route.params.programId)
+    
      
     },
     closeUserRoles() {
@@ -1407,7 +1412,7 @@ export default {
     contractNames(){
       if(this.contracts && this.contracts[0]){
         if (this.contracts[0].length > 0){
-          // console.log(_.groupBy(this.currentProject.contracts, 'id'))
+           console.log(this.contracts[0].map(t => t))
           return this.contracts[0].map(t => t)
         }
       }
@@ -1416,8 +1421,7 @@ export default {
   filteredContracts(){
       if( this.projectUsers &&  this.projectUsers.data && this.contractNames && this.contractNames.length > 0){
         let roleProjectIds = this.projectUsers.data.map(t => t.contract_id)
-        // console.log(this.projectNames)
-         return this.contractNames.filter(t => !roleProjectIds.includes(t.contractId))
+          return this.contractNames.filter(t => !roleProjectIds.includes(t.id))
       }    
     },
     admin_role_names(){
@@ -1460,7 +1464,7 @@ export default {
             ) 
         } else return true
         })
-         console.log(data)
+         console.log(_.uniq(data.filter(t => t.project_id == this.$route.params.programId).map(t => t.role_id)))
          return {                
                   data: data,
                   dataRow: data.filter(t => this.roleRowId == t.role_id),
