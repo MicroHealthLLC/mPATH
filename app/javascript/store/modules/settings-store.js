@@ -319,7 +319,7 @@ const settingsStore = {
           if (userData.projectIds){
             userData.projectIds.forEach((ids) => {
             formData.append("role_users[][user_id]", userData.userId);
-            // formData.append("role_users[][project_id]", userData.programId)
+            formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)  
             formData.append("role_users[][facility_project_id]", ids)  
             });
@@ -328,7 +328,7 @@ const settingsStore = {
           if (userData.contractIds){
             userData.contractIds.forEach((ids) => {
             formData.append("role_users[][user_id]", userData.userId);
-            // formData.append("role_users[][project_id]", userData.programId)
+            formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)      
             formData.append("role_users[][contract_id]", ids)      
             });
