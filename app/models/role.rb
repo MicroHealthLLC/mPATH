@@ -24,12 +24,22 @@ class Role < ApplicationRecord
 
   def to_json(options = {})
     hash = self.attributes
+    hash[:role_privileges] = []
+    hash[:role_users] = []
+
     if options[:page] == "user_tab_role_assign"
       hash[:facility_projects] = self.role_users.map(&:facility_project).compact.uniq.map{|f| {id: f.id, name: f.facility.facility_name} }
       hash[:contracts] = self.role_users.map(&:contract).compact.uniq.map{|f| {id: f.id, name: f.nickname} }
     end
-    hash[:role_privileges] = self.role_privileges.as_json
-    hash[:role_users] = self.role_users.map(&:to_json)
+
+    if options[:include] && ( options[:include].include?(:role_privileges) || options[:include].include?(:all) )
+      hash[:role_privileges] = self.role_privileges.as_json
+    end
+
+    if options[:include] && ( options[:include].include?(:role_users)|| options[:include].include?(:all) )
+      hash[:role_users] = self.role_users.map(&:to_json)      
+    end
+    
     hash
   end
   
@@ -42,7 +52,11 @@ class Role < ApplicationRecord
   end
 
   def self.default_roles
-    where(is_default: true)
+    where(is_default: true).distinct
+  end
+  
+  def self.not_default_roles
+    where(is_default: false).distinct
   end
 
   def create_or_update_role(params, user)

@@ -463,6 +463,7 @@ class User < ApplicationRecord
   end
 
   def is_program_admin?(program_id)
+    
     program = self.projects.where(id: program_id).active.first
     if program
       return program.get_program_admin_ids.include?(self.id)
