@@ -3,6 +3,11 @@ class ProjectUser < ApplicationRecord
   belongs_to :project
   # after_create :provide_program_privileges
   after_destroy :remove_program_privileges
+  after_destroy :remove_program_related_roles
+
+  def remove_program_related_roles
+    self.user.role_users.where(project_id: self.project_id).destroy_all
+  end
 
   def remove_program_privileges
     self.user.remove_all_privileges(self.project_id)
