@@ -761,7 +761,7 @@
                 v-for="item in viableAdminUsers"
                 :value="item"
                 :key="item.id"
-                :label="item.fullName"
+                :label="item.fullName || item.name"
               >
               </el-option>
             </el-select>
