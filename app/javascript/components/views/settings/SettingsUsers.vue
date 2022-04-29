@@ -433,7 +433,7 @@
           <i class="fal fa-user-lock mr-1 mb-3 bootstrap-purple-text"></i> 
           <b>Assigned Roles</b>
           <span class="badge badge-secondary badge-pill">
-          <span v-if="projectUsers">{{ projectUsers.roleIds.length }}</span>        
+          <span v-if="projectUsers || assignedAdminRoles">{{ projectUsers.roleIds.length + assignedAdminRoles.length }}</span>
         </span>
         </h5>       
      </span>
@@ -631,7 +631,7 @@
         
         </el-table>
         <span v-else>
-          No Roles Assigned To This User
+          No Project or Contract Roles Assigned to this User
         </span>
 
         </div>
