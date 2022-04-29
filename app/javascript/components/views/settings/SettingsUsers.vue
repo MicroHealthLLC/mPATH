@@ -1457,14 +1457,13 @@ export default {
              return this.projId == t.user_id
            } else return true
         }).filter((role) => {
-           if (this.searchRoleUsers !== '' && role) {
-           
+           if (this.searchRoleUsers !== '' && role) {           
             return (            
                role.role_name.toLowerCase().match(this.searchRoleUsers.toLowerCase()) 
             ) 
         } else return true
         })
-         console.log(_.uniq(data.filter(t => t.project_id == this.$route.params.programId).map(t => t.role_id)))
+        //  console.log(_.uniq(data.filter(t => t.project_id == this.$route.params.programId).map(t => t.role_id)))
          return {                
                   data: data,
                   dataRow: data.filter(t => this.roleRowId == t.role_id),
