@@ -269,7 +269,7 @@ const settingsStore = {
         // console.log(role)
         formData.append("role[name]", role.name); //Required
         formData.append("role[id]", role.id); //Required
-        formData.append("project_id", role.pId)
+        formData.append("role[project_id]", role.pId)
         formData.append("role[type_of]", role.type)
         formData.append("role[user_id]", role.uId)
         role.rp.forEach((p) => {
@@ -282,7 +282,7 @@ const settingsStore = {
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "PUT",
-           url: `${API_BASE_PATH}/roles/${role.id}`,
+           url: `${API_BASE_PATH}/roles/${role.id}?project_id=${role.pId}`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
