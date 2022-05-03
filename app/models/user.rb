@@ -472,6 +472,10 @@ class User < ApplicationRecord
     end
   end
 
+  def has_program_admin_role?
+    self.roles.distinct.where(id: Role.program_admin_user_role.id).any?
+  end
+
   def initialize(*args)
     privilege ||= Privilege.new
     super
@@ -781,10 +785,6 @@ class User < ApplicationRecord
     end
     hash.with_indifferent_access
   end 
-
-  def programs_with_program_admin_role
-    role_users.where()
-  end
 
   def authorized_contract_ids(project_ids: []) 
     # c_ids = []

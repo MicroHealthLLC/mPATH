@@ -48,7 +48,7 @@ class HomeController < AuthenticatedController
     # Findnig tab from params
     params_split = params[:path].split("/")
     tab = params_split[2] || "map"
-    program_id = params_split[1]
+    @program_id = params_split[1]
 
     view = "map_view"
     if tab == "map"
@@ -70,13 +70,13 @@ class HomeController < AuthenticatedController
     ##  elsif params[:tab] == "facility_manager"
     ##    view = "facility_manager_view" 
     else
-      redirect_to current_user.allowed_redirect_url(program_id)
+      redirect_to current_user.allowed_redirect_url(@program_id)
       return
     end
-    if current_user.authorized_programs.pluck(:id).include?(program_id.to_i)
+    if current_user.authorized_programs.pluck(:id).include?(@program_id.to_i)
       if !current_user.allowed?(view)
         # raise CanCan::AccessDenied
-        redirect_to current_user.allowed_redirect_url(program_id)
+        redirect_to current_user.allowed_redirect_url(@program_id)
         return
       end
     else

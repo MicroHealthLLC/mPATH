@@ -343,7 +343,7 @@ ActiveAdmin.register User do
     end
 
     def scoped_collection
-      super.includes(:organization)
+      super.includes(:organization, :project_users)
     end
   end
 
