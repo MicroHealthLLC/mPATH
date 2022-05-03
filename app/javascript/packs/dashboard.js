@@ -74,7 +74,7 @@ var programSettingPrivileges = JSON.parse(window.program_settings_privileges.rep
 var projectPrivilegesRoles = JSON.parse(window.project_privilegs_roles.replace(/&quot;/g,'"'))
 var programPrivilegesRoles = JSON.parse(window.program_privilegs_roles.replace(/&quot;/g,'"'))
 var contractPrivilegesRoles = JSON.parse(window.contract_privilegs_roles.replace(/&quot;/g,'"'))
-var programSettingPrivilegesRoles = JSON.parse(window.program_settings_privileges_roles.replace(/&quot;/g,'"')) 
+var programSettingPrivilegesRoles = JSON.parse(window.program_settings_privileges_roles.replace(/&quot;/g,'"'))
 var projectFacilityHash = JSON.parse(window.project_facility_hash.replace(/&quot;/g,'"')) 
  
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
@@ -253,8 +253,9 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
   }else if(["ProjectSidebar"].includes(page)){
 
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
+    
     if(extraData["method"] == "isallowedProgramSettings"){
-      return pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(permissionHash[salut]) || pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(permissionHash[salut]) || pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(permissionHash[salut]) ||  pPrivileges['program_setting_users_roles']  && pPrivileges['program_setting_users_roles'].includes(permissionHash[salut])
+      return pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(s) || pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(s) || pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(s) ||  pPrivileges['program_setting_users_roles']  && pPrivileges['program_setting_users_roles'].includes(s)
     
     }else if(extraData["method"] == "isallowedContracts"){
       
@@ -263,6 +264,18 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       let contract_privileges = pPrivileges[extraData["contract_id"]]
 
       return contract_privileges && (contract_privileges.contract_analytics || contract_privileges.contract_issues || contract_privileges.contract_lessons || contract_privileges.contract_notes || contract_privileges.contract_risks || contract_privileges.contract_tasks);
+    }else{
+      return false
+    }
+
+  }else if(["ProjectRollup"].includes(page)){
+
+    let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
+    
+     if(extraData["method"] == "isallowedContracts"){
+      
+      return pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(s)
+      
     }else{
       return false
     }
