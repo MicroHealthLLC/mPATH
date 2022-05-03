@@ -322,7 +322,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       return facility_project_privileges && facility_project_privileges.project_tasks && facility_project_privileges.project_tasks.includes(s);
     }
 
-  }else if( ["SheetContract", "MapAnalytics", "MapOverview", "MapProject", "SheetAnalytics", "SheetProject", "ContractAnalytics"].includes(page)){
+  }else if( ["SheetContract", "MapAnalytics", "MapOverview", "MapProject", "SheetAnalytics", "SheetProject", "ContractAnalytics", "Kanban"].includes(page)){
 
     if (contract_id) {
 
