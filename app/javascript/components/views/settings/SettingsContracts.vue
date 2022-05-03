@@ -673,7 +673,7 @@ export default {
       });
       this.hideSaveBtn = true;
       this.fetchCurrentProject(this.$route.params.programId);
-      // console.log(contractData)
+      console.log(contractData)
     },
     // DO NOT DELETE This async method.  It is code for firebase cloud functionality
     //  async onSubmit ()  {
