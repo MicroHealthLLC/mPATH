@@ -106,7 +106,7 @@ const settingsStore = {
 
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contracts`,
+        url: `${API_BASE_PATH}/contracts?project_id=${contract.project_id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -263,7 +263,6 @@ const settingsStore = {
            });
        },
        // UPDATE ROLE
-
        updateRole({ commit }, { role }) {
         let formData = new FormData();
         // console.log(role)
@@ -278,7 +277,6 @@ const settingsStore = {
           formData.append("role[role_privileges][][name]", p.name);
           formData.append("role[role_privileges][][id]", p.id);
         });
-
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "PUT",
@@ -301,8 +299,7 @@ const settingsStore = {
             }
             if (res.data && res.data.role.type_of == "contract" ){
               commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
-            }
-                    
+            }                    
            })
            .catch((err) => {
              console.log(err);
