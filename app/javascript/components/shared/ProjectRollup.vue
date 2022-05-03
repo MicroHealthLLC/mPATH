@@ -1940,13 +1940,8 @@ export default {
         'setHideDraft',
       ]),
     _isallowedContracts(salut) {
-      let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      if (pPrivilege && pPrivilege.contracts){
-        return pPrivilege.contracts.includes(s);    
-      } else return false          
-    },
+      return this.checkPrivileges("ProjectRollup", salut, this.$route, {method: "isallowedContracts"})
+     },
     showLessToggle() {
       this.showLess = "Show Less";
     },

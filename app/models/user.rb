@@ -472,6 +472,10 @@ class User < ApplicationRecord
     end
   end
 
+  def has_program_admin_role?
+    self.roles.distinct.where(id: Role.program_admin_user_role.id).any?
+  end
+
   def initialize(*args)
     privilege ||= Privilege.new
     super
@@ -730,18 +734,31 @@ class User < ApplicationRecord
     user = self
     program_ids = user.project_ids if !program_ids.any?
     contarct_hash = {}
-    role_users = user.role_users.where.not(contract_id: nil)
+    # role_users = user.role_users.where.not(contract_id: nil)
+    role_users = user.role_users.joins(:role_privileges).where(project_id: program_ids, role_privileges: {role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES} ).distinct
     contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    contracts_group_by_project = Contract.where(project_id: program_ids).group_by(&:project_id)
+
     role_users.each do |role_user|
-      h = {}
-      if role_user.contract_id && (role_privilegs = contract_role_privileges[role_user.role_id])
+      role_privilegs = contract_role_privileges[role_user.role_id]
+      if role_user.contract_id && role_privilegs
         h2 = {}
         role_privilegs.each do |rp|          
           h2[rp.role_type] = rp.privilege&.chars
         end
         contarct_hash[role_user.contract_id] = h2
+      elsif role_user.project_id.present? && role_user.contract_id.nil?
+        contracts = contracts_group_by_project[role_user.project_id]
+        contracts.each do |contract|
+          next if contarct_hash[contract.id] || !role_privilegs
+          h2 = {}
+          role_privilegs.each do |rp|          
+            h2[rp.role_type] = rp.privilege&.chars
+          end
+          contarct_hash[contract.id] = h2
+        end
       end
-      # contarct_hash << h.with_indifferent_access if h.present?
+      
     end
     contarct_hash.with_indifferent_access
   end
@@ -781,10 +798,6 @@ class User < ApplicationRecord
     end
     hash.with_indifferent_access
   end 
-
-  def programs_with_program_admin_role
-    role_users.where()
-  end
 
   def authorized_contract_ids(project_ids: []) 
     # c_ids = []

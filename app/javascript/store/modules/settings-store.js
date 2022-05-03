@@ -523,7 +523,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts?project_id=${id}`,
+        url: `${API_BASE_PATH}/contracts.json?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -531,6 +531,7 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_CONTRACTS", res.data.contracts);
+          console.log(res.data.contracts);
         })
         .catch((err) => {
           console.log(err);
