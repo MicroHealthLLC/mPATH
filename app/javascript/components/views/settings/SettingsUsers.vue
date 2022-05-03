@@ -228,7 +228,7 @@
         
           <div class="col-12"  v-if="portfolioUsersOnly">
           <label class="font-md mb-0">Select from
-             <span class="badge badge-secondary badge-pill pill"> {{portfolioUsersOnly.length}}
+             <span class="badge badge-secondary badge-pill pill"> {{ portfolioUsersOnly.length}}
             </span>
               Portfolio Users
             </label>
@@ -1059,8 +1059,8 @@ export default {
                   contractIds: aCids,   
               },
             };
-            console.log("editAdmin in progress", this.isEditingContractRoles)
-              console.log("data", projectUserRoleData)
+            // console.log("editAdmin in progress", this.isEditingContractRoles)
+            //   console.log("data", projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });
@@ -1214,7 +1214,9 @@ export default {
       }    
       this.openUserRoles = true    
       this.userData = rows    
-     // console.log(this.userData)
+     console.log(this.getPortfolioUsers)
+        console.log(this.portfolioUsersOnly)
+           console.log(this.programUsers)
    
       this.fetchContracts(this.$route.params.programId)
     
@@ -1307,9 +1309,9 @@ export default {
    if (this.programUsers.length <= 0)    {
         this.fetchProgramUsers(this.$route.params.programId)
       }
-    if (this.getPortfolioUsers.length <= 0)    {
+
       this.fetchPortfolioUsers()
-    }  
+
 
   },
   computed: {
@@ -1343,8 +1345,7 @@ export default {
 
     portfolioUsersOnly(){
       //line 231
-    if (this.getPortfolioUsers && this.getPortfolioUsers.length > 0 && 
-          this.programUsers && this.programUsers.length > 0
+    if (this.getPortfolioUsers && this.programUsers
           ){  
         let programUserIds = this.programUsers.map(p => p.id)
         return this.getPortfolioUsers.filter(u => !programUserIds.includes(u.id) )     
