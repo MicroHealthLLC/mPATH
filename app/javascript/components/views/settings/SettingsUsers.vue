@@ -1411,10 +1411,10 @@ export default {
       }    
     },
     contractNames(){
-      if(this.contracts && this.contracts[0]){
-        if (this.contracts[0].length > 0){
-           console.log(this.contracts[0].map(t => t))
-          return this.contracts[0].map(t => t)
+      if(this.contracts){
+        if (this.contracts.length > 0){
+           console.log(this.contracts.map(t => t))
+          return this.contracts.map(t => t)
         }
       }
 

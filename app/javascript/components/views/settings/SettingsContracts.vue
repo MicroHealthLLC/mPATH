@@ -139,8 +139,8 @@
                 </el-option>
               </el-select>        
             <span v-else>
-               <span v-if="groupList && groupList.length > 0">
-                 {{ groupList.find((c) => c.id == scope.row.facility_group_id).name }}
+               <span v-if="scope.row.facility_group_name">
+                 {{ scope.row.facility_group_name }}
                </span>
             </span>
 
@@ -750,8 +750,8 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
-                if(this.contracts && this.contracts[0] && this.contracts[0].length > 0){
-      console.log(this.contracts[0])
+     if(this.contracts && this.contracts.length > 0){
+      console.log(this.contracts)
     }
       this.dialogVisible = true;
       this.C_newContractGroupFilter = null;
@@ -791,9 +791,9 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData() {
-     if (this.contracts[0] && this.contracts[0].length > 0 && this.facilityGroups) {
+     if (this.contracts && this.contracts.length > 0 && this.facilityGroups) {
         // let groups = this.facilityGroups.map(g => g.id)
-        let contracts = this.contracts[0].map(cp => cp)
+        let contracts = this.contracts.map(cp => cp)
         let programContracts = contracts.filter((u) => u.project_id == this.$route.params.programId );
         let contractData = programContracts
           .map((t) => t)
