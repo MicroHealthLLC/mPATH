@@ -82,7 +82,7 @@
         >
           <el-table
             v-if="tableData && tableData.length > 0"  
-            :load="log(tableData)"  
+            :load="log(groupList)"  
             :data="
               tableData
                 .filter(
@@ -139,8 +139,8 @@
                 </el-option>
               </el-select>        
             <span v-else>
-               <span v-if="facilityGroups && facilityGroups.length > 0">
-                 {{ facilityGroups.find((c) => c.id == scope.row.facility_group_id).name }}
+               <span v-if="groupList && groupList.length > 0">
+                 {{ groupList.find((c) => c.id == scope.row.facility_group_id).name }}
                </span>
             </span>
 
@@ -794,7 +794,7 @@ export default {
      if (this.contracts[0] && this.contracts[0].length > 0 && this.facilityGroups) {
         // let groups = this.facilityGroups.map(g => g.id)
         let contracts = this.contracts[0].map(cp => cp)
-        let programContracts = contracts.filter((u) => u.project_id == this.$route.params.programId);
+        let programContracts = contracts.filter((u) => u.project_id == this.$route.params.programId );
         let contractData = programContracts
           .map((t) => t)
           .filter((td) => {
