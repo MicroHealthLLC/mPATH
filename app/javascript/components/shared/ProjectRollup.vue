@@ -1943,7 +1943,9 @@ export default {
       let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return pPrivilege.contracts.includes(s);     
+      if (pPrivilege && pPrivilege.contracts){
+        return pPrivilege.contracts.includes(s);    
+      } else return false          
     },
     showLessToggle() {
       this.showLess = "Show Less";
