@@ -116,7 +116,7 @@
             </el-table-column>
             <el-table-column
               sortable
-	      filterable
+	            filterable
               label="Group"
             >
               <template slot-scope="scope">
@@ -139,8 +139,9 @@
                 </el-option>
               </el-select>        
             <span v-else>
-          {{ facilityGroups.find((c) => c.id == scope.row.facility_group_id).name }}
-
+               <span v-if="facilityGroups && facilityGroups.length > 0">
+                 {{ facilityGroups.find((c) => c.id == scope.row.facility_group_id).name }}
+               </span>
             </span>
 
               </template>
@@ -548,9 +549,9 @@ export default {
   mounted() {
     this.fetchContracts(this.$route.params.programId);
     this.fetchRoles(this.$route.params.programId)
-    if(this.groups && this.groups.length <= 0){
+    // if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
-    }
+    // }
   },
   methods: {
     ...mapMutations([
@@ -791,11 +792,9 @@ export default {
     },
     tableData() {
      if (this.contracts[0] && this.contracts[0].length > 0 && this.facilityGroups) {
-        let groups = this.facilityGroups.map(g => g.id)
+        // let groups = this.facilityGroups.map(g => g.id)
         let contracts = this.contracts[0].map(cp => cp)
-        let programContracts = contracts.filter((u) =>
-            groups.includes(u.facility_group_id)
-        );
+        let programContracts = contracts.filter((u) => u.project_id == this.$route.params.programId);
         let contractData = programContracts
           .map((t) => t)
           .filter((td) => {
@@ -805,7 +804,7 @@ export default {
               this.C_projectGroupFilter.length > 0
             ) {
               let group = this.C_projectGroupFilter.map((t) => t.id);
-              return group.includes(td.facilityGroupId);
+              return group.includes(td.facility_group_id);
             } else return true;
           });
         return contractData;
@@ -857,7 +856,6 @@ export default {
         return this.groups.filter((u) => programGroupIds.includes(u.id));
       } else return [];
     },
-
     C_typeFilter: {
       get() {
         return this.getContractGroupTypes;
