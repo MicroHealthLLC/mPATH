@@ -32,9 +32,9 @@
               <el-button
                 v-if="_isallowed('write')"
                 @click.prevent="addContract"
-                class="bg-primary text-light mb-2"
+                class="bg-success text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Create Contract
+                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Contract(s)
               </el-button>
             </div>
             <div class="col">

@@ -3,7 +3,7 @@ ActiveAdmin.register Facility do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path(is_portfolio: true))]
     if %(show edit).include?(params['action'])
       links << link_to(facility.facility_name, edit_admin_facility_path)
     end

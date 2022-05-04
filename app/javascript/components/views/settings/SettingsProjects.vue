@@ -36,6 +36,14 @@
               >
                 <i class="far fa-plus-circle mr-1"></i> Create Project
               </el-button>
+              <el-button
+                @click.prevent="openProjectGroup"
+                 v-if="_isallowed('write')"   
+                 disabled 
+                class="bg-success text-light mb-2"
+              >
+                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Project(s)
+              </el-button>
             </div>
 
             <div class="col">
@@ -83,6 +91,7 @@
         <el-table
           :key="componentKey"   
           v-if="projectData && projectData.length > 0"
+          :load="log(projectData)"
           :data="
             projectData
               .filter(
@@ -111,7 +120,9 @@
                 v-model="scope.row.facilityName"
                 controls-position="right"
               ></el-input>
-              <span v-else> {{ scope.row.facilityName }}</span>
+              <span v-else> 
+              <span v-if="scope.row.isPortfolio" v-tooltip="`Portfolio Project`"><i class="fas fa-circle mr-2 text-success fs-50"></i></span> 
+                {{ scope.row.facilityName }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -179,7 +190,7 @@
                 type="default" 
                 v-tooltip="`Edit Project Name or Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex "
+                v-if="scope.$index !== rowIndex && !scope.row.isPortfolio"
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button>  
@@ -269,7 +280,19 @@
             </div>
           </form>
         </el-dialog>
-
+       <el-dialog
+          :visible.sync="dialog2Visible"
+          append-to-body
+          center
+          class="contractForm p-0 addProjectDialog"
+        >
+        <span slot="title" class="text-left add-groups-header ">
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Add Portfolio Project(s) </h5>
+        </span>
+          <form accept-charset="UTF-8">
+      
+          </form>
+        </el-dialog>
 
          <el-dialog
           :visible.sync="rolesVisible"
@@ -492,8 +515,9 @@ export default {
   props: ["currentFacility", "facility"],
   data() {
     return {
-      userids: null, 
+      userids: null,     
       dialogVisible: false,
+      dialog2Visible: false,  
       rolesVisible: false,
       isEditingRoles: false, 
       expandRowKeys: [],      
@@ -544,9 +568,7 @@ export default {
      };
   },
  mounted(){
-    if(this.groups && this.groups.length <= 0){
-    this.fetchGroups(this.$route.params.programId);
-    }
+  this.fetchGroups(this.$route.params.programId);
     //Move fetchRole back to row click method
   this.fetchRoles(this.$route.params.programId)
   },
@@ -572,7 +594,7 @@ export default {
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
     },
     log(e){
-      // console.log(e)
+      console.log('tableData:', e)
     },
     editUsers(index, rowData){
         this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
@@ -602,6 +624,9 @@ export default {
     this.isEditingRoles = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
+    },
+    openProjectGroup() {
+      this.dialog2Visible = true;
     },
     cancelCreateGroup() {
       this.dialogVisible = false;
@@ -651,9 +676,13 @@ export default {
       }
       formData.append("facility[status]", "active");
       formData.append("facility[project_ids][]", this.$route.params.programId);
+      formData.append("facility[is_portfolio]", false);
       formData.append("commit", "Create Project");
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
       let method = "POST";
+
+
+      // console.log(formData)
       axios({
         method: method,
         url: url,
@@ -931,6 +960,9 @@ projectUsers(){
 </script>
 
 <style scoped lang="scss">
+.fs-50{
+  font-size: .50rem;
+}
 /deep/.el-popper {
   .select-popper {
     display: none;
