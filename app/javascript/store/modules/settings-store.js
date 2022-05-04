@@ -531,7 +531,7 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_CONTRACTS", res.data.contracts);
-          console.log(res.data.contracts);
+          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
