@@ -778,9 +778,9 @@ export default {
       }
     },
   groupContracts() {
-     if (this.contracts && this.contracts[0] && this.contracts[0].length > 0) {
-          console.log(this.contracts[0])
-          return this.contracts[0];
+     if (this.contracts && this.contracts.length > 0) {
+          console.log(this.contracts)
+          return this.contracts;
       }
     },
     // groupContracts() {

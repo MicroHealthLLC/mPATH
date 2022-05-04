@@ -81,7 +81,7 @@
          v-if="_isallowed('read')"
         >
           <el-table
-            v-if="tableData && tableData.length > 0"  
+            v-if="tableData"  
             :load="log(groupList)"  
             :data="
               tableData
@@ -116,6 +116,7 @@
             </el-table-column>
             <el-table-column
               sortable
+              prop="facility_group_name"
 	            filterable
               label="Group"
             >
@@ -807,7 +808,10 @@ export default {
               return group.includes(td.facility_group_id);
             } else return true;
           });
-        return contractData;
+          if (contractData.length > 0){
+              return contractData;
+          } else return []
+      
       }
     },
   contractUsers(){
