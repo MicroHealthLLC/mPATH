@@ -44,7 +44,8 @@ class Project < SortableRecord
   
   has_many :contracts, dependent: :destroy
   has_many :roles, dependent: :destroy
-  
+  has_many :role_users, dependent: :destroy
+
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false
