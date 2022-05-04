@@ -9,6 +9,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
 
   def create
     @facility = @project.facilities.create(facility_params.merge(creator: current_user))
+    @facility.is_portfolio = false
     render json: {facility: @facility.as_json}
   end
 
@@ -57,7 +58,8 @@ class Api::V1::FacilitiesController < AuthenticatedController
       :phone_number,
       :email,
       :lat,
-      :lng
+      :lng,
+      :is_portfolio
     )
   end
 
