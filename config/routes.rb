@@ -51,6 +51,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :facilities do
+        collection do
+          put :bulk_projects_update
+        end
+      end
+
       resources :contracts do
         resources :notes #, module: :facilities
         resources :issues do

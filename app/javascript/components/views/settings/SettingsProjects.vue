@@ -38,8 +38,7 @@
               </el-button>
               <el-button
                 @click.prevent="openProjectGroup"
-                 v-if="_isallowed('write')"   
-                 disabled 
+                 v-if="_isallowed('write')"                  
                 class="bg-success text-light mb-2"
               >
                 <i class="far fa-plus-circle mr-1"></i> Add Portfolio Project(s)
@@ -280,18 +279,61 @@
             </div>
           </form>
         </el-dialog>
-       <el-dialog
+     <el-dialog
           :visible.sync="dialog2Visible"
           append-to-body
           center
-          class="contractForm p-0 addProjectDialog"
+          class="portfolioNames p-0"
+          v-if="portfolioProjects && portfolioProjects.length > 0"
         >
-        <span slot="title" class="text-left add-groups-header ">
-          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Add Portfolio Project(s) </h5>
-        </span>
-          <form accept-charset="UTF-8">
-      
-          </form>
+          <div>
+            <template>
+              <div class="sticky">
+
+              <div class="row mb-2"> 
+               <div slot="title" class="col-8 pr-0 text-left">
+                <h5 class="text-dark addGroupsHeader">   <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>Select Project(s) to Add </h5>
+              </div>
+                <div class="col text-right">
+                  <el-button
+                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
+                    v-tooltip="`Save Group(s)`"
+                    @click.prevent="importProjectName"
+                    :disabled="programProjects.length <= 0"
+                  >
+                    <i class="fal fa-save"></i>
+                  </el-button>
+                  <el-button
+                    @click.prevent="closeImportProjectBtn"
+                    v-tooltip="`Close`"
+                    class="btn bg-secondary ml-0 text-light modalBtns"
+                  >
+                    <i class="fas fa-ban"></i> 
+                  </el-button>
+                </div>
+              </div>
+              </div>
+            </template>
+            <el-checkbox
+              :indeterminate="isIndeterminate"
+              v-model="checkAll"
+               @change="handleCheckAllChange"
+              ><i>Check all Groups</i></el-checkbox
+            >
+            <div style="margin: 15px 0;"></div>
+            <el-checkbox-group v-model="checkedPortfolioProjects">
+              <div class="row">
+                <div class="col-4">
+                  <el-checkbox
+                    v-for="project in programProjects.filter(g => g.is_portfolio)"
+                    :label="project.id"
+                    :key="project.id"
+                    >{{ project.facility_name }}</el-checkbox
+                  >
+                </div>
+              </div>
+            </el-checkbox-group>
+          </div>
         </el-dialog>
 
          <el-dialog
@@ -515,7 +557,8 @@ export default {
   props: ["currentFacility", "facility"],
   data() {
     return {
-      userids: null,     
+      userids: null,   
+      isIndeterminate: true,  
       dialogVisible: false,
       dialog2Visible: false,  
       rolesVisible: false,
@@ -571,6 +614,7 @@ export default {
   this.fetchGroups(this.$route.params.programId);
     //Move fetchRole back to row click method
   this.fetchRoles(this.$route.params.programId)
+  this.fetchPortfolioProjects(this.$route.params.programId)
   },
   methods: {
     ...mapActions([
@@ -579,11 +623,14 @@ export default {
       "fetchGroups", 
       "addUserToRole", 
       "fetchRoles",
+      "fetchPortfolioProjects",
       "removeUserRole"
       ]),
     ...mapMutations([
       "setProjectGroupFilter", 
       "setGroupFilter", 
+      "SET_CHECKED_PORTFOLIO_PROJECTS",
+      "SET_CHECK_ALL_PROJECTS",
       "SET_ADD_USER_TO_ROLE_STATUS", 
       "SET_PROJECT_ROLE_USERS",
       "SET_ASSIGNED_PROJECT_USERS",
@@ -594,7 +641,7 @@ export default {
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
     },
     log(e){
-      console.log('tableData:', e)
+      // console.log('tableData:', e)
     },
     editUsers(index, rowData){
         this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
@@ -602,6 +649,37 @@ export default {
         this.rowIndex_1 = index;
         this.roleRowId = rowData
         this.isEditingRoles = true;
+    },
+ closeImportProjectBtn() {
+    this.dialog2Visible = false;
+    this.SET_CHECKED_PORTFOLIO_PROJECTS([0]);
+  },
+  handleCheckAllChange() {
+    this.isIndeterminate = false;
+  },
+  importProjectName() {
+      let data = this.checkedPortfolioProjects;
+      if (this.portfolioProjects && this.portfolioProjects.length > 0) {
+        let savedProjects = this.portfolioProjects.map((g) => g.id);
+        for (let i = 0; i <= this.portfolioProjects.length; i++) {
+          if (savedProjects[i] !== undefined) {
+            data.push(savedProjects[i]);
+          }
+        }
+      }
+
+      //CHANGE
+      // let group = {
+      //   groupData: {
+      //     ids: [...new Set(data)],
+      //     programId: this.$route.params.programId,
+      //   },
+      // };
+
+      // this.updateGroup({
+      //   ...group,
+      // });
+      // this.confirmTransfer = false;
     },
     saveRemoveUsers(index, rowData){     
       let user_ids = this.assignedProjectUsers.map(t => t.id);
@@ -647,10 +725,7 @@ export default {
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];        
 		}, 
     addUserRole(index, rows) {
-      if (this.assignedUsers){
-     console.log( this.assignedUsers.map(t => t))
-      }
- 
+      // console.log(this.portfolioProjects)     
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
@@ -764,11 +839,14 @@ export default {
       "facilities",
       "facilityGroups",
       "groups",
+      "getCheckAllProjects",
+      "getCheckedPortfolioProjects",
       "getRoles",
       "getRolesLoaded",
       "getTransferData",
       "getNewGroups",
       "tableData",
+      "portfolioProjects",
       "projectUserRoles",
       "getProjectGroupFilter",
       "getProjectRoleUsers",
@@ -790,7 +868,16 @@ export default {
         this.setGroupFilter(value);
       },
     },
-projectUsers(){
+
+ programProjects() {
+      //Removes current Program  Projects from checkbox options in Add Protfolio Group popup
+    if (this.portfolioProjects && this.portfolioProjects.length > 0) {
+      return this.portfolioProjects.filter(
+        (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
+      );
+    }
+  },
+ projectUsers(){
   if(this.getRoles && this.getRoles.length > 0 ){   
     let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
     if (this.projId)  {
@@ -921,6 +1008,34 @@ projectUsers(){
             })
         );
       }
+    },
+     checkAll: {
+      get() {
+        return this.getCheckAllProjects;
+      },
+      set(value) {
+        // console.log(value);
+        this.SET_CHECK_ALL_PROJECTS(value);
+        if (value == true) {
+          let checkP = this.portfolioProjects.map((p) => p.id);
+          this.SET_CHECKED_PORTFOLIO_PROJECTS(checkP);
+        } else if (value == false) {
+          this.SET_CHECKED_PORTFOLIO_PROJECTS([0]);
+        }
+      },
+    },
+  checkedPortfolioProjects: {
+      get() {
+        return this.getCheckedPortfolioProjects;
+      },
+      set(value) {
+        let checkedCount = value.length;
+
+        // this.SET_CHECK_ALL(checkedCount === this.portfolioGroups.length);
+        this.SET_CHECKED_PORTFOLIO_PROJECTS(value);
+        this.isIndeterminate =
+          checkedCount > 0 && checkedCount < this.portfolioProjects.length;
+      },
     },
   },
    watch: { 
@@ -1057,6 +1172,32 @@ h5 {
  /deep/.el-dialog {
   width: 55%;
   }
+}
+.portfolioNames {
+  /deep/.el-dialog__header {
+    padding-top: 0 !important;
+  }
+  /deep/.el-dialog__headerbtn {
+    display: none;
+  }
+
+  /deep/.el-dialog__body {
+    padding-top: 0 !important;
+  }
+}
+
+div.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  text-align: right;
+  padding-top: 10px;
+  z-index: 10;
+  background: #fff;
+}
+.addGroupsHeader, h5 {
+  line-height: 2.2;
+  word-break: break-word;
 }
 
 .addProjectDialog {
