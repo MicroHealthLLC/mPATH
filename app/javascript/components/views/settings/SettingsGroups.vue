@@ -552,7 +552,7 @@ export default {
     cancelEdits(index, rows) {
       this.rowIndex = null;
       this.rowId = null;
-      console.log(this.facilityGroups)
+      // console.log(this.facilityGroups)
     },
     createNewGroup() {
       let groupData = {
@@ -779,7 +779,7 @@ export default {
     },
   groupContracts() {
      if (this.contracts && this.contracts.length > 0) {
-          console.log(this.contracts)
+          // console.log(this.contracts)
           return this.contracts;
       }
     },

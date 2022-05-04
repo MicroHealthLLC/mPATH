@@ -13,11 +13,14 @@ const settingsStore = {
     transfer_data: [],
     new_groups: [], 
     checked_portfolio_groups: [],
-    checked_groups:[],
+    checked_portfolio_projects:[],
+    checked_groups:[],  
+    checked_projects:[],
     portfolio_users: [],
     contract: {},
     contracts: [],
     check_all: false, 
+    check_all_projects: false, 
     client_types: [],
     pop_days_remaining: null,
     contract_loaded: true,
@@ -34,6 +37,9 @@ const settingsStore = {
     current_pop: [],
     contract_type_filter: 0,
     contract_group_types: {},
+    
+    portfolio_projects: [],
+    portfolio_projects_loaded: true, 
 
     group: {},
     groups: [],
@@ -924,6 +930,27 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    fetchPortfolioProjects({ commit }, id) {
+      commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", false);
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/facilities?program_id=${id}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_PORTFOLIO_PROJECTS", res.data.facilities);  
+          // console.log(res.data.facilities);     
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", true);
+        });
+    },
     updateContract({ commit }, { contract, id }) {
       // Displays loader on front end
       commit("TOGGLE_CONTRACTS_LOADED", false);
@@ -1045,7 +1072,9 @@ const settingsStore = {
     SET_CURRENT_POP: (state, value) => (state.current_pop = value),
     SET_PRIME: (state, value) => (state.prime = value),
     SET_CHECKED_PORTFOLIO_GROUPS: (state, value)=> (state.checked_portfolio_groups = value),  
+    SET_CHECKED_PORTFOLIO_PROJECTS: (state, value)=> (state.checked_portfolio_projects = value),  
     SET_CHECK_ALL: (state, value) => (state.check_all = value), 
+    SET_CHECK_ALL_PROJECTS: (state, value) => (state.check_all_projects = value), 
     SET_CONTRACT_CLASSIFICATIONS: (state, value) =>
       (state.contract_classifications = value),
 
@@ -1057,6 +1086,8 @@ const settingsStore = {
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
     SET_NEW_USER: (state, value) => (state.new_user_id = value),
     SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
+
+    SET_PORTFOLIO_PROJECTS: (state, value) => (state.portfolio_projects = value),
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_PORTFOLIO_USERS: (state, value) => (state.portfolio_users = value),
@@ -1064,7 +1095,11 @@ const settingsStore = {
     SET_PROGRAM_USERS: (state, value) => (state.program_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
+
+    TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
     SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value),
+
+    TOGGLE_PORTFOLIO_PROJECTS_LOADED: (state, loaded) => (state.portfolio_projects_loaded)
   },
 
   getters: {
@@ -1118,12 +1153,14 @@ const settingsStore = {
     getPrime: (state) => state.prime,
     getNewGroups: (state) => state.new_groups,
     getCheckAll: (state) => state.check_all,
+    getCheckAllProjects: (state) => state.check_all_projects,
     getCheckedGroups: (state) => state.checked_groups,
 
     getNewUserId:(state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,
 
     getCheckedPortfolioGroups: (state) => state.checked_portfolio_groups,
+    getCheckedPortfolioProjects: (state) => state.checked_portfolio_projects,
 
     getVehicles: (state) => state.vehicle_filter,
     getVehicleNumbers: (state) => state.vehicle_number,
@@ -1137,6 +1174,10 @@ const settingsStore = {
     getContractGroupTypes: (state) => state.contract_group_types,
     group: (state) => state.group,
     groups: (state) => state.groups,
+
+    portfolioProjects: (state) => state.portfolio_projects,
+    portfolioProjectsLoaded: (state) => state.portfolio_projects_loaded,
+
     getPortfolioUsers: (state) => state.portfolio_users,
     programUsersLoaded: (state) => state.program_users_loaded,
     programUsers: (state) => state.program_users,
