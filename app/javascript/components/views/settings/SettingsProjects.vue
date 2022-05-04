@@ -868,16 +868,7 @@ export default {
         this.setGroupFilter(value);
       },
     },
-
- programProjects() {
-      //Removes current Program  Projects from checkbox options in Add Protfolio Group popup
-    if (this.portfolioProjects && this.portfolioProjects.length > 0) {
-      return this.portfolioProjects.filter(
-        (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
-      );
-    }
-  },
- projectUsers(){
+  projectUsers(){
   if(this.getRoles && this.getRoles.length > 0 ){   
     let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
     if (this.projId)  {
@@ -1008,6 +999,14 @@ export default {
             })
         );
       }
+    },
+    programProjects() {
+      //Removes current Program  Projects from checkbox options in Add Protfolio Group popup
+    if (this.projectData && this.portfolioProjects && this.portfolioProjects.length > 0) {
+      return this.portfolioProjects.filter(
+        (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
+      );
+    }
     },
      checkAll: {
       get() {
