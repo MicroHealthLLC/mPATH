@@ -183,7 +183,6 @@ const settingsStore = {
     //
     removeOrDeleteGroup({ commit }, { g }) {
       commit("TOGGLE_GROUPS_LOADED", false);
-      // Utilize utility function to prep Lesson form data
       let formData = new FormData();
       formData.append("project_id", g.programId)
       axios({
@@ -1006,6 +1005,18 @@ const settingsStore = {
       return new Promise((resolve, reject) => {
         http
           .delete(`${API_BASE_PATH}/contracts/${id}`)
+          .then((res) => {
+            resolve(res.status);
+          }).catch((err) => {
+            console.log(err);
+            reject();
+          });
+      });
+    },
+    deleteProgramProject({ commit }, {programId, id} ) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`${API_BASE_PATH}/programs/${programId}/projects/${id}`)
           .then((res) => {
             resolve(res.status);
           }).catch((err) => {

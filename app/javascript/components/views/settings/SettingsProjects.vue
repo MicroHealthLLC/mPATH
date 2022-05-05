@@ -160,15 +160,7 @@
             </template>
           </el-table-column>
           <el-table-column label="Actions" align="right">
-            <template slot-scope="scope">
-              <el-button
-                type="default"
-                v-tooltip="`Manage User(s)`"
-                @click.prevent="addUserRole(scope.$index, scope.row)"
-                v-if="scope.$index !== rowIndex"
-                class="bg-primary text-light btn-sm">
-                <i class="fas fa-users-medical mr-1"></i>
-              </el-button>
+            <template slot-scope="scope">              
               <el-button
                 type="default"
                 @click="saveEdits(scope.$index, scope.row)"
@@ -187,12 +179,45 @@
                 </el-button>
               <el-button  
                 type="default" 
-                v-tooltip="`Edit Project Name or Change Group`"
+                v-tooltip="`Edit Project`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex && !scope.row.isPortfolio"
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button>  
+                  <el-button
+                    type="default"            
+                    class="bg-light btn-sm"
+                    v-tooltip="'Remove Portfolio Project'"            
+                    @click.prevent="removeProject(scope.$index, scope.row)"
+                    v-if="
+                      scope.$index !== rowIndex &&
+                        scope.row.isPortfolio
+                    "        
+                  >                  
+                    <i class="fa-light fa-circle-minus text-danger"></i>                   
+                  </el-button>
+                  <el-button
+                    type="default" 
+                    v-tooltip="'Delete Program Project'"            
+                    @click.prevent="deleteProject(scope.$index, scope.row)"
+                    v-if="
+                      scope.$index !== rowIndex &&
+                        !scope.row.isPortfolio
+                    "
+                    class="bg-light btn-sm"
+                  >    
+                <i class="far fa-trash-alt text-danger "></i>                           
+                  </el-button>
+               <el-button
+                type="default"
+                v-tooltip="`Manage User(s)`"
+                @click.prevent="addUserRole(scope.$index, scope.row)"
+                v-if="scope.$index !== rowIndex"
+                class="bg-primary text-light btn-sm">
+                <i class="fas fa-users-medical mr-1"></i>
+              </el-button>
+             
               <el-button
                 type="default"
                 v-tooltip="`Go to Project`"
@@ -633,7 +658,9 @@ export default {
       "addUserToRole", 
       "fetchRoles",
       "fetchPortfolioProjects",
-      "removeUserRole"
+      "removeUserRole",
+      "removeOrDeleteProject",
+      "deleteProgramProject"
       ]),
     ...mapMutations([
       "setProjectGroupFilter", 
@@ -667,6 +694,53 @@ export default {
   handleCheckAllChange() {
     this.isIndeterminate = false;
   },
+  removeProject(index, rows) {
+      // let id = [rows.id];
+      let project = {
+        g: {
+          id: rows.id,
+          programId: this.$route.params.programId,
+          },
+       };      
+ 
+      this.$confirm(
+        `Are you sure you want to remove ${rows.facilityName} from your program?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+         alert("We're still working on the remove project functionality :)")
+        // this.removeOrDeleteProject({ ...project });
+      });
+    },
+   deleteProject(index, rows) {
+    //  console.log(rows)
+      let id = rows.id;
+      let programId = this.$route.params.programId;
+      this.$confirm(
+        `Are you sure you want to delete ${rows.facilityName}?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      ).then(() => {
+        this.deleteProgramProject({programId, id}).then((value) => {
+          if (value === 200) {
+           this.fetchCurrentProject(this.$route.params.programId);
+            this.$message({
+              message: `${rows.facilityName} was deleted successfully.`,
+              type: "success",
+              showClose: true,
+            });
+          }
+        });
+      });
+    },
   importProjectName() {
       let data = this.checkedPortfolioProjects;
       if (this.facilities && this.facilities.length > 0) {
