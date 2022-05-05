@@ -20,7 +20,7 @@ task :remove_duplicate_project_users => :environment do
   duplicate_records.each do |project_id, user_id|
     if ProjectUser.where(project_id: project_id, user_id: user_id).count > 1
       pu = ProjectUser.where(project_id: project_id, user_id: user_id).last
-      role_users = pu.user.role_users.where(project_id: self.project_id).map(&:dup)
+      role_users = pu.user.role_users.where(project_id: project_id).map(&:dup)
       
       pu.destroy
       role_users.each do |role_user|
