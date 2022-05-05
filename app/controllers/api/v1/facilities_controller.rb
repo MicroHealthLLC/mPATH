@@ -3,9 +3,6 @@ class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show]
 
   def index
-    # facility_projects = @project.facilities.includes(:facility_group).as_json
-    # render json: {facilities: facility_projects, project: @project}
-  # end
   response_hash = {}
   all_facilities = Facility.all.as_json
   response_hash = {facilities: all_facilities.as_json}
@@ -17,8 +14,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
 end
 
   def create
-    @facility = @project.facilities.create(facility_params.merge(creator: current_user))
-    @facility.is_portfolio = false
+    @facility = @project.facilities.create(facility_params.merge({creator: current_user, is_portfolio: false}))
     render json: {facility: @facility.as_json}
   end
 
@@ -60,6 +56,7 @@ end
   def facility_params
     params.require(:facility).permit(
       :country_code,
+      :project_id,
       :facility_name,
       :address,
       :facility_group_id,
@@ -67,8 +64,7 @@ end
       :phone_number,
       :email,
       :lat,
-      :lng,
-      :is_portfolio
+      :lng
     )
   end
 
