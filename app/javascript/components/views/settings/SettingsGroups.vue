@@ -161,6 +161,7 @@
                   <el-checkbox
                     v-for="group in portfolioGroups.filter(g => g.is_portfolio)"
                     :label="group.id"
+                    class="d-flex"
                     :key="group.id"
                     >{{ group.name }}</el-checkbox
                   >
@@ -679,7 +680,7 @@ export default {
         return this.getCheckAll;
       },
       set(value) {
-        console.log(value);
+        // console.log(value);
         this.SET_CHECK_ALL(value);
         if (value == true) {
           let checkGroups = this.groups.map((group) => group.id);
@@ -758,9 +759,9 @@ export default {
     portfolioGroups() {
       //Removes current Program  Groups from checkbox options in Add Protfolio Group popup
       if (this.groups && this.groups.length > 0) {
-        return this.groups.filter(
-          (pG) => !this.tableData.map((g) => g.id).includes(pG.id)
-        );
+       let filteredGroups = this.groups.filter(
+          (pG) => !this.tableData.map((g) => g.id).includes(pG.id))
+       return _.orderBy(filteredGroups, 'name', 'asc')
       }
     },
     tableData() {

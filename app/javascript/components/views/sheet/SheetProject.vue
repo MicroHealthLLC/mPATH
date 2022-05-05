@@ -37,7 +37,7 @@
                    <div class="col pt-2 text-right">     
                   <button
                     v-if="_isallowed('write')"
-                    v-tooltip="`Save role`"
+                    v-tooltip="`Save`"
                     class="btn btn-primary text-light mt-1 btn-sm apply-btn"
                     :class="{'disabledBtn': !DV_updated }"
                     @click="updateFacility"  

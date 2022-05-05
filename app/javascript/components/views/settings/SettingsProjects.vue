@@ -327,6 +327,7 @@
                   <el-checkbox
                     v-for="project in programProjects.filter(g => g.is_portfolio)"
                     :label="project.id"
+                     class="d-flex"
                     :key="project.id"
                     >{{ project.facility_name }}</el-checkbox
                   >
@@ -1003,9 +1004,10 @@ export default {
     programProjects() {
       //Removes current Program  Projects from checkbox options in Add Protfolio Group popup
     if (this.projectData && this.portfolioProjects && this.portfolioProjects.length > 0) {
-      return this.portfolioProjects.filter(
+      let filteredProjects = this.portfolioProjects.filter(
         (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
-      );
+      )
+        return _.orderBy(filteredProjects, 'facility_name', 'asc')
     }
     },
      checkAll: {
