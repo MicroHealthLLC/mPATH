@@ -1,6 +1,6 @@
-class Api::V1::ProgramSettingsController < AuthenticatedController 
+class Api::V1::ProgramSettings::ContractsController < AuthenticatedController 
   
-  def contracts
+  def index
     authorized_program_ids = current_user.authorized_programs.pluck(:id)
 
     all_contracts = []

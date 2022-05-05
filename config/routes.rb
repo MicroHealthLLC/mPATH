@@ -11,8 +11,9 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
-      
-      get '/program_settings/contracts', to: 'program_settings#contracts'
+      namespace :program_settings do
+        get '/contracts', to: 'contracts#index'
+      end
 
       resources :privileges do
         collection do
