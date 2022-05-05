@@ -299,8 +299,14 @@
                     class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Project(s)`"
                     @click.prevent="importProjectName"
-                    :disabled="programProjects && programProjects.length <= 0"
+                    disabled                    
                   >
+                    <!-- <el-button
+                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
+                    v-tooltip="`Save Project(s)`"
+                    @click.prevent="importProjectName"
+                    :disabled="programProjects && programProjects.length <= 0"
+                  > -->
                     <i class="fal fa-save"></i>
                   </el-button>
                   <el-button
@@ -1010,7 +1016,7 @@ export default {
       let filteredProjects = this.portfolioProjects.filter(
         (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
       )
-        return _.orderBy(filteredProjects, 'facility_name', 'asc')
+      return filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
     }
     },
      checkAll: {
@@ -1053,7 +1059,7 @@ export default {
           });         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
-           this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
         }
       },
