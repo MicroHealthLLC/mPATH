@@ -761,7 +761,7 @@ export default {
       if (this.groups && this.groups.length > 0) {
        let filteredGroups = this.groups.filter(
           (pG) => !this.tableData.map((g) => g.id).includes(pG.id))
-       return _.orderBy(filteredGroups, 'name', 'asc')
+       return filteredGroups.sort((a, b) => a.name.localeCompare(b.name))
       }
     },
     tableData() {

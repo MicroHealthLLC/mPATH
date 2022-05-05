@@ -46,6 +46,7 @@ const settingsStore = {
     group_loaded: true,
     groups_loaded: true,
     group_status: 0,
+    portfolio_projects_status: 0,
 
     is_editting_role: false,
     edit_user_data:[],
@@ -476,9 +477,8 @@ const settingsStore = {
        },
       //*****************ROLES ACTIONS ABOVE*******************
 
-   updateGroup({ commit }, { groupData }) {
-    //WORK IN PROGRESS (1/24/2022):  This action is to push pre-existing groups into facility_groups array
-      commit("TOGGLE_GROUPS_LOADED", false);
+    updateGroup({ commit }, { groupData }) {
+     commit("TOGGLE_GROUPS_LOADED", false);
       // Utilize utility function to prep Lesson form data
       let formData = portfolioGroupData(groupData);
       // console.log(groupData)
@@ -503,6 +503,30 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    updateProjects({ commit }, { groupData }) {
+      commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", false);
+       // Utilize utility function to prep Lesson form data
+       let formData = portfolioGroupData(groupData);
+       axios({
+         method: "PUT",
+         url: `${API_BASE_PATH}/facilities/bulk_projects_update`,
+         data: formData,
+         headers: {
+           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+             .attributes["content"].value,
+         },
+       })
+         .then((res) => {
+           commit("SET_PORTFOLIO_PROJECTS", res.data.facilities);
+           commit("SET_GROUP_STATUS", res.status);
+         })
+         .catch((err) => {
+           console.log(err);
+         })
+         .finally(() => {
+           commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", true);
+         });
+     },
     fetchContract({ commit }, { contractId }) {
       commit("TOGGLE_CONTRACT_LOADED", false);
       // Retrieve contract by id
@@ -1094,6 +1118,7 @@ const settingsStore = {
 
     SET_PROGRAM_USERS: (state, value) => (state.program_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
+    SET_PORTFOLIO_PROJECTS_STATUS: (state, status) => (state.portfolio_projects_status = status),
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
 
     TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
@@ -1182,6 +1207,7 @@ const settingsStore = {
     programUsersLoaded: (state) => state.program_users_loaded,
     programUsers: (state) => state.program_users,
     groupStatus: (state) => state.group_status,
+    portfolioProjectsStatus: (state) => state.portfolio_projects_status,
     groupsLoaded: (state) => state.groups_loaded,
     portfolioUsersLoaded: (state) => state.portfolio_users_loaded,
     addedProgramUsersLoaded: (state) => state.added_program_users_loaded,

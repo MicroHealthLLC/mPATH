@@ -297,10 +297,16 @@
                 <div class="col text-right">
                   <el-button
                     class="confirm-save-group-names btn text-light bg-primary modalBtns"
-                    v-tooltip="`Save Group(s)`"
+                    v-tooltip="`Save Project(s)`"
                     @click.prevent="importProjectName"
-                    :disabled="programProjects.length <= 0"
+                    disabled                    
                   >
+                    <!-- <el-button
+                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
+                    v-tooltip="`Save Project(s)`"
+                    @click.prevent="importProjectName"
+                    :disabled="programProjects && programProjects.length <= 0"
+                  > -->
                     <i class="fal fa-save"></i>
                   </el-button>
                   <el-button
@@ -323,7 +329,7 @@
             <div style="margin: 15px 0;"></div>
             <el-checkbox-group v-model="checkedPortfolioProjects">
               <div class="row">
-                <div class="col-4">
+                <div class="col-4" v-if=" programProjects">
                   <el-checkbox
                     v-for="project in programProjects.filter(g => g.is_portfolio)"
                     :label="project.id"
@@ -563,6 +569,7 @@ export default {
       dialogVisible: false,
       dialog2Visible: false,  
       rolesVisible: false,
+      confirmTransfer: false, 
       isEditingRoles: false, 
       expandRowKeys: [],      
       componentKey: 0,
@@ -622,6 +629,7 @@ export default {
       "fetchFacilities", 
       "fetchCurrentProject", 
       "fetchGroups", 
+      "updateProjects",
       "addUserToRole", 
       "fetchRoles",
       "fetchPortfolioProjects",
@@ -633,6 +641,7 @@ export default {
       "SET_CHECKED_PORTFOLIO_PROJECTS",
       "SET_CHECK_ALL_PROJECTS",
       "SET_ADD_USER_TO_ROLE_STATUS", 
+      "SET_PORTFOLIO_PROJECTS_STATUS",
       "SET_PROJECT_ROLE_USERS",
       "SET_ASSIGNED_PROJECT_USERS",
       "SET_REMOVE_PROJECT_ROLE_STATUS",
@@ -660,27 +669,26 @@ export default {
   },
   importProjectName() {
       let data = this.checkedPortfolioProjects;
-      if (this.portfolioProjects && this.portfolioProjects.length > 0) {
-        let savedProjects = this.portfolioProjects.map((g) => g.id);
-        for (let i = 0; i <= this.portfolioProjects.length; i++) {
+      if (this.facilities && this.facilities.length > 0) {
+        let savedProjects = this.facilities.map((g) => g.id);
+        for (let i = 0; i <= this.facilities.length; i++) {
           if (savedProjects[i] !== undefined) {
             data.push(savedProjects[i]);
           }
         }
       }
 
-      //CHANGE
-      // let group = {
-      //   groupData: {
-      //     ids: [...new Set(data)],
-      //     programId: this.$route.params.programId,
-      //   },
-      // };
-
-      // this.updateGroup({
-      //   ...group,
-      // });
-      // this.confirmTransfer = false;
+      let projects = {
+        groupData: {
+          ids: [...new Set(data)],
+          programId: this.$route.params.programId,
+        },
+      };
+      // console.log(projects)
+      this.updateProjects({
+        ...projects,
+      });
+      this.confirmTransfer = false;
     },
     saveRemoveUsers(index, rowData){     
       let user_ids = this.assignedProjectUsers.map(t => t.id);
@@ -846,6 +854,7 @@ export default {
       "getRolesLoaded",
       "getTransferData",
       "getNewGroups",
+      "portfolioProjectsStatus",
       "tableData",
       "portfolioProjects",
       "projectUserRoles",
@@ -1007,7 +1016,7 @@ export default {
       let filteredProjects = this.portfolioProjects.filter(
         (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
       )
-        return _.orderBy(filteredProjects, 'facility_name', 'asc')
+      return filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
     }
     },
      checkAll: {
@@ -1035,7 +1044,7 @@ export default {
         // this.SET_CHECK_ALL(checkedCount === this.portfolioGroups.length);
         this.SET_CHECKED_PORTFOLIO_PROJECTS(value);
         this.isIndeterminate =
-          checkedCount > 0 && checkedCount < this.portfolioProjects.length;
+          checkedCount > 0 && checkedCount < this.programProjects.length;
       },
     },
   },
@@ -1050,11 +1059,27 @@ export default {
           });         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
-           this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
         }
       },
     },  
+    portfolioProjectsStatus: {
+      handler() {
+        if (this.portfolioProjectsStatus == 200) {
+          this.$message({
+            message: `Saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_PORTFOLIO_PROJECTS_STATUS(0);
+          this.fetchPortfolioProjects(this.$route.params.programId)
+          this.fetchCurrentProject(this.$route.params.programId);
+
+          //  this.newGroupName =
+        }
+      },
+    },
     removeProjectRoleStatus: {
       handler() {
         if (this.removeProjectRoleStatus == 204  || this.removeProjectRoleStatus == 200) {
