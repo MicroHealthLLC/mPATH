@@ -3,15 +3,15 @@ class Api::V1::FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show]
 
   def index
-  response_hash = {}
-  all_facilities = Facility.all.as_json
-  response_hash = {facilities: all_facilities.as_json}
-  if params[:program_id]
-    project = Project.find(params[:program_id])
-    response_hash[:facility_ids] = project.project_groups.pluck(:id)
+    response_hash = {}
+    all_facilities = Facility.all.as_json
+    response_hash = {facilities: all_facilities.as_json}
+    if params[:program_id]
+      project = Project.find(params[:program_id])
+      response_hash[:facility_ids] = project.project_groups.pluck(:id)
+    end
+    render json: response_hash
   end
-  render json: response_hash
-end
 
   def create
     @facility = @project.facilities.create(facility_params.merge({creator: current_user, is_portfolio: false}))
