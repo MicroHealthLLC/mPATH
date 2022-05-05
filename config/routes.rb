@@ -11,22 +11,42 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+
       namespace :program_settings do
         get '/contracts', to: 'contracts#index'
+
+        resources :facility_groups do
+          collection do
+            put :bulk_project_update
+          end
+        end
+  
+        resources :facilities do
+          collection do
+            put :bulk_projects_update
+          end
+        end
+
+        resources :roles do
+          collection do
+            post :remove_role
+          end
+          member do
+            post :add_users
+          end
+        end
+        
+        resources :users do
+          collection do
+            post :add_to_program
+          end
+        end
+
       end
 
       resources :privileges do
         collection do
           get :get_privileges, to: 'privileges#get_privileges'
-        end
-      end
-
-      resources :roles do
-        collection do
-          post :remove_role
-        end
-        member do
-          post :add_users
         end
       end
       

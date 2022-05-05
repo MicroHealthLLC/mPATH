@@ -9,5 +9,10 @@ class AuthenticatedController < ApplicationController
       @current_user ||= User.find_by(email: 'admin@example.com')
     end
   end
-
+  
+  def check_program_admin
+    if !current_user.is_program_admin?(params[:project_id])
+      raise CanCan::AccessDenied      
+    end
+  end
 end
