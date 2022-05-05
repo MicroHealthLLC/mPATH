@@ -373,7 +373,7 @@ const settingsStore = {
            .then((res) => {
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
             commit("SET_NEW_ROLE", res);
-            console.log(res)
+            // console.log(res)
              commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
            })
            .catch((err) => {
@@ -537,7 +537,7 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_CONTRACTS", res.data.contracts[0]);
-          console.log(res.data);
+          // console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
