@@ -1,5 +1,5 @@
-class Api::V1::RolesController < AuthenticatedController
-  before_action :check_permission
+class Api::V1::ProgramSettings::RolesController < AuthenticatedController
+  before_action :check_program_admin
 
   def check_permission
     raise(CanCan::AccessDenied) if !params[:project_id]
