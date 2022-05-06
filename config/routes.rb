@@ -24,6 +24,7 @@ Rails.application.routes.draw do
         resources :facilities do
           collection do
             put :bulk_projects_update
+            get :remove_facility_project
           end
         end
 
