@@ -126,7 +126,7 @@
 
               <div class="row"> 
                <div slot="title" class="col-8 pr-0 text-left">
-                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
+                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Portfolio Group(s) to Add </h5>
               </div>
                 <div class="col text-right">
                   <el-button
