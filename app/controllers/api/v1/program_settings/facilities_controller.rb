@@ -24,6 +24,15 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
     render json: {facility: @facility_project.as_json}
   end
 
+  # Juan's  bulk_projects_update 
+  def bulk_projects_update
+    # logic for adding projects to current program
+    project = Project.find(params[:project_id])
+    facility_ids = ( project.facility_ids + params[:facility_ids].map(&:to_i) ).compact.uniq
+    project.facility_ids = facility_ids if facility_ids.any?
+    render json: Facility.where(id: facility_ids)
+  end
+
   def update
     # @facility_project.update(facility_project_params)
     @facility = Facility.find(params[:id])
