@@ -17,10 +17,10 @@ class Role < ApplicationRecord
     return true
   end
 
-  def destroy
-    raise "Can not destroy default role." if !prevent_default_role_update
-    super
-  end
+  # def destroy
+  #   raise "Can not destroy default role." if !prevent_default_role_update
+  #   super
+  # end
 
   def to_json(options = {})
     hash = self.attributes
