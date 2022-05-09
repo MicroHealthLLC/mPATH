@@ -300,7 +300,7 @@
                         </h5>
                         <span v-if="groupProjects">
                           <ul
-                            class="pl-3"
+                            class="pl-3 mb-0"
                             v-for="(item, i) in groupProjects.filter(
                               (t) => t.facilityGroupId == props.row.id
                             )"
@@ -336,7 +336,7 @@
                           </span>
                         </h5>
                         <span v-if="groupContracts">
-                          <ul class="pl-3">
+                          <ul class="pl-3 mb-0">
                             <li
                               v-for="(item, i) in groupContracts.filter(
                                 (t) => t.facility_group_id == props.row.id

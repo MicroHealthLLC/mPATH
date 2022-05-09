@@ -46,6 +46,8 @@ const settingsStore = {
     program_projects_loaded: true, 
     program_projects_status: 0,
 
+    remove_portfolio_projects_status: 0,
+
     group: {},
     groups: [],
     group_loaded: true,
@@ -209,7 +211,29 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
       },  
-
+    removePortfolioProject({ commit }, { fpId, pId }) {
+        commit("TOGGLE_PROGRAM_PROJECTS", false);
+        axios({
+          method: "DELETE",
+          url: `${API_BASE_PATH}/program_settings/facilities/remove_facility_project?facility_project_id=${fpId}&project_id=${pId}`,
+          // data: formData,
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            commit("SET_PROGRAM_PROJECTS", res.data.facilities);
+            // console.log(res)
+            commit("SET_REMOVE_PORTFOLIO_PROJECTS_STATUS", res.status);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_PROGRAM_PROJECTS_LOADED", true);
+          });
+      },
       //*****************ROLES ACTIONS BELOW*******************
       
       //FETCH ROLES
@@ -253,7 +277,7 @@ const settingsStore = {
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
-           url: `${API_BASE_PATH}/roles?project_id=${role.pId}`,
+           url: `${API_BASE_PATH}/program_settings/roles?project_id=${role.pId}&all=true`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -290,7 +314,7 @@ const settingsStore = {
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "PUT",
-           url: `${API_BASE_PATH}/roles/${role.id}?project_id=${role.pId}`,
+           url: `${API_BASE_PATH}/program_settings/roles/${role.id}?project_id=${role.pId}&all=true`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -319,7 +343,7 @@ const settingsStore = {
            });
        },
       //ADD USER TO ROLE
-     addUserToRole({ commit }, { userData }) {         
+       addUserToRole({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
         // console.log(userData)
         let formData = new FormData();     
@@ -361,13 +385,11 @@ const settingsStore = {
             formData.append("role_users[][contract_id]", userData.contractId)
             }
             });
-
-          }
-       
+          }       
         commit("TOGGLE_NEW_ROLE_LOADED", false);   
          axios({
            method: "POST",
-           url: `${API_BASE_PATH}/roles/${userData.roleId}/add_users?project_id=${userData.programId}`,
+           url: `${API_BASE_PATH}/program_settings/roles/${userData.roleId}/add_users?project_id=${userData.programId}&all=true`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -441,7 +463,7 @@ const settingsStore = {
         commit("TOGGLE_ROLE_REMOVED", false);   
          axios({
            method: "POST",
-           url: `${API_BASE_PATH}/roles/remove_role?project_id=${userData.programId}`,
+           url: `${API_BASE_PATH}/program_settings/roles/remove_role?project_id=${userData.programId}&all=true`,
            data: formData,
            headers: {
              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1159,6 +1181,7 @@ const settingsStore = {
   
     SET_PROGRAM_PROJECTS: (state, value) => (state.program_projects = value),
     SET_PROGRAM_PROJECTS_STATUS: (state, status) => (state.program_projects_status = status),
+    SET_REMOVE_PORTFOLIO_PROJECTS_STATUS: (state, status) => (state.remove_portfolio_projects_status = status),
     TOGGLE_PROGRAM_PROJECTS_LOADED: (state, loaded) => (state.program_projects_loaded),
 
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
@@ -1253,6 +1276,7 @@ const settingsStore = {
     groupStatus: (state) => state.group_status,
     portfolioProjectsStatus: (state) => state.portfolio_projects_status,
     programProjectsStatus: (state) => state.program_projects_status,
+    removePortfolioProjectsStatus: (state) => state.remove_portfolio_projects_status,
     groupsLoaded: (state) => state.groups_loaded,
     portfolioUsersLoaded: (state) => state.portfolio_users_loaded,
     addedProgramUsersLoaded: (state) => state.added_program_users_loaded,

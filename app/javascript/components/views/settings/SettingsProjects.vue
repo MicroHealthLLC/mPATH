@@ -657,7 +657,8 @@ export default {
       "fetchPortfolioProjects",
       "removeUserRole",
       "removeOrDeleteProject",
-      "deleteProgramProject"
+      "deleteProgramProject",
+      "removePortfolioProject"
       ]),
     ...mapMutations([
       "setProjectGroupFilter", 
@@ -669,7 +670,8 @@ export default {
       "SET_PROJECT_ROLE_USERS",
       "SET_ASSIGNED_PROJECT_USERS",
       "SET_REMOVE_PROJECT_ROLE_STATUS",
-      "SET_PROJECT_ROLE_NAMES"      
+      "SET_PROJECT_ROLE_NAMES",
+      "SET_REMOVE_PORTFOLIO_PROJECTS_STATUS"   
       ]),
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
@@ -737,6 +739,22 @@ export default {
           }
         });
       });
+    },
+removeProject(index, rows) {
+    let fpId = rows.facilityProjectId;
+    let pId = this.$route.params.programId; 
+    this.$confirm(
+        `Removing ${rows.facilityName} from your program will also delete all its data.  Are you sure you want to remove this project?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+        this.removePortfolioProject({ fpId, pId  });
+      });
+      
     },
   importProjectName() {
       let data = this.checkedPortfolioProjects;
@@ -939,7 +957,8 @@ export default {
       "filteredFacilityGroups",
       "addUserToRoleStatus",
       "getAssignedProjectUsers",
-      "removeProjectRoleStatus"
+      "removeProjectRoleStatus",
+      "removePortfolioProjectsStatus"
     ]),
     // Filter for Projects Table
     C_groupFilter: {
@@ -1137,6 +1156,21 @@ export default {
         }
       },
     },  
+    removePortfolioProjectsStatus: {
+      handler() {
+        if (this.removePortfolioProjectsStatus == 200) {
+          this.$message({
+            message: `Successfully removed project from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_REMOVE_PORTFOLIO_PROJECTS_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);
+
+          //  this.newGroupName =
+        }
+      },
+    },
     portfolioProjectsStatus: {
       handler() {
         if (this.portfolioProjectsStatus == 200) {
