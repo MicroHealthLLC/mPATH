@@ -1,14 +1,20 @@
-class Api::V1::FacilitiesController < AuthenticatedController
+class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
+  
+  before_action :check_program_admin
   before_action :set_project
   before_action :set_facility, only: [:show]
 
   def index
     response_hash = {}
-    all_facilities = Facility.all.as_json
-    response_hash = {facilities: all_facilities.as_json}
-    if params[:program_id]
-      project = Project.find(params[:program_id])
-      response_hash[:facility_ids] = project.project_groups.pluck(:id)
+    if params[:project_id]
+      project = Project.find(params[:project_id])
+      response_hash[project.id] = {facility_ids: project.facility_ids}
+    end
+    if ActiveModel::Type::Boolean.new.cast(params[:all]) 
+      projects = current_user.projects
+      projects.each do |project|
+        response_hash[project.id] = {facility_ids: project.facility_ids}
+      end
     end
     render json: response_hash
   end
@@ -22,12 +28,24 @@ class Api::V1::FacilitiesController < AuthenticatedController
     render json: {facility: @facility_project.as_json}
   end
 
-    # Juan's  bulk_projects_update 
+  # Juan's  bulk_projects_update 
   def bulk_projects_update
-    #  logic for adding projects to current program
-
+    # logic for adding projects to current program
+    project = Project.find(params[:project_id])
+    facility_ids = ( project.facility_ids + params[:facility_ids].map(&:to_i) ).compact.uniq
+    project.facility_ids = facility_ids if facility_ids.any?
+    render json: Facility.where(id: facility_ids)
   end
-  
+
+  def remove_facility_project
+    @facility_project = FacilityProject.find(params[:facility_project_id])
+    if @facility_project.destroy
+      render json:  @facility_project
+    else
+      render json: {errors: @facility_project.errors.full_messages }, status: 406  
+    end      
+  end
+
   def update
     # @facility_project.update(facility_project_params)
     @facility = Facility.find(params[:id])
