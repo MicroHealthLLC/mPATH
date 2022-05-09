@@ -643,7 +643,7 @@ export default {
     //Move fetchRole back to row click method
   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
-  this.fetchProgramSettingsProjects(this.$route.params.programId)
+  // this.fetchProgramSettingsProjects(this.$route.params.programId)
   },
   methods: {
     ...mapActions([
@@ -760,7 +760,7 @@ removeProject(index, rows) {
   importProjectName() {
       let data = this.checkedPortfolioProjects;
       if (this.facilities && this.facilities.length > 0) {
-        let savedProjects = this.facilities.map((g) => g.id).filter(t => t !== 0);
+        let savedProjects = this.facilities.map((g) => g.id);
         for (let i = 0; i <= this.facilities.length; i++) {
           if (savedProjects[i] !== undefined) {
             data.push(savedProjects[i]);
@@ -770,11 +770,13 @@ removeProject(index, rows) {
 
       let projects = {
         groupData: {
-          ids: [...new Set(data)],
+          ids: [...new Set(data)].filter(t => t !== 0),
           programId: this.$route.params.programId,
         },
       };
-      console.log([...new Set(data)].length)
+      console.log("Without filter: ",[...new Set(data)])
+        console.log("With filter: ", [...new Set(data)].filter(t => t !== 0))
+      
       this.updateProjects({
         ...projects,
       });
