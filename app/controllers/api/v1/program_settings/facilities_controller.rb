@@ -33,6 +33,15 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
     render json: Facility.where(id: facility_ids)
   end
 
+  def remove_facility_project
+    @facility_project = FacilityProject.find(params[:facility_project_id])
+    if @facility_project.destroy
+      render json:  @facility_project
+    else
+      render json: {errors: @facility_project.errors.full_messages }, status: 406  
+    end      
+  end
+
   def update
     # @facility_project.update(facility_project_params)
     @facility = Facility.find(params[:id])

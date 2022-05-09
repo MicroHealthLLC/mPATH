@@ -117,6 +117,7 @@ ActiveAdmin.register Project do
   filter :project_type, label: "Program Type"
   filter :status, as: :select, collection: Project.statuses, label: "State"
   filter :program_admins, as: :string, label: "Program Admins"
+  filter :users, as: :select, label: "Users"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
