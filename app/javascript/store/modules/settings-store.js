@@ -42,9 +42,9 @@ const settingsStore = {
     portfolio_projects_loaded: true, 
     portfolio_projects_status: 0,
 
-    program_projects: [],
-    program_projects_loaded: true, 
-    program_projects_status: 0,
+    program_settings_projects: [],
+    program_settings_projects_loaded: true, 
+    program_settings_projects_status: 0,
 
     remove_portfolio_projects_status: 0,
 
@@ -529,12 +529,12 @@ const settingsStore = {
         });
     },
     updateProjects({ commit }, { groupData }) {
-      commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", false);
+      commit("TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED", false);
        // Utilize utility function to prep Lesson form data
-       let formData = portfolioGroupData(groupData);
+       let formData = portfolioProjectsData(groupData);
        axios({
          method: "PUT",
-         url: `${API_BASE_PATH}/facilities/bulk_projects_update`,
+         url: `${API_BASE_PATH}/program_settings/facilities/bulk_projects_update?project_id=${groupData.programId}`,
          data: formData,
          headers: {
            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -542,15 +542,15 @@ const settingsStore = {
          },
        })
          .then((res) => {
-           commit("SET_PORTFOLIO_PROJECTS", res.data.facilities);
+           commit("SET_PROGRAM_SETTINGS_PROJECTS", res.data.facilities);
            console.log(res.data)
-           commit("SET_PORTFOLIO_PROJECTS_STATUS", res.status);
+           commit("SET_PROGRAM_SETTINGS_PROJECTS_STATUS", res.status);
          })
          .catch((err) => {
            console.log(err);
          })
          .finally(() => {
-           commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", true);
+           commit("TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED", true);
          });
      },
     fetchContract({ commit }, { contractId }) {
@@ -1001,25 +1001,25 @@ const settingsStore = {
           commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", true);
         });
     },
-    fetchProgramProjects({ commit }, id) {
-      commit("TOGGLE_PROGRAM_PROJECTS_LOADED", false);
+    fetchProgramSettingsProjects({ commit }, id) {
+      commit("TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/facilities?project_id=${id}&all=true`,
+        url: `${API_BASE_PATH}/program_settings/facilities?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_PROGRAM_PROJECTS", res.data.facilities);  
+          commit("SET_PROGRAM_SETTINGS_PROJECTS", res.data.facilities);  
           // console.log(res.data.facilities);     
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_PROGRAM_PROJECTS_LOADED", true);
+          commit("TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED", true);
         });
     },
     updateContract({ commit }, { contract, id }) {
@@ -1179,10 +1179,10 @@ const settingsStore = {
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) => (state.portfolio_projects_status = status),
   
-    SET_PROGRAM_PROJECTS: (state, value) => (state.program_projects = value),
-    SET_PROGRAM_PROJECTS_STATUS: (state, status) => (state.program_projects_status = status),
+    SET_PROGRAM_SETTINGS_PROJECTS: (state, value) => (state.program_settings_projects = value),
+    SET_PROGRAM_SETTINGS_PROJECTS_STATUS: (state, status) => (state.program_settings_projects_status = status),
     SET_REMOVE_PORTFOLIO_PROJECTS_STATUS: (state, status) => (state.remove_portfolio_projects_status = status),
-    TOGGLE_PROGRAM_PROJECTS_LOADED: (state, loaded) => (state.program_projects_loaded),
+    TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED: (state, loaded) => (state.program_settings_projects_loaded = loaded),
 
     TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
     TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
@@ -1264,8 +1264,9 @@ const settingsStore = {
     group: (state) => state.group,
     groups: (state) => state.groups,
 
-    programProjects: (state) => state.program_projects,
-    programProjectsLoaded: (state) => state.program_projects_loaded,
+    programSettingsProjects: (state) => state.program_settings_projects,
+    programProjectsSettingsLoaded: (state) => state.program_settings_projects_loaded,
+    bulkProjectAddStatus: (state) => state.program_settings_projects_status,
 
     portfolioProjects: (state) => state.portfolio_projects,
     portfolioProjectsLoaded: (state) => state.portfolio_projects_loaded,
@@ -1399,6 +1400,15 @@ const portfolioGroupData = (groupData) => {
     formData.append("facility_group_ids[]",ids);
   });
   formData.append("program_id", groupData.programId);
+  return formData;
+};
+
+const portfolioProjectsData = (groupData) => {
+  let formData = new FormData();
+  groupData.ids.forEach((ids) => {
+    formData.append("facility_ids[]", ids);
+  });
+  formData.append("project_id", groupData.programId);
   return formData;
 };
 

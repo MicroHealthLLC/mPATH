@@ -643,7 +643,7 @@ export default {
     //Move fetchRole back to row click method
   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
-  this.fetchProgramProjects(this.$route.params.programId)
+  this.fetchProgramSettingsProjects(this.$route.params.programId)
   },
   methods: {
     ...mapActions([
@@ -653,7 +653,7 @@ export default {
       "updateProjects",
       "addUserToRole", 
       "fetchRoles",
-      "fetchProgramProjects",
+      "fetchProgramSettingsProjects",
       "fetchPortfolioProjects",
       "removeUserRole",
       "removeOrDeleteProject",
@@ -671,7 +671,8 @@ export default {
       "SET_ASSIGNED_PROJECT_USERS",
       "SET_REMOVE_PROJECT_ROLE_STATUS",
       "SET_PROJECT_ROLE_NAMES",
-      "SET_REMOVE_PORTFOLIO_PROJECTS_STATUS"   
+      "SET_REMOVE_PORTFOLIO_PROJECTS_STATUS",
+      "SET_PROGRAM_SETTINGS_PROJECTS_STATUS"  
       ]),
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
@@ -759,7 +760,7 @@ removeProject(index, rows) {
   importProjectName() {
       let data = this.checkedPortfolioProjects;
       if (this.facilities && this.facilities.length > 0) {
-        let savedProjects = this.facilities.map((g) => g.id);
+        let savedProjects = this.facilities.map((g) => g.id).filter(t => t !== 0);
         for (let i = 0; i <= this.facilities.length; i++) {
           if (savedProjects[i] !== undefined) {
             data.push(savedProjects[i]);
@@ -823,9 +824,6 @@ removeProject(index, rows) {
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];        
 		}, 
     addUserRole(index, rows) {
-      if(this.portfolioProjects){
-        console.log(this.portfolioProjects.filter(t => t && t.is_portfolio == false )) 
-      }  
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
@@ -948,6 +946,7 @@ removeProject(index, rows) {
       "portfolioProjectsStatus",
       "tableData",
       "portfolioProjects",
+      "programSettingsProjects",
       "projectUserRoles",
       "getProjectGroupFilter",
       "getProjectRoleUsers",
@@ -958,7 +957,8 @@ removeProject(index, rows) {
       "addUserToRoleStatus",
       "getAssignedProjectUsers",
       "removeProjectRoleStatus",
-      "removePortfolioProjectsStatus"
+      "removePortfolioProjectsStatus",
+      "bulkProjectAddStatus"
     ]),
     // Filter for Projects Table
     C_groupFilter: {
@@ -1156,6 +1156,21 @@ removeProject(index, rows) {
         }
       },
     },  
+    bulkProjectAddStatus: {
+     handler() {
+        if (this.bulkProjectAddStatus == 200) {
+          this.$message({
+            message: `Successfully added projects from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_PROGRAM_SETTINGS_PROJECTS_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);
+
+          //  this.newGroupName =
+        }
+      },
+    },
     removePortfolioProjectsStatus: {
       handler() {
         if (this.removePortfolioProjectsStatus == 200) {
@@ -1171,7 +1186,7 @@ removeProject(index, rows) {
         }
       },
     },
-    portfolioProjectsStatus: {
+  portfolioProjectsStatus: {
       handler() {
         if (this.portfolioProjectsStatus == 200) {
           this.$message({
