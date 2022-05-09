@@ -6,11 +6,15 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
 
   def index
     response_hash = {}
-    all_facilities = Facility.all.as_json
-    response_hash = {facilities: all_facilities.as_json}
-    if params[:program_id]
-      project = Project.find(params[:program_id])
-      response_hash[:facility_ids] = project.facility_ids
+    if params[:project_id]
+      project = Project.find(params[:project_id])
+      response_hash[project.id] = {facility_ids: project.facility_ids}
+    end
+    if ActiveModel::Type::Boolean.new.cast(params[:all]) 
+      projects = current_user.projects
+      projects.each do |project|
+        response_hash[project.id] = {facility_ids: project.facility_ids}
+      end
     end
     render json: response_hash
   end
