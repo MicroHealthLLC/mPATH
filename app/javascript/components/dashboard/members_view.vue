@@ -43,7 +43,7 @@
          <table class="table table-sm table-bordered" id="taskList1"  ref="table">
           <thead style="min-height:50px">
               <tr class="thead" style="background-color:#ededed;">
-              <th class="sort-th firstCol" @click="sort('id')"># 
+              <!-- <th class="sort-th firstCol" @click="sort('id')"># 
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'id'">    
                 <i class="fas fa-sort"></i></span>            
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'id'">                
@@ -54,7 +54,7 @@
                 <i class="fas fa-sort-down"></i></span>  
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'id'">                
                 <i class="fas fa-sort-down"></i></span>                
-             </th>
+             </th> -->
               <th class="sort-th" @click="sort('fullName')">Name 
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'fullName'">    
                 <i class="fas fa-sort"></i></span>            
@@ -120,7 +120,7 @@
           </thead>
           <tbody>
             <tr v-for="(user, index) in sortedMembers" :key="index">
-              <td class="text-center">{{user.id}}</td>
+              <!-- <td class="text-center">{{user.id}}</td> -->
               <td>{{user.fullName}}</td>
               <!-- <td>{{user.lastName}}</td> -->
               <td>{{user.title}}</td>

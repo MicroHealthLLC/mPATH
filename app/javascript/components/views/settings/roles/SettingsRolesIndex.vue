@@ -1326,6 +1326,9 @@ export default {
  },
  closeUserRoles() {
       this.rolesVisible = false;
+      this.isEditingRoles = false;
+      this.roleRowId = null;
+      this.rowIndex_1 = null;
       this.SET_PROJECT_ROLE_USERS([])
   },
   // cancelCreateRole() {

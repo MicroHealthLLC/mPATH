@@ -317,21 +317,16 @@
 
               <div class="row mb-2"> 
                <div slot="title" class="col-8 pr-0 text-left">
-                <h5 class="text-dark addGroupsHeader">   <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>Select Project(s) to Add </h5>
+                <h5 class="text-dark addGroupsHeader">   <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>Select Portfolio Project(s) to Add </h5>
               </div>
                 <div class="col text-right">
-                  <el-button
-                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
-                    v-tooltip="`Save Project(s)`"
-                    @click.prevent="importProjectName"
-                    disabled                    
-                  >
-                    <!-- <el-button
+          
+                    <el-button
                     class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Project(s)`"
                     @click.prevent="importProjectName"
                     :disabled="programProjects && programProjects.length <= 0"
-                  > -->
+                  >
                     <i class="fal fa-save"></i>
                   </el-button>
                   <el-button
@@ -648,6 +643,7 @@ export default {
     //Move fetchRole back to row click method
   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
+  // this.fetchProgramSettingsProjects(this.$route.params.programId)
   },
   methods: {
     ...mapActions([
@@ -657,10 +653,12 @@ export default {
       "updateProjects",
       "addUserToRole", 
       "fetchRoles",
+      "fetchProgramSettingsProjects",
       "fetchPortfolioProjects",
       "removeUserRole",
       "removeOrDeleteProject",
-      "deleteProgramProject"
+      "deleteProgramProject",
+      "removePortfolioProject"
       ]),
     ...mapMutations([
       "setProjectGroupFilter", 
@@ -672,7 +670,9 @@ export default {
       "SET_PROJECT_ROLE_USERS",
       "SET_ASSIGNED_PROJECT_USERS",
       "SET_REMOVE_PROJECT_ROLE_STATUS",
-      "SET_PROJECT_ROLE_NAMES"      
+      "SET_PROJECT_ROLE_NAMES",
+      "SET_REMOVE_PORTFOLIO_PROJECTS_STATUS",
+      "SET_PROGRAM_SETTINGS_PROJECTS_STATUS"  
       ]),
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
@@ -741,6 +741,22 @@ export default {
         });
       });
     },
+removeProject(index, rows) {
+    let fpId = rows.facilityProjectId;
+    let pId = this.$route.params.programId; 
+    this.$confirm(
+        `Removing ${rows.facilityName} from your program will also delete all its data.  Are you sure you want to remove this project?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+        this.removePortfolioProject({ fpId, pId  });
+      });
+      
+    },
   importProjectName() {
       let data = this.checkedPortfolioProjects;
       if (this.facilities && this.facilities.length > 0) {
@@ -754,11 +770,13 @@ export default {
 
       let projects = {
         groupData: {
-          ids: [...new Set(data)],
+          ids: [...new Set(data)].filter(t => t !== 0),
           programId: this.$route.params.programId,
         },
       };
-      // console.log(projects)
+      console.log("Without filter: ",[...new Set(data)])
+        console.log("With filter: ", [...new Set(data)].filter(t => t !== 0))
+      
       this.updateProjects({
         ...projects,
       });
@@ -808,7 +826,6 @@ export default {
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];        
 		}, 
     addUserRole(index, rows) {
-      // console.log(this.portfolioProjects)     
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
@@ -931,6 +948,7 @@ export default {
       "portfolioProjectsStatus",
       "tableData",
       "portfolioProjects",
+      "programSettingsProjects",
       "projectUserRoles",
       "getProjectGroupFilter",
       "getProjectRoleUsers",
@@ -940,7 +958,9 @@ export default {
       "filteredFacilityGroups",
       "addUserToRoleStatus",
       "getAssignedProjectUsers",
-      "removeProjectRoleStatus"
+      "removeProjectRoleStatus",
+      "removePortfolioProjectsStatus",
+      "bulkProjectAddStatus"
     ]),
     // Filter for Projects Table
     C_groupFilter: {
@@ -1138,7 +1158,37 @@ export default {
         }
       },
     },  
-    portfolioProjectsStatus: {
+    bulkProjectAddStatus: {
+     handler() {
+        if (this.bulkProjectAddStatus == 200) {
+          this.$message({
+            message: `Successfully added projects from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_PROGRAM_SETTINGS_PROJECTS_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);
+
+          //  this.newGroupName =
+        }
+      },
+    },
+    removePortfolioProjectsStatus: {
+      handler() {
+        if (this.removePortfolioProjectsStatus == 200) {
+          this.$message({
+            message: `Successfully removed project from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_REMOVE_PORTFOLIO_PROJECTS_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);
+
+          //  this.newGroupName =
+        }
+      },
+    },
+  portfolioProjectsStatus: {
       handler() {
         if (this.portfolioProjectsStatus == 200) {
           this.$message({

@@ -126,7 +126,7 @@
 
               <div class="row"> 
                <div slot="title" class="col-8 pr-0 text-left">
-                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
+                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Portfolio Group(s) to Add </h5>
               </div>
                 <div class="col text-right">
                   <el-button
@@ -300,7 +300,7 @@
                         </h5>
                         <span v-if="groupProjects">
                           <ul
-                            class="pl-3"
+                            class="pl-3 mb-0"
                             v-for="(item, i) in groupProjects.filter(
                               (t) => t.facilityGroupId == props.row.id
                             )"
@@ -336,7 +336,7 @@
                           </span>
                         </h5>
                         <span v-if="groupContracts">
-                          <ul class="pl-3">
+                          <ul class="pl-3 mb-0">
                             <li
                               v-for="(item, i) in groupContracts.filter(
                                 (t) => t.facility_group_id == props.row.id
