@@ -40,13 +40,17 @@ const settingsStore = {
     
     portfolio_projects: [],
     portfolio_projects_loaded: true, 
+    portfolio_projects_status: 0,
+
+    program_projects: [],
+    program_projects_loaded: true, 
+    program_projects_status: 0,
 
     group: {},
     groups: [],
     group_loaded: true,
     groups_loaded: true,
     group_status: 0,
-    portfolio_projects_status: 0,
 
     is_editting_role: false,
     edit_user_data:[],
@@ -214,7 +218,7 @@ const settingsStore = {
      
         axios({
           method: "GET",
-          url: `${API_BASE_PATH}/roles?project_id=${id}`,
+          url: `${API_BASE_PATH}/program_settings/roles?project_id=${id}&all=true`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -517,7 +521,8 @@ const settingsStore = {
        })
          .then((res) => {
            commit("SET_PORTFOLIO_PROJECTS", res.data.facilities);
-           commit("SET_GROUP_STATUS", res.status);
+           console.log(res.data)
+           commit("SET_PORTFOLIO_PROJECTS_STATUS", res.status);
          })
          .catch((err) => {
            console.log(err);
@@ -936,7 +941,7 @@ const settingsStore = {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/facility_groups?program_id=${id}`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups?project_id=${id}&all=true`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -972,6 +977,27 @@ const settingsStore = {
         })
         .finally(() => {
           commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", true);
+        });
+    },
+    fetchProgramProjects({ commit }, id) {
+      commit("TOGGLE_PROGRAM_PROJECTS_LOADED", false);
+      axios({
+        method: "GET",
+        url: `${API_BASE_PATH}/program_settings/facilities?project_id=${id}&all=true`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_PROGRAM_PROJECTS", res.data.facilities);  
+          // console.log(res.data.facilities);     
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_PROGRAM_PROJECTS_LOADED", true);
         });
     },
     updateContract({ commit }, { contract, id }) {
@@ -1122,7 +1148,7 @@ const settingsStore = {
     SET_NEW_USER: (state, value) => (state.new_user_id = value),
     SET_DAYS_REMAINING: (state, value) => (state.pop_days_remaining = value),
 
-    SET_PORTFOLIO_PROJECTS: (state, value) => (state.portfolio_projects = value),
+    SET_PORTFOLIO_PROJECTS: (state, value) => (state.portfolio_projects = value),   
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_PORTFOLIO_USERS: (state, value) => (state.portfolio_users = value),
@@ -1130,12 +1156,16 @@ const settingsStore = {
     SET_PROGRAM_USERS: (state, value) => (state.program_users = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) => (state.portfolio_projects_status = status),
-    TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
+  
+    SET_PROGRAM_PROJECTS: (state, value) => (state.program_projects = value),
+    SET_PROGRAM_PROJECTS_STATUS: (state, status) => (state.program_projects_status = status),
+    TOGGLE_PROGRAM_PROJECTS_LOADED: (state, loaded) => (state.program_projects_loaded),
 
+    TOGGLE_GROUP_LOADED: (state, loaded) => (state.group_loaded = loaded),
     TOGGLE_GROUPS_LOADED: (state, loaded) => (state.groups_loaded = loaded),
     SET_CHECKED_GROUPS: (state, value) => (state.checked_groups = value),
-
-    TOGGLE_PORTFOLIO_PROJECTS_LOADED: (state, loaded) => (state.portfolio_projects_loaded)
+    TOGGLE_PORTFOLIO_PROJECTS_LOADED: (state, loaded) => (state.portfolio_projects_loaded),
+ 
   },
 
   getters: {
@@ -1211,6 +1241,9 @@ const settingsStore = {
     group: (state) => state.group,
     groups: (state) => state.groups,
 
+    programProjects: (state) => state.program_projects,
+    programProjectsLoaded: (state) => state.program_projects_loaded,
+
     portfolioProjects: (state) => state.portfolio_projects,
     portfolioProjectsLoaded: (state) => state.portfolio_projects_loaded,
 
@@ -1219,6 +1252,7 @@ const settingsStore = {
     programUsers: (state) => state.program_users,
     groupStatus: (state) => state.group_status,
     portfolioProjectsStatus: (state) => state.portfolio_projects_status,
+    programProjectsStatus: (state) => state.program_projects_status,
     groupsLoaded: (state) => state.groups_loaded,
     portfolioUsersLoaded: (state) => state.portfolio_users_loaded,
     addedProgramUsersLoaded: (state) => state.added_program_users_loaded,

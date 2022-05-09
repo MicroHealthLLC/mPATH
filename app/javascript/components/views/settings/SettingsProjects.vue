@@ -320,18 +320,13 @@
                 <h5 class="text-dark addGroupsHeader">   <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>Select Portfolio Project(s) to Add </h5>
               </div>
                 <div class="col text-right">
-                  <el-button
-                    class="confirm-save-group-names btn text-light bg-primary modalBtns"
-                    v-tooltip="`Save Project(s)`"
-                    @click.prevent="importProjectName"
-                    disabled                    
-                  >
-                    <!-- <el-button
+          
+                    <el-button
                     class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Project(s)`"
                     @click.prevent="importProjectName"
                     :disabled="programProjects && programProjects.length <= 0"
-                  > -->
+                  >
                     <i class="fal fa-save"></i>
                   </el-button>
                   <el-button
@@ -648,6 +643,7 @@ export default {
     //Move fetchRole back to row click method
   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
+  this.fetchProgramProjects(this.$route.params.programId)
   },
   methods: {
     ...mapActions([
@@ -657,6 +653,7 @@ export default {
       "updateProjects",
       "addUserToRole", 
       "fetchRoles",
+      "fetchProgramProjects",
       "fetchPortfolioProjects",
       "removeUserRole",
       "removeOrDeleteProject",
@@ -758,7 +755,7 @@ export default {
           programId: this.$route.params.programId,
         },
       };
-      // console.log(projects)
+      console.log([...new Set(data)].length)
       this.updateProjects({
         ...projects,
       });
@@ -808,7 +805,9 @@ export default {
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];        
 		}, 
     addUserRole(index, rows) {
-      // console.log(this.portfolioProjects)     
+      if(this.portfolioProjects){
+        console.log(this.portfolioProjects.filter(t => t && t.is_portfolio == false )) 
+      }  
       this.rolesVisible = true
       this.projId = rows.facilityProjectId
       this.projectRowData = rows
