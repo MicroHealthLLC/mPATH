@@ -4,7 +4,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
 
   def index
     response_hash = {}
-    all_facilities = Facility.all.as_json
+    all_facilities = Facility.includes(:facility_group).all.as_json
     response_hash = {facilities: all_facilities.as_json}
     if params[:program_id]
       project = Project.find(params[:program_id])
@@ -22,12 +22,6 @@ class Api::V1::FacilitiesController < AuthenticatedController
     render json: {facility: @facility_project.as_json}
   end
 
-    # Juan's  bulk_projects_update 
-  def bulk_projects_update
-    #  logic for adding projects to current program
-
-  end
-  
   def update
     # @facility_project.update(facility_project_params)
     @facility = Facility.find(params[:id])
