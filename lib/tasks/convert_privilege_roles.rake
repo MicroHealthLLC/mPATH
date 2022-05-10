@@ -174,6 +174,7 @@ task :convert_privilege_roles => :environment do
       end
 
     end
+    RoleUser.import(new_role_users)
   end
   puts "----- Assigning Roles using Program privileges -----"
   assign_roles_using_program_privileges
