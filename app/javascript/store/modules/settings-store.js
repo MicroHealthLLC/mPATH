@@ -991,8 +991,9 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_PORTFOLIO_PROJECTS", res.data.facilities);  
-          // console.log(res.data.facilities);     
+          commit("SET_PORTFOLIO_PROJECTS",res.data.facilities.filter(t => t.status == "active"));  
+          // console.log(res.data.facilities.filter(t => t.status == "active").length);   
+          // console.log(res.data.facilities.length);     
         })
         .catch((err) => {
           console.log(err);
