@@ -43,6 +43,20 @@ body {
     color: #007bff !important;
   }
 }
+
+.portfolio-contracts-module {
+  
+  .el-table {
+    font-size: 13px !important;
+    th.el-table__cell>.cell {
+      word-break: break-word;
+      font-size: .88rem;
+    }
+    th {
+      color: #383838;
+    }
+  }    
+}
 .portfolioResultsBtn {
   font-size: .9rem;
 }

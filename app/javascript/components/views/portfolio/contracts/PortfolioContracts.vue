@@ -31,7 +31,7 @@
     
     <el-tab-pane>
      <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
-    <div style="height:80vh">
+    <div style="height:80vh" class="portfolio-contracts-module">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
     :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
