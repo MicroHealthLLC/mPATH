@@ -2166,6 +2166,7 @@ td.col-issue_type, td.col-issue_severity {
 .portfolioViewerBtn {
   background-color: #DD9036;
   border-radius: 3px;
+  text-decoration-line: none !important;
   color: white !important;
   padding: 3px 6px;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
@@ -2177,6 +2178,7 @@ td.col-issue_type, td.col-issue_severity {
 .portfolioContractsBtn {
   border-radius: 3px;
   color: black !important;
+  text-decoration-line: none !important;
   padding: 3px 6px;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   transition: all .2s ease-in;

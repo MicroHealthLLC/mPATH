@@ -32,9 +32,9 @@
               <el-button
                 v-if="_isallowed('write')"
                 @click.prevent="addContract"
-                class="bg-primary text-light mb-2"
+                class="bg-success text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Create Contract
+                <i class="far fa-plus-circle mr-1"></i> Add Existing Contract(s)
               </el-button>
             </div>
             <div class="col">
@@ -751,13 +751,14 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
-     if(this.contracts && this.contracts.length > 0){
-      console.log(this.contracts)
-    }
-      this.dialogVisible = true;
-      this.C_newContractGroupFilter = null;
-      this.contractNameText = "";
-      this.contractNicknameText = "";
+      alert("Add Contracts functionality under development")
+    //  if(this.contracts && this.contracts.length > 0){
+    //   console.log(this.contracts)
+    // }
+    //   this.dialogVisible = true;
+    //   this.C_newContractGroupFilter = null;
+    //   this.contractNameText = "";
+    //   this.contractNicknameText = "";
     },
     openUserPrivileges(index, rows) {
       this.openUserPrivilegesDialog = true;

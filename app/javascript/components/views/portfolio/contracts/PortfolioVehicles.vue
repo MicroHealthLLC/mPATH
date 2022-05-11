@@ -9,18 +9,18 @@
     style="width: 95%">
    <el-table-column
       fixed
-      label="Name"
+      label="Vehicle"
       width="175"
       prop="name">
     </el-table-column>
     <el-table-column
       label="Vehicle Full Name"
-      width="250"
+      width="300"
       prop="fullname">
     </el-table-column>
       <el-table-column
       label="SINS or Subcategories"      
-      width="200"
+      width="250"
       prop="sins">
     </el-table-column>
      <el-table-column
@@ -46,22 +46,22 @@
 
     <el-table-column
       label="Base Period Start"
-       width="165"
+      width="100"
       prop="startdate">
     </el-table-column>
        <el-table-column
      label="Base Period End"
-       width="160"
+      width="100"
       prop="startdate">
     </el-table-column>
      <el-table-column
       label="Option Period Start"
-       width="165"
+      width="100"
       prop="startdate">
     </el-table-column>
        <el-table-column
-     label="Option Period End"
-       width="160"
+      label="Option Period End"
+      width="100"
       prop="startdate">
     </el-table-column>
     <el-table-column

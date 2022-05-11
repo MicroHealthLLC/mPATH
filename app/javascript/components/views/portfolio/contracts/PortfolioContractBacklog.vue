@@ -9,60 +9,60 @@
     style="width: 95%">
      <el-table-column
       fixed
-      label="Charge Code"
-      width="125"
+      label="Code"
+      width="55"
       prop="code">
     </el-table-column>
    <el-table-column
       fixed
-      label="Name"
-      width="175"
+      label="Project Name"
+      width="325"
       prop="name">
     </el-table-column>
    
      <el-table-column
       label="Contract Start Date"
-       width="165"
+       width="100"
       prop="startdate">
-    </el-table-column>
+     </el-table-column>
        <el-table-column
-     label="Contract End Date"
-       width="160"
+      label="Contract End Date"
+      width="100"
       prop="startdate">
     </el-table-column>
      <el-table-column
       label="Total Contract Value"
-       width="200"
+       width="115"
       prop="value">
     </el-table-column>
      <el-table-column
       label="Total Funded Value"
-       width="200"
+       width="115"
       prop="value">
     </el-table-column>
      <el-table-column
       label="Billings to Date"
-       width="200"
+       width="115"
       prop="value">
     </el-table-column>
      <el-table-column
       label="% Completed"
-      width="125"
+      width="115"
       prop="percent">
     </el-table-column>
          <el-table-column
       label="Funded Remaining"
-       width="200"
+       width="115"
       prop="value">
     </el-table-column>
       <el-table-column
       label="Total Backlog (Sum of A & B)"
-       width="200"
+       width="115"
       prop="value">
     </el-table-column>
        <el-table-column
       label="Notes/Questions"
-       width="350"
+       width="375"
       prop="">
     </el-table-column>
     <el-table-column

@@ -9,14 +9,14 @@
     style="width: 95%">
      <el-table-column
       fixed
-      label="Charge Code"
-      width="125"
+      label="Code"
+      width="55"
       prop="code">
     </el-table-column>
    <el-table-column
       fixed
       label="Project Name"
-      width="200"
+      width="325"
       prop="name">
     </el-table-column>
    

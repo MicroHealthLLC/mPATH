@@ -21,9 +21,16 @@
       </span>
     </div>
 
-  <el-tabs :tab-position="tabPosition" type="card"  class="bottomTabs">
+  <el-tabs :tab-position="tabPosition" type="border-card"  class="bottomTabs"  @tab-click="handleClick">
+    <el-tab-pane label="">
+     <span slot="label"> <i class="fa-solid fa-car mr-1" :class="[ pane0? 'mh-green-text' : 'txt-secondary']"></i>
+     VEHICLES
+     </span>
+      <PortfolioVehicles/>
+    </el-tab-pane>
+    
     <el-tab-pane>
-          <span slot="label"> <i class="far fa-file-contract mr-1 mh-orange-text"></i>CONTRACT DETAILS</span>
+     <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
     <div style="height:80vh">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
@@ -32,6 +39,7 @@
     height="800"
     style="width: 95%">
     <el-table-column
+      fixed
       label="Code"
       width="55"
       prop="code">
@@ -78,7 +86,7 @@
     </el-table-column>
     <el-table-column
       label="Contract Type"
-      width="70"
+      width="75"
       prop="type">
     </el-table-column>
       <el-table-column
@@ -149,40 +157,26 @@
       </div>
       </div>
     </el-tab-pane>
-    <el-tab-pane label="">
-     <span slot="label"> <i class="fa-solid fa-car mr-1 mh-green-text"></i>VEHICLES</span>
-      <PortfolioVehicles/>
-    </el-tab-pane>
+ 
     <el-tab-pane>
-    <span slot="label"> <i class="fa-solid fa-book mr-1 mh-blue-text"></i>   CONTRACT BACKLOG</span> 
+    <span slot="label"> <i class="fa-solid fa-book mr-1" :class="[ pane2? 'mh-blue-text' : 'txt-secondary']"></i>
+     CONTRACT BACKLOG
+     </span> 
     <PortfolioContractBacklog/>
     </el-tab-pane>
    <el-tab-pane>
-    <span slot="label"> <i class="fa-solid fa-user mr-1 bootstrap-purple-text"></i>CONTRACT POC</span>
+    <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
+    CONTRACT POC
+    </span>
     <PortfolioContractPOC/>
     </el-tab-pane>
     <el-tab-pane>
-    <span slot="label">  <i class="fa-solid fa-calendar-xmark mr-1 text-danger"></i>EXPIRED CONTRACTS</span>
-
+    <span slot="label">  <i class="fa-solid fa-calendar-xmark mr-1" :class="[ pane4? 'text-danger' : 'txt-secondary']"></i>
+    EXPIRED CONTRACTS
+    </span>
+   <PortfolioExpiredContracts/>
     </el-tab-pane>
   </el-tabs>
-
- 
-<!-- 
-  TABS
-  
-  CONTRACT DETAILS
-  VEHICLES
-  CONTRACT BACKLOG
-  CONTRACT POC
-  EXPIRED CONTRACTS
-
-
-
-
-
- -->
-
   </div>
       
 </template>
@@ -192,6 +186,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import PortfolioVehicles from "./PortfolioVehicles.vue";
 import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
 import PortfolioContractPOC from "./PortfolioContractPOC.vue";
+import PortfolioExpiredContracts from "./PortfolioExpiredContracts.vue";
 // import ProgramTaskForm from "./ProgramTaskForm.vue";
 // import ProgramLessons from "./ProgramLessons.vue";
 
@@ -199,6 +194,7 @@ export default {
   name: "PortfolioContracts",
   components: {
     PortfolioVehicles,  
+    PortfolioExpiredContracts,
     PortfolioContractBacklog,
     PortfolioContractPOC
   },
@@ -206,6 +202,11 @@ export default {
     data() {    
       return {
         nothing: true,
+        pane0: true, 
+        pane1: false, 
+        pane2: false, 
+        pane3: false, 
+        pane4: false, 
         tabPosition: 'bottom',
         tableData: [{
           code: 123, 
@@ -376,7 +377,46 @@ export default {
       },
   handleDelete(index, row) {
     console.log(index, row);
+  },
+  handleClick(tab, event) {
+    if (tab.paneName == 0){
+       this.pane0 = true;
+       this.pane1 = false;
+       this.pane2 = false;
+       this.pane3 = false;
+       this.pane4 = false;
+    }
+    if (tab.paneName == 1){
+       this.pane0 = false;
+       this.pane1 = true;
+       this.pane2 = false;
+       this.pane3 = false
+       this.pane4 = false
+    }
+    if (tab.paneName == 2){
+       this.pane0 = false;
+       this.pane1 = false;
+       this.pane2 = true;
+       this.pane3 = false;
+       this.pane4 = false;
+    }
+    if (tab.paneName == 3){
+       this.pane0 = false;
+       this.pane1 = false;
+       this.pane2 = false;
+       this.pane3 = true;
+       this.pane4 = false;
+    }
+   if (tab.paneName == 4){
+       this.pane0 = false;
+       this.pane1 = false;
+       this.pane2 = false;
+       this.pane3 = false;
+       this.pane4 = true;
+    }
+ 
   }
+  
   },
   mounted() {
     
