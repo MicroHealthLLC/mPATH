@@ -341,10 +341,10 @@
               </div>
             </template>
             <el-checkbox
-              :indeterminate="isIndeterminate"
-              v-model="checkAll"
-               @change="handleCheckAllChange"
-              ><i>Check all Groups</i></el-checkbox
+              v-model="checkAllProjects"
+              @change="checkAllChange"
+              :indeterminate="isIndeterminate"                      
+              ><i>Check all Projects</i></el-checkbox
             >
             <div style="margin: 15px 0;"></div>
             <el-checkbox-group v-model="checkedPortfolioProjects">
@@ -691,7 +691,7 @@ export default {
     this.dialog2Visible = false;
     this.SET_CHECKED_PORTFOLIO_PROJECTS([0]);
   },
-  handleCheckAllChange() {
+  checkAllChange() {
     this.isIndeterminate = false;
   },
   removeProject(index, rows) {
@@ -1113,7 +1113,7 @@ removeProject(index, rows) {
       return filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
     }
     },
-     checkAll: {
+     checkAllProjects: {
       get() {
         return this.getCheckAllProjects;
       },
