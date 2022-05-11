@@ -466,7 +466,7 @@ class User < ApplicationRecord
     
     program = self.projects.where(id: program_id).active.first
     if program
-      return program.get_program_admin_ids.include?(self.id)
+      return self.role_users.includes(:role_privileges).where("role_privileges.role_type" => RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES, "role_users.project_id" => program_id).count > 0
     else
       return false
     end

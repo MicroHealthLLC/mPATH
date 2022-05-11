@@ -401,6 +401,7 @@ class Project < SortableRecord
       h[:facility] = facility.attributes.merge({
         facility_group_name: g&.name,
         facility_group_status: g&.status,
+        project_id: fp.project_id
       })
 
       # Building Tasks
@@ -501,8 +502,8 @@ class Project < SortableRecord
 
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
-        # h2[:project_ids] << fp.project_id
-        h2[:project_ids] << fp.facility_id
+        h2[:project_ids] << fp.project_id
+        # h2[:project_ids] << fp.facility_id
       end
       h2[:project_ids] = h2[:project_ids].compact.uniq
       facility_groups_hash << h2
