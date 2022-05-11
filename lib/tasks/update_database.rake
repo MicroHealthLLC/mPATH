@@ -1,3 +1,37 @@
+desc "Remove duplicate project users"
+task :remove_duplicate_project_users => :environment do
+  
+  uniq_project_users = ProjectUser.all.group_by{|p| p.project_id}.transform_values{|pu| pu.map(&:user_id)}
+
+  duplicate_records = []
+  
+  uniq_project_users.each do |project_id, user_ids|
+    #t_values = user_ids.tally
+    t_values = user_ids.group_by(&:itself).transform_values(&:count)
+    t_values.each do |user_id,count|
+      if count > 1
+        duplicate_records << [project_id, user_id]
+      end
+    end
+  end
+  
+  puts "**** Total duplicate records: #{duplicate_records.size} ****"
+  
+  duplicate_records.each do |project_id, user_id|
+    if ProjectUser.where(project_id: project_id, user_id: user_id).count > 1
+      pu = ProjectUser.where(project_id: project_id, user_id: user_id).last
+      role_users = pu.user.role_users.where(project_id: project_id).map(&:dup)
+      
+      pu.destroy
+      role_users.each do |role_user|
+        role_user.dup.save
+      end
+    end
+  end
+
+end
+
+
 desc "Update Facility Group"
 task :update_facility_group_data => :environment do
 

@@ -3,7 +3,7 @@ ActiveAdmin.register Facility do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path(is_portfolio: true))]
     if %(show edit).include?(params['action'])
       links << link_to(facility.facility_name, edit_admin_facility_path)
     end
@@ -12,6 +12,8 @@ ActiveAdmin.register Facility do
 
   permit_params do
     permitted = [
+      :project_id,
+      :is_portfolio,
       :facility_name,
       :address,
       :point_of_contact,
@@ -53,13 +55,15 @@ ActiveAdmin.register Facility do
       end
     end
     tag_column "State", :status
-    column "Programs" , :projects do |facility|
+    column "Associated Programs" , :projects do |facility|
       if current_user.admin_write?
         facility.projects.active
       else
         "<span>#{facility.projects.active.reorder(:id).pluck(:name).join(', ')}</span>".html_safe
       end
     end
+    column "Owned by Program" , :project
+    column :is_portfolio
     actions defaults: false do |facility|
       item "Edit", edit_admin_facility_path(facility), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_facility_path(facility), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -74,6 +78,8 @@ ActiveAdmin.register Facility do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
           f.input :facility_group, include_blank: true, include_hidden: false, label: "Group"
+          f.input :project
+          f.input :is_portfolio
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden

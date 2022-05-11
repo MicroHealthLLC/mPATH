@@ -27,6 +27,10 @@ class Risk < ApplicationRecord
   after_save :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
   after_destroy :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
 
+  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
+  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
+  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
 
   attr_accessor :file_links
 
@@ -49,7 +53,11 @@ class Risk < ApplicationRecord
 
     append :text => " - Copy"
   end
-  
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:exclude_closed_in, :exclude_inactive_in]
+  end
+
   def update_facility_project
     if self.previous_changes.keys.include?("progress")
       fp = facility_project

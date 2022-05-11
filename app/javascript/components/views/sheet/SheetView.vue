@@ -176,7 +176,7 @@ export default {
   },
 
   beforeMount() {
-  this.fetchContracts()  
+  // this.fetchContracts()  
     if (this.contentLoaded && this.$route.params.projectId) {
       this.currentFacility = this.facilities.find(
         (facility) => facility.facilityId == this.$route.params.projectId

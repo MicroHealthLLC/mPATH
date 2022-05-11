@@ -403,7 +403,6 @@ export default {
 
 /deep/.el-table {
     font-size: 13px !important;
-
     th.el-table__cell>.cell {
       word-break: break-word;
       font-size: .88rem;

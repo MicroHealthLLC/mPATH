@@ -37,12 +37,13 @@
                    <div class="col pt-2 text-right">     
                   <button
                     v-if="_isallowed('write')"
+                    v-tooltip="`Save`"
                     class="btn btn-primary text-light mt-1 btn-sm apply-btn"
                     :class="{'disabledBtn': !DV_updated }"
                     @click="updateFacility"  
                     :disabled="!DV_updated"             
-                  >
-                    Apply
+                  >     
+                    <i class="far fa-save"></i>
                   </button>
                  </div>
                 </div>
@@ -392,6 +393,7 @@ export default {
         });
     },
      _isallowed(salut) {
+       console.log(this.$route)
         return this.checkPrivileges("SheetProject", salut, this.$route)
 
         // var programId = this.$route.params.programId;

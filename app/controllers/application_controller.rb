@@ -65,7 +65,7 @@ class ApplicationController < ActionController::Base
   # end
 
   def require_admin
-    render_404 unless current_user.admin?
+    render_404 unless current_user.admin?(params)
   end
 
   def user_time_zone(&block)

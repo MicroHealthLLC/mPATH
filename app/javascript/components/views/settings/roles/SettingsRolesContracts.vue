@@ -1,10 +1,19 @@
 <template>
 <div>
+<div :class="{ 'd-none': !_isallowed('write') }">               
+  <el-button
+    @click.prevent="addContractRole"
+    :disabled="isEditting"
+    class="bg-primary text-light mb-3"
+  >
+    <i class="far fa-plus-circle mr-1"></i>Create Role
+  </el-button>
+    </div>
  <el-table 
   v-if="tableData && tableData.length > 0"  
   :data="tableData"   
   height="450"
- :row-class-name="showHideCreateRow"
+  class="crudRow"
   >
   <el-table-column
     fixed
@@ -13,17 +22,23 @@
     width="250">
 
   <template slot-scope="scope">
-  <span v-if="scope.$index == 0">
+ <span v-if="(scope.$index == currentRow && isEditting) || (scope.$index == 0 && isEditting && scope.row.newRow)">
     <el-input
-    size="small"         
+    size="small"   
+    placeholder="Enter Role Name"      
     style="font-style: italic; color: red"
-    v-model="newRoleName"
-    placeholder="Enter New Role Name"
+    v-model="scope.row.name"
     controls-position="right"
   >
   </el-input>
-  </span>
-  <span v-else>
+  </span> 
+ <span v-else>     
+    <span v-show="
+      scope.row.name == 'update-contract' ||
+      scope.row.name == 'read-contract' ||
+      scope.row.name == 'contribute-contract'"
+      style="color: #dc3545; font-size: 15px">*
+    </span>   
     {{ scope.row.name }}
   </span>
 
@@ -37,24 +52,10 @@
       width="75">
 
     <template slot-scope="scope">
-
-    <span 
-      @click.prevent.stop="analyticsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-     <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'contracts_analytics' && 
-          scope.row.role_privileges.map(t => t.privilege)[0].includes('R')"  
-          >
-          <!-- {{ scope.row.role_privileges.map(t => t.role_type)[0]}} -->
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.analytics)"
+        >   
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -62,7 +63,17 @@
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
           </span>   
     </span>  
-
+     <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="analyticsRead(scope.$index, scope.row)"      
+      >
+      <span v-if="isAnalyticsRead">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span> 
       </template>
     </el-table-column>
       <el-table-column
@@ -70,22 +81,10 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="analyticsWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-   <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'contracts_analytics' && 
-      scope.row.role_privileges.map(t => t.privilege)[0].includes('W')"  
-      >
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+    <span 
+      v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.analytics)"
+    >   
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -93,6 +92,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span>  
+     <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="analyticsWrite(scope.$index, scope.row)"      
+      >
+      <span v-if="isAnalyticsWrite">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span> 
       </template>
     </el-table-column>
     <el-table-column
@@ -100,22 +110,10 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="analyticsDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-        <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[0] == 'contracts_analytics' && 
-          scope.row.role_privileges.map(t => t.privilege)[0].includes('D')"  
-          >
+       <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+         <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.analytics)"
+        >   
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
@@ -123,6 +121,17 @@
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
           </span>   
     </span>
+       <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="analyticsDelete(scope.$index, scope.row)"      
+      >
+      <span v-if="isAnalyticsDelete">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>   
       </template>
     </el-table-column>
 
@@ -134,29 +143,28 @@
       width="75">
 
     <template slot-scope="scope">
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
        <span 
-      @click.prevent.stop="tasksRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-         <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'contracts_tasks' && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('R')"  
-          >
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.tasks)"
+        >   
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
           <span v-else>
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
           </span>   
-    </span>  
+     </span> 
+      <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="tasksRead(scope.$index, scope.row)"      
+      >
+      <span v-if="isTasksRead">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>    
       </template>
     </el-table-column>
       <el-table-column
@@ -164,29 +172,28 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="tasksWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-         <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'contracts_tasks' && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('W')"  
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+            <span 
+            v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.tasks)"
+          >  
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
+    
+            </span>
+          <span v-else>
+            <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+            </span>   
+      </span>  
+        <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+          @click.prevent.stop="tasksWrite(scope.$index, scope.row)"      
           >
-          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
-  
-          </span>
-         <span v-else>
+        <span v-if="isTasksWrite">  
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+            </span>
+        <span v-else>
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-          </span>   
-    </span>  
+        </span>   
+        </span>   
       </template>
     </el-table-column>
     <el-table-column
@@ -194,29 +201,29 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="tasksDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-        <span v-if="scope.$index !== 0">
-          <span 
-          v-if="scope.row.role_privileges.map(t => t.role_type)[1] == 'contracts_tasks' && 
-          scope.row.role_privileges.map(t => t.privilege)[1].includes('D')"  
-          >
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+         <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.tasks)"
+        >  
           <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
   
           </span>
          <span v-else>
           <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
           </span>   
-    </span>  
+      </span>  
+      <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="tasksDelete(scope.$index, scope.row)"      
+      >
+      <span v-if="isTasksDelete">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>     
+
       </template>
     </el-table-column>
 
@@ -229,22 +236,10 @@
       width="75">
 
     <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="issuesRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'contracts_issues' && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('R')"  
-      >
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.issues)"
+        >  
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
@@ -252,6 +247,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+      <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="issuesRead(scope.$index, scope.row)"      
+      >
+      <span v-if="isIssuesRead">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>     
       </template>
     </el-table-column>
       <el-table-column
@@ -259,29 +265,29 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-     <span 
-      @click.prevent.stop="issuesWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'contracts_issues' && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('W')"  
-      >
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+       <span 
+          v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.issues)"
+        >  
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
       </span>
      <span v-else>
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
-    </span>       
+    </span>     
+       <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="issuesWrite(scope.$index, scope.row)"      
+      >
+      <span v-if="isIssuesWrite">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>       
+
       </template>
     </el-table-column>
     <el-table-column
@@ -289,21 +295,9 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="issuesDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      <span v-if="scope.$index !== 0">
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[2] == 'contracts_issues' && 
-      scope.row.role_privileges.map(t => t.privilege)[2].includes('D')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.issues)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -312,6 +306,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+     <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="issuesDelete(scope.$index, scope.row)"      
+      >
+      <span v-if="isIssuesDelete">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>     
       </template>
     </el-table-column>
 
@@ -324,21 +329,9 @@
       width="75">
 
     <template slot-scope="scope">
-    <span 
-      @click.prevent.stop="risksRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'contracts_risks' && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('R')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.risks)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -346,7 +339,19 @@
      <span v-else>
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
-    </span> 
+    </span>
+     <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="risksRead(scope.$index, scope.row)"      
+      >
+      <span v-if="isRisksRead">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+      </span>      
+
       </template>
     </el-table-column>
       <el-table-column
@@ -354,21 +359,9 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
+      <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
-      @click.prevent.stop="risksWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-     <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'contracts_risks' && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('W')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.risks)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -376,29 +369,29 @@
      <span v-else>
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
-    </span> 
+    </span>
+       <span 
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+        @click.prevent.stop="risksWrite(scope.$index, scope.row)"      
+        >
+        <span v-if="isRisksWrite">  
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+            </span>
+        <span v-else>
+          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+        </span>      
+
       </template>
     </el-table-column>
     <el-table-column
       prop="delete"
       label="Delete"
       width="75">
-      <template slot-scope="scope">
-        <span 
-      @click.prevent.stop="risksDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[3] == 'contracts_risks' && 
-      scope.row.role_privileges.map(t => t.privilege)[3].includes('D')"  
+      <template slot-scope="scope">       
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+     <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.risks)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -407,6 +400,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+     <span 
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+        @click.prevent.stop="risksDelete(scope.$index, scope.row)"      
+        >
+        <span v-if="isRisksDelete">  
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+            </span>
+        <span v-else>
+          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+        </span>     
       </template>
     </el-table-column>
 
@@ -419,21 +423,9 @@
       width="75">
 
     <template slot-scope="scope">
-     <span 
-      @click.prevent.stop="notesRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts_notes' && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('R')"  
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+    <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.notes)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -442,6 +434,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+      <span 
+        v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+        @click.prevent.stop="notesRead(scope.$index, scope.row)"      
+        >
+        <span v-if="isNotesRead">  
+            <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+            </span>
+        <span v-else>
+          <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+        </span>    
       </template>
     </el-table-column>
       <el-table-column
@@ -449,21 +452,9 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="notesWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-       <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts_notes' && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('W')"  
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+    <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.notes)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -472,6 +463,18 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+    <span 
+     v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+    @click.prevent.stop="notesWrite(scope.$index, scope.row)"      
+    >
+    <span v-if="isNotesWrite">  
+        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+        </span>
+    <span v-else>
+      <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+      </span>   
+  </span>    
+
       </template>
     </el-table-column>
     <el-table-column
@@ -479,21 +482,9 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="notesDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[4] == 'contracts_notes' && 
-      scope.row.role_privileges.map(t => t.privilege)[4].includes('D')"  
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.notes)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -502,6 +493,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+    <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="notesDelete(scope.$index, scope.row)"      
+      >
+  <span v-if="isNotesDelete">  
+      <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+      </span>
+  <span v-else>
+    <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+    </span>   
+      </span>    
       </template>
     </el-table-column>
 
@@ -514,21 +516,9 @@
       width="75">
 
     <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="lessonsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
+    <span v-if="currentRow !== scope.$index && !scope.row.newRow">
       <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == 'contracts_lessons' && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('R')"  
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes(contract.lessons)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -537,6 +527,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+       <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="lessonsRead(scope.$index, scope.row)"      
+      >
+      <span v-if="isLessonsRead">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+     </span>    
       </template>
     </el-table-column>
       <el-table-column
@@ -544,21 +545,9 @@
       label="Write"
       width="75">
       <template slot-scope="scope">
-          <span 
-      @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == 'contracts_lessons' && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('W')"  
+     <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes(contract.lessons)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -567,6 +556,17 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+    <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"      
+      >
+      <span v-if="isLessonsWrite">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+      </span>    
       </template>
     </el-table-column>
     <el-table-column
@@ -574,21 +574,9 @@
       label="Delete"
       width="75">
       <template slot-scope="scope">
-          <span 
-      @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-    <span v-if="scope.$index !== 0">
-      <span 
-      v-if="scope.row.role_privileges.map(t => t.role_type)[5] == 'contracts_lessons' && 
-      scope.row.role_privileges.map(t => t.privilege)[5].includes('D')"  
+  <span v-if="currentRow !== scope.$index && !scope.row.newRow">
+   <span 
+        v-if="scope.row.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes(contract.lessons)"
       >
       <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>       
 
@@ -597,6 +585,18 @@
       <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
       </span>   
     </span> 
+     <span 
+      v-if="(isEditting && currentRow == scope.$index) || (scope.$index == 0 && isEditting && scope.row.newRow)"
+      @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"      
+      >
+      <span v-if="isLessonsDelete">  
+          <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>
+          </span>
+      <span v-else>
+        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
+        </span>   
+      </span>    
+
       </template>
     </el-table-column>
 
@@ -610,453 +610,55 @@
         <template slot-scope="scope">
       <el-button
       type="default"
-      v-tooltip="`Save edits`"
-      v-if="showCreateRow === true && scope.$index == 0 && newRoleName"
+      v-tooltip="`Save role`"    
+      v-if="(isEditting && currentRow == scope.$index) || 
+      (scope.$index == 0 && isEditting && scope.row.newRow) && scope.row.name"
       @click.prevent="saveNewRole(scope.$index, scope.row)"
         class="bg-primary btn-sm text-light"
       >
     <i class="far fa-save"></i>
     </el-button>
     <el-button
-       type="default"
-      @click.prevent="cancelCreateRole(scope.$index, scope.row)"
-      v-if="showCreateRow === true && scope.$index == 0"
-      class="bg-secondary btn-sm text-light ml-1 "
-      v-tooltip="`Cancel`"                  
-    >
-      <i class="fas fa-ban"></i> 
-    </el-button>
-    <el-button
       type="default"
-      @click.prevent="test(scope.$index, scope.row)"
-       v-if="!scope.$index == 0"
-      class="bg-light btn-sm"
-      disabled
+      @click.prevent="editRole(scope.$index, scope.row)"
+      v-if="!isEditting &&
+      scope.row.name !== 'update-contract' &&
+      scope.row.name !== 'read-contract' && 
+      scope.row.name !== 'contribute-contract'"
+      class="bg-light btn-sm"   
       v-tooltip="`Edit Role`"
     >
       <i class="fal fa-edit text-primary"></i>
-    </el-button>
+      </el-button>
+
+      <el-button
+      type="default"
+      @click.prevent="cancelEditRole(scope.$index, scope.row)"
+       v-if="isEditting && currentRow == scope.$index"
+      class="bg-secondary btn-sm text-light ml-1"
+      v-tooltip="`Cancel Edit`"                  
+    >
+      <i class="fas fa-ban"></i> 
+      </el-button>
+      <el-button
+      type="default"
+      @click.prevent="cancelCreateRole(scope.$index, scope.row)"
+      v-if="scope.$index == 0 && isEditting && scope.row.newRow"
+      class="bg-light btn-sm"
+      v-tooltip="`Cancel Create`"                  
+      >
+      <i class="far fa-trash-alt text-danger"></i>
+     </el-button>
    </template>
       
       </el-table-column> 
   </el-table>
-     <el-table    
-        v-else  
-        :data="firstRole"   
-        height="450"
-        :row-class-name="showHideCreateRow"
-        >
-    <el-table-column
-    fixed
-    prop="role"
-    label="Contracts Role"
-    width="250">
-
-  <template slot-scope="scope">
-  <span >
-    <el-input
-    size="small"    
-    placeholder="Enter New Role Name"     
-    style="font-style: italic; color: red"
-    v-model="newRoleName"
-    controls-position="right"
-  >
-  </el-input>
-  </span>
-  
-
-    </template>
-  </el-table-column>
-
-  <el-table-column label="Analytics">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-
-    <span 
-      @click.prevent.stop="analyticsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="analyticsWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="analyticsDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isAnalyticsDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isAnalyticsDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-   <el-table-column label="Tasks">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="tasksRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="tasksWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="tasksDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isTasksDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isTasksDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Issues">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="issuesRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-     <span 
-      @click.prevent.stop="issuesWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-  
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="issuesDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isIssuesDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isIssuesDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Risks">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-    <span 
-      @click.prevent.stop="risksRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-      <span 
-      @click.prevent.stop="risksWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-        <span 
-      @click.prevent.stop="risksDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isRisksDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isRisksDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Notes">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-     <span 
-      @click.prevent.stop="notesRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="notesWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="notesDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isNotesDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isNotesDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-     <el-table-column label="Lessons">
-    <el-table-column
-      prop="read"
-      label="Read"
-      width="75">
-
-    <template slot-scope="scope">
-       <span 
-      @click.prevent.stop="lessonsRead(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsRead">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsRead">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-      </template>
-    </el-table-column>
-      <el-table-column
-      prop="write"
-      label="Write"
-      width="75">
-      <template slot-scope="scope">
-          <span 
-      @click.prevent.stop="lessonsWrite(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsWrite">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsWrite">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="delete"
-      label="Delete"
-      width="75">
-      <template slot-scope="scope">
-          <span 
-      @click.prevent.stop="lessonsDelete(scope.$index, scope.row)"
-      v-if="scope.$index == 0">
-       <span v-if="isLessonsDelete">
-        <i class="el-icon-success text-success" style="font-size: 1.35rem"></i>     
-        </span>
-         <span v-if="!isLessonsDelete">
-        <i class="el-icon-error text-secondary" style="font-size: 1.35rem"></i>      
-        </span>
-    </span>
-
-  
-      </template>
-    </el-table-column>
-
-  </el-table-column>
-
-    <el-table-column 
-      fixed="right" 
-      label="Actions"
-      class="text-center "
-      width="120">
-        <template slot-scope="scope">
-      <el-button
-      type="default"
-      v-tooltip="`Save edits`"
-      v-if="showCreateRow === true && scope.$index == 0"
-      @click.prevent="saveNewRole(scope.$index, scope.row)"
-      class="bg-primary btn-sm text-light"
-      >
-    <i class="far fa-save"></i>
-    </el-button>
-    <el-button
-       type="default"
-      @click.prevent="cancelCreateRole(scope.$index, scope.row)"
-      v-if="showCreateRow === true && scope.$index == 0"
-      class="bg-secondary btn-sm text-light"
-      v-tooltip="`Cancel`"                  
-    >
-      <i class="fas fa-ban"></i> 
-    </el-button>
-    <!-- <el-button
-      type="default"
-       v-if="showCreateRow === false && scope.$index !== 0"
-      @click.prevent="test(scope.$index, scope.row)"
-      class="bg-light btn-sm"
-      v-tooltip="`Edit Role`"
-    >
-      <i class="fal fa-edit text-primary"></i>
-    </el-button> -->
-   </template>
-      
-      </el-table-column> 
-    </el-table> 
+ 
 </div>
 </template>
 
 <script>
+import { faLeaf } from '@fortawesome/free-solid-svg-icons';
  
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
@@ -1064,6 +666,8 @@ export default {
   name: "SettingsRolesContracts",
      data() {    
       return {
+        currentRow: null, 
+        isEditting: false, 
         addRoleDialogOpen: false, 
         isAnalyticsRead: true,
         isAnalyticsWrite: true,
@@ -1089,422 +693,612 @@ export default {
         isLessonsWrite: true,
         isLessonsDelete: true,
 
-       newRoleName: "",
-        firstRole: [
-          {
-          role: 'Enter New Role Name',        
-          read: true,
-          write: true,
-          delete: false,  
-
-
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
-          
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
-          
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
-
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-         }
-        ],
         analyticsPriv: [],
         tasksPriv: [],
         issuesPriv: [],
         risksPriv: [],
         lessonsPriv: [],
         notesPriv: [],
-        newRoleRow: [{
-          role: 'Enter Name',        
-          read: true,
-          write: true,
-          delete: false,  
-
-          groupsRead: true, 
-          groupsWrite: true, 
-          groupsDelete: true, 
-          
-          projectsRead: true, 
-          projectsWrite: true, 
-          projectsDelete: true, 
-          
-          contractsRead: true, 
-          contractsWrite: true, 
-          contractsDelete: true, 
-
-          usersRead: true, 
-          usersWrite: true, 
-          usersDelete: true, 
-        },]
       }
   },
   methods: {
-    ...mapMutations(["SET_NEW_ROLE_STATUS", "SET_SHOW_CREATE_ROW"]),
-  ...mapActions(["fetchRoles", "createRole"]),
-  analyticsRead() {
-    this.isAnalyticsRead = !this.isAnalyticsRead
-    if(this.isAnalyticsRead && !this.analyticsPriv.map(t => t).includes("R") ){
-        this.analyticsPriv.push(..."R")
-    } else if (!this.isAnalyticsRead) {
-        this.analyticsPriv = this.analyticsPriv.filter(t => t !== "R")
-    }
-      console.log(`analytics: ${this.analyticsPriv}`)
-
-    },
-  analyticsWrite() {
-    this.isAnalyticsWrite = !this.isAnalyticsWrite
-    if(this.isAnalyticsWrite && !this.analyticsPriv.map(t => t).includes("W") ){
-        this.analyticsPriv.push(..."W")
-    } else if (!this.isAnalyticsWrite) {
-        this.analyticsPriv = this.analyticsPriv.filter(t => t !== "W")
-    }
-      console.log(`analytics: ${this.analyticsPriv}`)
-
-    },
-  analyticsDelete() {
-  this.isAnalyticsDelete = !this.isAnalyticsDelete
-  if(this.isAnalyticsDelete && !this.analyticsPriv.map(t => t).includes("D") ){
-      this.analyticsPriv.push(..."D")
-  } else if (!this.isAnalyticsDelete) {
-      this.analyticsPriv = this.analyticsPriv.filter(t => t !== "D")
-  }
+    ...mapMutations([
+      "SET_NEW_ROLE_STATUS", 
+      "SET_UPDATED_CONTRACT_ROLE_STATUS",
+      "SET_SHOW_CREATE_ROW"
+      ]),
+    ...mapActions([
+      "fetchRoles", 
+      "createRole",
+      "updateRole"
+      ]),
+  _isallowed(salut) {
+     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
+  },
+//Analytics
+ analyticsRead(index, rowData) {
+    this.isAnalyticsRead = !this.isAnalyticsRead;
+      if(this.isAnalyticsRead && (!this.analyticsPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_analytics')) ){
+         this.analyticsPriv.push(..."R")
+      } else if (!this.isAnalyticsRead) {
+          this.analyticsPriv = this.analyticsPriv.filter(t => t !== "R")
+      } 
     console.log(`analytics: ${this.analyticsPriv}`)
+   },
+  analyticsWrite(index, rowData) {
+    this.isAnalyticsWrite = !this.isAnalyticsWrite
+      if(this.isAnalyticsWrite && (!this.analyticsPriv.map(t => t).includes("W") || !rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_analytics')) ){
+         this.analyticsPriv.push(..."W")
+      } else if (!this.isAnalyticsWrite) {
+          this.analyticsPriv = this.analyticsPriv.filter(t => t !== "W")
+      }
+    console.log(`analytics: ${this.analyticsPriv}`)
+   },
+  analyticsDelete(index, rowData) {
+    this.isAnalyticsDelete = !this.isAnalyticsDelete;
+      if(this.isAnalyticsDelete && (!this.analyticsPriv.map(t => t).includes("D") || !rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_analytics')) ){
+         this.analyticsPriv.push(..."D")
+      } else if (!this.isAnalyticsDelete) {
+          this.analyticsPriv = this.analyticsPriv.filter(t => t !== "D")
+      } 
+    console.log(`analytics: ${this.analyticsPriv}`)
+   },
+
+//TASKS
+  tasksRead(index, rowData) {
+  this.isTasksRead =  !this.isTasksRead
+    if(this.isTasksRead && (!this.tasksPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_tasks')) ){
+          this.tasksPriv.push(..."R")
+        } else if (!this.isTasksRead) {
+          this.tasksPriv = this.tasksPriv.filter(t => t !== "R")
+        } 
+      console.log(`tasks: ${this.tasksPriv}`)
 
   },
-tasksRead() {
- this.isTasksRead =  !this.isTasksRead
-  if(this.isTasksRead && !this.tasksPriv.map(t => t).includes("R") ){
-    this.tasksPriv.push(..."R")
-  } else if (!this.isTasksRead) {
-      this.tasksPriv = this.tasksPriv.filter(t => t !== "R")
-  }
-    console.log(`tasks: ${this.tasksPriv}`)
-
-    },
-tasksWrite() {
- this.isTasksWrite =  !this.isTasksWrite
-  if(this.isTasksWrite && !this.tasksPriv.map(t => t).includes("W") ){
-    this.tasksPriv.push(..."W")
-  } else if (!this.isTasksWrite) {
-      this.tasksPriv = this.tasksPriv.filter(t => t !== "W")
-  }
-    console.log(`tasks: ${this.tasksPriv}`)
-
-},
-tasksDelete() {
- this.isTasksDelete =  !this.isTasksDelete
-  if(this.isTasksDelete && !this.tasksPriv.map(t => t).includes("D") ){
-    this.tasksPriv.push(..."D")
-  } else if (!this.isTasksDelete) {
-      this.tasksPriv = this.tasksPriv.filter(t => t !== "D")
-  }
-    console.log(`tasks: ${this.tasksPriv}`)
-
- },
-issuesRead() {
-  this.isIssuesRead= !this.isIssuesRead
-  if(this.isIssuesRead && !this.issuesPriv.map(t => t).includes("R") ){
-     this.issuesPriv.push(..."R")
-  } else if (!this.isIssuesRead) {
-     this.issuesPriv = this.issuesPriv.filter(t => t !== "R")
-  }
-    console.log(`issues: ${this.issuesPriv}`)
-
-},
-issuesWrite() {
-  this.isIssuesWrite = !this.isIssuesWrite
-  if(this.isIssuesWrite && !this.issuesPriv.map(t => t).includes("W") ){
-     this.issuesPriv.push(..."W")
-  } else if (!this.isIssuesWrite) {
-     this.issuesPriv = this.issuesPriv.filter(t => t !== "W")
-  }
-    console.log(`issues: ${this.issuesPriv}`)
-
-},
-issuesDelete() {
+  tasksWrite(index, rowData) {
+  this.isTasksWrite =  !this.isTasksWrite
+    if(this.isTasksWrite && (!this.tasksPriv.map(t => t).includes("W") || !rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_tasks')) ){
+          this.tasksPriv.push(..."W")
+        } else if (!this.isTasksWrite) {
+          this.tasksPriv = this.tasksPriv.filter(t => t !== "W")
+        } 
+      console.log(`tasks: ${this.tasksPriv}`)
+  },
+  tasksDelete(index, rowData) {
+  this.isTasksDelete =  !this.isTasksDelete
+    if(this.isTasksDelete && (!this.tasksPriv.map(t => t).includes("D") || !rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_tasks')) ){
+          this.tasksPriv.push(..."D")
+        } else if (!this.isTasksDelete) {
+          this.tasksPriv = this.tasksPriv.filter(t => t !== "D")
+        } 
+      console.log(`tasks: ${this.tasksPriv}`)
+  },
+  //ISSUES
+    issuesRead(index, rowData) {
+    this.isIssuesRead= !this.isIssuesRead
+    if(this.isIssuesRead && (!this.issuesPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')) ){
+          this.issuesPriv.push(..."R")
+        } else if (!this.isIssuesRead) {
+          this.issuesPriv = this.issuesPriv.filter(t => t !== "R")
+        } 
+      console.log(`issues: ${this.issuesPriv}`)
+  },
+  issuesWrite(index, rowData) {
+    this.isIssuesWrite = !this.isIssuesWrite
+    if(this.isIssuesWrite && (!this.issuesPriv.map(t => t).includes("W") || !rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_issues')) ){
+          this.issuesPriv.push(..."W")
+        } else if (!this.isIssuesWrite) {
+          this.issuesPriv = this.issuesPriv.filter(t => t !== "W")
+        } 
+      console.log(`issues: ${this.issuesPriv}`)
+  },
+  issuesDelete(index, rowData) {
   this.isIssuesDelete = !this.isIssuesDelete
-  if(this.isIssuesDelete && !this.issuesPriv.map(t => t).includes("D") ){
-     this.issuesPriv.push(..."D")
-  } else if (!this.isIssuesDelete) {
-     this.issuesPriv = this.issuesPriv.filter(t => t !== "D")
-  }
-    console.log(`issues: ${this.issuesPriv}`)
-
-},
-risksRead() {
-  this.isRisksRead = !this.isRisksRead
-  if(this.isRisksRead && !this.risksPriv.map(t => t).includes("R") ){
-     this.risksPriv.push(..."R")
-  } else if (!this.isRisksRead) {
-     this.risksPriv = this.risksPriv.filter(t => t !== "R")
-  }
-  console.log(`risks: ${this.risksPriv}`)
-
-},
-risksWrite() {
-  this.isRisksWrite = !this.isRisksWrite
-  if(this.isRisksWrite && !this.risksPriv.map(t => t).includes("W") ){
-     this.risksPriv.push(..."W")
-  } else if (!this.isRisksWrite) {
-     this.risksPriv = this.risksPriv.filter(t => t !== "W")
-  }
+    if(this.isIssuesDelete && (!this.issuesPriv.map(t => t).includes("D") || !rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_issues')) ){
+          this.issuesPriv.push(..."D")
+        } else if (!this.isIssuesDelete) {
+          this.issuesPriv = this.issuesPriv.filter(t => t !== "D")
+        } 
+      console.log(`issues: ${this.issuesPriv}`)
+  },
+//RISKS
+ risksRead(index, rowData) {
+    this.isRisksRead = !this.isRisksRead
+  if(this.isRisksRead && (!this.risksPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_risks')) ){
+        this.risksPriv.push(..."R")
+        } else if (!this.isRisksRead) {
+          this.risksPriv = this.risksPriv.filter(t => t !== "R")
+        } 
     console.log(`risks: ${this.risksPriv}`)
-
-},
-risksDelete() {
-  this.isRisksDelete = !this.isRisksDelete
-  if(this.isRisksDelete && !this.risksPriv.map(t => t).includes("D") ){
-     this.risksPriv.push(..."D")
-  } else if (!this.isRisksDelete) {
-     this.risksPriv = this.risksPriv.filter(t => t !== "D")
-  }
+  },
+  risksWrite(index, rowData) {
+    this.isRisksWrite = !this.isRisksWrite
+      if(this.isRisksWrite && (!this.risksPriv.map(t => t).includes("W") || !rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_risks')) ){
+        this.risksPriv.push(..."W")
+        } else if (!this.isRisksWrite) {
+          this.risksPriv = this.risksPriv.filter(t => t !== "W")
+        } 
+      console.log(`risks: ${this.risksPriv}`)
+  },
+  risksDelete(index, rowData) {
+    this.isRisksDelete = !this.isRisksDelete
+      if(this.isRisksDelete && (!this.risksPriv.map(t => t).includes("D") || !rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_risks')) ){
+        this.risksPriv.push(..."D")
+        } else if (!this.isRisksDelete) {
+          this.risksPriv = this.risksPriv.filter(t => t !== "D")
+        } 
     console.log(`risks: ${this.risksPriv}`)
-
-},
-
+  },
 //LESSONS//
-lessonsRead() {
-  this.isLessonsRead = !this.isLessonsRead
-  if(this.isLessonsRead && !this.lessonsPriv.map(t => t).includes("R") ){
-     this.lessonsPriv.push(..."R")
-  } else if (!this.isLessonsRead) {
-     this.lessonsPriv = this.lessonsPriv.filter(t => t !== "R")
-  }
-  console.log(`lessons: ${this.lessonsPriv}`)
+  lessonsRead(index, rowData) {
+    this.isLessonsRead = !this.isLessonsRead
+    if(this.isLessonsRead && (!this.lessonsPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_lessons')) ){
+        this.lessonsPriv.push(..."R")
+      } else if (!this.isLessonsRead) {
+      this.lessonsPriv = this.lessonsPriv.filter(t => t !== "R")
+      } 
+    console.log(`lessons: ${this.lessonsPriv}`)
+  },
+  lessonsWrite(index, rowData) {
+    this.isLessonsWrite = !this.isLessonsWrite
+      if(this.isLessonsWrite && (!this.lessonsPriv.map(t => t).includes("W") || !rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_lessons')) ){
+        this.lessonsPriv.push(..."W")
+      } else if (!this.isLessonsWrite) {
+      this.lessonsPriv = this.lessonsPriv.filter(t => t !== "W")
+      } 
+    console.log(`lessons: ${this.lessonsPriv}`)
 
-},
-lessonsWrite() {
-  this.isLessonsWrite = !this.isLessonsWrite
-  if(this.isLessonsWrite && !this.lessonsPriv.map(t => t).includes("W") ){
-     this.lessonsPriv.push(..."W")
-  } else if (!this.isLessonsWrite) {
-     this.lessonsPriv = this.lessonsPriv.filter(t => t !== "W")
-  }
-  console.log(`lessons: ${this.lessonsPriv}`)
-
-},
-lessonsDelete() {
-  this.isLessonsDelete = !this.isLessonsDelete
-  if(this.isLessonsDelete && !this.lessonsPriv.map(t => t).includes("D") ){
-     this.lessonsPriv.push(..."D")
-  } else if (!this.isLessonsDelete) {
-     this.lessonsPriv = this.lessonsPriv.filter(t => t !== "D")
-  }
-  console.log(`lessons: ${this.lessonsPriv}`)
-
-},
+  },
+  lessonsDelete(index, rowData) {
+    this.isLessonsDelete = !this.isLessonsDelete
+    if(this.isLessonsDelete && (!this.lessonsPriv.map(t => t).includes("D") || !rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_lessons')) ){
+        this.lessonsPriv.push(..."D")
+    } else if (!this.isLessonsDelete) {
+      this.lessonsPriv = this.lessonsPriv.filter(t => t !== "D")
+    } 
+    console.log(`lessons: ${this.lessonsPriv}`)
+  },
 
 //NOTES
-notesRead() {
-  this.isNotesRead = !this.isNotesRead
-  if(this.isNotesRead && !this.notesPriv.map(t => t).includes("R") ){
-     this.notesPriv.push(..."R")
-  } else if (!this.isNotesRead) {
-     this.notesPriv = this.notesPriv.filter(t => t !== "R")
-  }
-    console.log(`notes: ${this.notesPriv}`)
+  notesRead(index, rowData) {
+    this.isNotesRead = !this.isNotesRead
+    if(this.isNotesRead && (!this.notesPriv.map(t => t).includes("R") || !rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_notes')) ){
+        this.notesPriv.push(..."R")
+      } else if (!this.isNotesRead) {
+      this.notesPriv = this.notesPriv.filter(t => t !== "R")
+      }
+      console.log(`notes: ${this.notesPriv}`)
+  },
+  notesWrite(index, rowData) {
+    this.isNotesWrite = !this.isNotesWrite
+    if(this.isNotesWrite && (!this.notesPriv.map(t => t).includes("W") || !rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_notes')) ){
+        this.notesPriv.push(..."W")
+      } else if (!this.isNotesWrite) {
+      this.notesPriv = this.notesPriv.filter(t => t !== "W")
+      }
+      console.log(`notes: ${this.notesPriv}`)
+  },
+  notesDelete(index, rowData) {
+    this.isNotesDelete = !this.isNotesDelete
+  if(this.isNotesDelete && (!this.notesPriv.map(t => t).includes("D") || !rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_notes')) ){
+        this.notesPriv.push(..."D")
+      } else if (!this.isNotesDelete) {
+      this.notesPriv = this.notesPriv.filter(t => t !== "D")
+      }
+      console.log(`notes: ${this.notesPriv}`)
+  },
+    editRole(index, rowData){
+      // console.log(rowData)
+      this.analyticsPriv = [];
+      this.tasksPriv = [],
+      this.issuesPriv = [],
+      this.risksPriv = [], 
+      this.notesPriv = [],
+      this.lessonsPriv = [],  
+      this.isEditting = true;
+      this.currentRow = index;
+    // ANALYTICS
+    if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_analytics')){
+        this.isAnalyticsRead = false;
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_analytics')) {
+        this.analyticsPriv.push(..."R")
+        this.isAnalyticsRead = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_analytics')) {
+        this.isAnalyticsWrite = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_analytics')) {
+        this.analyticsPriv.push(..."W")
+        this.isAnalyticsWrite = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_analytics')){
+        this.isAnalyticsDelete = false
+    }
+    if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_analytics')){
+        this.analyticsPriv.push(..."D")
+        this.isAnalyticsDelete = true
+    }
 
-},
+    // TASKS
+    if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_tasks')){
+        this.isTasksRead = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_tasks')) {
+        this.tasksPriv.push(..."R")
+        this.isTasksRead = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_tasks')) {
+        this.isTasksWrite = false;
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_tasks')) {
+        this.tasksPriv .push(..."W")
+        this.isTasksWrite = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_tasks')){
+        this.isTasksDelete =  false
+    }
+    if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_tasks')){
+        this.tasksPriv.push(..."D")
+         this.isTasksDelete = true
+    }
 
-notesWrite() {
-  this.isNotesWrite = !this.isNotesWrite
-  if(this.isNotesWrite && !this.notesPriv.map(t => t).includes("W") ){
-     this.notesPriv.push(..."W")
-  } else if (!this.isNotesWrite) {
-     this.notesPriv = this.notesPriv.filter(t => t !== "W")
-  }
-    console.log(`notes: ${this.notesPriv}`)
+    //ISSUES
+    if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')){
+        this.isIssuesRead = false
+    if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')) {
+        this.issuesPriv.push(..."R")
+        this.isIssuesRead= true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_issues')) {
+        this.isIssuesWrite = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_issues')) {
+        this.issuesPriv.push(..."W")
+        this.isIssuesWrite = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_issues')){
+        this.isIssuesDelete = false
+    }
+    if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_issues')){
+        this.issuesPriv.push(..."D")
+        this.isIssuesDelete = true
+    }
 
-},
+          //RISKS
+    if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_risks')){
+        this.isRisksRead = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_risks')) {
+         this.risksPriv.push(..."R")
+         this.isRisksRead = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_risks')) {
+        this.isRisksWrite = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_risks')) {
+        this.risksPriv.push(..."W")
+        this.isRisksWrite = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_risks')){
+        this.isRisksDelete = false
+    }
+    if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_risks')){
+        this.risksPriv.push(..."D")
+        this.isRisksDelete = true
+    }
+    //LESSONS
+    if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_lessons')){
+        this.isLessonsRead = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_lessons')) {
+        this.lessonsPriv.push(..."R")
+        this.isLessonsRead = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_lessons')) {
+        this.isLessonsWrite = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_lessons')) {
+         this.lessonsPriv.push(..."W")
+         this.isLessonsWrite = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_lessons')){
+        this.isLessonsDelete = false
+    }
+    if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_lessons')){
+        this.lessonsPriv.push(..."D");
+        this.isLessonsDelete = true
+    }
 
-notesDelete() {
-  this.isNotesDelete = !this.isNotesDelete
-  if(this.isNotesDelete && !this.notesPriv.map(t => t).includes("D") ){
-     this.notesPriv.push(..."D")
-  } else if (!this.isNotesDelete) {
-     this.notesPriv = this.notesPriv.filter(t => t !== "D")
-  }
-    console.log(`notes: ${this.notesPriv}`)
+    //NOTES
+    if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_notes')){
+        this.isNotesRead = false
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_notes')) {
+        this.notesPriv.push(..."R")
+        this.isNotesRead = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_notes')) {
+        this.isNotesWrite = false;
+    } 
+    if (rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_notes')) {
+        this.notesPriv.push(..."W")
+        this.isNotesWrite = true
+    }
+    if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_notes')){
+        this.isNotesDelete = false
+    }
+    if (rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_notes')){
+        this.notesPriv.push(..."D")
+        this.isNotesDelete = true
+    }
+    }
+  },
+  cancelEditRole(index, rowData){    
+    this.isEditting = false;
+    this.currentRow = null;
+    //ANALYTICS
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_analytics')){
+          this.isAnalyticsRead = !this.isAnalyticsRead    
+      }   
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_analytics')) {
+        this.isAnalyticsWrite = !this.isAnalyticsWrite
+      }   
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_analytics')){
+         this.isAnalyticsDelete = !this.isAnalyticsDelete
+      }
+    
+      //TASKS
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_tasks')){
+          this.isTasksRead =  !this.isTasksRead 
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_tasks')) {
+         this.isTasksWrite =  !this.isTasksWrite
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_tasks')){
+          this.isTasksDelete =  !this.isTasksDelete
+      }
+       //ISSUES
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_issues')){
+         this.isIssuesRead= !this.isIssuesRead
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_issues')) {
+          this.isIssuesWrite = !this.isIssuesWrite
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_issues')){
+          this.isIssuesDelete = !this.isIssuesDelete     }
+ 
+     //RISKS
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_risks')){
+          this.isRisksRead = !this.isRisksRead
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_risks')) {
+          this.isRisksWrite = !this.isRisksWrite
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_risks')){
+          this.isRisksDelete = !this.isRisksDelete
+      }
+      //LESSONS
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_lessons')){
+           this.isLessonsRead = !this.isLessonsRead
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_lessons')) {
+          this.isLessonsWrite = !this.isLessonsWrite
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_lessons')){
+          this.isLessonsDelete = !this.isLessonsDelete
+      }
+      //NOTES
+      if (!rowData.role_privileges.map(t => t.privilege.includes('R') && t.role_type).includes('contract_notes')){
+          this.isNotesRead = !this.isNotesRead
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('W') && t.role_type).includes('contract_notes')) {
+          this.isNotesWrite = !this.isNotesWrite
+      } 
+      if (!rowData.role_privileges.map(t => t.privilege.includes('D') && t.role_type).includes('contract_notes')){
+          this.isNotesDelete = !this.isNotesDelete
+      }
+  },
+  addContractRole() {
+    // this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
+     this.tableData.unshift({     
+        name: "",
+        newRow: true, 
+        role_privileges: [],
+        role_users: [],
+        type_of: "contract",
+      });
+        this.isEditting = true;
+        this.isAnalyticsRead = true,
+        this.isAnalyticsWrite = true,
+        this.isAnalyticsDelete = true,
 
-},
+        this.isTasksRead = true,
+        this.isTasksWrite = true,
+        this.isTasksDelete = true,
 
+        this.isIssuesRead = true,
+        this.isIssuesWrite = true,
+        this.isIssuesDelete = true,
+
+        this.isRisksRead = true,
+        this.isRisksWrite = true,
+        this.isRisksDelete = true,
+
+        this.isNotesRead = true,
+        this.isNotesWrite = true,
+        this.isNotesDelete = true,
+
+        this.isLessonsRead = true,
+        this.isLessonsWrite = true,
+        this.isLessonsDelete = true,
+
+        this.analyticsPriv = [],
+        this.tasksPriv = [],
+        this.issuesPriv = [],
+        this.risksPriv = [],
+        this.lessonsPriv = [],
+        this.notesPriv = []
+            
+      if (this.isAnalyticsRead && this.isAnalyticsWrite && this.isAnalyticsDelete ) {
+          this.analyticsPriv.push(..."R") 
+          this.analyticsPriv.push(..."W")  
+          this.analyticsPriv.push(..."D") 
+                  
+          }
+      if (this.isTasksRead && this.isTasksWrite && this.isTasksDelete) {
+          this.tasksPriv.push(..."R")     
+          this.tasksPriv.push(..."W")     
+          this.tasksPriv.push(..."D")       
+        }
+      if (this.isIssuesRead && this.isIssuesWrite && this.isIssuesDelete) {
+          this.issuesPriv.push(..."R")     
+          this.issuesPriv.push(..."W")     
+          this.issuesPriv.push(..."D")       
+        }
+      if (this.isRisksRead && this.isRisksWrite && this.isRisksDelete) {
+          this.risksPriv.push(..."R")     
+          this.risksPriv.push(..."W")     
+          this.risksPriv.push(..."D")       
+        }
+      if (this.isLessonsRead && this.isLessonsWrite && this.isLessonsDelete) {
+          this.lessonsPriv.push(..."R")     
+          this.lessonsPriv.push(..."W")     
+          this.lessonsPriv.push(..."D")       
+        }
+      if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
+          this.notesPriv.push(..."R")     
+          this.notesPriv.push(..."W")     
+          this.notesPriv.push(..."D")       
+      }
+  
+ },
   showHideCreateRow(row, index){   
     // console.log(row.rowIndex)    
       return row.rowIndex == 0 && !this.showCreateRow ? 'd-none' : '';
   },
- cancelCreateRole(rows, index) {
-    this.SET_SHOW_CREATE_ROW(!this.showCreateRow);
-   },
-    closeAddRole() {
-      this.addRoleDialogOpen = false;
-    },
-    test(rows, index){
-    
-      console.log(rows)
-      console.log(index)
-// console.log(index)
-// console.log(rows)
-// console.log(index)
-    },
-  saveNewRole(rows, index){
-        let newRoleData = {
+  cancelCreateRole(){
+    this.tableData.shift({});
+    this.isEditting = false
+    this.currentRow = null 
+  },  
+  closeAddRole() {
+    this.addRoleDialogOpen = false;
+  },
+  saveNewRole(index, rowData){
+    let roleData = {};  
+     if (rowData.id){
+      roleData = {
         role: {
-           name: this.newRoleName,
+           name: rowData.name,
+           id:  rowData.id, 
+           uId: rowData.user_id,
+           pId: this.$route.params.programId,
+           type: 'contract',
+            rp: [
+              {
+                privilege: this.analyticsPriv.join(''),
+                role_type: "contract_analytics",
+                name: rowData.name,
+                id:  rowData.role_privileges[0].id
+              }, 
+              {
+                privilege: this.tasksPriv.join(''),
+                role_type: "contract_tasks",
+                name: rowData.name,
+                id:  rowData.role_privileges[1].id
+              },
+              {
+                privilege: this.issuesPriv.join(''),
+                role_type: "contract_issues",
+                name: rowData.name,
+                id:  rowData.role_privileges[2].id
+              },
+              {
+                privilege: this.risksPriv.join(''),
+                role_type: "contract_risks",
+                name: rowData.name,
+                id:  rowData.role_privileges[3].id
+              }, 
+             {
+                privilege: this.notesPriv.join(''),
+                role_type: "contract_notes",
+                name: rowData.name,
+                id:  rowData.role_privileges[4].id
+              }, 
+              {
+                privilege: this.lessonsPriv.join(''),
+                role_type: "contract_lessons",
+                name: rowData.name,
+                id:  rowData.role_privileges[5].id
+              },
+            ],
+            
+        },
+        
+      };
+       console.log(roleData)
+      this.updateRole({
+        ...roleData,
+      });
+     } else {
+         let newRoleData = {
+        role: {
+           name: rowData.name,
            uId: '',
-           type: 'contracts',
+           type: 'contract',
           //  role_users: [{}],
            pId: this.$route.params.programId,
             rp: [
               {
                 privilege: this.analyticsPriv.join(''),
-                role_type: "contracts_analytics",
-                name: this.newRoleName, 
+                role_type: "contract_analytics",
+                name: rowData.name,
               }, 
               {
                 privilege: this.tasksPriv.join(''),
-                role_type: "contracts_tasks",
-                name: this.newRoleName, 
+                role_type: "contract_tasks",
+                name: rowData.name,
               },
               {
                 privilege: this.issuesPriv.join(''),
-                role_type: "contracts_issues",
-                name: this.newRoleName, 
+                role_type: "contract_issues",
+                name: rowData.name,
               },
               {
                 privilege: this.risksPriv.join(''),
-                role_type: "contracts_risks",
-                name: this.newRoleName, 
+                role_type: "contract_risks",
+                name: rowData.name,
               }, 
              {
                 privilege: this.notesPriv.join(''),
-                role_type: "contracts_notes",
-                name: this.newRoleName, 
+                role_type: "contract_notes",
+                name: rowData.name,
               }, 
               {
                 privilege: this.lessonsPriv.join(''),
-                role_type: "contracts_lessons",
-                name: this.newRoleName, 
+                role_type: "contract_lessons",
+                name: rowData.name,
               },
             ],
         },
       };
       this.createRole({
         ...newRoleData,
-      });
-    this.SET_SHOW_CREATE_ROW(!this.showCreateRow)    
-    this.newRoleName = ""
-    this.isAnalyticsRead = true,
-    this.isAnalyticsWrite = true,
-    this.isAnalyticsDelete = true,
-
-    this.isTasksRead = true,
-    this.isTasksWrite = true,
-    this.isTasksDelete = true,
-
-    this.isIssuesRead = true,
-    this.isIssuesWrite = true,
-    this.isIssuesDelete = true,
-
-    this.isRisksRead = true,
-    this.isRisksWrite = true,
-    this.isRisksDelete = true,
-
-    this.isNotesRead = true,
-    this.isNotesWrite = true,
-    this.isNotesDelete = true,
-
-    this.isLessonsRead = true,
-    this.isLessonsWrite = true,
-    this.isLessonsDelete = true,
-
-    this.analyticsPriv = [],
-    this.tasksPriv = [],
-    this.issuesPriv = [],
-    this.risksPriv = [],
-    this.lessonsPriv = [],
-    this.notesPriv = []
-          
-    if (this.isAnalyticsRead && this.isAnalyticsWrite && this.isAnalyticsDelete ) {
-        this.analyticsPriv.push(..."R") 
-        this.analyticsPriv.push(..."W")  
-        this.analyticsPriv.push(..."D") 
-                
-        }
-    if (this.isTasksRead && this.isTasksWrite && this.isTasksDelete) {
-        this.tasksPriv.push(..."R")     
-        this.tasksPriv.push(..."W")     
-        this.tasksPriv.push(..."D")       
-      }
-    if (this.isIssuesRead && this.isIssuesWrite && this.isIssuesDelete) {
-        this.issuesPriv.push(..."R")     
-        this.issuesPriv.push(..."W")     
-        this.issuesPriv.push(..."D")       
-      }
-    if (this.isRisksRead && this.isRisksWrite && this.isRisksDelete) {
-        this.risksPriv.push(..."R")     
-        this.risksPriv.push(..."W")     
-        this.risksPriv.push(..."D")       
-      }
-    if (this.isLessonsRead && this.isLessonsWrite && this.isLessonsDelete) {
-        this.lessonsPriv.push(..."R")     
-        this.lessonsPriv.push(..."W")     
-        this.lessonsPriv.push(..."D")       
-      }
-    if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
-        this.notesPriv.push(..."R")     
-        this.notesPriv.push(..."W")     
-        this.notesPriv.push(..."D")       
-    }
+      });  
+     }   
+      this.isEditting = false;
+      this.currentRow = null;  
     },
-    handleClick(tab, event) { 
-      console.log(tab)
-        // Route redirecting incase we want to assign url paths to each tab
-        // if(tab.index == 1) {
-        //  this.$router.push({ name: "SettingsRolesProjects" })
-        // }    
-   
+      handleClick(tab, event) { 
+      if(tab){
+          this.isEditting = false;
+        }  
     },
 
    },
   mounted() {
- this.fetchRoles(this.$route.params.programId)
-   if (this.isAnalyticsRead && this.isAnalyticsWrite && this.isAnalyticsDelete ) {
-        this.analyticsPriv.push(..."R") 
-        this.analyticsPriv.push(..."W")  
-        this.analyticsPriv.push(..."D")                 
-        }
-    if (this.isTasksRead && this.isTasksWrite && this.isTasksDelete) {
-        this.tasksPriv.push(..."R")     
-        this.tasksPriv.push(..."W")     
-        this.tasksPriv.push(..."D")       
-        }
-    if (this.isIssuesRead && this.isIssuesWrite && this.isIssuesDelete) {
-        this.issuesPriv.push(..."R")     
-        this.issuesPriv.push(..."W")     
-        this.issuesPriv.push(..."D")       
-    }
-      if (this.isRisksRead && this.isRisksWrite && this.isRisksDelete) {
-        this.risksPriv.push(..."R")     
-        this.risksPriv.push(..."W")     
-        this.risksPriv.push(..."D")       
-      }
-    if (this.isLessonsRead && this.isLessonsWrite && this.isLessonsDelete) {
-        this.lessonsPriv.push(..."R")     
-        this.lessonsPriv.push(..."W")     
-        this.lessonsPriv.push(..."D")       
-      }
-    if (this.isNotesRead && this.isNotesWrite && this.isNotesWrite) {
-        this.notesPriv.push(..."R")     
-        this.notesPriv.push(..."W")     
-        this.notesPriv.push(..."D")       
-    }
+ this.fetchRoles(this.$route.params.programId)   
   },
   computed: {
     ...mapGetters([
@@ -1514,14 +1308,25 @@ notesDelete() {
         "activeProjectUsers",
         "newRoleStatus",
         "getRoles",
-        "showCreateRow"
+        "showCreateRow",
+        "updatedContractRoleStatus"
     ]),
      backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
+    contract(){
+      return {
+        analytics: 'contract_analytics',
+        tasks: 'contract_tasks',
+        issues: 'contract_issues',
+        risks: 'contract_risks',
+        lessons: 'contract_lessons',
+        notes: 'contract_notes'
+      }
+    },
      tableData(){
       if(this.getRoles && this.getRoles.length > 0){
-        return this.getRoles.filter(role => role.type_of == 'contracts')
+        return this.getRoles.filter(role => role.type_of == 'contract')
         }  
        } 
     },
@@ -1540,6 +1345,22 @@ notesDelete() {
         }
       },
     },
+    updatedContractRoleStatus: {
+      handler() {
+        if (this.updatedContractRoleStatus == 200) {
+        this.$message({
+            message: `Role successfully updated.`,
+            type: "success",
+            showClose: true,
+          }); 
+          console.log("updatedRole in contracts Tab")
+          this.isEditting = false;
+          this.SET_UPDATED_CONTRACT_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId)
+          this.currentRow = null;          
+          }
+        },
+     },   
    
   },
 };
@@ -1548,6 +1369,11 @@ notesDelete() {
 .right-panel {
   height: calc(100vh - 100px);
   overflow-y: auto;
+}
+.crudRow{
+  /deep/.el-input__inner{
+  border: 1px solid #d9534f;
+ }
 }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
@@ -1582,6 +1408,8 @@ notesDelete() {
       box-shadow: inset 0 0 0 2px #DD9036;
     }
   }
+
+
   .results {
     position: absolute;
     max-height: 300px;

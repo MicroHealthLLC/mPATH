@@ -2615,6 +2615,9 @@ body /deep/ .mx-input.disabled {
 .mw-95 {
   min-width: 95%;
 }
+.mw-90 {
+  min-width: 90%;
+}
 .load-spinner {
   display: flex;
   position: absolute;
@@ -3025,4 +3028,7 @@ i.el-icon-circle-close {
   -webkit-hyphens: auto;
   hyphens: auto;
 }
+//   .el-select-dropdown {
+//     display: none !important; 
+//   }
 

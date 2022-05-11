@@ -26,16 +26,19 @@
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
             <div
-              class="col-6"             
-            >
+              class="col-6"  
+                    
+            > 
               <el-button
                 @click.prevent="addGroup"
+                 v-if="_isallowed('write')"    
                 class="bg-primary text-light mb-2"
               >
                 <i class="far fa-plus-circle mr-1"></i> Create Group
               </el-button>
               <el-button
                 @click.prevent="openPortfolioGroup"
+                 v-if="_isallowed('write')"    
                 class="bg-success text-light mb-2"
               >
                 <i class="far fa-plus-circle mr-1"></i> Add Portfolio Group(s)
@@ -123,7 +126,7 @@
 
               <div class="row"> 
                <div slot="title" class="col-8 pr-0 text-left">
-                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Group(s) to Add </h5>
+                <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Portfolio Group(s) to Add </h5>
               </div>
                 <div class="col text-right">
                   <el-button
@@ -158,6 +161,7 @@
                   <el-checkbox
                     v-for="group in portfolioGroups.filter(g => g.is_portfolio)"
                     :label="group.id"
+                    class="d-flex"
                     :key="group.id"
                     >{{ group.name }}</el-checkbox
                   >
@@ -169,6 +173,7 @@
         <div class="container-fluid mt-2 mx-0">
           <div
             v-loading="!contentLoaded"
+            v-if="_isallowed('read')"
             element-loading-text="Fetching your data. Please wait..."
             element-loading-spinner="el-icon-loading"   
             element-loading-background="rgba(0, 0, 0, 0.8)"       
@@ -204,7 +209,7 @@
                       >
                       </el-input>
                       <span v-else>                         
-                       <span v-if="!props.row.isPortfolio" v-tooltip="`Program Only Group`"><i class="fas fa-circle mr-2 text-primary fs-75"></i></span> 
+                       <span v-if="props.row.isPortfolio" v-tooltip="`Portfolio Group`"><i class="fas fa-circle mr-2 text-success fs-50"></i></span> 
                         {{ props.row.name }}
                        
 
@@ -248,13 +253,13 @@
                         v-if="
                           groupContracts &&
                             groupContracts
-                              .map((t) => t.facilityGroupId)
+                              .map((t) => t.facility_group_id)
                               .filter((t) => t == props.row.id).length
                         "
                       >
                         {{
                           groupContracts
-                            .map((t) => t.facilityGroupId)
+                            .map((t) => t.facility_group_id)
                             .filter((t) => t == props.row.id).length
                         }}
                       </span>
@@ -295,7 +300,7 @@
                         </h5>
                         <span v-if="groupProjects">
                           <ul
-                            class="pl-3"
+                            class="pl-3 mb-0"
                             v-for="(item, i) in groupProjects.filter(
                               (t) => t.facilityGroupId == props.row.id
                             )"
@@ -314,13 +319,13 @@
                             v-if="
                               groupContracts &&
                                 groupContracts
-                                  .map((t) => t.facilityGroupId)
+                                  .map((t) => t.facility_group_id)
                                   .filter((t) => t == props.row.id).length
                             "
                             class="badge badge-secondary badge-pill pill"
                             >{{
                               groupContracts
-                                .map((t) => t.facilityGroupId)
+                                .map((t) => t.facility_group_id)
                                 .filter((t) => t == props.row.id).length
                             }}
                           </span>
@@ -331,10 +336,10 @@
                           </span>
                         </h5>
                         <span v-if="groupContracts">
-                          <ul class="pl-3">
+                          <ul class="pl-3 mb-0">
                             <li
                               v-for="(item, i) in groupContracts.filter(
-                                (t) => t.facilityGroupId == props.row.id
+                                (t) => t.facility_group_id == props.row.id
                               )"
                               :key="i"
                             >
@@ -413,6 +418,9 @@
               
             </el-table>
           </div>
+            <div v-else class="text-danger mx-2 mt-5">
+              <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
+            </div>
         </div>
       </div>
       <!-- <div class="col-md-8" > -->
@@ -447,7 +455,6 @@ export default {
       dialog2Visible: false,
       isIndeterminate: true,
       currentTab: "tab1",
-      contracts: null,
       currentFacilityGroup: {},
       componentKey: 0,
       confirmTransfer: false,
@@ -483,6 +490,7 @@ export default {
       "removeOrDeleteGroup",
       "updateGroup",
       "fetchGroups",
+      "fetchContracts",
       "fetchCurrentProject",
     ]),
        tableRowClassName({row, rowIndex}) {
@@ -545,7 +553,7 @@ export default {
     cancelEdits(index, rows) {
       this.rowIndex = null;
       this.rowId = null;
-      console.log(this.facilityGroups)
+      // console.log(this.facilityGroups)
     },
     createNewGroup() {
       let groupData = {
@@ -617,27 +625,22 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    // _isallowedProgramSettings(salut) {
-    //   // return this.checkPrivileges("SettingsGroups", salut, this.$route)
-    //   let pPrivilege = this.$programSettingPrivileges[
-    //     this.$route.params.programId
-    //   ];
-    //   let permissionHash = { write: "W", read: "R", delete: "D" };
-    //   let s = permissionHash[salut];
-    //   return pPrivilege.admin_groups.includes(s);
-    // },
+    _isallowed(salut) {
+     return this.checkPrivileges("SettingsGroups", salut, this.$route, {settingType: "Groups"})    
+    },
   },
   mounted() {
   if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
     }
-   
+    this.fetchContracts(this.$route.params.programId);  
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "facilities",
       "groups",
+      "contracts",
       "groupStatus",
       "getNewGroups",
       "getTransferData",
@@ -677,7 +680,7 @@ export default {
         return this.getCheckAll;
       },
       set(value) {
-        console.log(value);
+        // console.log(value);
         this.SET_CHECK_ALL(value);
         if (value == true) {
           let checkGroups = this.groups.map((group) => group.id);
@@ -756,9 +759,9 @@ export default {
     portfolioGroups() {
       //Removes current Program  Groups from checkbox options in Add Protfolio Group popup
       if (this.groups && this.groups.length > 0) {
-        return this.groups.filter(
-          (pG) => !this.tableData.map((g) => g.id).includes(pG.id)
-        );
+       let filteredGroups = this.groups.filter(
+          (pG) => !this.tableData.map((g) => g.id).includes(pG.id))
+       return filteredGroups.sort((a, b) => a.name.localeCompare(b.name))
       }
     },
     tableData() {
@@ -775,15 +778,22 @@ export default {
         return this.facilities;
       }
     },
-    groupContracts() {
-      if (
-        this.currentProject &&
-        this.currentProject.contracts &&
-        this.currentProject.contracts.length > 0
-      ) {
-        return this.currentProject.contracts;
+  groupContracts() {
+     if (this.contracts && this.contracts.length > 0) {
+          // console.log(this.contracts)
+          return this.contracts;
       }
     },
+    // groupContracts() {
+      // contracts array no longer in currentProject response
+    //   if (
+    //     this.currentProject &&
+    //     this.currentProject.contracts &&
+    //     this.currentProject.contracts.length > 0
+    //   ) {
+    //     return this.currentProject.contracts;
+    //   }
+    // },
     C_projectGroupFilter: {
       get() {
         return this.getProjectGroupFilter;
@@ -977,8 +987,8 @@ div.sticky {
 .modalBtns {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
-.fs-75{
-font-size: .75rem;
+.fs-50{
+font-size: .50rem;
 }
 .program-sphere {
   width: 10px;

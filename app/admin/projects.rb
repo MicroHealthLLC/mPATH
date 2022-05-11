@@ -8,6 +8,7 @@ ActiveAdmin.register Project do
       :description,
       :project_type_id,
       :status,
+      admin_program_admins: [],
       user_ids: [],
       facility_ids: [],
       status_ids: [],
@@ -50,6 +51,16 @@ ActiveAdmin.register Project do
         "<span>#{project.project_type&.name}</span>".html_safe
       end
     end
+    column "Program Admins", :get_program_admins do |project|
+      if current_user.admin_write?
+        project.get_program_admins
+      else
+        "<span>#{project.get_program_admins.map(&:full_name).join(', ')}</span>".html_safe
+      end
+    end
+    column "Users", :users do |project|
+      project.users - project.get_program_admins
+    end
     tag_column "State", :status
     actions defaults: false do |project|
       item "Edit", edit_admin_project_path(project), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
@@ -67,13 +78,14 @@ ActiveAdmin.register Project do
           f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
+          f.input :admin_program_admins, label: 'Program Admins*', as: :select, collection: options_for_select(  User.active.map{|u| [u.email, u.id]}, f.object.get_program_admin_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
         end
       end
 
       tab 'Advanced' do
         f.inputs 'Program Details' do
-          input :users, label: 'Users in Program', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :facilities, label: 'Projects in Program', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # input :users, label: 'Users in Program', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # input :facilities, label: 'Projects in Program', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :statuses, label: 'Statuses in Program', as: :select, collection:  options_for_select( Status.all.map{|u| [u.name, u.id]}, f.object.status_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :task_stages, label: 'Task Stages in Program', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :task_types, label: 'Process Areas in Program', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
@@ -104,6 +116,8 @@ ActiveAdmin.register Project do
   filter :name
   filter :project_type, label: "Program Type"
   filter :status, as: :select, collection: Project.statuses, label: "State"
+  filter :program_admins, as: :string, label: "Program Admins"
+  filter :users, as: :select, label: "Users"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
@@ -122,6 +136,10 @@ ActiveAdmin.register Project do
     before_action :check_readability, only: [:index, :show]
     before_action :check_order, only: [:index]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def scoped_collection
+      super.includes [:roles, {role_users: :user }, :users, :project_users, :project_type]
+    end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -144,9 +162,19 @@ ActiveAdmin.register Project do
       # super
       p_params = permitted_params[:project]
       user_ids = p_params.delete("user_ids")
+      # project_admins = p_params.delete("admin_program_admins")
       project = Project.new(p_params)
       if project.save
         project.user_ids = project.user_ids + user_ids if user_ids.present?
+        users = User.where(id: project.admin_program_admins)
+        project.user_ids = (project.user_ids + users.pluck(:id)).compact.uniq if users.any?
+        role_users = []
+        role_id = Role.program_admin_user_role.id
+        users.each do |user|
+          role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: project.id)
+        end
+        RoleUser.import(role_users)
+        
         redirect_to admin_projects_path , notice: "Program created Successfully"
       else
         # render :new
@@ -162,6 +190,31 @@ ActiveAdmin.register Project do
         User.where(id: removed_user_ids).each do |user|
           user.remove_all_privileges(resource.id)
         end if removed_user_ids.any?
+      end
+      p_params = permitted_params[:project]
+
+      role_id = Role.program_admin_user_role.id
+
+      p_project_admin_ids = p_params.delete("admin_program_admins").reject { |c| c.empty? }.map(&:to_i)
+      existing_program_admin_ids = resource.get_program_admin_ids
+
+      all_project_admin_ids = (p_project_admin_ids + existing_program_admin_ids).uniq
+      new_project_admin_ids = (all_project_admin_ids - existing_program_admin_ids).uniq
+      remove_project_admin_ids = (all_project_admin_ids - p_project_admin_ids).uniq
+
+      role_users = []
+      users = User.where(id: new_project_admin_ids)
+      users.each do |user|
+        role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: resource.id)
+      end
+      RoleUser.import(role_users) if role_users.any?
+
+      if (resource.reload.get_program_admin_ids.size > remove_project_admin_ids.size)
+        RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
+   
+        params[:project][:user_ids] = resource.reload.user_ids.map(&:to_s) if !params[:project][:user_ids] # in case no user is added in program and adding admin users
+        params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s)) if remove_project_admin_ids.any?
+        params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)) if new_project_admin_ids.any?
       end
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
@@ -191,9 +244,6 @@ ActiveAdmin.register Project do
       end
     end
 
-    def scoped_collection
-      super.includes(:project_type)
-    end
   end
 
 end

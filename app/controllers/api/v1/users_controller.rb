@@ -1,13 +1,17 @@
 class Api::V1::UsersController < AuthenticatedController
-  before_action :require_admin
+  before_action :require_admin, except: [:index]
 
   def index
-    if params[:project_id].present?
-      @users = Project.where(id: params[:project_id]).first.users.as_json
-    else
+    @users = []    
+    status_code = 200
+    if params[:project_id].present? && current_user.is_program_admin?(params[:project_id])
+      @users = Project.where(id: params[:project_id]).first.users.includes(:organization).as_json
+    elsif current_user.has_program_admin_role?
       @users = User.active.map(&:as_json)
+    else
+      status_code = 406
     end
-    render json: @users
+    render json: @users, status: status_code
   end
 
   def create

@@ -5,11 +5,13 @@ class Api::V1::ContractsController < AuthenticatedController
 
     all_contracts = []
     if params[:project_id] && authorized_program_ids.include?(params[:project_id].to_i)
-      cph = current_user.contract_privileges_hash[params[:project_id].to_s] || {}
+      cph = current_user.contract_privileges_hash_by_role(program_ids: [params[:project_id]] )
       contract_ids = cph.keys
       all_contracts = Contract.includes(:facility_group, :contract_facility_group).where(id: contract_ids, project_id: params[:project_id] )
     elsif !params[:project_id]
-      all_contracts = Contract.includes(:facility_group, :contract_facility_group).where(project_id: authorized_program_ids )
+      cph = current_user.contract_privileges_hash_by_role
+      contract_ids = cph.keys
+      all_contracts = Contract.includes(:facility_group, :contract_facility_group).where(id: contract_ids)
     end
     c = []
     all_contracts.in_batches do |contracts|

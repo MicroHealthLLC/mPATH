@@ -229,8 +229,16 @@ ActiveAdmin.register Risk do
   end
 
   controller do
+    before_action :exclude_inactive_items, only: [:index]
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def exclude_inactive_items
+      return unless params.keys == ["controller", "action"]
+      extra_params = { "q" => { "exclude_inactive_in" => ["true"] }}
+      params.merge! extra_params
+      request.query_parameters.merge! extra_params
+    end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -296,4 +304,6 @@ ActiveAdmin.register Risk do
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, "data-placeholder" => "Select Checklist user" }
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
+  filter :exclude_closed, as: :check_boxes, collection: [['Exclude Closed Items', true]], label: ''
+  filter :exclude_inactive, as: :check_boxes, collection: [['Exclude Inactive Items', true]], label: ''
 end

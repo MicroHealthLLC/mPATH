@@ -44,21 +44,61 @@ class Project < SortableRecord
   
   has_many :contracts, dependent: :destroy
   has_many :roles, dependent: :destroy
-  
+  has_many :role_users, dependent: :destroy
+
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false
   validates :name, presence: true
+  validate :check_min_program_admins
 
   before_create :set_uuid
-  after_save :grant_access_to_admins
+  # after_save :grant_access_to_admins
   after_save :add_not_started_status
+
+  scope :program_admins_contains, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}%").map(&:project_id)) }
+  scope :program_admins_equals, -> (email) { where(id: RoleUser.joins(:user).where("users.email=?", email).map(&:project_id)) }
+  scope :program_admins_ends_with, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "%#{email}").map(&:project_id)) }
+  scope :program_admins_starts_with, -> (email) { where(id: RoleUser.joins(:user).where("users.email LIKE ?", "#{email}%").map(&:project_id)) }
+
+  # Program admins are those who has any of RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES roles for this program
+  # i.e. check Role#get_program_admins 
+  attr_accessor :admin_program_admins
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:program_admins_equals, :program_admins_ends_with, :program_admins_starts_with, :program_admins_contains]
+  end
 
   def as_json(options=nil)
     json = super(options)
     json.merge(
       project_type: self.project_type.try(:name)
     ).as_json
+  end
+
+  def check_min_program_admins
+    if self.persisted?
+      role_id = Role.program_admin_user_role.id
+      role_user_count = RoleUser.where(role_id: role_id, project_id: self.id).count
+      if role_user_count < 1
+        self.errors.add(:base, "There must be at least one program admin assigned")
+        return false
+      end
+    else
+      if admin_program_admins.reject { |c| c.empty? }.size < 1
+        self.errors.add(:base, "There must be at least one program admin assigned")
+        return false
+      end
+    end
+  end
+
+  def get_program_admins
+    role_id = Role.program_admin_user_role.id
+    User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
+  end
+
+  def get_program_admin_ids
+    get_program_admins.pluck(:id)
   end
 
   def total_progress
@@ -318,7 +358,7 @@ class Project < SortableRecord
 
     all_user_ids = all_user_ids.compact.uniq
 
-    all_users = User.includes(:organization).where(id: all_user_ids ).active
+    all_users = User.includes(:organization, :facility_projects, :role_users, :role_privileges).where(id: all_user_ids ).active
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
@@ -361,6 +401,7 @@ class Project < SortableRecord
       h[:facility] = facility.attributes.merge({
         facility_group_name: g&.name,
         facility_group_status: g&.status,
+        project_id: fp.project_id
       })
 
       # Building Tasks
@@ -461,8 +502,8 @@ class Project < SortableRecord
 
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
-        # h2[:project_ids] << fp.project_id
-        h2[:project_ids] << fp.facility_id
+        h2[:project_ids] << fp.project_id
+        # h2[:project_ids] << fp.facility_id
       end
       h2[:project_ids] = h2[:project_ids].compact.uniq
       facility_groups_hash << h2

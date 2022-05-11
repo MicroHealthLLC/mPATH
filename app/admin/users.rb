@@ -126,7 +126,6 @@ ActiveAdmin.register User do
         f.inputs 'Access' do
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
-            p.input :settings_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "settings_view")
             p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
             p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
             p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
@@ -142,13 +141,13 @@ ActiveAdmin.register User do
         end
       end
 
-      tab 'Programs' do
+      # tab 'Programs' do
 
-        f.inputs 'Assign Program Privileges' do
+      #   f.inputs 'Assign Program Privileges' do
 
-          render(partial:'admin/project_privileges/index', locals: {user: user})
+      #     render(partial:'admin/project_privileges/index', locals: {user: user})
           
-          project_select_options = user.active_admin_facility_project_select_options
+      #     project_select_options = user.active_admin_facility_project_select_options
 
           # f.has_many :project_privileges,
           #   heading: '',
@@ -166,7 +165,7 @@ ActiveAdmin.register User do
           #   b.input :notes, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "notes")
           #   b.input :lessons, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "lessons")
           # end
-        end
+        # end
 
         # f.inputs 'Assign Programs' do
         #   # f.input :projects, label: 'Programs', as: :select, include_blank: false
@@ -192,41 +191,16 @@ ActiveAdmin.register User do
         #   p.input :admin, as: :hidden
         #   p.input :lessons, as: :hidden
         # end
-      end
+      # end
 
 
 
-      tab 'Projects' do
-        f.inputs 'Assign Project Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
+      # tab 'Projects' do
+      #   f.inputs 'Assign Project Privileges' do
+      #     project_select_options = user.active_admin_facility_project_select_options
+      #     user_privileges = f.object.privilege || Privilege.new
 
-          render(partial:'admin/facility_privileges/list_facility_privileges', locals: {user: user})
-
-          # f.has_many :facility_privileges,
-          #   heading: '',
-          #   new_record: 'Add Project Privilege',
-          #   remove_record: 'Remove Project Privilege',
-          #   allow_destroy: -> (c) { current_user.superadmin?  } do |b|
-
-          #   b.input :project_select, label: "Program", as: :select, collection: options_for_select( user.projects.active.map{|p| [p.name, p.id]})  , include_blank: true, input_html: {class: "facility_project_select", onchange: 'facilityProjectChange(this)'}
-          #   b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  project_select_options, b.object.facility_project_id ), include_blank: false, input_html: {class: "project_privileges_select"}
-          #   b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "overview")
-          #   b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "admin")
-          #   b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "tasks")
-          #   b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "issues")
-          #   b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "risks")
-          #   b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
-
-          # end
-        end
-      end
-      tab 'Contracts' do
-        f.inputs 'Assign Contract Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
-
-          render(partial:'admin/contract_privileges/list_contract_privileges', locals: {user: user})
+      #     render(partial:'admin/facility_privileges/list_facility_privileges', locals: {user: user})
 
           # f.has_many :facility_privileges,
           #   heading: '',
@@ -244,8 +218,33 @@ ActiveAdmin.register User do
           #   b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
 
           # end
-        end
-      end
+      #   end
+      # end
+      # tab 'Contracts' do
+      #   f.inputs 'Assign Contract Privileges' do
+      #     project_select_options = user.active_admin_facility_project_select_options
+      #     user_privileges = f.object.privilege || Privilege.new
+
+      #     render(partial:'admin/contract_privileges/list_contract_privileges', locals: {user: user})
+
+      #     f.has_many :facility_privileges,
+      #       heading: '',
+      #       new_record: 'Add Project Privilege',
+      #       remove_record: 'Remove Project Privilege',
+      #       allow_destroy: -> (c) { current_user.superadmin?  } do |b|
+
+      #       b.input :project_select, label: "Program", as: :select, collection: options_for_select( user.projects.active.map{|p| [p.name, p.id]})  , include_blank: true, input_html: {class: "facility_project_select", onchange: 'facilityProjectChange(this)'}
+      #       b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  project_select_options, b.object.facility_project_id ), include_blank: false, input_html: {class: "project_privileges_select"}
+      #       b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "overview")
+      #       b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "admin")
+      #       b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "tasks")
+      #       b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "issues")
+      #       b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "risks")
+      #       b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
+
+      #     end
+      #   end
+      # end
     end
 
     actions
@@ -344,7 +343,7 @@ ActiveAdmin.register User do
     end
 
     def scoped_collection
-      super.includes(:organization)
+      super.includes(:organization, :project_users)
     end
   end
 

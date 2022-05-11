@@ -14,7 +14,8 @@
       <div v-if="contentLoaded" >
         <div
           v-for="(group, index) in sortedGroups"
-          :key="index + 'a'"    
+          :key="index + 'a'"  
+          :load="log(sortedGroups.length)"  
           class="my-2 px-2 container"
         >
           <div
@@ -44,12 +45,15 @@
               }}
             </span>
 
-             <span class="badge badge-secondary badge-pill pill" v-else>
+             <span class="badge badge-secondary badge-pill pill" 
+          
+             v-else>
                {{ facilityGroupFacilities(group).projects.a.length }}
             </span>
          </div>
              
           </div>
+          <!-- <span    :load="log(facilityGroupFacilities(group))"> </span> -->
          <div v-show="getExpandedGroup == group.id" class="ml-2">
               <div
               v-for="facility in facilityGroupFacilities(group).projects.a"            
@@ -214,25 +218,33 @@ export default {
        }
       this.$emit("on-expand-facility-group", group);
     },
+    log(e){
+          console.log(e)
+
+    },
     _isallowedContracts(salut, c) {
-        let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.id})
+
+        // let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
     },
     _isallowedProgramSettings(salut) {
-        let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return pPrivilege.admin_groups.includes(s) ||
-               pPrivilege.admin_contracts.includes(s) ||
-               pPrivilege.admin_facilities.includes(s);
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
+        // let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
+        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        // let s = permissionHash[salut]
+        // return pPrivilege.admin_groups.includes(s) ||
+        //        pPrivilege.admin_contracts.includes(s) ||
+        //        pPrivilege.admin_facilities.includes(s);
     },
     toggleAdminView() {
+      window.location.pathname = `/programs/${this.$route.params.programId}/settings`
         // this.setShowAdminBtn(!this.getShowAdminBtn);
-         this.$router.push(
-        `/programs/${this.$route.params.programId}/settings`
-        );
+        //  this.$router.push(
+        // `/programs/${this.$route.params.programId}/settings`
+        // );
 
       },
      handleClose(done) {
