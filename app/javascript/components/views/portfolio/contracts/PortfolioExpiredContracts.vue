@@ -1,6 +1,5 @@
 <template>
-
-    <div style="height:80vh">
+    <div style="height:80vh" class="portfolio-contracts-module">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
     :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
@@ -8,6 +7,7 @@
     height="800"
     style="width: 95%">
     <el-table-column
+      fixed
       label="Code"
       width="55"
       prop="code">
