@@ -3,6 +3,7 @@ import PortfolioTaskForm from "./../components/views/portfolio/PortfolioTaskForm
 import PortfolioIssueForm from "./../components/views/portfolio/PortfolioIssueForm";
 import PortfolioRiskForm from "./../components/views/portfolio/PortfolioRiskForm";
 import PortfolioLessonForm from "./../components/views/portfolio/PortfolioLessonForm";
+import ContractsView from "./../components/views/portfolio/contracts/PortfolioContracts";
 
 export default new VueRouter({
   routes: [
@@ -11,6 +12,12 @@ export default new VueRouter({
       // path: "/api/v1/portfolio/programs",    
       path: "/portfolio",    
       component: PortfolioView,
+     },
+     {
+      name: "PortfolioContracts",
+      // path: "/api/v1/portfolio/programs",    
+      path: "/portfolio/contracts",    
+      component: ContractsView,
      },
      {
       name: "PortfolioTaskForm",

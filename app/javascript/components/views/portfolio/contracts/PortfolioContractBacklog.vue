@@ -1,36 +1,5 @@
 <template>
-  <div class="container-fluid mt-3 mx-3">
-   
-    <div style="height:85px">
-      <span @click.prevent="backHomeBtn">
-        <img
-          class="mb-2"
-          style="width: 147px;cursor:pointer"
-          :src="require('../../../../../assets/images/microhealthllc.png')"
-        />
-        <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
-      </span>
-      <span class="float-right mr-4">
-        <button
-          class="portfolioHomeBtn mh-orange btn btn-sm"
-          style="cursor: pointer"
-          @click.prevent="backHomeBtn"
-        >
-          <i class="fas fa-home text-light"></i>
-        </button>
-      </span>
-    </div>
-
-  <el-tabs :tab-position="tabPosition" type="border-card"  class="bottomTabs"  @tab-click="handleClick">
-    <el-tab-pane label="">
-     <span slot="label"> <i class="fa-solid fa-car mr-1" :class="[ pane0? 'mh-green-text' : 'txt-secondary']"></i>
-     VEHICLES
-     </span>
-      <PortfolioVehicles/>
-    </el-tab-pane>
-    
-    <el-tab-pane>
-     <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
+ 
     <div style="height:80vh">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
@@ -38,68 +7,25 @@
     border
     height="800"
     style="width: 95%">
-    <el-table-column
+     <el-table-column
       fixed
       label="Code"
       width="55"
       prop="code">
     </el-table-column>
-    <el-table-column
+   <el-table-column
       fixed
       label="Project Name"
-      width="200"
+      width="325"
       prop="name">
     </el-table-column>
-     <el-table-column
-    
-      label="Customer"
-      width="200"
-      prop="name">
-    </el-table-column>
-      <el-table-column
-    
-      label="Vehicle/ Schedule"
-      width="125"
-      prop="sched">
-    </el-table-column>
-      <el-table-column
-    
-      label="Contract #"
-      width="125"
-      prop="sched">
-    </el-table-column>
-    <el-table-column
-  
-      label="Award/ TO #"
-      width="125"
-      prop="sched">
-    </el-table-column>
-     <el-table-column
-      label="NAICS"
-      width="70"
-      prop="type">
-    </el-table-column>
-     <el-table-column
-      label="Award Type"
-      width="70"
-      prop="type">
-    </el-table-column>
-    <el-table-column
-      label="Contract Type"
-      width="75"
-      prop="type">
-    </el-table-column>
-      <el-table-column
-      label="Prime Vs Sub"
-      width="55"
-      prop="primesub">
-    </el-table-column>
+   
      <el-table-column
       label="Contract Start Date"
-      width="100"
+       width="100"
       prop="startdate">
-    </el-table-column>
-     <el-table-column
+     </el-table-column>
+       <el-table-column
       label="Contract End Date"
       width="100"
       prop="startdate">
@@ -109,39 +35,42 @@
        width="115"
       prop="value">
     </el-table-column>
-    <el-table-column
-      label="PoP's"
-       width="55"
-      prop="type">
+     <el-table-column
+      label="Total Funded Value"
+       width="115"
+      prop="value">
     </el-table-column>
      <el-table-column
-      label="Current PoP"
-      width="70"
-      prop="type">
+      label="Billings to Date"
+       width="115"
+      prop="value">
     </el-table-column>
-    <el-table-column
-      label="Contract Pop Start Date"
-       width="100"
-      prop="startdate">
+     <el-table-column
+      label="% Completed"
+      width="115"
+      prop="percent">
+    </el-table-column>
+         <el-table-column
+      label="Funded Remaining"
+       width="115"
+      prop="value">
+    </el-table-column>
+      <el-table-column
+      label="Total Backlog (Sum of A & B)"
+       width="115"
+      prop="value">
     </el-table-column>
        <el-table-column
-      label="Contract Pop End Date"
-       width="100"
-      prop="startdate">
+      label="Notes/Questions"
+       width="375"
+      prop="">
     </el-table-column>
     <el-table-column
-      label="Actions"
+     label="Actions"
       width="75"
       fixed="right"
       align="right">
-      <!-- <template slot="header" slot-scope="scope">
-        <el-input
-         
-          v-model="search"
-          size="mini"
-          placeholder="Type to search"/>
-      </template> -->
-      <template slot-scope="scope">
+       <template slot-scope="scope">
          <el-button
           type="default"
           class="bg-light btn-sm"
@@ -156,73 +85,39 @@
   </el-table>
       </div>
       </div>
-    </el-tab-pane>
+
+
  
-    <el-tab-pane>
-    <span slot="label"> <i class="fa-solid fa-book mr-1" :class="[ pane2? 'mh-blue-text' : 'txt-secondary']"></i>
-     CONTRACT BACKLOG
-     </span> 
-    <PortfolioContractBacklog/>
-    </el-tab-pane>
-   <el-tab-pane>
-    <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
-    CONTRACT POC
-    </span>
-    <PortfolioContractPOC/>
-    </el-tab-pane>
-    <el-tab-pane>
-    <span slot="label">  <i class="fa-solid fa-calendar-xmark mr-1" :class="[ pane4? 'text-danger' : 'txt-secondary']"></i>
-    EXPIRED CONTRACTS
-    </span>
-   <PortfolioExpiredContracts/>
-    </el-tab-pane>
-  </el-tabs>
-  </div>
-      
 </template>
     
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import PortfolioVehicles from "./PortfolioVehicles.vue";
-import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
-import PortfolioContractPOC from "./PortfolioContractPOC.vue";
-import PortfolioExpiredContracts from "./PortfolioExpiredContracts.vue";
-// import ProgramTaskForm from "./ProgramTaskForm.vue";
-// import ProgramLessons from "./ProgramLessons.vue";
 
 export default {
-  name: "PortfolioContracts",
+  name: "PortfolioContractBacklog",
   components: {
-    PortfolioVehicles,  
-    PortfolioExpiredContracts,
-    PortfolioContractBacklog,
-    PortfolioContractPOC
+  
   },
 
     data() {    
       return {
         nothing: true,
-        pane0: true, 
-        pane1: false, 
-        pane2: false, 
-        pane3: false, 
-        pane4: false, 
         tabPosition: 'bottom',
         tableData: [{
           code: 123, 
           type: 'FFP', 
           value: "$7,343,342.45",
           primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
           startdate: '2016-05-03',
-          name: 'SEC FOIA Admin Proceedings',
+          percent: '12%',
+          name: 'Tom',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           type: 'FFP', 
           startdate: '2016-05-02',
-            sched: "CIOSP3-SDVOSB",
           value: "$7,343,342.45",
+            percent: '12%',
           name: 'John',
           primesub: "Prime",
           address: 'No. 189, Grove St, Los Angeles'
@@ -231,7 +126,7 @@ export default {
           startdate: '2016-05-04',
           type: 'T&M', 
           primesub: "Sub",
-            sched: "CIOSP3-SDVOSB",
+          percent: '42%',
           value: "$5,643.45",
           name: 'Morgan',
           address: 'No. 189, Grove St, Los Angeles'
@@ -239,8 +134,8 @@ export default {
           code: 123, 
           startdate: '2016-05-01',
           name: 'Jessy',
+          percent: '67%',
           type: 'T&M', 
-            sched: "CIOSP3-SDVOSB",
           value: "$17,343,342.45",
           primesub: "Prime",
           address: 'No. 189, Grove St, Los Angeles'
@@ -248,8 +143,8 @@ export default {
           code: 123, 
           startdate: '2016-05-03',
           name: 'Tom',
-            sched: "CIOSP3-SDVOSB",
           value: "$6,343,342.45",
+          percent: '42%',
           primesub: "Prime",
           type: 'T&M', 
           address: 'No. 189, Grove St, Los Angeles'
@@ -258,8 +153,8 @@ export default {
            startdate:'2016-05-02',
           name: 'John',
           primesub: "Sub",
-            sched: "CIOSP3-SDVOSB",
-           value: "$7,343,342.45",
+          value: "$7,343,342.45",
+          percent: '42%',
           type: 'T&M', 
           address: 'No. 189, Grove St, Los Angeles'
         }, {
@@ -267,7 +162,7 @@ export default {
           type: 'FFP', 
           startdate: '2016-05-02',
           value: "$7,343,342.45",
-            sched: "CIOSP3-SDVOSB",
+          percent: '48%',
           name: 'John',
           primesub: "Prime",
           address: 'No. 189, Grove St, Los Angeles'
@@ -277,16 +172,16 @@ export default {
           type: 'T&M', 
           primesub: "Sub",
           value: "$5,643.45",
-            sched: "CIOSP3-SDVOSB",
+          percent: '4%',
           name: 'Morgan',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-01',
           name: 'Jessy',
-            sched: "CIOSP3-SDVOSB",
           type: 'T&M', 
           value: "$17,343,342.45",
+          percent: '98%',
           primesub: "Prime",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
@@ -294,8 +189,43 @@ export default {
           startdate: '2016-05-03',
           name: 'Tom',
           value: "$6,343,342.45",
+          percent: '74%',
           primesub: "Prime",
-          sched: "CIOSP3-SDVOSB",
+          type: 'T&M', 
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+           code: 123, 
+           startdate:'2016-05-02',
+          name: 'John',
+          primesub: "Sub",
+          value: "$7,343,342.45",
+          percent: '23%',
+          type: 'T&M', 
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+           code: 123, 
+          startdate: '2016-05-04',
+          name: 'Morgan',
+          value: "$7,343,342.45",
+          percent: '45%',
+          primesub: "Prime",
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-01',
+          name: 'Jessy',
+          type: 'T&M', 
+          value: "$17,343,342.45",
+          percent: '45%',
+          primesub: "Prime",
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-03',
+          name: 'Tom',
+          value: "$6,343,342.45",
+          percent: '45%',
+          primesub: "Prime",
           type: 'T&M', 
           address: 'No. 189, Grove St, Los Angeles'
         }, {
@@ -304,58 +234,23 @@ export default {
           name: 'John',
           primesub: "Sub",
            value: "$7,343,342.45",
-          sched: "CIOSP3-SDVOSB",
+           percent: '45%',
           type: 'T&M', 
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
           startdate: '2016-05-04',
           name: 'Morgan',
-          sched: "CIOSP3-SDVOSB",
           value: "$7,343,342.45",
+          percent: '45%',
           primesub: "Prime",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-01',
           name: 'Jessy',
-          type: 'T&M', 
-          sched: "CIOSP3-SDVOSB",
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          sched: "CIOSP3-SDVOSB",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
-           value: "$7,343,342.45",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-          startdate: '2016-05-04',
-          name: 'Morgan',
-          sched: "CIOSP3-SDVOSB",
           value: "$7,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          sched: "CIOSP3-SDVOSB",
-          name: 'Jessy',
-          value: "$7,343,342.45",
+          percent: '45%',
           primesub: "Sub",
           address: 'No. 189, Grove St, Los Angeles'       
         }],
@@ -377,46 +272,7 @@ export default {
       },
   handleDelete(index, row) {
     console.log(index, row);
-  },
-  handleClick(tab, event) {
-    if (tab.paneName == 0){
-       this.pane0 = true;
-       this.pane1 = false;
-       this.pane2 = false;
-       this.pane3 = false;
-       this.pane4 = false;
-    }
-    if (tab.paneName == 1){
-       this.pane0 = false;
-       this.pane1 = true;
-       this.pane2 = false;
-       this.pane3 = false
-       this.pane4 = false
-    }
-    if (tab.paneName == 2){
-       this.pane0 = false;
-       this.pane1 = false;
-       this.pane2 = true;
-       this.pane3 = false;
-       this.pane4 = false;
-    }
-    if (tab.paneName == 3){
-       this.pane0 = false;
-       this.pane1 = false;
-       this.pane2 = false;
-       this.pane3 = true;
-       this.pane4 = false;
-    }
-   if (tab.paneName == 4){
-       this.pane0 = false;
-       this.pane1 = false;
-       this.pane2 = false;
-       this.pane3 = false;
-       this.pane4 = true;
-    }
- 
   }
-  
   },
   mounted() {
     
@@ -440,17 +296,9 @@ export default {
     bottom: 2.5%;
     width: 100%;
   }
-
 /deep/.el-table {
-    font-size: 13px !important;
-    th.el-table__cell>.cell {
-      word-break: break-word;
-      font-size: .88rem;
-    }
     th {
       color: #383838;
     }
-
-
   }    
 </style>

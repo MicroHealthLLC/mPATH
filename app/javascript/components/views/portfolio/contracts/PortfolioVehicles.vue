@@ -1,36 +1,5 @@
 <template>
-  <div class="container-fluid mt-3 mx-3">
-   
-    <div style="height:85px">
-      <span @click.prevent="backHomeBtn">
-        <img
-          class="mb-2"
-          style="width: 147px;cursor:pointer"
-          :src="require('../../../../../assets/images/microhealthllc.png')"
-        />
-        <!-- <h3 class="d-inline mt-1 programName">{{ this.$portfolio_heading }}</h3> -->
-      </span>
-      <span class="float-right mr-4">
-        <button
-          class="portfolioHomeBtn mh-orange btn btn-sm"
-          style="cursor: pointer"
-          @click.prevent="backHomeBtn"
-        >
-          <i class="fas fa-home text-light"></i>
-        </button>
-      </span>
-    </div>
-
-  <el-tabs :tab-position="tabPosition" type="border-card"  class="bottomTabs"  @tab-click="handleClick">
-    <el-tab-pane label="">
-     <span slot="label"> <i class="fa-solid fa-car mr-1" :class="[ pane0? 'mh-green-text' : 'txt-secondary']"></i>
-     VEHICLES
-     </span>
-      <PortfolioVehicles/>
-    </el-tab-pane>
-    
-    <el-tab-pane>
-     <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
+ 
     <div style="height:80vh">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
@@ -38,110 +7,69 @@
     border
     height="800"
     style="width: 95%">
-    <el-table-column
+   <el-table-column
       fixed
-      label="Code"
-      width="55"
-      prop="code">
+      label="Vehicle"
+      width="175"
+      prop="name">
     </el-table-column>
     <el-table-column
-      fixed
-      label="Project Name"
-      width="200"
+      label="Vehicle Full Name"
+      width="300"
+      prop="fullname">
+    </el-table-column>
+      <el-table-column
+      label="SINS or Subcategories"      
+      width="250"
+      prop="sins">
+    </el-table-column>
+     <el-table-column
+      label="Contracting Agency"
+      width="175"
+      prop="name">
+    </el-table-column>
+  <el-table-column
+      label="Vehicle Type"
+      width="125"
       prop="name">
     </el-table-column>
      <el-table-column
-    
-      label="Customer"
-      width="200"
-      prop="name">
-    </el-table-column>
-      <el-table-column
-    
-      label="Vehicle/ Schedule"
+      label="Contract Number"
       width="125"
-      prop="sched">
-    </el-table-column>
-      <el-table-column
-    
-      label="Contract #"
-      width="125"
-      prop="sched">
-    </el-table-column>
-    <el-table-column
-  
-      label="Award/ TO #"
-      width="125"
-      prop="sched">
-    </el-table-column>
-     <el-table-column
-      label="NAICS"
-      width="70"
-      prop="type">
-    </el-table-column>
-     <el-table-column
-      label="Award Type"
-      width="70"
-      prop="type">
-    </el-table-column>
-    <el-table-column
-      label="Contract Type"
-      width="75"
-      prop="type">
-    </el-table-column>
-      <el-table-column
-      label="Prime Vs Sub"
-      width="55"
-      prop="primesub">
-    </el-table-column>
-     <el-table-column
-      label="Contract Start Date"
-      width="100"
       prop="startdate">
     </el-table-column>
      <el-table-column
-      label="Contract End Date"
+      label="Ceiling"
+      width="125"
+      prop="ceiling">
+    </el-table-column>
+
+    <el-table-column
+      label="Base Period Start"
       width="100"
-      prop="startdate">
-    </el-table-column>
-     <el-table-column
-      label="Total Contract Value"
-       width="115"
-      prop="value">
-    </el-table-column>
-    <el-table-column
-      label="PoP's"
-       width="55"
-      prop="type">
-    </el-table-column>
-     <el-table-column
-      label="Current PoP"
-      width="70"
-      prop="type">
-    </el-table-column>
-    <el-table-column
-      label="Contract Pop Start Date"
-       width="100"
       prop="startdate">
     </el-table-column>
        <el-table-column
-      label="Contract Pop End Date"
-       width="100"
+     label="Base Period End"
+      width="100"
+      prop="startdate">
+    </el-table-column>
+     <el-table-column
+      label="Option Period Start"
+      width="100"
+      prop="startdate">
+    </el-table-column>
+       <el-table-column
+      label="Option Period End"
+      width="100"
       prop="startdate">
     </el-table-column>
     <el-table-column
-      label="Actions"
+     label="Actions"
       width="75"
       fixed="right"
       align="right">
-      <!-- <template slot="header" slot-scope="scope">
-        <el-input
-         
-          v-model="search"
-          size="mini"
-          placeholder="Type to search"/>
-      </template> -->
-      <template slot-scope="scope">
+       <template slot-scope="scope">
          <el-button
           type="default"
           class="bg-light btn-sm"
@@ -156,138 +84,116 @@
   </el-table>
       </div>
       </div>
-    </el-tab-pane>
+
+
  
-    <el-tab-pane>
-    <span slot="label"> <i class="fa-solid fa-book mr-1" :class="[ pane2? 'mh-blue-text' : 'txt-secondary']"></i>
-     CONTRACT BACKLOG
-     </span> 
-    <PortfolioContractBacklog/>
-    </el-tab-pane>
-   <el-tab-pane>
-    <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
-    CONTRACT POC
-    </span>
-    <PortfolioContractPOC/>
-    </el-tab-pane>
-    <el-tab-pane>
-    <span slot="label">  <i class="fa-solid fa-calendar-xmark mr-1" :class="[ pane4? 'text-danger' : 'txt-secondary']"></i>
-    EXPIRED CONTRACTS
-    </span>
-   <PortfolioExpiredContracts/>
-    </el-tab-pane>
-  </el-tabs>
-  </div>
-      
 </template>
     
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import PortfolioVehicles from "./PortfolioVehicles.vue";
-import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
-import PortfolioContractPOC from "./PortfolioContractPOC.vue";
-import PortfolioExpiredContracts from "./PortfolioExpiredContracts.vue";
-// import ProgramTaskForm from "./ProgramTaskForm.vue";
-// import ProgramLessons from "./ProgramLessons.vue";
 
 export default {
-  name: "PortfolioContracts",
+  name: "PortfolioVehicles",
   components: {
-    PortfolioVehicles,  
-    PortfolioExpiredContracts,
-    PortfolioContractBacklog,
-    PortfolioContractPOC
+  
   },
 
     data() {    
       return {
         nothing: true,
-        pane0: true, 
-        pane1: false, 
-        pane2: false, 
-        pane3: false, 
-        pane4: false, 
         tabPosition: 'bottom',
         tableData: [{
           code: 123, 
           type: 'FFP', 
           value: "$7,343,342.45",
+          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
           primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
-          startdate: '2016-05-03',
-          name: 'SEC FOIA Admin Proceedings',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
-            sched: "CIOSP3-SDVOSB",
-          value: "$7,343,342.45",
-          name: 'John',
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-04',
-          type: 'T&M', 
-          primesub: "Sub",
-            sched: "CIOSP3-SDVOSB",
-          value: "$5,643.45",
-          name: 'Morgan',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-            sched: "CIOSP3-SDVOSB",
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
+          sins: "8(a), SDVOSB, SB",
           startdate: '2016-05-03',
           name: 'Tom',
-            sched: "CIOSP3-SDVOSB",
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-            sched: "CIOSP3-SDVOSB",
-           value: "$7,343,342.45",
-          type: 'T&M', 
+          ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           type: 'FFP', 
           startdate: '2016-05-02',
           value: "$7,343,342.45",
-            sched: "CIOSP3-SDVOSB",
+          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
           name: 'John',
           primesub: "Prime",
+            ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-04',
           type: 'T&M', 
           primesub: "Sub",
+            fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
           value: "$5,643.45",
-            sched: "CIOSP3-SDVOSB",
           name: 'Morgan',
+            ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-01',
           name: 'Jessy',
-            sched: "CIOSP3-SDVOSB",
           type: 'T&M', 
           value: "$17,343,342.45",
           primesub: "Prime",
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-03',
+          name: 'Tom',
+          value: "$6,343,342.45",
+            fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          primesub: "Prime",
+          type: 'T&M', 
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+           code: 123, 
+           startdate:'2016-05-02',
+          name: 'John',
+          primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
+          value: "$7,343,342.45",
+          type: 'T&M', 
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          type: 'FFP', 
+          startdate: '2016-05-02',
+          value: "$7,343,342.45",
+          name: 'John',
+          primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
+          ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-04',
+          type: 'T&M', 
+          primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
+          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          value: "$5,643.45",
+          name: 'Morgan',
+            ceiling: '$25,000,000,000.00',
+          address: 'No. 189, Grove St, Los Angeles'
+        }, {
+          code: 123, 
+          startdate: '2016-05-01',
+          name: 'Jessy',
+          type: 'T&M', 
+          value: "$17,343,342.45",
+          primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
+          ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -295,34 +201,36 @@ export default {
           name: 'Tom',
           value: "$6,343,342.45",
           primesub: "Prime",
-          sched: "CIOSP3-SDVOSB",
+          sins: "8(a), SDVOSB, SB",
           type: 'T&M', 
+          ceiling: '$25,000,000,000.00',
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
            startdate:'2016-05-02',
           name: 'John',
           primesub: "Sub",
-           value: "$7,343,342.45",
-          sched: "CIOSP3-SDVOSB",
+          value: "$7,343,342.45",
+          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins: "8(a), SDVOSB, SB",
           type: 'T&M', 
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
           startdate: '2016-05-04',
           name: 'Morgan',
-          sched: "CIOSP3-SDVOSB",
           value: "$7,343,342.45",
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-01',
           name: 'Jessy',
           type: 'T&M', 
-          sched: "CIOSP3-SDVOSB",
           value: "$17,343,342.45",
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
@@ -330,33 +238,33 @@ export default {
           name: 'Tom',
           value: "$6,343,342.45",
           primesub: "Prime",
-          sched: "CIOSP3-SDVOSB",
           type: 'T&M', 
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
            startdate:'2016-05-02',
           name: 'John',
           primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
-           value: "$7,343,342.45",
+          value: "$7,343,342.45",
           type: 'T&M', 
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
            code: 123, 
           startdate: '2016-05-04',
           name: 'Morgan',
-          sched: "CIOSP3-SDVOSB",
           value: "$7,343,342.45",
           primesub: "Prime",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'
         }, {
           code: 123, 
           startdate: '2016-05-01',
-          sched: "CIOSP3-SDVOSB",
           name: 'Jessy',
           value: "$7,343,342.45",
           primesub: "Sub",
+          sins: "8(a), SDVOSB, SB",
           address: 'No. 189, Grove St, Los Angeles'       
         }],
         search: '',
@@ -377,46 +285,7 @@ export default {
       },
   handleDelete(index, row) {
     console.log(index, row);
-  },
-  handleClick(tab, event) {
-    if (tab.paneName == 0){
-       this.pane0 = true;
-       this.pane1 = false;
-       this.pane2 = false;
-       this.pane3 = false;
-       this.pane4 = false;
-    }
-    if (tab.paneName == 1){
-       this.pane0 = false;
-       this.pane1 = true;
-       this.pane2 = false;
-       this.pane3 = false
-       this.pane4 = false
-    }
-    if (tab.paneName == 2){
-       this.pane0 = false;
-       this.pane1 = false;
-       this.pane2 = true;
-       this.pane3 = false;
-       this.pane4 = false;
-    }
-    if (tab.paneName == 3){
-       this.pane0 = false;
-       this.pane1 = false;
-       this.pane2 = false;
-       this.pane3 = true;
-       this.pane4 = false;
-    }
-   if (tab.paneName == 4){
-       this.pane0 = false;
-       this.pane1 = false;
-       this.pane2 = false;
-       this.pane3 = false;
-       this.pane4 = true;
-    }
- 
   }
-  
   },
   mounted() {
     
@@ -440,7 +309,6 @@ export default {
     bottom: 2.5%;
     width: 100%;
   }
-
 /deep/.el-table {
     font-size: 13px !important;
     th.el-table__cell>.cell {
@@ -450,7 +318,5 @@ export default {
     th {
       color: #383838;
     }
-
-
   }    
 </style>

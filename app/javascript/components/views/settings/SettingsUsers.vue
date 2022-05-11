@@ -1026,7 +1026,7 @@ export default {
       return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
    },
    log(e){
-     console.log(`contracts:  ${e}` )
+    //  console.log(`contracts:  ${e}` )
    },
    removeRoles(index, rowData){   
  
@@ -1084,6 +1084,7 @@ export default {
   editRoles(index, rowData){
     this.roleRowId = rowData   
     this.editRoleRowData = rowData;
+    console.log(this.projectUsers)
     this.rowIndex_1 = index;
     this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)   
     this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
@@ -1212,12 +1213,9 @@ export default {
       if(this.getRoles && this.getRoles.length <= 0){
       this.fetchRoles(this.$route.params.programId) 
       }    
+      console.log(this.projectUsers)
       this.openUserRoles = true    
       this.userData = rows    
-     console.log(this.getPortfolioUsers)
-        console.log(this.portfolioUsersOnly)
-           console.log(this.programUsers)
-   
       this.fetchContracts(this.$route.params.programId)
     
      
@@ -1413,7 +1411,7 @@ export default {
     contractNames(){
       if(this.contracts){
         if (this.contracts.length > 0){
-           console.log(this.contracts.map(t => t))
+          //  console.log(this.contracts.map(t => t))
           return this.contracts.map(t => t)
         }
       }
