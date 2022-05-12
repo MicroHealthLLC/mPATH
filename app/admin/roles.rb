@@ -1,3 +1,5 @@
+return # We will not show role management in admin panel
+
 ActiveAdmin.register Role do
   actions :all, except: [:show]
 

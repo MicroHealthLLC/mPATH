@@ -211,7 +211,6 @@ ActiveAdmin.register Project do
 
       if (resource.reload.get_program_admin_ids.size > remove_project_admin_ids.size)
         RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
-   
         params[:project][:user_ids] = resource.reload.user_ids.map(&:to_s) if !params[:project][:user_ids] # in case no user is added in program and adding admin users
         params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s)) if remove_project_admin_ids.any?
         params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)) if new_project_admin_ids.any?

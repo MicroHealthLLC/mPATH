@@ -4,7 +4,7 @@ class ProjectUser < ApplicationRecord
   # after_create :provide_program_privileges
   after_destroy :remove_program_privileges
   after_destroy :remove_program_related_roles
-  validates :user_id, uniqueness: { scope: [ :project_id ], message: "Can't add same user multiple times in same project."  }
+  validates :user_id, uniqueness: { scope: [ :project_id ], message: "Can't add same user multiple times in same project."  }, on: :create
 
   def remove_program_related_roles
     self.user.role_users.where(project_id: self.project_id).destroy_all

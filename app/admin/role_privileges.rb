@@ -1,3 +1,4 @@
+return # We will not show role management in admin panel
 ActiveAdmin.register RolePrivilege do
   menu parent: "Roles", priority: 1
   actions :all, except: [:show]
