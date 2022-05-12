@@ -139,69 +139,70 @@ ActiveAdmin.register Facility do
     Facility.where(id: ids).update_all(status: inputs['state'].to_i)
     redirect_to collection_path, notice: 'State is updated'
   end
-
-  batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
-    assign: :checkbox,
-    "Program": Project.pluck(:name, :id)
-  }} do |ids, inputs|
-    notice = "Program is assigned"
-    project = Project.find_by_id(inputs["Project"])
-    if inputs['assign'] === 'assign'
-      Facility.where(id: ids).each do |facility|
-        facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
-      end
+  if false
+    batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
+      assign: :checkbox,
+      "Program": Project.pluck(:name, :id)
+    }} do |ids, inputs|
       notice = "Program is assigned"
-    elsif inputs['assign'] === 'unassign'
-      FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
-      notice = "Program is unassigned"
-    end
-    redirect_to collection_path, notice: "#{notice}"
-  end
-
-  batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
-    "Name": :text,
-    "Description": :textarea,
-    "Program": Project.pluck(:name, :id),
-    "Category": TaskType.pluck(:name, :id),
-    "Stage": TaskStage.pluck(:name, :id),
-    "Start Date": :datepicker,
-    "Due Date": :datepicker,
-    "Assign Users": :text,
-    "Progress": :number,
-    "AutoCalculate": :checkbox,
-    "Checklists": :text,
-    "Task Files": :text
-  }} do |ids, inputs|
-    user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
-    file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []
-    checklists = JSON.parse(inputs["Checklists"]) rescue []
-    Facility.where(id: ids).each do |facility|
-      facility.facility_projects.where(project_id: inputs['Program']).each do |facility_project|
-        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
-        task.task_files.create(file_blobs) if file_blobs.present?
+      project = Project.find_by_id(inputs["Project"])
+      if inputs['assign'] === 'assign'
+        Facility.where(id: ids).each do |facility|
+          facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
+        end
+        notice = "Program is assigned"
+      elsif inputs['assign'] === 'unassign'
+        FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
+        notice = "Program is unassigned"
       end
+      redirect_to collection_path, notice: "#{notice}"
     end
-    redirect_to collection_path, notice: "Task added"
-  rescue => e
-    redirect_to collection_path, flash: {error: e.message}
-  end
 
-  batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
-    "Program": Project.pluck(:name, :id),
-    "Status": Status.pluck(:name, :id),
-    "Due Date": :datepicker
-  }} do |ids, inputs|
-    Facility.where(id: ids).each do |facility|
-      facility_project = facility.facility_projects.find_or_initialize_by(project_id: inputs['Project'])
-      facility_project.status_id = inputs['Status']
-      facility_project.due_date = inputs['Due Date']
-      facility_project.save
+    batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
+      "Name": :text,
+      "Description": :textarea,
+      "Program": Project.pluck(:name, :id),
+      "Category": TaskType.pluck(:name, :id),
+      "Stage": TaskStage.pluck(:name, :id),
+      "Start Date": :datepicker,
+      "Due Date": :datepicker,
+      "Assign Users": :text,
+      "Progress": :number,
+      "AutoCalculate": :checkbox,
+      "Checklists": :text,
+      "Task Files": :text
+    }} do |ids, inputs|
+      user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
+      file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []
+      checklists = JSON.parse(inputs["Checklists"]) rescue []
+      Facility.where(id: ids).each do |facility|
+        facility.facility_projects.where(project_id: inputs['Program']).each do |facility_project|
+          task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+          task.task_files.create(file_blobs) if file_blobs.present?
+        end
+      end
+      redirect_to collection_path, notice: "Task added"
+    rescue => e
+      redirect_to collection_path, flash: {error: e.message}
     end
-    redirect_to collection_path, notice: "Due Date, Status and Assign Program is updated"
-  rescue => e
-    redirect_to collection_path, flash: {error: e.message}
-  end
 
+    batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
+      "Program": Project.pluck(:name, :id),
+      "Status": Status.pluck(:name, :id),
+      "Due Date": :datepicker
+    }} do |ids, inputs|
+      Facility.where(id: ids).each do |facility|
+        facility_project = facility.facility_projects.find_or_initialize_by(project_id: inputs['Project'])
+        facility_project.status_id = inputs['Status']
+        facility_project.due_date = inputs['Due Date']
+        facility_project.save
+      end
+      redirect_to collection_path, notice: "Due Date, Status and Assign Program is updated"
+    rescue => e
+      redirect_to collection_path, flash: {error: e.message}
+    end
+  end
+  
   batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Projects" do |ids|
     deleted = Facility.where(id: ids).destroy_all
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Projects"

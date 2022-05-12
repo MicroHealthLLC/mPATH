@@ -215,24 +215,26 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
-    assign: :checkbox,
-    "Program": Project.pluck(:name, :id)
-  }} do |ids, inputs|
-    notice = "Program is assigned"
-    project = Project.find_by_id(inputs["Program"])
-    if inputs['assign'] === 'assign'
-      User.where(id: ids).each do |user|
-        user.projects << project unless user.projects.pluck(:id).include?(project.id)
-      end
+  if false
+    batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
+      assign: :checkbox,
+      "Program": Project.pluck(:name, :id)
+    }} do |ids, inputs|
       notice = "Program is assigned"
-    elsif inputs['assign'] === 'unassign'
-      ProjectUser.where(project_id: project.id, user_id: ids).destroy_all
-      notice = "Program is unassigned"
+      project = Project.find_by_id(inputs["Program"])
+      if inputs['assign'] === 'assign'
+        User.where(id: ids).each do |user|
+          user.projects << project unless user.projects.pluck(:id).include?(project.id)
+        end
+        notice = "Program is assigned"
+      elsif inputs['assign'] === 'unassign'
+        ProjectUser.where(project_id: project.id, user_id: ids).destroy_all
+        notice = "Program is unassigned"
+      end
+      redirect_to collection_path, notice: "#{notice}"
     end
-    redirect_to collection_path, notice: "#{notice}"
   end
-
+  
   batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Users?" do |ids|
     deleted = User.where(id: ids).where.not(id: current_user.id).destroy_all
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Users"
