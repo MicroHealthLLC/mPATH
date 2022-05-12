@@ -59,7 +59,7 @@ ActiveAdmin.register Project do
       end
     end
     column "Users", :users do |project|
-      project.users - project.get_program_admins
+      (project.users - project.get_program_admins)
     end
     tag_column "State", :status
     actions defaults: false do |project|
@@ -171,9 +171,9 @@ ActiveAdmin.register Project do
         role_users = []
         role_id = Role.program_admin_user_role.id
         users.each do |user|
-          role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: project.id)
+          role_users << RoleUser.create(user_id: user.id, role_id: role_id, project_id: project.id)
         end
-        RoleUser.import(role_users)
+        # RoleUser.import(role_users)
         
         redirect_to admin_projects_path , notice: "Program created Successfully"
       else
@@ -205,15 +205,18 @@ ActiveAdmin.register Project do
       role_users = []
       users = User.where(id: new_project_admin_ids)
       users.each do |user|
-        role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: resource.id)
+        role_users << RoleUser.create(user_id: user.id, role_id: role_id, project_id: resource.id)
       end
-      RoleUser.import(role_users) if role_users.any?
-
+      # RoleUser.import(role_users) if role_users.any?
       if (resource.reload.get_program_admin_ids.size > remove_project_admin_ids.size)
         RoleUser.where(user_id: remove_project_admin_ids, role_id: role_id, project_id: resource.id).destroy_all
-        params[:project][:user_ids] = resource.reload.user_ids.map(&:to_s) if !params[:project][:user_ids] # in case no user is added in program and adding admin users
-        params[:project][:user_ids] = ( params[:project][:user_ids] - remove_project_admin_ids.map(&:to_s)) if remove_project_admin_ids.any?
-        params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)) if new_project_admin_ids.any?
+        # if !resource.reload.user_ids.any? && new_project_admin_ids.any?
+        #   params[:project][:user_ids] = new_project_admin_ids.map(&:to_s)          
+        # end
+
+        # params[:project][:user_ids] = resource.reload.user_ids.map(&:to_s) if !params[:project][:user_ids] # in case no user is added in program and adding admin users
+        
+        # params[:project][:user_ids] = ( params[:project][:user_ids] + new_project_admin_ids.map(&:to_s)).uniq if new_project_admin_ids.any?
       end
       resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
