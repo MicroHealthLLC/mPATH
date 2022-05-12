@@ -24,7 +24,8 @@ task :convert_privilege_roles => :environment do
       pph = user.project_privileges_hash
       pph.each do |project_id, privileges_hash|
         project_id = project_id.to_i
-        project = Project.find project_id
+        project = Project.where(id: project_id).first
+        next if !project
         next if !privileges_hash["overview"] || !privileges_hash["tasks"] || !privileges_hash["notes"] || !privileges_hash["issues"] || !privileges_hash["risks"] || !privileges_hash["lessons"]
 
         if ( ["R", "D", "W"] & privileges_hash["overview"] ).size == 3 &&
@@ -56,6 +57,8 @@ task :convert_privilege_roles => :environment do
       fph.each do |project_id, fph2|
         facility_projects = FacilityProject.where( project_id: project_id)
         project_id = project_id.to_i
+        project = Project.where(id: project_id).first
+        next if !project      
         fph2.each do |facility_id, privileges_hash|
           facility_project_id = facility_projects.detect{|fp| fp.facility_id == facility_id.to_i }.id
           # puts privileges_hash
@@ -106,6 +109,8 @@ task :convert_privilege_roles => :environment do
       cph = user.contract_privileges_hash
       cph.each do |project_id, cph2|
         project_id = project_id.to_i
+        project = Project.where(id: project_id).first
+        next if !project
         cph2.each do |contract_id, privileges_hash|
           next if contract_id == "authorized_contract_ids"
           contract_id  = contract_id.to_i
