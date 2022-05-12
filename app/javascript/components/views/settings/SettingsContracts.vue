@@ -217,90 +217,65 @@
         <div v-else class="text-danger mx-2 mt-5">
         <h5> <i>Sorry, you don't have read-permissions for this page! Please contact your Program Administrator for access.</i></h5>
        </div>
-
-        <!-- <span v-else class="mt-5">
-          NO DATA TO DISPLAY
-        </span> -->
         <el-dialog
-          :visible.sync="dialogVisible"
+          :visible.sync="contractDialogVisible"
           append-to-body
           center
           class="contractForm addContract p-0"
         >
-          <span slot="title" class="text-left add-groups-header ">
-          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Create Contract </h5>
+        
+          <div class="row mb-3">
+          <div class="col-7">
+        <span slot="title" class="text-left add-groups-header ">
+          <h5 class="text-dark"> <i class="far fa-plus-circle mr-1 mb-3"></i>Add Exisiting Contract </h5>
         </span>
-          <form accept-charset="UTF-8">
-            <div class="form-group mx-3">
-              <label class="font-md"
-                >Contract Name <span style="color: #dc3545">*</span></label
-              >
-              <el-input            
-                v-model="contractNameText"
-                placeholder="Enter New Contract Name"
-                rows="1"
-                name="Program Name"
-              />
-            </div>
-            <div class="form-group mx-3">
-              <label class="font-md"
-                >Contract Nickname <span style="color: #dc3545">*</span></label
-              >
-              <el-input              
-                v-model="contractNicknameText"
-                placeholder="Enter New Contract Nickname"
-                rows="1"
-                name="Program Name"
-              />
-            </div>
-            <div class="form-group mx-3">
-              <label class="font-md">Group</label>
-              <el-select
-                class="w-100"
-                v-model="C_newContractGroupFilter"
-                track-by="id"
-                value-key="id"
-                clearable
-                filterable
-                name="Project Group"
-                placeholder="Search and select Group"
-              >
-                <el-option
-                  v-for="item in groupList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
-            </div>
-            <div class="right mr-2">
-              <button
-                @click.prevent="saveNewContract"
-                v-if="contractNameText && contractNicknameText"
-                class="btn btn-md bg-primary text-light modalBtns"
-                v-tooltip="`Save Contract`"
-                :class="[hideSaveBtn ? 'd-none' : '']"
-              >
-               <i class="far fa-save"></i>
-              </button>
-              <button
-                @click.prevent="addAnotherContract"
-                :class="[!hideSaveBtn ? 'd-none' : '']"
-                v-tooltip="`Add Another Contract`"
-                class="btn btn-md bg-primary text-light modalBtns"
-              >
-                <i class="far fa-plus-circle"></i> 
-              </button>
-              <button
-                @click.prevent="closeAddContractBtn"
-                 class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Close`"                    
-              >
-             <i class="fas fa-ban"></i> 
-              </button>
-            </div>
-          </form>
+          </div>
+          <div class="col-5 text-right">
+            <el-input
+            type="search"
+            placeholder="Search Contracts"
+            aria-label="Search"
+            class="w-100"
+            aria-describedby="search-addon"
+            v-model="searchContractData"
+            data-cy=""
+          >
+            <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+          </div>
+        </div>
+         <template>
+    <el-table
+      :data="contractArray"
+      style="width: 100%">
+      <el-table-column
+        prop="project_name"
+        label="Project Name"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="vehicle"
+        label="Vehicle"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="award_number"
+        label="Award Number">
+      </el-table-column>
+      <el-table-column label="Actions" align="right">
+          <template slot-scope="scope">
+            <el-button
+              type="default"
+              v-tooltip="`Add Contract`"
+              @click.prevent="addExistingContract(scope.$index, scope.row)"          
+              class="bg-primary text-light btn-sm">
+              <i class="far fa-plus-circle"></i>  
+            </el-button>
+          </template>
+        </el-table-column>
+    </el-table>
+  </template>
+     
         </el-dialog>
       </div>
 
@@ -520,6 +495,45 @@ export default {
   },
   data() {
     return {
+        newContractArray: [
+        {          
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
+        }, {          
+          charge_code: '1062',
+          project_name: 'IPO Data Gap',
+          vehicle: 'GSA IT-70',
+          contract_number:'GS-35F-413BA',
+          award_number: '140D0418F0001',
+          naics: '541512-$30M',
+          award_type: 'SDVOSB',
+          contract_type: 'T&M',
+          prime_or_sub: 'Prime',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 6926124.61,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
+        },       
+      ],
+      searchContractData: '',
+      contractDialogVisible: false, 
       rowIndex_1: null, 
       isEditingRoles: false,
       roleRowId: null, 
@@ -639,6 +653,9 @@ export default {
       this.projId = rows.id
       this.contractData = rows
     },
+    addExistingContract(index, rows) {
+     console.log(rows)
+    },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
@@ -751,7 +768,9 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
-      alert("Add Contracts functionality under development")
+       this.contractDialogVisible = true;
+      // alert("Add Contracts functionality under development")
+
     //  if(this.contracts && this.contracts.length > 0){
     //   console.log(this.contracts)
     // }
@@ -814,6 +833,24 @@ export default {
           } else return []
       
       }
+    },
+    contractArray(){
+      if(this.newContractArray && this.newContractArray.length > 0 ){   
+      
+        let data = this.newContractArray.filter(t => {
+            
+        if (this.searchContractData !== '' && t) {           
+            return (            
+               t.project_name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
+               t.award_number.toLowerCase().match(this.searchContractData.toLowerCase()) ||
+               t.vehicle.toLowerCase().match(this.searchContractData.toLowerCase())
+            ) 
+        } else return true
+        })
+      
+         return data
+         }     
+       
     },
   contractUsers(){
   if(this.getRoles && this.getRoles.length > 0 ){   

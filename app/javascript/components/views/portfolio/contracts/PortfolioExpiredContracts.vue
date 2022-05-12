@@ -18,8 +18,7 @@
       width="200"
       prop="name">
     </el-table-column>
-     <el-table-column
-    
+     <el-table-column    
       label="Customer"
       width="200"
       prop="name">

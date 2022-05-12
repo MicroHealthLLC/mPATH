@@ -2,7 +2,7 @@
   <div style="height:80vh" class="portfolio-contracts-module">
     <div  style="height: 100%; overflow-y:auto">
     <el-table
-    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+    :data="tableData"
     border
     height="800"
     style="width: 95%">
@@ -10,75 +10,315 @@
       fixed
       label="Vehicle"
       width="175"
-      prop="name">
+      prop="vehicle">
+    <template slot-scope="scope">
+    <el-input
+      size="small"
+      v-if="scope.$index == createRow"
+      placeholder="Enter Vehicle"
+      style="text-align:center"
+      v-model="scope.row.vehicle"
+      controls-position="right"
+    ></el-input>
+    <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+     <el-input
+      size="small"
+      placeholder="Enter Vehicle Full Name"
+      style="text-align:center"
+      v-model="scope.row.vehicle"
+      controls-position="right"
+      ></el-input>
+     </span>
+  <span v-else >
+   {{ scope.row.vehicle }} 
+   </span>
+
+        </template>
     </el-table-column>
     <el-table-column
       label="Vehicle Full Name"
       width="300"
-      prop="fullname">
+      prop="vehicle_full_name">
+    <template slot-scope="scope">
+     <el-input
+      size="small"
+      v-if="scope.$index == createRow"
+      placeholder="Enter Vehicle Full Name"
+      style="text-align:center"
+      v-model="scope.row.vehicle_full_name"
+      controls-position="right"
+      ></el-input>
+    <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+     <el-input
+      size="small"
+      placeholder="Enter Vehicle Full Name"
+      style="text-align:center"
+      v-model="scope.row.vehicle_full_name"
+      controls-position="right"
+      ></el-input>
+       
+       
+       </span>
+      <span v-else >
+      {{ scope.row.vehicle_full_name }}
+      </span>
+
+    </template>
+
     </el-table-column>
       <el-table-column
       label="SINS or Subcategories"      
       width="250"
-      prop="sins">
+      prop="sins_or_subs">
+
+      <template slot-scope="scope" >
+     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+       <el-select
+        v-model="scope.row.sins_or_subs"
+        filterable       
+        track-by="name"        
+        value-key="id"
+        class="w-100"
+        clearable
+        allow-create
+        default-first-option
+        placeholder="Select SINS/Subcategory or enter new"
+
+      >
+        <el-option
+          v-for="item in sinsOptions"
+          :key="item"
+          :label="item"
+          :value="item"
+        >
+        </el-option>
+      </el-select>
+      </span>
+      <span v-else>
+
+  {{ scope.row.sins_or_subs }}
+
+      </span>
+      </template>
     </el-table-column>
      <el-table-column
       label="Contracting Agency"
       width="175"
-      prop="name">
+      prop="contracting_agency">
+
+    <template slot-scope="scope" >
+     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+       <el-select
+        v-model="scope.row.contracting_agency"
+        filterable       
+        track-by="name"        
+        value-key="id"
+        class="w-100"
+        clearable
+        allow-create
+        default-first-option
+        placeholder="Select or enter Contracting Agency"
+
+      >
+        <el-option
+          v-for="item in contractAgencyOptions"
+          :key="item + '34'"
+          :label="item"
+          :value="item"
+        >
+        </el-option>
+      </el-select>
+      </span>
+      <span v-else>
+
+  {{ scope.row.contracting_agency }}
+
+      </span>
+      </template>
     </el-table-column>
-  <el-table-column
+    <el-table-column
       label="Vehicle Type"
       width="125"
-      prop="name">
+      prop="vehicle_type">
+     <template slot-scope="scope" >
+     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+       <el-select
+        v-model="scope.row.vehicle_type"
+        filterable       
+        track-by="name"        
+        value-key="id"
+        class="w-100"
+        clearable
+        allow-create
+        default-first-option
+        placeholder="Select or enter Vehicle Type"
+
+      >
+        <el-option
+          v-for="item in vehicleTypes"
+          :key="item"
+          :label="item"
+          :value="item"
+        >
+        </el-option>
+      </el-select>
+      </span>
+      <span v-else>
+
+       {{ scope.row.vehicle_type}}
+
+      </span>
+      </template>
     </el-table-column>
      <el-table-column
       label="Contract Number"
       width="125"
-      prop="startdate">
+      prop="contract_num">
+
+    <template slot-scope="scope" >
+     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+       <el-select
+        v-model="scope.row.contract_num"
+        filterable       
+        track-by="name"        
+        value-key="id"
+        class="w-100"
+        clearable
+        allow-create
+        default-first-option
+        placeholder="Select or enter Contract Number"
+
+      >
+        <el-option
+          v-for="item in contractNumber"
+          :key="item"
+          :label="item"
+          :value="item"
+        >
+        </el-option>
+      </el-select>
+      </span>
+      <span v-else>
+
+       {{ scope.row.contract_num}}
+
+      </span>
+      </template>
     </el-table-column>
      <el-table-column
       label="Ceiling"
-      width="125"
+      width="175"
       prop="ceiling">
+      <template slot-scope="scope">
+     <el-input
+      size="small"
+      v-if="scope.$index == createRow"
+      type="number"
+      placeholder="Enter Ceiling"
+      style="text-align:center"
+      v-model="scope.row.ceiling"
+      controls-position="right"
+      ></el-input>
+      <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+     <el-input
+      size="small"      
+      type="number"
+      placeholder="Enter Ceiling"
+      style="text-align:center"
+      v-model="scope.row.ceiling"
+      controls-position="right"
+      ></el-input>
+      </span>
+      <span v-else >
+      {{ scope.row.ceiling }}
+      </span>
+
+    </template>
     </el-table-column>
 
     <el-table-column
       label="Base Period Start"
       width="100"
-      prop="startdate">
+      prop="base_period_start">
+     <template slot-scope="scope">
+        <v2-date-picker
+          name="Date"       
+          v-if="scope.$index == createRow"
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+          <span v-else >
+      {{ scope.row.base_period_start }}
+      </span>
+     </template>
+       
     </el-table-column>
        <el-table-column
      label="Base Period End"
       width="100"
-      prop="startdate">
+      prop="base_period_end">
     </el-table-column>
      <el-table-column
       label="Option Period Start"
       width="100"
-      prop="startdate">
+      prop="option_period_start">
+       <template slot-scope="scope">
+        <v2-date-picker
+          name="Date"       
+          v-if="scope.$index == createRow"
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+          <span v-else >
+      {{ scope.row.option_period_start }}
+      </span>
+     </template>
     </el-table-column>
        <el-table-column
       label="Option Period End"
       width="100"
-      prop="startdate">
+      prop="option_period_end">
     </el-table-column>
     <el-table-column
      label="Actions"
-      width="75"
-      fixed="right"
-      align="right">
+      width="95"
+      align="center"
+      >
        <template slot-scope="scope">
          <el-button
+        type="default"
+        @click="saveEdits(scope.$index, scope.row)"
+        v-if="scope.$index == rowIndex" 
+        v-tooltip="`Save`" 
+        class="bg-primary btn-sm text-light mx-0">               
+        <i class="far fa-save"></i>
+        </el-button>
+      <el-button 
+        type="default" 
+        v-tooltip="`Cancel Edit`"       
+        v-if="scope.$index == rowIndex"
+        @click.prevent="cancelEdits(scope.$index, scope.row)"  
+        class="bg-secondary btn-sm text-light mx-0">
+      <i class="fas fa-ban"></i>
+        </el-button>
+         <el-button
           type="default"
+           v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-          @click="handleEdit(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
+           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+          @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
-        <!-- <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Delete</el-button> -->
-      </template>
+        <el-button
+          type="default"
+          @click="saveNewContract(scope.$index, scope.row)"
+          v-if="scope.$index == createRow" 
+          v-tooltip="`Save`" 
+          class="bg-primary btn-sm text-light mx-0">               
+        <i class="far fa-save"></i>
+        </el-button>
+       </template>
     </el-table-column>
   </el-table>
       </div>
@@ -89,183 +329,190 @@
 </template>
     
 <script>
+import { helpers } from 'chart.js';
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "PortfolioVehicles",
   components: {
-  
   },
-
     data() {    
       return {
         nothing: true,
+        rowIndex: null, 
+        rowId: null, 
         tabPosition: 'bottom',
-        tableData: [{
-          code: 123, 
-          type: 'FFP', 
-          value: "$7,343,342.45",
-          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
-          primesub: "Sub",
-          sins: "8(a), SDVOSB, SB",
-          startdate: '2016-05-03',
-          name: 'Tom',
+        sinsOptions: [ 
+                       '8(a), SDVOSB, SB', 
+                       'SDVOSB',
+                       'SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ',
+                       'Small Business'
+                       ],
+       contractAgencyOptions: [ 
+                       'Naval Sea Systems Command (NAVSEA)', 
+                       'General Services Administration ',
+                       'Centers for Medicare & Medicaid Services (CMS)',
+                       'Federal Aviation Administration (FAA)'
+                       ],
+       vehicleTypes:   [ 
+                      'Federal Supply Schedule', 
+                      'IDIQ ',
+                      'GWAC',
+                      'BPA issued as MOA'
+                       ],
+
+      contractNumber:   [ 
+                      'GS35F413BA ', 
+                      '47QRAA-18-D-0098',
+                      'N0017819D8115',
+                      'HHSM-500-2017-00038I',
+                      'W911QY-18-D-0109'
+                        ],
+        vehicleArray: [{
+          id: 0,
+          vehicle: 'GSA IT-70',
+          vehicle_full_name: "GSA Schedule IT-70",
+          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'Federal Supply Schedule',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 250242442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+          }, {
+          id: 1,
+          vehicle: 'GSA PSS',
+          vehicle_full_name: "Center for Medicare and Medicaid Services (SPARC)",
+          sins_or_subs:"Professional Services and 132-56 (Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'IDIQ',
+          contract_num: "8(a), SDVOSB, SB",         
+           ceiling: 1299242442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+          id: 2,
+          vehicle: 'Seaport NextGen',
+          vehicle_full_name: "Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins_or_subs:"(Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'IDIQ',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 250242442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+           id: 3,
+          vehicle: 'CIO-SP3 SB',
+          vehicle_full_name: "Chief Information Officer - Solutions and Partners 3 (CIO-SP3) ",
+          sins_or_subs:"Small Business",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'Federal Supply Schedule',
+          contract_num: "8(a), SDVOSB, SB",         
+           ceiling: 250242442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+          id: 4,
+          vehicle: 'SPARC',
+          vehicle_full_name: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins_or_subs:"8(a), SDVOSB, SB",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'Federal Supply Schedule',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 3457442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+          id: 5,
+          vehicle: 'GSA IT-70',
+          vehicle_full_name: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'IDIQ',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 250242442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+          id: 6,
+          vehicle: 'GSA IT-70',
+          vehicle_full_name: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'IDIQ',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 478442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+          id: 7,
+          vehicle: 'GSA IT-70',
+          vehicle_full_name: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'GWAC',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 3350242442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+          id: 8,
+          vehicle: 'GSA IT-70',
+          vehicle_full_name: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
+          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'GWAC',
+          contract_num: "8(a), SDVOSB, SB",         
+          ceiling: 125022442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+        }, {
+         id:9, 
+          vehicle: 'eFAST',
+          vehicle_full_name: "Electronic FAA Accelerated and Simplified Tasks (eFAST)",
+          sins_or_subs:"8(a), SDVOSB, SB",
+          contracting_agency: "Federal Aviation Administration (FAA)",        
+          vehicle_type: 'IDIQ',
+          contract_num: "8(a), SDVOSB, SB",         
           ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
-          value: "$7,343,342.45",
-          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          name: 'John',
-          primesub: "Prime",
-            ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-04',
-          type: 'T&M', 
-          primesub: "Sub",
-            fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
-          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          value: "$5,643.45",
-          name: 'Morgan',
-            ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-          value: "$17,343,342.45",
-          primesub: "Prime",
-            ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-            fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
-          sins:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          primesub: "Prime",
-          type: 'T&M', 
-            ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-          sins: "8(a), SDVOSB, SB",
-          value: "$7,343,342.45",
-          type: 'T&M', 
-            ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
-          value: "$7,343,342.45",
-          name: 'John',
-          primesub: "Prime",
-          sins: "8(a), SDVOSB, SB",
-          ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-04',
-          type: 'T&M', 
-          primesub: "Sub",
-          sins: "8(a), SDVOSB, SB",
-          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
-          value: "$5,643.45",
-          name: 'Morgan',
-            ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          sins: "8(a), SDVOSB, SB",
-          ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          sins: "8(a), SDVOSB, SB",
-          type: 'T&M', 
-          ceiling: '$25,000,000,000.00',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-          value: "$7,343,342.45",
-          fullname: "Center for Medicare and Medicaid Services (CMS) Strategic Partners Acquisition Readiness Contract (SPARC)",
-          sins: "8(a), SDVOSB, SB",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-          startdate: '2016-05-04',
-          name: 'Morgan',
-          value: "$7,343,342.45",
-          primesub: "Prime",
-          sins: "8(a), SDVOSB, SB",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          sins: "8(a), SDVOSB, SB",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          type: 'T&M', 
-          sins: "8(a), SDVOSB, SB",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-          value: "$7,343,342.45",
-          type: 'T&M', 
-          sins: "8(a), SDVOSB, SB",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-          startdate: '2016-05-04',
-          name: 'Morgan',
-          value: "$7,343,342.45",
-          primesub: "Prime",
-          sins: "8(a), SDVOSB, SB",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          value: "$7,343,342.45",
-          primesub: "Sub",
-          sins: "8(a), SDVOSB, SB",
-          address: 'No. 189, Grove St, Los Angeles'       
-        }],
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03',
+         }, {
+          id: 10, 
+          vehicle: 'CIO-SP3 SDVOSB',
+          vehicle_full_name: "Chief Information Officer - Solutions and Partners 3 (CIO-SP3)",
+          sins_or_subs:"SDVOSB",
+          contracting_agency: "General Services Administration",        
+          vehicle_type: 'Federal Supply Schedule',
+          contract_num: "19AQMM19D0147",         
+          ceiling: 125022442,
+          base_period_start: '2016-05-03',
+          base_period_end: '2016-05-03',
+          option_period_start: '2016-05-03',
+          option_period_end: '2016-05-03', 
+        }
+        ],
         search: '',
     };
   },
@@ -275,13 +522,32 @@ export default {
     ]),
     ...mapActions([
       
-    ]),  
+    ]),
+  editMode(index, rows) {
+    this.rowIndex = index,
+     console.log(rows);
+       console.log(this.createRow);
+    this.rowId = rows.id
+  },  
+  saveEdits(){
+    // Row edit action will occur here
+    this.rowIndex = null;
+    this.rowId = null;
+  }, 
+  saveNewRow(){
+    // Row create action will occur here
+    //After save, dont forget to push new empty object to append new create row
+    this.rowIndex = null;
+    this.rowId = null;
+  },
+  cancelEdits(index, rows) {
+    this.rowIndex = null;
+    this.rowId = null;
+       
+  },
   backHomeBtn() {
       window.location.pathname = "/";
-    },    
-  handleEdit(index, row) {
-        console.log(index, row);
-      },
+  },    
   handleDelete(index, row) {
     console.log(index, row);
   }
@@ -293,6 +559,19 @@ export default {
     ...mapGetters([
      
     ]),   
+    tableData(){
+      if (this.vehicleArray && this.vehicleArray.length > 0){
+        let data = this.vehicleArray
+        data.push({})
+        return data
+     }
+    },
+    createRow(){
+      let lastItem = this.tableData.length - 1
+     console.log(lastItem)
+    return lastItem
+
+    },
   },
   watch: {
    

@@ -42,92 +42,92 @@
       fixed
       label="Code"
       width="55"
-      prop="code">
+      prop="charge_code">
     </el-table-column>
     <el-table-column
       fixed
       label="Project Name"
       width="200"
-      prop="name">
+      prop="project_name">
     </el-table-column>
      <el-table-column
     
       label="Customer"
       width="200"
-      prop="name">
+      prop="customer_name">
     </el-table-column>
       <el-table-column
     
       label="Vehicle/ Schedule"
       width="125"
-      prop="sched">
+      prop="vehicle">
     </el-table-column>
       <el-table-column
     
       label="Contract #"
       width="125"
-      prop="sched">
+      prop="contract_number">
     </el-table-column>
     <el-table-column
   
       label="Award/ TO #"
       width="125"
-      prop="sched">
+      prop="award_number">
     </el-table-column>
      <el-table-column
       label="NAICS"
       width="70"
-      prop="type">
+      prop="naics">
     </el-table-column>
      <el-table-column
       label="Award Type"
       width="70"
-      prop="type">
+      prop="award_type">
     </el-table-column>
     <el-table-column
       label="Contract Type"
       width="75"
-      prop="type">
+      prop="contract_type">
     </el-table-column>
       <el-table-column
       label="Prime Vs Sub"
       width="55"
-      prop="primesub">
+      prop="prime_or_sub">
     </el-table-column>
      <el-table-column
       label="Contract Start Date"
       width="100"
-      prop="startdate">
+      prop="contract_start_date">
     </el-table-column>
      <el-table-column
       label="Contract End Date"
       width="100"
-      prop="startdate">
+      prop="contract_end_date">
     </el-table-column>
      <el-table-column
       label="Total Contract Value"
        width="115"
-      prop="value">
+      prop="total_contract_val">
     </el-table-column>
     <el-table-column
       label="PoP's"
-       width="55"
-      prop="type">
+       width="100"
+      prop="pops">
     </el-table-column>
      <el-table-column
       label="Current PoP"
-      width="70"
-      prop="type">
+      width="100"
+      prop="current_pop">
     </el-table-column>
     <el-table-column
       label="Contract Pop Start Date"
        width="100"
-      prop="startdate">
+      prop="current_pop_start_date">
     </el-table-column>
        <el-table-column
       label="Contract Pop End Date"
        width="100"
-      prop="startdate">
+      prop="current_pop_end_date">
     </el-table-column>
     <el-table-column
       label="Actions"
@@ -209,155 +209,286 @@ export default {
         pane4: false, 
         tabPosition: 'bottom',
         tableData: [{
-          code: 123, 
-          type: 'FFP', 
-          value: "$7,343,342.45",
-          primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
-          startdate: '2016-05-03',
-          name: 'SEC FOIA Admin Proceedings',
-          address: 'No. 189, Grove St, Los Angeles'
+          id:0,
+          charge_code: '1053',
+          customer_name: 'Favor TechConsulting, LLC',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
-            sched: "CIOSP3-SDVOSB",
-          value: "$7,343,342.45",
-          name: 'John',
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
+          id:1,
+          charge_code: '1062',
+          customer_name: 'Interagency Program Office',
+          project_name: 'IPO Data Gap',
+          vehicle: 'GSA IT-70',
+          contract_number:'GS-35F-413BA',
+          award_number: '140D0418F0001',
+          naics: '541512-$30M',
+          award_type: 'SDVOSB',
+          contract_type: 'F&M',
+          prime_or_sub: 'Prime',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-04',
-          type: 'T&M', 
-          primesub: "Sub",
-            sched: "CIOSP3-SDVOSB",
-          value: "$5,643.45",
-          name: 'Morgan',
-          address: 'No. 189, Grove St, Los Angeles'
+          id:2,
+          charge_code: '1079',
+          project_name: '3M SEDTS 3',
+          customer_name: '3M',
+          vehicle: 'NA',
+          contract_number:'NA',
+          award_number: 'HQMMMBCKG0',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Prime',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-            sched: "CIOSP3-SDVOSB",
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
+          id:3,
+          charge_code: '1090',
+          project_name: 'FTC DIA TO8',
+          vehicle: 'NA',
+          customer_name: 'Security & Exchange Commission',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-            sched: "CIOSP3-SDVOSB",
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
+          id:4,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          customer_name: '3M',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-            sched: "CIOSP3-SDVOSB",
-           value: "$7,343,342.45",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
+          id:5,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',          
+          customer_name: '3M',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
-          value: "$7,343,342.45",
-            sched: "CIOSP3-SDVOSB",
-          name: 'John',
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
+          id:6,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          customer_name: 'Favor TechConsulting, LLC',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-04',
-          type: 'T&M', 
-          primesub: "Sub",
-          value: "$5,643.45",
-            sched: "CIOSP3-SDVOSB",
-          name: 'Morgan',
-          address: 'No. 189, Grove St, Los Angeles'
+          id:7,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          customer_name: 'Favor TechConsulting, LLC',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-            sched: "CIOSP3-SDVOSB",
-          type: 'T&M', 
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
+          id:8,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          customer_name: 'Favor TechConsulting, LLC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          sched: "CIOSP3-SDVOSB",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
+          id:9,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          customer_name: 'Favor TechConsulting, LLC',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-           value: "$7,343,342.45",
-          sched: "CIOSP3-SDVOSB",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
+          id:10,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          customer_name: 'Favor TechConsulting, LLC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-           code: 123, 
-          startdate: '2016-05-04',
-          name: 'Morgan',
-          sched: "CIOSP3-SDVOSB",
-          value: "$7,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
+          id:11,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          name: 'Jessy',
-          type: 'T&M', 
-          sched: "CIOSP3-SDVOSB",
-          value: "$17,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
+          id:12,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-          code: 123, 
-          startdate: '2016-05-03',
-          name: 'Tom',
-          value: "$6,343,342.45",
-          primesub: "Prime",
-          sched: "CIOSP3-SDVOSB",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
+          id:13,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022',
         }, {
-           code: 123, 
-           startdate:'2016-05-02',
-          name: 'John',
-          primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
-           value: "$7,343,342.45",
-          type: 'T&M', 
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-           code: 123, 
-          startdate: '2016-05-04',
-          name: 'Morgan',
-          sched: "CIOSP3-SDVOSB",
-          value: "$7,343,342.45",
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          startdate: '2016-05-01',
-          sched: "CIOSP3-SDVOSB",
-          name: 'Jessy',
-          value: "$7,343,342.45",
-          primesub: "Sub",
-          address: 'No. 189, Grove St, Los Angeles'       
+          id:14,
+          charge_code: '1053',
+          project_name: 'FTC HPS Admin',
+          vehicle: 'NA',
+          contract_number:'2017-006-T4NG-SC',
+          award_number: 'VAT4NG-012-003',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
+          contract_start_date: '6/19/2021',
+          contract_end_date: '8/27/2022',
+          total_contract_val: 2423434.03,
+          pops: 'Base + 4 OYs',
+          current_pop: 'OY4 extension',
+          current_pop_start_date: '1/19/2022',
+          current_pop_end_date: '8/27/2022', 
         }],
         search: '',
     };
