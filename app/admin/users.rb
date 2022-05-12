@@ -140,37 +140,36 @@ ActiveAdmin.register User do
 
         end
       end
+      if false
+        tab 'Programs' do
 
-      tab 'Programs' do
+          f.inputs 'Assign Program Privileges' do
 
-        f.inputs 'Assign Program Privileges' do
+            render(partial:'admin/project_privileges/index', locals: {user: user})
+            
+            project_select_options = user.active_admin_facility_project_select_options
 
-          render(partial:'admin/project_privileges/index', locals: {user: user})
-          
-          project_select_options = user.active_admin_facility_project_select_options
-
-        end
-
-      end
-
-
-
-      tab 'Projects' do
-        f.inputs 'Assign Project Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
-
-          render(partial:'admin/facility_privileges/list_facility_privileges', locals: {user: user})
+          end
 
         end
-      end
-      tab 'Contracts' do
-        f.inputs 'Assign Contract Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
 
-          render(partial:'admin/contract_privileges/list_contract_privileges', locals: {user: user})
+        tab 'Projects' do
+          f.inputs 'Assign Project Privileges' do
+            project_select_options = user.active_admin_facility_project_select_options
+            user_privileges = f.object.privilege || Privilege.new
 
+            render(partial:'admin/facility_privileges/list_facility_privileges', locals: {user: user})
+
+          end
+        end
+        tab 'Contracts' do
+          f.inputs 'Assign Contract Privileges' do
+            project_select_options = user.active_admin_facility_project_select_options
+            user_privileges = f.object.privilege || Privilege.new
+
+            render(partial:'admin/contract_privileges/list_contract_privileges', locals: {user: user})
+
+          end
         end
       end
     end
