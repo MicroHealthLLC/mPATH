@@ -29,7 +29,7 @@
       controls-position="right"
       ></el-input>
      </span>
-  <span v-else >
+  <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
    {{ scope.row.vehicle }} 
    </span>
 
@@ -59,7 +59,7 @@
        
        
        </span>
-      <span v-else >
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
       {{ scope.row.vehicle_full_name }}
       </span>
 
@@ -94,7 +94,7 @@
         </el-option>
       </el-select>
       </span>
-      <span v-else>
+ <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
 
   {{ scope.row.sins_or_subs }}
 
@@ -122,14 +122,14 @@
       >
         <el-option
           v-for="item in contractAgencyOptions"
-          :key="item + '34'"
+          :key="item"
           :label="item"
           :value="item"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-else>
+  <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
 
   {{ scope.row.contracting_agency }}
 
@@ -163,10 +163,8 @@
         </el-option>
       </el-select>
       </span>
-      <span v-else>
-
-       {{ scope.row.vehicle_type}}
-
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+       {{ scope.row.vehicle_type }}
       </span>
       </template>
     </el-table-column>
@@ -198,10 +196,8 @@
         </el-option>
       </el-select>
       </span>
-      <span v-else>
-
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
        {{ scope.row.contract_num}}
-
       </span>
       </template>
     </el-table-column>
@@ -229,10 +225,9 @@
       controls-position="right"
       ></el-input>
       </span>
-      <span v-else >
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
       {{ scope.row.ceiling }}
       </span>
-
     </template>
     </el-table-column>
 
@@ -240,7 +235,7 @@
       label="Base Period Start"
       width="100"
       prop="base_period_start">
-     <template slot-scope="scope">
+    <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
@@ -248,7 +243,15 @@
           format="M/DD/YYYY"
           class="w-100"
           />
-          <span v-else >
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"       
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
       {{ scope.row.base_period_start }}
       </span>
      </template>
@@ -258,6 +261,26 @@
      label="Base Period End"
       width="100"
       prop="base_period_end">
+      <template slot-scope="scope">
+        <v2-date-picker
+          name="Date"       
+          v-if="scope.$index == createRow"
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"       
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+      {{ scope.row.base_period_end }}
+      </span>
+     </template>
     </el-table-column>
      <el-table-column
       label="Option Period Start"
@@ -271,7 +294,15 @@
           format="M/DD/YYYY"
           class="w-100"
           />
-          <span v-else >
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"       
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
       {{ scope.row.option_period_start }}
       </span>
      </template>
@@ -280,10 +311,31 @@
       label="Option Period End"
       width="100"
       prop="option_period_end">
+          <template slot-scope="scope">
+        <v2-date-picker
+          name="Date"       
+          v-if="scope.$index == createRow"
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"       
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+      {{ scope.row.option_period_end }}
+      </span>
+     </template>
     </el-table-column>
     <el-table-column
      label="Actions"
       width="95"
+      fixed="right"
       align="center"
       >
        <template slot-scope="scope">
@@ -312,7 +364,7 @@
           </el-button>
         <el-button
           type="default"
-          @click="saveNewContract(scope.$index, scope.row)"
+          @click="saveNewRow(scope.$index, scope.row)"
           v-if="scope.$index == createRow" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
@@ -521,7 +573,7 @@ export default {
      
     ]),
     ...mapActions([
-      
+      // "updateContractData"
     ]),
   editMode(index, rows) {
     this.rowIndex = index,
@@ -529,16 +581,56 @@ export default {
        console.log(this.createRow);
     this.rowId = rows.id
   },  
-  saveEdits(){
+  saveEdits(index, rows){
     // Row edit action will occur here
+  let updatedContractData = {
+        contractData: {
+          id: rows.id,
+          id: 0,
+          vehicle: rows.vehicle,
+          vehicle_full_name: rows.vehicle_full_name,
+          sins_or_subs: rows.sins_or_subs,
+          contracting_agency: rows.contracting_agency,        
+          vehicle_type: rows.vehicle_type,
+          contract_num: rows.contract_num,         
+          ceiling: rows.ceiling,
+          base_period_start: rows.base_period_start,
+          base_period_end: rows.base_period_start,
+          option_period_start: rows.option_period_start,
+          option_period_end: rows.option_period_end
+      },
+    };
+    console.log(updatedContractData)
+    // this.updateContractData({
+    //   ...updatedContractData,
+    // });   
+    console.log(index, rows);
     this.rowIndex = null;
     this.rowId = null;
   }, 
-  saveNewRow(){
+  saveNewRow(index, rows){
     // Row create action will occur here
     //After save, dont forget to push new empty object to append new create row
-    this.rowIndex = null;
-    this.rowId = null;
+      let newContractData = {
+        contractData: {
+          vehicle: rows.vehicle,
+          vehicle_full_name: rows.vehicle_full_name,
+          sins_or_subs: rows.sins_or_subs,
+          contracting_agency: rows.contracting_agency,        
+          vehicle_type: rows.vehicle_type,
+          contract_num: rows.contract_num,         
+          ceiling: rows.ceiling,
+          base_period_start: rows.base_period_start,
+          base_period_end: rows.base_period_start,
+          option_period_start: rows.option_period_start,
+          option_period_end: rows.option_period_end
+      },
+    };
+    console.log(newContractData)
+    // this.createContractData({
+    //   ...newContractData,
+    // }); 
+    // this.tableData.push({})
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
@@ -595,6 +687,9 @@ export default {
     }
     th {
       color: #383838;
+    }
+    tr, td {
+      word-break: break-word;
     }
   }    
 </style>
