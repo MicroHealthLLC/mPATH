@@ -118,18 +118,11 @@ ActiveAdmin.register Facility do
     f.actions
   end
 
-  batch_action :"Assign/Unassign Project Group", if: proc {current_user.admin_write?}, form: -> {{
-    assign: :checkbox,
+  batch_action :"Assign Group", if: proc {current_user.admin_write?}, form: -> {{
     "Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
     notice = "Group is updated"
-    if inputs['assign'] === 'assign'
-      Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
-      notice = "Group is assigned"
-    elsif inputs['assign'] === 'unassign'
-      Facility.where(id: ids, facility_group_id: inputs["Facility Group"]).update_all(facility_group_id: nil)
-      notice = "Group is unassigned"
-    end
+    Facility.where(id: ids).update_all(facility_group_id: inputs["Group"])
     redirect_to collection_path, notice: "#{notice}"
   end
 
