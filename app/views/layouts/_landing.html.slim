@@ -10,8 +10,8 @@
       -if @active_projects.size > 0
       =link_to "/portfolio", class: "mr-2 portfolioViewerBtn", "data-cy" => "portfolio_btn" do
         | PORTFOLIO DATA VIEWER
-      / =link_to "/portfolio/contracts", class: "portfolioContractsBtn bg-light"
-      /   | CONTRACTS
+      =link_to "/portfolio/contracts", class: "portfolioContractsBtn bg-light"
+        | CONTRACTS
     .grid-container.program-name
       -if @active_projects.size > 0
         - preference_url = current_user.preference_url

@@ -59,6 +59,9 @@ input[type=number] {
 .portfolio-contracts-module {
   
   .el-table {
+    td.el-table__cell div {
+      word-break: break-word;
+    }
     font-size: 13px !important;
     th.el-table__cell>.cell {
       word-break: break-word;

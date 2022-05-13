@@ -607,35 +607,7 @@ export default {
       searchContractUsers:"",
       selectedProjectGroup: null,
       newProjectNameText: "",
-      value: "",
-        contractUser: [
-        {          
-          user: 'John Doe',
-          roles: 'project-write, project-read',
-          last_name: 'Doe'
-        }, {
-          user: 'Bob Dole',
-          roles: 'project-write',
-          last_name: 'Dole'
-        }, {
-          user: 'Adam Smith',
-          roles: 'project-write, project-read, project-delete',
-          last_name: 'Smith'
-       }, {
-          user: 'Samantha Smith',
-          roles: 'project-write, project-read',
-          last_name: 'Smith'
-        }, {
-          user: 'Curtis Smith',
-          roles: 'project-write, project-read',
-          last_name: 'Smith'
-        }, {
-          user: 'Daisy Rivera',
-          roles: 'project-write, project-read',
-          last_name: 'Rivera'
-        }, 
-       
-        ],
+      value: "",      
      };
   },
  mounted(){
