@@ -62,8 +62,6 @@ ActiveAdmin.register Facility do
         "<span>#{facility.projects.active.reorder(:id).pluck(:name).join(', ')}</span>".html_safe
       end
     end
-    column "Owned by Program" , :project
-    column :is_portfolio
     actions defaults: false do |facility|
       item "Edit", edit_admin_facility_path(facility), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_facility_path(facility), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -78,8 +76,6 @@ ActiveAdmin.register Facility do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
           f.input :facility_group, include_blank: true, include_hidden: false, label: "Group"
-          f.input :project
-          f.input :is_portfolio
           f.input :address, as: :hidden
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
@@ -94,15 +90,16 @@ ActiveAdmin.register Facility do
         end
       end
 
-      tab 'Advanced' do
-        f.inputs 'Assign Programs' do
-          # f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
-          input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+      if false
+        tab 'Advanced' do
+          f.inputs 'Assign Programs' do
+            # f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+            input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
 
+          end
+          div id: 'facility_projects-tab', "data-key": "#{resource.id}"
         end
-        div id: 'facility_projects-tab', "data-key": "#{resource.id}"
       end
-
       tab 'Comments' do
         f.inputs 'Comments' do
           f.has_many :comments, heading: false do |c|
@@ -223,12 +220,14 @@ ActiveAdmin.register Facility do
 
     def create
       params[:facility][:creator_id] = current_user.id
+      params[:facility][:is_portfolio] = true
       normalize_comment_params
       super
     end
 
     def update(options={}, &block)
       normalize_comment_params
+
       resource.delete_nested_projects(params[:facility][:project_ids]) if params[:facility][:project_ids].present?
       super do |success, failure|
         block.call(success, failure) if block
