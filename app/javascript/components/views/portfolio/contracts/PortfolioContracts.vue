@@ -539,6 +539,235 @@
 
     </el-table-column>
   </el-table>
+      <el-dialog
+        :visible.sync="pocDialogVisible"
+        append-to-body
+        center
+        class="p-0 users"       
+      >
+       <span slot="title" class="text-left">
+        <h5 class="text-dark"><i class="fa-solid fa-address-card mr-2"></i>Add Contracts POC</h5>
+      </span>
+      <div class="container" >      
+        <div class="row">
+        
+       <div class="col-12" v-if="pocData">
+       <el-table
+        :data="pocData.filter(data => !search || data.poc_name.toLowerCase().includes(search.toLowerCase()))"
+        border
+        height="400"
+        style="width: 95%">
+        <el-table-column
+          fixed
+          label="Name"
+          width="150"
+          prop="poc_name">
+          <template slot-scope="scope">
+            <el-input
+              size="small"
+              v-if="scope.$index == pocCreateRow"
+              placeholder="Enter POC Name"
+              style="text-align:center"
+              v-model="scope.row.poc_name"
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+              placeholder="Enter POC Name"
+              style="text-align:center"
+              v-model="scope.row.poc_name"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            {{ scope.row.poc_name }} 
+            </span>
+            </template>
+        </el-table-column>
+        <el-table-column
+          label="POC Title"
+          width="150"
+          prop="poc_title">
+          <template slot-scope="scope">
+            <el-input
+              size="small"
+              v-if="scope.$index == pocCreateRow"
+              placeholder="Enter POC Title"
+              style="text-align:center"
+              v-model="scope.row.poc_title"
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+              placeholder="Enter POC Title"
+              style="text-align:center"
+              v-model="scope.row.poc_title"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            {{ scope.row.poc_title }} 
+            </span>
+            </template>
+        </el-table-column>    
+        <el-table-column
+          label="Email"
+          width="300"
+          prop="poc_email">
+          <template slot-scope="scope">
+            <el-input
+              size="small"
+              v-if="scope.$index == pocCreateRow"
+              placeholder="Enter POC Email"
+              style="text-align:center"
+              v-model="scope.row.poc_email"
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+          placeholder="Enter POC Email"
+              style="text-align:center"
+              v-model="scope.row.poc_email"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            {{ scope.row.poc_email }} 
+            </span>
+            </template>
+        </el-table-column>
+        <el-table-column
+          label="POC Work Phone #"
+          width="175"
+          prop="title">
+          <template slot-scope="scope">
+            <el-input
+              size="small"
+              v-if="scope.$index == pocCreateRow"
+              placeholder="Enter POC Work Phone #"
+              style="text-align:center"
+              v-model="scope.row.poc_work_num"
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+              placeholder="Enter POC Work Phone #"
+              style="text-align:center"
+              v-model="scope.row.poc_work_num"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            {{ scope.row.poc_work_num }} 
+            </span>
+            </template>
+        </el-table-column>
+        <el-table-column
+          label="POC Mobile Phone #"
+          width="175"
+          prop="title">
+          <template slot-scope="scope">
+            <el-input
+              size="small"
+              v-if="scope.$index == pocCreateRow"
+              placeholder="Enter POC Mobile Phone #"
+              style="text-align:center"
+              v-model="scope.row.poc_mobile_num"
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+              placeholder="Enter POC Mobile Phone #"
+              style="text-align:center"
+              v-model="scope.row.poc_mobile_num"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            {{ scope.row.poc_mobile_num }} 
+            </span>
+            </template>
+        </el-table-column>
+        <el-table-column
+          label="Notes"
+          width="350"
+          prop="poc_notes">
+          <template slot-scope="scope">
+            <el-input
+              size="small"
+              v-if="scope.$index == pocCreateRow"
+              placeholder="Notes"
+              style="text-align:center"
+              v-model="scope.row.poc_notes"
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+              placeholder="Notes"
+              style="text-align:center"
+              v-model="scope.row.poc_notes"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            {{ scope.row.poc_notes }} 
+            </span>
+            </template>
+        </el-table-column>
+        <el-table-column
+          label="Actions"
+          width="95"
+          fixed="right"
+          align="center">
+         <template slot-scope="scope">
+          <el-button
+            type="default"
+            @click="saveEdits(scope.$index, scope.row)"
+            v-if="scope.$index == pocRowIndex" 
+            v-tooltip="`Save`" 
+            class="bg-primary btn-sm text-light mx-0">               
+            <i class="far fa-save"></i>
+            </el-button>
+          <el-button 
+            type="default" 
+            v-tooltip="`Cancel Edit`"       
+            v-if="scope.$index == pocRowIndex"
+            @click.prevent="cancelPocEdits(scope.$index, scope.row)"  
+            class="bg-secondary btn-sm text-light mx-0">
+          <i class="fas fa-ban"></i>
+            </el-button>
+            <el-button
+              type="default"
+              v-tooltip="`Edit`" 
+              class="bg-light btn-sm"
+              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
+              @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
+              </el-button>
+            <el-button
+              type="default"
+              @click="saveNewPocRow(scope.$index, scope.row)"
+              v-if="scope.$index == pocCreateRow" 
+              v-tooltip="`Save`" 
+              class="bg-primary btn-sm text-light mx-0">               
+            <i class="far fa-save"></i>
+            </el-button>
+          </template>
+
+        </el-table-column>
+       </el-table>
+    
+       </div> 
+        </div>
+
+      </div>
+      </el-dialog>
+
       </div>
       </div>
     </el-tab-pane>
@@ -551,9 +780,10 @@
     </el-tab-pane>
    <el-tab-pane>
     <span slot="label"> <i class="fa-solid fa-user mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'txt-secondary']"></i>
-    CONTRACT POC
-    </span>
-    <PortfolioContractPOC/>
+    <i v-tooltip="`Manage POCs`" class="far fa-plus-circle mr-1" :class="[ pane3? 'bootstrap-purple-text' : 'd-none']" @click="openPocModal"></i> 
+    CONTRACT POC   
+    </span>  
+    <PortfolioContractPOC/>    
     </el-tab-pane>
     <el-tab-pane>
     <span slot="label">  <i class="fa-solid fa-calendar-xmark mr-1" :class="[ pane4? 'text-danger' : 'txt-secondary']"></i>
@@ -587,8 +817,11 @@ export default {
     data() {    
       return {
         nothing: true,
+        pocDialogVisible: false,
         rowIndex: null, 
         rowId: null, 
+        pocRowIndex: null, 
+        pocRowId: null, 
         pane0: true, 
         pane1: false, 
         pane2: false, 
@@ -596,35 +829,33 @@ export default {
         pane4: false, 
         tabPosition: 'bottom',
         awardToNums: [ 
-                       'VAT4NG-012-003', 
-                       '140D0418F0001',
-                       'HQMMMBCKG0',
-                       'DIA-008-002'
+                       '000-33340-3', 
+                       'ZPPPP-18F0001',
+                       'ZZ-VVBCKG0',
+                       'CCCC-008-002'
                        ],
        primeOrSub: [ 
                       'Prime', 
                        'Sub',
                          ],                     
        contractNumber:   [ 
-                      'GS35F413BA ', 
-                      '47QRAA-18-D-0098',
-                      'N0017819D8115',
-                      'HHSM-500-2017-00038I',
-                      'W911QY-18-D-0109'
+                       '000-33340-3', 
+                       'ZPPPP-18F0001',
+                       'ZZ-VVBCKG0',
+                       'CCCC-008-002'
                         ],
         vehicleOptions: [ 
-                       'NA', 
-                       'GSA IT-70',
-                       'GSA PSS MOBIS',
-                       'VETS II',
-                       'CIOSP3-8a'
+                        '000-33340-3', 
+                       'ZPPPP-18F0001',
+                       'ZZ-VVBCKG0',
+                       'CCCC-008-002'
                        ],
         customerOptions: [ 
-                       'Favor TechConsulting, LLC', 
-                       'Security & Exchange Commission',
+                       'Consulting, LLC', 
+                       'Security Incorprated',
                        'Accolade, Inc.',
-                       'Department of Energy',
-                       'American Systems',
+                       'Department of Acme',
+                       'American Honor',
                        'Health & Human Services'
                        ],
         naicsOptions: [ 
@@ -665,290 +896,271 @@ export default {
                        ],
         contractsArray: [{
           id:0,
-          charge_code: '1053',
-          customer_name: 'Favor TechConsulting, LLC',
-          project_name: 'FTC HPS Admin',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'2017-006-T4NG-SC',
-          award_to_num: 'VAT4NG-012-003',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: ''
         }, {
           id:1,
-          charge_code: '1062',
-          customer_name: 'Interagency Program Office',
-          project_name: 'IPO Data Gap',
-          vehicle: 'GSA IT-70',
-          contract_num:'GS-35F-413BA',
-          award_to_num: '140D0418F0001',
-          naics: '541512-$30M',
-          award_type: 'SDVOSB',
-          contract_type: 'F&M',
-          prime_or_sub: 'Prime',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
+          vehicle: 'NA',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
+          naics: 'NA',
+          award_type: 'NA',
+          contract_type: 'FFP',
+          prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: ''
         }, {
           id:2,
-          charge_code: '1079',
-          project_name: '3M SEDTS 3',
-          customer_name: '3M',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'NA',
-          award_to_num: 'HQMMMBCKG0',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
-          prime_or_sub: 'Prime',
+          prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: ''
         }, {
           id:3,
-          charge_code: '1090',
-          project_name: 'FTC DIA TO8',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          customer_name: 'Security & Exchange Commission',
-          contract_num:'2017-006-T4NG-SC',
-          award_to_num: 'VAT4NG-012-003',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: ''
         }, {
           id:4,
-          charge_code: '1053',
-          project_name: 'FTC HPS Admin',
-          vehicle: 'GSA PSS MOBIS',
-          contract_num:'2017-006-T4NG-SC',
-          customer_name: '3M',
-          award_to_num: 'VAT4NG-012-003',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
+          vehicle: 'NA',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
         }, {
           id:5,
-          charge_code: '1053',
-          project_name: 'FTC HPS Admin',          
-          customer_name: '3M',
-          vehicle: 'GSA PSS MOBIS',
-          contract_num:'2017-006-T4NG-SC',
-          award_to_num: 'VAT4NG-012-003',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
+          vehicle: 'NA',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
         }, {
           id:6,
-          charge_code: '1053',
-          project_name: 'FTC HPS Admin',
-          customer_name: 'Favor TechConsulting, LLC',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'2017-006-T4NG-SC',
-          award_to_num: 'VAT4NG-012-003',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
         }, {
           id:7,
-          charge_code: '1053',
-          project_name: 'FTC HPS Admin',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          customer_name: 'Favor TechConsulting, LLC',
-          contract_num:'2017-006-T4NG-SC',
-          award_to_num: 'VAT4NG-012-003',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
         }, {
           id:8,
-          charge_code: '1053',
-          project_name: 'FTC HPS Admin',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'2017-006-T4NG-SC',
-          customer_name: 'Favor TechConsulting, LLC',
-          award_to_num: 'VAT4NG-012-003',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
         }, {
           id:9,
-          charge_code: '1053',
-          project_name: 'FTC HPS Admin',
-          customer_name: 'Favor TechConsulting, LLC',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'2017-006-T4NG-SC',
-          award_to_num: 'VAT4NG-012-003',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
           current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
         }, {
           id:10,
-          charge_code: '4002',
-          project_name: 'DoS PHIMS Task Order 2',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'19AQMM19D0147',
-          award_to_num: '19AQMM21F3765',
-          customer_name: 'Department of State',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022', 
+          current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is somet'
         }, {
           id:11,
-           charge_code: '4004',
-          project_name: 'DoS PHIMS Task Order 4',
+          charge_code: '383',
+          customer_name: 'Tech Consulting Unlimited, LLC',
+          project_name: 'KADNK Admin',         
           vehicle: 'NA',
-          contract_num:'19AQMM19D0147',
-          award_to_num: '19AQMM21F3765',
-          customer_name: 'Department of State',
+          contract_num:'esdgdsgfsad',
+          award_to_num: '9494030293-2',
           naics: 'NA',
           award_type: 'NA',
           contract_type: 'FFP',
           prime_or_sub: 'Sub',
           contract_start_date: '6/19/2021',
           contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
+          billings_to_date: 734365.35,
+          total_funded_val: 7999430.32,
+          total_contract_val: 7999430.32,
           pops: 'Base + 4 OYs',
           current_pop: 'OY4 extension',
           current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022', 
-        }, {
-          id:12,
-         charge_code: '4005',
-          project_name: 'DoS PHIMS Task Order 5',
-          vehicle: 'NA',
-          contract_num:'19AQMM19D0147',
-          award_to_num: '19AQMM21F3765',
-          customer_name: 'Department of State',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022', 
-        }, {
-          id:13,
-          charge_code: '4006',
-          project_name: 'DoS PHIMS Task Order 6',
-          vehicle: 'NA',
-          contract_num:'19AQMM19D0147',
-          award_to_num: '19AQMM21F3765',
-          customer_name: 'Department of State',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022', 
-        }, {
-          id:14,
-          charge_code: '4007',
-          project_name: 'DoS PHIMS Task Order 7',
-          vehicle: 'NA',
-          contract_num:'19AQMM19D0147',
-          award_to_num: '19AQMM21F3765',
-          customer_name: 'Department of State',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022', 
-        }],
+          current_pop_end_date: '8/27/2022',
+          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
+   
+         }],
+
         search: '',
     };
   },
@@ -961,13 +1173,32 @@ export default {
     ]),  
   backHomeBtn() {
       window.location.pathname = "/";
-    },    
+    },  
+  openPocModal(){
+    this.pocDialogVisible = true;
+  },   
   editMode(index, rows) {
     this.rowIndex = index,
      console.log(rows);
        console.log(this.createRow);
     this.rowId = rows.id
+  }, 
+  editPocRow(index, rows) {
+    this.pocRowIndex = index,
+     console.log(rows);
+    this.pocRowId = rows.id
   },  
+  savePocEdits(){
+    // Row edit action will occur here
+    this.pocRowIndex = null;
+    this.pocRowId = null;
+  }, 
+  saveNewPocRow(){
+    // Row create action will occur here
+    //After save, dont forget to push new empty object to append new create row
+     this.pocRowIndex = null;
+    this.pocRowId = null;
+  },
   saveEdits(){
     // Row edit action will occur here
     this.rowIndex = null;
@@ -978,6 +1209,11 @@ export default {
     //After save, dont forget to push new empty object to append new create row
     this.rowIndex = null;
     this.rowId = null;
+  },
+  cancelPocEdits() {
+    this.pocRowIndex = null;
+    this.pocRowId = null;
+       
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
@@ -1043,6 +1279,18 @@ export default {
     },
     createRow(){
       let lastItem = this.tableData.length - 1
+       console.log(lastItem)
+      return lastItem
+    },
+   pocData(){
+      if (this.pocsArray && this.pocsArray.length > 0){
+        let data = this.pocsArray
+        data.push({})
+        return data
+     }
+    },
+    pocCreateRow(){
+      let lastItem = this.pocData.length - 1
        console.log(lastItem)
       return lastItem
     },
