@@ -62,6 +62,7 @@ ActiveAdmin.register Facility do
         "<span>#{facility.projects.active.reorder(:id).pluck(:name).join(', ')}</span>".html_safe
       end
     end
+    column :is_portfolio
     actions defaults: false do |facility|
       item "Edit", edit_admin_facility_path(facility), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_facility_path(facility), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -253,7 +254,7 @@ ActiveAdmin.register Facility do
     end
 
     def scoped_collection
-      super.includes(:facility_group)
+      super.includes(:facility_group).where(is_portfolio: true)
     end
   end
 
