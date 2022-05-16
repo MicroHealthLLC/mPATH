@@ -7,6 +7,7 @@ import * as Cookies from "js-cookie";
 import exampleModule from "./modules/example-module-store";
 import settingsStore from "./modules/settings-store";
 import programStore from "./modules/program-store";
+import contractStore from "./modules/contract-store";
 import projectStore from "./modules/project-store";
 import taskStore from "./modules/task-store";
 import issueStore from "./modules/issue-store";
@@ -31,6 +32,7 @@ export default new Vuex.Store({
   modules: {
     exampleModule,
     programStore,
+    contractStore,
     projectStore,
     taskStore,
     settingsStore,
