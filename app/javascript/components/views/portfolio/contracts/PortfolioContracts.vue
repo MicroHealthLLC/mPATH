@@ -894,7 +894,7 @@ export default {
                       'FFP', 
                       'T&M',
                        ],
-        contractsArray: [{
+       contractsArray: [{
           id:0,
           charge_code: '383',
           customer_name: 'Tech Consulting Unlimited, LLC',
@@ -1159,6 +1159,31 @@ export default {
           current_pop_end_date: '8/27/2022',
           notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
    
+         }],
+         pocsArray: [{
+          id: 0,
+          poc_name: 'David Pumphrey',
+          poc_title: 'Program Manager',
+          poc_email: 'david.pumphrey@microhealthllc.com',
+          poc_work_num: 8753334567,
+          poc_mobile_num: 8753334567,
+          notes:'Lorem ipsum dolor sit amet, consectetur adipiscing eliua.',
+        }, {
+          id: 1,
+          poc_name: 'Michael Holmes',
+          poc_title: 'Program Manager',
+          poc_email: 'michael.holmes@microhealthllc.com',
+          poc_work_num: 8753334567,
+          poc_mobile_num: 8753334567,
+          notes:'Lorem ipsum dolor sit amet, consectetur adipiscing eliua.',
+        }, {
+          id: 2,
+          poc_name: 'Phillip Edmonds',
+          poc_title: 'Program Manager',
+          poc_email: 'phillip.edmonds.pumphrey@microhealthllc.com',
+          poc_work_num: 8753334567,
+          poc_mobile_num: 8753334567,
+          notes:'Lorem ipsum dolor sit amet, consectetur adipiscing eliua.',
          }],
 
         search: '',
