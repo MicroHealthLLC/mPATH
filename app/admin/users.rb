@@ -36,7 +36,8 @@ ActiveAdmin.register User do
         kanban_view: [],
         calendar_view: [],
         members: [],
-        admin: []
+        admin: [],
+        contract_data: []
 
       ],
       project_privileges_attributes: [
@@ -137,7 +138,11 @@ ActiveAdmin.register User do
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :admin, as: :check_boxes, :collection =>  admin_privileges_options(p.object, "admin")
           end
-
+        end
+        f.inputs 'Contract Data Privilege' do
+          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+            p.input :contract_data, as: :check_boxes, :collection =>  contract_privileges_options(p.object, "contract_data")
+          end
         end
       end
       if false
