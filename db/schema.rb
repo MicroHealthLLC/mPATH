@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_17_185659) do
+ActiveRecord::Schema.define(version: 2022_05_17_205124) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -218,15 +218,15 @@ ActiveRecord::Schema.define(version: 2022_05_17_185659) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "vehicle_number"
     t.string "full_name"
-    t.string "sins"
-    t.string "contract_agency"
-    t.string "vehicle_type"
     t.string "contract_number"
     t.string "ceiling"
     t.datetime "base_period_start"
     t.datetime "base_period_end"
     t.datetime "option_period_start"
     t.datetime "option_period_end"
+    t.integer "conctract_sub_category_id"
+    t.integer "contract_agency_id"
+    t.integer "vehicle_type_id"
   end
 
   create_table "contracts", charset: "utf8", force: :cascade do |t|
@@ -511,6 +511,13 @@ ActiveRecord::Schema.define(version: 2022_05_17_185659) do
     t.datetime "updated_at", null: false
     t.index ["checklist_id"], name: "index_progress_lists_on_checklist_id"
     t.index ["user_id"], name: "index_progress_lists_on_user_id"
+  end
+
+  create_table "project_contracts", charset: "utf8", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "contract_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "project_facility_groups", charset: "utf8", force: :cascade do |t|

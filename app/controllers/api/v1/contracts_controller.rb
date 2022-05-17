@@ -1,5 +1,14 @@
 class Api::V1::ContractsController < AuthenticatedController
 
+  def add_contract
+    project_contract = ProjectContract.new(project_id: params[:project_id], contract_id: params[:contract_id])
+    if project_contract.save
+      render json: {message: "Contract added successfully"}
+    else
+      render json: {error: project_contract.errors.full_messages, message: "Contract added successfully"}, status: 406
+    end
+  end
+
   def index
     authorized_program_ids = current_user.authorized_programs.pluck(:id)
 

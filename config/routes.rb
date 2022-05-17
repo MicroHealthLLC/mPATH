@@ -45,6 +45,8 @@ Rails.application.routes.draw do
 
       end
 
+      resources :contract_vehicles
+
       resources :privileges do
         collection do
           get :get_privileges, to: 'privileges#get_privileges'
@@ -80,6 +82,7 @@ Rails.application.routes.draw do
       end
 
       resources :contracts do
+        post :add_contract, on: :member
         resources :notes #, module: :facilities
         resources :issues do
           post :batch_update, on: :collection
