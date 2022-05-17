@@ -1,11 +1,35 @@
 class Api::V1::ContractDataController < AuthenticatedController
 
-  def contract_client_types
-    render json: ContractClientType.all.as_json(only: [:id, :name] )
+  def contract_sub_categories
+    render json: ContractSubCategory.all.as_json(only: [:id, :name] )
   end
 
-  def contract_categories
-    render json: ContractCategory.all.as_json(only: [:id, :name] )
+  def contract_agencies
+    render json: ContractAgency.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_vehicle_types
+    render json: ContractVehicleType.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_award_tos
+    render json: ContractAwardTo.all.as_json(only: [:id, :name] )
+  end
+  
+  def contract_naics
+    render json: ContractNaic.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_award_types
+    render json: ContractAwardType.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_pocs
+    render json: ContractPoc.all.as_json(only: [:id, :name] )
+  end
+  
+  def contract_client_types
+    render json: ContractClientType.all.as_json(only: [:id, :name] )
   end
 
   def contract_types
