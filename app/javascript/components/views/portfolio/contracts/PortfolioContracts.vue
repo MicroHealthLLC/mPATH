@@ -1,6 +1,5 @@
 <template>
-  <div class="container-fluid mt-3 mx-3">
-   
+  <div class="container-fluid mt-3 mx-3">   
     <div style="height:85px">
       <span @click.prevent="backHomeBtn">
         <img
@@ -120,7 +119,7 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Vehicle"
+        placeholder="Select or enter Vehicle/Schedule"
 
       >
         <el-option
@@ -294,7 +293,7 @@
       </template>
     </el-table-column>
       <el-table-column
-      label="Prime Vs Sub"
+      label="Prime vs Sub"
       width="55"
       prop="prime_or_sub">
      <template slot-scope="scope" >
@@ -449,7 +448,7 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Contract Pop Start Date"
+      label="Contract PoP Start Date"
        width="100"
       prop="current_pop_start_date">
       <template slot-scope="scope">
@@ -474,7 +473,7 @@
      </template>
     </el-table-column>
        <el-table-column
-      label="Contract Pop End Date"
+      label="Contract PoP End Date"
        width="100"
       prop="current_pop_end_date">
      <template slot-scope="scope">

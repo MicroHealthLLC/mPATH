@@ -17,143 +17,26 @@
       label="Project Name"
       width="200"
       prop="project_name">
-      <template slot-scope="scope">
-        <el-input
-          size="small"
-          v-if="scope.$index == createRow"
-          placeholder="Enter Project Name"
-          style="text-align:center"
-          v-model="scope.row.project_name"
-          controls-position="right"
-        ></el-input>
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
-        <el-input
-          size="small"
-          placeholder="Enter Project Name"
-          style="text-align:center"
-          v-model="scope.row.project_name"
-          controls-position="right"
-          ></el-input>
-        </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-        {{ scope.row.project_name }} 
-        </span>
-        </template>
      </el-table-column>
-     <el-table-column
-    
+     <el-table-column    
       label="Customer"
       width="200"
-      prop="customer_name">
-     <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
-       <el-select
-        v-model="scope.row.customer_name"
-        filterable       
-        track-by="name"        
-        value-key="id"
-        class="w-100"
-        clearable
-        allow-create
-        default-first-option
-        placeholder="Select or enter Customer Name"
-
-      >
-        <el-option
-          v-for="item in customerOptions"
-          :key="item"
-          :label="item"
-          :value="item"
-        >
-        </el-option>
-      </el-select>
-      </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.customer_name }}
-      </span>
-      </template>
-    </el-table-column>
-   
-  
+      prop="customer_name">    
+    </el-table-column> 
      <el-table-column
       label="Contract Start Date"
       width="100"
       prop="contract_start_date">
-    <template slot-scope="scope">
-        <v2-date-picker
-          name="Date"       
-          v-if="scope.$index == createRow"
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
-         <v2-date-picker
-          name="Date"       
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_start_date }}
-      </span>
-     </template>
     </el-table-column>
      <el-table-column
       label="Contract End Date"
       width="100"
       prop="contract_end_date">
-           <template slot-scope="scope">
-        <v2-date-picker
-          name="Date"       
-          v-if="scope.$index == createRow"
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
-         <v2-date-picker
-          name="Date"       
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_end_date }}
-      </span>
-     </template>
-    </el-table-column>
+     </el-table-column>
      <el-table-column
       label="Total Contract Value"
        width="115"
       prop="total_contract_val">
-     <template slot-scope="scope">
-     <el-input
-      size="small"
-      v-if="scope.$index == createRow"
-      type="number"
-      placeholder="Enter Total Contract Value"
-      style="text-align:center"
-      v-model="scope.row.total_contract_val"
-      controls-position="right"
-      ></el-input>
-      <span v-if="rowId == scope.row.id && scope.$index !== createRow">
-     <el-input
-      size="small"      
-      type="number"
-      placeholder="Enter Total Contract Value"
-      style="text-align:center"
-      v-model="scope.row.total_contract_val"
-      controls-position="right"
-      ></el-input>
-      </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.total_contract_val }}
-      </span>
-    </template>
-
     </el-table-column>
     <el-table-column
       label="Total Funded Value"
@@ -183,9 +66,7 @@
       {{ scope.row.total_funded_val }}
       </span>
     </template>
-
-    </el-table-column>
-  
+    </el-table-column>  
      <el-table-column
       label="Billings to Date"
        width="115"

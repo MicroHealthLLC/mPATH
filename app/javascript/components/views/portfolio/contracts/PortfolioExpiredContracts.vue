@@ -1,5 +1,5 @@
 <template>
-    <div style="height:80vh" class="portfolio-contracts-module">
+  <div style="height:80vh" class="portfolio-contracts-module">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
     :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
@@ -53,11 +53,11 @@
     </el-table-column>
     <el-table-column
       label="Contract Type"
-      width="70"
+      width="75"
       prop="type">
     </el-table-column>
       <el-table-column
-      label="Prime Vs Sub"
+      label="Prime vs Sub"
       width="55"
       prop="primesub">
     </el-table-column>
@@ -78,21 +78,21 @@
     </el-table-column>
     <el-table-column
       label="PoP's"
-       width="55"
-      prop="type">
+       width="100"
+       prop="type">
     </el-table-column>
      <el-table-column
       label="Current PoP"
-      width="70"
+      width="100"
       prop="type">
     </el-table-column>
     <el-table-column
-      label="Contract Pop Start Date"
+      label="Contract PoP Start Date"
        width="100"
       prop="startdate">
     </el-table-column>
        <el-table-column
-      label="Contract Pop End Date"
+      label="Contract PoP End Date"
        width="100"
       prop="startdate">
     </el-table-column>

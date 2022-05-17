@@ -123,7 +123,6 @@
           <div>
             <template>
               <div class="sticky">
-
               <div class="row"> 
                <div slot="title" class="col-8 pr-0 text-left">
                 <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Portfolio Group(s) to Add </h5>
@@ -892,9 +891,7 @@ a {
 /deep/.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
-/deep/.el-dialog {
-  width: 30%;  
-}
+
 .container {
   margin-left: 50px;
 }
@@ -977,7 +974,11 @@ div.sticky {
   /deep/.el-dialog__body {
   padding-top: 0 !important;
  }
+ /deep/.el-dialog {
+  width: 30%;  
+ }
 }
+
 /deep/.el-dialog__close.el-icon.el-icon-close{
   display: none;
 }
