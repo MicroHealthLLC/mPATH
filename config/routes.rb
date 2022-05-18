@@ -106,6 +106,7 @@ Rails.application.routes.draw do
       end
 
       # Contract data API
+      get "/contract_data/get_contract_data", to: "contract_data#get_contract_data"
       get "/contract_data/contract_types", to: "contract_data#contract_types"
       get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
       get "/contract_data/contract_customeres", to: "contract_data#contract_customeres"

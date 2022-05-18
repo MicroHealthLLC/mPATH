@@ -1,5 +1,30 @@
 class Api::V1::ContractDataController < AuthenticatedController
 
+  def get_contract_data
+    h = {
+      contract_sub_categories:  ContractSubCategory.all.as_json(only: [:id, :name] ),
+      contract_agency: ContractAgency.all.as_json(only: [:id, :name] ),
+      contract_vehicle_type:  ContractVehicleType.all.as_json(only: [:id, :name] ),
+      contract_award_tos: ContractAwardTo.all.as_json(only: [:id, :name] ),
+      contract_naics: ContractNaic.all.as_json(only: [:id, :name] ),
+      contract_award_types: ContractAwardType.all.as_json(only: [:id, :name] ),
+      contract_pocs: ContractPoc.all.as_json(only: [:id, :name] ),
+      contract_client_types: ContractClientType.all.as_json(only: [:id, :name] ),
+      contract_types: ContractType.all.as_json(only: [:id, :name] ),
+      contract_status: ContractStatus.all.as_json(only: [:id, :name] ),
+      contract_customers: ContractCustomer.all.as_json(only: [:id, :name] ),
+      contract_vehicles: ContractVehicle.all.as_json(only: [:id, :name] ),
+      contract_vehicle_numbers: ContractVehicleNumber.all.as_json(only: [:id, :name] ),
+      contract_numbers: ContractNumber.all.as_json(only: [:id, :name] ),
+      sub_contract_numbers: SubcontractNumber.all.as_json(only: [:id, :name] ),
+      contract_primes: ContractPrime.all.as_json(only: [:id, :name] ),
+      contract_current_pops: ContractCurrentPop.all.as_json(only: [:id, :name] ),
+      contract_classifications: ContractClassification.all.as_json(only: [:id, :name] )
+    }
+
+    render json: h
+  end
+
   def contract_sub_categories
     render json: ContractSubCategory.all.as_json(only: [:id, :name] )
   end
