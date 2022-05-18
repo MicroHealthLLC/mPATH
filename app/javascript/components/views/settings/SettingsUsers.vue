@@ -533,8 +533,8 @@
                 </span>
                 <span v-if="contractNames && (item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row &&                  
                   contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).length > 0" class="projectNames" >  
-      {{ contractNames}}
-                  <!-- {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).join()}} -->
+
+                  {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).join()}} 
                 </span>
               </span>
            
