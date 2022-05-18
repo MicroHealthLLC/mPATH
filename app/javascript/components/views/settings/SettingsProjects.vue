@@ -314,7 +314,6 @@
           <div>
             <template>
               <div class="sticky">
-
               <div class="row mb-2"> 
                <div slot="title" class="col-8 pr-0 text-left">
                 <h5 class="text-dark addGroupsHeader">   <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>Select Portfolio Project(s) to Add </h5>
