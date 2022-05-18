@@ -87,7 +87,7 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Customer Name"
+        placeholder="Select or enter Customer"
 
       >
         <el-option

@@ -82,7 +82,7 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select SINS/Subcategory or enter new"
+        placeholder="Select or enter SINS or Subcategory"
 
       >
         <el-option
