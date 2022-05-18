@@ -112,6 +112,11 @@ class Contract < ApplicationRecord
     contract.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
 
+
+      if c_params[:contract_sub_category_id] && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
+        c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id]).id
+      end
+
       if c_params[:contract_type_id] && !ContractType.exists?(id: c_params[:contract_type_id])
         c_params[:contract_type_id] = ContractType.create(name: c_params[:contract_type_id]).id
       end

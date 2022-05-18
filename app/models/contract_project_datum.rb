@@ -1,0 +1,2 @@
+class ContractProjectDatum < ApplicationRecord
+end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_17_205124) do
+ActiveRecord::Schema.define(version: 2022_05_18_211624) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -178,6 +178,42 @@ ActiveRecord::Schema.define(version: 2022_05_17_205124) do
     t.integer "project_id"
     t.string "contract_ids", default: "--- []\n"
     t.string "lessons", default: "--- []\n"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_project_data", charset: "utf8", force: :cascade do |t|
+    t.string "charge_code"
+    t.string "name"
+    t.integer "contract_customer_id"
+    t.integer "contract_award_to_id"
+    t.integer "contract_type_id"
+    t.string "prime_or_sub"
+    t.datetime "contract_start_date"
+    t.datetime "contract_end_date"
+    t.integer "total_contract_value"
+    t.integer "contract_pops"
+    t.integer "contract_current_pop_id"
+    t.datetime "contract_current_pop_start_date"
+    t.datetime "contract_current_pop_end_date"
+    t.decimal "total_founded_value", precision: 10
+    t.datetime "billings_to_date"
+    t.string "comments"
+    t.integer "pm_contract_poc_id"
+    t.integer "gov_contract_poc_id"
+    t.integer "co_contract_poc_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "poc_type"
+    t.string "email"
+    t.string "title"
+    t.string "work_number"
+    t.string "mobile_number"
+    t.string "notes"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
