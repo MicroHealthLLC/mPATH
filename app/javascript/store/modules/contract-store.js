@@ -13,6 +13,7 @@ const contractStore = {
   // POST (new) Contract Data
   // POST (new) Vehicles Data
   // POST (new) POC Data
+  // POST Associate Contract to Program
 
   // UPDATE Contract Data
   // UPDATE Vehicles
@@ -156,6 +157,28 @@ const contractStore = {
         commit("TOGGLE_ROLES_LOADED", true);
       });
     },
+    associateContractToProgram({ commit }, { contractData } ) {
+      commit("TOGGLE_ROLES_LOADED", false);
+   
+      axios({
+        method: "POST",
+        url: ` /contracts/{${contractData.id}/add_contract?project_id=${contractData.programId}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_ROLES", res.data.roles);
+          // console.log(res.data.roles)
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_ROLES_LOADED", true);
+        });
+      },
 
   // UPDATE REQUESTS
     updateContractData({ commit }, id ) {

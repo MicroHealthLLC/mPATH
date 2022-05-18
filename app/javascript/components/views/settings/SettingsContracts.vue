@@ -17,9 +17,9 @@
             <i class="far fa-file-contract ml-2 mr-1 mh-orange-text"></i>
             CONTRACTS
             <span
-              v-if="tableData && tableData.length"
+              v-if="newContractArray && newContractArray.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-              >{{ tableData.length }}
+              >{{newContractArray.length }}
             </span>
             <span v-else class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ 0 }}
@@ -81,14 +81,13 @@
          v-if="_isallowed('read')"
         >
           <el-table
-            v-if="tableData"  
-            :load="log(groupList)"  
+            v-if="newContractArray"          
             :data="
-              tableData
+              newContractArray
                 .filter(
                   (data) =>
                     !search ||
-                    data.nickname.toLowerCase().includes(search.toLowerCase())
+                    data.project_name.toLowerCase().includes(search.toLowerCase())
                 )
                 .reverse()
             "
@@ -99,53 +98,31 @@
             :row-key="row => row.id"
             :expand-row-keys="expandRowKeys"
 		      	@expand-change="handleExpandChange" 
-            :default-sort="{ prop: 'nickname', order: 'ascending'}"        
+            :default-sort="{ prop: 'project_name', order: 'ascending'}"        
           >
-            <el-table-column prop="nickname" sortable label="Contract">
-              <template slot-scope="scope">
-                <el-input
-                  size="small"
-                  v-if="rowId == scope.row.id"
-                  style="text-align:center"
-                  v-model="scope.row.nickname"
-                  controls-position="right"
-                >
-                </el-input>
-                <span v-else> {{ scope.row.nickname }}</span>
-              </template>
+           <el-table-column
+              prop="charge_code"
+              label="Code"
+            >
             </el-table-column>
             <el-table-column
-              sortable
-              prop="facility_group_name"
-	            filterable
-              label="Group"
+              prop="project_name"
+              label="Project Name"
             >
-              <template slot-scope="scope">
-
-                <el-select
-                v-model="scope.row.facility_group_id"
-                class="w-100"
-                v-if="rowId == scope.row.id"
-                filterable
-                track-by="id"
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-              </el-select>        
-            <span v-else>
-               <span v-if="scope.row.facility_group_name">
-                 {{ scope.row.facility_group_name }}
-               </span>
-            </span>
-
-              </template>
+            </el-table-column>
+            <el-table-column
+              prop="customer"
+              label="Customer"
+            >
+            </el-table-column>
+              <el-table-column
+              prop="contract_num"
+              label="Contract Number"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="award_number"
+              label="Award Number">
             </el-table-column>
            <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
@@ -180,28 +157,15 @@
                   <i class="fas fa-ban"></i>
                 </el-button>
                 <el-button
-                  type="default"
-                  v-tooltip="`Edit Contract Name or Change Group`"
-                  @click.prevent="editMode(scope.$index, scope.row)"
-                  v-if="
-                    scope.$index !== rowIndex
-                  "
-                  class="bg-light btn-sm"
-                >
-                  <i class="fal fa-edit text-primary"></i>
+                    type="default"            
+                    class="bg-light btn-sm"
+                    v-tooltip="'Remove Contract'"            
+                    @click.prevent="removeContract(scope.$index, scope.row)"
+                    v-if="scope.$index !== rowIndex"        
+                  >                  
+                    <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>
-                  <!-- <el-button
-                  v-if="scope.$index !== rowIndex"
-                  type="default"
-                  v-tooltip="`Delete Contract`"
-                  @click.prevent="
-                    deleteSelectedContract(scope.$index, scope.row)
-                  "
-                  class="bg-light btn-sm"
-                >
-                  <i class="far fa-trash-alt text-danger"></i>
-                </el-button> -->
-                <el-button
+                 <el-button
                   type="default" 
                     v-tooltip="`Go To Contract`"              
                   @click.prevent="goToContract(scope.$index, scope.row)"
@@ -248,6 +212,11 @@
     <el-table
       :data="contractArray"
       style="width: 100%">
+      <el-table-column
+      prop="charge_code"
+      label="Code"
+    >
+    </el-table-column>
       <el-table-column
         prop="project_name"
         label="Project Name"
@@ -496,40 +465,21 @@ export default {
   data() {
     return {
         newContractArray: [
-        {          
+        {     
+          id: 1,      
           charge_code: '1053',
-          project_name: 'FTC HPS Admin',
-          vehicle: 'NA',
-          contract_number:'2017-006-T4NG-SC',
-          award_number: 'VAT4NG-012-003',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          total_contract_val: 2423434.03,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-        }, {          
-          charge_code: '1062',
-          project_name: 'IPO Data Gap',
-          vehicle: 'GSA IT-70',
-          contract_number:'GS-35F-413BA',
-          award_number: '140D0418F0001',
-          naics: '541512-$30M',
-          award_type: 'SDVOSB',
-          contract_type: 'T&M',
-          prime_or_sub: 'Prime',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          total_contract_val: 6926124.61,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
+          project_name: 'US Army Medical',
+          customer: "Acme Unlimited",
+          contract_num:'2017-006-T4NG-SC',
+          award_number: 'ZZADD-012-003',     
+        }, {  
+          id: 2,  
+          charge_code: '1013',
+          project_name: 'SEC Filings',
+          customer: "Acme Unlimited",
+          contract_num:'2017-006-T4NG-SC',
+          award_number: 'AASSG-012-003',            
+     
         },       
       ],
       searchContractData: '',
@@ -592,7 +542,8 @@ export default {
       "deleteContract",
       "addUserToRole", 
       "fetchRoles",
-      "removeUserRole"
+      "removeUserRole",
+      "associateContractToProgram"
     ]),
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -655,6 +606,14 @@ export default {
     },
     addExistingContract(index, rows) {
      console.log(rows)
+         let contractData = {
+          contract: {
+            id:    rows.id,            
+            programId: this.$route.params.programId, 
+          
+         },
+      };
+     this.associateContractToProgram({...contractData})
     },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
@@ -693,6 +652,28 @@ export default {
       this.hideSaveBtn = true;
       this.fetchCurrentProject(this.$route.params.programId);
       console.log(contractData)
+    },
+      removeContract(index, rows) {
+      // let id = [rows.id];
+      let project = {
+        g: {
+          id: rows.id,
+          programId: this.$route.params.programId,
+          },
+       };      
+ 
+      this.$confirm(
+        `Are you sure you want to remove ${rows.project_name} from your program?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+         alert("We're still working on the remove project functionality :)")
+        // this.removeOrDeleteProject({ ...project });
+      });
     },
     // DO NOT DELETE This async method.  It is code for firebase cloud functionality
     //  async onSubmit ()  {
