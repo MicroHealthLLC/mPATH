@@ -2,6 +2,13 @@ const contractStore = {
 
 
   state: () => ({
+    associated_contracts: [],
+    associated_contracts_loaded: true,
+    associated_contracts_status: 0,
+
+    contract_data: [],
+    contract_data_loaded: true,
+    contract_data_status: 0,
    
   }),
 
@@ -24,26 +31,26 @@ const contractStore = {
   // DELETE POC Data
 
   // GET REQUESTS
-    fetchContractData({ commit }, id ) {
-      commit("TOGGLE_ROLES_LOADED", false);
+    fetchContractData({ commit }) {
+      commit("TOGGLE_CONTRACT_DATA_LOADED", false);
    
       axios({
         method: "GET",
-        url: ``,
+        url: `${API_BASE_PATH}/contract_data/get_contract_data`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_ROLES", res.data.roles);
+          commit("SET_CONTRACT_DATA", res.data);
           // console.log(res.data.roles)
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_ROLES_LOADED", true);
+          commit("TOGGLE_CONTRACT_DATA_LOADED", true);
         });
     },
     fetchVehiclesData({ commit }, id ) {
@@ -157,26 +164,27 @@ const contractStore = {
         commit("TOGGLE_ROLES_LOADED", true);
       });
     },
-    associateContractToProgram({ commit }, { contractData } ) {
-      commit("TOGGLE_ROLES_LOADED", false);
+    associateContractToProgram({ commit }, { contract } ) {
+      commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", false);
    
       axios({
         method: "POST",
-        url: ` /contracts/{${contractData.id}/add_contract?project_id=${contractData.programId}`,
+        url: `${API_BASE_PATH}/contracts/{${contract.id}/add_contract?project_id=${contract.programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_ROLES", res.data.roles);
+          commit("SET_ASSOCIATED_CONTRACTS", res.data);
+          commit("SET_ASSOCIATED_CONTRACTS_STATUS", res.status);
           // console.log(res.data.roles)
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_ROLES_LOADED", true);
+          commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", true);
         });
       },
 
@@ -317,11 +325,22 @@ const contractStore = {
     },
   },
   mutations: {
-    setCurrTaskPage: (state, value) => state.curr_task_page = value,
+    SET_ASSOCIATED_CONTRACTS: (state, value) => (state.associated_contracts = value),
+    SET_ASSOCIATED_CONTRACTS_STATUS: (state, status) => (state.associated_contracts_status = status),   
+    TOGGLE_ASSOCIATED_CONTRACTS_LOADED: (state, loaded) => (state.associated_contracts_loaded = loaded),
+
+    SET_CONTRACT_DATA: (state, value) => (state.contract_data = value),
+    SET_CONTRACT_DATA_STATUS: (state, status) => (state.contract_data_status = status), 
+    TOGGLE_CONTRACT_DATA_LOADED: (state, loaded) => (state.contract_data_loaded = loaded),
   },
 
   getters: {
-    
+   associatedContracts: (state) => state.associated_contracts,
+   associatedContractsStatus: (state) => state.associated_contracts_status,
+
+   contractData: (state) => state.contract_data, 
+   contractDataStatus: (state) => state.contract_data_status,
+
   },
 };
 
