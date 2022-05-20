@@ -1,0 +1,2 @@
+class ContractProjectPoc < ApplicationRecord
+end

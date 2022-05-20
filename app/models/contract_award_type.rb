@@ -1,0 +1,2 @@
+class ContractAwardType < ApplicationRecord
+end

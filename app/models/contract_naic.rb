@@ -1,0 +1,2 @@
+class ContractNaic < ApplicationRecord
+end

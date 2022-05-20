@@ -45,6 +45,8 @@ Rails.application.routes.draw do
 
       end
 
+      resources :contract_vehicles
+
       resources :privileges do
         collection do
           get :get_privileges, to: 'privileges#get_privileges'
@@ -80,6 +82,7 @@ Rails.application.routes.draw do
       end
 
       resources :contracts do
+        post :add_contract, on: :member
         resources :notes #, module: :facilities
         resources :issues do
           post :batch_update, on: :collection
@@ -103,6 +106,7 @@ Rails.application.routes.draw do
       end
 
       # Contract data API
+      get "/contract_data/get_contract_data", to: "contract_data#get_contract_data"
       get "/contract_data/contract_types", to: "contract_data#contract_types"
       get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
       get "/contract_data/contract_customeres", to: "contract_data#contract_customeres"
@@ -114,8 +118,15 @@ Rails.application.routes.draw do
       get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
       get "/contract_data/contract_classification", to: "contract_data#contract_classification"
       get "/contract_data/contract_client_types", to: "contract_data#contract_client_types"
-      get "/contract_data/contract_categories", to: "contract_data#contract_categories"
-      
+      get "/contract_data/contract_sub_categories", to: "contract_data#contract_sub_categories"
+      get "/contract_data/contract_agencies", to: "contract_data#contract_agencies"
+      get "/contract_data/contract_vehicle_types", to: "contract_data#contract_vehicle_types"
+      get "/contract_data/contract_award_tos", to: "contract_data#contract_award_tos"
+      get "/contract_data/contract_naics", to: "contract_data#contract_naics"
+      get "/contract_data/contract_award_types", to: "contract_data#contract_award_types"
+      get "/contract_data/contract_pocs", to: "contract_data#contract_pocs"
+
+
       post "/contract_data/contract_client_types", to: "contract_data#create_contract_category"
       post "/contract_data/contract_categories", to: "contract_data#create_contract_client_type"
       post "/contract_data/contract_type", to: "contract_data#create_contract_type"

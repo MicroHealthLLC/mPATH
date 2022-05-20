@@ -1,11 +1,61 @@
 class Api::V1::ContractDataController < AuthenticatedController
 
-  def contract_client_types
-    render json: ContractClientType.all.as_json(only: [:id, :name] )
+  def get_contract_data
+    h = {
+      contract_sub_categories:  ContractSubCategory.all.as_json(only: [:id, :name] ),
+      contract_agency: ContractAgency.all.as_json(only: [:id, :name] ),
+      contract_vehicle_type:  ContractVehicleType.all.as_json(only: [:id, :name] ),
+      contract_award_tos: ContractAwardTo.all.as_json(only: [:id, :name] ),
+      contract_naics: ContractNaic.all.as_json(only: [:id, :name] ),
+      contract_award_types: ContractAwardType.all.as_json(only: [:id, :name] ),
+      contract_pocs: ContractPoc.all.as_json(only: [:id, :name] ),
+      contract_client_types: ContractClientType.all.as_json(only: [:id, :name] ),
+      contract_types: ContractType.all.as_json(only: [:id, :name] ),
+      contract_status: ContractStatus.all.as_json(only: [:id, :name] ),
+      contract_customers: ContractCustomer.all.as_json(only: [:id, :name] ),
+      contract_vehicles: ContractVehicle.all.as_json(only: [:id, :name] ),
+      contract_vehicle_numbers: ContractVehicleNumber.all.as_json(only: [:id, :name] ),
+      contract_numbers: ContractNumber.all.as_json(only: [:id, :name] ),
+      sub_contract_numbers: SubcontractNumber.all.as_json(only: [:id, :name] ),
+      contract_primes: ContractPrime.all.as_json(only: [:id, :name] ),
+      contract_current_pops: ContractCurrentPop.all.as_json(only: [:id, :name] ),
+      contract_classifications: ContractClassification.all.as_json(only: [:id, :name] ),
+      contract_project_pocs: ContractProjectPocs.all.as_json(only: [:id, :name, :email, :title, :work_number, :mobile_number, :notes ] )
+    }
+
+    render json: h
   end
 
-  def contract_categories
-    render json: ContractCategory.all.as_json(only: [:id, :name] )
+  def contract_sub_categories
+    render json: ContractSubCategory.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_agencies
+    render json: ContractAgency.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_vehicle_types
+    render json: ContractVehicleType.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_award_tos
+    render json: ContractAwardTo.all.as_json(only: [:id, :name] )
+  end
+  
+  def contract_naics
+    render json: ContractNaic.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_award_types
+    render json: ContractAwardType.all.as_json(only: [:id, :name] )
+  end
+
+  def contract_pocs
+    render json: ContractPoc.all.as_json(only: [:id, :name] )
+  end
+  
+  def contract_client_types
+    render json: ContractClientType.all.as_json(only: [:id, :name] )
   end
 
   def contract_types

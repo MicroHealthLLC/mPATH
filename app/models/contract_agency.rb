@@ -1,0 +1,2 @@
+class ContractAgency < ApplicationRecord
+end

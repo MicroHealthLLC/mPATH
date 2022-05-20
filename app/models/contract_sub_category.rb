@@ -1,0 +1,2 @@
+class ContractSubCategory < ApplicationRecord
+end
