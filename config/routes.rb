@@ -82,6 +82,7 @@ Rails.application.routes.draw do
       end
       
       resources :contract_project_data
+      resources :contract_project_pocs
 
       resources :contracts do
         post :add_contract, on: :member
