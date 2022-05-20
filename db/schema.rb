@@ -204,6 +204,7 @@ ActiveRecord::Schema.define(version: 2022_05_20_194716) do
     t.integer "co_contract_poc_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "contract_naic_id"
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
