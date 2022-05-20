@@ -1,7 +1,7 @@
 class Api::V1::ContractVehiclesController < AuthenticatedController
 
   def index
-    contract_vehicles = ContractVehicle.all
+    contract_vehicles = ContractVehicle.all.map(&:to_json)
     render json: {contract_vehicles: contract_vehicles}
   end
 
