@@ -121,19 +121,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.customer_name }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow 
+      && (scope.row.contract_customer && scope.row.contract_customer.name !== null)">
+      {{ scope.row.contract_customer.name }}
       </span>
       </template>
     </el-table-column>
       <el-table-column    
       label="Vehicle/Schedule"
       width="125"
-      prop="vehicle">
+      prop="contract_vehicle">
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.vehicle"
+        v-model="scope.row.contract_vehicle_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -153,19 +154,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.vehicle }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow && 
+      (scope.row.contract_vehicle && scope.row.contract_vehicle.name !== null)">
+      {{ scope.row.contract_vehicle.name }}
       </span>
       </template>
     </el-table-column>
       <el-table-column
       label="Contract #"
       width="125"
-      prop="contract_num">
+      prop="contract_number_id">
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_num"
+        v-model="scope.row.contract_number_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -185,19 +187,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_num }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+       (scope.row.contract_number && scope.row.contract_number.name !== null)">
+      {{ scope.row.contract_number.name }}
       </span>
       </template>
     </el-table-column>
     <el-table-column
       label="Award/TO #"
       width="125"
-      prop="award_to_num">
+      prop="contract_award_to_id">
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.award_to_num"
+        v-model="scope.row.contract_award_to_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -216,19 +219,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.award_to_num }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_award_to && scope.row.contract_award_to.name !== null)">
+      {{ scope.row.contract_award_to.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="NAICS"
       width="70"
-      prop="naics">
+      prop="contract_naic_id">
      <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.naics"
+        v-model="scope.row.contract_naic_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -247,19 +251,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.naics }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_naic && scope.row.contract_naic.name !== null)">
+      {{ scope.row.contract_naic.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="Award Type"
       width="70"
-      prop="award_type">
+      prop="contract_award_type_id">
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.award_type"
+        v-model="scope.row.contract_award_type_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -278,19 +283,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.award_type }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_award_type && scope.row.contract_award_type.name !== null)">
+      {{ scope.row.contract_award_type.name }}
       </span>
       </template>
     </el-table-column>
     <el-table-column
       label="Contract Type"
       width="75"
-      prop="contract_type">
+      prop="contract_type_id">
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_type"
+        v-model="scope.row.contract_type_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -309,8 +315,9 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_type }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow  &&
+        (scope.row.contract_type && scope.row.contract_type.name !== null)">
+      {{ scope.row.contract_type.name }}
       </span>
       </template>
     </el-table-column>
@@ -332,7 +339,6 @@
         <el-option
           v-for="item in primeOrSub"
           :key="item"
-          :load="log(scope.row.prime_or_sub)"
           :label="item"
           :value="item"
         >
@@ -358,7 +364,7 @@
           class="w-100"
           />
           <span v-else >
-      {{ scope.row.contract_start_date }}
+      {{ moment(scope.row.contract_start_date).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
@@ -376,7 +382,7 @@
           class="w-100"
           />
           <span v-else >
-      {{ scope.row.contract_end_date }}
+      {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
@@ -413,11 +419,11 @@
     <el-table-column
       label="PoP's"
        width="100"
-      prop="pops">
+      prop="contract_pop_id">
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.pops"
+        v-model="scope.row.contract_pop_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -436,19 +442,20 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.pops }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_pop && scope.row.contract_pop.name !== null)">
+      {{ scope.row.contract_pop.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="Current PoP"
       width="100"
-      prop="current_pop">
+      prop="contract_current_pop_id">
     <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.current_pop"
+        v-model="scope.row.contract_current_pop_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -467,8 +474,9 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.current_pop }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_current_pop && scope.row.contract_current_pop.name !== null)">
+      {{ scope.row.contract_current_pop.name }}
       </span>
       </template>
     </el-table-column>
@@ -494,7 +502,7 @@
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_current_pop_start_date }}
+      {{ moment(scope.row.contract_current_pop_start_date).format('MM-DD-YYYY') }}
       </span>
      </template>
     </el-table-column>
@@ -520,7 +528,7 @@
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_current_pop_end_date }}
+      {{ moment(scope.row.contract_current_pop_end_date).format('MM-DD-YYYY') }}
       </span>
      </template>
     </el-table-column>
@@ -1232,9 +1240,9 @@ export default {
   backHomeBtn() {
       window.location.pathname = "/";
     }, 
-  log(e){
-    console.log(e)
-  } ,
+  // log(e){
+  //   console.log(e)
+  // } ,
   openPocModal(){
     this.pocDialogVisible = true;
   },   
@@ -1269,7 +1277,6 @@ export default {
     this.rowId = null;
     let contractProjectData = {
           cProjectData: {
-            //These values exist in contract_project_data table
             charge_code: row.charge_code,
             name: row.name,   
             prime_or_sub: row.prime_or_sub,
@@ -1279,23 +1286,15 @@ export default {
             total_contract_value: row.total_contract_value,
             contract_current_pop_start_date: this.popStartDate,
             contract_current_pop_end_date: this.popEndDate,
-
-
-            //Not in contract_project_data table 
-                  // vehicle: row.vehicle,
-                  // contract_numbers: row.contract_numbers,
-                  // naics: row.naics,
-                  // award_type: row.award_type,
-         
-            //Ids exist in table for these columns 
-                  // customer_name: row.customer_name,     
-                  // contract_award_tos: row.award_to_num, 
-                  // contract_type: row.contract_type,         
-                  // current_pop: row.current_pop, 
-
-            //Exists in table but data type should be string (not integer)
-                  // contract_pops: row.contract_pops,
-         
+            contract_vehicle_id: row.contract_vehicle_id,
+            // contract_number_id: row.contract_number_id,
+            contract_naic_id: row.contract_naic_id,
+            contract_award_type_id: row.contract_award_type_id,
+            contract_award_to_id: row.contract_award_to_id,
+            contract_type_id: row.contract_type_id,
+            contract_pop_id: row.contract_pop_id,
+            contract_current_pop_id: row.contract_current_pop_id,
+        
         },
       };
     console.log(contractProjectData)
@@ -1364,7 +1363,7 @@ export default {
       "contractProjects"
     ]),   
   tableData(){
-      if (this.contractProjects){
+      if (this.contractProjects && this.contractProjectStatus !== 200){
         let data = this.contractProjects
         data.push({})
         return data

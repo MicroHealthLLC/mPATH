@@ -115,6 +115,15 @@ const contractStore = {
       formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
       formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
+      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
+      formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
+      // formData.append("contract_project_data[contract_number_id]", cProjectData.contract_number_id)
+      formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
+      formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
+      formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
+      formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
+      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
+      
     axios({
       method: "POST",
       url: `${API_BASE_PATH}/contract_project_data`,
