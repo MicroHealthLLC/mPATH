@@ -20,7 +20,7 @@ class Api::V1::ContractDataController < AuthenticatedController
       contract_primes: ContractPrime.all.as_json(only: [:id, :name] ),
       contract_current_pops: ContractCurrentPop.all.as_json(only: [:id, :name] ),
       contract_classifications: ContractClassification.all.as_json(only: [:id, :name] ),
-      contract_project_pocs: ContractProjectPocs.all.as_json(only: [:id, :name, :email, :title, :work_number, :mobile_number, :notes ] )
+      contract_project_pocs: ContractProjectPoc.all.as_json(only: [:id, :name, :email, :title, :work_number, :mobile_number, :notes ] )
     }
 
     render json: h
