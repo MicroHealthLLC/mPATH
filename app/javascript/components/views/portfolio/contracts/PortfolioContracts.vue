@@ -33,7 +33,7 @@
     <div style="height:80vh" class="portfolio-contracts-module">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
-    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+    :data="tableData"
     border
     height="800"
     style="width: 95%">
@@ -42,19 +42,41 @@
       label="Code"
       width="55"
       prop="charge_code">
+      <template slot-scope="scope">
+        <el-input
+          size="small"
+          v-if="scope.$index == createRow"
+          placeholder="Enter Charge Code"
+          style="text-align:center"
+          v-model="scope.row.charge_code"
+          controls-position="right"
+        ></el-input>
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <el-input
+          size="small"
+          placeholder="Enter Charge Code"
+          style="text-align:center"
+          v-model="scope.row.charge_code"
+          controls-position="right"
+          ></el-input>
+        </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        {{ scope.row.charge_code }} 
+        </span>
+        </template>
     </el-table-column>
     <el-table-column
       fixed
       label="Project Name"
       width="200"
-      prop="project_name">
+      prop="name">
       <template slot-scope="scope">
         <el-input
           size="small"
           v-if="scope.$index == createRow"
           placeholder="Enter Project Name"
           style="text-align:center"
-          v-model="scope.row.project_name"
+          v-model="scope.row.name"
           controls-position="right"
         ></el-input>
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
@@ -62,12 +84,12 @@
           size="small"
           placeholder="Enter Project Name"
           style="text-align:center"
-          v-model="scope.row.project_name"
+          v-model="scope.row.name"
           controls-position="right"
           ></el-input>
         </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-        {{ scope.row.project_name }} 
+        {{ scope.row.name }} 
         </span>
         </template>
      </el-table-column>
@@ -75,11 +97,11 @@
     
       label="Customer"
       width="200"
-      prop="customer_name">
+      prop="contract_customer_id">
      <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.customer_name"
+        v-model="scope.row.contract_customer_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -92,9 +114,9 @@
       >
         <el-option
           v-for="item in customerOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -105,7 +127,7 @@
       </template>
     </el-table-column>
       <el-table-column    
-      label="Vehicle/ Schedule"
+      label="Vehicle/Schedule"
       width="125"
       prop="vehicle">
        <template slot-scope="scope" >
@@ -310,6 +332,7 @@
         <el-option
           v-for="item in primeOrSub"
           :key="item"
+          :load="log(scope.row.prime_or_sub)"
           :label="item"
           :value="item"
         >
@@ -329,6 +352,7 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
+          v-model="contractStartDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -344,7 +368,8 @@
       prop="contract_end_date">
       <template slot-scope="scope">
         <v2-date-picker
-          name="Date"       
+          name="Date"     
+          v-model="contractEndDate"  
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
@@ -358,7 +383,7 @@
      <el-table-column
       label="Total Contract Value"
        width="115"
-      prop="total_contract_val">
+      prop="total_contract_value">
      <template slot-scope="scope">
      <el-input
       size="small"
@@ -366,7 +391,7 @@
       type="number"
       placeholder="Enter Total Contract Value"
       style="text-align:center"
-      v-model="scope.row.total_contract_val"
+      v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
@@ -375,12 +400,12 @@
       type="number"
       placeholder="Enter Total Contract Value"
       style="text-align:center"
-      v-model="scope.row.total_contract_val"
+      v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.total_contract_val }}
+      {{ scope.row.total_contract_value }}
       </span>
     </template>
 
@@ -450,10 +475,11 @@
     <el-table-column
       label="Contract PoP Start Date"
        width="100"
-      prop="current_pop_start_date">
+      prop="contract_current_pop_start_date">
       <template slot-scope="scope">
         <v2-date-picker
-          name="Date"       
+          name="Date"   
+          v-model="popStartDate"      
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
@@ -468,17 +494,18 @@
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.current_pop_start_date }}
+      {{ scope.row.contract_current_pop_start_date }}
       </span>
      </template>
     </el-table-column>
        <el-table-column
       label="Contract PoP End Date"
        width="100"
-      prop="current_pop_end_date">
+      prop="contract_current_pop_end_date">
      <template slot-scope="scope">
      <v2-date-picker
-          name="Date"       
+          name="Date" 
+          v-model="popEndDate"        
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
@@ -493,7 +520,7 @@
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.current_pop_end_date }}
+      {{ scope.row.contract_current_pop_end_date }}
       </span>
      </template>
     </el-table-column>
@@ -528,7 +555,7 @@
           </el-button>
         <el-button
           type="default"
-          @click="saveNewRow(scope.$index, scope.row)"
+          @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
@@ -796,6 +823,11 @@
 </template>
     
 <script>
+
+//Save new contract action
+//Save new contract url
+//state, actions, mutations, getters (in store file and in this file)
+//
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import PortfolioVehicles from "./PortfolioVehicles.vue";
 import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
@@ -815,6 +847,10 @@ export default {
 
     data() {    
       return {
+        contractStartDate: "",
+        contractEndDate: "",
+        popStartDate: "",
+        popEndDate: "",
         nothing: true,
         pocDialogVisible: false,
         rowIndex: null, 
@@ -849,13 +885,10 @@ export default {
                        'ZZ-VVBCKG0',
                        'CCCC-008-002'
                        ],
-        customerOptions: [ 
-                       'Consulting, LLC', 
-                       'Security Incorprated',
-                       'Accolade, Inc.',
-                       'Department of Acme',
-                       'American Honor',
-                       'Health & Human Services'
+        customerOptions: [ {
+                           id: 2, 
+                           name: 'Consulting, LLC', 
+                         }
                        ],
         naicsOptions: [ 
                        'NA', 
@@ -1190,26 +1223,27 @@ export default {
   },
   methods: {
     ...mapMutations([
-     
+     "SET_CONTRACT_PROJECT_STATUS"
     ]),
     ...mapActions([
-      
+      "createContractProject",
+      "fetchContractProjects"
     ]),  
   backHomeBtn() {
       window.location.pathname = "/";
-    },  
+    }, 
+  log(e){
+    console.log(e)
+  } ,
   openPocModal(){
     this.pocDialogVisible = true;
   },   
   editMode(index, rows) {
     this.rowIndex = index,
-     console.log(rows);
-       console.log(this.createRow);
     this.rowId = rows.id
   }, 
   editPocRow(index, rows) {
     this.pocRowIndex = index,
-     console.log(rows);
     this.pocRowId = rows.id
   },  
   savePocEdits(){
@@ -1228,11 +1262,44 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
   }, 
-  saveNewRow(){
+  saveContractProject(index, row){
     // Row create action will occur here
     //After save, dont forget to push new empty object to append new create row
     this.rowIndex = null;
     this.rowId = null;
+    let contractProjectData = {
+          cProjectData: {
+            //These values exist in contract_project_data table
+            charge_code: row.charge_code,
+            name: row.name,   
+            prime_or_sub: row.prime_or_sub,
+            contract_customer_id: row.contract_customer_id, 
+            contract_start_date: this.contractStartDate,
+            contract_end_date: this.contractEndDate,
+            total_contract_value: row.total_contract_value,
+            contract_current_pop_start_date: this.popStartDate,
+            contract_current_pop_end_date: this.popEndDate,
+
+
+            //Not in contract_project_data table 
+                  // vehicle: row.vehicle,
+                  // contract_numbers: row.contract_numbers,
+                  // naics: row.naics,
+                  // award_type: row.award_type,
+         
+            //Ids exist in table for these columns 
+                  // customer_name: row.customer_name,     
+                  // contract_award_tos: row.award_to_num, 
+                  // contract_type: row.contract_type,         
+                  // current_pop: row.current_pop, 
+
+            //Exists in table but data type should be string (not integer)
+                  // contract_pops: row.contract_pops,
+         
+        },
+      };
+    console.log(contractProjectData)
+    this.createContractProject({...contractProjectData})
   },
   cancelPocEdits() {
     this.pocRowIndex = null;
@@ -1254,6 +1321,7 @@ export default {
        this.pane2 = false;
        this.pane3 = false;
        this.pane4 = false;
+
     }
     if (tab.paneName == 1){
        this.pane0 = false;
@@ -1288,22 +1356,23 @@ export default {
   
   },
   mounted() {
-    
+    this.fetchContractProjects()
   },
   computed: {
     ...mapGetters([
-     
+      "contractProjectStatus",
+      "contractProjects"
     ]),   
   tableData(){
-      if (this.contractsArray && this.contractsArray.length > 0){
-        let data = this.contractsArray
+      if (this.contractProjects){
+        let data = this.contractProjects
         data.push({})
         return data
      }
     },
     createRow(){
       let lastItem = this.tableData.length - 1
-       console.log(lastItem)
+      //  console.log(lastItem)
       return lastItem
     },
    pocData(){
@@ -1315,12 +1384,24 @@ export default {
     },
     pocCreateRow(){
       let lastItem = this.pocData.length - 1
-       console.log(lastItem)
+      //  console.log(lastItem)
       return lastItem
     },
   },
   watch: {
-   
+    contractProjectStatus: {
+      handler() {
+        if (this.contractProjectStatus == 200) {
+          this.$message({
+            message: `Saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACT_PROJECT_STATUS(0);
+          this.fetchContractProjects();
+        }
+      },
+    }, 
   
     
   },
