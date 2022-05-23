@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_20_194716) do
+ActiveRecord::Schema.define(version: 2022_05_23_191041) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -161,6 +161,12 @@ ActiveRecord::Schema.define(version: 2022_05_20_194716) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "contract_pops", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "contract_primes", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -192,7 +198,7 @@ ActiveRecord::Schema.define(version: 2022_05_20_194716) do
     t.datetime "contract_start_date"
     t.datetime "contract_end_date"
     t.integer "total_contract_value"
-    t.integer "contract_pops"
+    t.integer "contract_pop_id"
     t.integer "contract_current_pop_id"
     t.datetime "contract_current_pop_start_date"
     t.datetime "contract_current_pop_end_date"
@@ -205,6 +211,9 @@ ActiveRecord::Schema.define(version: 2022_05_20_194716) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "contract_naic_id"
+    t.integer "contract_vehicle_id"
+    t.integer "contract_award_type_id"
+    t.integer "user_id"
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
