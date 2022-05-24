@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_23_191041) do
+ActiveRecord::Schema.define(version: 2022_05_24_143607) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -205,15 +205,13 @@ ActiveRecord::Schema.define(version: 2022_05_23_191041) do
     t.decimal "total_founded_value", precision: 10
     t.datetime "billings_to_date"
     t.string "comments"
-    t.integer "pm_contract_poc_id"
-    t.integer "gov_contract_poc_id"
-    t.integer "co_contract_poc_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "contract_naic_id"
     t.integer "contract_vehicle_id"
     t.integer "contract_award_type_id"
     t.integer "user_id"
+    t.string "number"
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
