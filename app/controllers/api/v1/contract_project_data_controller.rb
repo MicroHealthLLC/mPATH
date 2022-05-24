@@ -23,4 +23,12 @@ class Api::V1::ContractProjectDataController < AuthenticatedController
     end
   end
 
+  def destroy
+    contract_project_data = ContractProjectDatum.find(params[:id])
+    if contract_project_data.destroy
+        render json: {contract_project_data: contract_project_data, message: "Contract Project Data deleted successfully!!"}
+    else
+      render json: {errors: contract_project_data.errors.full_messages}, status: 406
+    end
+  end
 end
