@@ -201,8 +201,9 @@
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
         v-model="scope.row.contract_award_to_id"
+        :load="log(scope.row.contract_award_to_id)"
         filterable       
-        track-by="name"        
+        track-by="id"        
         value-key="id"
         class="w-100"
         clearable
@@ -212,9 +213,10 @@
       >
         <el-option
           v-for="item in awardToNums"
-          :key="item"
-          :label="item"
-          :value="item"
+          :load="log(item)"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -580,7 +582,7 @@
         class="p-0 users"       
       >
        <span slot="title" class="text-left">
-        <h5 class="text-dark"><i class="fa-solid fa-address-card mr-2"></i>Add Contracts POC</h5>
+        <h5 class="text-dark"><i class="fa-solid fa-address-card mr-2"></i>Manage Contract POCs</h5>
       </span>
       <div class="container" >      
         <div class="row">
@@ -832,10 +834,12 @@
     
 <script>
 
-//Save new contract action
-//Save new contract url
-//state, actions, mutations, getters (in store file and in this file)
-//
+// TO DO //
+// Update method 
+// Modify columns for edit mode
+// Modify push method  ** DONE **
+// Create all dropdown arrays 
+// Reformat CRUD row to widen columns
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import PortfolioVehicles from "./PortfolioVehicles.vue";
 import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
@@ -852,7 +856,6 @@ export default {
     PortfolioContractBacklog,
     PortfolioContractPOC
   },
-
     data() {    
       return {
         contractStartDate: "",
@@ -870,337 +873,8 @@ export default {
         pane2: false, 
         pane3: false, 
         pane4: false, 
-        tabPosition: 'bottom',
-        awardToNums: [ 
-                       '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                       ],
-       primeOrSub: [ 
-                      'Prime', 
-                       'Sub',
-                         ],                     
-       contractNumber:   [ 
-                       '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                        ],
-        vehicleOptions: [ 
-                        '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                       ],
-        customerOptions: [ {
-                           id: 2, 
-                           name: 'Consulting, LLC', 
-                         }
-                       ],
-        naicsOptions: [ 
-                       'NA', 
-                       '541611-$16.5M',
-                       '541512-$30M',
-                       '541512',
-                       '519190'
-                       ],
-        awardTypes:   [ 
-                      'NA', 
-                      'SDVOSB',
-                      'SBA 8a',
-                       ],
-        pops:          [ 
-                      'Base Period',
-                      'Base + 2 OYs',
-                      'Base + 4 OYs', 
-                      'Yearly',
-                      '6 mo Base + 1 OY',
-                      '9 mo BP + 1 OY',
-                       ],
-
-       currentPops:   [ 
-                      'Base',
-                      'OY1',
-                      'OY2',
-                      'OY3',
-                      'OY4',
-                      'Year1',
-                      'Year2',
-                      'Year3',
-                        ],
-       contractTypes:  [ 
-                      'FFP/FFPU',
-                      'FFP', 
-                      'T&M',
-                       ],
-       contractsArray: [{
-          id:0,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:1,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:2,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:3,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:4,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:5,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:6,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:7,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:8,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:9,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:10,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is somet'
-        }, {
-          id:11,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-   
-         }],
-         pocsArray: [{
+        tabPosition: 'bottom',      
+        pocsArray: [{
           id: 0,
           poc_name: 'David Pumphrey',
           poc_title: 'Program Manager',
@@ -1240,9 +914,9 @@ export default {
   backHomeBtn() {
       window.location.pathname = "/";
     }, 
-  // log(e){
-  //   console.log(e)
-  // } ,
+  log(e){
+    console.log(e)
+  } ,
   openPocModal(){
     this.pocDialogVisible = true;
   },   
@@ -1299,6 +973,10 @@ export default {
       };
     console.log(contractProjectData)
     this.createContractProject({...contractProjectData})
+    this.contractStartDate = "";
+    this.contractEndDate = "";
+    this.popStartDate = "";
+    this.popEndDate = "";
   },
   cancelPocEdits() {
     this.pocRowIndex = null;
@@ -1320,14 +998,13 @@ export default {
        this.pane2 = false;
        this.pane3 = false;
        this.pane4 = false;
-
     }
     if (tab.paneName == 1){
        this.pane0 = false;
        this.pane1 = true;
        this.pane2 = false;
-       this.pane3 = false
-       this.pane4 = false
+       this.pane3 = false;
+       this.pane4 = false;
     }
     if (tab.paneName == 2){
        this.pane0 = false;
@@ -1363,11 +1040,15 @@ export default {
       "contractProjects"
     ]),   
   tableData(){
-      if (this.contractProjects && this.contractProjectStatus !== 200){
-        let data = this.contractProjects
-        data.push({})
-        return data
-     }
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let data = this.contractProjects   
+         data.push({})
+         return data    
+     } else {
+        let data = []
+         data.push({})
+         return data
+     }      
     },
     createRow(){
       let lastItem = this.tableData.length - 1
@@ -1385,6 +1066,43 @@ export default {
       let lastItem = this.pocData.length - 1
       //  console.log(lastItem)
       return lastItem
+    },
+    awardToNums(){
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueAwardTOs = _.uniq(this.contractProjects.filter(t => t.contract_award_to_id))
+        let awardTos = uniqueAwardTOs.map(t => t.contract_award_to).filter(t => t !== undefined)
+        let unique = [];
+        console.log(awardTos)
+        awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
+    },
+    primeOrSub(){
+      return ['Prime', 'Sub']
+    },                  
+    contractNumber(){
+
+    },
+    vehicleOptions(){
+
+    },
+    customerOptions(){
+
+    },
+    naicsOptions(){
+
+    },
+    awardTypes(){
+
+    },
+    pops(){
+
+    },
+    currentPops(){
+
+    },
+    contractTypes(){
+
     },
   },
   watch: {
