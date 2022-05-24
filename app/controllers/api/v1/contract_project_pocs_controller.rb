@@ -1,6 +1,5 @@
 class Api::V1::ContractProjectPocsController < AuthenticatedController
   def index
-    contract_project_pocs = 
     render json: {contract_project_pocs: ContractProjectPoc.all}
   end
 
@@ -17,6 +16,15 @@ class Api::V1::ContractProjectPocsController < AuthenticatedController
     contract_project_poc = ContractProjectPoc.find(params[:id])
     if contract_project_poc.update(contract_project_poc_params)
       render json: {contract_project_poc: contract_project_poc}
+    else
+      render json: {errors: contract_project_poc.errors.full_message}, status: 406
+    end
+  end
+
+  def destroy
+    contract_project_poc = ContractProjectPoc.find(params[:id])
+    if contract_project_poc.destroy
+      render json: {, message: "Contract Project POC deleted successfully!!", contract_project_poc: contract_project_poc}
     else
       render json: {errors: contract_project_poc.errors.full_message}, status: 406
     end

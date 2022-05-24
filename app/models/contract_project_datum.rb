@@ -60,6 +60,16 @@ class ContractProjectDatum < ApplicationRecord
       if c_params[:contract_pop_id] && !ContractPop.exists?(id: c_params[:contract_pop_id])
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id]).id
       end
+      if c_params[:co_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:co_contract_poc_id])
+        c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id]).id
+      end
+      if c_params[:gov_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:gov_contract_poc_id])
+        c_params[:gov_contract_poc_id] = ContractProjectPoc.create(name: c_params[:gov_contract_poc_id]).id
+      end
+      if c_params[:pm_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:pm_contract_poc_id])
+        c_params[:pm_contract_poc_id] = ContractProjectPoc.create(name: c_params[:pm_contract_poc_id]).id
+      end
+
       # if c_params[:contract_sub_category_id] && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
       #   c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id]).id
       # end

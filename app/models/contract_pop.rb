@@ -1,0 +1,2 @@
+class ContractPop < ApplicationRecord
+end
