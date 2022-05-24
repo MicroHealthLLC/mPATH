@@ -22,7 +22,7 @@ class ContractProjectDatum < ApplicationRecord
   end
   def self.params_to_permit
     [
-      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pops, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id
+      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pops, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number
     ]
   end
   def create_or_update_contract_project_data(params, user)
@@ -45,8 +45,8 @@ class ContractProjectDatum < ApplicationRecord
       if c_params[:contract_award_to_id] && !ContractAwardTo.exists?(id: c_params[:contract_award_to_id])
         c_params[:contract_award_to_id] = ContractAwardTo.create(name: c_params[:contract_award_to_id]).id
       end
-      if c_params[:contract_naics_id] && !ContractAwardTo.exists?(id: c_params[:contract_naics_id])
-        c_params[:contract_naics_id] = ContractNaics.create(name: c_params[:contract_naics_id]).id
+      if c_params[:contract_naic_id] && !ContractNaic.exists?(id: c_params[:contract_naic_id])
+        c_params[:contract_naic_id] = ContractNaic.create(name: c_params[:contract_naic_id]).id
       end
       if c_params[:contract_award_type_id] && !ContractAwardType.exists?(id: c_params[:contract_award_type_id])
         c_params[:contract_award_type_id] = ContractAwardType.create(name: c_params[:contract_award_type_id]).id
@@ -57,7 +57,9 @@ class ContractProjectDatum < ApplicationRecord
       if c_params[:contract_current_pop_id] && !ContractCurrentPop.exists?(id: c_params[:contract_current_pop_id])
         c_params[:contract_current_pop_id] = ContractCurrentPop.create(name: c_params[:contract_current_pop_id]).id
       end
-      
+      if c_params[:contract_pop_id] && !ContractPop.exists?(id: c_params[:contract_pop_id])
+        c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id]).id
+      end
       # if c_params[:contract_sub_category_id] && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
       #   c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id]).id
       # end
