@@ -49,9 +49,9 @@ class User < ApplicationRecord
     privilege = self.privilege || Privilege.new
     if permission == 'read'
       privilege.contract_data && privilege.contract_data.chars.include?("R")
-    elsif permssion == 'write'
+    elsif permission == 'write'
       privilege.contract_data && privilege.contract_data.chars.include?("W")
-    elsif permssion == 'delete'
+    elsif permission == 'delete'
       privilege.contract_data && privilege.contract_data.chars.include?("D")
     else
       false
