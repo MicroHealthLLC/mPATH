@@ -161,7 +161,7 @@
       <el-table-column
       label="Contract #"
       width="125"
-      prop="contract_number_id">
+      prop="number">
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -177,7 +177,6 @@
       >
         <el-option
           v-for="item in contractNumber"
-          :load="log(contractNumber)"
           :key="item"
           :label="item"
           :value="item"
@@ -945,7 +944,9 @@ export default {
       "createContractPOC",
       "fetchContractPOCs",
       "updateContractPOC",
-      "deleteContractPOC"
+      "deleteContractPOC",
+      //Vehicles
+      "fetchContractVehicles"
     ]),  
   backHomeBtn() {
       window.location.pathname = "/";
@@ -987,6 +988,15 @@ export default {
   saveContractProject(index, row){
     this.rowIndex = null;
     this.rowId = null;
+    let id = null;
+    
+    if (row.id) {
+      id = row.id
+      this.contractStartDate = row.contract_start_date
+      this.contractEndDate = row.contract_end_date
+      this.popStartDate = row.contract_current_pop_start_date;
+      this.popEndDate = row.contract_current_pop_end_date;   
+    }
     let contractProjectData = {
           cProjectData: {
             charge_code: row.charge_code,
@@ -1005,14 +1015,12 @@ export default {
             contract_award_to_id: row.contract_award_to_id,
             contract_type_id: row.contract_type_id,
             contract_pop_id: row.contract_pop_id,
-            contract_current_pop_id: row.contract_current_pop_id,
-        
+            contract_current_pop_id: row.contract_current_pop_id,        
         },
       };
     console.log(contractProjectData)
-    if (row.id){
-       let id = row.id
-       this.updateContractProject({...contractProjectData, id})
+    if (id){
+      this.updateContractProject({...contractProjectData, id})
     } else {
       this.createContractProject({...contractProjectData})
       this.contractStartDate = "";
@@ -1098,6 +1106,7 @@ export default {
   },
   mounted() {
     this.fetchContractProjects()
+    this.fetchContractVehicles()
   },
   computed: {
     ...mapGetters([
@@ -1109,6 +1118,8 @@ export default {
       "contractPOCs",
       "contractPOCsStatus",  
       "contractPOCsLoaded",
+      //Vehicles
+      "contractVehicles"
 
     ]),   
   tableData(){
@@ -1165,9 +1176,9 @@ export default {
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
-     if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueVehicles = _.uniq(this.contractProjects.filter(t => t.contract_vehicle_id))
-        let vehicles = uniqueVehicles.map(t => t.contract_vehicle).filter(t => t !== undefined)
+     if (this.contractVehicles && this.contractVehicles.length > 0){
+        let uniqueVehicles = _.uniq(this.contractVehicles.filter(t => t && t.id))
+        let vehicles = uniqueVehicles.map(t => t.contract_vehicles).filter(t => t !== undefined)
         let unique = [];
         // console.log(vehicles)
         vehicles.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));

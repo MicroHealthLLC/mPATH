@@ -142,16 +142,15 @@ const contractStore = {
       let formData = new FormData();
       console.log(cVehicleData)
         formData.append("contract_vehicles[name]",  cVehicleData.name);
-        formData.append("contract_vehicles[contract_sub_category_id]", cVehicleData.subCatId);
-        formData.append("contract_vehicles[contract_agency_id]", cVehicleData.charge_code);
-        formData.append("contract_vehicles[vehicle_type_id]", cVehicleData.charge_code);
-      
-    //  NEED SCHEMA COLUMNS FOR THESE VALUES
         formData.append("contract_vehicles[full_name]", cVehicleData.fullName);
-        formData.append("contract_vehicles[contract_number]", cVehicleData.contractNum);
+        formData.append("contract_vehicles[contract_sub_category_id]", cVehicleData.subCatId);
+        formData.append("contract_vehicles[contract_agency_id]", cVehicleData.cAgencyId);
+        formData.append("contract_vehicles[vehicle_type_id]", cVehicleData.type);
+
+        formData.append("contract_vehicles[contract_number]", cVehicleData.cNumber);
         formData.append("contract_vehicles[ceiling]", cVehicleData.ceiling);
-        formData.append("contract_vehicles[base_period_start_date]", cVehicleData.bp_startDate);
-        formData.append("contract_vehicles[base_period_end_date]", cVehicleData.bp_endDate);
+        formData.append("contract_vehicles[base_period_start]", cVehicleData.bp_startDate);
+        formData.append("contract_vehicles[base_period_end]", cVehicleData.bp_endDate);
         formData.append("contract_vehicles[option_period_start]", cVehicleData.op_startDate);
         formData.append("contract_vehicles[option_period_end]", cVehicleData.op_endDate);  
       axios({
@@ -179,7 +178,7 @@ const contractStore = {
       let formData = new FormData();
       console.log(cPOCsData)
         formData.append("contract_project_pocs[name]", cPOCsData.name);
-        formData.append("contract_project_pocs[poc_type]", cPOCsData.pocType);
+        // formData.append("contract_project_pocs[poc_type]", cPOCsData.pocType);
         formData.append("contract_project_pocs[email]", cPOCsData.email);
         formData.append("contract_project_pocs[title]", cPOCsData.title);
         formData.append("contract_project_pocs[work_number]", cPOCsData.workNum);
@@ -234,6 +233,7 @@ const contractStore = {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     let formData = new FormData();
     console.log(cProjectData)
+      formData.append("contract_project_data[id]", id);
       formData.append("contract_project_data[charge_code]", cProjectData.charge_code);
       formData.append("contract_project_data[name]", cProjectData.name)
       formData.append("contract_project_data[contract_customer_id]", cProjectData.contract_customer_id)
@@ -278,17 +278,16 @@ const contractStore = {
   },
   updateVehiclesData({ commit }, { cVehicleData, id } ) {
     commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
+    formData.append("contract_vehicles[id]",  cVehicleData.id);
     formData.append("contract_vehicles[name]",  cVehicleData.name);
     formData.append("contract_vehicles[contract_sub_category_id]", cVehicleData.subCatId);
     formData.append("contract_vehicles[contract_agency_id]", cVehicleData.charge_code);
     formData.append("contract_vehicles[vehicle_type_id]", cVehicleData.charge_code);
-  
-//  NEED SCHEMA COLUMNS FOR THESE VALUES
     formData.append("contract_vehicles[full_name]", cVehicleData.fullName);
     formData.append("contract_vehicles[contract_number]", cVehicleData.contractNum);
     formData.append("contract_vehicles[ceiling]", cVehicleData.ceiling);
-    formData.append("contract_vehicles[base_period_start_date]", cVehicleData.bp_startDate);
-    formData.append("contract_vehicles[base_period_end_date]", cVehicleData.bp_endDate);
+    formData.append("contract_vehicles[base_period_start]", cVehicleData.bp_startDate);
+    formData.append("contract_vehicles[base_period_end]", cVehicleData.bp_endDate);
     formData.append("contract_vehicles[option_period_start]", cVehicleData.op_startDate);
     formData.append("contract_vehicles[option_period_end]", cVehicleData.op_endDate);
     axios({

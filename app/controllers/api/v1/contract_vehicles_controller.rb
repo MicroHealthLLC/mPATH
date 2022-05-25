@@ -34,6 +34,6 @@ class Api::V1::ContractVehiclesController < AuthenticatedController
 
   private
   def contract_vehicle_params
-    params[:vehicle].permit(:name, :vehicle_number, :full_name, :conctract_sub_category_id, :contract_agency_id, :vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end)
+    params[:vehicle].permit(:name, :full_name, :contract_sub_category_id, :contract_agency_id, :vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end)
   end
 end
