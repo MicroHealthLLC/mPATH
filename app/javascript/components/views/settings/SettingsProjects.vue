@@ -665,28 +665,28 @@ export default {
   checkAllChange() {
     this.isIndeterminate = false;
   },
-  removeProject(index, rows) {
-      // let id = [rows.id];
-      let project = {
-        g: {
-          id: rows.id,
-          programId: this.$route.params.programId,
-          },
-       };      
+  // removeProject(index, rows) {
+  //     // let id = [rows.id];
+  //     let project = {
+  //       g: {
+  //         id: rows.id,
+  //         programId: this.$route.params.programId,
+  //         },
+  //      };      
  
-      this.$confirm(
-        `Are you sure you want to remove ${rows.facilityName} from your program?`,
-        "Confirm Remove",
-        {
-          confirmButtonText: "Remove",
-          cancelButtonText: "Cancel",
-          type: "warning",
-        }
-       ).then(() => {
-         alert("We're still working on the remove project functionality :)")
-        // this.removeOrDeleteProject({ ...project });
-      });
-    },
+  //     this.$confirm(
+  //       `Are you sure you want to remove ${rows.facilityName} from your program?`,
+  //       "Confirm Remove",
+  //       {
+  //         confirmButtonText: "Remove",
+  //         cancelButtonText: "Cancel",
+  //         type: "warning",
+  //       }
+  //      ).then(() => {
+  //        alert("We're still working on the remove project functionality :)")
+  //       // this.removeOrDeleteProject({ ...project });
+  //     });
+  //   },
    deleteProject(index, rows) {
     //  console.log(rows)
       let id = rows.id;

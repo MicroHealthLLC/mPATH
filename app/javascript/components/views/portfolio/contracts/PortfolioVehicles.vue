@@ -572,7 +572,7 @@ export default {
      
     ]),
     ...mapActions([
-      // "updateContractData"
+      "fetchContractProjects"
     ]),
   editMode(index, rows) {
     this.rowIndex = index,
@@ -644,7 +644,7 @@ export default {
   }
   },
   mounted() {
-    
+    this.fetchContractProjects()
   },
   computed: {
     ...mapGetters([
