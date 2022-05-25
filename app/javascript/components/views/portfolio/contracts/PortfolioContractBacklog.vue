@@ -165,10 +165,8 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "PortfolioContractBacklog",
-  components: {
-  
+  components: { 
   },
-
     data() {    
       return {
         nothing: true,
