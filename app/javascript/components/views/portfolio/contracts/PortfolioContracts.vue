@@ -28,7 +28,11 @@
       <PortfolioVehicles/>
     </el-tab-pane>
     
-    <el-tab-pane>
+    <el-tab-pane
+    v-loading="!contractProjectsLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    >
      <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
     <div style="height:80vh" class="portfolio-contracts-module">
       <div  style="height: 100%; overflow-y:auto">
@@ -147,9 +151,9 @@
       >
         <el-option
           v-for="item in vehicleOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -167,7 +171,7 @@
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_number_id"
+        v-model="scope.row.number"
         filterable       
         track-by="name"        
         value-key="id"
@@ -180,6 +184,7 @@
       >
         <el-option
           v-for="item in contractNumber"
+          :load="log(contractNumber)"
           :key="item"
           :label="item"
           :value="item"
@@ -188,8 +193,8 @@
       </el-select>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-       (scope.row.contract_number && scope.row.contract_number.name !== null)">
-      {{ scope.row.contract_number.name }}
+       (scope.row.number && scope.row.number.name !== null)">
+      {{ scope.row.number }}
       </span>
       </template>
     </el-table-column>
@@ -201,7 +206,6 @@
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
         v-model="scope.row.contract_award_to_id"
-        :load="log(scope.row.contract_award_to_id)"
         filterable       
         track-by="id"        
         value-key="id"
@@ -213,7 +217,6 @@
       >
         <el-option
           v-for="item in awardToNums"
-          :load="log(item)"
           :key="item.id"
           :label="item.name"
           :value="item.id"
@@ -246,9 +249,9 @@
       >
         <el-option
           v-for="item in naicsOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -278,9 +281,9 @@
       >
         <el-option
           v-for="item in awardTypes"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -310,9 +313,9 @@
       >
         <el-option
           v-for="item in contractTypes"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -365,7 +368,16 @@
           format="M/DD/YYYY"
           class="w-100"
           />
-          <span v-else >
+       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"     
+          v-model="scope.row.contract_start_date"  
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
       {{ moment(scope.row.contract_start_date).format("MM-DD-YYYY") }}
       </span>
      </template>
@@ -383,7 +395,16 @@
           format="M/DD/YYYY"
           class="w-100"
           />
-          <span v-else >
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"     
+          v-model="scope.row.contract_end_date"  
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow" >
       {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
       </span>
      </template>
@@ -437,9 +458,9 @@
       >
         <el-option
           v-for="item in pops"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -469,9 +490,9 @@
       >
         <el-option
           v-for="item in currentPops"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -497,7 +518,8 @@
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"   
+          v-model="scope.row.contract_current_pop_start_date"          
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -523,7 +545,8 @@
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"  
+          v-model="scope.row.contract_current_pop_end_date"       
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -542,7 +565,7 @@
    <template slot-scope="scope">
       <el-button
         type="default"
-        @click="saveEdits(scope.$index, scope.row)"
+        @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
@@ -838,8 +861,7 @@
 // Update method 
 // Modify columns for edit mode
 // Modify push method  ** DONE **
-// Create all dropdown arrays 
-// Reformat CRUD row to widen columns
+// Create all dropdown arrays ** DONE **
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import PortfolioVehicles from "./PortfolioVehicles.vue";
 import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
@@ -909,13 +931,14 @@ export default {
     ]),
     ...mapActions([
       "createContractProject",
-      "fetchContractProjects"
+      "fetchContractProjects",
+      "updateContractProject"
     ]),  
   backHomeBtn() {
       window.location.pathname = "/";
     }, 
   log(e){
-    console.log(e)
+    // console.log(e)
   } ,
   openPocModal(){
     this.pocDialogVisible = true;
@@ -939,14 +962,7 @@ export default {
      this.pocRowIndex = null;
     this.pocRowId = null;
   },
-  saveEdits(){
-    // Row edit action will occur here
-    this.rowIndex = null;
-    this.rowId = null;
-  }, 
   saveContractProject(index, row){
-    // Row create action will occur here
-    //After save, dont forget to push new empty object to append new create row
     this.rowIndex = null;
     this.rowId = null;
     let contractProjectData = {
@@ -961,7 +977,7 @@ export default {
             contract_current_pop_start_date: this.popStartDate,
             contract_current_pop_end_date: this.popEndDate,
             contract_vehicle_id: row.contract_vehicle_id,
-            // contract_number_id: row.contract_number_id,
+            number:  row.number,
             contract_naic_id: row.contract_naic_id,
             contract_award_type_id: row.contract_award_type_id,
             contract_award_to_id: row.contract_award_to_id,
@@ -972,11 +988,17 @@ export default {
         },
       };
     console.log(contractProjectData)
-    this.createContractProject({...contractProjectData})
-    this.contractStartDate = "";
-    this.contractEndDate = "";
-    this.popStartDate = "";
-    this.popEndDate = "";
+    if (row.id){
+       let id = row.id
+       this.updateContractProject({...contractProjectData, id})
+    } else {
+      this.createContractProject({...contractProjectData})
+      this.contractStartDate = "";
+      this.contractEndDate = "";
+      this.popStartDate = "";
+      this.popEndDate = "";
+    }
+   
   },
   cancelPocEdits() {
     this.pocRowIndex = null;
@@ -1037,7 +1059,8 @@ export default {
   computed: {
     ...mapGetters([
       "contractProjectStatus",
-      "contractProjects"
+      "contractProjects",
+      "contractProjectsLoaded"
     ]),   
   tableData(){
       if (this.contractProjects && this.contractProjects.length > 0){
@@ -1055,7 +1078,7 @@ export default {
       //  console.log(lastItem)
       return lastItem
     },
-   pocData(){
+    pocData(){
       if (this.pocsArray && this.pocsArray.length > 0){
         let data = this.pocsArray
         data.push({})
@@ -1072,7 +1095,7 @@ export default {
         let uniqueAwardTOs = _.uniq(this.contractProjects.filter(t => t.contract_award_to_id))
         let awardTos = uniqueAwardTOs.map(t => t.contract_award_to).filter(t => t !== undefined)
         let unique = [];
-        console.log(awardTos)
+        // console.log(awardTos)
         awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
          return unique
       }
@@ -1081,28 +1104,81 @@ export default {
       return ['Prime', 'Sub']
     },                  
     contractNumber(){
-
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueContractNums = this.contractProjects.filter(t => t.number)
+        let contractNums = uniqueContractNums.map(t => t.number).filter(t => t !== null)
+        return _.uniq(contractNums.map(t => t))
+      }
     },
     vehicleOptions(){
-
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueVehicles = _.uniq(this.contractProjects.filter(t => t.contract_vehicle_id))
+        let vehicles = uniqueVehicles.map(t => t.contract_vehicle).filter(t => t !== undefined)
+        let unique = [];
+        // console.log(vehicles)
+        vehicles.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
     },
     customerOptions(){
-
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueCustomerOptions = _.uniq(this.contractProjects.filter(t => t.contract_customer_id))
+        let customers = uniqueCustomerOptions.map(t => t.contract_customer).filter(t => t !== undefined)
+        let unique = [];
+        // console.log(customers)
+        customers.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
     },
     naicsOptions(){
-
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueNaics = _.uniq(this.contractProjects.filter(t => t.contract_naic_id))
+        let naics = uniqueNaics.map(t => t.contract_naic).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(naics)
+        naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
     },
     awardTypes(){
-
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueAwardTypes = _.uniq(this.contractProjects.filter(t => t.contract_award_type_id))
+        let awardType = uniqueAwardTypes.map(t => t.contract_award_type).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(awardType)
+        awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
     },
     pops(){
-
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniquePoPs = _.uniq(this.contractProjects.filter(t => t.contract_pop_id))
+        let pops = uniquePoPs.map(t => t.contract_pop).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(pops)
+        pops.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
     },
     currentPops(){
-
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueCurrentPoPs = _.uniq(this.contractProjects.filter(t => t.contract_current_pop_id))
+        let currentPoPs = uniqueCurrentPoPs.map(t => t.contract_current_pop).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(currentPoPs)
+        currentPoPs.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
     },
     contractTypes(){
-
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))
+        let contractTypes = uniqueContractTypes.map(t => t.contract_type).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(contractTypes)
+        contractTypes.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
     },
   },
   watch: {

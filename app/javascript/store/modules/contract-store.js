@@ -117,7 +117,7 @@ const contractStore = {
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
       formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
       formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
-      // formData.append("contract_project_data[contract_number_id]", cProjectData.contract_number_id)
+      formData.append("contract_project_data[number]", cProjectData.number)
       formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
       formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
@@ -213,26 +213,46 @@ const contractStore = {
       },
 
   // UPDATE REQUESTS
-    updateContractData({ commit }, id ) {
-    commit("TOGGLE_ROLES_LOADED", false);
-  
+  updateContractProject({ commit }, { cProjectData, id }) {
+    commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
+    let formData = new FormData();
+    console.log(cProjectData)
+      formData.append("contract_project_data[charge_code]", cProjectData.charge_code);
+      formData.append("contract_project_data[name]", cProjectData.name)
+      formData.append("contract_project_data[contract_customer_id]", cProjectData.contract_customer_id)
+      formData.append("contract_project_data[prime_or_sub]", cProjectData.prime_or_sub)
+      formData.append("contract_project_data[total_contract_value]", cProjectData.total_contract_value)
+      formData.append("contract_project_data[contract_start_date]", cProjectData.contract_start_date)
+      formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
+      formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
+      formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
+      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
+      formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
+      formData.append("contract_project_data[number]", cProjectData.number)
+      formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
+      formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
+      formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
+      formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
+      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
+      
     axios({
       method: "PUT",
-      url: ``,
+      url: `${API_BASE_PATH}/contract_project_data/${id}`,
+      data: formData,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
           .attributes["content"].value,
       },
     })
       .then((res) => {
-        commit("SET_ROLES", res.data.roles);
-        // console.log(res.data.roles)
+        commit("SET_CONTRACT_PROJECTS", res.data.contract_project_data);
+        commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => {
-        commit("TOGGLE_ROLES_LOADED", true);
+        commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
       });
     },
     updateVehiclesData({ commit }, id ) {
@@ -364,6 +384,7 @@ const contractStore = {
 
    contractProjects: (state) => state.contract_projects, 
    contractProjectStatus: (state) => state.contract_project_status,
+   contractProjectsLoaded: (state) => state.contract_projects_loaded
 
   },
 };
