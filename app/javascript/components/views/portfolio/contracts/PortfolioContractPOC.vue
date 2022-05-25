@@ -2,31 +2,32 @@
  <div style="height:80vh" class="portfolio-contracts-module">
    <div  style="height: 100%; overflow-y:auto">
   <el-table
-    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+    :data="tableData"
+    :load="log(tableData)"
     border
     height="800"
     >
     <el-table-column
       fixed
       label="Code"
-      width="55"
+      width=""
       prop="charge_code">
     </el-table-column>
     <el-table-column
       fixed
       label="Project Name"
       width="400"
-      prop="project_name">
+      prop="name">
      </el-table-column>
 
      <el-table-column    
       label="Contract Program Manager POC"
       width="420"
-      prop="contract_pm_poc">
+      prop="pm_contract_poc_id">
      <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id">
+     <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.pm_contract_poc_id">
        <el-select
-        v-model="scope.row.contract_pm_poc"
+        v-model="scope.row.pm_contract_poc_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -34,7 +35,7 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Contract Program Manager POC"
+        placeholder="Select Contract Program Manager POC"
       >
         <el-option
           v-for="item in contractPM"
@@ -46,7 +47,7 @@
       </el-select>
       </span>
       <span v-else>
-      {{ scope.row.contract_pm_poc }}
+      {{ scope.row.pm_contract_poc_id }}
       </span>
       </template>
      </el-table-column>
@@ -54,11 +55,11 @@
     <el-table-column    
       label="Government COR POC/ Prime POC"
       width="420"
-      prop="government_poc">
+      prop="gov_contract_poc_id">
      <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id">
+     <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.gov_contract_poc_id">
        <el-select
-        v-model="scope.row.government_poc"
+        v-model="scope.row.gov_contract_poc_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -66,8 +67,7 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Customer Name"
-
+           placeholder="Select Government COR POC or Prime POC"
       >
         <el-option
           v-for="item in govCorPoC"
@@ -79,7 +79,7 @@
       </el-select>
       </span>
       <span v-else>
-      {{ scope.row.government_poc }}
+      {{ scope.row.gov_contract_poc_id }}
       </span>
       </template>
     </el-table-column>
@@ -87,11 +87,11 @@
      <el-table-column    
       label="Contract Office POC"
       width="420"
-      prop="contract_office_poc">
+      prop="co_contract_poc_id">
      <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id">
+     <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.co_contract_poc_id">
        <el-select
-        v-model="scope.row.contract_office_poc"
+        v-model="scope.row.co_contract_poc_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -99,7 +99,7 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Contracting Office POC"
+        placeholder="Select Contracting Office POC"
 
       >
         <el-option
@@ -112,7 +112,7 @@
       </el-select>
       </span>
       <span v-else>
-      {{ scope.row.contract_office_poc }}
+      {{ scope.row.co_contract_poc_id }}
       </span>
       </template>
      </el-table-column>
@@ -125,7 +125,7 @@
    <template slot-scope="scope">
       <el-button
         type="default"
-        @click="saveEdits(scope.$index, scope.row)"
+        @click="saveContractPOCs(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
@@ -166,7 +166,7 @@ export default {
   
   },
 
-    data() {    
+  data() {    
       return {
         nothing: true,
         rowIndex: null, 
@@ -189,39 +189,34 @@ export default {
                       'FTC Contracting',
                       'DOI', 
                       'Mary Hogoboom',
-                       ],
-        tableData: [{
-          id:0,
-          charge_code: '422',
-          project_name: 'Comptroller Msd',
-          contract_pm_poc: 'Michael Holmes',
-          government_poc:  'Andrew Lee',
-          contract_office_poc: 'FTC Contracting',
-        }, {
-          id:2,
-          charge_code: '422',
-          project_name: 'Admin Acme Co',
-          contract_pm_poc: 'Michael Holmes',
-          government_poc:  'Andrew Lee',
-          contract_office_poc: 'FTC Contracting',
-        }, {
-          id:3,
-          charge_code: '422',
-          project_name: 'How They M',
-          contract_pm_poc: 'Michael Holmes',
-          government_poc:  'Andrew Lee',
-          contract_office_poc: 'FTC Contracting', 
-          }],
+                       ],        
         search: '',
     };
   },
   methods: {
-    ...mapMutations([
-     
-    ]),
-    ...mapActions([
-      
-    ]),  
+  ...mapMutations([
+    "SET_CONTRACT_PROJECT_STATUS"
+  ]),
+  ...mapActions([
+    "updateContractProject",
+    "fetchContractProjects",
+  ]),  
+  log(e){
+    console.log(e)
+  },
+  saveContractPOCs(index, row){
+    this.rowIndex = null;
+    this.rowId = null;
+    let contractProjectData = {
+          cProjectData: {
+            pm_poc_id: row.pm_contract_poc_id,
+            gov_poc_id: row.gov_contract_poc_id,
+            co_poc_id: row.co_contract_poc_id,        
+        },
+      };
+      let id = row.id
+      this.updateContractProject({...contractProjectData, id})    
+  },
   backHomeBtn() {
       window.location.pathname = "/";
     },    
@@ -235,12 +230,6 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
   }, 
-  saveNewRow(){
-    // Row create action will occur here
-    //After save, dont forget to push new empty object to append new create row
-    this.rowIndex = null;
-    this.rowId = null;
-  },
   cancelEdits(index, rows) {
     this.rowIndex = null;
     this.rowId = null;
@@ -251,13 +240,29 @@ export default {
   },
   computed: {
     ...mapGetters([
-     
-    ]),  
+     "contractProjects"
+    ]), 
+  tableData(){
+    if (this.contractProjects && this.contractProjects.length > 0){
+      let validProjects = this.contractProjects.filter(t => t && t.id)
+       return validProjects
+     }      
+    }, 
   },
   watch: {
-   
-  
-    
+   contractProjectStatus: {
+      handler() {
+        if (this.contractProjectStatus == 200) {
+          this.$message({
+            message: `Contract POCs saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACT_PROJECT_STATUS(0);
+          this.fetchContractProjects();
+        }
+      },
+    },    
   },
 };
 </script>

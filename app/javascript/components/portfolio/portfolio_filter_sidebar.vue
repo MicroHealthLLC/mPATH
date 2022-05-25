@@ -1,6 +1,6 @@
 <!-- NOTE: This file is used Global filter view in left side -->
 <template>
-<div class="portfolioFilter">
+<div class="portfolioFilter" v-if="!isContractView">
   <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick" data-cy="filter_bar">
 
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
@@ -539,8 +539,7 @@ export default {
     // // this.fetchFilters()
   },
   computed: {
-    ...mapGetters([
-      
+    ...mapGetters([      
       'getTaskIssueUserFilter',
       'getTaskIssueProgressStatusFilter',
       'getMyAssignmentsFilter',
@@ -916,7 +915,10 @@ export default {
     },
     mapFilterApplied() {
       return this.getMapZoomFilter.length === this.getUnfilteredFacilities.length || !this.mapFilterSet
-    }
+    },
+    isContractView() {
+     return this.$route.name.includes("Contract") || this.$route.name.includes("Vehicle")
+    },
   },
   methods: {
     ...mapActions([

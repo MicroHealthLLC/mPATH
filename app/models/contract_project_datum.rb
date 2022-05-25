@@ -26,6 +26,11 @@ class ContractProjectDatum < ApplicationRecord
       :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number
     ]
   end
+
+  def expired?
+    contract_end_date < DateTime.now
+  end
+
   def create_or_update_contract_project_data(params, user)
     contract_params = params.require(:contract_project_data).permit(ContractProjectDatum.params_to_permit)
     c_params = contract_params.dup
@@ -61,6 +66,16 @@ class ContractProjectDatum < ApplicationRecord
       if c_params[:contract_pop_id] && !ContractPop.exists?(id: c_params[:contract_pop_id])
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id]).id
       end
+      if c_params[:co_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:co_contract_poc_id])
+        c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id]).id
+      end
+      if c_params[:gov_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:gov_contract_poc_id])
+        c_params[:gov_contract_poc_id] = ContractProjectPoc.create(name: c_params[:gov_contract_poc_id]).id
+      end
+      if c_params[:pm_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:pm_contract_poc_id])
+        c_params[:pm_contract_poc_id] = ContractProjectPoc.create(name: c_params[:pm_contract_poc_id]).id
+      end
+
       # if c_params[:contract_sub_category_id] && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
       #   c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id]).id
       # end
