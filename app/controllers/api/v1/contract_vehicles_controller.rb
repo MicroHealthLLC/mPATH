@@ -6,20 +6,20 @@ class Api::V1::ContractVehiclesController < AuthenticatedController
   end
 
   def create
-    contract_vehicle = ContractVehicle.new(contract_vehicle_params)
-    if contract_vehicle.save
+    contract_vehicle = ContractVehicle.new.create_or_update_contract_vehicle(params, current_user)
+    if !contract_vehicle.errors.any?
       render json: {contract_vehicle: contract_vehicle}
     else
-      render json: {errors: contract_vehicles.errors.full_message}, status: 406
+      render json: {errors: contract_vehicle.errors.full_messages}, status: 406
     end
   end
 
   def update
-    contract_vehicle = ContractVehicle.find(params[:id])
-    if contract_vehicle.update(contract_vehicle_params)
-      render json: {contract_vehicle: contract_vehicle}
+    contract_vehicle = ContractVehicle.new.create_or_update_contract_vehicle(params, current_user)
+    if !contract_vehicle.errors.any?
+        render json: {contract_vehicle: contract_vehicle}
     else
-      render json: {errors: contract_vehicles.errors.full_message}, status: 406
+      render json: {errors: contract_vehicle.errors.full_messages}, status: 406
     end
   end
 
@@ -28,12 +28,12 @@ class Api::V1::ContractVehiclesController < AuthenticatedController
     if contract_vehicle.destroy
       render json: {contract_vehicle: contract_vehicle}
     else
-      render json: {errors: contract_vehicles.errors.full_message}, status: 406
+      render json: {errors: contract_vehicles.errors.full_messages}, status: 406
     end
   end
 
   private
   def contract_vehicle_params
-    params.required(:contract_vehicle).permit(:name, :vehicle_number, :full_name, :conctract_sub_category_id, :contract_agency_id, :vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id)
+    params.required(:contract_vehicle).permit(:name, :vehicle_number, :full_name, :conctract_sub_category_id, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id)
   end
 end
