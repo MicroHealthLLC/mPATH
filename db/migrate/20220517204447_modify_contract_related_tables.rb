@@ -3,7 +3,7 @@ class ModifyContractRelatedTables < ActiveRecord::Migration[6.1]
     if column_exists?  :contract_vehicles, :sins
       remove_column :contract_vehicles, :sins
     end
-    add_column :contract_vehicles, :conctract_sub_category_id, :integer
+    add_column :contract_vehicles, :contract_sub_category_id, :integer
     
     if column_exists?  :contract_vehicles, :contract_agency
       remove_column :contract_vehicles, :contract_agency

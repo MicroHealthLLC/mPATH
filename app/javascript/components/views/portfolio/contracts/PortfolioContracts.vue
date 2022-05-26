@@ -28,12 +28,16 @@
       <PortfolioVehicles/>
     </el-tab-pane>
     
-    <el-tab-pane>
+    <el-tab-pane
+    v-loading="!contractProjectsLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    >
      <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
     <div style="height:80vh" class="portfolio-contracts-module">
       <div  style="height: 100%; overflow-y:auto">
     <el-table
-    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+    :data="tableData"
     border
     height="800"
     style="width: 95%">
@@ -42,19 +46,41 @@
       label="Code"
       width="55"
       prop="charge_code">
+      <template slot-scope="scope">
+        <el-input
+          size="small"
+          v-if="scope.$index == createRow"
+          placeholder="Enter Charge Code"
+          style="text-align:center"
+          v-model="scope.row.charge_code"
+          controls-position="right"
+        ></el-input>
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <el-input
+          size="small"
+          placeholder="Enter Charge Code"
+          style="text-align:center"
+          v-model="scope.row.charge_code"
+          controls-position="right"
+          ></el-input>
+        </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        {{ scope.row.charge_code }} 
+        </span>
+        </template>
     </el-table-column>
     <el-table-column
       fixed
       label="Project Name"
       width="200"
-      prop="project_name">
+      prop="name">
       <template slot-scope="scope">
         <el-input
           size="small"
           v-if="scope.$index == createRow"
           placeholder="Enter Project Name"
           style="text-align:center"
-          v-model="scope.row.project_name"
+          v-model="scope.row.name"
           controls-position="right"
         ></el-input>
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
@@ -62,12 +88,12 @@
           size="small"
           placeholder="Enter Project Name"
           style="text-align:center"
-          v-model="scope.row.project_name"
+          v-model="scope.row.name"
           controls-position="right"
           ></el-input>
         </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-        {{ scope.row.project_name }} 
+        {{ scope.row.name }} 
         </span>
         </template>
      </el-table-column>
@@ -75,11 +101,11 @@
     
       label="Customer"
       width="200"
-      prop="customer_name">
+      prop="contract_customer_id">
      <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.customer_name"
+        v-model="scope.row.contract_customer_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -92,26 +118,27 @@
       >
         <el-option
           v-for="item in customerOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.customer_name }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow 
+      && (scope.row.contract_customer && scope.row.contract_customer.name !== null)">
+      {{ scope.row.contract_customer.name }}
       </span>
       </template>
     </el-table-column>
       <el-table-column    
-      label="Vehicle/ Schedule"
+      label="Vehicle/Schedule"
       width="125"
-      prop="vehicle">
+      prop="contract_vehicle">
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.vehicle"
+        v-model="scope.row.contract_vehicle_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -124,26 +151,27 @@
       >
         <el-option
           v-for="item in vehicleOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.vehicle }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow && 
+      (scope.row.contract_vehicle && scope.row.contract_vehicle.name !== null)">
+      {{ scope.row.contract_vehicle.name }}
       </span>
       </template>
     </el-table-column>
       <el-table-column
       label="Contract #"
       width="125"
-      prop="contract_num">
+      prop="contract_number_id">
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_num"
+        v-model="scope.row.number"
         filterable       
         track-by="name"        
         value-key="id"
@@ -156,6 +184,7 @@
       >
         <el-option
           v-for="item in contractNumber"
+          :load="log(contractNumber)"
           :key="item"
           :label="item"
           :value="item"
@@ -163,21 +192,22 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_num }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+       (scope.row.number && scope.row.number.name !== null)">
+      {{ scope.row.number }}
       </span>
       </template>
     </el-table-column>
     <el-table-column
       label="Award/TO #"
       width="125"
-      prop="award_to_num">
+      prop="contract_award_to_id">
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.award_to_num"
+        v-model="scope.row.contract_award_to_id"
         filterable       
-        track-by="name"        
+        track-by="id"        
         value-key="id"
         class="w-100"
         clearable
@@ -187,26 +217,27 @@
       >
         <el-option
           v-for="item in awardToNums"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.award_to_num }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_award_to && scope.row.contract_award_to.name !== null)">
+      {{ scope.row.contract_award_to.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="NAICS"
       width="70"
-      prop="naics">
+      prop="contract_naic_id">
      <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.naics"
+        v-model="scope.row.contract_naic_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -218,26 +249,27 @@
       >
         <el-option
           v-for="item in naicsOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.naics }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_naic && scope.row.contract_naic.name !== null)">
+      {{ scope.row.contract_naic.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="Award Type"
       width="70"
-      prop="award_type">
+      prop="contract_award_type_id">
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.award_type"
+        v-model="scope.row.contract_award_type_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -249,26 +281,27 @@
       >
         <el-option
           v-for="item in awardTypes"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.award_type }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_award_type && scope.row.contract_award_type.name !== null)">
+      {{ scope.row.contract_award_type.name }}
       </span>
       </template>
     </el-table-column>
     <el-table-column
       label="Contract Type"
       width="75"
-      prop="contract_type">
+      prop="contract_type_id">
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_type"
+        v-model="scope.row.contract_type_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -280,15 +313,16 @@
       >
         <el-option
           v-for="item in contractTypes"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.contract_type }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow  &&
+        (scope.row.contract_type && scope.row.contract_type.name !== null)">
+      {{ scope.row.contract_type.name }}
       </span>
       </template>
     </el-table-column>
@@ -329,12 +363,22 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
+          v-model="contractStartDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
-          <span v-else >
-      {{ scope.row.contract_start_date }}
+       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"     
+          v-model="scope.row.contract_start_date"  
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+      {{ moment(scope.row.contract_start_date).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
@@ -344,21 +388,31 @@
       prop="contract_end_date">
       <template slot-scope="scope">
         <v2-date-picker
-          name="Date"       
+          name="Date"     
+          v-model="contractEndDate"  
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
-          <span v-else >
-      {{ scope.row.contract_end_date }}
+        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+         <v2-date-picker
+          name="Date"     
+          v-model="scope.row.contract_end_date"  
+          value-type="YYYY-MM-DD"                     
+          format="M/DD/YYYY"
+          class="w-100"
+          />
+        </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow" >
+      {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
      <el-table-column
       label="Total Contract Value"
        width="115"
-      prop="total_contract_val">
+      prop="total_contract_value">
      <template slot-scope="scope">
      <el-input
       size="small"
@@ -366,7 +420,7 @@
       type="number"
       placeholder="Enter Total Contract Value"
       style="text-align:center"
-      v-model="scope.row.total_contract_val"
+      v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
@@ -375,12 +429,12 @@
       type="number"
       placeholder="Enter Total Contract Value"
       style="text-align:center"
-      v-model="scope.row.total_contract_val"
+      v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.total_contract_val }}
+      {{ scope.row.total_contract_value }}
       </span>
     </template>
 
@@ -388,11 +442,11 @@
     <el-table-column
       label="PoP's"
        width="100"
-      prop="pops">
+      prop="contract_pop_id">
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.pops"
+        v-model="scope.row.contract_pop_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -404,26 +458,27 @@
       >
         <el-option
           v-for="item in pops"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.pops }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_pop && scope.row.contract_pop.name !== null)">
+      {{ scope.row.contract_pop.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="Current PoP"
       width="100"
-      prop="current_pop">
+      prop="contract_current_pop_id">
     <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.current_pop"
+        v-model="scope.row.contract_current_pop_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -435,25 +490,27 @@
       >
         <el-option
           v-for="item in currentPops"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.current_pop }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_current_pop && scope.row.contract_current_pop.name !== null)">
+      {{ scope.row.contract_current_pop.name }}
       </span>
       </template>
     </el-table-column>
     <el-table-column
       label="Contract PoP Start Date"
        width="100"
-      prop="current_pop_start_date">
+      prop="contract_current_pop_start_date">
       <template slot-scope="scope">
         <v2-date-picker
-          name="Date"       
+          name="Date"   
+          v-model="popStartDate"      
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
@@ -461,24 +518,26 @@
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"   
+          v-model="scope.row.contract_current_pop_start_date"          
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.current_pop_start_date }}
+      {{ moment(scope.row.contract_current_pop_start_date).format('MM-DD-YYYY') }}
       </span>
      </template>
     </el-table-column>
        <el-table-column
       label="Contract PoP End Date"
        width="100"
-      prop="current_pop_end_date">
+      prop="contract_current_pop_end_date">
      <template slot-scope="scope">
      <v2-date-picker
-          name="Date"       
+          name="Date" 
+          v-model="popEndDate"        
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
@@ -486,14 +545,15 @@
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"  
+          v-model="scope.row.contract_current_pop_end_date"       
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.current_pop_end_date }}
+      {{ moment(scope.row.contract_current_pop_end_date).format('MM-DD-YYYY') }}
       </span>
      </template>
     </el-table-column>
@@ -505,7 +565,7 @@
    <template slot-scope="scope">
       <el-button
         type="default"
-        @click="saveEdits(scope.$index, scope.row)"
+        @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
@@ -528,7 +588,7 @@
           </el-button>
         <el-button
           type="default"
-          @click="saveNewRow(scope.$index, scope.row)"
+          @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
@@ -545,7 +605,7 @@
         class="p-0 users"       
       >
        <span slot="title" class="text-left">
-        <h5 class="text-dark"><i class="fa-solid fa-address-card mr-2"></i>Add Contracts POC</h5>
+        <h5 class="text-dark"><i class="fa-solid fa-address-card mr-2"></i>Manage Contract POCs</h5>
       </span>
       <div class="container" >      
         <div class="row">
@@ -796,6 +856,12 @@
 </template>
     
 <script>
+
+// TO DO //
+// Update method 
+// Modify columns for edit mode
+// Modify push method  ** DONE **
+// Create all dropdown arrays ** DONE **
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import PortfolioVehicles from "./PortfolioVehicles.vue";
 import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
@@ -812,9 +878,12 @@ export default {
     PortfolioContractBacklog,
     PortfolioContractPOC
   },
-
     data() {    
       return {
+        contractStartDate: "",
+        contractEndDate: "",
+        popStartDate: "",
+        popEndDate: "",
         nothing: true,
         pocDialogVisible: false,
         rowIndex: null, 
@@ -826,340 +895,8 @@ export default {
         pane2: false, 
         pane3: false, 
         pane4: false, 
-        tabPosition: 'bottom',
-        awardToNums: [ 
-                       '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                       ],
-       primeOrSub: [ 
-                      'Prime', 
-                       'Sub',
-                         ],                     
-       contractNumber:   [ 
-                       '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                        ],
-        vehicleOptions: [ 
-                        '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                       ],
-        customerOptions: [ 
-                       'Consulting, LLC', 
-                       'Security Incorprated',
-                       'Accolade, Inc.',
-                       'Department of Acme',
-                       'American Honor',
-                       'Health & Human Services'
-                       ],
-        naicsOptions: [ 
-                       'NA', 
-                       '541611-$16.5M',
-                       '541512-$30M',
-                       '541512',
-                       '519190'
-                       ],
-        awardTypes:   [ 
-                      'NA', 
-                      'SDVOSB',
-                      'SBA 8a',
-                       ],
-        pops:          [ 
-                      'Base Period',
-                      'Base + 2 OYs',
-                      'Base + 4 OYs', 
-                      'Yearly',
-                      '6 mo Base + 1 OY',
-                      '9 mo BP + 1 OY',
-                       ],
-
-       currentPops:   [ 
-                      'Base',
-                      'OY1',
-                      'OY2',
-                      'OY3',
-                      'OY4',
-                      'Year1',
-                      'Year2',
-                      'Year3',
-                        ],
-       contractTypes:  [ 
-                      'FFP/FFPU',
-                      'FFP', 
-                      'T&M',
-                       ],
-       contractsArray: [{
-          id:0,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:1,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:2,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:3,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: ''
-        }, {
-          id:4,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:5,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:6,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:7,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:8,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:9,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-        }, {
-          id:10,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is somet'
-        }, {
-          id:11,
-          charge_code: '383',
-          customer_name: 'Tech Consulting Unlimited, LLC',
-          project_name: 'KADNK Admin',         
-          vehicle: 'NA',
-          contract_num:'esdgdsgfsad',
-          award_to_num: '9494030293-2',
-          naics: 'NA',
-          award_type: 'NA',
-          contract_type: 'FFP',
-          prime_or_sub: 'Sub',
-          contract_start_date: '6/19/2021',
-          contract_end_date: '8/27/2022',
-          billings_to_date: 734365.35,
-          total_funded_val: 7999430.32,
-          total_contract_val: 7999430.32,
-          pops: 'Base + 4 OYs',
-          current_pop: 'OY4 extension',
-          current_pop_start_date: '1/19/2022',
-          current_pop_end_date: '8/27/2022',
-          notes: 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in'
-   
-         }],
-         pocsArray: [{
+        tabPosition: 'bottom',      
+        pocsArray: [{
           id: 0,
           poc_name: 'David Pumphrey',
           poc_title: 'Program Manager',
@@ -1190,26 +927,28 @@ export default {
   },
   methods: {
     ...mapMutations([
-     
+     "SET_CONTRACT_PROJECT_STATUS"
     ]),
     ...mapActions([
-      
+      "createContractProject",
+      "fetchContractProjects",
+      "updateContractProject"
     ]),  
   backHomeBtn() {
       window.location.pathname = "/";
-    },  
+    }, 
+  log(e){
+    // console.log(e)
+  } ,
   openPocModal(){
     this.pocDialogVisible = true;
   },   
   editMode(index, rows) {
     this.rowIndex = index,
-     console.log(rows);
-       console.log(this.createRow);
     this.rowId = rows.id
   }, 
   editPocRow(index, rows) {
     this.pocRowIndex = index,
-     console.log(rows);
     this.pocRowId = rows.id
   },  
   savePocEdits(){
@@ -1223,16 +962,43 @@ export default {
      this.pocRowIndex = null;
     this.pocRowId = null;
   },
-  saveEdits(){
-    // Row edit action will occur here
+  saveContractProject(index, row){
     this.rowIndex = null;
     this.rowId = null;
-  }, 
-  saveNewRow(){
-    // Row create action will occur here
-    //After save, dont forget to push new empty object to append new create row
-    this.rowIndex = null;
-    this.rowId = null;
+    let contractProjectData = {
+          cProjectData: {
+            charge_code: row.charge_code,
+            name: row.name,   
+            prime_or_sub: row.prime_or_sub,
+            contract_customer_id: row.contract_customer_id, 
+            contract_start_date: this.contractStartDate,
+            contract_end_date: this.contractEndDate,
+            total_contract_value: row.total_contract_value,
+            contract_current_pop_start_date: this.popStartDate,
+            contract_current_pop_end_date: this.popEndDate,
+            contract_vehicle_id: row.contract_vehicle_id,
+            number:  row.number,
+            contract_naic_id: row.contract_naic_id,
+            contract_award_type_id: row.contract_award_type_id,
+            contract_award_to_id: row.contract_award_to_id,
+            contract_type_id: row.contract_type_id,
+            contract_pop_id: row.contract_pop_id,
+            contract_current_pop_id: row.contract_current_pop_id,
+        
+        },
+      };
+    console.log(contractProjectData)
+    if (row.id){
+       let id = row.id
+       this.updateContractProject({...contractProjectData, id})
+    } else {
+      this.createContractProject({...contractProjectData})
+      this.contractStartDate = "";
+      this.contractEndDate = "";
+      this.popStartDate = "";
+      this.popEndDate = "";
+    }
+   
   },
   cancelPocEdits() {
     this.pocRowIndex = null;
@@ -1259,8 +1025,8 @@ export default {
        this.pane0 = false;
        this.pane1 = true;
        this.pane2 = false;
-       this.pane3 = false
-       this.pane4 = false
+       this.pane3 = false;
+       this.pane4 = false;
     }
     if (tab.paneName == 2){
        this.pane0 = false;
@@ -1288,25 +1054,31 @@ export default {
   
   },
   mounted() {
-    
+    this.fetchContractProjects()
   },
   computed: {
     ...mapGetters([
-     
+      "contractProjectStatus",
+      "contractProjects",
+      "contractProjectsLoaded"
     ]),   
   tableData(){
-      if (this.contractsArray && this.contractsArray.length > 0){
-        let data = this.contractsArray
-        data.push({})
-        return data
-     }
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let data = this.contractProjects   
+         data.push({})
+         return data    
+     } else {
+        let data = []
+         data.push({})
+         return data
+     }      
     },
     createRow(){
       let lastItem = this.tableData.length - 1
-       console.log(lastItem)
+      //  console.log(lastItem)
       return lastItem
     },
-   pocData(){
+    pocData(){
       if (this.pocsArray && this.pocsArray.length > 0){
         let data = this.pocsArray
         data.push({})
@@ -1315,12 +1087,114 @@ export default {
     },
     pocCreateRow(){
       let lastItem = this.pocData.length - 1
-       console.log(lastItem)
+      //  console.log(lastItem)
       return lastItem
+    },
+    awardToNums(){
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueAwardTOs = _.uniq(this.contractProjects.filter(t => t.contract_award_to_id))
+        let awardTos = uniqueAwardTOs.map(t => t.contract_award_to).filter(t => t !== undefined)
+        let unique = [];
+        // console.log(awardTos)
+        awardTos.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
+    },
+    primeOrSub(){
+      return ['Prime', 'Sub']
+    },                  
+    contractNumber(){
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueContractNums = this.contractProjects.filter(t => t.number)
+        let contractNums = uniqueContractNums.map(t => t.number).filter(t => t !== null)
+        return _.uniq(contractNums.map(t => t))
+      }
+    },
+    vehicleOptions(){
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueVehicles = _.uniq(this.contractProjects.filter(t => t.contract_vehicle_id))
+        let vehicles = uniqueVehicles.map(t => t.contract_vehicle).filter(t => t !== undefined)
+        let unique = [];
+        // console.log(vehicles)
+        vehicles.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
+    },
+    customerOptions(){
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueCustomerOptions = _.uniq(this.contractProjects.filter(t => t.contract_customer_id))
+        let customers = uniqueCustomerOptions.map(t => t.contract_customer).filter(t => t !== undefined)
+        let unique = [];
+        // console.log(customers)
+        customers.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
+    },
+    naicsOptions(){
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueNaics = _.uniq(this.contractProjects.filter(t => t.contract_naic_id))
+        let naics = uniqueNaics.map(t => t.contract_naic).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(naics)
+        naics.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
+    },
+    awardTypes(){
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueAwardTypes = _.uniq(this.contractProjects.filter(t => t.contract_award_type_id))
+        let awardType = uniqueAwardTypes.map(t => t.contract_award_type).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(awardType)
+        awardType.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
+      }
+    },
+    pops(){
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniquePoPs = _.uniq(this.contractProjects.filter(t => t.contract_pop_id))
+        let pops = uniquePoPs.map(t => t.contract_pop).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(pops)
+        pops.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
+    },
+    currentPops(){
+      if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueCurrentPoPs = _.uniq(this.contractProjects.filter(t => t.contract_current_pop_id))
+        let currentPoPs = uniqueCurrentPoPs.map(t => t.contract_current_pop).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(currentPoPs)
+        currentPoPs.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
+    },
+    contractTypes(){
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))
+        let contractTypes = uniqueContractTypes.map(t => t.contract_type).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        // console.log(contractTypes)
+        contractTypes.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+         return unique
+      }
     },
   },
   watch: {
-   
+    contractProjectStatus: {
+      handler() {
+        if (this.contractProjectStatus == 200) {
+          this.$message({
+            message: `Saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACT_PROJECT_STATUS(0);
+          this.fetchContractProjects();
+        }
+      },
+    }, 
   
     
   },
