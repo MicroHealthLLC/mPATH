@@ -177,13 +177,13 @@ const contractStore = {
       commit("TOGGLE_CONTRACT_POCS_LOADED", false);
       let formData = new FormData();
       console.log(cPOCsData)
-        formData.append("contract_project_pocs[name]", cPOCsData.name);
-        // formData.append("contract_project_pocs[poc_type]", cPOCsData.pocType);
-        formData.append("contract_project_pocs[email]", cPOCsData.email);
-        formData.append("contract_project_pocs[title]", cPOCsData.title);
-        formData.append("contract_project_pocs[work_number]", cPOCsData.workNum);
-        formData.append("contract_project_pocs[mobile_number]", cPOCsData.mobileNum);
-        formData.append("contract_project_pocs[notes]", cPOCsData.notes);
+        formData.append("contract_project_poc[name]", cPOCsData.name);
+        // formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
+        formData.append("contract_project_poc[email]", cPOCsData.email);
+        formData.append("contract_project_poc[title]", cPOCsData.title);
+        formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
+        formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);
+        formData.append("contract_project_poc[notes]", cPOCsData.notes);
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/contract_project_pocs`,
@@ -313,13 +313,13 @@ const contractStore = {
   commit("TOGGLE_CONTRACT_POCS_LOADED", false);
   let formData = new FormData();
   console.log(cPOCsData)
-    formData.append("contract_project_pocs[name]", cPOCsData.name);
-    formData.append("contract_project_pocs[poc_type]", cPOCsData.pocType);
-    formData.append("contract_project_pocs[email]", cPOCsData.email);
-    formData.append("contract_project_pocs[title]", cPOCsData.title);
-    formData.append("contract_project_pocs[work_number]", cPOCsData.workNum);
-    formData.append("contract_project_pocs[mobile_number]", cPOCsData.mobileNum);
-    formData.append("contract_project_pocs[notes]", cPOCsData.notes);
+    formData.append("contract_project_poc[name]", cPOCsData.name);
+    formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
+    formData.append("contract_project_poc[email]", cPOCsData.email);
+    formData.append("contract_project_poc[title]", cPOCsData.title);
+    formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
+    formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);
+    formData.append("contract_project_poc[notes]", cPOCsData.notes);
   axios({
     method: "PUT",
     url: `${API_BASE_PATH}/contract_project_pocs/${id}`,

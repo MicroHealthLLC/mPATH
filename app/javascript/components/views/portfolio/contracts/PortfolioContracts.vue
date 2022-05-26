@@ -933,7 +933,8 @@ export default {
   },
   methods: {
     ...mapMutations([
-     "SET_CONTRACT_PROJECT_STATUS"
+     "SET_CONTRACT_PROJECT_STATUS",
+     "SET_CONTRACT_POCS_STATUS"
     ]),
     ...mapActions([
       //Contract Projects
