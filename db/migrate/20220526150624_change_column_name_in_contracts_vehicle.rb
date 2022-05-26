@@ -12,5 +12,8 @@ class ChangeColumnNameInContractsVehicle < ActiveRecord::Migration[6.1]
     add_column :contract_types, :user_id, :integer
     add_column :contract_current_pops, :user_id, :integer
     add_column :contract_pops, :user_id, :integer
+    add_column :contract_sub_categories, :user_id, :integer
+    add_column :contract_agencies, :user_id, :integer
+    add_column :contract_vehicle_types, :user_id, :integer
   end
 end

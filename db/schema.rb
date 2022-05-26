@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_award_tos", charset: "utf8", force: :cascade do |t|
@@ -246,6 +247,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_types", charset: "utf8", force: :cascade do |t|
@@ -265,6 +267,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_vehicles", charset: "utf8", force: :cascade do |t|
