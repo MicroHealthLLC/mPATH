@@ -128,7 +128,7 @@
    <template slot-scope="scope">
       <el-button
         type="default"
-        @click="saveEdits(scope.$index, scope.row)"
+        @click="saveBacklogValues(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               

@@ -1022,11 +1022,7 @@ export default {
     if (id){
       this.updateContractProject({...contractProjectData, id})
     } else {
-      this.createContractProject({...contractProjectData})
-      this.contractStartDate = "";
-      this.contractEndDate = "";
-      this.popStartDate = "";
-      this.popEndDate = "";
+      this.createContractProject({...contractProjectData})     
     }
    
   },
@@ -1255,6 +1251,10 @@ export default {
             type: "success",
             showClose: true,
           });
+          this.contractStartDate = "";
+          this.contractEndDate = "";
+          this.popStartDate = "";
+          this.popEndDate = "";
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects();
         }
