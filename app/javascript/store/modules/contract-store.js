@@ -141,18 +141,18 @@ const contractStore = {
       commit("TOGGLE_CONTRACT_VECHILES_LOADED", false);
       let formData = new FormData();
       console.log(cVehicleData)
-        formData.append("contract_vehicles[name]",  cVehicleData.name);
-        formData.append("contract_vehicles[full_name]", cVehicleData.fullName);
-        formData.append("contract_vehicles[contract_sub_category_id]", cVehicleData.subCatId);
-        formData.append("contract_vehicles[contract_agency_id]", cVehicleData.cAgencyId);
-        formData.append("contract_vehicles[vehicle_type_id]", cVehicleData.type);
+        formData.append("contract_vehicle[name]",  cVehicleData.name);
+        formData.append("contract_vehicle[full_name]", cVehicleData.fullName);
+        formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
+        formData.append("contract_vehicle[contract_agency_id]", cVehicleData.cAgencyId);
+        formData.append("contract_vehicle[vehicle_type_id]", cVehicleData.type);
 
         formData.append("contract_vehicles[contract_number]", cVehicleData.cNumber);
-        formData.append("contract_vehicles[ceiling]", cVehicleData.ceiling);
-        formData.append("contract_vehicles[base_period_start]", cVehicleData.bp_startDate);
-        formData.append("contract_vehicles[base_period_end]", cVehicleData.bp_endDate);
-        formData.append("contract_vehicles[option_period_start]", cVehicleData.op_startDate);
-        formData.append("contract_vehicles[option_period_end]", cVehicleData.op_endDate);  
+        formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
+        formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
+        formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
+        formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
+        formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/contract_vehicles`,

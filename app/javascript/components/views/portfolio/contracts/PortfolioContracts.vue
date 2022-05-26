@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid mt-3 mx-3">   
+  <div class="container-fluid mt-3 mx-3">       
     <div style="height:85px">
       <span @click.prevent="backHomeBtn">
         <img
@@ -852,7 +852,8 @@
 </template>
     
 <script>
-
+//Create Vehicles Does not work error: undefined method `permit' for nil:NilClass
+// Create POCs doesn;t work error:  app/models/user.rb:49:in `can_contract_data?' param is missing or the value is empty: contract_project_poc
 // import CurrencyInput from "./CurrencyInput.vue";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import PortfolioVehicles from "./PortfolioVehicles.vue";
