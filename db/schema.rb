@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_24_212622) do
+ActiveRecord::Schema.define(version: 2022_05_26_150624) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -98,12 +98,14 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_award_types", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_categories", charset: "utf8", force: :cascade do |t|
@@ -135,18 +137,21 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_customers", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_naics", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_numbers", charset: "utf8", force: :cascade do |t|
@@ -165,6 +170,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_primes", charset: "utf8", force: :cascade do |t|
@@ -203,7 +209,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.datetime "contract_current_pop_start_date"
     t.datetime "contract_current_pop_end_date"
     t.decimal "total_founded_value", precision: 10
-    t.datetime "billings_to_date"
+    t.decimal "billings_to_date", precision: 10
     t.string "comments"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -227,6 +233,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.string "notes"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_statuses", charset: "utf8", force: :cascade do |t|
@@ -245,6 +252,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_vehicle_numbers", charset: "utf8", force: :cascade do |t|
@@ -273,7 +281,8 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.datetime "option_period_end"
     t.integer "contract_sub_category_id"
     t.integer "contract_agency_id"
-    t.integer "vehicle_type_id"
+    t.integer "contract_vehicle_type_id"
+    t.integer "user_id"
   end
 
   create_table "contracts", charset: "utf8", force: :cascade do |t|
@@ -567,6 +576,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_212622) do
     t.integer "contract_project_datum_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "project_facility_groups", charset: "utf8", force: :cascade do |t|

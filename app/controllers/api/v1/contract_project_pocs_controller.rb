@@ -19,10 +19,11 @@ class Api::V1::ContractProjectPocsController < AuthenticatedController
 
   def create
     contract_project_poc = ContractProjectPoc.new(contract_project_poc_params)
+    contract_project_poc.user_id = current_user.id
     if contract_project_poc.save
       render json: {contract_project_poc: contract_project_poc}
     else
-      render json: {errors: contract_project_poc.errors.full_message}, status: 406
+      render json: {errors: contract_project_poc.errors.full_messages}, status: 406
     end
   end
 
@@ -31,22 +32,22 @@ class Api::V1::ContractProjectPocsController < AuthenticatedController
     if contract_project_poc.update(contract_project_poc_params)
       render json: {contract_project_poc: contract_project_poc}
     else
-      render json: {errors: contract_project_poc.errors.full_message}, status: 406
+      render json: {errors: contract_project_poc.errors.full_messages}, status: 406
     end
   end
 
   def destroy
     contract_project_poc = ContractProjectPoc.find(params[:id])
     if contract_project_poc.destroy
-      render json: {, message: "Contract Project POC deleted successfully!!", contract_project_poc: contract_project_poc}
+      render json: { message: "Contract Project POC deleted successfully!!", contract_project_poc: contract_project_poc}
     else
-      render json: {errors: contract_project_poc.errors.full_message}, status: 406
+      render json: {errors: contract_project_poc.errors.full_messages}, status: 406
     end
   end
   
   private
   def contract_project_poc_params
-    params.require(:contract_project_poc).permit(:name, :poc_type, :email, :title, :work_number, :mobile_number, :notes)
+    params.require(:contract_project_poc).permit(:name, :poc_type, :email, :title, :work_number, :mobile_number, :notes, :user_id)
   end
 
 end
