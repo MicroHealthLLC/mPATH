@@ -81,11 +81,12 @@ Rails.application.routes.draw do
         end
       end
       
-      resources :contract_project_data
+      resources :contract_project_data do
+        post :add_project, on: :member
+      end
       resources :contract_project_pocs
 
       resources :contracts do
-        post :add_contract, on: :member
         resources :notes #, module: :facilities
         resources :issues do
           post :batch_update, on: :collection

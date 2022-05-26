@@ -11,6 +11,8 @@ module Tasker
 
     belongs_to :facility_project, optional: true #since now we can create task under contract
     belongs_to :contract, optional: true
+    # New contract functionality
+    belongs_to :project_contract, optional: true
 
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project

@@ -45,6 +45,32 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def can_contract_data?(permission = 'read')
+    privilege = self.privilege || Privilege.new
+    if permission == 'read'
+      privilege.contract_data && privilege.contract_data.chars.include?("R")
+    elsif permission == 'write'
+      privilege.contract_data && privilege.contract_data.chars.include?("W")
+    elsif permission == 'delete'
+      privilege.contract_data && privilege.contract_data.chars.include?("D")
+    else
+      false
+    end
+  end
+
+  def can_read_contract_data?
+    can_contract_data?('read')
+  end
+
+  def can_write_contract_data?
+    can_contract_data?('write')
+  end
+
+  def can_delete_contract_data?
+    can_contract_data?('delete')
+  end
+
+
   def provide_program_privileges
     user = self
     return if !user.project_ids.any?
@@ -521,6 +547,7 @@ class User < ApplicationRecord
       sheets_view: p.sheets_view,
       kanban_view: p.kanban_view,
       calendar_view: p.calendar_view,
+      contract_data: p.contract_data
       #NOTE: hard coding because lesson will go under project level. 
       # Once front end is working with project, do remove this permission.
       # This is used in topLevelNavigation for now 

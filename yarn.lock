@@ -1430,6 +1430,11 @@
   optionalDependencies:
     prettier "^1.18.2"
 
+"@vue/composition-api@^1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.6.2.tgz#8e65cf60cd919f23649951ed14a67d43cd32131d"
+  integrity sha512-g6pCOaAB5Z987EwCBIDanRlramrgnWfrrYS8F/0axn2AL8EvyfAebDcLTSr48hac0G0rqC9ODp5LWaiupzl6Tw==
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
@@ -8993,6 +8998,13 @@ vue-content-loading@^1.6.0:
   dependencies:
     vue "^2.5.13"
 
+vue-currency-input@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/vue-currency-input/-/vue-currency-input-2.4.0.tgz#46b532be856d4ecdd23286d4389109d042e401a7"
+  integrity sha512-eZhMZfjm9zaVGMW5eQfbQ5S0TM48QIAvKjzoAnjguPycPRwXq3QyWGvewnDqTQyKrYeFkkVgCh6Z6BF9pQRvqQ==
+  dependencies:
+    vue-demi "^0.12.1"
+
 vue-data-tables@^3.4.5:
   version "3.4.5"
   resolved "https://registry.yarnpkg.com/vue-data-tables/-/vue-data-tables-3.4.5.tgz#010d9456de411f17f4b9d99254f30139e668954c"
@@ -9001,6 +9013,11 @@ vue-data-tables@^3.4.5:
     element-ui "^2.3.9"
     lodash "^4.17.10"
     vue "^2.5.16"
+
+vue-demi@^0.12.1:
+  version "0.12.5"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.12.5.tgz#8eeed566a7d86eb090209a11723f887d28aeb2d1"
+  integrity sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==
 
 vue-functional-data-merge@^3.1.0:
   version "3.1.0"
