@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_24_143607) do
+ActiveRecord::Schema.define(version: 2022_05_24_212622) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -212,6 +212,9 @@ ActiveRecord::Schema.define(version: 2022_05_24_143607) do
     t.integer "contract_award_type_id"
     t.integer "user_id"
     t.string "number"
+    t.integer "co_contract_poc_id"
+    t.integer "gov_contract_poc_id"
+    t.integer "pm_contract_poc_id"
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
@@ -446,6 +449,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_143607) do
     t.integer "contract_id"
     t.integer "owner_id"
     t.string "owner_type"
+    t.integer "project_contract_id"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -496,6 +500,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_143607) do
     t.integer "contract_id"
     t.integer "owner_id"
     t.string "owner_type"
+    t.integer "project_contract_id"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -559,7 +564,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_143607) do
 
   create_table "project_contracts", charset: "utf8", force: :cascade do |t|
     t.integer "project_id", null: false
-    t.integer "contract_id", null: false
+    t.integer "contract_project_datum_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -817,6 +822,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_143607) do
     t.integer "contract_id"
     t.integer "owner_id"
     t.string "owner_type"
+    t.integer "project_contract_id"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -946,6 +952,7 @@ ActiveRecord::Schema.define(version: 2022_05_24_143607) do
     t.integer "contract_id"
     t.integer "owner_id"
     t.string "owner_type"
+    t.integer "project_contract_id"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
