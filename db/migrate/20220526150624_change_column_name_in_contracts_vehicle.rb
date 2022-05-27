@@ -1,6 +1,6 @@
 class ChangeColumnNameInContractsVehicle < ActiveRecord::Migration[6.1]
   def change
-    # rename_column :contract_vehicles, :vehicle_type_id, :contract_vehicle_type_id
+    rename_column :contract_vehicles, :vehicle_type_id, :contract_vehicle_type_id
     change_column :contract_project_data, :billings_to_date, :decimal
     add_column :contract_vehicles, :user_id, :integer
     add_column :contract_project_pocs, :user_id, :integer

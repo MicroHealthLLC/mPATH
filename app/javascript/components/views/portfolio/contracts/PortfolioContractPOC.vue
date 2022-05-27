@@ -3,7 +3,7 @@
    <div  style="height: 100%; overflow-y:auto">
   <el-table
     :data="tableData"
-    :load="log(tableData)"
+    :load="log(pocOption)"
     border
     height="800"
     >
@@ -38,10 +38,10 @@
         placeholder="Select Contract Program Manager POC"
       >
         <el-option
-          v-for="item in contractPM"
-          :key="item"
-          :label="item"
-          :value="item"
+          v-for="item in pocOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -70,10 +70,10 @@
            placeholder="Select Government COR POC or Prime POC"
       >
         <el-option
-          v-for="item in govCorPoC"
-          :key="item"
-          :label="item"
-          :value="item"
+          v-for="item in pocOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -103,10 +103,10 @@
 
       >
         <el-option
-          v-for="item in contractingOfficePoc"
-          :key="item"
-          :label="item"
-          :value="item"
+          v-for="item in pocOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -162,8 +162,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "PortfolioContractPOC",
-  components: {
-  
+  components: {  
   },
 
   data() {    
@@ -172,24 +171,6 @@ export default {
         rowIndex: null, 
         rowId: null, 
         tabPosition: 'bottom',
-        contractPM:          [ 
-                      'Michael Holmes',
-                      'Monica Lee',
-                      'Gloria Walker', 
-                      'Justin Spears',            
-                       ],
-        govCorPoC:     [ 
-                      'Rishan Chandarana',
-                      'Michael Zrimm',
-                      'Andrew Lee',
-                      'Matthew Terrill',
-                      'Aaron Taylor'                
-                        ],
-       contractingOfficePoc:  [ 
-                      'FTC Contracting',
-                      'DOI', 
-                      'Mary Hogoboom',
-                       ],        
         search: '',
     };
   },
@@ -200,9 +181,10 @@ export default {
   ...mapActions([
     "updateContractProject",
     "fetchContractProjects",
+    "fetchContractPOCs",
   ]),  
   log(e){
-    console.log(e)
+   console.log(e)
   },
   saveContractPOCs(index, row){
     this.rowIndex = null;
@@ -236,11 +218,12 @@ export default {
   },    
   },
   mounted() {
-    
+    this.fetchContractPOCs()
   },
   computed: {
     ...mapGetters([
-     "contractProjects"
+     "contractProjects",
+     "contractPOCs"
     ]), 
   tableData(){
     if (this.contractProjects && this.contractProjects.length > 0){
@@ -248,6 +231,16 @@ export default {
        return validProjects
      }      
     }, 
+  pocOptions(){
+     if (this.contractPOCs && this.contractPOCs.length > 0){
+        return this.contractPOCs.map(t => t).filter(pocs => pocs && pocs.id)
+      }
+    },
+     pocOption(){
+     if (this.contractPOCs && this.contractPOCs.length > 0){
+        return this.contractPOCs.map(t => t)
+      }
+     },
   },
   watch: {
    contractProjectStatus: {

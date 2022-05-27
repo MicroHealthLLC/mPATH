@@ -1087,6 +1087,7 @@ export default {
        this.pane4 = false;
     }
     if (tab.paneName == 3){
+       this.fetchContractPOCs()
        this.pane0 = false;
        this.pane1 = false;
        this.pane2 = false;
@@ -1272,6 +1273,7 @@ export default {
           });
           this.SET_CONTRACT_POCS_STATUS(0);
           this.fetchContractPOCs();
+          this.fetchContractProjects();
         }
       },
     },     

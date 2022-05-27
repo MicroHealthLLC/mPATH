@@ -10,13 +10,13 @@ class ContractVehicle < ApplicationRecord
     h = self.as_json
     h.merge!({contract_sub_category: contract_sub_category.as_json}) if contract_sub_category
     h.merge!({contract_agency: contract_agency.as_json}) if contract_agency_id
-    h.merge!({vehicle_type: contract_vehicle_type.as_json}) if contract_vehicle_type_id
+    h.merge!({contract_vehicle_type: contract_vehicle_type.as_json}) if contract_vehicle_type_id
     h
   end
 
 
   def self.params_to_permit
-    [:name, :vehicle_number, :full_name, :conctract_sub_category_id, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id]
+    [:name, :full_name, :conctract_sub_category_id, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id]
   end
 
   def create_or_update_contract_vehicle(params, user)

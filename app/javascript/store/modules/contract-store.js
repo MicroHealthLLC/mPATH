@@ -84,7 +84,7 @@ const contractStore = {
         },
       })
         .then((res) => {
-          commit("SET_CONTRACT_POCS", res.data.contract_vehicles);
+          commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
           // console.log(res.data.roles)
         })
         .catch((err) => {
@@ -194,7 +194,7 @@ const contractStore = {
         },
       })
         .then((res) => {
-          commit("SET_CONTRACT_POCS", res.data.contract_pocs);
+          commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
           commit("SET_CONTRACT_POCS_STATUS", res.status);
         })
         .catch((err) => {
@@ -278,18 +278,18 @@ const contractStore = {
   },
   updateVehiclesData({ commit }, { cVehicleData, id } ) {
     commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
-    formData.append("contract_vehicles[id]",  cVehicleData.id);
-    formData.append("contract_vehicles[name]",  cVehicleData.name);
-    formData.append("contract_vehicles[contract_sub_category_id]", cVehicleData.subCatId);
-    formData.append("contract_vehicles[contract_agency_id]", cVehicleData.charge_code);
-    formData.append("contract_vehicles[vehicle_type_id]", cVehicleData.charge_code);
-    formData.append("contract_vehicles[full_name]", cVehicleData.fullName);
-    formData.append("contract_vehicles[contract_number]", cVehicleData.contractNum);
-    formData.append("contract_vehicles[ceiling]", cVehicleData.ceiling);
-    formData.append("contract_vehicles[base_period_start]", cVehicleData.bp_startDate);
-    formData.append("contract_vehicles[base_period_end]", cVehicleData.bp_endDate);
-    formData.append("contract_vehicles[option_period_start]", cVehicleData.op_startDate);
-    formData.append("contract_vehicles[option_period_end]", cVehicleData.op_endDate);
+    formData.append("contract_vehicle[id]",  cVehicleData.id);
+    formData.append("contract_vehicle[name]",  cVehicleData.name);
+    formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
+    formData.append("contract_vehicle[contract_agency_id]", cVehicleData.charge_code);
+    formData.append("contract_vehicle[vehicle_type_id]", cVehicleData.charge_code);
+    formData.append("contract_vehicle[full_name]", cVehicleData.fullName);
+    formData.append("contract_vehicle[contract_number]", cVehicleData.contractNum);
+    formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
+    formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
+    formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
+    formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
+    formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);
     axios({
       method: "PUT",
       url: `${API_BASE_PATH}/contract_vehicles/${id}`,
@@ -330,7 +330,7 @@ const contractStore = {
     },
   })
     .then((res) => {
-      commit("SET_CONTRACT_POCS", res.data.contract_pocs);
+      commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
       commit("SET_CONTRACT_POCS_STATUS", res.status);
     })
     .catch((err) => {
