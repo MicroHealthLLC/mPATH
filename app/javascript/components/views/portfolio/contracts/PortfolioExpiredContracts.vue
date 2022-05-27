@@ -1,125 +1,156 @@
 <template>
   <div style="height:80vh" class="portfolio-contracts-module">
-      <div  style="height: 100%; overflow-y:auto">
-    <el-table
-    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+   <div  style="height: 100%; overflow-y:auto" v-if="contractProjects && contractProjects.length > 0">
+   <el-table
+    :data="contractProjects.filter(t => t && t.id)"
     border
     height="800"
     style="width: 95%">
     <el-table-column
       fixed
       label="Code"
-      width="55"
-      prop="code">
-    </el-table-column>
+      width=""
+      prop="charge_code">
+   </el-table-column>
     <el-table-column
       fixed
       label="Project Name"
       width="200"
       prop="name">
-    </el-table-column>
+     </el-table-column>
      <el-table-column    
       label="Customer"
       width="200"
-      prop="name">
+      >
+     <template slot-scope="scope" >
+      <span v-if="scope.row.contract_customer && scope.row.contract_customer.name !== null">
+      {{ scope.row.contract_customer.name }}
+      </span>
+      </template>
     </el-table-column>
-      <el-table-column
-    
+      <el-table-column    
       label="Vehicle/ Schedule"
       width="125"
-      prop="sched">
+      prop="contract_vehicle">
+       <template slot-scope="scope" >
+     <span v-if="scope.row.contract_vehicle && scope.row.contract_vehicle.name !== null">
+      {{ scope.row.contract_vehicle.name }}
+      </span>
+      </template>
     </el-table-column>
       <el-table-column
-    
       label="Contract #"
       width="125"
-      prop="sched">
+      prop="number">
+    <template slot-scope="scope" >     
+      <span v-if="scope.row.number && scope.row.number.name !== null">
+      {{ scope.row.number }}
+      </span>
+      </template>
     </el-table-column>
     <el-table-column
-  
-      label="Award/ TO #"
+      label="Award/TO #"
       width="125"
-      prop="sched">
+      prop="contract_award_to_id">
+       <template slot-scope="scope" >
+      <span v-if="scope.row.contract_award_to && scope.row.contract_award_to.name !== null">
+      {{ scope.row.contract_award_to.name }}
+      </span>
+      </template>
     </el-table-column>
      <el-table-column
       label="NAICS"
       width="70"
-      prop="type">
+      prop="contract_naic_id">
+     <template slot-scope="scope" >
+    <span v-if="scope.row.contract_naic && scope.row.contract_naic.name !== null">
+      {{ scope.row.contract_naic.name }}
+      </span>
+      </template>
     </el-table-column>
      <el-table-column
       label="Award Type"
       width="70"
-      prop="type">
+      prop="contract_award_type_id">
+      <template slot-scope="scope" >
+       <span v-if="scope.row.contract_award_type && scope.row.contract_award_type.name !== null">
+      {{ scope.row.contract_award_type.name }}
+      </span>
+      </template>
     </el-table-column>
     <el-table-column
       label="Contract Type"
       width="75"
-      prop="type">
+      prop="contract_type_id">
+      <template slot-scope="scope" >
+      <span v-if="scope.row.contract_type && scope.row.contract_type.name !== null">
+      {{ scope.row.contract_type.name }}
+      </span>
+      </template>
     </el-table-column>
       <el-table-column
       label="Prime vs Sub"
       width="55"
-      prop="primesub">
+      prop="prime_or_sub">
     </el-table-column>
      <el-table-column
       label="Contract Start Date"
       width="100"
-      prop="startdate">
+      prop="contract_start_date">
+       <template slot-scope="scope">
+     {{ moment(scope.row.contract_start_date).format("MM-DD-YYYY") }}
+     </template>
     </el-table-column>
      <el-table-column
       label="Contract End Date"
       width="100"
-      prop="startdate">
+      prop="contract_end_date">
+      <template slot-scope="scope">
+      {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
+     </template>
     </el-table-column>
      <el-table-column
       label="Total Contract Value"
        width="115"
-      prop="value">
-    </el-table-column>
+      prop="total_contract_value">
+   </el-table-column>
     <el-table-column
       label="PoP's"
        width="100"
-       prop="type">
+      prop="contract_pop_id">
+      <template slot-scope="scope" >
+     <span v-if="scope.row.contract_pop && scope.row.contract_pop.name !== null">
+      {{ scope.row.contract_pop.name }}
+      </span>
+      </template>
     </el-table-column>
      <el-table-column
       label="Current PoP"
       width="100"
-      prop="type">
+      prop="contract_current_pop_id">
+    <template slot-scope="scope" >
+     <span v-if="scope.row.contract_current_pop && scope.row.contract_current_pop.name !== null">
+      {{ scope.row.contract_current_pop.name }}
+      </span>
+      </template>
     </el-table-column>
     <el-table-column
       label="Contract PoP Start Date"
        width="100"
-      prop="startdate">
+      prop="contract_current_pop_start_date">
+       <template slot-scope="scope">
+       {{ moment(scope.row.contract_current_pop_start_date).format('MM-DD-YYYY') }}
+       </template>
+   
     </el-table-column>
-       <el-table-column
+     <el-table-column
       label="Contract PoP End Date"
        width="100"
-      prop="startdate">
-    </el-table-column>
-    <el-table-column
-      label="Actions"
-      width="75"
-      fixed="right"
-      align="right">
-      <!-- <template slot="header" slot-scope="scope">
-        <el-input
-         
-          v-model="search"
-          size="mini"
-          placeholder="Type to search"/>
-      </template> -->
-      <template slot-scope="scope">
-         <el-button
-          type="default"
-          class="bg-light btn-sm"
-          @click="handleEdit(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
-          </el-button>
-        <!-- <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Delete</el-button> -->
+      prop="contract_current_pop_end_date">
+     <template slot-scope="scope">
+      {{ moment(scope.row.contract_current_pop_end_date).format('MM-DD-YYYY') }}
       </template>
-    </el-table-column>
+    </el-table-column>  
   </el-table>
       </div>
       </div>
@@ -127,65 +158,19 @@
 </template>
     
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "PortfolioExpiredContracts",
    data() {    
       return {
         nothing: true,
-        tableData: [{
-          code: 123, 
-          type: 'FFP', 
-          value: "$7,343,342.45",
-          primesub: "Sub",
-          sched: "CIOSP3-SDVOSB",
-          startdate: '2016-05-03',
-          name: 'SEC FOIA Admin Proceedings',
-          address: 'No. 189, Grove St, Los Angeles'
-        }, {
-          code: 123, 
-          type: 'FFP', 
-          startdate: '2016-05-02',
-            sched: "CIOSP3-SDVOSB",
-          value: "$7,343,342.45",
-          name: 'John',
-          primesub: "Prime",
-          address: 'No. 189, Grove St, Los Angeles'
-        
-        }],
         search: '',
     };
   },
-  methods: {
-    ...mapMutations([
-     
-    ]),
-    ...mapActions([
-      
-    ]),  
-  backHomeBtn() {
-      window.location.pathname = "/";
-    },    
-  handleEdit(index, row) {
-        console.log(index, row);
-      },
-  handleDelete(index, row) {
-    console.log(index, row);
-  },
- 
-  },
-  mounted() {
-    
-  },
   computed: {
     ...mapGetters([
-     
+     "contractProjects"
     ]),   
-  },
-  watch: {
-   
-  
-    
   },
 };
 </script>

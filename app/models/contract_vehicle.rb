@@ -8,15 +8,14 @@ class ContractVehicle < ApplicationRecord
 
   def to_json
     h = self.as_json
-    h.merge!({contract_sub_category: contract_sub_category.as_json}) if contract_sub_category
+    h.merge!({contract_sub_category: contract_sub_category.as_json}) if contract_sub_category_id
     h.merge!({contract_agency: contract_agency.as_json}) if contract_agency_id
-    h.merge!({vehicle_type: contract_vehicle_type.as_json}) if contract_vehicle_type_id
+    h.merge!({contract_vehicle_type: contract_vehicle_type.as_json}) if contract_vehicle_type_id
     h
   end
 
-
   def self.params_to_permit
-    [:name, :vehicle_number, :full_name, :conctract_sub_category_id, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id]
+    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id]
   end
 
   def create_or_update_contract_vehicle(params, user)
@@ -31,15 +30,15 @@ class ContractVehicle < ApplicationRecord
       c_params.reject!{|k,v| v == 'undefined'}
 
       if c_params[:contract_sub_category_id] && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
-        c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id]).id
+        c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id], user_id: user.id).id
       end
       if c_params[:contract_agency_id] && !ContractAgency.exists?(id: c_params[:contract_agency_id])
-        c_params[:contract_agency_id] = ContractAgency.create(name: c_params[:contract_agency_id]).id
+        c_params[:contract_agency_id] = ContractAgency.create(name: c_params[:contract_agency_id], user_id: user.id).id
       end
       if c_params[:contract_vehicle_type_id] && !ContractVehicleType.exists?(id: c_params[:contract_vehicle_type_id])
-        c_params[:contract_vehicle_type_id] = ContractVehicleType.create(name: c_params[:contract_vehicle_type_id]).id
+        c_params[:contract_vehicle_type_id] = ContractVehicleType.create(name: c_params[:contract_vehicle_type_id], user_id: user.id).id
       end
-
+ 
       contract_vehicle.attributes = c_params
       contract_vehicle.user_id = user.id
       contract_vehicle.save

@@ -10,27 +10,27 @@
       fixed
       label="Vehicle"
       width="175"
-      prop="vehicle">
+      prop="name">
     <template slot-scope="scope">
     <el-input
       size="small"
       v-if="scope.$index == createRow"
-      placeholder="Enter Vehicle"
+      placeholder=""
       style="text-align:center"
-      v-model="scope.row.vehicle"
+      v-model="scope.row.name"
       controls-position="right"
     ></el-input>
     <span v-if="rowId == scope.row.id && scope.$index !== createRow">
      <el-input
       size="small"
-      placeholder="Enter Vehicle Full Name"
+      placeholder=""
       style="text-align:center"
-      v-model="scope.row.vehicle"
+      v-model="scope.row.name"
       controls-position="right"
       ></el-input>
      </span>
   <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-   {{ scope.row.vehicle }} 
+   {{ scope.row.name }} 
    </span>
 
         </template>
@@ -38,29 +38,29 @@
     <el-table-column
       label="Vehicle Full Name"
       width="300"
-      prop="vehicle_full_name">
+      prop="full_name">
     <template slot-scope="scope">
      <el-input
       size="small"
       v-if="scope.$index == createRow"
-      placeholder="Enter Vehicle Full Name"
+      placeholder=""
       style="text-align:center"
-      v-model="scope.row.vehicle_full_name"
+      v-model="scope.row.full_name"
       controls-position="right"
       ></el-input>
     <span v-if="rowId == scope.row.id && scope.$index !== createRow">
      <el-input
       size="small"
-      placeholder="Enter Vehicle Full Name"
+      placeholder=""
       style="text-align:center"
-      v-model="scope.row.vehicle_full_name"
+      v-model="scope.row.full_name"
       controls-position="right"
       ></el-input>
        
        
        </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.vehicle_full_name }}
+      {{ scope.row.full_name }}
       </span>
 
     </template>
@@ -69,12 +69,12 @@
       <el-table-column
       label="SINS or Subcategories"      
       width="250"
-      prop="sins_or_subs">
+      prop="contract_sub_category_id">
 
       <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.sins_or_subs"
+        v-model="scope.row.contract_sub_category_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -82,34 +82,33 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter SINS or Subcategory"
+        placeholder=""
 
       >
         <el-option
           v-for="item in sinsOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
- <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-
-  {{ scope.row.sins_or_subs }}
-
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_sub_category && scope.row.contract_sub_category.name !== null)">
+       {{ scope.row.contract_sub_category.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="Contracting Agency"
       width="175"
-      prop="contracting_agency">
+      prop="contract_agency_id">
 
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contracting_agency"
+        v-model="scope.row.contract_agency_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -117,33 +116,32 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Contracting Agency"
+        placeholder=""
 
       >
         <el-option
           v-for="item in contractAgencyOptions"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-  <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-
-  {{ scope.row.contracting_agency }}
-
+    <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+      (scope.row.contract_agency && scope.row.contract_agency.name !== null)">
+      {{ scope.row.contract_agency.name }}
       </span>
       </template>
     </el-table-column>
     <el-table-column
       label="Vehicle Type"
       width="125"
-      prop="vehicle_type">
+      prop="contract_vehicle_type_id">
      <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.vehicle_type"
+        v-model="scope.row.contract_vehicle_type_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -151,40 +149,40 @@
         clearable
         allow-create
         default-first-option
-        placeholder="Select or enter Vehicle Type"
+        placeholder=""
 
       >
         <el-option
           v-for="item in vehicleTypes"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-       {{ scope.row.vehicle_type }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_vehicle_type && scope.row.contract_vehicle_type.name !== null)">
+       {{ scope.row.contract_vehicle_type.name }}
       </span>
       </template>
     </el-table-column>
      <el-table-column
       label="Contract Number"
       width="125"
-      prop="contract_num">
+      prop="contract_number">
 
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_num"
+        v-model="scope.row.contract_number"
         filterable       
         track-by="name"        
         value-key="id"
         class="w-100"
         clearable
-        allow-create
         default-first-option
-        placeholder="Select or enter Contract Number"
+        placeholder=""
 
       >
         <el-option
@@ -197,7 +195,7 @@
       </el-select>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-       {{ scope.row.contract_num}}
+       {{ scope.row.contract_number}}
       </span>
       </template>
     </el-table-column>
@@ -210,7 +208,7 @@
       size="small"
       v-if="scope.$index == createRow"
       type="number"
-      placeholder="Enter Ceiling"
+      placeholder=""
       style="text-align:center"
       v-model="scope.row.ceiling"
       controls-position="right"
@@ -219,7 +217,7 @@
      <el-input
       size="small"      
       type="number"
-      placeholder="Enter Ceiling"
+      placeholder=""
       style="text-align:center"
       v-model="scope.row.ceiling"
       controls-position="right"
@@ -235,50 +233,53 @@
       label="Base Period Start"
       width="100"
       prop="base_period_start">
-    <template slot-scope="scope">
+     <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
+          v-model="bpStart"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"    
+          v-model="scope.row.base_period_start"     
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.base_period_start }}
+      {{ moment(scope.row.base_period_start).format("MM-DD-YYYY") }}
       </span>
      </template>
-       
-    </el-table-column>
-       <el-table-column
-     label="Base Period End"
+   </el-table-column>
+    <el-table-column
+      label="Base Period End"
       width="100"
       prop="base_period_end">
-      <template slot-scope="scope">
+         <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
+          v-model="bpEnd"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"    
+          v-model="scope.row.base_period_end"     
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.base_period_end }}
+     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+      {{ moment(scope.row.base_period_end).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
@@ -290,20 +291,22 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
+          v-model="opStart"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"    
+          v-model="scope.row.option_period_start"     
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.option_period_start }}
+      {{ moment(scope.row.option_period_start).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
@@ -311,24 +314,26 @@
       label="Option Period End"
       width="100"
       prop="option_period_end">
-          <template slot-scope="scope">
+      <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
+          v-model="opEnd"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
-          name="Date"       
+          name="Date"    
+          v-model="scope.row.option_period_end"     
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.option_period_end }}
+      {{ moment(scope.row.option_period_end).format("MM-DD-YYYY") }}
       </span>
      </template>
     </el-table-column>
@@ -341,7 +346,7 @@
        <template slot-scope="scope">
          <el-button
         type="default"
-        @click="saveEdits(scope.$index, scope.row)"
+        @click="saveContractVehicle(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
@@ -364,7 +369,7 @@
           </el-button>
         <el-button
           type="default"
-          @click="saveNewRow(scope.$index, scope.row)"
+          @click="saveContractVehicle(scope.$index, scope.row)"
           v-if="scope.$index == createRow" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
@@ -394,185 +399,22 @@ export default {
         rowIndex: null, 
         rowId: null, 
         tabPosition: 'bottom',
-        sinsOptions: [ 
-                       '8(a), SDVOSB, SB', 
-                       'SDVOSB',
-                       'SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ',
-                       'Small Business'
-                       ],
-       contractAgencyOptions: [ 
-                       'Naval Sea Systems Command (NAVSEA)', 
-                       'General Services Administration ',
-                       'Centers for Medicare & Medicaid Services (CMS)',
-                       'Federal Aviation Administration (FAA)'
-                       ],
-       vehicleTypes:   [ 
-                      'Federal Supply Schedule', 
-                      'IDIQ ',
-                      'GWAC',
-                      'BPA issued as MOA'
-                       ],
-
-      contractNumber:   [ 
-                       '000-33340-3', 
-                       'ZPPPP-18F0001',
-                       'ZZ-VVBCKG0',
-                       'CCCC-008-002'
-                        ],
-        vehicleArray: [{
-          id: 0,
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 250242442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-          }, {
-          id: 1,
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 1299242442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id: 2,
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",               
-          ceiling: 250242442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-           id: 3,
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 250242442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id: 4,
-         vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 3457442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id: 5,
-           vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 250242442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id: 6,
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 478442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id: 7,
-           vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 3350242442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id: 8,
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 125022442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-        }, {
-          id:9, 
-          vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: '$25,000,000,000.00',
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03',
-         }, {
-          id: 10, 
-           vehicle: 'NBC IT-7489',
-          vehicle_full_name: "GSA Schedule ZZZ",
-          sins_or_subs:"SIN 132-51 - Information Technology Professional Services and 132-56 (Health IT SIN) ",
-          contracting_agency: "General Services Administration",        
-          vehicle_type: 'Federal Supply Schedule',
-          contract_num: "7(b) ZZZ TYI",         
-          ceiling: 125022442,
-          base_period_start: '2016-05-03',
-          base_period_end: '2016-05-03',
-          option_period_start: '2016-05-03',
-          option_period_end: '2016-05-03', 
-        }
-        ],
+        bpStart: "",
+        bpEnd: "",
+        opStart: "",
+        opEnd: "",
         search: '',
     };
   },
   methods: {
     ...mapMutations([
-     
+       "SET_CONTRACT_VEHICLES_STATUS"
     ]),
     ...mapActions([
-      "fetchContractProjects"
+      "createContractVehicle",
+      "fetchContractVehicles",
+      "updateContractVehicle",
+      "deleteContractVehicle",
     ]),
   editMode(index, rows) {
     this.rowIndex = index,
@@ -580,57 +422,42 @@ export default {
        console.log(this.createRow);
     this.rowId = rows.id
   },  
-  saveEdits(index, rows){
-    // Row edit action will occur here
-  let updatedContractData = {
-        contractData: {
-          id: rows.id,
-          id: 0,
-          vehicle: rows.vehicle,
-          vehicle_full_name: rows.vehicle_full_name,
-          sins_or_subs: rows.sins_or_subs,
-          contracting_agency: rows.contracting_agency,        
-          vehicle_type: rows.vehicle_type,
-          contract_num: rows.contract_num,         
-          ceiling: rows.ceiling,
-          base_period_start: rows.base_period_start,
-          base_period_end: rows.base_period_start,
-          option_period_start: rows.option_period_start,
-          option_period_end: rows.option_period_end
-      },
-    };
-    console.log(updatedContractData)
-    // this.updateContractData({
-    //   ...updatedContractData,
-    // });   
-    console.log(index, rows);
+  saveContractVehicle(index, rows){
     this.rowIndex = null;
     this.rowId = null;
-  }, 
-  saveNewRow(index, rows){
-    // Row create action will occur here
-    //After save, dont forget to push new empty object to append new create row
-      let newContractData = {
-        contractData: {
-          vehicle: rows.vehicle,
-          vehicle_full_name: rows.vehicle_full_name,
-          sins_or_subs: rows.sins_or_subs,
-          contracting_agency: rows.contracting_agency,        
-          vehicle_type: rows.vehicle_type,
-          contract_num: rows.contract_num,         
+    let id = null;
+    
+    if (rows.id) {
+      id = rows.id
+      this.bpStart = rows.base_period_start;
+      this.bpEnd = rows.base_period_end;
+      this.opStart = rows.option_period_start;
+      this.opEnd = rows.option_period_end;   
+    }
+    // Row edit action will occur here
+  let contractVehicleData = {
+        cVehicleData: {
+          name: rows.name,
+          fullName: rows.full_name,
+          subCatId: rows.contract_sub_category_id,
+          cAgencyId: rows.contract_agency_id,        
+          type: rows.contract_vehicle_type_id,
+          cNumber: rows.contract_number,         
           ceiling: rows.ceiling,
-          base_period_start: rows.base_period_start,
-          base_period_end: rows.base_period_start,
-          option_period_start: rows.option_period_start,
-          option_period_end: rows.option_period_end
+          bp_startDate: this.bpStart,
+          bp_endDate: this.bpEnd,
+          op_startDate: this.opStart,
+          op_endDate: this.opEnd,
       },
     };
-    console.log(newContractData)
-    // this.createContractData({
-    //   ...newContractData,
-    // }); 
-    // this.tableData.push({})
-  },
+    console.log(contractVehicleData)
+    if (id){
+      this.updateContractVehicle({...contractVehicleData, id})
+      console.log(contractVehicleData)
+    } else {
+      this.createContractVehicle({...contractVehicleData})     
+    }
+  }, 
   cancelEdits(index, rows) {
     this.rowIndex = null;
     this.rowId = null;
@@ -644,29 +471,89 @@ export default {
   }
   },
   mounted() {
-    this.fetchContractProjects()
+    // this.fetchContractVehicles()
   },
   computed: {
     ...mapGetters([
-     
+      "contractProjects",
+       //Contract Vehicles
+      "contractVehiclesStatus",
+      "contractVehicles",
+      "contractVehiclesLoaded",
     ]),   
     tableData(){
-      if (this.vehicleArray && this.vehicleArray.length > 0){
-        let data = this.vehicleArray
+      if (this.contractVehicles && this.contractVehicles.length > 0){
+        let data = this.contractVehicles
         data.push({})
         return data
-     }
+     } else {
+        let data = []
+         data.push({})
+         return data
+     }  
     },
     createRow(){
       let lastItem = this.tableData.length - 1
-     console.log(lastItem)
-    return lastItem
+       console.log(lastItem)
+      return lastItem
 
+    },
+contractAgencyOptions(){
+    if (this.contractVehicles && this.contractVehicles.length > 0){
+      let uniqueAgencies = _.uniq(this.contractVehicles.filter(t => t.contract_agency_id))
+      let agencies = uniqueAgencies.map(t => t.contract_agency).filter(t => t && t.id && t !== undefined && t !== null)
+      let unique = [];
+      // console.log(naics)
+      agencies.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+      return unique
+    }
+  },
+  sinsOptions(){
+      if (this.contractVehicles && this.contractVehicles.length > 0){
+      let uniqueSins = _.uniq(this.contractVehicles.filter(t => t.contract_sub_category_id))
+      let sins = uniqueSins.map(t => t.contract_sub_category).filter(t => t && t.id && t !== undefined && t !== null)
+      let unique = [];
+      // console.log(naics)
+      sins.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+      return unique
+    }
+  },
+  vehicleTypes(){
+      if (this.contractVehicles && this.contractVehicles.length > 0){
+      let uniqueTypes = _.uniq(this.contractVehicles.filter(t => t.contract_vehicle_type_id))
+      let types = uniqueTypes.map(t => t.vehicle_type).filter(t => t && t.id && t !== undefined && t !== null)
+      let unique = [];
+      // console.log(naics)
+      types.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+      return unique
+     }
+    },
+    contractNumber(){
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueContractNums = this.contractProjects.filter(t => t.number)
+        let contractNums = uniqueContractNums.map(t => t.number).filter(t => t !== null)
+        return _.uniq(contractNums.map(t => t))
+      }
     },
   },
   watch: {
-   
-  
+     contractVehiclesStatus: {
+      handler() {
+        if (this.contractVehiclesStatus == 200) {
+          this.$message({
+            message: `Vehicle data saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACT_VEHICLES_STATUS(0);
+          this.fetchContractVehicles();
+          this.bpStart = "";
+          this.bpEnd = "";
+          this.opStart = "";
+          this.opEnd = "";   
+        }
+      },
+    },  
     
   },
 };

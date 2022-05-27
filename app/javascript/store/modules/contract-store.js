@@ -7,33 +7,28 @@ const contractStore = {
 
   state: () => ({
     associated_contracts: [],
-    associated_contracts_loaded: true,
     associated_contracts_status: 0,
+    associated_contracts_loaded: true,
 
+   //CONTRACT PROJECTS DATA
     contract_projects: [],
-    contract_projects_loaded: true,
     contract_project_status: 0,
+    contract_projects_loaded: true,
+    
+    //VEHICLES
+    contract_vehicles: [],
+    contract_vehicles_status: 0,
+    contract_vehicles_loaded: true,
+
+    //POCS
+    contract_pocs: [],
+    contract_pocs_status: 0,
+    contract_pocs_loaded: true,
+
    
   }),
 
   actions: {
-  // GET Contract Project Data  **DONE**
-  // GET Vehicles Data
-  // GET POC DATA
-
-  // POST (new) Contract Data  **DONE**
-  // POST (new) Vehicles Data
-  // POST (new) POC Data
-  // POST Associate Contract to Program
-
-  // UPDATE Contract Data
-  // UPDATE Vehicles
-  // UPDATE POC Data
-
-  // DELETE Contract Data
-  // DELETE Vehicles Data
-  // DELETE POC Data
-
   // GET REQUESTS
     fetchContractProjects({ commit }) {
       commit("TOGGLE_CONTRACT_PROJECTS_LOADED", false);
@@ -57,52 +52,50 @@ const contractStore = {
           commit("TOGGLE_CONTRACT_PROJECTS_LOADED", true);
         });
     },
-    fetchVehiclesData({ commit }, id ) {
-      commit("TOGGLE_ROLES_LOADED", false);
-   
+    fetchContractVehicles({ commit }) {
+      commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
       axios({
         method: "GET",
-        url: ``,
+        url: `${API_BASE_PATH}/contract_vehicles`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_ROLES", res.data.roles);
+          commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
           // console.log(res.data.roles)
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_ROLES_LOADED", true);
+          commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
         });
     },
-    fetchPOCData({ commit }, id ) {
-      commit("TOGGLE_ROLES_LOADED", false);
-   
+    fetchContractPOCs({ commit } ) {
+      commit("TOGGLE_CONTRACT_POCS_LOADED", false);   
       axios({
         method: "GET",
-        url: ``,
+        url: `${API_BASE_PATH}/contract_project_pocs`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_ROLES", res.data.roles);
+          commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
           // console.log(res.data.roles)
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_ROLES_LOADED", true);
+          commit("TOGGLE_CONTRACT_POCS_LOADED", true);
         });
     },
   // POST REQUESTS
-  createContractProject({ commit }, { cProjectData }) {
+    createContractProject({ commit }, { cProjectData }) {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     let formData = new FormData();
     console.log(cProjectData)
@@ -144,49 +137,71 @@ const contractStore = {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
       });
     },
-    newVehiclesData({ commit }, id ) {
-    commit("TOGGLE_ROLES_LOADED", false);
- 
-    axios({
-      method: "POST",
-      url: ``,
-      headers: {
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-          .attributes["content"].value,
-      },
-    })
-      .then((res) => {
-        commit("SET_ROLES", res.data.roles);
-        // console.log(res.data.roles)
+    createContractVehicle({ commit }, { cVehicleData }) {
+      commit("TOGGLE_CONTRACT_VECHILES_LOADED", false);
+      let formData = new FormData();
+      console.log(cVehicleData)
+        formData.append("contract_vehicle[name]",  cVehicleData.name);
+        formData.append("contract_vehicle[full_name]", cVehicleData.fullName);
+        formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
+        formData.append("contract_vehicle[contract_agency_id]", cVehicleData.cAgencyId);
+        formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
+        formData.append("contract_vehicle[contract_number]", cVehicleData.cNumber);
+        formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
+        formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
+        formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
+        formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
+        formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/contract_vehicles`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
       })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        commit("TOGGLE_ROLES_LOADED", true);
-      });
+        .then((res) => {
+          commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
+          commit("SET_CONTRACT_VEHICLES_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
+        });
     },
-    newPOCData({ commit }, id ) {
-    commit("TOGGLE_ROLES_LOADED", false);
- 
-    axios({
-      method: "POST",
-      url: ``,
-      headers: {
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-          .attributes["content"].value,
-      },
-    })
-      .then((res) => {
-        commit("SET_ROLES", res.data.roles);
-        // console.log(res.data.roles)
+    createContractPOC({ commit }, { cPOCsData }) {
+      commit("TOGGLE_CONTRACT_POCS_LOADED", false);
+      let formData = new FormData();
+      console.log(cPOCsData)
+        formData.append("contract_project_poc[name]", cPOCsData.name);
+        // formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
+        formData.append("contract_project_poc[email]", cPOCsData.email);
+        formData.append("contract_project_poc[title]", cPOCsData.title);
+        formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
+        formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);
+        formData.append("contract_project_poc[notes]", cPOCsData.notes);
+      axios({
+        method: "POST",
+        url: `${API_BASE_PATH}/contract_project_pocs`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
       })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        commit("TOGGLE_ROLES_LOADED", true);
-      });
+        .then((res) => {
+          commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
+          commit("SET_CONTRACT_POCS_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACT_POCS_LOADED", true);
+        });
     },
     associateContractToProgram({ commit }, { contract } ) {
       commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", false);
@@ -217,6 +232,7 @@ const contractStore = {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     let formData = new FormData();
     console.log(cProjectData)
+      formData.append("contract_project_data[id]", id);
       formData.append("contract_project_data[charge_code]", cProjectData.charge_code);
       formData.append("contract_project_data[name]", cProjectData.name)
       formData.append("contract_project_data[contract_customer_id]", cProjectData.contract_customer_id)
@@ -234,7 +250,11 @@ const contractStore = {
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
       formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
       formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
-      
+      formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
+      formData.append("contract_project_data[gov_contract_poc_id]", cProjectData.gov_poc_id)
+      formData.append("contract_project_data[pm_contract_poc_id]", cProjectData.pm_poc_id)  
+      formData.append("contract_project_data[total_founded_value]", cProjectData.tfv)
+      formData.append("contract_project_data[billings_to_date]", cProjectData.btd)      
     axios({
       method: "PUT",
       url: `${API_BASE_PATH}/contract_project_data/${id}`,
@@ -254,74 +274,95 @@ const contractStore = {
       .finally(() => {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
       });
-    },
-    updateVehiclesData({ commit }, id ) {
-    commit("TOGGLE_ROLES_LOADED", false);
-  
+  },
+  updateContractVehicle({ commit }, { cVehicleData, id } ) {    
+    commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
+    console.log(id)
+    let formData = new FormData();
+    formData.append("contract_vehicle[id]", id);
+    formData.append("contract_vehicle[name]",  cVehicleData.name);
+    formData.append("contract_vehicle[full_name]", cVehicleData.fullName);
+    formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
+    formData.append("contract_vehicle[contract_agency_id]", cVehicleData.cAgencyId);
+    formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
+    formData.append("contract_vehicle[contract_number]", cVehicleData.cNumber);
+    formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
+    formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
+    formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
+    formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
+    formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
     axios({
       method: "PUT",
-      url: ``,
+      url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+      data: formData, 
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
           .attributes["content"].value,
       },
     })
       .then((res) => {
-        commit("SET_ROLES", res.data.roles);
-        // console.log(res.data.roles)
+        commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
+        commit("SET_CONTRACT_VEHICLES_STATUS", res.status);
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => {
-        commit("TOGGLE_ROLES_LOADED", true);
+        commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
       });
+  },
+  updateContractPOC({ commit }, { cPOCsData, id }) {
+  commit("TOGGLE_CONTRACT_POCS_LOADED", false);
+  let formData = new FormData();
+  console.log(cPOCsData)
+    formData.append("contract_project_poc[name]", cPOCsData.name);
+    formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
+    formData.append("contract_project_poc[email]", cPOCsData.email);
+    formData.append("contract_project_poc[title]", cPOCsData.title);
+    formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
+    formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);
+    formData.append("contract_project_poc[notes]", cPOCsData.notes);
+  axios({
+    method: "PUT",
+    url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+    data: formData,
+    headers: {
+      "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+        .attributes["content"].value,
     },
-    updatePOCData({ commit }, id ) {
-    commit("TOGGLE_ROLES_LOADED", false);
-  
+  })
+    .then((res) => {
+      commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
+      commit("SET_CONTRACT_POCS_STATUS", res.status);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      commit("TOGGLE_CONTRACT_POCS_LOADED", true);
+    });
+  },
+    // DELETE REQUESTS
+   deleteContractProject({ commit }, id) {
+    commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     axios({
-      method: "PUT",
-      url: ``,
+      method: "DELETE",
+      url: `${API_BASE_PATH}/contract_project_data/${id}`,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
           .attributes["content"].value,
       },
     })
       .then((res) => {
-        commit("SET_ROLES", res.data.roles);
-        // console.log(res.data.roles)
+        commit("SET_CONTRACT_PROJECTS", res.data.contract_project_data);
+        commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => {
-        commit("TOGGLE_ROLES_LOADED", true);
+        commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
       });
-    },
-
-  // DELETE REQUESTS
-    deleteContractData({ commit }, id ) {
-        commit("TOGGLE_ROLES_LOADED", false);
-      
-        axios({
-          method: "PUT",
-          url: ``,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
-        })
-          .then((res) => {
-            commit("SET_ROLES", res.data.roles);
-            // console.log(res.data.roles)
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_ROLES_LOADED", true);
-          });
     },
     deleteVehiclesData({ commit }, id ) {
         commit("TOGGLE_ROLES_LOADED", false);
@@ -373,19 +414,40 @@ const contractStore = {
     SET_ASSOCIATED_CONTRACTS_STATUS: (state, status) => (state.associated_contracts_status = status),   
     TOGGLE_ASSOCIATED_CONTRACTS_LOADED: (state, loaded) => (state.associated_contracts_loaded = loaded),
 
+    //CONTRACT PROJECTS DATA
     SET_CONTRACT_PROJECTS: (state, value) => (state.contract_projects = value),
     SET_CONTRACT_PROJECT_STATUS: (state, status) => (state.contract_project_status = status), 
     TOGGLE_CONTRACT_PROJECTS_LOADED: (state, loaded) => (state.contract_projects_loaded = loaded),
+
+    //VEHICLES
+    SET_CONTRACT_VEHICLES: (state, value) => (state.contract_vehicles = value),
+    SET_CONTRACT_VEHICLES_STATUS: (state, status) => (state.contract_vehicles_status = status), 
+    TOGGLE_CONTRACT_VEHICLES_LOADED: (state, loaded) => (state.contract_vehicles_loaded = loaded),
+
+    //POCS
+    SET_CONTRACT_POCS: (state, value) => (state.contract_pocs = value),
+    SET_CONTRACT_POCS_STATUS: (state, status) => (state.contract_pocs_status = status), 
+    TOGGLE_CONTRACT_POCS_LOADED: (state, loaded) => (state.contract_pocs_loaded = loaded),
   },
 
   getters: {
    associatedContracts: (state) => state.associated_contracts,
    associatedContractsStatus: (state) => state.associated_contracts_status,
 
+   //CONTRACT PROJECTS DATA
    contractProjects: (state) => state.contract_projects, 
    contractProjectStatus: (state) => state.contract_project_status,
-   contractProjectsLoaded: (state) => state.contract_projects_loaded
+   contractProjectsLoaded: (state) => state.contract_projects_loaded,
 
+   //VEHICLES
+   contractVehicles: (state) => state.contract_vehicles, 
+   contractVehiclesStatus: (state) => state.contract_vehicles_status,
+   contractVehiclesLoaded: (state) => state.contract_vehicles_loaded,
+
+   //POCS
+   contractPOCs: (state) => state.contract_pocs, 
+   contractPOCsStatus: (state) => state.contract_pocs_status,
+   contractPOCsLoaded: (state) => state.contract_pocs_loaded
   },
 };
 
