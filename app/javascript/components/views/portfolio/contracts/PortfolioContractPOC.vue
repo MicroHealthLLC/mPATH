@@ -3,7 +3,6 @@
    <div  style="height: 100%; overflow-y:auto">
   <el-table
     :data="tableData"
-    :load="log(pocOption)"
     border
     height="800"
     >
@@ -25,7 +24,7 @@
       width="420"
       prop="pm_contract_poc_id">
      <template slot-scope="scope" >
-     <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.pm_contract_poc_id">
+     <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.pm_contract_poc_id"> -->
        <el-select
         v-model="scope.row.pm_contract_poc_id"
         filterable       
@@ -45,10 +44,10 @@
         >
         </el-option>
       </el-select>
-      </span>
-      <span v-else>
+      <!-- </span> -->
+      <!-- <span v-else>
       {{ scope.row.pm_contract_poc_id }}
-      </span>
+      </span> -->
       </template>
      </el-table-column>
     
@@ -57,7 +56,7 @@
       width="420"
       prop="gov_contract_poc_id">
      <template slot-scope="scope" >
-     <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.gov_contract_poc_id">
+     <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.gov_contract_poc_id"> -->
        <el-select
         v-model="scope.row.gov_contract_poc_id"
         filterable       
@@ -77,10 +76,10 @@
         >
         </el-option>
       </el-select>
-      </span>
-      <span v-else>
+      <!-- </span> -->
+      <!-- <span v-else>
       {{ scope.row.gov_contract_poc_id }}
-      </span>
+      </span> -->
       </template>
     </el-table-column>
    
@@ -89,7 +88,7 @@
       width="420"
       prop="co_contract_poc_id">
      <template slot-scope="scope" >
-     <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.co_contract_poc_id">
+     <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.co_contract_poc_id"> -->
        <el-select
         v-model="scope.row.co_contract_poc_id"
         filterable       
@@ -110,10 +109,10 @@
         >
         </el-option>
       </el-select>
-      </span>
-      <span v-else>
+      <!-- </span> -->
+      <!-- <span v-else>
       {{ scope.row.co_contract_poc_id }}
-      </span>
+      </span> -->
       </template>
      </el-table-column>
 
@@ -123,29 +122,37 @@
       fixed="right"
       align="center">
    <template slot-scope="scope">
-      <el-button
+      <!-- <el-button
         type="default"
         @click="saveContractPOCs(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
+        </el-button> -->
+          <el-button
+        type="default"
+        @click="saveContractPOCs(scope.$index, scope.row)"
+  
+        v-tooltip="`Save`" 
+        class="bg-primary btn-sm text-light mx-0">               
+        <i class="far fa-save"></i>
         </el-button>
-      <el-button 
+      <!-- <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary btn-sm text-light mx-0">
       <i class="fas fa-ban"></i>
-        </el-button>
-         <el-button
+        </el-button> -->
+         <!-- <el-button
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
            v-if="scope.$index !== rowIndex"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
-          </el-button>
+          </el-button> -->
         </template>
 
     </el-table-column>
