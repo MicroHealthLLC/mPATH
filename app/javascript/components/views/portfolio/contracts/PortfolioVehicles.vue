@@ -137,11 +137,11 @@
     <el-table-column
       label="Vehicle Type"
       width="125"
-      prop="vehicle_type_id">
+      prop="contract_vehicle_type_id">
      <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.vehicle_type_id"
+        v-model="scope.row.contract_vehicle_type_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -162,8 +162,8 @@
       </el-select>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-        (scope.row.vehicle_type && scope.row.vehicle_type.name !== null)">
-       {{ scope.row.vehicle_type.name }}
+        (scope.row.contract_vehicle_type && scope.row.contract_vehicle_type.name !== null)">
+       {{ scope.row.contract_vehicle_type.name }}
       </span>
       </template>
     </el-table-column>
@@ -181,7 +181,6 @@
         value-key="id"
         class="w-100"
         clearable
-        allow-create
         default-first-option
         placeholder=""
 
@@ -442,7 +441,7 @@ export default {
           fullName: rows.full_name,
           subCatId: rows.contract_sub_category_id,
           cAgencyId: rows.contract_agency_id,        
-          type: rows.vehicle_type_id,
+          type: rows.contract_vehicle_type_id,
           cNumber: rows.contract_number,         
           ceiling: rows.ceiling,
           bp_startDate: this.bpStart,
@@ -454,12 +453,9 @@ export default {
     console.log(contractVehicleData)
     if (id){
       this.updateContractVehicle({...contractVehicleData, id})
+      console.log(contractVehicleData)
     } else {
-      this.createContractVehicle({...contractVehicleData})
-      this.bpStart = "";
-      this.bpEnd = "";
-      this.opStart = "";
-      this.opEnd = "";   
+      this.createContractVehicle({...contractVehicleData})     
     }
   }, 
   cancelEdits(index, rows) {
@@ -479,6 +475,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      "contractProjects",
        //Contract Vehicles
       "contractVehiclesStatus",
       "contractVehicles",
@@ -523,7 +520,7 @@ contractAgencyOptions(){
   },
   vehicleTypes(){
       if (this.contractVehicles && this.contractVehicles.length > 0){
-      let uniqueTypes = _.uniq(this.contractVehicles.filter(t => t.vehicle_type_id))
+      let uniqueTypes = _.uniq(this.contractVehicles.filter(t => t.contract_vehicle_type_id))
       let types = uniqueTypes.map(t => t.vehicle_type).filter(t => t && t.id && t !== undefined && t !== null)
       let unique = [];
       // console.log(naics)
@@ -532,9 +529,9 @@ contractAgencyOptions(){
      }
     },
     contractNumber(){
-     if (this.contractVehicles && this.contractVehicles.length > 0){
-        let uniqueContractNums = this.contractVehicles.filter(t => t.contract_number)
-        let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t !== null)
+     if (this.contractProjects && this.contractProjects.length > 0){
+        let uniqueContractNums = this.contractProjects.filter(t => t.number)
+        let contractNums = uniqueContractNums.map(t => t.number).filter(t => t !== null)
         return _.uniq(contractNums.map(t => t))
       }
     },
@@ -550,6 +547,10 @@ contractAgencyOptions(){
           });
           this.SET_CONTRACT_VEHICLES_STATUS(0);
           this.fetchContractVehicles();
+          this.bpStart = "";
+          this.bpEnd = "";
+          this.opStart = "";
+          this.opEnd = "";   
         }
       },
     },  
