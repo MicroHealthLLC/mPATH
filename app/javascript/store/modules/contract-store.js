@@ -145,9 +145,8 @@ const contractStore = {
         formData.append("contract_vehicle[full_name]", cVehicleData.fullName);
         formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
         formData.append("contract_vehicle[contract_agency_id]", cVehicleData.cAgencyId);
-        formData.append("contract_vehicle[vehicle_type_id]", cVehicleData.type);
-
-        formData.append("contract_vehicles[contract_number]", cVehicleData.cNumber);
+        formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
+        formData.append("contract_vehicle[contract_number]", cVehicleData.cNumber);
         formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
         formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
         formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
@@ -276,23 +275,26 @@ const contractStore = {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
       });
   },
-  updateVehiclesData({ commit }, { cVehicleData, id } ) {
+  updateContractVehicle({ commit }, { cVehicleData, id } ) {    
     commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
-    formData.append("contract_vehicle[id]",  cVehicleData.id);
+    console.log(id)
+    let formData = new FormData();
+    formData.append("contract_vehicle[id]", id);
     formData.append("contract_vehicle[name]",  cVehicleData.name);
-    formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
-    formData.append("contract_vehicle[contract_agency_id]", cVehicleData.charge_code);
-    formData.append("contract_vehicle[vehicle_type_id]", cVehicleData.charge_code);
     formData.append("contract_vehicle[full_name]", cVehicleData.fullName);
-    formData.append("contract_vehicle[contract_number]", cVehicleData.contractNum);
+    formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
+    formData.append("contract_vehicle[contract_agency_id]", cVehicleData.cAgencyId);
+    formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
+    formData.append("contract_vehicle[contract_number]", cVehicleData.cNumber);
     formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
     formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
     formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
     formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
-    formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);
+    formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
     axios({
       method: "PUT",
       url: `${API_BASE_PATH}/contract_vehicles/${id}`,
+      data: formData, 
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
           .attributes["content"].value,
