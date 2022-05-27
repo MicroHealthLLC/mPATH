@@ -21,7 +21,11 @@
     </div>
 
   <el-tabs :tab-position="tabPosition" type="border-card"  class="bottomTabs"  @tab-click="handleClick">
-    <el-tab-pane label="">
+    <el-tab-pane label=""
+    v-loading="!contractVehiclesLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    >
      <span slot="label"> <i class="fa-solid fa-car mr-1" :class="[ pane0? 'mh-green-text' : 'txt-secondary']"></i>
      VEHICLES
      </span>
@@ -1118,7 +1122,8 @@ export default {
       "contractPOCsStatus",  
       "contractPOCsLoaded",
       //Vehicles
-      "contractVehicles"
+      "contractVehicles",
+      "contractVehiclesLoaded",
 
     ]),   
   tableData(){
@@ -1176,12 +1181,11 @@ export default {
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
-        let uniqueVehicles = _.uniq(this.contractVehicles.filter(t => t && t.id))
-        let vehicles = uniqueVehicles.map(t => t.contract_vehicles).filter(t => t !== undefined)
-        let unique = [];
-        // console.log(vehicles)
-        vehicles.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
+        let vehicles = this.contractVehicles.filter(t => t && t.id)
+        // let unique = [];
+        // // console.log(vehicles)
+        // vehicles.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return vehicles
       }
     },
     customerOptions(){
@@ -1288,7 +1292,7 @@ export default {
     width: 100%;
   }
 /deep/.el-input__inner {
-  padding: 1px 1px 0.5px 1px;
+  padding: 1px 1px 1px 1px;
 }
 /deep/.el-table {
     font-size: 13px !important;
