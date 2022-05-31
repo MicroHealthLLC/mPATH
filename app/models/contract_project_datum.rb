@@ -13,7 +13,7 @@ class ContractProjectDatum < ApplicationRecord
   def to_json
     h = self.as_json
     h.merge!({contract_customer: contract_customer.as_json}) if contract_customer_id
-    h.merge!({contract_vehicle: contract_vehicle.as_json}) if contract_vehicle_id
+    h.merge!({contract_vehicle: self.contract_vehicle.as_json}) if contract_vehicle_id
     h.merge!({contract_award_to: contract_award_to.as_json}) if contract_award_to_id
     h.merge!({contract_pop: contract_pop.as_json}) if contract_pop_id
     h.merge!({contract_naic: contract_naic.as_json}) if contract_naic_id

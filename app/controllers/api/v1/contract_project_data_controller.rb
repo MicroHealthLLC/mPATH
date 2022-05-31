@@ -25,7 +25,7 @@ class Api::V1::ContractProjectDataController < AuthenticatedController
   end
 
   def index
-    contract_project_data = ContractProjectDatum.all.map(&:to_json)
+    contract_project_data = ContractProjectDatum.includes([ {contract_vehicle: [:contract_vehicle_type, :contract_sub_category] }, :contract_award_to, :contract_naic, :contract_customer, :contract_award_type, :contract_type, :contract_current_pop, :contract_pop, :contract_number, :user]).all.map(&:to_json)
     render json: {contract_project_data: contract_project_data}
   end
 

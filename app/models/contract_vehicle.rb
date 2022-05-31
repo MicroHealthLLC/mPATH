@@ -9,9 +9,10 @@ class ContractVehicle < ApplicationRecord
 
   def to_json
     h = self.as_json
-    h.merge!({contract_sub_category: contract_sub_category.as_json}) if contract_sub_category_id
-    h.merge!({contract_agency: contract_agency.as_json}) if contract_agency_id
-    h.merge!({contract_vehicle_type: contract_vehicle_type.as_json}) if contract_vehicle_type_id
+    vehicle = self
+    h.merge!({contract_sub_category: vehicle.contract_sub_category.as_json}) if contract_sub_category_id
+    h.merge!({contract_agency: vehicle.contract_agency.as_json}) if contract_agency_id
+    h.merge!({contract_vehicle_type: vehicle.contract_vehicle_type.as_json}) if contract_vehicle_type_id
     h
   end
 
