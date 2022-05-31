@@ -328,7 +328,7 @@
                 this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId );
               }
             }
-            if(program_id && program_id){
+            if(program_id && project_id){
               this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             }
 
