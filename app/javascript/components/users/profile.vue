@@ -352,7 +352,7 @@
                 // this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
                 this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs[program_id][project_id], h => !["overview", "notes"].includes(h.id))
               }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
-                if(program_id && program_id && allowed_sub_navigation_tabs[program_id][project_id]){
+                if(program_id && project_id && allowed_sub_navigation_tabs[program_id][project_id]){
                   this.subNavigationOptions = allowed_sub_navigation_tabs[program_id][project_id]
                 }else{
                   this.subNavigationOptions = []
