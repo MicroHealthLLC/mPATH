@@ -2,7 +2,7 @@
   <div style="height:80vh" class="portfolio-contracts-module">
    <div  style="height: 100%; overflow-y:auto" v-if="contractProjects && contractProjects.length > 0">
    <el-table
-    :data="contractProjects.filter(t => t && t.id)"
+    :data="contractProjects.filter(t => t && t.id && t.contract_end_date < today)"
     border
     height="800"
     style="width: 95%">
@@ -180,6 +180,7 @@ export default {
       return {
         nothing: true,
         search: '',
+        today: new Date().toISOString().slice(0, 10)
     };
   },
   computed: {

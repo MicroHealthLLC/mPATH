@@ -3,6 +3,7 @@ import                           'regenerator-runtime/runtime'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
 import                           'vue2-datepicker/index.css'
 import                           'bootstrap-vue/dist/bootstrap-vue.css'
+import                           'vue-phone-number-input/dist/vue-phone-number-input.css'
 import _                    from 'lodash'
 import Multiselect          from 'vue-multiselect'
 import VModal               from 'vue-js-modal'
@@ -26,6 +27,9 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
+import VuePhoneNumberInput  from 'vue-phone-number-input'
+
+
 
 Vue.use(vco)
 Vue.mixin(utils)
@@ -42,6 +46,7 @@ Vue.component('vue-slide-bar', VueSlideBar)
 Vue.component('date-picker', DatePicker)
 Vue.component('v2-date-picker', V2DatePicker)
 Vue.component('GmapCluster', GmapCluster)
+Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
 Vue.config.productionTip = false
