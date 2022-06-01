@@ -62,7 +62,7 @@
         filterable       
         track-by="name"        
         value-key="id"
-        class="w-100"
+        class="w-100 pl-2"
         clearable
         allow-create
         default-first-option

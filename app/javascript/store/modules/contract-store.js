@@ -254,7 +254,8 @@ const contractStore = {
       formData.append("contract_project_data[gov_contract_poc_id]", cProjectData.gov_poc_id)
       formData.append("contract_project_data[pm_contract_poc_id]", cProjectData.pm_poc_id)  
       formData.append("contract_project_data[total_founded_value]", cProjectData.tfv)
-      formData.append("contract_project_data[billings_to_date]", cProjectData.btd)      
+      formData.append("contract_project_data[billings_to_date]", cProjectData.btd)
+      formData.append("contract_project_data[comments]", cProjectData.notes)      
     axios({
       method: "PUT",
       url: `${API_BASE_PATH}/contract_project_data/${id}`,

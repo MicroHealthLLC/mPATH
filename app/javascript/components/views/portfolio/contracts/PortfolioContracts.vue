@@ -359,7 +359,7 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
-          v-model="contractStartDate"
+          v-model="newContractStartDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -367,14 +367,18 @@
        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"     
-          v-model="scope.row.contract_start_date"  
+          v-model="contractStartDate"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.contract_start_date).format("MM-DD-YYYY") }}
+        <span v-if="scope.row.contract_start_date == null || scope.row.contract_start_date == undefined">      
+        </span>
+        <span v-else>
+            {{ moment(scope.row.contract_start_date).format("MM-DD-YYYY") }}
+        </span>   
       </span>
      </template>
     </el-table-column>
@@ -385,8 +389,9 @@
       <template slot-scope="scope">
         <v2-date-picker
           name="Date"     
-          v-model="contractEndDate"  
+          v-model="newContractEndDate"  
           v-if="scope.$index == createRow"
+          :disabled-date="disabledNewContractEndDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -394,14 +399,19 @@
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"     
-          v-model="scope.row.contract_end_date"  
+          :disabled-date="disabledContractEndDate"
+          v-model="contractEndDate"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow" >
-      {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
+        <span v-if="scope.row.contract_end_date == null || scope.row.contract_end_date == undefined">      
+        </span>
+        <span v-else>
+          {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
+        </span>     
       </span>
      </template>
     </el-table-column>
@@ -428,7 +438,7 @@
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.total_contract_value }}
+      {{ scope.row.total_contract_value | toCurrency }}
       </span>
     </template>
 
@@ -504,7 +514,7 @@
       <template slot-scope="scope">
         <v2-date-picker
           name="Date"   
-          v-model="popStartDate"      
+          v-model="newPopStartDate"      
           v-if="scope.$index == createRow"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
@@ -513,15 +523,18 @@
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"   
-          v-model="scope.row.contract_current_pop_start_date"          
+          v-model="popStartDate"          
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.contract_current_pop_start_date).format('MM-DD-YYYY') }}
-      </span>
+       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+          <span v-if="scope.row.contract_current_pop_start_date == null || scope.row.contract_current_pop_start_date == undefined" >        
+          </span>
+          <span v-else> {{ moment(scope.row.contract_current_pop_start_date).format("MM-DD-YYYY") }}
+          </span>      
+       </span>
      </template>
     </el-table-column>
        <el-table-column
@@ -529,25 +542,30 @@
        width="100"
       prop="contract_current_pop_end_date">
      <template slot-scope="scope">
-     <v2-date-picker
-          name="Date" 
-          v-model="popEndDate"        
-          v-if="scope.$index == createRow"
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
+        <v2-date-picker
+        name="Date" 
+        v-model="newPopEndDate"        
+        v-if="scope.$index == createRow"
+        :disabled-date="disabledNewPoPEndDate"
+        value-type="YYYY-MM-DD"                     
+        format="M/DD/YYYY"
+        class="w-100"
+        />
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"  
-          v-model="scope.row.contract_current_pop_end_date"       
+          :disabled-date="disabledPoPEndDate"
+          v-model="popEndDate"       
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.contract_current_pop_end_date).format('MM-DD-YYYY') }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+       <span v-if="scope.row.contract_current_pop_end_date == null || scope.row.contract_current_pop_end_date == undefined" >        
+          </span>
+          <span v-else>  {{ moment(scope.row.contract_current_pop_end_date).format('MM-DD-YYYY') }}
+          </span>    
       </span>
      </template>
     </el-table-column>
@@ -676,17 +694,22 @@
           width="300"
           prop="email">
           <template slot-scope="scope">
-            <el-input
+             <el-input
               size="small"
               v-if="scope.$index == pocCreateRow"
               placeholder=""
-              style="text-align:center"
-              v-model="scope.row.email"
+              v-model="email"
+              for="email"
+              type="email"
+              @change="validEmail"
+              style="text-align:center"            
               controls-position="right"
             ></el-input>
+        
             <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
             <el-input
               size="small"
+              type="email"
               placeholder=""
               style="text-align:center"
               v-model="scope.row.email"
@@ -866,7 +889,16 @@ import PortfolioContractPOC from "./PortfolioContractPOC.vue";
 import PortfolioExpiredContracts from "./PortfolioExpiredContracts.vue";
 // import ProgramTaskForm from "./ProgramTaskForm.vue";
 // import ProgramLessons from "./ProgramLessons.vue";
-
+Vue.filter('toCurrency', function (value) {
+    if (typeof value !== "number") {
+        return value;
+    }
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    });
+    return formatter.format(value);
+});
 export default {
   name: "PortfolioContracts",
   components: {
@@ -876,15 +908,21 @@ export default {
     PortfolioContractPOC,
     // CurrencyInput,
   },
+  
     data() {    
       return {
-        contractStartDate: "",
-        contractEndDate: "",
-        popStartDate: "",
-        popEndDate: "",
+        contractStartDate: null,
+        contractEndDate: null,
+        popStartDate: null,
+        popEndDate: null,
+        newContractStartDate: null,
+        newContractEndDate: null,
+        newPopStartDate: null,
+        newPopEndDate: null,
         nothing: true,
         pocDialogVisible: false,
         rowIndex: null, 
+        email: null, 
         rowId: null, 
         pocRowIndex: null, 
         pocRowId: null, 
@@ -894,32 +932,6 @@ export default {
         pane3: false, 
         pane4: false, 
         tabPosition: 'bottom',      
-        pocsArray: [{
-          id: 0,
-          poc_name: 'David Pumphrey',
-          poc_title: 'Program Manager',
-          poc_email: 'david.pumphrey@microhealthllc.com',
-          poc_work_num: 8753334567,
-          poc_mobile_num: 8753334567,
-          notes:'Lorem ipsum dolor sit amet, consectetur adipiscing eliua.',
-        }, {
-          id: 1,
-          poc_name: 'Michael Holmes',
-          poc_title: 'Program Manager',
-          poc_email: 'michael.holmes@microhealthllc.com',
-          poc_work_num: 8753334567,
-          poc_mobile_num: 8753334567,
-          notes:'Lorem ipsum dolor sit amet, consectetur adipiscing eliua.',
-        }, {
-          id: 2,
-          poc_name: 'Phillip Edmonds',
-          poc_title: 'Program Manager',
-          poc_email: 'phillip.edmonds.pumphrey@microhealthllc.com',
-          poc_work_num: 8753334567,
-          poc_mobile_num: 8753334567,
-          notes:'Lorem ipsum dolor sit amet, consectetur adipiscing eliua.',
-         }],
-
         search: '',
     };
   },
@@ -965,8 +977,21 @@ export default {
     this.fetchContractPOCs()
   },   
   editMode(index, rows) {
+    console.log(rows)
     this.rowIndex = index,
     this.rowId = rows.id
+    if(rows.contract_current_pop_start_date){
+      this.popStartDate = rows.contract_current_pop_start_date;
+    }
+    if(rows.contract_current_pop_end_date){
+      this.popEndDate = rows.contract_current_pop_end_date;
+    }
+    if(rows.contract_start_date){
+      this.contractStartDate = rows.contract_start_date;
+    }
+    if(rows.contract_end_date){
+      this.contractEndDate = rows.contract_end_date;
+    }
   }, 
   editPocRow(index, rows) {
     this.pocRowIndex = index,
@@ -998,10 +1023,24 @@ export default {
     
     if (row.id) {
       id = row.id
-      this.contractStartDate = row.contract_start_date
-      this.contractEndDate = row.contract_end_date
-      this.popStartDate = row.contract_current_pop_start_date;
-      this.popEndDate = row.contract_current_pop_end_date;   
+      if (!this.contractEndDate) {
+        this.contractEndDate = rows.contract_end_date
+      }
+      if (!this.contractStartDate) {
+        this.contractStartDate = rows.contract_start_date
+      }       
+      if (!this.popStartDate){
+        this.popStartDate = rows.contract_current_pop_start_date
+      }
+      if (!this.popEndDate){
+        this.popEndDate = rows.contract_current_pop_end_date
+      }
+    }
+    if (!row.id){
+        this.contractStartDate = this.newContractStartDate;
+        this.contractEndDate = this.newContractEndDate;
+        this.popStartDate = this.newPopStartDate;
+        this.popEndDate = this.newPopEndDate;
     }
     let contractProjectData = {
           cProjectData: {
@@ -1062,11 +1101,51 @@ export default {
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
-    this.rowId = null;
-       
+    this.rowId = null;       
   },
   handleDelete(index, row) {
     console.log(index, row);
+  },
+  disabledPoPEndDate(date) {
+  if (this.popStartDate){
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.popStartDate);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  disabledContractEndDate(date) {
+  if (this.contractStartDate){
+    // console.log(this.contractStartDate, date)
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.contractStartDate);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  disabledNewPoPEndDate(date) {
+  if (this.newPopStartDate){
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.newPopStartDate);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  disabledNewContractEndDate(date) {
+  if (this.newContractStartDate){
+    // console.log(this.contractStartDate, date)
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.newContractStartDate);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  validateEmail() {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+        this.msg['email'] = 'Please enter a valid email address';
+    } else {
+        this.msg['email'] = '';
+    }
   },
   handleClick(tab, event) {
     if (tab.paneName == 0){
@@ -1105,7 +1184,15 @@ export default {
        this.pane3 = false;
        this.pane4 = true;
     } 
-   }  
+   },
+  validEmail() {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+          this.msg[this.email] = 'Please enter a valid email address';
+      } else {
+          this.msg[this.email] = '';
+      }
+  },
+
   },
   mounted() {
     this.fetchContractProjects()
@@ -1125,8 +1212,8 @@ export default {
       "contractVehicles",
       "contractVehiclesLoaded",
 
-    ]),   
-  tableData(){
+    ]), 
+   tableData(){
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects   
          data.push({})
@@ -1182,9 +1269,6 @@ export default {
     vehicleOptions(){
      if (this.contractVehicles && this.contractVehicles.length > 0){
         let vehicles = this.contractVehicles.filter(t => t && t.id)
-        // let unique = [];
-        // // console.log(vehicles)
-        // vehicles.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
         return vehicles
       }
     },
@@ -1258,10 +1342,14 @@ export default {
             type: "success",
             showClose: true,
           });
-          this.contractStartDate = "";
-          this.contractEndDate = "";
-          this.popStartDate = "";
-          this.popEndDate = "";
+          this.contractStartDate = null;
+          this.contractEndDate = null;
+          this.popStartDate = null;
+          this.popEndDate = null;
+          this.newContractStartDate = null,
+          this.newContractEndDate = null,
+          this.newPopStartDate = null,
+          this.newPopEndDate = null,
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects();
         }
@@ -1292,7 +1380,7 @@ export default {
     width: 100%;
   }
 /deep/.el-input__inner {
-  padding: 1px 1px 1px 1px;
+  padding: 1px 1px 1px 2px;
 }
 /deep/.el-table {
     font-size: 13px !important;
