@@ -132,9 +132,11 @@
           controls-position="right"
           ></el-input>
         </span>
-      <span v-else>
-        {{ scope.row.comments }} 
-        </span>
+        <span v-else>
+          <span v-if="scope.row.comments && scope.row.comments !== 'null'">
+            {{ scope.row.comments }}
+          </span>
+         </span>
         </template>
     </el-table-column>
     <el-table-column
