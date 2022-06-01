@@ -113,6 +113,11 @@
       label="Total Contract Value"
        width="115"
       prop="total_contract_value">
+      <template slot-scope="scope">
+      <span>
+      {{ scope.row.total_contract_value | toCurrency }}
+      </span>
+    </template>
    </el-table-column>
     <el-table-column
       label="PoP's"
@@ -159,6 +164,16 @@
     
 <script>
 import { mapGetters } from "vuex";
+Vue.filter('toCurrency', function (value) {
+    if (typeof value !== "number") {
+        return value;
+    }
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    });
+    return formatter.format(value);
+});
 export default {
   name: "PortfolioExpiredContracts",
    data() {    
