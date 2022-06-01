@@ -16,7 +16,7 @@ class Api::V1::UsersController < AuthenticatedController
 
   def create
     @user = User.new(user_params)
-    @user.password = "changeme"
+    @user.password =  ENV['NEW_USER_PASSWORD'] || SecureRandom.hex(7)
     if @user.save      
       render json: {msg: @user.id }, status: 200
     else

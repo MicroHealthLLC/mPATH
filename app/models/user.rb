@@ -22,6 +22,7 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true
   validate :password_complexity
   before_commit :set_color, on: :create
+  after_create :provide_view_privileges
 
   enum role: [:client, :superadmin].freeze
   enum status: [:inactive, :active].freeze
@@ -70,6 +71,11 @@ class User < ApplicationRecord
     can_contract_data?('delete')
   end
 
+   def provide_view_privileges
+    user = self
+    privilege = user.privilege || user.create_privilege
+    privilege.update( {"map_view": ["R"], "gantt_view": ["R"],  "members": ["R"], "sheets_view": ["R"], "kanban_view": ["R"], "calendar_view": ["R"]})
+  end
 
   def provide_program_privileges
     user = self
@@ -479,7 +485,7 @@ class User < ApplicationRecord
   end
 
   def admin?(params = {})
-    if superadmin? || privilege.admin.include?("R")
+    if superadmin? || (privilege.admin && privilege.admin.include?("R") )
       return true
     elsif params[:project_id]
       return is_program_admin?(params[:project_id])
@@ -540,14 +546,14 @@ class User < ApplicationRecord
   def privilege_hash
     p = self.privilege
     h = {
-      map_view: p.map_view,
-      gantt_view: p.gantt_view,
-      members: p.members,
-      settings_view: p.settings_view, 
-      sheets_view: p.sheets_view,
-      kanban_view: p.kanban_view,
-      calendar_view: p.calendar_view,
-      contract_data: p.contract_data
+      map_view: p.map_view || "",
+      gantt_view: p.gantt_view || "",
+      members: p.members || "",
+      settings_view: p.settings_view || "", 
+      sheets_view: p.sheets_view || "",
+      kanban_view: p.kanban_view || "",
+      calendar_view: p.calendar_view || "",
+      contract_data: p.contract_data || ""
       #NOTE: hard coding because lesson will go under project level. 
       # Once front end is working with project, do remove this permission.
       # This is used in topLevelNavigation for now 
