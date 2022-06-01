@@ -43,6 +43,9 @@
       label="Total Contract Value"
        width="115"
       prop="total_contract_value">
+       <template slot-scope="scope">
+        {{ scope.row.total_contract_value | toCurrency }}
+       </template>
     </el-table-column>
     <el-table-column
       label="Total Funded Value"
@@ -60,7 +63,7 @@
       ></el-input>
       </span>
       <span v-else>
-      {{ scope.row.total_founded_value }}
+      {{ scope.row.total_founded_value | toCurrency }}
       </span>
     </template>
     </el-table-column>  
@@ -80,7 +83,7 @@
       ></el-input>
       </span>
       <span v-else>
-      {{ scope.row.billings_to_date }}
+      {{ scope.row.billings_to_date | toCurrency }}
       </span>
     </template>
     </el-table-column>   
@@ -100,7 +103,7 @@
       >
        <template slot-scope="scope">
         <span>
-         {{ (scope.row.total_founded_value - scope.row.billings_to_date).toFixed(2) }}
+         {{ (scope.row.total_founded_value - scope.row.billings_to_date) | toCurrency }}
         </span>     
        </template>       
     </el-table-column>
@@ -110,15 +113,29 @@
       >
      <template slot-scope="scope">
       <span>
-      {{ (scope.row.total_contract_value - scope.row.billings_to_date).toFixed(2) }}
+      {{ (scope.row.total_contract_value - scope.row.billings_to_date) | toCurrency }}
       </span>
-       </template>
+     </template>
 
     </el-table-column>
      <el-table-column
-      label="Notes/Questions"
+       label="Notes/Questions"
        width="300"
+       prop="comments"
       >
+      <template slot-scope="scope">
+       <span v-if="rowId == scope.row.id">
+        <el-input
+          size="small"
+          style="text-align:center"
+          v-model="scope.row.comments"
+          controls-position="right"
+          ></el-input>
+        </span>
+      <span v-else>
+        {{ scope.row.comments }} 
+        </span>
+        </template>
     </el-table-column>
     <el-table-column
       label="Actions"
@@ -162,7 +179,16 @@
     
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-
+  Vue.filter('toCurrency', function (value) {
+      if (typeof value !== "number") {
+          return value;
+      }
+      var formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+      });
+      return formatter.format(value);
+  });
 export default {
   name: "PortfolioContractBacklog",
   components: { 
@@ -191,6 +217,7 @@ export default {
           cProjectData: {
             tfv: row.total_founded_value,
             btd: row.billings_to_date,
+            notes: row.comments
         },
       }
       let id = row.id
@@ -202,6 +229,7 @@ export default {
  editMode(index, rows) {
     this.rowIndex = index,
     this.rowId = rows.id
+    console.log(rows)
   },  
   saveEdits(){
     // Row edit action will occur here

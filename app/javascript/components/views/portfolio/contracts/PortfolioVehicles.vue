@@ -224,7 +224,7 @@
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.ceiling }}
+      {{ parseFloat(scope.row.ceiling) | toCurrency }}
       </span>
     </template>
     </el-table-column>
@@ -234,26 +234,30 @@
       width="100"
       prop="base_period_start">
      <template slot-scope="scope">
+      <v2-date-picker
+        name="Date"       
+        v-if="scope.$index == createRow"
+        v-model="newBpStart"  
+        value-type="YYYY-MM-DD"                      
+        format="MM/DD/YYYY"
+        class="w-100"
+        />
+      <span v-if="rowId == scope.row.id && scope.$index !== createRow">
         <v2-date-picker
-          name="Date"       
-          v-if="scope.$index == createRow"
-          v-model="bpStart"  
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
-         <v2-date-picker
-          name="Date"    
-          v-model="scope.row.base_period_start"     
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
+        name="Date"    
+        v-model="bpStart"     
+        value-type="YYYY-MM-DD"                     
+        format="MM/DD/YYYY"
+        class="w-100"
+        />
+      </span>  
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        <span v-if="scope.row.base_period_start == null || scope.row.base_period_start == undefined" >        
         </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.base_period_start).format("MM-DD-YYYY") }}
+        <span v-else>  {{ moment(scope.row.base_period_start).format("MM-DD-YYYY") }}
+        </span>     
       </span>
+
      </template>
    </el-table-column>
     <el-table-column
@@ -264,7 +268,8 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
-          v-model="bpEnd"  
+          v-model="newBpEnd"  
+          :disabled-date="disabledNewBpEndDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -272,14 +277,18 @@
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"    
-          v-model="scope.row.base_period_end"     
+          v-model="bpEnd"  
+         :disabled-date="disabledBpEndDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
-     <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.base_period_end).format("MM-DD-YYYY") }}
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        <span v-if="scope.row.base_period_end == null || scope.row.base_period_end == undefined" >        
+        </span>
+        <span v-else> {{ moment(scope.row.base_period_end).format("MM-DD-YYYY") }}
+        </span>      
       </span>
      </template>
     </el-table-column>
@@ -291,7 +300,7 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
-          v-model="opStart"  
+          v-model="newOpStart"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -299,18 +308,21 @@
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"    
-          v-model="scope.row.option_period_start"     
+          v-model="opStart"     
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.option_period_start).format("MM-DD-YYYY") }}
-      </span>
+       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        <span v-if="scope.row.option_period_start == null || scope.row.option_period_start == undefined" >        
+        </span>
+        <span v-else> {{ moment(scope.row.option_period_start).format("MM-DD-YYYY") }}
+        </span>   
+       </span>
      </template>
     </el-table-column>
-       <el-table-column
+    <el-table-column
       label="Option Period End"
       width="100"
       prop="option_period_end">
@@ -318,7 +330,8 @@
         <v2-date-picker
           name="Date"       
           v-if="scope.$index == createRow"
-          v-model="opEnd"  
+          v-model="newOpEnd" 
+          :disabled-date="disabledNewOpEndDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -326,15 +339,19 @@
         <span v-if="rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"    
-          v-model="scope.row.option_period_end"     
+          v-model="opEnd"   
+          :disabled-date="disabledOpEndDate"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
         </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ moment(scope.row.option_period_end).format("MM-DD-YYYY") }}
-      </span>
+        <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+          <span v-if="scope.row.option_period_end == null || scope.row.option_period_end == undefined" >        
+          </span>
+          <span v-else> {{ moment(scope.row.option_period_end).format("MM-DD-YYYY") }}
+          </span>   
+       </span>
      </template>
     </el-table-column>
     <el-table-column
@@ -386,23 +403,35 @@
 </template>
     
 <script>
-import { helpers } from 'chart.js';
 import { mapGetters, mapMutations, mapActions } from "vuex";
-
+  Vue.filter('toCurrency', function (value) {
+    if (typeof value !== "number") {
+        return value;
+    }
+    var formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    });
+    return formatter.format(value);
+});
 export default {
   name: "PortfolioVehicles",
   components: {
   },
-    data() {    
+      data() {    
       return {
         nothing: true,
         rowIndex: null, 
         rowId: null, 
         tabPosition: 'bottom',
-        bpStart: "",
-        bpEnd: "",
-        opStart: "",
-        opEnd: "",
+        bpStart: null,
+        bpEnd: null,
+        opStart: null,
+        opEnd: null,
+        newBpStart: null,
+        newBpEnd: null,
+        newOpStart: null,
+        newOpEnd: null,
         search: '',
     };
   },
@@ -418,21 +447,79 @@ export default {
     ]),
   editMode(index, rows) {
     this.rowIndex = index,
-     console.log(rows);
-       console.log(this.createRow);
+    console.log(rows);    
     this.rowId = rows.id
+    if(rows.base_period_start){
+      this.bpStart = rows.base_period_start;
+    }
+    if(rows.base_period_end){
+      this.bpEnd = rows.base_period_end;
+    }
+    if(rows.option_period_start){
+      this.opStart = rows.option_period_start;
+    }
+    if(rows.option_period_end){
+      this.opEnd = rows.option_period_end;
+    }
+ },  
+  disabledBpEndDate(date) {
+  if (this.bpStart){
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.bpStart);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  disabledOpEndDate(date) {
+  if (this.opStart){
+    // console.log(this.contractStartDate, date)
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.opStart);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  disabledNewBpEndDate(date) {
+  if (this.newBpStart){
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.newBpStart);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
+  },  
+  disabledNewOpEndDate(date) {
+  if (this.newOpStart){
+    // console.log(this.contractStartDate, date)
+    date.setHours(0, 0, 0, 0);
+    const startDate = new Date(this.newOpStart);
+    startDate.setHours(48, 0, 0, 0);
+    return date < startDate;  
+    }      
   },  
   saveContractVehicle(index, rows){
     this.rowIndex = null;
     this.rowId = null;
-    let id = null;
-    
+    let id = null;    
     if (rows.id) {
       id = rows.id
-      this.bpStart = rows.base_period_start;
-      this.bpEnd = rows.base_period_end;
-      this.opStart = rows.option_period_start;
-      this.opEnd = rows.option_period_end;   
+      if (!this.bpEnd) {
+        this.bpEnd = rows.base_period_end
+      }
+      if (!this.bpStart) {
+        this.bpStart = rows.base_period_start
+      }       
+      if (!this.opStart){
+        this.opStart = rows.option_period_start
+      }
+      if (!this.opEnd){
+        this.opEnd = rows.option_period_end
+      }
+    }
+    if (!rows.id){
+        this.bpStart = this.newBpStart;
+        this.bpEnd = this.newBpEnd
+        this.opStart = this.newOpStart;
+        this.opEnd = this.newOpEnd;   
     }
     // Row edit action will occur here
   let contractVehicleData = {
@@ -450,7 +537,7 @@ export default {
           op_endDate: this.opEnd,
       },
     };
-    console.log(contractVehicleData)
+    // console.log(contractVehicleData)
     if (id){
       this.updateContractVehicle({...contractVehicleData, id})
       console.log(contractVehicleData)
@@ -521,7 +608,7 @@ contractAgencyOptions(){
   vehicleTypes(){
       if (this.contractVehicles && this.contractVehicles.length > 0){
       let uniqueTypes = _.uniq(this.contractVehicles.filter(t => t.contract_vehicle_type_id))
-      let types = uniqueTypes.map(t => t.vehicle_type).filter(t => t && t.id && t !== undefined && t !== null)
+      let types = uniqueTypes.map(t => t.contract_vehicle_type).filter(t => t && t.id && t !== undefined && t !== null)
       let unique = [];
       // console.log(naics)
       types.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
@@ -537,6 +624,14 @@ contractAgencyOptions(){
     },
   },
   watch: {
+   opStart:{
+      handler() {
+      if (this.opStart !== null) {
+          this.opStart == this.opStart
+          console.log(this.opStart)
+       }
+     }
+    },
      contractVehiclesStatus: {
       handler() {
         if (this.contractVehiclesStatus == 200) {
@@ -547,10 +642,14 @@ contractAgencyOptions(){
           });
           this.SET_CONTRACT_VEHICLES_STATUS(0);
           this.fetchContractVehicles();
-          this.bpStart = "";
-          this.bpEnd = "";
-          this.opStart = "";
-          this.opEnd = "";   
+          this.bpStart = null;
+          this.bpEnd = null;
+          this.opStart = null;
+          this.opEnd = null;   
+          this.newBpStart = null;
+          this.newBpEnd = null;
+          this.newOpStart = null;
+          this.newOpEnd = null;   
         }
       },
     },  
