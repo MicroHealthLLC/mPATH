@@ -1,5 +1,6 @@
 class ContractVehicle < ApplicationRecord
   has_many :contracts
+  belongs_to :contract_number, optional: true
   belongs_to :contract_sub_category, optional: true
   belongs_to :contract_agency, optional: true
   belongs_to :contract_vehicle_type, optional: true
@@ -8,14 +9,15 @@ class ContractVehicle < ApplicationRecord
 
   def to_json
     h = self.as_json
-    h.merge!({contract_sub_category: contract_sub_category.as_json}) if contract_sub_category_id
-    h.merge!({contract_agency: contract_agency.as_json}) if contract_agency_id
-    h.merge!({contract_vehicle_type: contract_vehicle_type.as_json}) if contract_vehicle_type_id
+    vehicle = self
+    h.merge!({contract_sub_category: vehicle.contract_sub_category.as_json}) if contract_sub_category_id
+    h.merge!({contract_agency: vehicle.contract_agency.as_json}) if contract_agency_id
+    h.merge!({contract_vehicle_type: vehicle.contract_vehicle_type.as_json}) if contract_vehicle_type_id
     h
   end
 
   def self.params_to_permit
-    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id]
+    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id]
   end
 
   def create_or_update_contract_vehicle(params, user)
