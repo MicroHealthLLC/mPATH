@@ -2,18 +2,17 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   before_action :check_program_admin
 
   def index
-    contract_project_data_ids = ProjectContract.where(project_id: params[:project_id]).pluck(:contract_project_datum_id).compact.uniq
-    contract_project_datas = ContractProjectDatum.where(id: contract_project_data_ids )
-    c = []
-    contract_project_datas.in_batches do |contract_project_data|
-      c << contract_project_data.map(&:to_json)
-    end if contract_project_datas.any?
-    render json: {contracts: c, total_count: c.size}
 
+    project_contracts = ProjectContract.includes(:contract_project_datum).where(project_id: params[:project_id])
+    c = []
+    project_contracts.in_batches do |_project_contracts|
+      c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract_id: pc.id}) }
+    end
+    render json: {contracts: c, total_count: c.size}
   end
 
   def show
-    render json: {contract: ProjectContract.find(params[:id]).contract_project_datum.to_json}
+    render json: {contract: ProjectContract.find(params[:id]).contract_project_datum.to_json({project_contract_id: params[:id]})}
   end
 
   def destroy
