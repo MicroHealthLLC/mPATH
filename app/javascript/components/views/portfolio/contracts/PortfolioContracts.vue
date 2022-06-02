@@ -640,13 +640,13 @@
           width="150"
           prop="name">
           <template slot-scope="scope">
-            <el-form           
+            <el-form      
+             v-if="scope.$index == pocCreateRow"     
              :model="dynamicValidateForm" 
              ref="form0" 
              label-width="0" 
              class="demo-dynamic">
-            <el-form-item
-              v-if="scope.$index == pocCreateRow"
+            <el-form-item             
               prop="newName"          
               :rules="[
                   { required: true, message: 'Please enter POC name', trigger: 'blur' },
@@ -655,9 +655,16 @@
             >
               <el-input v-model="dynamicValidateForm.newName"></el-input>
             </el-form-item>
+           </el-form>
+            <el-form     
+             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"          
+            :model="dynamicValidateForm" 
+             ref="form00" 
+             label-width="0" 
+             class="demo-dynamic">
             <el-form-item
               prop="updateName" 
-               v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"         
+                   
               :rules="[
                   { required: true, message: 'Please enter POC name', trigger: 'blur' },
                   { min: 3, max: 35, message: 'Please enter valid name', trigger: 'blur' }
@@ -676,13 +683,13 @@
           width="150"
           prop="title">
           <template slot-scope="scope">
-            <el-form             
+            <el-form
+              v-if="scope.$index == pocCreateRow"              
              :model="dynamicValidateForm" 
              ref="form1" 
              label-width="0" 
              class="demo-dynamic">
-             <el-form-item
-              v-if="scope.$index == pocCreateRow" 
+             <el-form-item            
               prop="newTitle"          
               :rules="[
                   { required: true, message: 'Please enter POC title', trigger: 'blur' },
@@ -691,8 +698,15 @@
             >
               <el-input v-model="dynamicValidateForm.newTitle"></el-input>
               </el-form-item> 
-              <el-form-item
-              v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow" 
+             
+            </el-form>
+             <el-form  
+              v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"            
+             :model="dynamicValidateForm" 
+             ref="form11" 
+             label-width="0" 
+             class="demo-dynamic">
+           <el-form-item
               prop="updateTitle"          
               :rules="[
                   { required: true, message: 'Please enter POC title', trigger: 'blur' },
@@ -713,12 +727,12 @@
           prop="email">
           <template slot-scope="scope">
             <el-form  
+            v-if="scope.$index == pocCreateRow"
             :model="dynamicValidateForm" 
              ref="form2" 
              label-width="0" 
              class="demo-dynamic">
-            <el-form-item
-              v-if="scope.$index == pocCreateRow"
+            <el-form-item           
                prop="newEmail"          
               :rules="[
                 { required: true, message: 'Email address required', trigger: 'blur' },
@@ -727,8 +741,16 @@
             >
             <el-input v-model="dynamicValidateForm.newEmail"></el-input>
             </el-form-item>
-            <el-form-item
-              v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
+           </el-form>  
+            
+           <el-form  
+             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
+            :model="dynamicValidateForm" 
+             ref="form22" 
+             label-width="0" 
+             class="demo-dynamic">
+         
+            <el-form-item             
               prop="updateEmail"          
               :rules="[
                 { required: true, message: 'Email address required', trigger: 'blur' },
@@ -737,7 +759,7 @@
             >
             <el-input v-model="dynamicValidateForm.updateEmail"></el-input>
             </el-form-item>
-            </el-form>   
+            </el-form> 
            <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.email }} 
             </span>
@@ -749,12 +771,12 @@
           prop="work_number">
           <template slot-scope="scope">
            <el-form  
+             v-if="scope.$index == pocCreateRow"
              :model="dynamicValidateForm" 
              ref="form3" 
              label-width="0" 
              class="demo-dynamic">
-            <el-form-item
-              v-if="scope.$index == pocCreateRow"
+            <el-form-item            
               prop="newWorkNumber"          
               :rules="[
                   // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
@@ -763,8 +785,17 @@
             >
               <el-input v-model="dynamicValidateForm.newWorkNumber"  @input="acceptNumber"></el-input>
             </el-form-item>
+      
+            </el-form>
+
+             <el-form  
+             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
+             :model="dynamicValidateForm" 
+             ref="form33" 
+             label-width="0" 
+             class="demo-dynamic">
              <el-form-item
-              v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
+              
               prop="updateWorkNumber"          
               :rules="[
                   // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
@@ -785,12 +816,13 @@
           prop="mobile_number">
           <template slot-scope="scope">
             <el-form  
+            v-if="scope.$index == pocCreateRow"
             :model="dynamicValidateForm" 
              ref="form4" 
              label-width="0" 
              class="demo-dynamic">
             <el-form-item
-              v-if="scope.$index == pocCreateRow"
+            
               prop="newMobileNumber"          
               :rules="[
                   // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
@@ -799,8 +831,14 @@
             >
             <el-input v-model="dynamicValidateForm.newMobileNumber"  @input="acceptNumber"></el-input>
             </el-form-item>
-            <el-form-item
+            </el-form>
+            <el-form  
              v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
+            :model="dynamicValidateForm" 
+             ref="form44" 
+             label-width="0" 
+             class="demo-dynamic">
+            <el-form-item            
               prop="updateMobileNumber"          
               :rules="[
                   // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
@@ -1073,7 +1111,7 @@ export default {
     if(rows.work_number){
       dvf.updateWorkNumber = rows.work_number;
     }
-    if(rows.phone_number){
+    if(rows.mobile_number){
       dvf.updateMobileNumber = rows.mobile_number;
     }
   },  
@@ -1170,6 +1208,31 @@ export default {
       if (!this.mobile_number){
         this.mobile_number = row.mobile_number
       } else this.mobile_number = d.updateMobileNumber
+       this.$refs.form00.validate((valid) => {
+          if (valid) {
+           this.validName = true
+          }
+        });
+        this.$refs.form11.validate((valid) => {
+          if (valid) {
+           this.validTitle = true
+          }
+        });
+        this.$refs.form22.validate((valid) => {
+          if (valid) {
+           this.validEmail = true
+          }
+        });
+        this.$refs.form33.validate((valid) => {
+          if (valid) {
+           this.validWorkNum = true
+          }
+        });
+         this.$refs.form44.validate((valid) => {
+          if (valid) {
+           this.validMobileNum = true
+          }
+        });
     }
     if (!row.id){
       this.pocName = d.newName; 
@@ -1177,21 +1240,7 @@ export default {
       this.title = d.newTitle;
       this.work_number = d.newWorkNumber;
       this.mobile_number = d.newMobileNumber;
-    }
-    let contractPOCdata = {
-          cPOCsData: {
-            name: this.pocName, 
-            pocType: this.poc_type, 
-            email: this.email, 
-            title: this.title, 
-            workNum: this.work_number, 
-            mobileNum: this.mobile_number, 
-            notes: row.notes,             
-        },
-      };
-    // console.log(formNa)
-    //  console.log('1188', this.$refs.form0.validate(valid => valid))
-        this.$refs.form0.validate((valid) => {
+      this.$refs.form0.validate((valid) => {
           if (valid) {
            this.validName = true
           }
@@ -1216,6 +1265,21 @@ export default {
            this.validMobileNum = true
           }
         });
+    }
+    let contractPOCdata = {
+          cPOCsData: {
+            name: this.pocName, 
+            pocType: this.poc_type, 
+            email: this.email, 
+            title: this.title, 
+            workNum: this.work_number, 
+            mobileNum: this.mobile_number, 
+            notes: row.notes,             
+        },
+      };
+    // console.log(formNa)
+    //  console.log('1188', this.$refs.form0.validate(valid => valid))
+
     if (this.validName == true && this.validTitle == true && this.validEmail &&
         this.validWorkNum == true && this.validMobileNum == true){
         this.pocRowIndex = null;
@@ -1341,15 +1405,6 @@ export default {
       "contractVehiclesLoaded",
 
     ]), 
-    C_work_phone() {
-      return this.work_phoneData.workNumber ? this.work_phoneData.formatNational : this.profile.workNumber
-    },
-    C_mobile_phone() {
-      return this.mobile_phoneData.mobileNumber ? this.mobile_phoneData.formatNational : this.profile.mobileNumber
-    },
-    C_work_code() {
-          return this.work_phoneData.work_phoneNumber ? this.work_phoneData.countryCode : this.profile.countryCode
-    },
    tableData(){
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects.filter(t => t.contract_end_date > this.today)

@@ -208,7 +208,7 @@ const contractStore = {
   //  console.log(contract)
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contracts/${contract.id}/add_contract?project_id=${contract.programId}`,
+        url: `${API_BASE_PATH}/contract_project_data/${contract.id}/add_project?project_id=${contract.programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

@@ -216,10 +216,10 @@
       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
      <el-input
       size="small"      
-      type="number"
+      type="text"
       placeholder=""
       style="text-align:center"
-      v-model="scope.row.ceiling"
+      v-model="updateCeiling"
       controls-position="right"
       ></el-input>
       </span>
@@ -420,6 +420,8 @@ export default {
   },
       data() {    
       return {
+        updateCeiling: 0,
+        newCeiling: null, 
         nothing: true,
         rowIndex: null, 
         rowId: null, 
@@ -433,7 +435,7 @@ export default {
         newOpStart: null,
         newOpEnd: null,
         search: '',
-    };
+       };
   },
   methods: {
     ...mapMutations([
@@ -445,10 +447,17 @@ export default {
       "updateContractVehicle",
       "deleteContractVehicle",
     ]),
+  formatCurrency(value) {
+    let val = (value/1).toFixed(2).replace('.', ',')
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+  },
   editMode(index, rows) {
     this.rowIndex = index,
     console.log(rows);    
     this.rowId = rows.id
+    let formattedCeiling = parseFloat(rows.ceiling)
+    this.updateCeiling = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling);
+    console.log(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling));  
     if(rows.base_period_start){
       this.bpStart = rows.base_period_start;
     }
