@@ -250,6 +250,7 @@
          <template>
     <el-table
       :data="allContracts"
+      v-if="allContracts && allContracts.length > 0"
       style="width: 100%">
     <el-table-column
       prop="name"
