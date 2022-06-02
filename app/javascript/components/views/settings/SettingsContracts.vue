@@ -100,12 +100,7 @@
 		      	@expand-change="handleExpandChange" 
             :default-sort="{ prop: 'project_name', order: 'ascending'}"        
           >
-           <el-table-column
-              prop="charge_code"
-              label="Code"
-            >
-            </el-table-column>
-            <el-table-column
+             <el-table-column
               prop="project_name"
               label="Project Name"
             >
@@ -210,27 +205,43 @@
         </div>
          <template>
     <el-table
-      :data="contractArray"
+      :data="tableData"
       style="width: 100%">
-      <el-table-column
-      prop="charge_code"
-      label="Code"
-    >
+    <el-table-column
+      prop="name"
+      label="Project Name"
+      width="180">
+    </el-table-column>
+    <el-table-column    
+      label="Customer"
+      width="200"
+      prop="contract_customer_id">
+     <template slot-scope="scope" >
+     <span v-if="(scope.row.contract_customer && scope.row.contract_customer.name !== null)">
+      {{ scope.row.contract_customer.name }}
+      </span>
+      </template>
     </el-table-column>
       <el-table-column
-        prop="project_name"
-        label="Project Name"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="vehicle"
-        label="Vehicle"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="award_number"
-        label="Award Number">
-      </el-table-column>
+      label="Contract Number"
+      width="200"
+      prop="number">
+    <template slot-scope="scope" >
+      <span v-if="scope.row.number && scope.row.number.name !== null">
+      {{ scope.row.number }}
+      </span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="Award/ TO Number"
+      width="200"
+      prop="contract_award_to_id">
+    <template slot-scope="scope" >
+     <span v-if="scope.row.contract_award_to && scope.row.contract_award_to.name !== null">
+      {{ scope.row.contract_award_to.name }}
+      </span>
+      </template>
+    </el-table-column>
       <el-table-column label="Actions" align="right">
           <template slot-scope="scope">
             <el-button
@@ -464,6 +475,7 @@ export default {
   },
   data() {
     return {
+        today: new Date().toISOString().slice(0, 10),
         newContractArray: [
         {     
           id: 1,      
@@ -512,7 +524,7 @@ export default {
     };
   },
   mounted() {
-    this.fetchContracts(this.$route.params.programId);
+    this.fetchContractProjects();
     this.fetchRoles(this.$route.params.programId)
     // if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
@@ -536,7 +548,7 @@ export default {
     ...mapActions([
       "fetchCurrentProject",
       "createContract",
-      "fetchContracts",
+      "fetchContractProjects",
       "fetchGroups",
       "updateContract",
       "deleteContract",
@@ -608,7 +620,7 @@ export default {
      console.log(rows)
          let contractData = {
           contract: {
-            id:    rows.id,            
+            id: rows.id,            
             programId: this.$route.params.programId, 
           
          },
@@ -787,32 +799,16 @@ export default {
       "facilityGroups",
        "removeContractRoleStatus",
       "currentProject",
-       "getAssignedContractUsers"
+      "getAssignedContractUsers",
+      "contractProjects",
+      "associatedContractsStatus"
     ]),
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
     tableData() {
-     if (this.contracts && this.contracts.length > 0 && this.facilityGroups) {
-        // let groups = this.facilityGroups.map(g => g.id)
-        let contracts = this.contracts.map(cp => cp)
-        let programContracts = contracts.filter((u) => u.project_id == this.$route.params.programId );
-        let contractData = programContracts
-          .map((t) => t)
-          .filter((td) => {
-            //  console.log(td)
-            if (
-              this.C_projectGroupFilter &&
-              this.C_projectGroupFilter.length > 0
-            ) {
-              let group = this.C_projectGroupFilter.map((t) => t.id);
-              return group.includes(td.facility_group_id);
-            } else return true;
-          });
-          if (contractData.length > 0){
-              return contractData;
-          } else return []
-      
+     if (this.contractProjects && this.contractProjects.length > 0 ) {
+      return this.contractProjects.filter(t => t.contract_end_date > this.today)
       }
     },
     contractArray(){
@@ -953,6 +949,21 @@ export default {
           this.fetchCurrentProject(this.$route.params.programId);
         }
       },
+    },
+    associatedContractsStatus:{
+      handler() {
+        if (this.associatedContractsStatus == 200) {
+          this.$message({
+            message: `Contract successfully added to program.`,
+            type: "success",
+            showClose: true,
+          });
+          // this.SET_CONTRACT_STATUS(0);
+          // this.fetchContracts(this.$route.params.programId);
+          // this.fetchCurrentProject(this.$route.params.programId);
+        }
+      },
+
     },
     removeContractRoleStatus: {
       handler() {

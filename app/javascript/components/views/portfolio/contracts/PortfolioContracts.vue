@@ -951,6 +951,7 @@ export default {
   
     data() {    
       return {
+        today: new Date().toISOString().slice(0, 10),
         validName: false, 
         validEmail: false, 
         validWorkNum: false, 
@@ -1351,7 +1352,7 @@ export default {
     },
    tableData(){
       if (this.contractProjects && this.contractProjects.length > 0){
-        let data = this.contractProjects   
+        let data = this.contractProjects.filter(t => t.contract_end_date > this.today)
          data.push({})
          return data    
      } else {
