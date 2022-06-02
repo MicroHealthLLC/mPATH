@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_26_150624) do
+ActiveRecord::Schema.define(version: 2022_06_02_213044) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -159,6 +159,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
   end
 
   create_table "contract_pocs", charset: "utf8", force: :cascade do |t|
@@ -222,6 +223,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.integer "co_contract_poc_id"
     t.integer "gov_contract_poc_id"
     t.integer "pm_contract_poc_id"
+    t.integer "contract_number_id"
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
@@ -286,6 +288,7 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.integer "contract_agency_id"
     t.integer "contract_vehicle_type_id"
     t.integer "user_id"
+    t.integer "contract_number_id"
   end
 
   create_table "contracts", charset: "utf8", force: :cascade do |t|
@@ -856,10 +859,10 @@ ActiveRecord::Schema.define(version: 2022_05_26_150624) do
     t.integer "role_id"
     t.integer "user_id"
     t.integer "project_id"
-    t.integer "contract_id"
     t.integer "facility_project_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "project_contract_id"
   end
 
   create_table "roles", charset: "utf8", force: :cascade do |t|
