@@ -248,6 +248,14 @@
           </div>
         </div>
          <template>
+    <div       
+      v-loading="!contractProjectsLoaded"
+      element-loading-text="Fetching your data. Please wait..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)" 
+      class=""
+      
+      >
     <el-table
       :data="allContracts"
       v-if="allContracts && allContracts.length > 0"
@@ -299,6 +307,7 @@
           </template>
         </el-table-column>
     </el-table>
+    </div>  
   </template>
      
         </el-dialog>
@@ -551,12 +560,11 @@ export default {
       },    
     };
   },
-  mounted() {
-    this.fetchContractProjects();
+  mounted() {  
     this.fetchContracts(this.$route.params.programId)
     this.fetchRoles(this.$route.params.programId)
     // if(this.groups && this.groups.length <= 0){
-    this.fetchGroups(this.$route.params.programId);
+    // this.fetchGroups(this.$route.params.programId);
     // }
   },
   methods: {
@@ -794,15 +802,7 @@ export default {
     },
     addContract() {
        this.contractDialogVisible = true;
-      // alert("Add Contracts functionality under development")
-
-    //  if(this.contracts && this.contracts.length > 0){
-    //   console.log(this.contracts)
-    // }
-    //   this.dialogVisible = true;
-    //   this.C_newContractGroupFilter = null;
-    //   this.contractNameText = "";
-    //   this.contractNicknameText = "";
+       this.fetchContractProjects();
     },
     openUserPrivileges(index, rows) {
       this.openUserPrivilegesDialog = true;
