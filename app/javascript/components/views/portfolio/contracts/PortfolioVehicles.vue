@@ -170,7 +170,7 @@
      <el-table-column
       label="Contract Number"
       width="125"
-      prop="contract_number">
+      prop="contract_number_id">
 
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
