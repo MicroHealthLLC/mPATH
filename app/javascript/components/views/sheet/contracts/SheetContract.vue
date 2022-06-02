@@ -8,11 +8,10 @@
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
            <div class="row mt-3">
            <div class="col-4">
-             <el-card
+            <el-card
               class="box-card mb-2 pb-3"
               style="background-color:#fff"
-              data-cy="task_summary"
-            >   
+             >   
             <h4>Contract Project Lightning</h4>
             <hr>
            <div class="row">
