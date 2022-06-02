@@ -175,27 +175,26 @@
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.contract_number"
+        v-model="scope.row.contract_number_id"
         filterable       
         track-by="name"        
         value-key="id"
         class="w-100"
-        clearable
         default-first-option
         placeholder=""
-
       >
         <el-option
           v-for="item in contractNumber"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-       {{ scope.row.contract_number}}
+       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_number && scope.row.contract_number.name !== null)">
+       {{ scope.row.contract_number.name }}
       </span>
       </template>
     </el-table-column>
@@ -538,7 +537,7 @@ export default {
           subCatId: rows.contract_sub_category_id,
           cAgencyId: rows.contract_agency_id,        
           type: rows.contract_vehicle_type_id,
-          cNumber: rows.contract_number,         
+          cNumber: rows.contract_number_id,         
           ceiling: rows.ceiling,
           bp_startDate: this.bpStart,
           bp_endDate: this.bpEnd,
@@ -626,9 +625,11 @@ contractAgencyOptions(){
     },
     contractNumber(){
      if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueContractNums = this.contractProjects.filter(t => t.number)
-        let contractNums = uniqueContractNums.map(t => t.number).filter(t => t !== null)
-        return _.uniq(contractNums.map(t => t))
+        let uniqueContractNums = _.uniq(this.contractProjects.filter(t => t.contract_number_id))
+        let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        contractNums.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
       }
     },
   },

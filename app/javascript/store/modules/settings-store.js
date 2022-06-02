@@ -361,7 +361,7 @@ const settingsStore = {
             formData.append("role_users[][user_id]", userData.userId);
             formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)      
-            formData.append("role_users[][contract_id]", ids)      
+            formData.append("role_users[][contract_project_datum_id]", ids)      
             });
           } 
 
@@ -382,7 +382,7 @@ const settingsStore = {
             formData.append("role_users[][facility_project_id]", userData.projectId)
             }
             if(userData.contractId){
-            formData.append("role_users[][contract_id]", userData.contractId)
+            formData.append("role_users[][contract_project_datum_id]", userData.contractId)
             }
             });
           }       
@@ -431,7 +431,7 @@ const settingsStore = {
               formData.append("user_id", userData.userId);
               formData.append("project_id", userData.programId)
               formData.append("role_id", userData.roleId)      
-              formData.append("contract_id[]", ids)      
+              formData.append("contract_project_datum_id[]", ids)      
               });
             } 
             if (userData.adminRole || userData.adminRoleIndex){
@@ -455,7 +455,7 @@ const settingsStore = {
               }
               if(userData.contractId){
               formData.append("users_from_contract_role", true);   
-              formData.append("contract_id", userData.contractId)
+              formData.append("contract_project_datum_id", userData.contractId)
                }
               });
             }
