@@ -205,10 +205,10 @@ const contractStore = {
     },
     associateContractToProgram({ commit }, { contract } ) {
       commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", false);
-   
+  //  console.log(contract)
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contracts/{${contract.id}/add_contract?project_id=${contract.programId}`,
+        url: `${API_BASE_PATH}/contract_project_data/${contract.id}/add_project?project_id=${contract.programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

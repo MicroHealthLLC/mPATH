@@ -526,15 +526,16 @@
           >       
            <template slot-scope="scope">
              <span v-if="scope.$index !== rowIndex_1" >        
-              <span  v-for="(item, i) in projectUsers.data" :key="i">    
+              <span  v-for="(item, i) in projectUsers.data" :key="i">  
+              <!-- {{item}}   -->
                 <span v-if="projectNames && (item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row &&
                   projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).length > 0" class="projectNames">   
                   {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
                 </span>
                 <span v-if="contractNames && (item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row &&                  
-                  contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).length > 0" class="projectNames" >  
+                  contractNames.filter(t => t.id == item.contract_id).map(t => t.name).length > 0" class="projectNames" >  
 
-                  {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.nickname).join()}} 
+                  {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.name).join()}} 
                 </span>
               </span>
            
@@ -581,7 +582,7 @@
                 v-for="item in contractNames"
                 :value="item"
                 :key="item.id"
-                :label="item.nickname"
+                :label="item.name"
               > 
               </el-option> 
              </el-select>  

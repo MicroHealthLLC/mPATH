@@ -20,6 +20,12 @@ Rails.application.routes.draw do
             put :bulk_project_update
           end
         end
+
+        # resources :contract_project_data do
+        #   collection do
+        #     put :add_contract
+        #   end
+        # end
   
         resources :facilities do
           collection do
