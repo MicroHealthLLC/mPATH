@@ -95,16 +95,16 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
       RoleUser.where(role_id: role.id, facility_project_id: facility_project_ids).destroy_all
     elsif params[:role_from_contracts]
       role = Role.find(params[:role_id])
-      contract_ids = ProjectContract.where(id: params[:contract_id]).pluck(:id)
-      RoleUser.where(role_id: role.id, contract_id: contract_ids).destroy_all
+      project_contract_ids = ProjectContract.where(id: params[:project_contract_id]).pluck(:id)
+      RoleUser.where(role_id: role.id, project_contract_id: project_contract_ids).destroy_all
     elsif params[:project_from_roles]
       role_ids = Role.where(id: params[:role_id]).pluck(:id)
       facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
       RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id).destroy_all
     elsif params[:contract_from_roles]
       role_ids = Role.where(id: params[:role_id]).pluck(:id)
-      contract_id = ProjectContract.where(id: params[:contract_id]).pluck(:id)
-      RoleUser.where(role_id: role_ids, contract_id: contract_id).destroy_all
+      project_contract_id = ProjectContract.where(id: params[:project_contract_id]).pluck(:id)
+      RoleUser.where(role_id: role_ids, project_contract_id: project_contract_id).destroy_all
     elsif params[:users_from_project_role]
       role_ids = Role.where(id: params[:role_id]).pluck(:id)
       user_ids = User.where(id: params[:user_id]).pluck(:id)
@@ -113,8 +113,8 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     elsif params[:users_from_contract_role]
       role_ids = Role.where(id: params[:role_id]).pluck(:id)
       user_ids = User.where(id: params[:user_id]).pluck(:id)
-      contract_id = ProjectContract.where(id: params[:contract_id]).pluck(:id)
-      RoleUser.where(role_id: role_ids, contract_id: contract_id, user_id: user_ids).destroy_all
+      project_contract_id = ProjectContract.where(id: params[:project_contract_id]).pluck(:id)
+      RoleUser.where(role_id: role_ids, project_contract_id: project_contract_id, user_id: user_ids).destroy_all
     end
     render json: {message: "Successfully removed role!!"}
   end
@@ -141,7 +141,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
 
   private
   def role_users_params
-    params.permit(role_users: [:role_id, :user_id, :project_id, :contract_id, :facility_id, :facility_project_id])
+    params.permit(role_users: [:role_id, :user_id, :project_id, :project_contract_id, :facility_id, :facility_project_id])
   end
   def roles_params
     params.require(:role).permit(:id, :name, :project_id, :type_of, role_privileges: [:id, :privilege, :role_type, :name])
