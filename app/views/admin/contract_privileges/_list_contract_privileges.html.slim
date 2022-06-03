@@ -1,7 +1,7 @@
 - active_projects = user.projects.active
 - contract_privileges = user.contract_privileges.order("created_at DESC")
 - project_privileges = user.project_privileges
-- contracts = Contract.where(project_id: active_projects.map(&:id) )
+- contracts = ProjectContract.where(project_id: active_projects.map(&:id) )
 - option_array = contracts.map{|fp| [fp.id, fp.nickname ] }
 
 a{href="javascript:void(0)" onclick="addContractPrivilegeForm(this)" data-url=(add_contract_privilege_form_path(user_id: user.id)) class="button has_many_add adminPanelBtn"}Add Contract Privilege
