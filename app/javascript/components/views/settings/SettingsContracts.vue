@@ -608,6 +608,7 @@ export default {
       this.roleRowId = rowData
       this.isEditingRoles = true;
       console.log(this.userids)
+  
     },
     saveRemoveUsers(index, rowData){     
       let user_ids = this.assignedContractUsers.map(t => t.id);
@@ -800,6 +801,9 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
+      console.log(this.contracts)
+       console.log(this.tableData)
+
        this.contractDialogVisible = true;
        this.fetchContractProjects();
     },
@@ -842,11 +846,12 @@ export default {
     tableData(){
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
+
       return this.contracts
       } else return []
     },
    allContracts(){
-     if(this.tableData && this.tableData == [] ){
+     if(this.contracts && this.contracts.total_count == 0 ){
        console.log('no table data', this.contracts.filter(t => t.contract_end_date > this.today))
        return this.contracts.filter(t => t.contract_end_date > this.today)
      }
