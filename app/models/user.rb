@@ -772,20 +772,20 @@ class User < ApplicationRecord
     user = self
     program_ids = user.project_ids if !program_ids.any?
     contarct_hash = {}
-    # role_users = user.role_users.where.not(contract_id: nil)
+    # role_users = user.role_users.where.not(project_contract_id: nil)
     role_users = user.role_users.joins(:role_privileges).where(project_id: program_ids, role_privileges: {role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES} ).distinct
     contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
     contracts_group_by_project = Contract.where(project_id: program_ids).group_by(&:project_id)
 
     role_users.each do |role_user|
       role_privilegs = contract_role_privileges[role_user.role_id]
-      if role_user.contract_id && role_privilegs
+      if role_user.project_contract_id && role_privilegs
         h2 = {}
         role_privilegs.each do |rp|          
           h2[rp.role_type] = rp.privilege&.chars
         end
-        contarct_hash[role_user.contract_id] = h2
-      elsif role_user.project_id.present? && role_user.contract_id.nil?
+        contarct_hash[role_user.project_contract_id] = h2
+      elsif role_user.project_id.present? && role_user.project_contract_id.nil?
         contracts = contracts_group_by_project[role_user.project_id]
         contracts.each do |contract|
           next if contarct_hash[contract.id] || !role_privilegs
@@ -847,13 +847,13 @@ class User < ApplicationRecord
     # end
     # c_ids
     user = self
-    # contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.contract_id is not null and role_users.user_id = ? ", user.id).distinct.pluck(:contract_id)
+    # project_contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.project_contract_id is not null and role_users.user_id = ? ", user.id).distinct.pluck(:project_contract_id)
     role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
-    contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:contract_id)
+    project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id)
     if project_ids.any?
-      contract_ids = Contract.where(project_id: project_ids, id: contract_ids).pluck(:id)
+      project_contract_ids = Contract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
     end
-    contract_ids
+    project_contract_ids
   end
 
   def authorized_contracts(project_ids: [])
@@ -923,10 +923,10 @@ class User < ApplicationRecord
 
       if contract
         program_id = contract.project_id.to_s
-        contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
+        project_contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
 
-        # role_ids = user.role_users.where(project_id: program_id, contract_id: contract_id).pluck(:role_id)
-        role_ids = user.role_users.select{|ru| ru.project_id == program_id &&  ru.contract_id == contract_id }.map(&:role_id).compact.uniq
+        # role_ids = user.role_users.where(project_id: program_id, project_contract_id: project_contract_id).pluck(:role_id)
+        role_ids = user.role_users.select{|ru| ru.project_id == program_id &&  ru.project_contract_id == project_contract_id }.map(&:role_id).compact.uniq
         role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
