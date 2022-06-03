@@ -12,16 +12,36 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
 
   def show
-    render json: {contract: ProjectContract.find(params[:id]).contract_project_datum.to_json({project_contract_id: params[:id]})}
+    project_contarct = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    if project_contarct
+      render json: {contract: project_contarct.contract_project_datum.to_json({project_contract_id: params[:id]}), message: "Successfully updated contract "}
+    else
+      render json: {error: "Error updating contract!"}, staus: 406
+    end
+  end
+  
+  def update
+    project_contarct = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    if project_contarct && project_contarct.update(project_contract_params)
+      render json: {message: "Successfully updated contract "}
+    else
+      render json: {error: "Error updating contract!"}, staus: 406
+    end
   end
 
   def destroy
-    project_contarct = ProjectContract.find(params[:id])
-    if project_contarct.destroy
+    project_contarct = ProjectContract.where(id: params[:id], project_id: params[:project_id]).first
+
+    if project_contarct && project_contarct.destroy
       render json: {message: "Successfully removed association!"}
     else
-      render json: {error: "Error removing association!"}
+      render json: {error: "Error removing association!"}, staus: 406
     end
+  end
+
+  private
+  def project_contract_params
+    params.require(:project_contract).permit(:facility_group_id)
   end
 
 end
