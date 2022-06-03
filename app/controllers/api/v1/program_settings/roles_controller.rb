@@ -22,17 +22,17 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     project_user_ids = project.user_ids
 
     if params[:page] == "user_tab_role_assign"
-      roles = project.roles.distinct.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :contract ] }]).map{|r| r.to_json( params.merge({include: [:all]}) )}
+      roles = project.roles.distinct.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract ] }]).map{|r| r.to_json( params.merge({include: [:all]}) )}
 
       default_roles = Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id)
 
       default_role_ids = default_roles.pluck(:id)
 
-      roles += default_roless.map{|r| r.to_json({include: [:all]}) }
+      roles += default_roles.map{|r| r.to_json({include: [:all]}) }
 
       roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where.not(id: default_role_ids).map{|r| r.to_json(params.merge({include: [:all]}) ) }
       
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :contract] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id).map{|r| r.to_json( params.merge({include: [:all]}) ) }
+      roles += Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id).map{|r| r.to_json( params.merge({include: [:all]}) ) }
       
     else
       roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map{|r| r.to_json({include: [:all]}) }
