@@ -767,7 +767,7 @@
                 v-for="item in filteredContracts"
                 :value="item"
                 :key="item.id"
-                :label="item.nickname"
+                :label="item.ame"
               >
               </el-option>
             </el-select>

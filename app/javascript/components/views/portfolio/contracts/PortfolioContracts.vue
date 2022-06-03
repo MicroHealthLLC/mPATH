@@ -134,7 +134,7 @@
       <el-table-column    
       label="Vehicle/ Schedule"
       width="125"
-      prop="contract_vehicle">
+      prop="contract_vehicle_id">
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -578,7 +578,13 @@
       <el-button
         type="default"
         @click="saveContractProject(scope.$index, scope.row)"
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex &&  (
+          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
+          scope.row.contract_vehicle_id && scope.row.contract_number_id && 
+          scope.row.contract_award_to_id && scope.row.contract_naic_id && scope.row.contract_award_type_id &&
+          scope.row.contract_type_id && contractStartDate && contractEndDate &&  scope.row.total_contract_value
+          && scope.row.contract_pop_id && popStartDate && popEndDate
+          )"  
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
@@ -608,7 +614,13 @@
         <el-button
           type="default"
           @click="saveContractProject(scope.$index, scope.row)"
-          v-if="scope.$index == createRow" 
+          v-if="scope.$index == createRow && (
+          scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
+          scope.row.contract_vehicle_id && scope.row.contract_number_id && 
+          scope.row.contract_award_to_id && scope.row.contract_naic_id && scope.row.contract_award_type_id &&
+          scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
+          && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
+          )" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>

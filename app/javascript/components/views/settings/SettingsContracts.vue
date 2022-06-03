@@ -684,28 +684,7 @@ export default {
 			// disable mutiple row expanded 
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
 		},
-    saveNewContract() {
-      let groupId = ""
-      if (this.C_newContractGroupFilter){
-        groupId = this.C_newContractGroupFilter.id
-      }
-      let contractData = {
-        contract: {
-          nickname: this.contractNicknameText,
-          name: this.contractNameText,
-          facility_group_id: groupId,
-          project_id: this.$route.params.programId,
-          contract_type_id: this.C_typeFilter,
-        },
-      };
-      this.createContract({
-        ...contractData,
-      });
-      this.hideSaveBtn = true;
-      this.fetchCurrentProject(this.$route.params.programId);
-      console.log(contractData)
-    },
-      removeContract(index, rows) {
+    removeContract(index, rows) {
       // let id = [rows.id];
       let project = {
         g: {
@@ -744,7 +723,7 @@ export default {
       let id = rows.id;
       let contractData = {
         contract: {
-          nickname: rows.nickname,
+          nickname: rows.name,
           name: rows.name,
           facility_group_id: rows.facility_group_id,
           project_id: this.$route.params.programId,
@@ -770,7 +749,7 @@ export default {
     deleteSelectedContract(index, rows) {
       let id = rows.id;
       this.$confirm(
-        `Are you sure you want to delete ${rows.nickname}?`,
+        `Are you sure you want to delete ${rows.name}?`,
         "Confirm Delete",
         {
           confirmButtonText: "Delete",
@@ -782,7 +761,7 @@ export default {
           if (value === 200) {
             this.fetchContracts();
             this.$message({
-              message: `${rows.nickname} was deleted successfully.`,
+              message: `${rows.name} was deleted successfully.`,
               type: "success",
               showClose: true,
             });
@@ -790,13 +769,7 @@ export default {
         });
       });
     },
-    addAnotherContract() {
-      this.C_newContractGroupFilter = null;
-      this.contractNameText = "";
-      this.contractNicknameText = "";
-      this.hideSaveBtn = false;
-    },
-    closeAddContractBtn() {
+   closeAddContractBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
     },

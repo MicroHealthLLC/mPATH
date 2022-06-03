@@ -207,8 +207,8 @@
       size="small"
       v-if="scope.$index == createRow"
       type="number"
-      placeholder=""
       style="text-align:center"
+      placeholder=""
       v-model="scope.row.ceiling"
       controls-position="right"
       ></el-input>
@@ -222,8 +222,15 @@
       controls-position="right"
       ></el-input>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+      scope.row.ceiling !== null
+      ">
       {{ parseFloat(scope.row.ceiling) | toCurrency }}
+      </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+      scope.row.ceiling == null
+      ">
+       N/A 
       </span>
     </template>
     </el-table-column>
@@ -363,7 +370,10 @@
          <el-button
         type="default"
         @click="saveContractVehicle(scope.$index, scope.row)"
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && (scope.row.name && 
+          scope.row.full_name && scope.row.contract_sub_category_id &&
+           scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
+          bpStart && bpEnd)" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
@@ -383,14 +393,28 @@
            v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
-        <el-button
+          <el-button
           type="default"
           @click="saveContractVehicle(scope.$index, scope.row)"
-          v-if="scope.$index == createRow" 
+          v-if="scope.$index == createRow && (scope.row.name && 
+          scope.row.full_name && scope.row.contract_sub_category_id &&
+           scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
+          newBpStart && newBpEnd)" 
           v-tooltip="`Save`" 
           class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
-        </el-button>
+        </el-button> 
+        <!-- <el-button
+          type="default"
+          @click="saveContractVehicle(scope.$index, scope.row)"
+          v-if="scope.$index == createRow && 
+          scope.row.name && scope.row.full_name && scope.row.contract_sub_category_id && 
+          scope.row.contract_agency_id && scope.row.contract_vehicle_type_id && scope.row.ceiling &&
+          newBpStart && newBpEnd" 
+          v-tooltip="`Save`" 
+          class="bg-primary btn-sm text-light mx-0">               
+        <i class="far fa-save"></i>
+        </el-button> -->
        </template>
     </el-table-column>
   </el-table>
@@ -455,7 +479,9 @@ export default {
     console.log(rows);    
     this.rowId = rows.id
     let formattedCeiling = parseFloat(rows.ceiling)
-    this.updateCeiling = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling);
+    if(rows.ceiling == null) {
+      this.updateCeiling = ""
+    } else this.updateCeiling = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling);
     console.log(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling));  
     if(rows.base_period_start){
       this.bpStart = rows.base_period_start;
