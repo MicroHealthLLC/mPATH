@@ -3,22 +3,45 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
 
   def index
 
-    # all_contracts = Contract.includes(:facility_group, :contract_facility_group).where(project_id: params[:project_id] )
-
-    # c = []
-    # all_contracts.in_batches do |contracts|
-    #   c << contracts.map(&:to_json)
-    # end if all_contracts.any?
-    # render json: {contracts: c, total_count: c.size}
-
-    contract_project_data_ids = ProjectContract.where(project_id: params[:project_id]).pluck(:contract_project_datum_id).compact.uniq
-    contract_project_datas = ContractProjectDatum.where(id: contract_project_data_ids )
+    project_contracts = ProjectContract.includes(:contract_project_datum).where(project_id: params[:project_id])
     c = []
-    contract_project_datas.in_batches do |contract_project_data|
-      c << contract_project_data.map(&:to_json)
-    end if contract_project_datas.any?
+    project_contracts.in_batches do |_project_contracts|
+      c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract_id: pc.id}) }
+    end
     render json: {contracts: c, total_count: c.size}
+  end
 
+  def show
+    project_contarct = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    if project_contarct
+      render json: {contract: project_contarct.contract_project_datum.to_json({project_contract_id: params[:id]}), message: "Successfully updated contract "}
+    else
+      render json: {error: "Error updating contract!"}, staus: 406
+    end
+  end
+  
+  def update
+    project_contarct = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    if project_contarct && project_contarct.update(project_contract_params)
+      render json: {message: "Successfully updated contract "}
+    else
+      render json: {error: "Error updating contract!"}, staus: 406
+    end
+  end
+
+  def destroy
+    project_contarct = ProjectContract.where(id: params[:id], project_id: params[:project_id]).first
+
+    if project_contarct && project_contarct.destroy
+      render json: {message: "Successfully removed association!"}
+    else
+      render json: {error: "Error removing association!"}, staus: 406
+    end
+  end
+
+  private
+  def project_contract_params
+    params.require(:project_contract).permit(:facility_group_id)
   end
 
 end

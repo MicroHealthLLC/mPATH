@@ -11,7 +11,7 @@ class HomeController < AuthenticatedController
 
   def settings
     @program_id = params[:all].split("/")[1]
-    if !current_user.authorized_programs.pluck(:id).include?(@program_id.to_i)
+    if !current_user.is_program_admin?(@program_id.to_i)
       raise CanCan::AccessDenied      
     end
     respond_to do |format|

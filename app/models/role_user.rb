@@ -3,7 +3,7 @@ class RoleUser < ApplicationRecord
   belongs_to :role
   has_many :role_privileges, through: :role
   belongs_to :facility_project, optional: true
-  belongs_to :contract, optional: true
+  belongs_to :project_contract, optional: true
   belongs_to :project, optional: true
 
   validate :check_valid_data
@@ -42,10 +42,10 @@ class RoleUser < ApplicationRecord
         self.errors.add(:base, "#{role.name} is already assigned to #{facility.facility_name} to user #{user.full_name}")
         return false
       end
-    elsif contract_id
-      if RoleUser.where(user_id: user_id, role_id: role_id, contract_id: contract_id).exists?
-        contract = self.contract
-        self.errors.add(:base, "#{role.name} is already assigned to #{contract.name} to user #{user.full_name}")
+    elsif project_contract_id
+      if RoleUser.where(user_id: user_id, role_id: role_id, project_contract_id: project_contract_id).exists?
+        contract = self.project_contract
+        self.errors.add(:base, "#{role.name} is already assigned to contract to user #{user.full_name}")
         return false
       end
     elsif project_id
@@ -58,7 +58,7 @@ class RoleUser < ApplicationRecord
   end
 
   def check_valid_data
-    if !facility_project_id && !contract_id && !project_id
+    if !facility_project_id && !project_contract_id && !project_id
       self.errors.add(:base, "One of the facility project, contract or project must be assigned!")
     end
   end

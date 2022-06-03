@@ -13,8 +13,9 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       namespace :program_settings do
-        get '/contracts', to: 'contracts#index'
 
+        resources :contracts
+        
         resources :facility_groups do
           collection do
             put :bulk_project_update

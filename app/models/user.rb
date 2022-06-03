@@ -508,6 +508,11 @@ class User < ApplicationRecord
     self.roles.distinct.where(id: Role.program_admin_user_role.id).any?
   end
 
+  def programs_with_program_admin_role
+    project_ids = self.role_users.where(role_id: Role.program_admin_user_role.id).pluck(:project_id).uniq
+    self.projects.where(id: project_ids)
+  end
+
   def initialize(*args)
     privilege ||= Privilege.new
     super
