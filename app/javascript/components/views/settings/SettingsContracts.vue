@@ -856,7 +856,7 @@ export default {
    allContracts(){
      if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
        if (this.contractProjects && this.contractProjects.length > 0){
-            console.log('no table data', this.contracts.filter(t => t.contract_end_date > this.today))
+            console.log('no table data', this.contractProjects.filter(t => t.contract_end_date > this.today))
        return this.contractProjects.filter(t => t.contract_end_date > this.today)
        }      
      }
