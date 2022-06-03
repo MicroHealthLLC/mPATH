@@ -801,10 +801,10 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
-      console.log(this.contracts.length)
-       console.log(this.tableData)
+ 
        if (this.allContracts  && this.allContracts.length > 0){
             console.log(this.allContracts)
+                console.log('tableData', this.tableData)
        }
     
 
