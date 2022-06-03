@@ -41,10 +41,10 @@
       <el-table-column
       label="Contract #"
       width="125"
-      prop="number">
-    <template slot-scope="scope" >     
-      <span v-if="scope.row.number && scope.row.number.name !== null">
-      {{ scope.row.number }}
+      prop="contract_number_id">
+      <template slot-scope="scope" >
+      <span v-if="scope.row.contract_number && scope.row.contract_number.name !== null">
+       {{ scope.row.contract_number.name }}
       </span>
       </template>
     </el-table-column>

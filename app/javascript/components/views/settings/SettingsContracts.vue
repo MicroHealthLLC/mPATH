@@ -88,7 +88,7 @@
                   (data) =>
                     !search ||
                     data.name.toLowerCase().includes(search.toLowerCase()) ||
-                    data.number.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_number.name.toLowerCase().includes(search.toLowerCase()) ||
                     data.contract_customer.name.toLowerCase().includes(search.toLowerCase())
                 )
                 .reverse()
@@ -118,10 +118,10 @@
           </el-table-column>
            <el-table-column
             label="Contract #"
-            prop="number">
+            prop="contract_number_id">
           <template slot-scope="scope" >
-           <span v-if="scope.row.number && scope.row.number.name !== null">
-            {{ scope.row.number }}
+           <span v-if="scope.row.contract_number && scope.row.contract_number.name !== null">
+            {{ scope.row.contract_number.name}}
             </span>
            </template>
            </el-table-column>
@@ -253,8 +253,7 @@
       element-loading-text="Fetching your data. Please wait..."
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)" 
-      class=""
-      
+      class="addContractModal"
       >
     <el-table
       :data="allContracts"
@@ -278,10 +277,10 @@
       <el-table-column
       label="Contract Number"
       width="200"
-      prop="number">
+      prop="contract_number_id">
     <template slot-scope="scope" >
-      <span v-if="scope.row.number && scope.row.number.name !== null">
-      {{ scope.row.number }}
+      <span v-if="scope.row.contract_number && scope.row.contract_number.name !== null">
+      {{ scope.row.contract_number.name }}
       </span>
       </template>
     </el-table-column>
@@ -853,7 +852,7 @@ export default {
         if (this.searchContractData !== '' && t) {           
             return (            
                t.name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
-               t.number.toLowerCase().match(this.searchContractData.toLowerCase()) ||
+               t.contract_number.name.toLowerCase().match(this.searchContractData.toLowerCase()) ||
                t.contract_customer.name.toLowerCase().match(this.searchContractData.toLowerCase())
             ) 
         } else return true
@@ -865,7 +864,10 @@ export default {
           return t.contract_end_date > this.today
         })
           return data       
-        }      
+        } 
+        if(this.contractProjects && this.contractProjects.length > 0 && this.contracts && this.contracts.length <= 0) {
+          return this.contractProjects.filter(t => t.contract_end_date > this.today)
+        }    
      },
   contractUsers(){
   if(this.getRoles && this.getRoles.length > 0 ){   
@@ -1038,6 +1040,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.addContractModal{
+  min-height: 350px;
+}
 /deep/.el-popper {
  .select-popper {
     display: none;
