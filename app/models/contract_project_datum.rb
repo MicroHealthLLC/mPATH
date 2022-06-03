@@ -21,6 +21,7 @@ class ContractProjectDatum < ApplicationRecord
     h.merge!({contract_award_type: contract_award_type.as_json}) if contract_award_type_id
     h.merge!({contract_type: contract_type.as_json}) if contract_type_id
     h.merge!({contract_current_pop: contract_current_pop.as_json}) if contract_current_pop_id
+    h.merge!({contract_number: contract_number.as_json}) if contract_number_id
     h
   end
   def self.params_to_permit

@@ -88,7 +88,7 @@
                   (data) =>
                     !search ||
                     data.name.toLowerCase().includes(search.toLowerCase()) ||
-                    data.number.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_number.name.toLowerCase().includes(search.toLowerCase()) ||
                     data.contract_customer.name.toLowerCase().includes(search.toLowerCase())
                 )
                 .reverse()
@@ -118,10 +118,10 @@
           </el-table-column>
            <el-table-column
             label="Contract #"
-            prop="number">
+            prop="contract_number_id">
           <template slot-scope="scope" >
-           <span v-if="scope.row.number && scope.row.number.name !== null">
-            {{ scope.row.number }}
+           <span v-if="scope.row.contract_number && scope.row.contract_number.name !== null">
+            {{ scope.row.contract_number.name}}
             </span>
            </template>
            </el-table-column>
@@ -248,8 +248,16 @@
           </div>
         </div>
          <template>
+    <div       
+      v-loading="!contractProjectsLoaded"
+      element-loading-text="Fetching your data. Please wait..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)" 
+      class="addContractModal"
+      >
     <el-table
       :data="allContracts"
+      v-if="allContracts && allContracts.length > 0"
       style="width: 100%">
     <el-table-column
       prop="name"
@@ -269,10 +277,10 @@
       <el-table-column
       label="Contract Number"
       width="200"
-      prop="number">
+      prop="contract_number_id">
     <template slot-scope="scope" >
-      <span v-if="scope.row.number && scope.row.number.name !== null">
-      {{ scope.row.number }}
+      <span v-if="scope.row.contract_number && scope.row.contract_number.name !== null">
+      {{ scope.row.contract_number.name }}
       </span>
       </template>
     </el-table-column>
@@ -298,6 +306,7 @@
           </template>
         </el-table-column>
     </el-table>
+    </div>  
   </template>
      
         </el-dialog>
@@ -550,12 +559,11 @@ export default {
       },    
     };
   },
-  mounted() {
-    this.fetchContractProjects();
+  mounted() {  
     this.fetchContracts(this.$route.params.programId)
     this.fetchRoles(this.$route.params.programId)
     // if(this.groups && this.groups.length <= 0){
-    this.fetchGroups(this.$route.params.programId);
+    // this.fetchGroups(this.$route.params.programId);
     // }
   },
   methods: {
@@ -793,15 +801,7 @@ export default {
     },
     addContract() {
        this.contractDialogVisible = true;
-      // alert("Add Contracts functionality under development")
-
-    //  if(this.contracts && this.contracts.length > 0){
-    //   console.log(this.contracts)
-    // }
-    //   this.dialogVisible = true;
-    //   this.C_newContractGroupFilter = null;
-    //   this.contractNameText = "";
-    //   this.contractNicknameText = "";
+       this.fetchContractProjects();
     },
     openUserPrivileges(index, rows) {
       this.openUserPrivilegesDialog = true;
@@ -843,16 +843,20 @@ export default {
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
       return this.contracts
-      }
+      } else return []
     },
    allContracts(){
-      if(this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
+     if(this.tableData && this.tableData == [] ){
+       console.log('no table data', this.contracts.filter(t => t.contract_end_date > this.today))
+       return this.contracts.filter(t => t.contract_end_date > this.today)
+     }
+     else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
           let associatedContractIds = this.tableData.map(t => t.id)
           let data = this.contractProjects.filter(t => {                     
         if (this.searchContractData !== '' && t) {           
             return (            
                t.name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
-               t.number.toLowerCase().match(this.searchContractData.toLowerCase()) ||
+               t.contract_number.name.toLowerCase().match(this.searchContractData.toLowerCase()) ||
                t.contract_customer.name.toLowerCase().match(this.searchContractData.toLowerCase())
             ) 
         } else return true
@@ -863,7 +867,7 @@ export default {
         .filter( (t) => {
           return t.contract_end_date > this.today
         })
-          return data       
+         return data       
         }      
      },
   contractUsers(){
@@ -1037,6 +1041,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.addContractModal{
+  min-height: 350px;
+}
 /deep/.el-popper {
  .select-popper {
     display: none;

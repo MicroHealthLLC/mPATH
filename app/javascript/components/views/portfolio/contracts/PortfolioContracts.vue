@@ -165,11 +165,11 @@
       <el-table-column
       label="Contract #"
       width="125"
-      prop="number">
+      prop="contract_number_id">
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
-        v-model="scope.row.number"
+        v-model="scope.row.contract_number_id"
         filterable       
         track-by="name"        
         value-key="id"
@@ -181,16 +181,16 @@
       >
         <el-option
           v-for="item in contractNumber"
-          :key="item"
-          :label="item"
-          :value="item"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
         >
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-       (scope.row.number && scope.row.number.name !== null)">
-      {{ scope.row.number }}
+       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        (scope.row.contract_number && scope.row.contract_number.name !== null)">
+       {{ scope.row.contract_number.name }}
       </span>
       </template>
     </el-table-column>
@@ -1172,7 +1172,7 @@ export default {
             contract_current_pop_start_date: this.popStartDate,
             contract_current_pop_end_date: this.popEndDate,
             contract_vehicle_id: row.contract_vehicle_id,
-            number:  row.number,
+            number:  row.contract_number_id,
             contract_naic_id: row.contract_naic_id,
             contract_award_type_id: row.contract_award_type_id,
             contract_award_to_id: row.contract_award_to_id,
@@ -1452,9 +1452,11 @@ export default {
     },                  
     contractNumber(){
      if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueContractNums = this.contractProjects.filter(t => t.number)
-        let contractNums = uniqueContractNums.map(t => t.number).filter(t => t !== null)
-        return _.uniq(contractNums.map(t => t))
+        let uniqueContractNums = _.uniq(this.contractProjects.filter(t => t.contract_number_id))
+        let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t && t.id && t !== undefined && t !== null)
+        let unique = [];
+        contractNums.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+        return unique
       }
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
