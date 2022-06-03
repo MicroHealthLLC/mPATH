@@ -199,7 +199,7 @@
                     type="default"            
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
-                    @click.prevent="removeContract(scope.$index, scope.row)"
+                    @click.prevent="removeContractBtn(scope.$index, scope.row)"
                     v-if="scope.$index !== rowIndex"        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
@@ -306,6 +306,9 @@
           </template>
         </el-table-column>
     </el-table>
+    <span class="mt-3" v-else>
+      <h4><em>There are currently no contracts to display</em></h4>
+    </span>
     </div>  
   </template>
      
@@ -580,7 +583,8 @@ export default {
       "SET_CONTRACT_ROLE_NAMES",
       "SET_ASSIGNED_CONTRACT_USERS",
       "SET_REMOVE_CONTRACT_ROLE_STATUS",
-       "SET_ASSOCIATED_CONTRACTS_STATUS"
+       "SET_ASSOCIATED_CONTRACTS_STATUS",
+       "SET_CONTRACTS_STATUS"
     ]),
     ...mapActions([
       "fetchCurrentProject",
@@ -593,7 +597,8 @@ export default {
       "addUserToRole", 
       "fetchRoles",
       "removeUserRole",
-      "associateContractToProgram"
+      "associateContractToProgram",
+      "removeContract"
     ]),
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -652,7 +657,7 @@ export default {
     },
     addUserRole(index, rows) {
       this.openUserPrivilegesDialog = true
-      this.projId = rows.id
+      this.projId = rows.project_contract_id
       this.contractData = rows
       console.log(rows)
     },
@@ -669,7 +674,7 @@ export default {
     },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
+      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
       // this.$router.push({
       //   name: "SheetContract",
       //   params: {
@@ -684,17 +689,19 @@ export default {
 			// disable mutiple row expanded 
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
 		},
-    removeContract(index, rows) {
+    removeContractBtn(index, rows) {
+
+    console.log(rows)
       // let id = [rows.id];
-      let project = {
+      let contract = {
         g: {
-          id: rows.id,
-          programId: this.$route.params.programId,
+          id: rows.project_contract_id,
+          pId: this.$route.params.programId,
           },
        };      
  
       this.$confirm(
-        `Are you sure you want to remove ${rows.project_name} from your program?`,
+        `Are you sure you want to remove ${rows.name} from your program?`,
         "Confirm Remove",
         {
           confirmButtonText: "Remove",
@@ -702,8 +709,7 @@ export default {
           type: "warning",
         }
        ).then(() => {
-         alert("We're still working on the remove project functionality :)")
-        // this.removeOrDeleteProject({ ...project });
+        this.removeContract({ ...contract });
       });
     },
     // DO NOT DELETE This async method.  It is code for firebase cloud functionality
@@ -716,8 +722,7 @@ export default {
     //       }
     //     await createUser({...formData})
     //     return { formData }
-    //  }
-
+    
     saveEdits(index, rows) {
       // console.log(rows)
       let id = rows.id;
@@ -814,18 +819,20 @@ export default {
       "getAssignedContractUsers",
       "contractProjects",
       "associatedContractsStatus",
-      "contractProjectsLoaded"
+      "contractProjectsLoaded",
+      "contractsStatus"
     ]),
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
     },
  
-    tableData(){
-      //Need to add filter for associated contracts only
-      if (this.contracts && this.contracts.length > 0 ) {
-      return this.contracts
-      } else return []
-    },
+  tableData(){
+    //Need to add filter for associated contracts only
+    if (this.contracts && this.contracts.length > 0 ) {
+      console.log(this.contacts)
+    return this.contracts
+    } else return []
+  },
    allContracts(){
      if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
        if (this.contractProjects && this.contractProjects.length > 0){
@@ -857,7 +864,7 @@ export default {
   if(this.getRoles && this.getRoles.length > 0 ){   
     let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
     if (this.projId)  {
-      let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.contract_id)   
+      let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.project_contract_id)   
       // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
       //     { 
       //       ...acc, 
@@ -974,6 +981,20 @@ export default {
         }
       },
     },
+  contractsStatus: {
+      handler() {
+        if (this.contractsStatus == 200) {
+          this.$message({
+            message: `Successfully removed contract from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACTS_STATUS(0);
+          this.fetchContracts(this.$route.params.programId);
+          this.fetchContractProjects();
+        }
+      },
+    },
     associatedContractsStatus:{
       handler() {
         if (this.associatedContractsStatus == 200) {
@@ -1025,7 +1046,7 @@ export default {
 
 <style scoped lang="scss">
 .addContractModal{
-  min-height: 350px;
+  min-height: 300px;
 }
 /deep/.el-popper {
  .select-popper {

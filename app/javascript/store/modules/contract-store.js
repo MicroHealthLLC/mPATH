@@ -344,7 +344,7 @@ const contractStore = {
     });
   },
     // DELETE REQUESTS
-   deleteContractProject({ commit }, id) {
+    deleteContractProject({ commit }, id) {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     axios({
       method: "DELETE",

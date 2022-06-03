@@ -83,7 +83,7 @@
                 >              
               <router-link               
                 :to="
-                  `/programs/${$route.params.programId}/${tab}/contracts/${c.id}${pathTab}`
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.project_contract_id}${pathTab}`
                 "
               >
                 <div
@@ -92,7 +92,7 @@
                   :class="{ active: c.id == $route.params.contractId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                  <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.nickname }}
+                  <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.name }}
                   </p>
                 </div>
               </router-link>

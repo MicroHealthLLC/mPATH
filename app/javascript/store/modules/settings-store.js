@@ -26,6 +26,7 @@ const settingsStore = {
     contract_loaded: true,
     contracts_loaded: true,
     contract_status: 0,
+    contracts_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
     contract_classifications: [],
@@ -186,6 +187,28 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    removeContract({ commit }, { g } ) {
+      commit("TOGGLE_CONTRACTS_LOADED", false);
+        console.log(g)
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/program_settings/contracts/${g.id}?project_id=${g.pId}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CONTRACTS", res.data.contracts);
+          commit("SET_CONTRACTS_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACTS_LOADED", true);
+        });
+      },
     //
     removeOrDeleteGroup({ commit }, { g }) {
       commit("TOGGLE_GROUPS_LOADED", false);
@@ -242,7 +265,7 @@ const settingsStore = {
      
         axios({
           method: "GET",
-          url: `${API_BASE_PATH}/program_settings/roles?project_id=${id}&all=true`,
+          url: `${API_BASE_PATH}/program_settings/roles?project_id=${id}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -250,7 +273,7 @@ const settingsStore = {
         })
           .then((res) => {
             commit("SET_ROLES", res.data.roles);
-            // console.log(res.data.roles)
+          console.log(res.data.roles)
           })
           .catch((err) => {
             console.log(err);
@@ -361,7 +384,7 @@ const settingsStore = {
             formData.append("role_users[][user_id]", userData.userId);
             formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)      
-            formData.append("role_users[][contract_project_datum_id]", ids)      
+            formData.append("role_users[][project_contract_id]", ids)      
             });
           } 
 
@@ -382,7 +405,7 @@ const settingsStore = {
             formData.append("role_users[][facility_project_id]", userData.projectId)
             }
             if(userData.contractId){
-            formData.append("role_users[][contract_project_datum_id]", userData.contractId)
+            formData.append("role_users[][project_contract_id]", userData.contractId)
             }
             });
           }       
@@ -431,7 +454,7 @@ const settingsStore = {
               formData.append("user_id", userData.userId);
               formData.append("project_id", userData.programId)
               formData.append("role_id", userData.roleId)      
-              formData.append("contract_project_datum_id[]", ids)      
+              formData.append("project_contract_id[]", ids)      
               });
             } 
             if (userData.adminRole || userData.adminRoleIndex){
@@ -455,7 +478,7 @@ const settingsStore = {
               }
               if(userData.contractId){
               formData.append("users_from_contract_role", true);   
-              formData.append("contract_project_datum_id", userData.contractId)
+              formData.append("project_contract_id", userData.contractId)
                }
               });
             }
@@ -586,8 +609,8 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_CONTRACTS", res.data.contracts[0]);
-          // console.log(res.data);
+          commit("SET_CONTRACTS", res.data.contracts);
+          // console.log(res.data.contracts);
         })
         .catch((err) => {
           console.log(err);
@@ -1109,6 +1132,7 @@ const settingsStore = {
     SET_SHOW_CREATE_ROW: (state, value) => (state.show_create_row = value),
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
+    SET_CONTRACTS_STATUS: (state, value) => (state.contracts_status = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
     SET_NEW_GROUPS: (state, value) => (state.new_groups = value),
     SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
@@ -1232,6 +1256,7 @@ const settingsStore = {
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
+    contractsStatus: (state) => state.contracts_status,
     getNewContractGroupFilter: (state) => state.new_contract_group_filter,    
     getClientTypes: (state) => state.client_types,
     getDaysRemaining: (state) => state.pop_days_remaining,
