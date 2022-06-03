@@ -565,6 +565,7 @@ class User < ApplicationRecord
     }
   end
 
+  # NOTE: We are not using this method.
   #This will build has like this
   # {<project_id> : { <contract_id>: { <all_perissions> } }
   def contract_privileges_hash
@@ -767,7 +768,7 @@ class User < ApplicationRecord
   end
   
   # This will generate array of hash like this
-  # {<contract id>=>{<role types>=><privileges array>}} e.g. {1441=>{"contract_notes"=>["R", "W"]}}
+  # {<project_contract id>=>{<role types>=><privileges array>}} e.g. {1441=>{"contract_notes"=>["R", "W"]}}
   def contract_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
@@ -775,7 +776,7 @@ class User < ApplicationRecord
     # role_users = user.role_users.where.not(project_contract_id: nil)
     role_users = user.role_users.joins(:role_privileges).where(project_id: program_ids, role_privileges: {role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES} ).distinct
     contract_role_privileges = RolePrivilege.where(role_type: RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
-    contracts_group_by_project = Contract.where(project_id: program_ids).group_by(&:project_id)
+    contracts_group_by_project = ProjectContract.where(project_id: program_ids).group_by(&:project_id)
 
     role_users.each do |role_user|
       role_privilegs = contract_role_privileges[role_user.role_id]
@@ -851,13 +852,13 @@ class User < ApplicationRecord
     role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
     project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id)
     if project_ids.any?
-      project_contract_ids = Contract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
+      project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
     end
     project_contract_ids
   end
 
   def authorized_contracts(project_ids: [])
-    Contract.where(id: authorized_contract_ids(project_ids: project_ids) )
+    ProjectContract.where(id: authorized_contract_ids(project_ids: project_ids) )
   end
 
   # def has_contract_permission?(action: "read", resource: , program: nil, contract: nil, project_privileges_hash: {}, contract_privileges_hash: {} )
