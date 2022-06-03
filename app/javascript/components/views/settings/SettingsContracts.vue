@@ -843,15 +843,14 @@ export default {
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
       return this.contracts
-      }
+      } else return []
     },
    allContracts(){
-      if((this.contractProjects && this.contractProjects.length > 0) && this.tableData && !this.tableData > 0) {
-        console.log('allContracts data')
-          console.log(this.contractProjects)
-          return this.contractProjects.filter(t => t.contract_end_date > this.today)
-        }    
-      else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
+     if(this.tableData && this.tableData == [] ){
+       console.log('no table data', this.contracts.filter(t => t.contract_end_date > this.today))
+       return this.contracts.filter(t => t.contract_end_date > this.today)
+     }
+     else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
           let associatedContractIds = this.tableData.map(t => t.id)
           let data = this.contractProjects.filter(t => {                     
         if (this.searchContractData !== '' && t) {           
@@ -868,10 +867,8 @@ export default {
         .filter( (t) => {
           return t.contract_end_date > this.today
         })
-          console.log(data)
-          return data       
-        } else return []
-     
+         return data       
+        }      
      },
   contractUsers(){
   if(this.getRoles && this.getRoles.length > 0 ){   
