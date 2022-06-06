@@ -15,8 +15,7 @@
         <div
           v-for="(group, index) in sortedGroups"
           :key="index + 'a'"  
-          :load="log(sortedGroups.length)"  
-          class="my-2 px-2 container"
+           class="my-2 px-2 container"
         >
           <div
             class="d-flex row expandable"
@@ -218,10 +217,10 @@ export default {
        }
       this.$emit("on-expand-facility-group", group);
     },
-    log(e){
-          console.log(e)
+    // log(e){
+    //       console.log(e)
 
-    },
+    // },
     _isallowedContracts(salut, c) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.id})
 

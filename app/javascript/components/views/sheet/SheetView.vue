@@ -161,7 +161,11 @@ export default {
     },
  },
   mounted() { 
-    console.log(this.$route.params)   
+    this.fetchContracts(this.$route.params.programId)
+    if(this.contracts && this.contracts.length > 0){
+        console.log(this.contracts)   
+    }
+   
     // Display notification when leaving map view to another page and conditions met
    if (
       this.getPreviousRoute.includes("Map") &&

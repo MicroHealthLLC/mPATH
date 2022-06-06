@@ -368,7 +368,7 @@ const settingsStore = {
       //ADD USER TO ROLE
        addUserToRole({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
-        // console.log(userData)
+      console.log(userData)
         let formData = new FormData();     
           if (userData.projectIds){
             userData.projectIds.forEach((ids) => {
@@ -1049,12 +1049,14 @@ const settingsStore = {
     updateContract({ commit }, { contract, id }) {
       // Displays loader on front end
       commit("TOGGLE_CONTRACTS_LOADED", false);
+      let formData = new FormData();
       // Utilize utility function to prep Lesson form data
-      let formData = contractFormData(contract);
-
+      // let formData = contractFormData(contract);
+      formData.append("project_id", contract.programId);
+      formData.append("project_contract[facility_group_id]", contract.facility_group_id);
       axios({
-        method: "PATCH",
-        url: `${API_BASE_PATH}/contracts/${id}`,
+        method: "PUT",
+        url: `${API_BASE_PATH}/program_settings/contracts/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1347,66 +1349,9 @@ const contractFormData = (contract) => {
     formData.append("facility_group_name", contract.facility_group_name);
   }
   formData.append("contract[facility_group_id]", contract.facility_group_id);
-  formData.append("contract[contract_type_id]", contract.contract_type_id);
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
-  formData.append("contract[project_code]", contract.project_code);
-  formData.append("contract[nickname]", contract.nickname); //Required
-  formData.append("contract[total_subcontracts]", contract.total_subcontracts); //Required
-  formData.append("contract[name]", contract.name); //Required
-  formData.append("contract[notes]", contract.notes);
-  formData.append("contract[contract_status_id]", contract.contract_status_id);
-  formData.append(
-    "contract[contract_customer_id]",
-    contract.contract_customer_id
-  );
-  formData.append(
-    "contract[contract_vehicle_id]",
-    contract.contract_vehicle_id
-  );
-  formData.append(
-    "contract[contract_vehicle_number_id]",
-    contract.contract_vehicle_number_id
-  );
-  formData.append(
-    "contract[contract_client_type_id]",
-    contract.contract_client_type_id
-  );
-  formData.append("contract[contract_number_id]", contract.contract_number_id);
-  formData.append(
-    "contract[contract_classification_id]",
-    contract.contract_classification_id
-  );
-  formData.append(
-    "contract[subcontract_number_id]",
-    contract.subcontract_number_id
-  );
-  formData.append("contract[contract_prime_id]", contract.contract_prime_id);
-  formData.append(
-    "contract[contract_current_pop_id]",
-    contract.contract_current_pop_id
-  );
-  formData.append(
-    "contract[current_pop_start_time]",
-    contract.current_pop_start_time
-  );
-  formData.append(
-    "contract[current_pop_end_time]",
-    contract.current_pop_end_time
-  );
-  formData.append("contract[days_remaining]", contract.days_remaining);
-  formData.append(
-    "contract[total_contract_value]",
-    contract.total_contract_value
-  );
-  formData.append("contract[current_pop_value]", contract.current_pop_value);
-  formData.append("contract[current_pop_funded]", contract.current_pop_funded);
-  formData.append(
-    "contract[total_contract_funded]",
-    contract.total_contract_funded
-  );
-  formData.append("contract[start_date]", contract.start_date);
-  formData.append("contract[end_date]", contract.end_date);
-  // formData.append("contract[id]", contract.id);
+
+// formData.append("contract[id]", contract.id);
 
   return formData;
 };

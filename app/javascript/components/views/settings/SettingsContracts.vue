@@ -621,9 +621,9 @@ export default {
   mounted() {  
     this.fetchContracts(this.$route.params.programId)
     this.fetchRoles(this.$route.params.programId)
-    // if(this.groups && this.groups.length <= 0){
-    // this.fetchGroups(this.$route.params.programId);
-    // }
+    if(this.groups && this.groups.length <= 0){
+    this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapMutations([
@@ -798,8 +798,8 @@ export default {
         ...contractData,
         id,
       });
-        console.log(rows)
-      console.log(contractData)
+        // console.log(rows)
+      // console.log(groupId)
       this.rowIndex = null;
       this.rowId = null;
     },
@@ -888,58 +888,65 @@ export default {
       return `/programs/${this.$route.params.programId}/settings`;
     },
  
-  tableData(){
-    //Need to add filter for associated contracts only
-    if (this.contracts && this.contracts.length > 0 ) {
-      console.log(this.contacts)
-    return this.contracts
-    } else return []
-  },
-   allContracts(){
-     if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
-       if (this.contractProjects && this.contractProjects.length > 0){
-            console.log('no table data', this.contractProjects.filter(t => t.contract_end_date > this.today))
-       return this.contractProjects.filter(t => t.contract_end_date > this.today)
-       }      
-     }
-     else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
-          let associatedContractIds = this.tableData.map(t => t.id)
-          let data = this.contractProjects.filter(t => {                     
-        if (this.searchContractData !== '' && t) {           
-            return (            
-               t.name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
-               t.contract_number.name.toLowerCase().match(this.searchContractData.toLowerCase()) ||
-               t.contract_customer.name.toLowerCase().match(this.searchContractData.toLowerCase())
-            ) 
-        } else return true
-        })
-        .filter((t) => {
-          return !associatedContractIds.includes(t.id)
-        }) 
-        .filter( (t) => {
-          return t.contract_end_date > this.today
-        })
-         return data       
+    tableData(){
+      //Need to add filter for associated contracts only
+      if (this.contracts && this.contracts.length > 0 ) {
+        // console.log(this.contacts)
+        return (
+            this.contracts.filter((td) => {
+                if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0) {
+                  let group = this.C_projectGroupFilter.map((t) => t.name);
+                  return group.includes(td.facility_group.name);
+                } else return true;
+              })
+          );
+      } else return []
+    },
+    allContracts(){
+      if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
+        if (this.contractProjects && this.contractProjects.length > 0){
+              console.log('no table data', this.contractProjects.filter(t => t.contract_end_date > this.today))
+        return this.contractProjects.filter(t => t.contract_end_date > this.today)
         }      
-     },
-  contractUsers(){
-  if(this.getRoles && this.getRoles.length > 0 ){   
-    let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-    if (this.projId)  {
-      let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.project_contract_id)   
-      // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
-      //     { 
-      //       ...acc, 
-      //       [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
-      //     }
-      // ), {});
-      console.log(groupByRoles)
-          return {
-                  data: groupByRoles,
-                  roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
-                  }
-      } else return [].concat.apply([], roleUsers)       
-    }
+      }
+      else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
+            let associatedContractIds = this.tableData.map(t => t.id)
+            let data = this.contractProjects.filter(t => {                     
+          if (this.searchContractData !== '' && t) {           
+              return (            
+                t.name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
+                t.contract_number.name.toLowerCase().match(this.searchContractData.toLowerCase()) ||
+                t.contract_customer.name.toLowerCase().match(this.searchContractData.toLowerCase())
+              ) 
+          } else return true
+          })
+          .filter((t) => {
+            return !associatedContractIds.includes(t.id)
+          }) 
+          .filter( (t) => {
+            return t.contract_end_date > this.today
+          })
+          return data       
+          }      
+    },
+    contractUsers(){
+    if(this.getRoles && this.getRoles.length > 0 ){   
+      let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+      if (this.projId)  {
+        let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.project_contract_id)   
+        // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
+        //     { 
+        //       ...acc, 
+        //       [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
+        //     }
+        // ), {});
+        console.log(groupByRoles)
+            return {
+                    data: groupByRoles,
+                    roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
+                    }
+        } else return [].concat.apply([], roleUsers)       
+      }
     },
     assignedUsers(){
     //   //  Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
