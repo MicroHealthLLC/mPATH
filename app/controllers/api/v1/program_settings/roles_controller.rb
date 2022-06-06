@@ -72,7 +72,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
       end
     end
     if !errors.any?
-      render json: {message: "User added to role successfully!!", role: role.to_json({page: 'user_tab_role_assign'})}
+      render json: {message: "User added to role successfully!!", role: role.to_json({page: 'user_tab_role_assign', include: [:all] })}
     else
       render json: {errors: errors.compact.uniq}, status: 422
     end
