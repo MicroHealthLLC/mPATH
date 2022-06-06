@@ -608,6 +608,7 @@ export default {
       this.roleRowId = rowData
       this.isEditingRoles = true;
       console.log(this.userids)
+  
     },
     saveRemoveUsers(index, rowData){     
       let user_ids = this.assignedContractUsers.map(t => t.id);
@@ -800,6 +801,13 @@ export default {
       this.hideSaveBtn = false;
     },
     addContract() {
+ 
+       if (this.allContracts  && this.allContracts.length > 0){
+            console.log(this.allContracts)
+                console.log('tableData', this.tableData)
+       }
+    
+
        this.contractDialogVisible = true;
        this.fetchContractProjects();
     },
@@ -846,9 +854,11 @@ export default {
       } else return []
     },
    allContracts(){
-     if(this.tableData && this.tableData == [] ){
-       console.log('no table data', this.contracts.filter(t => t.contract_end_date > this.today))
-       return this.contracts.filter(t => t.contract_end_date > this.today)
+     if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
+       if (this.contractProjects && this.contractProjects.length > 0){
+            console.log('no table data', this.contractProjects.filter(t => t.contract_end_date > this.today))
+       return this.contractProjects.filter(t => t.contract_end_date > this.today)
+       }      
      }
      else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
           let associatedContractIds = this.tableData.map(t => t.id)
