@@ -136,12 +136,51 @@
             </template>
           </el-table-column>
             <el-table-column
-                prop="group"
-                label="Group"
-              >
-               <template slot-scope="scope">
-                 <!-- Need v-model -->
-               <el-select               
+              prop="facility_group"
+              sortable
+              filterable
+              label="Group"
+            >
+            <template slot-scope="scope">
+              <span v-if="rowId == scope.row.id && scope.row.facility_group">
+                <el-select
+                v-model="scope.row.facility_group.id"
+                class="w-100"               
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+                </el-select>
+              </span>
+               <span v-if="rowId == scope.row.id && !scope.row.facility_group">
+                <el-select
+                v-model="newGroup"
+                class="w-100"               
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+                </el-select>
+              </span>
+            
+               <!-- <el-select
+                v-model="scope.row.facility_group.id"
                 class="w-100"
                 v-if="rowId == scope.row.id"
                 filterable
@@ -156,15 +195,31 @@
                   :label="item.name"
                 >
                 </el-option>
-              </el-select>   
+              </el-select>    -->
 
-               <!-- <span v-else>  
-              {{ scope.row.facilityGroupName }}
-               </span> -->
-             </template>
-            </el-table-column>  
+               <span v-else> 
+                 <span v-if="scope.row.facility_group && scope.row.facility_group.name && rowId !== scope.row.id">
+                    {{ scope.row.facility_group.name }}
+                 </span> 
+            
+               </span>
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            </template>
+          </el-table-column>
            <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
+              <el-button  
+                type="default" 
+                v-tooltip="`Edit Project`"
+                @click.prevent="editMode(scope.$index, scope.row)" 
+                v-if="scope.$index !== rowIndex"
+                class="bg-light btn-sm">
+                <i class="fal fa-edit text-primary" ></i>
+               </el-button>  
                 <el-button
                   type="default"
                   v-tooltip="`Manage User(s)`"
@@ -534,6 +589,7 @@ export default {
         today: new Date().toISOString().slice(0, 10),
 
       searchContractData: '',
+      newGroup: null, 
       contractDialogVisible: false, 
       rowIndex_1: null, 
       isEditingRoles: false,
@@ -724,15 +780,17 @@ export default {
     //     return { formData }
     
     saveEdits(index, rows) {
-      // console.log(rows)
-      let id = rows.id;
+      // console.log(this.facilityGroups)
+      let groupId = null
+      if (this.newGroup){
+          groupId = this.newGroup
+      } else groupId = rows.facility_group.id
+      
+      let id = rows.project_contract_id;
       let contractData = {
         contract: {
-          nickname: rows.name,
-          name: rows.name,
-          facility_group_id: rows.facility_group_id,
-          project_id: this.$route.params.programId,
-          id: id,
+          facility_group_id: groupId,
+          programId: this.$route.params.programId,
         },
       };
       // this.setNewContractGroupFilter(rows.facility_group_id);
@@ -740,6 +798,8 @@ export default {
         ...contractData,
         id,
       });
+        console.log(rows)
+      console.log(contractData)
       this.rowIndex = null;
       this.rowId = null;
     },
@@ -748,6 +808,8 @@ export default {
       this.rowId = null;
     },
     editMode(index, rows) {
+      console.log(rows)
+      this.newGroup = null;
       this.rowIndex = index;
       this.rowId = rows.id;
     },
@@ -975,6 +1037,7 @@ export default {
             type: "success",
             showClose: true,
           });
+          this.newGroup = null;
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
