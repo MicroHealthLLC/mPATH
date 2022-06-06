@@ -93,7 +93,7 @@ Rails.application.routes.draw do
       end
       resources :contract_project_pocs
 
-      resources :contracts do
+      resources :project_contracts do
         resources :notes #, module: :facilities
         resources :issues do
           post :batch_update, on: :collection

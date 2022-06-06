@@ -915,19 +915,20 @@ class User < ApplicationRecord
     program = args[:program]
     project = args[:project]
     action = args[:action]
-    contract = args[:contract]
+    project_contract = args[:project_contract]
     resource = args[:resource]
 
     begin
       user = self
       action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
 
-      if contract
-        program_id = contract.project_id.to_s
-        project_contract_id = contract.is_a?(Contract) ? contract.id.to_s : contract.to_s
+      if project_contract
+        project_contract = project_contract.is_a?(ProjectContract) ? project_contract.id.to_s : ProjectContract.find( project_contract.to_s)
+
+        program_id = project_contract.project_id.to_s
 
         # role_ids = user.role_users.where(project_id: program_id, project_contract_id: project_contract_id).pluck(:role_id)
-        role_ids = user.role_users.select{|ru| ru.project_id == program_id &&  ru.project_contract_id == project_contract_id }.map(&:role_id).compact.uniq
+        role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_id == project_contract.id }.map(&:role_id).compact.uniq
         role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
@@ -956,9 +957,9 @@ class User < ApplicationRecord
     return result
   end
 
-  def has_contract_permission?(action: "read", resource: , contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
+  def has_contract_permission?(action: "read", resource: , project_contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
 
-    return has_permission_by_role?({action: "read", resource: resource , contract: contract})
+    return has_permission_by_role?({action: "read", resource: resource , project_contract: project_contract})
 
     # begin
     #   contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)

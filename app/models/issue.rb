@@ -171,6 +171,7 @@ class Issue < ApplicationRecord
       :reportable,
       :on_hold,
       :draft,
+      :project_contract_id,
       issue_files: [],
       file_links: [],
       user_ids: [],
@@ -390,8 +391,8 @@ class Issue < ApplicationRecord
 
     issue.attributes = i_params
 
-    if params[:contract_id]
-      issue.contract_id = params[:contract_id]
+    if params[:project_contract_id]
+      issue.project_contract_id = params[:project_contract_id]
     elsif !issue.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
