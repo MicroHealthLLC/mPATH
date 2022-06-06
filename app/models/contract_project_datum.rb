@@ -12,7 +12,8 @@ class ContractProjectDatum < ApplicationRecord
   
   def to_json(options = {})
     h = self.as_json
-    h.merge!({project_contract_id: options[:project_contract_id] }) if options[:project_contract_id]
+    h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]
+    h.merge!({facility_group: options[:project_contract].facility_group.as_json }) if options[:project_contract]
     h.merge!({contract_customer: contract_customer.as_json}) if contract_customer_id
     h.merge!({contract_vehicle: self.contract_vehicle.as_json}) if contract_vehicle_id
     h.merge!({contract_award_to: contract_award_to.as_json}) if contract_award_to_id
