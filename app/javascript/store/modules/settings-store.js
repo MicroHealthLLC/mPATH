@@ -576,19 +576,20 @@ const settingsStore = {
            commit("TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED", true);
          });
      },
-    fetchContract({ commit }, { contractId }) {
+    fetchContract({ commit }, { id, programId }) {
+      console.log(id, programId)
       commit("TOGGLE_CONTRACT_LOADED", false);
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}.json`,
+        url: `${API_BASE_PATH}/contracts/${id}?project_id=${programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_CONTRACT", res.data);
+          commit("SET_CONTRACT", res.data.contract);
         })
         .catch((err) => {
           console.log(err);
@@ -1099,6 +1100,7 @@ const settingsStore = {
           });
       });
     },
+  
   },
 
   mutations: {
@@ -1320,6 +1322,16 @@ const settingsStore = {
     contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: (state) => state.contract_type_filter,
+    facilityGroupContracts: (state, getters) => (group) => {
+      return {
+      contracts: { 
+          b: getters.contracts
+          .filter(f => 
+              f.facility_group.id == group.id
+              ).sort((a, b) => a.name.localeCompare(b.name)),
+         }      
+      }
+    },
     getContractGroupOptions: (state, getters) => {
       let options = [
         {

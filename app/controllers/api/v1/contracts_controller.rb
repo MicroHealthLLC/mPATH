@@ -19,7 +19,7 @@ class Api::V1::ContractsController < AuthenticatedController
     authorized_program_ids = current_user.authorized_programs.pluck(:id)
     if authorized_program_ids.include?(params[:project_id].to_i)
       project_contract = ProjectContract.find(params[:id])
-      render json: {contract: project_contarct.contract_project_datum.to_json({project_contract: project_contarct})}
+      render json: {contract: project_contract.contract_project_datum.to_json({project_contract: project_contract})}
     else
       render json: {error: "You are not authorized to see contract!"}, status: 406
     end

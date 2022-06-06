@@ -91,6 +91,7 @@ export default {
     return {
       currentFacility: {},
       currentContract: {},
+      // projectContracts: [],
       facGroupId:null,
       currentContractGroup: {},
       currentFacilityGroup: {},
@@ -140,6 +141,7 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "contractsLoaded",
       "currentProject",
       "facilities",
       "contracts",
@@ -188,6 +190,9 @@ export default {
         (facility) => facility.facilityId == this.$route.params.projectId
       );
     }
+    if (this.contractsLoaded && this.contracts) {
+        this.projectContracts = this.contracts
+    }
      if (this.contentLoaded && this.$route.params.contractId) {
  
       this.currentContract = this.contracts.find((c) => c.project_contract_id == this.$route.params.contractId)
@@ -207,6 +212,13 @@ export default {
 
       },
     },
+    // projectContracts: {
+    //   handler() {
+    //     if(this.contracts && this.contracts.length > 0) {
+    //       this.projectContracts = this.contracts
+    //     }      
+    //   },
+    // },
      currentFacility: {
       handler() {
         if(this.$route.params.projectId) {
@@ -219,7 +231,7 @@ export default {
       handler() {
        if(this.$route.params.contractId) {       
             this.currentContract = this.contracts.find((c) => c.project_contract_id == this.$route.params.contractId)
-            this.currentContractGroup = this.facilityGroups.find((group) => group.id == this.currentContract.facility_group_id);
+            this.currentContractGroup = this.facilityGroups.find((group) => group.id == this.currentContract.facility_group.id);
         }
      
       },
