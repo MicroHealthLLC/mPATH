@@ -12,17 +12,17 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
 
   def show
-    project_contarct = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
-    if project_contarct
-      render json: {contract: project_contarct.contract_project_datum.to_json({project_contract: project_contarct}), message: "Successfully updated contract "}
+    project_contract = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    if project_contract
+      render json: {contract: project_contract.contract_project_datum.to_json({project_contract: project_contract}), message: "Successfully updated contract "}
     else
       render json: {error: "Error updating contract!"}, staus: 406
     end
   end
   
   def update
-    project_contarct = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
-    if project_contarct && project_contarct.update(project_contract_params)
+    project_contract = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    if project_contract && project_contract.update(project_contract_params)
       render json: {message: "Successfully updated contract "}
     else
       render json: {error: "Error updating contract!"}, staus: 406
@@ -30,9 +30,9 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
 
   def destroy
-    project_contarct = ProjectContract.where(id: params[:id], project_id: params[:project_id]).first
+    project_contract = ProjectContract.where(id: params[:id], project_id: params[:project_id]).first
 
-    if project_contarct && project_contarct.destroy
+    if project_contract && project_contract.destroy
       render json: {message: "Successfully removed association!"}
     else
       render json: {error: "Error removing association!"}, staus: 406

@@ -40,7 +40,7 @@
            <div class="col py-0 text-right">
             <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
               facilityGroupFacilities(group).projects.a.length +  
-              facilityGroupFacilities(group).contracts.b.length
+              facilityGroupContracts(group).contracts.b.length
               }}
             </span>
 
@@ -75,10 +75,10 @@
                 </div>
               </router-link>
               </div>
-               <div 
-                v-show="isContractsView && _isallowedContracts('read', c)"              
-                v-for="c in filteredContracts.filter(t => t.facilityGroupId == group.id)" 
-                :key="c.id + 'a'"
+               <div                          
+                v-for="c in contracts.filter(t => t.facility_group.id == group.id)" 
+                 v-show="isContractsView && _isallowedContracts('read', c)"    
+                :key="c.project_contract_id + 'a'"
                 >              
               <router-link               
                 :to="
@@ -88,9 +88,9 @@
                 <div
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
-                  :class="{ active: c.id == $route.params.contractId }"
+                  :class="{ active: c.project_contract_id == $route.params.contractId }"
                 >
-                  <p class="facility-header" data-cy="facilities">
+                <p class="facility-header" data-cy="facilities">
                   <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.name }}
                   </p>
                 </div>
@@ -127,6 +127,7 @@ export default {
    data() {
       return {
         value: '',
+        totalGroupContract: 0,
         filteredGroupSize: null,
         
       }
@@ -146,6 +147,7 @@ export default {
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
+       "facilityGroupContracts",
     ]),
    isContractsView() {
      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
@@ -213,30 +215,20 @@ export default {
    ...mapActions(["createContract", "fetchContracts", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
-         group = this.currentContract.facilityGroupId
+         group = this.currentContract.facility_group.id
        }
       this.$emit("on-expand-facility-group", group);
+
     },
     // log(e){
     //       console.log(e)
 
     // },
     _isallowedContracts(salut, c) {
-        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.id})
-
-        // let pPrivilege = this.$contractPrivileges[this.$route.params.programId][c.id]
-        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        // let s = permissionHash[salut]
-        // return pPrivilege.tasks.includes(s) || pPrivilege.issues.includes(s) || pPrivilege.risks.includes(s) || pPrivilege.overview.includes(s);
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.project_contract_id})
     },
     _isallowedProgramSettings(salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
-        // let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
-        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        // let s = permissionHash[salut]
-        // return pPrivilege.admin_groups.includes(s) ||
-        //        pPrivilege.admin_contracts.includes(s) ||
-        //        pPrivilege.admin_facilities.includes(s);
     },
     toggleAdminView() {
       window.location.pathname = `/programs/${this.$route.params.programId}/settings`
@@ -281,9 +273,12 @@ export default {
         if (this.currentFacility && !this.$route.params.contractId && this.currentFacilityGroup ){             
           this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
-         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facilityGroupId) {
+         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facility_group_id) {
           this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
         }
+        console.log(this.currentContract)
+          console.log(this.projectContracts)
+                console.log(this.currentContractGroup)
         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
