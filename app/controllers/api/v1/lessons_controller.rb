@@ -4,8 +4,8 @@ class Api::V1::LessonsController < AuthenticatedController
   before_action :authorize_request!, only: [:show]
 
   def authorize_request!
-    if params[:contract_id]
-      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(resource: 'lessons', contract: params[:contract_id])
+    if params[:project_contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(resource: 'lessons', project_contract: params[:project_contract_id])
     else
       raise CanCan::AccessDenied unless current_user.has_permission?(resource: 'lessons', program: params[:project_id], project: params[:facility_id], project_privileges_hash: nil, facility_privileges_hash: nil)
     end
@@ -34,13 +34,13 @@ class Api::V1::LessonsController < AuthenticatedController
       end
     elsif params[:project_id]
       allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["lessons"].present? }.compact
-      allowed_contract_ids = cph[params[:project_id]].map{|k,v| k if v.is_a?(Hash) && v["lessons"].present? }.compact
+      allowed_project_contract_ids = cph[params[:project_id]].map{|k,v| k if v.is_a?(Hash) && v["lessons"].present? }.compact
 
       fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
       lesson_ids = []
 
-      if allowed_contract_ids.any?
-        lesson_ids += Lesson.where(contract_id: allowed_contract_ids).pluck(:id)
+      if allowed_project_contract_ids.any?
+        lesson_ids += Lesson.where(project_contract_id: allowed_project_contract_ids).pluck(:id)
       end
       if fp_ids.any?
         lesson_ids += Lesson.where(facility_project_id: fp_ids).pluck(:id)
@@ -87,7 +87,7 @@ class Api::V1::LessonsController < AuthenticatedController
 
       role_users = role_users.joins(:user, {role: :role_privileges}).where("role_privileges.privilege like ? and role_users.project_id = ?", "%R%", params[:project_id]).distinct
 
-      allowed_contract_ids = current_user.authorized_contract_ids(project_ids: [params[:project_id]])
+      allowed_project_contract_ids = current_user.authorized_contract_ids(project_ids: [params[:project_id]])
 
       fp_ids = FacilityProject.where(project_id: params[:project_id]).pluck(:id)
       response_lessons = []
@@ -97,8 +97,8 @@ class Api::V1::LessonsController < AuthenticatedController
         lesson_ids = Lesson.joins(:facility_project).includes(Lesson.lesson_preload_array).where(facility_project_id: fp_ids).pluck(:id)
       end
       
-      if allowed_contract_ids.any?
-        lesson_ids += Lesson.where(contract_id: allowed_contract_ids).pluck(:id)
+      if allowed_project_contract_ids.any?
+        lesson_ids += Lesson.where(project_contract_id: allowed_project_contract_ids).pluck(:id)
       end
 
       lessons = Lesson.includes(Lesson.lesson_preload_array).where(id: lesson_ids.compact.uniq).order(:id)
@@ -107,10 +107,10 @@ class Api::V1::LessonsController < AuthenticatedController
       response_hash = {lessons: response_lessons}
       status_code = 200
 
-    elsif params[:contract_id]
-      allowed_contract_ids = current_user.authorized_contract_ids(project_ids: [params[:project_id]])
-      if allowed_contract_ids.include?(params[:contract_id])
-        lessons = Lesson.where(contract_id: params[:contract_id]).includes(Lesson.lesson_preload_array)
+    elsif params[:project_contract_id]
+      allowed_project_contract_ids = current_user.authorized_contract_ids(project_ids: [params[:project_id]])
+      if allowed_project_contract_ids.include?(params[:project_contract_id])
+        lessons = Lesson.where(project_contract_id: params[:project_contract_id]).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
       end
@@ -166,7 +166,7 @@ class Api::V1::LessonsController < AuthenticatedController
   private
 
   def lesson_params
-    params.require(:lesson).permit(:title, :description, :date, :stage, :task_type_id, :task_id, :risk_id, :issue_id, :issue_type_id, :user_id, :project_id )
+    params.require(:lesson).permit(:title, :description, :date, :stage, :task_type_id, :task_id, :risk_id, :issue_id, :issue_type_id, :user_id, :project_id, :project_contract_id )
   end
 
 end
