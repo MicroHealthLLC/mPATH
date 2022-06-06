@@ -7,7 +7,7 @@ class Api::V1::ContractsController < AuthenticatedController
       project_contracts = ProjectContract.includes(:contract_project_datum).where(project_id: params[:project_id])
       c = []
       project_contracts.in_batches do |_project_contracts|
-        c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract_id: pc.id}) }
+        c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract: pc}) }
       end
       render json: {contracts: c, total_count: c.size}
     else
@@ -18,7 +18,8 @@ class Api::V1::ContractsController < AuthenticatedController
   def show
     authorized_program_ids = current_user.authorized_programs.pluck(:id)
     if authorized_program_ids.include?(params[:project_id].to_i)
-      render json: {contract: ProjectContract.find(params[:id]).contract_project_datum.to_json({project_contract_id: params[:id]})}
+      project_contract = ProjectContract.find(params[:id])
+      render json: {contract: project_contarct.contract_project_datum.to_json({project_contract: project_contarct})}
     else
       render json: {error: "You are not authorized to see contract!"}, status: 406
     end
