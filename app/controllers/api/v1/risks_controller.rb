@@ -14,8 +14,8 @@ class Api::V1::RisksController < AuthenticatedController
     elsif ["destroy"].include?(params[:action]) 
       action = "delete"
     end
-    if params[:contract_id]
-      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'risks', contract: params[:contract_id])
+    if params[:project_contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'risks', project_contract: params[:project_contract_id])
     else
       raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'risks', program: params[:project_id], project: params[:facility_id])
     end
@@ -26,8 +26,8 @@ class Api::V1::RisksController < AuthenticatedController
     all_users = []
     all_user_ids = []
 
-    if params[:contract_id]
-      all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @contract.id).paginate(:page => params[:page], :per_page => 15)
+    if params[:project_contract_id]
+      all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(project_contract_id: @project_contract.id).paginate(:page => params[:page], :per_page => 15)
     else
       all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
     end
@@ -106,10 +106,10 @@ class Api::V1::RisksController < AuthenticatedController
         all_objs << duplicate_risk
       end
     end
-    if params[:contract_ids].present?
-      params[:contract_ids].each do |c_id|
+    if params[:project_contract_ids].present?
+      params[:project_contract_ids].each do |c_id|
         duplicate_risk = @risk.amoeba_dup
-        duplicate_risk.contract_id = c_id
+        duplicate_risk.project_contract_id = c_id
         duplicate_risk.save
         all_objs << duplicate_risk
       end
@@ -121,8 +121,8 @@ class Api::V1::RisksController < AuthenticatedController
 
   def show
 
-    if params[:contract_id]
-      @risk = @contract.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
+    if params[:project_contract_id]
+      @risk = @project_contract.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
     else
       @risk = @facility_project.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
     end
@@ -143,8 +143,8 @@ class Api::V1::RisksController < AuthenticatedController
 
   private
   def set_resources
-    if params[:contract_id]
-      @contract = current_user.authorized_contracts.find_by(id: params[:contract_id] )
+    if params[:project_contract_id]
+      @project_contract = current_user.authorized_contracts.find_by(id: params[:project_contract_id] )
     else
       @project = current_user.authorized_programs.find_by(id: params[:project_id])
       @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
@@ -153,8 +153,8 @@ class Api::V1::RisksController < AuthenticatedController
   
 
   def set_risk
-    if params[:contract_id]
-      @risk = @contract.risks.find(params[:id])
+    if params[:project_contract_id]
+      @risk = @project_contract.risks.find(params[:id])
     else
       @risk = @facility_project.risks.find_by(id: params[:id])
     end

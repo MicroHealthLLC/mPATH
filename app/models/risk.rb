@@ -24,8 +24,8 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|risk| risk.contract_id.nil?}
+  after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
 
   scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
   scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
@@ -248,7 +248,7 @@ class Risk < ApplicationRecord
       :risk_approach,
       :on_hold,
       :draft,
-      :contract_id, 
+      :project_contract_id, 
       :ongoing,
       :duration,
       :duration_name,
@@ -267,7 +267,6 @@ class Risk < ApplicationRecord
       :watched,
       :important,
       :reportable,
-      :project_contract_id,
       user_ids: [],
       file_links: [],
       risk_files: [],
@@ -414,8 +413,8 @@ class Risk < ApplicationRecord
 
     sorted_notes = notes.sort_by(&:created_at).reverse
     
-    project = self.contract_id ? self.contract_project : self.project
-    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    project = self.project_contract_id ? self.contract_project : self.project
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       priority_level_name: priority_level_name,
