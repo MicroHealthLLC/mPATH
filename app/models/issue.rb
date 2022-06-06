@@ -290,8 +290,8 @@ class Issue < ApplicationRecord
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse
     
-    project = self.contract_id ? self.contract_project : self.project
-    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    project = self.project_contract_id ? self.contract_project : self.project
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -340,7 +340,7 @@ class Issue < ApplicationRecord
       last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
-      contract_nickname: self.contract.try(:nickname),
+      contract_nickname: self.contract_project_data.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
