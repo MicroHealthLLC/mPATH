@@ -462,16 +462,17 @@ class Project < SortableRecord
     end
 
     contract_hash = []
+    
     all_project_contracts.each do |pc|
       c = all_contract_poject_data.detect{|cp| cp.id == pc.contract_project_datum_id}
       
       next if !c
 
       c_hash = c.to_json({project_contract: pc})
-      
+
       c_hash[:tasks] = []
       if user.has_contract_permission?(resource: 'tasks', project_contract: pc, project_privileges_hash: pph, contract_privileges_hash: cph)
-        tasks = all_tasks.select{|t| t.project_contract_id == c.id }.compact.uniq
+        tasks = all_tasks.select{|t| t.project_contract_id == pc.id }.compact.uniq
         
         tasks.each do |t| 
           c_hash[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
@@ -480,7 +481,7 @@ class Project < SortableRecord
 
       c_hash[:issues] = []
       if user.has_contract_permission?(resource: 'issues', project_contract: pc, project_privileges_hash: pph, contract_privileges_hash: cph)
-        issues = all_issues.select{|t| t.project_contract_id == c.id }.compact.uniq        
+        issues = all_issues.select{|t| t.project_contract_id == pc.id }.compact.uniq        
         issues.each do |i| 
           c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
         end
@@ -488,7 +489,7 @@ class Project < SortableRecord
 
       c_hash[:risks] = []
       if user.has_contract_permission?(resource: 'risks', project_contract: pc, project_privileges_hash: pph, contract_privileges_hash: cph)
-        risks = all_risks.select{|t| t.project_contract_id == c.id }.compact.uniq        
+        risks = all_risks.select{|t| t.project_contract_id == pc.id }.compact.uniq        
         risks.each do |r| 
           c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
         end
