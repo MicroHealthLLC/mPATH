@@ -1129,7 +1129,7 @@ export default new Vuex.Store({
     sideLoading: (state) => state.sideLoading,
     projects: (state) => state.projects,
     facilities: (state) => state.facilities,
-    getContracts: (state) => state.contracts,
+    projectContracts: (state) => state.contracts,
     tableData: (state) => state.tableData, 
     facilityGroups: (state) => state.facilityGroups,
     statuses: (state) => state.statuses,
@@ -1849,7 +1849,7 @@ export default new Vuex.Store({
     filteredContracts: (state, getters) => {
 
       return _.filter(getters.getContracts, (contract) => {
-        let valid = contract.id || null;
+        let valid = contract.project_id || null;
         // valid = valid && facility.facilityGroupStatus == "active";
         if (!valid) return valid;
         if (state.mapFilters.length < 1) return valid;
@@ -2199,7 +2199,7 @@ export default new Vuex.Store({
             case "ids": {
               valid =
                 valid &&
-                f[k].includes(contract.id) &&
+                f[k].includes(contract.project_contract_id) &&
                 getters.filterDataForAdvancedFilter(
                   resources1,
                   "filteredContracts",
@@ -2303,9 +2303,9 @@ export default new Vuex.Store({
       contracts: { 
           b: getters.filteredContracts
           .filter(f => 
-              f.facilityGroupId == group.id &&
+              f.facility_group.id == group.id &&
               f.projectId == getters.currentProject.id
-              ).sort((a, b) => a.nickname.localeCompare(b.nickname)),
+              ).sort((a, b) => a.name.localeCompare(b.name)),
          }      
       }
     },
@@ -3009,6 +3009,24 @@ export default new Vuex.Store({
             // }
             commit("setFacilities", facilities);
             commit("setProjectsLoaded", true);
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          });
+      });
+    },
+    fetchProjectContracts({ commit, dispatch }, id) {
+      return new Promise((resolve, reject) => {
+        http
+          .get(`${API_BASE_PATH}/program_settings/contracts?project_id=${id}`)
+          .then((res) => {
+            let contracts = [];
+            for (let c of res.data.contracts) {
+              contracts.push({ ...c, ...c });
+            }           
+            commit("setContracts", contracts);
             resolve();
           })
           .catch((err) => {

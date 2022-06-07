@@ -7,7 +7,7 @@
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group :class="{'d-none': !_isallowedContracts('read') || currentProject.contracts.length <= 0 }">
+        <el-button-group :class="{'d-none': !_isallowedContracts('read') || projectContracts.length <= 0 }">
           <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
           <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
           PROJECTS
@@ -21,9 +21,9 @@
           <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
           CONTRACTS 
             <span 
-              v-if="currentProject && currentProject.contracts"
+              v-if="projectContracts && projectContracts.length > 0"
               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
-              >{{ currentProject.contracts.length }}
+              >{{ projectContracts.length }}
               </span>
            </el-button>
        </el-button-group>
@@ -892,7 +892,7 @@
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(group).contracts.b.length
+                  facilityGroupContracts(group).contracts.b.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -1161,7 +1161,7 @@ import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
-  props: ["from"],
+  props: ["from","projectContracts"],
   components: {
     Loader,
     ProgramContractsSheet,
@@ -1177,6 +1177,7 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
+    
       "getShowProjectStats",
       "getContractGroupOptions",
       "currentProject",
@@ -1189,6 +1190,7 @@ export default {
       "facilities",
       "facilityCount",
       "facilityGroupFacilities",
+      "facilityGroupContracts",
       "facilityProgress",
       "filterDataForAdvancedFilter",
       "filteredAllIssues",
@@ -1260,18 +1262,9 @@ export default {
     programResourceObj(){
       if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
         return this.currentProject.facilities
-      } else if (this.currentProject && this.currentProject.contracts && this.getShowProjectStats){
-        return this.currentProject.contracts
+      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowProjectStats){
+        return this.projectContracts
       }
-    },
-    contractCategoryCount(){
-      if (this.currentProject && this.currentProject.contracts){     
-       return {
-       prime: this.currentProject.contracts.filter(c => c.contractTypeId == 1).length,
-       nonPrime: this.currentProject.contracts.filter(c => c.contractTypeId == 2).length,
-       primeV_IDIQs: this.currentProject.contracts.filter(c => c.contractTypeId == 3).length
-       }     
-      } 
     },
    C_taskTypeFilter: {
       get() {
@@ -1939,6 +1932,9 @@ export default {
         'setHideOnhold',
         'setHideDraft',
       ]),
+    log(e){
+      // console.log(e)
+    },
     _isallowedContracts(salut) {
       return this.checkPrivileges("ProjectRollup", salut, this.$route, {method: "isallowedContracts"})
      },
@@ -1957,9 +1953,6 @@ export default {
         this.setShowProjectStats(!this.getShowProjectStats)
           // console.log(this.getShowProjectStats)
       } else return
-    },
-    log(e){
-      // console.log(e)
     },
     handleClick(tab, event) {
         // console.log(tab, event);

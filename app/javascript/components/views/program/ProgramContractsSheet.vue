@@ -43,7 +43,7 @@
    >
    <hr class="mt-2 mb-0">
    <el-table 
-    :data="tableData.filter(data => !search || data.nickname.toLowerCase().includes(search.toLowerCase())).reverse()" 
+    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())).reverse()" 
     height="500"
     stripe
     style="width:100%" 
@@ -507,6 +507,7 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   name: "ProgramContractsSheet",
+  props: ["projectContracts"],
   data() {
     return {
       currentFacility: {},
@@ -615,16 +616,15 @@ export default {
       'currentProject'
     ]), 
     tableData(){
-      if(this.currentProject &&
-         this.currentProject.contracts.length > 0 
+      if(this.projectContracts &&
+         this.projectContracts.length > 0 
          ){
-      let programContracts = this.currentProject.contracts.filter(t => t.projectId == this.$route.params.programId)
-      let contractData = programContracts.map(t => t)
+     let contractData = this.projectContracts.map(t => t)
       .filter((td) => {
         //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
             let group = this.C_projectGroupFilter.map((t) => t.id);
-            return group.includes(td.facilityGroupId);
+            return group.includes(td.facility_group.id);
            
           } else return true;
         });

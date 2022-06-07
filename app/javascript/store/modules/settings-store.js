@@ -26,6 +26,7 @@ const settingsStore = {
     contract_loaded: true,
     contracts_loaded: true,
     contract_status: 0,
+    contracts_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
     contract_classifications: [],
@@ -186,6 +187,28 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
+    removeContract({ commit }, { g } ) {
+      commit("TOGGLE_CONTRACTS_LOADED", false);
+        console.log(g)
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/program_settings/contracts/${g.id}?project_id=${g.pId}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CONTRACTS", res.data.contracts);
+          commit("SET_CONTRACTS_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACTS_LOADED", true);
+        });
+      },
     //
     removeOrDeleteGroup({ commit }, { g }) {
       commit("TOGGLE_GROUPS_LOADED", false);
@@ -242,7 +265,7 @@ const settingsStore = {
      
         axios({
           method: "GET",
-          url: `${API_BASE_PATH}/program_settings/roles?project_id=${id}&all=true`,
+          url: `${API_BASE_PATH}/program_settings/roles?project_id=${id}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
@@ -250,7 +273,7 @@ const settingsStore = {
         })
           .then((res) => {
             commit("SET_ROLES", res.data.roles);
-            // console.log(res.data.roles)
+          console.log(res.data.roles)
           })
           .catch((err) => {
             console.log(err);
@@ -345,7 +368,7 @@ const settingsStore = {
       //ADD USER TO ROLE
        addUserToRole({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
-        // console.log(userData)
+      console.log(userData)
         let formData = new FormData();     
           if (userData.projectIds){
             userData.projectIds.forEach((ids) => {
@@ -361,7 +384,7 @@ const settingsStore = {
             formData.append("role_users[][user_id]", userData.userId);
             formData.append("role_users[][project_id]", userData.programId)
             formData.append("role_users[][role_id]", userData.roleId)      
-            formData.append("role_users[][contract_project_datum_id]", ids)      
+            formData.append("role_users[][project_contract_id]", ids)      
             });
           } 
 
@@ -382,7 +405,7 @@ const settingsStore = {
             formData.append("role_users[][facility_project_id]", userData.projectId)
             }
             if(userData.contractId){
-            formData.append("role_users[][contract_project_datum_id]", userData.contractId)
+            formData.append("role_users[][project_contract_id]", userData.contractId)
             }
             });
           }       
@@ -431,7 +454,7 @@ const settingsStore = {
               formData.append("user_id", userData.userId);
               formData.append("project_id", userData.programId)
               formData.append("role_id", userData.roleId)      
-              formData.append("contract_project_datum_id[]", ids)      
+              formData.append("project_contract_id[]", ids)      
               });
             } 
             if (userData.adminRole || userData.adminRoleIndex){
@@ -455,7 +478,7 @@ const settingsStore = {
               }
               if(userData.contractId){
               formData.append("users_from_contract_role", true);   
-              formData.append("contract_project_datum_id", userData.contractId)
+              formData.append("project_contract_id", userData.contractId)
                }
               });
             }
@@ -553,19 +576,20 @@ const settingsStore = {
            commit("TOGGLE_PROGRAM_SETTINGS_PROJECTS_LOADED", true);
          });
      },
-    fetchContract({ commit }, { contractId }) {
+    fetchContract({ commit }, { id, programId }) {
+      console.log(id, programId)
       commit("TOGGLE_CONTRACT_LOADED", false);
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}.json`,
+        url: `${API_BASE_PATH}/contracts/${id}?project_id=${programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_CONTRACT", res.data);
+          commit("SET_CONTRACT", res.data.contract);
         })
         .catch((err) => {
           console.log(err);
@@ -586,8 +610,8 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_CONTRACTS", res.data.contracts[0]);
-          // console.log(res.data);
+          commit("SET_CONTRACTS", res.data.contracts);
+          // console.log(res.data.contracts);
         })
         .catch((err) => {
           console.log(err);
@@ -1026,12 +1050,14 @@ const settingsStore = {
     updateContract({ commit }, { contract, id }) {
       // Displays loader on front end
       commit("TOGGLE_CONTRACTS_LOADED", false);
+      let formData = new FormData();
       // Utilize utility function to prep Lesson form data
-      let formData = contractFormData(contract);
-
+      // let formData = contractFormData(contract);
+      formData.append("project_id", contract.programId);
+      formData.append("project_contract[facility_group_id]", contract.facility_group_id);
       axios({
-        method: "PATCH",
-        url: `${API_BASE_PATH}/contracts/${id}`,
+        method: "PUT",
+        url: `${API_BASE_PATH}/program_settings/contracts/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1074,6 +1100,7 @@ const settingsStore = {
           });
       });
     },
+  
   },
 
   mutations: {
@@ -1109,6 +1136,7 @@ const settingsStore = {
     SET_SHOW_CREATE_ROW: (state, value) => (state.show_create_row = value),
     SET_CONTRACT: (state, contract) => (state.contract = contract),
     SET_CONTRACTS: (state, value) => (state.contracts = value),
+    SET_CONTRACTS_STATUS: (state, value) => (state.contracts_status = value),
     SET_CLIENT_TYPES: (state, value) => (state.client_types = value),
     SET_NEW_GROUPS: (state, value) => (state.new_groups = value),
     SET_TRANSFER_DATA: (state, value) => (state.transfer_data = value),
@@ -1232,6 +1260,7 @@ const settingsStore = {
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
     contractStatus: (state) => state.contract_status,
+    contractsStatus: (state) => state.contracts_status,
     getNewContractGroupFilter: (state) => state.new_contract_group_filter,    
     getClientTypes: (state) => state.client_types,
     getDaysRemaining: (state) => state.pop_days_remaining,
@@ -1293,6 +1322,16 @@ const settingsStore = {
     contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: (state) => state.contract_type_filter,
+    facilityGroupContracts: (state, getters) => (group) => {
+      return {
+      contracts: { 
+          b: getters.contracts
+          .filter(f => 
+              f.facility_group.id == group.id
+              ).sort((a, b) => a.name.localeCompare(b.name)),
+         }      
+      }
+    },
     getContractGroupOptions: (state, getters) => {
       let options = [
         {
@@ -1322,66 +1361,9 @@ const contractFormData = (contract) => {
     formData.append("facility_group_name", contract.facility_group_name);
   }
   formData.append("contract[facility_group_id]", contract.facility_group_id);
-  formData.append("contract[contract_type_id]", contract.contract_type_id);
   formData.append("contract[project_id]", contract.project_id); //Required; This is actually the Program ID
-  formData.append("contract[project_code]", contract.project_code);
-  formData.append("contract[nickname]", contract.nickname); //Required
-  formData.append("contract[total_subcontracts]", contract.total_subcontracts); //Required
-  formData.append("contract[name]", contract.name); //Required
-  formData.append("contract[notes]", contract.notes);
-  formData.append("contract[contract_status_id]", contract.contract_status_id);
-  formData.append(
-    "contract[contract_customer_id]",
-    contract.contract_customer_id
-  );
-  formData.append(
-    "contract[contract_vehicle_id]",
-    contract.contract_vehicle_id
-  );
-  formData.append(
-    "contract[contract_vehicle_number_id]",
-    contract.contract_vehicle_number_id
-  );
-  formData.append(
-    "contract[contract_client_type_id]",
-    contract.contract_client_type_id
-  );
-  formData.append("contract[contract_number_id]", contract.contract_number_id);
-  formData.append(
-    "contract[contract_classification_id]",
-    contract.contract_classification_id
-  );
-  formData.append(
-    "contract[subcontract_number_id]",
-    contract.subcontract_number_id
-  );
-  formData.append("contract[contract_prime_id]", contract.contract_prime_id);
-  formData.append(
-    "contract[contract_current_pop_id]",
-    contract.contract_current_pop_id
-  );
-  formData.append(
-    "contract[current_pop_start_time]",
-    contract.current_pop_start_time
-  );
-  formData.append(
-    "contract[current_pop_end_time]",
-    contract.current_pop_end_time
-  );
-  formData.append("contract[days_remaining]", contract.days_remaining);
-  formData.append(
-    "contract[total_contract_value]",
-    contract.total_contract_value
-  );
-  formData.append("contract[current_pop_value]", contract.current_pop_value);
-  formData.append("contract[current_pop_funded]", contract.current_pop_funded);
-  formData.append(
-    "contract[total_contract_funded]",
-    contract.total_contract_funded
-  );
-  formData.append("contract[start_date]", contract.start_date);
-  formData.append("contract[end_date]", contract.end_date);
-  // formData.append("contract[id]", contract.id);
+
+// formData.append("contract[id]", contract.id);
 
   return formData;
 };

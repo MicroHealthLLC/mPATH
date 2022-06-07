@@ -532,10 +532,10 @@
                   projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).length > 0" class="projectNames">   
                   {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
                 </span>
-                <span v-if="contractNames && (item.contract_id && contractNames.map(t => t.contractId == item.contract_id)) && item.role_id == scope.row &&                  
-                  contractNames.filter(t => t.id == item.contract_id).map(t => t.name).length > 0" class="projectNames" >  
+                <span v-if="contractNames && (item.project_contract_id && contractNames.map(t => t.project_contract_id == item.project_contract_id)) && item.role_id == scope.row &&                  
+                  contractNames.filter(t => t.project_contract_id == item.project_contract_id).map(t => t.name).length > 0" class="projectNames" >  
 
-                  {{ contractNames.filter(t => t.id == item.contract_id).map(t => t.name).join()}} 
+                  {{ contractNames.filter(t => t.project_contract_id == item.project_contract_id).map(t => t.name).join()}} 
                 </span>
               </span>
            
@@ -580,8 +580,8 @@
             > 
             <el-option
                 v-for="item in contractNames"
-                :value="item"
-                :key="item.id"
+                :value="item.project_contract_id"
+                :key="item.project_contract_id"
                 :label="item.name"
               > 
               </el-option> 
@@ -766,8 +766,8 @@
               <el-option
                 v-for="item in filteredContracts"
                 :value="item"
-                :key="item.id"
-                :label="item.nickname"
+                :key="item.project_contract_id"
+                :label="item.name"
               >
               </el-option>
             </el-select>
@@ -1122,7 +1122,7 @@ export default {
    
     },
     saveContractUserRole(index, rows){
-    let contractIds = this.associatedContracts.map(t => t.id)
+    let contractIds = this.associatedContracts.map(t => t.project_contract_id)
     let projectUserRoleData = {
           userData: {
             roleId: this.contractRoleNames.id,
@@ -1132,6 +1132,7 @@ export default {
             userRoles: true        
          },
       };
+      // console.log(contractIds)
       this.addUserToRole({
         ...projectUserRoleData,
       });
@@ -1418,8 +1419,8 @@ export default {
     },
   filteredContracts(){
       if( this.projectUsers &&  this.projectUsers.data && this.contractNames && this.contractNames.length > 0){
-        let roleProjectIds = this.projectUsers.data.map(t => t.contract_id)
-          return this.contractNames.filter(t => !roleProjectIds.includes(t.id))
+        let roleProjectIds = this.projectUsers.data.map(t => t.project_contract_id)
+          return this.contractNames.filter(t => !roleProjectIds.includes(t.project_contract_id))
       }    
     },
     admin_role_names(){
@@ -1492,8 +1493,8 @@ export default {
    assignedUserContracts(){
     if (this.contractNames && this.contractNames.length > 0){ 
           let ids = this.projectUsers.data.filter(t => t.role_id == this.roleRowId)
-          let tableContractIds = ids.map(t => t.contract_id)
-          let filteredContracts = this.contractNames.filter(t => tableContractIds.includes(t.id) )
+          let tableContractIds = ids.map(t => t.project_contract_id)
+          let filteredContracts = this.contractNames.filter(t => tableContractIds.includes(t.project_contract_id) )
           // console.log(filteredContracts)
           return filteredContracts   
       } 

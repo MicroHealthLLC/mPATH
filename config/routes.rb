@@ -13,8 +13,9 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       namespace :program_settings do
-        get '/contracts', to: 'contracts#index'
 
+        resources :contracts
+        
         resources :facility_groups do
           collection do
             put :bulk_project_update
@@ -92,7 +93,7 @@ Rails.application.routes.draw do
       end
       resources :contract_project_pocs
 
-      resources :contracts do
+      resources :project_contracts do
         resources :notes #, module: :facilities
         resources :issues do
           post :batch_update, on: :collection

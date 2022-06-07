@@ -171,6 +171,7 @@ class Issue < ApplicationRecord
       :reportable,
       :on_hold,
       :draft,
+      :project_contract_id,
       issue_files: [],
       file_links: [],
       user_ids: [],
@@ -289,8 +290,8 @@ class Issue < ApplicationRecord
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse
     
-    project = self.contract_id ? self.contract_project : self.project
-    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    project = self.project_contract_id ? self.contract_project : self.project
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -339,7 +340,7 @@ class Issue < ApplicationRecord
       last_update: sorted_notes.first.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
-      contract_nickname: self.contract.try(:nickname),
+      contract_nickname: self.contract_project_data.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -390,8 +391,8 @@ class Issue < ApplicationRecord
 
     issue.attributes = i_params
 
-    if params[:contract_id]
-      issue.contract_id = params[:contract_id]
+    if params[:project_contract_id]
+      issue.project_contract_id = params[:project_contract_id]
     elsif !issue.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])

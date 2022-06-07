@@ -29,7 +29,8 @@ class Role < ApplicationRecord
 
     if options[:page] == "user_tab_role_assign"
       hash[:facility_projects] = self.role_users.map(&:facility_project).compact.uniq.map{|f| {id: f.id, name: f.facility.facility_name} }
-      hash[:contracts] = self.role_users.map(&:contract).compact.uniq.map{|f| {id: f.id, name: f.nickname} }
+
+      hash[:contracts] = self.role_users.map(&:project_contract).compact.uniq.map{|f| {project_contract_id: f.id, name: f.contract_project_datum&.name} }
     end
 
     if options[:include] && ( options[:include].include?(:role_privileges) || options[:include].include?(:all) )

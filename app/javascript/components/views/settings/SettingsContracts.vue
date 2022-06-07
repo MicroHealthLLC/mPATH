@@ -136,12 +136,51 @@
             </template>
           </el-table-column>
             <el-table-column
-                prop="group"
-                label="Group"
-              >
-               <template slot-scope="scope">
-                 <!-- Need v-model -->
-               <el-select               
+              prop="facility_group"
+              sortable
+              filterable
+              label="Group"
+            >
+            <template slot-scope="scope">
+              <span v-if="rowId == scope.row.id && scope.row.facility_group">
+                <el-select
+                v-model="scope.row.facility_group.id"
+                class="w-100"               
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+                </el-select>
+              </span>
+               <span v-if="rowId == scope.row.id && !scope.row.facility_group">
+                <el-select
+                v-model="newGroup"
+                class="w-100"               
+                filterable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+                </el-select>
+              </span>
+            
+               <!-- <el-select
+                v-model="scope.row.facility_group.id"
                 class="w-100"
                 v-if="rowId == scope.row.id"
                 filterable
@@ -156,15 +195,31 @@
                   :label="item.name"
                 >
                 </el-option>
-              </el-select>   
+              </el-select>    -->
 
-               <!-- <span v-else>  
-              {{ scope.row.facilityGroupName }}
-               </span> -->
-             </template>
-            </el-table-column>  
+               <span v-else> 
+                 <span v-if="scope.row.facility_group && scope.row.facility_group.name && rowId !== scope.row.id">
+                    {{ scope.row.facility_group.name }}
+                 </span> 
+            
+               </span>
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            </template>
+          </el-table-column>
            <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
+              <el-button  
+                type="default" 
+                v-tooltip="`Edit Project`"
+                @click.prevent="editMode(scope.$index, scope.row)" 
+                v-if="scope.$index !== rowIndex"
+                class="bg-light btn-sm">
+                <i class="fal fa-edit text-primary" ></i>
+               </el-button>  
                 <el-button
                   type="default"
                   v-tooltip="`Manage User(s)`"
@@ -199,7 +254,7 @@
                     type="default"            
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
-                    @click.prevent="removeContract(scope.$index, scope.row)"
+                    @click.prevent="removeContractBtn(scope.$index, scope.row)"
                     v-if="scope.$index !== rowIndex"        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
@@ -306,6 +361,9 @@
           </template>
         </el-table-column>
     </el-table>
+    <span class="mt-3" v-else>
+      <h4><em>There are currently no contracts to display</em></h4>
+    </span>
     </div>  
   </template>
      
@@ -531,6 +589,7 @@ export default {
         today: new Date().toISOString().slice(0, 10),
 
       searchContractData: '',
+      newGroup: null, 
       contractDialogVisible: false, 
       rowIndex_1: null, 
       isEditingRoles: false,
@@ -562,9 +621,9 @@ export default {
   mounted() {  
     this.fetchContracts(this.$route.params.programId)
     this.fetchRoles(this.$route.params.programId)
-    // if(this.groups && this.groups.length <= 0){
-    // this.fetchGroups(this.$route.params.programId);
-    // }
+    if(this.groups && this.groups.length <= 0){
+    this.fetchGroups(this.$route.params.programId);
+    }
   },
   methods: {
     ...mapMutations([
@@ -580,7 +639,8 @@ export default {
       "SET_CONTRACT_ROLE_NAMES",
       "SET_ASSIGNED_CONTRACT_USERS",
       "SET_REMOVE_CONTRACT_ROLE_STATUS",
-       "SET_ASSOCIATED_CONTRACTS_STATUS"
+       "SET_ASSOCIATED_CONTRACTS_STATUS",
+       "SET_CONTRACTS_STATUS"
     ]),
     ...mapActions([
       "fetchCurrentProject",
@@ -593,7 +653,8 @@ export default {
       "addUserToRole", 
       "fetchRoles",
       "removeUserRole",
-      "associateContractToProgram"
+      "associateContractToProgram",
+      "removeContract"
     ]),
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -652,7 +713,7 @@ export default {
     },
     addUserRole(index, rows) {
       this.openUserPrivilegesDialog = true
-      this.projId = rows.id
+      this.projId = rows.project_contract_id
       this.contractData = rows
       console.log(rows)
     },
@@ -669,7 +730,7 @@ export default {
     },
     goToContract(index, rows) {
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.id}/`
+      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
       // this.$router.push({
       //   name: "SheetContract",
       //   params: {
@@ -684,38 +745,19 @@ export default {
 			// disable mutiple row expanded 
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];   
 		},
-    saveNewContract() {
-      let groupId = ""
-      if (this.C_newContractGroupFilter){
-        groupId = this.C_newContractGroupFilter.id
-      }
-      let contractData = {
-        contract: {
-          nickname: this.contractNicknameText,
-          name: this.contractNameText,
-          facility_group_id: groupId,
-          project_id: this.$route.params.programId,
-          contract_type_id: this.C_typeFilter,
-        },
-      };
-      this.createContract({
-        ...contractData,
-      });
-      this.hideSaveBtn = true;
-      this.fetchCurrentProject(this.$route.params.programId);
-      console.log(contractData)
-    },
-      removeContract(index, rows) {
+    removeContractBtn(index, rows) {
+
+    console.log(rows)
       // let id = [rows.id];
-      let project = {
+      let contract = {
         g: {
-          id: rows.id,
-          programId: this.$route.params.programId,
+          id: rows.project_contract_id,
+          pId: this.$route.params.programId,
           },
        };      
  
       this.$confirm(
-        `Are you sure you want to remove ${rows.project_name} from your program?`,
+        `Are you sure you want to remove ${rows.name} from your program?`,
         "Confirm Remove",
         {
           confirmButtonText: "Remove",
@@ -723,8 +765,7 @@ export default {
           type: "warning",
         }
        ).then(() => {
-         alert("We're still working on the remove project functionality :)")
-        // this.removeOrDeleteProject({ ...project });
+        this.removeContract({ ...contract });
       });
     },
     // DO NOT DELETE This async method.  It is code for firebase cloud functionality
@@ -737,18 +778,19 @@ export default {
     //       }
     //     await createUser({...formData})
     //     return { formData }
-    //  }
-
+    
     saveEdits(index, rows) {
-      // console.log(rows)
-      let id = rows.id;
+      // console.log(this.facilityGroups)
+      let groupId = null
+      if (this.newGroup){
+          groupId = this.newGroup
+      } else groupId = rows.facility_group.id
+      
+      let id = rows.project_contract_id;
       let contractData = {
         contract: {
-          nickname: rows.nickname,
-          name: rows.name,
-          facility_group_id: rows.facility_group_id,
-          project_id: this.$route.params.programId,
-          id: id,
+          facility_group_id: groupId,
+          programId: this.$route.params.programId,
         },
       };
       // this.setNewContractGroupFilter(rows.facility_group_id);
@@ -756,6 +798,8 @@ export default {
         ...contractData,
         id,
       });
+        // console.log(rows)
+      // console.log(groupId)
       this.rowIndex = null;
       this.rowId = null;
     },
@@ -764,13 +808,15 @@ export default {
       this.rowId = null;
     },
     editMode(index, rows) {
+      console.log(rows)
+      this.newGroup = null;
       this.rowIndex = index;
       this.rowId = rows.id;
     },
     deleteSelectedContract(index, rows) {
       let id = rows.id;
       this.$confirm(
-        `Are you sure you want to delete ${rows.nickname}?`,
+        `Are you sure you want to delete ${rows.name}?`,
         "Confirm Delete",
         {
           confirmButtonText: "Delete",
@@ -782,7 +828,7 @@ export default {
           if (value === 200) {
             this.fetchContracts();
             this.$message({
-              message: `${rows.nickname} was deleted successfully.`,
+              message: `${rows.name} was deleted successfully.`,
               type: "success",
               showClose: true,
             });
@@ -790,13 +836,7 @@ export default {
         });
       });
     },
-    addAnotherContract() {
-      this.C_newContractGroupFilter = null;
-      this.contractNameText = "";
-      this.contractNicknameText = "";
-      this.hideSaveBtn = false;
-    },
-    closeAddContractBtn() {
+   closeAddContractBtn() {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
     },
@@ -841,7 +881,8 @@ export default {
       "getAssignedContractUsers",
       "contractProjects",
       "associatedContractsStatus",
-      "contractProjectsLoaded"
+      "contractProjectsLoaded",
+      "contractsStatus"
     ]),
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
@@ -850,54 +891,62 @@ export default {
     tableData(){
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
-      return this.contracts
+        // console.log(this.contacts)
+        return (
+            this.contracts.filter((td) => {
+                if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0) {
+                  let group = this.C_projectGroupFilter.map((t) => t.name);
+                  return group.includes(td.facility_group.name);
+                } else return true;
+              })
+          );
       } else return []
     },
-   allContracts(){
-     if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
-       if (this.contractProjects && this.contractProjects.length > 0){
-            console.log('no table data', this.contractProjects.filter(t => t.contract_end_date > this.today))
-       return this.contractProjects.filter(t => t.contract_end_date > this.today)
-       }      
-     }
-     else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
-          let associatedContractIds = this.tableData.map(t => t.id)
-          let data = this.contractProjects.filter(t => {                     
-        if (this.searchContractData !== '' && t) {           
-            return (            
-               t.name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
-               t.contract_number.name.toLowerCase().match(this.searchContractData.toLowerCase()) ||
-               t.contract_customer.name.toLowerCase().match(this.searchContractData.toLowerCase())
-            ) 
-        } else return true
-        })
-        .filter((t) => {
-          return !associatedContractIds.includes(t.id)
-        }) 
-        .filter( (t) => {
-          return t.contract_end_date > this.today
-        })
-         return data       
+    allContracts(){
+      if(this.tableData && this.tableData == [] || this.tableData.length == 0  ){
+        if (this.contractProjects && this.contractProjects.length > 0){
+              console.log('no table data', this.contractProjects.filter(t => t.contract_end_date > this.today))
+        return this.contractProjects.filter(t => t.contract_end_date > this.today)
         }      
-     },
-  contractUsers(){
-  if(this.getRoles && this.getRoles.length > 0 ){   
-    let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
-    if (this.projId)  {
-      let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.contract_id)   
-      // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
-      //     { 
-      //       ...acc, 
-      //       [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
-      //     }
-      // ), {});
-      console.log(groupByRoles)
-          return {
-                  data: groupByRoles,
-                  roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
-                  }
-      } else return [].concat.apply([], roleUsers)       
-    }
+      }
+      else if (this.contractProjects && this.contractProjects.length > 0 && this.tableData && this.tableData.length > 0){ 
+            let associatedContractIds = this.tableData.map(t => t.id)
+            let data = this.contractProjects.filter(t => {                     
+          if (this.searchContractData !== '' && t) {           
+              return (            
+                t.name.toLowerCase().match(this.searchContractData.toLowerCase()) || 
+                t.contract_number.name.toLowerCase().match(this.searchContractData.toLowerCase()) ||
+                t.contract_customer.name.toLowerCase().match(this.searchContractData.toLowerCase())
+              ) 
+          } else return true
+          })
+          .filter((t) => {
+            return !associatedContractIds.includes(t.id)
+          }) 
+          .filter( (t) => {
+            return t.contract_end_date > this.today
+          })
+          return data       
+          }      
+    },
+    contractUsers(){
+    if(this.getRoles && this.getRoles.length > 0 ){   
+      let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
+      if (this.projId)  {
+        let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.project_contract_id)   
+        // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
+        //     { 
+        //       ...acc, 
+        //       [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
+        //     }
+        // ), {});
+        console.log(groupByRoles)
+            return {
+                    data: groupByRoles,
+                    roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
+                    }
+        } else return [].concat.apply([], roleUsers)       
+      }
     },
     assignedUsers(){
     //   //  Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
@@ -995,9 +1044,24 @@ export default {
             type: "success",
             showClose: true,
           });
+          this.newGroup = null;
           this.SET_CONTRACT_STATUS(0);
           this.fetchContracts(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
+        }
+      },
+    },
+  contractsStatus: {
+      handler() {
+        if (this.contractsStatus == 200) {
+          this.$message({
+            message: `Successfully removed contract from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACTS_STATUS(0);
+          this.fetchContracts(this.$route.params.programId);
+          this.fetchContractProjects();
         }
       },
     },
@@ -1052,7 +1116,7 @@ export default {
 
 <style scoped lang="scss">
 .addContractModal{
-  min-height: 350px;
+  min-height: 300px;
 }
 /deep/.el-popper {
  .select-popper {

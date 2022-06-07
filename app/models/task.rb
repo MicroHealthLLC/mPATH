@@ -70,7 +70,7 @@ class Task < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
-      :contract_id,
+      :project_contract_id,
       :nickname, 
       task_files: [],
       file_links: [],
@@ -280,9 +280,9 @@ class Task < ApplicationRecord
     p_users = []
 
     if all_users.any?
-      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }.uniq
     else
-      p_users = users.select(&:active?)
+      p_users = users.select(&:active?).uniq
     end
 
     users_hash = {}
@@ -334,8 +334,8 @@ class Task < ApplicationRecord
     sorted_notes = notes.sort_by(&:created_at).reverse
     fp = self.facility_project
 
-    project = self.contract_id ? self.contract_project : self.project
-    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    project = self.project_contract_id ? self.contract_project : self.project
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -344,7 +344,7 @@ class Task < ApplicationRecord
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       task_stage_id: self.task_stage_id,
-      user_ids: p_users.map(&:id).compact.uniq,
+      user_ids: p_users.map(&:id),
       due_date_duplicate: due_date.as_json,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
@@ -385,7 +385,7 @@ class Task < ApplicationRecord
 
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
-      contract_nickname: self.contract.try(:nickname),
+      contract_nickname: self.contract_project_data.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -401,7 +401,6 @@ class Task < ApplicationRecord
 
     task_params = params.require(:task).permit(Task.params_to_permit)
 
-
     task = self
     t_params = task_params.dup
     user_ids = t_params.delete(:user_ids)
@@ -412,8 +411,8 @@ class Task < ApplicationRecord
     notes_attributes = t_params.delete(:notes_attributes)
 
     task.attributes = t_params 
-    if params[:contract_id]
-      task.contract_id = params[:contract_id]
+    if params[:project_contract_id]
+      task.project_contract_id = params[:project_contract_id]
     elsif !task.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])

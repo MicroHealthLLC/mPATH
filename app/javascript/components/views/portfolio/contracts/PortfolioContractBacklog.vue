@@ -199,6 +199,7 @@ export default {
       return {
         nothing: true,
         rowIndex: null, 
+        today: new Date().toISOString().slice(0, 10),
         rowId: null, 
         tabPosition: 'bottom',
         search: '',
@@ -267,7 +268,7 @@ export default {
    tableData(){
     if (this.contractProjects && this.contractProjects.length > 0){
       let validProjects = this.contractProjects.filter(t => t && t.id)
-       return validProjects
+       return validProjects.filter(t => t.contract_end_date > this.today)
      }      
     }, 
   },

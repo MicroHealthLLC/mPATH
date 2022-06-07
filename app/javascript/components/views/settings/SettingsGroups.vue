@@ -342,7 +342,7 @@
                               )"
                               :key="i"
                             >
-                              {{ item.nickname }}
+                              {{ item.name }}
                             </li>
                           </ul>
                         </span>
