@@ -27,15 +27,15 @@
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView && task">
-                    {{ task.facilityName || task.contractNickname }}
+                    {{ task.facilityName || task.name }}
                </span>
                  <span v-if="!isProgramView && (contract || !facility)">
-                    {{ task.contractNickname }}
+                    {{ task.name }}
                </span>
             </router-link>
             <router-link :to="backToContract">
               <span v-if="contract && !isProgramView">{{
-                  contract.nickname || contract.name
+                        contract.name
                   }}
               </span>
             </router-link>     

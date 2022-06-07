@@ -49,439 +49,59 @@
     style="width:100%" 
     >
     <el-table-column 
-      prop="projectCode"  
+      prop="name"  
       sortable  
-      label="Project Code"
-      width="120"
+      width="200"
       fixed  
+      label="Project Name"
       > 
-      <template slot-scope="scope">
-        {{ scope.row.projectCode }}
-        <!-- <el-input size="small"
-          style="text-align:center"
-          v-model="scope.row.projectCode" controls-position="right">
-        </el-input> -->
+   </el-table-column>
+  <el-table-column    
+    label="Customer"
+    prop="contractCustomerId">
+      <template slot-scope="scope" >
+      <span v-if="scope.row.contractCustomer && scope.row.contractCustomer.name !== null">
+        {{ scope.row.contractCustomer.name }}
+        </span>
       </template>
-    </el-table-column>   
-    <el-table-column 
-      prop="nickname"  
-      sortable  
-      width="200"
-      fixed  
-      label="Contract Nickname"
-      > 
-       <template slot-scope="scope">
-
-         {{ scope.row.nickname }}
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.nickname" controls-position="right"></el-input> -->
-       </template>
     </el-table-column>
-    <!-- TYPE -->
-    <el-table-column 
-      prop="contractClassification"  
-      sortable  
-      label="Type" 
-      width="200"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractClassification && scope.row.contractClassification !== null && scope.row.contractClassification.name"
-            v-model="scope.row.contractClassification.name" controls-position="right">
-          </el-input> -->
-            <span 
-              v-if="scope.row.contractClassification &&
-               scope.row.contractClassification.name && 
-                scope.row.contractClassification.name !== 'undefined'
-               ">
-               {{ scope.row.contractClassification.name }}
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-    <!-- STATUS      -->
-    <el-table-column sortable prop="contractStatus"  label="Status" width="200"> 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractStatus && scope.row.contractStatus !== null && scope.row.contractStatus.name"
-            v-model="scope.row.contractStatus.name" controls-position="right"></el-input> -->
-              <span v-if="scope.row.contractStatus && scope.row.contractStatus.name && scope.row.contractStatus.name !== 'undefined'">
-             {{ scope.row.contractStatus.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-    <!-- CONTRACT NAME -->
-    <el-table-column prop="name"  sortable  label="Contract Name" width="200"> 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.name"
-            v-model="scope.row.name" controls-position="right"></el-input>
-            <span v-else> <i> Edit in Program Settings </i> </span> -->
-             <span v-if="scope.row.name && scope.row.name !== 'null'">
-               {{ scope.row.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-    <!-- CUSTOMER (AGENCY) -->
-    <el-table-column prop="contractCustomer.name"  sortable  label="Customer (Agency)" width="200"> 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractCustomer && scope.row.contractCustomer !== null && scope.row.contractCustomer.name"
-            v-model="scope.row.contractCustomer.name" controls-position="right">
-          </el-input> -->
-             <span  v-if="scope.row.contractCustomer && scope.row.contractCustomer.name !== 'undefined' && scope.row.contractCustomer.name">
-                {{ scope.row.contractCustomer.name }}
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-       <!-- CUSTOMER ENTITY -->
-        <el-table-column prop="contractClientType.name"  sortable  label="Customer Entity Type" width="230"> 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractCustomer && scope.row.contractCustomer !== null && scope.row.contractCustomer.name"
-            v-model="scope.row.contractCustomer.name" controls-position="right">
-          </el-input> -->
-             <span  v-if="scope.row.contractClientType && scope.row.contractClientType.name !== 'undefined' && scope.row.contractClientType.name">
-                {{ scope.row.contractClientType.name }}
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-    <!-- VEHICLE -->
-    <el-table-column prop="contractVehicle.name"  sortable  label="Vehicle" width="200"> 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractVehicle && scope.row.contractVehicle.name && scope.row.contractVehicle !== null"
-            v-model="scope.row.contractVehicle.name" controls-position="right"></el-input>
-             <span v-else> <i> Edit in Program Settings </i> </span> -->
-            <span  v-if="scope.row.contractVehicle && scope.row.contractVehicle.name && scope.row.contractVehicle.name !== 'undefined'">
-               {{ scope.row.contractVehicle.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-
-       </template>
-    </el-table-column>
-    <!-- COMMERCIAL / FEDERAL -->
-     <!-- <el-table-column prop=""
-          sortable 
-          label="Commercial/Federal"
-          width="200"
-          >     
-    </el-table-column> -->
-    <!-- PRIME IDIQ -->
-    <el-table-column prop="contractVehicleNumber.name"
-          sortable 
-          label="Prime IDIQ/Vehicle Contract Number"
-          width="230"
-          > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractVehicleNumber && scope.row.contractVehicleNumber.name && scope.row.contractVehicleNumber !== null"
-            v-model="scope.row.contractVehicleNumber.name" controls-position="right"></el-input>
-            <span v-else> <i> Edit in Program Settings </i> </span> -->
-
-            <span  v-if="scope.row.contractVehicleNumber && scope.row.contractVehicleNumber.name && scope.row.contractVehicleNumber.name !== 'undefined'">
-                {{ scope.row.contractVehicleNumber.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-
-       </template>
-    </el-table-column>
-    <!-- PRIME CONTRACT NUMBER -->
-    <el-table-column 
-          prop="contractPrime.name"  
-          sortable  
-          label="Prime Contract Number/Task Order/PO Number"
-          width="230"
-          > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime !== null"
-            v-model="scope.row.contractPrime.name" controls-position="right"></el-input>
-           <span v-else> <i> Edit in Program Settings </i> </span> -->
-
-            <span    v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime.name !== 'undefined'">
-              {{ scope.row.contractPrime.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-           
-       </template>
-    </el-table-column>
-   
-    <!-- SUBCONTRACT NUMBER -->
-    <el-table-column 
-          prop="subcontractNumber.name"  
-          sortable  
-          label="Subcontract Number/PO Number"
-          width="230"
-          > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber !== null"
-            v-model="scope.row.subcontractNumber.name" controls-position="right"></el-input>
-          <span v-else> <i> Edit in Program Settings </i> </span> -->
-
-             <span v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber.name !== 'undefined'">
-              {{ scope.row.subcontractNumber.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-
-     <!-- GOVERNEMNT / CLIENT -->
-     <!-- <el-table-column prop=""
-      sortable 
-      label="Government/Client"
-      width="200"
-      >     
-    </el-table-column> -->
-   <!-- PRIME-->
-     <el-table-column 
-      prop="" 
-      sortable 
-      filterable 
-      label="Prime"
-      width="230"     
-      >     
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-if="scope.row.subcontractNumber && scope.row.subcontractNumber.name && scope.row.subcontractNumber !== null"
-            v-model="scope.row.subcontractNumber.name" controls-position="right"></el-input>
-          <span v-else> <i> Edit in Program Settings </i> </span> -->
-
-             <span v-if="scope.row.contractPrime && scope.row.contractPrime.name && scope.row.contractPrime.name !== 'undefined'">
-              {{ scope.row.contractPrime.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-    </el-table-column>
-  <!-- TOTAL Number of Subcontracts to MH-->
-     <el-table-column 
-      prop="" 
-      sortable 
-      filterable 
-      label="Total Number of Subcontracts"
-      width="150"     
-      >    
-        <template slot-scope="scope">
-        <span  v-if="scope.row.totalSubcontracts">
-          {{scope.row.totalSubcontracts }} 
+      <el-table-column
+      label="Contract #"
+      prop="contractNumberId">
+      <template slot-scope="scope" >
+      <span v-if="scope.row.contractNumber && scope.row.contractNumber.name !== null">
+      {{ scope.row.contractNumber.name}}
+      </span>
+      </template>
+      </el-table-column>
+      <el-table-column
+        label="Award/TO #"
+  
+        prop="contract_award_to_id">
+        <template slot-scope="scope" >
+        <span v-if="scope.row.contractAwardTo && scope.row.contractAwardTo.name !== null">
+        {{ scope.row.contractAwardTo.name }}
         </span>
-        <span v-else></span> 
         </template>
-
-    </el-table-column>
-  <!-- Contract Start-->
-     <el-table-column 
-      prop="startDate"  
-      sortable  
-      width="200"
-      label="Contract Start"
-      > 
-       <template slot-scope="scope">
-        <span  v-if="scope.row.startDate">
-          {{ moment(scope.row.startDate).format('MM/DD/YYYY') }} 
-        </span>
-        <span v-else></span>
-       </template>
-      
-    </el-table-column>
-      <!-- Contract End-->
-     <el-table-column 
-      prop="endDate"  
-      sortable  
-      width="200"
-      label="Contract End"
-      > 
-       <template slot-scope="scope">
-        <span  v-if="scope.row.endDate">
-            {{ moment(scope.row.endDate).format('MM/DD/YYYY') }} 
-        </span>
-        <span v-else></span>
-       </template>
-       
-    </el-table-column>
-   <!-- Current PoP-->
-     <el-table-column 
-      prop="contractCurrentPop"  
-      sortable  
-      width="200"
-      label="Current PoP"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-             v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop !== null"
-            v-model="scope.row.contractCurrentPop.name" controls-position="right"></el-input> -->
-              <span  v-if="scope.row.contractCurrentPop && scope.row.contractCurrentPop.name && scope.row.contractCurrentPop.name !== 'undefined'">
-               {{  scope.row.contractCurrentPop.name }} 
-            </span>
-           <span v-else> <i> Not Available </i> </span>
-       </template>
-       
-    </el-table-column>
-     <!-- Start-->
-     <el-table-column 
-      prop="currentPopStartTime"  
-      sortable  
-      width="230"
-      label="Current PoP Start"
-      > 
-       <template slot-scope="scope">
-          <span v-if="scope.row.currentPopStartTime">
-            {{ moment(scope.row.currentPopStartTime).format('MM/DD/YYYY') }} 
-          </span>
-          <span v-else></span>
-       </template>
-    </el-table-column>
-      <!-- End-->
-     <el-table-column 
-      prop="currentPopEndTime"  
-      sortable  
-      width="230"
-      label="Current PoP End"
-      > 
-       <template slot-scope="scope">
-          <span v-if="scope.row.currentPopEndTime">
-           {{  moment(scope.row.currentPopEndTime).format('MM/DD/YYYY') }}
-          </span>
-          <span v-else></span>
-       </template>
-    </el-table-column>
-    <!--Days Remaining-->
-     <el-table-column 
-      prop="daysRemaining"  
-      sortable  
-      width="200"
-      label="Days Remaining"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.daysRemaining" controls-position="right"></el-input> -->
-        {{scope.row.daysRemaining }}
-       </template>
-    </el-table-column>
-    <!--Total Contract Value-->
-     <el-table-column 
-      prop="totalContractValue"  
-      sortable  
-      width="200"
-      label="Total Contract Value"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.totalContractValue" controls-position="right"></el-input> -->
-            ${{ scope.row.totalContractValue }}
-       </template>
-    </el-table-column>
-     <!--Current PoP Value-->
-     <el-table-column 
-      prop="currentPopValue"  
-      sortable  
-      width="200"
-      label="Current PoP Value"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.currentPopValue" controls-position="right"></el-input> -->
-         ${{ scope.row.currentPopValue }}
-
-       </template>
-    </el-table-column>
-     <!--Total PoP Funded-->
-     <el-table-column 
-      prop="currentPopFunded"  
-      sortable  
-      width="200"
-      label="Total PoP Funded"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.currentPopValue" controls-position="right"></el-input> -->
-         ${{ scope.row.currentPopFunded }}
-
-       </template>
-    </el-table-column>
-      <!--Total Funded To Date-->
-     <el-table-column 
-      prop="totalContractFunded"  
-      sortable  
-      width="200"
-      label="Total Funded To Date"
-      > 
-       <template slot-scope="scope">
-          <!-- <el-input size="small"
-            style="text-align:center"
-            v-model="scope.row.totalContractFunded" controls-position="right"></el-input> -->
-           ${{ scope.row.totalContractFunded }}
-       </template>
-    </el-table-column>
-    <!--Notes-->
-     <el-table-column 
-      prop="notes" 
-      filterable 
-      label="Remarks"
-      width="300"     
-      >     
-       <template slot-scope="scope">
-        <span class="truncate-line-five">
-          {{ scope.row.notes }}
-        </span>
-       </template>
-    </el-table-column>
-    <el-table-column 
-      prop="facilityGroupId" 
-      sortable 
-      filterable 
-      label="Group"
-      width="230"     
+      </el-table-column>
+      <el-table-column
+        prop="facilityGoup"
+        sortable
+        filterable
+        label="Group"
       >
-      <template slot-scope="scope">
-        <span v-if="groupsArr && groupsArr.find( g => g.id == scope.row.facilityGroupId) &&
-          groupsArr.find( g => g.id == scope.row.facilityGroupId).name !== 'undefined'">
-            {{ groupsArr.find( g => g.id == scope.row.facilityGroupId).name  }}
-        </span>
-            <span v-else> <i> Group Name Not Available </i> </span>
-       </template>
+        <template slot-scope="scope">
+          <span v-if="scope.row.facilityGroup && scope.row.facilityGroup.name">
+              {{ scope.row.facilityGroup.name }}
+            </span> 
+      
+        </template>
     </el-table-column>
-
      <el-table-column 
       label="Actions"     
       width="300"      
       >
         <template slot-scope="scope">
-          <!-- THESE COMMENTED OUT  BUTTONS ARE FOR CRUD OPERATIONS -->
-        <!-- <el-button
-          type="default"  
-           class="bg-primary text-light"     
-        >
-        <i class="far fa-save"></i>
-        </el-button>   
-        <el-button
-          type="default" 
-          class="bg-secondary text-light"      
-        >
-        <i class="far fa-cog"></i>
-        </el-button>    -->
-    
         <el-button
           v-tooltip="`Go to Contract`"
           type="default"       
@@ -507,7 +127,6 @@
 import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   name: "ProgramContractsSheet",
-  props: ["projectContracts"],
   data() {
     return {
       currentFacility: {},
@@ -550,7 +169,7 @@ export default {
         name: "SheetContract",
         params: {
           programId: this.$route.params.programId,
-          contractId: rows.id.toString(),          
+          contractId: rows.projectContractId.toString(),          
         },
       });
     
@@ -607,7 +226,7 @@ export default {
       'getNewContractGroupFilter',
       "contractStatus",
       'getContractGroupOptions',
-      "contracts",
+      "projectContracts",
       'editContractSheet',
       'getContractTable',
       'getProjectGroupFilter',

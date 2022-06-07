@@ -1847,9 +1847,8 @@ export default new Vuex.Store({
       });
     },
     filteredContracts: (state, getters) => {
-
-      return _.filter(getters.getContracts, (contract) => {
-        let valid = contract.project_id || null;
+      return _.filter(getters.projectContracts, (contract) => {
+        let valid = contract.project_contract_id || null;
         // valid = valid && facility.facilityGroupStatus == "active";
         if (!valid) return valid;
         if (state.mapFilters.length < 1) return valid;
@@ -2301,10 +2300,9 @@ export default new Vuex.Store({
               ).sort((a, b) => a.facilityName.localeCompare(b.facilityName)),
         },
       contracts: { 
-          b: getters.filteredContracts
+          b: getters.projectContracts
           .filter(f => 
-              f.facility_group.id == group.id &&
-              f.projectId == getters.currentProject.id
+               f.facilityGroup.id == group.id
               ).sort((a, b) => a.name.localeCompare(b.name)),
          }      
       }
