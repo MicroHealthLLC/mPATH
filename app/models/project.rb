@@ -362,6 +362,7 @@ class Project < SortableRecord
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
+
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
     all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
@@ -378,7 +379,8 @@ class Project < SortableRecord
     cph = {} #user.contract_privileges_hash[project.id.to_s] || {}
 
     contract_ids = user.authorized_contract_ids(project_ids: [project.id] )
-
+    binding.pry
+    all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
     all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)
     all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
 
@@ -481,7 +483,7 @@ class Project < SortableRecord
 
       c_hash[:issues] = []
       if user.has_contract_permission?(resource: 'issues', project_contract: pc, project_privileges_hash: pph, contract_privileges_hash: cph)
-        issues = all_issues.select{|t| t.project_contract_id == pc.id }.compact.uniq        
+        issues = all_issues.select{|t| t.project_contract_id == pc.id }.compact.uniq
         issues.each do |i| 
           c_hash[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
         end
@@ -489,11 +491,19 @@ class Project < SortableRecord
 
       c_hash[:risks] = []
       if user.has_contract_permission?(resource: 'risks', project_contract: pc, project_privileges_hash: pph, contract_privileges_hash: cph)
-        risks = all_risks.select{|t| t.project_contract_id == pc.id }.compact.uniq        
+        risks = all_risks.select{|t| t.project_contract_id == pc.id }.compact.uniq
         risks.each do |r| 
           c_hash[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
         end
       end
+
+      # Building Notes
+      c_hash[:notes] = []
+      if user.has_contract_permission?(resource: 'notes', project_contract: pc, project_privileges_hash: pph, contract_privileges_hash: cph)
+        notes = all_notes.select{|r| r.noteable_id == pc.id}.compact.uniq
+        c_hash[:notes] = notes.map(&:to_json)
+      end
+
 
 
       contract_hash << c_hash

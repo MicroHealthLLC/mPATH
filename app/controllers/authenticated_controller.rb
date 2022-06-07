@@ -6,10 +6,11 @@ class AuthenticatedController < ApplicationController
 
   if ENV['API_TEST_MODE'].present? && ENV['API_TEST_MODE'] == "true"
     def current_user
-      @current_user ||= User.find_by(email: 'admin@example.com')
+      email = request.headers["Email"].present? ? request.headers["Email"] : 'admin@example.com'
+      @current_user ||= User.find_by(email: email)
     end
   end
-  
+
   def check_program_admin
     if !current_user.is_program_admin?(params[:project_id])
       raise CanCan::AccessDenied      

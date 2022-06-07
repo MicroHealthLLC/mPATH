@@ -12,5 +12,11 @@ class ProjectContract < ApplicationRecord
   has_many :lessons
   has_many :notes, as: :noteable, dependent: :destroy
 
+  before_create :assign_default_facility_group 
 
+  def assign_default_facility_group
+    if self.facility_group.nil?
+      self.facility_group_id = FacilityGroup.unassigned.id
+    end
+  end
 end
