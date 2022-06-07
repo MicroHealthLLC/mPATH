@@ -1,19 +1,19 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
   <div id="contract-sheets" data-cy="contract_sheets">
-    <div v-if="contentLoaded" class="position-sticky">
-      <div>
-        <div 
+    <div class="position-sticky">
+      <div :load="log(currentContract)">
+        <!-- <div 
           v-loading="!contractLoaded"
           element-loading-text="Fetching Portfolio data. Please wait..."
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.8)"
-          >
+          > -->
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
            <div  class="row mt-3">
            <div class="col-4">
-             <!-- {{ contract }} -->
+            {{ c }} 
             <el-card
               v-if="c"
               class="box-card mb-2 pb-3"
@@ -68,10 +68,10 @@
            <div v-else class="text-danger mx-2 mt-5">
             <h5> <i>Sorry, you don't have read-permissions for this tab! Please click on any available tab.</i></h5>
           </div>
-        </div>
+        <!-- </div> -->
       </div>
     </div>
-    <div v-else></div>
+   
   </div>
 </template>
 
@@ -85,7 +85,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass"], 
+  props: ["contractClass", 'currentContract'], 
   data() {
     return {
       loading: true,
@@ -105,7 +105,11 @@ export default {
   },
   mounted() {
     this.loading = false;
-    console.log(this.$route.params)
+
+    if(this.currentContract){
+         console.log(this.currentContract)
+    }
+ 
     if (this.$route.params.contractId) {
       this.fetchContract({
         id: this.$route.params.contractId,
@@ -123,19 +127,12 @@ export default {
     reRenderDropdowns() {
       this.componentKey += 1;
 
-    },
-  
-    
-    onChangeTab(tab) {
-      this.currentTab = tab ? tab.key : "tab1";
-      if (tab.key == "tab2") {
-        this.fetchContractGroupTypes();
-        this.fetchCurrentPop();
-        this.fetchClassificationTypes();
-      }
-    },
+    },    
     _isallowed(salut) {
       return this.checkPrivileges("SheetContract", salut, this.$route)
+    },
+    log(e){
+      console.log(e)
     },
   },
   computed: {
@@ -147,49 +144,12 @@ export default {
       "contracts",
     ]),
     c(){
-      if(this.contract){
-          return this.contract
+      if(this.currentContract){
+          return this.currentContract
       }
     },  
   },
-  watch: {
-    contract: {
-      handler(newValue, oldValue) {
-        if (
-          this.contractLoaded &&
-          Object.keys(oldValue).length === 0 &&
-          this.$route.params.contractId != "new"
-        ) {
-          this.statusId = this.contract_status_id;
-          // this.nickname = this.contract.contract_nickname;
-          // this.projectCode = this.contract.project_code;
-        }
-        if (this.contract.nickname === "null"){
-            this.contract.nickname = ''
-        }
-        if (this.contract.name === "null"){
-            this.contract.name = ''
-        }
-        if (this.contract.project_code === "null"){
-            this.contract.project_code = ''
-        }
-        if (this.contract.total_subcontracts === "null"){
-            this.contract.total_subcontracts = ''
-        }
-         if (this.contract.notes === "null"){
-            this.contract.notes = ''
-        }
-      },
-    },
-    contractLoaded: {
-      handler() {
-        if (this.contract) {
-          this.statusId = this.contract_status_id;
-        }
-      },
-    },
-   },
-};
+ };
 </script>
 
 <style lang="scss" scoped>

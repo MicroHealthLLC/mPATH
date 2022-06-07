@@ -1823,7 +1823,7 @@ export default {
         }
          let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.$route.params.projectId}/tasks.json`;
         if (this.contract) {
-            url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks.json`
+            url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks.json`
          }
         let method = "POST";
         let callback = "task-created";
@@ -1836,7 +1836,7 @@ export default {
           url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
         if (this.task && this.task.id && this.task.contractId) {
-          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
         // var beforeSaveTask = this.task
 

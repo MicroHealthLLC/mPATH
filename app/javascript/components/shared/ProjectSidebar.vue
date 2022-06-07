@@ -212,7 +212,7 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn', 'SET_EXPANDED_GROUP']), 
-   ...mapActions(["createContract", "fetchContracts", "updateContract"]),
+   ...mapActions(["createContract", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
          group = this.currentContract.facility_group.id
@@ -276,10 +276,7 @@ export default {
          if (this.currentContract && !this.$route.params.projectId && this.currentContract.facility_group_id) {
           this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
         }
-        console.log(this.currentContract)
-          console.log(this.projectContracts)
-                console.log(this.currentContractGroup)
-        // Expand the project tree if there is only one project group on refresh
+         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
           (!this.$route.params.projectId || !this.$route.params.contractId )

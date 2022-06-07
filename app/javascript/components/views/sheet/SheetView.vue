@@ -13,6 +13,7 @@
         :expanded="C_expanded"
         :current-facility="currentFacility"
         :current-contract="currentContract"
+        :project-contracts="projectContracts"
         @on-expand-facility-group="expandFacilityGroup"
         @on-expand-facility="showFacility"
         @on-expand-contract="showContract"
@@ -67,6 +68,7 @@
           <router-view
             :key="$route.path"
             :facility="currentFacility"
+            :project-contracts="projectContracts"
             :contract="currentContract"
             :facilityGroup="currentFacilityGroup"
             :contractGroup="currentContractGroup"
@@ -91,7 +93,7 @@ export default {
     return {
       currentFacility: {},
       currentContract: {},
-      // projectContracts: [],
+      projectContracts: [],
       facGroupId:null,
       currentContractGroup: {},
       currentFacilityGroup: {},
@@ -152,6 +154,7 @@ export default {
       "getUnfilteredFacilities",
       "contracts"
     ]),
+
     C_expanded: {
       get() {
         return this.getExpandedGroup;
@@ -201,6 +204,10 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
+       if(this.contracts && this.contracts.length > 0) {
+          this.projectContracts = this.contracts
+          
+        }
         if (this.$route.params.projectId) {
           this.currentFacility = this.facilities.find(
             (facility) => facility.id == this.$route.params.projectId
@@ -208,8 +215,8 @@ export default {
         }
          else if (this.$route.params.contractId) {
           this.currentContract = this.contracts.find((c) => c.project_contract_id == this.$route.params.contractId);
+           console.log(this.currentContract)   
         }
-
       },
     },
     // projectContracts: {
@@ -243,7 +250,7 @@ export default {
          }
          if (this.$route.params.contractId) {
            this.currentContract =this.contracts.find((c) => c.project_contract_id == this.$route.params.contractId)
-       }
+         }
 
       },
     },
