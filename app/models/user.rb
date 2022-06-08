@@ -923,7 +923,7 @@ class User < ApplicationRecord
       action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
 
       if project_contract
-        project_contract = project_contract.is_a?(ProjectContract) ? project_contract.id.to_s : ProjectContract.find( project_contract.to_s)
+        project_contract = project_contract.is_a?(ProjectContract) ? project_contract : ProjectContract.find( project_contract.to_s)
 
         program_id = project_contract.project_id.to_s
 

@@ -160,14 +160,14 @@ export default {
               id: index,
               label: group.name,         
               children: [
-                  ...contractGroups.filter(t => t.facilityGroupId == group.id)
+                  ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowedFacility("write", 'issues', contract.id) && contract.id !== this.issue.contractId
+                    (contract) => this.isAllowedFacility("write", 'issues', contract.projectContractId) && contract.projectContractId !== this.issue.projectContractId
                   )
                   .map((contract) => {
                     return {
-                      id: contract.id,
-                      label: contract.nickname,
+                      id: contract.projectContractId,
+                      label: contract.name,
                     };
                   }),
               ],
@@ -193,26 +193,11 @@ export default {
     ...mapActions(["issueDeleted"]),
     ...mapMutations(["updateIssuesHash", "updateContractIssues"]),
     isAllowed(salut) {
-           if (this.$route.params.contractId) {
-        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege.issues.includes(s);
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.issues.includes(s); 
-        }         
+      return this.checkPrivileges("issue_form", salut, this.$route)
      },
      isAllowedFacility(salut, module, facility_id) {
-         if (this.$route.params.contractId) {
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
+         if (this.$route.params.projectId) {
+         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut];
           return fPrivilege[module].includes(s);
@@ -271,13 +256,16 @@ export default {
             formData.append("issue[facility_project_id]", facilityProjectId);
          }
         let url;
+        let method;
         if (this.$route.params.contractId) {
-             url =  `${API_BASE_PATH}/contracts/${issue.contractId}/issues/${issue.id}.json`;
-              console.log(`issue.id: ${issue.contractId}`)
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contracts/${issue.projectContractId}/issues/${issue.id}.json`;
+              console.log(`issue.id: ${issue.projectContractId}`)
          } else {
+             method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${issue.facilityId}/issues/${issue.id}.json`;
          }
-        let method = "PUT";
+     
         let callback = "issue-updated";
 
         axios({

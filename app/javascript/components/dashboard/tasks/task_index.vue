@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3" data-cy="task_list">
+  <div id="tasks-index" class="mt-3" data-cy="task_list" :load="log(object)">
     <div v-if="_isallowed('read')">
 
        <div class="d-flex align-item-center justify-content-between w-100 mb-3">        
@@ -267,20 +267,7 @@ export default {
     ]),
     _isallowed(salut) {
         return this.checkPrivileges("task_index", salut, this.$route)
-
-      //  if (this.$route.params.contractId) {
-      //     // return this.defaultPrivileges
-      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //     let s = permissionHash[salut]
-      //     return fPrivilege.tasks.includes(s);
-      //   } else {
-      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //     let s = permissionHash[salut]
-      //     return fPrivilege.tasks.includes(s); 
-      //   }
-     },
+    },
     toggleAdvancedFilter() {
         this.setShowAdvancedFilter(!this.getShowAdvancedFilter);
       },
@@ -291,9 +278,9 @@ export default {
         `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/new`
       );
     },
-    // log(e){
-    //   console.log("task " + e)
-    // },
+    log(e){
+      console.log("task " + e)
+    },
     editTask(task) {
       this.$emit('show-hide', task)
     },
@@ -602,8 +589,9 @@ computed: {
         },      
       };
     },
-   object(){
+ object(){
       if (this.$route.params.contractId) {
+        console.log(this.contract)
         return this.contract
       } else return this.facility
      },

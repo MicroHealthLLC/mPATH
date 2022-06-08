@@ -1161,7 +1161,7 @@ import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
-  props: ["from","projectContracts"],
+  props: ["from"],
   components: {
     Loader,
     ProgramContractsSheet,
@@ -1176,8 +1176,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "contentLoaded",
-    
+      "contentLoaded",    
       "getShowProjectStats",
       "getContractGroupOptions",
       "currentProject",
@@ -1185,6 +1184,7 @@ export default {
       'currProgramTab',
       "projectLessons",
       "programLessons",
+      "projectContracts",
       "programLessonsCount",
       'projects',
       "facilities",

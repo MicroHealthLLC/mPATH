@@ -25,7 +25,9 @@
                <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
                         <template slot="title">
                         <div v-if="dynamicObj.length > 0 && dynamicObj[currentTaskSlide] !== undefined" class="container-fluid">
-                          <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">{{ action }}</h3>
+                          <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">
+                          <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractId">
+                            CONTRACT </span>{{ action }}</h3>
                            <div v-for="number in [currentTaskSlide]" :key="number" >
                            <div class="row justify-content-center">
                              <div class="col-3 pb-0">
@@ -225,27 +227,28 @@
                         </template>
                </el-dialog>
              <div class="row pb-4" v-if="currentProject && currentProject.contracts || contentLoaded" >
-              <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }">
+               <div class="col-3 py-2">
+              <!-- <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }"> -->
                 <div class="w-100">
                 <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
-                <el-button-group >
+               <el-button-group >
                   <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
                     <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
                     PROJECTS
-                    <!-- <span 
+                    <span 
                       v-if="currentProject && currentProject.facilities"
                       class="ml-1 badge badge-secondary badge-pill pill"
                       >{{ currentProject.facilities.length }}
-                      </span> -->
+                      </span>
                   </el-button>
                   <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats"> 
                     <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i>
                     CONTRACTS
-                    <!-- <span 
+                    <span 
                       v-if="currentProject && currentProject.contracts"
                       class="ml-1 badge badge-secondary badge-pill pill"
                       >{{ currentProject.contracts.length }}
-                      </span> -->
+                      </span>
                   </el-button>
                 </el-button-group>                
                 </div>
@@ -2164,7 +2167,7 @@ export default {
         name: "ProgramContractTaskForm", 
           params: {
           programId: this.$route.params.programId,
-          contractId: task.contractId,
+          contractId: task.projectContractId,
           taskId: task.id,
         },
        }); 

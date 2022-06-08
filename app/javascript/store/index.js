@@ -339,7 +339,7 @@ export default new Vuex.Store({
     },
     updateContractTasks: (state, { task, action }) => {
       let contract_i = state.contracts.findIndex(
-        (f) => f.id == task.contractId
+        (f) => f.projectContractId == task.projectContractId
       );
       if (contract_i > -1) {
         let contract = Object.assign({}, state.contracts[contract_i]);
@@ -359,7 +359,7 @@ export default new Vuex.Store({
     },
     updateContractIssues: (state, { issue, action }) => {
       let contract_i = state.contracts.findIndex(
-        (f) => f.id == issue.contractId
+        (f) => f.projectContractId == issue.projectContractId
       );
       if (contract_i > -1) {
         let contract = Object.assign({}, state.contracts[contract_i]);
@@ -420,7 +420,7 @@ export default new Vuex.Store({
     },
     updateContractRisks: (state, { risk, action }) => {
       let contract_i = state.contracts.findIndex(
-        (f) => f.id == risk.contractId
+        (f) => f.projectContractId == risk.projectContractId
       );
       if (contract_i > -1) {
         let contract = Object.assign({}, state.contracts[contract_i]);
@@ -1847,9 +1847,8 @@ export default new Vuex.Store({
       });
     },
     filteredContracts: (state, getters) => {
-
-      return _.filter(getters.getContracts, (contract) => {
-        let valid = contract.project_id || null;
+      return _.filter(getters.projectContracts, (contract) => {
+        let valid = contract.projectContractId || null;
         // valid = valid && facility.facilityGroupStatus == "active";
         if (!valid) return valid;
         if (state.mapFilters.length < 1) return valid;
@@ -2303,8 +2302,7 @@ export default new Vuex.Store({
       contracts: { 
           b: getters.filteredContracts
           .filter(f => 
-              f.facility_group.id == group.id &&
-              f.projectId == getters.currentProject.id
+              f.facilityGroup.id == group.id 
               ).sort((a, b) => a.name.localeCompare(b.name)),
          }      
       }
@@ -3270,16 +3268,15 @@ export default new Vuex.Store({
     },
 
   taskDeleted({ commit }, { task, programId }) {
-      let urlPrefix = `programs/${programId}/projects`
-      let taskResourceId = task.facilityId
-      if(task.contractId){
-         taskResourceId = task.contractId
-         urlPrefix = 'contracts'
+      let deleteUrl = `programs/${programId}/projects/${task.facilityId}/tasks/${task.id}.json`   
+      if(task.projectContractId){
+         pCid = task.projectContractId
+         deleteUrl = `/project_contracts/${pcId}/tasks/${task.id}.json`
       } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/${urlPrefix}/${taskResourceId}/tasks/${task.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
             if (task.facilityId){
@@ -3296,17 +3293,26 @@ export default new Vuex.Store({
       });
     },
     noteDeleted({ commit }, { note, projectId, facilityId, cb }) {
+      let deleteUrl = `programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`   
+        if(note.projectContractId){
+          pCid = note.projectContractId
+          deleteUrl = `/project_contracts/${pcId}/notes/${note.id}.json`
+        } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`
+            `${API_BASE_PATH}/`
           )
           .then((res) => {
-            commit("updateNotesHash", {
-              note: note,
-              facilityId,
-              action: "delete",
-            });
+            if (issue.facilityId){
+              commit("updateNotesHash", {
+                note: note,
+                facilityId,
+                action: "delete",
+              });
+            } else   {
+              commit("updateContractNotes", { note: note, action: "delete" });
+            }            
             if (cb) cb();
             resolve();
           })
@@ -3317,16 +3323,15 @@ export default new Vuex.Store({
       });
     },
     issueDeleted({ commit }, { issue, programId }) {
-      let urlPrefix = `programs/${programId}/projects`
-      let issueResourceId = issue.facilityId
-      if(issue.contractId){
-         issueResourceId = issue.contractId
-         urlPrefix = 'contracts'
-      } 
+      let deleteUrl = `programs/${programId}/projects/${issue.facilityId}/issues/${issue.id}.json`   
+        if(issue.projectContractId){
+          pCid = issue.projectContractId
+          deleteUrl = `/project_contracts/${pcId}/issues/${issue.id}.json`
+        } 
       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/${urlPrefix}/${issueResourceId}/issues/${issue.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
             if (issue.facilityId){
@@ -3343,16 +3348,15 @@ export default new Vuex.Store({
       });
     },
     riskDeleted({ commit }, { risk, programId }) {
-      let urlPrefix = `programs/${programId}/projects`
-      let riskResourceId = risk.facilityId
-      if(risk.contractId){
-         riskResourceId = risk.contractId
-         urlPrefix = 'contracts'
-      } 
-      return new Promise((resolve, reject) => {
+        let deleteUrl = `programs/${programId}/projects/${risk.facilityId}/risks/${risk.id}.json`   
+        if(risk.projectContractId){
+          pCid = risk.projectContractId
+          deleteUrl = `/project_contracts/${pcId}/risks/${risk.id}.json`
+        } 
+       return new Promise((resolve, reject) => {
         http
           .delete(
-            `${API_BASE_PATH}/${urlPrefix}/${riskResourceId}/risks/${risk.id}.json`
+            `${API_BASE_PATH}/${deleteUrl}`
           )
           .then((res) => {
             if (risk.facilityId){

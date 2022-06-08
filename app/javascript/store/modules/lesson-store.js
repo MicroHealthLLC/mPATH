@@ -93,7 +93,7 @@ const lessonModule = {
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}/lessons.json`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/lessons.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -187,7 +187,7 @@ const lessonModule = {
 
   axios({
     method: "POST",
-    url: `${API_BASE_PATH}/contracts/${contractId}/lessons.json`,
+    url: `${API_BASE_PATH}/project_contracts/${contractId}/lessons.json`,
     data: formData,
     headers: {
       "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -240,7 +240,7 @@ const lessonModule = {
 
       axios({
         method: "PATCH",
-        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${lessonId}`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/lessons/${lessonId}.json`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')

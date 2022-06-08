@@ -2,7 +2,7 @@
 <template>
   <div id="contract-sheets" data-cy="contract_sheets">
     <div class="position-sticky">
-      <div :load="log(currentContract)">
+      <div :load="log(contract)">
         <!-- <div 
           v-loading="!contractLoaded"
           element-loading-text="Fetching Portfolio data. Please wait..."
@@ -13,7 +13,7 @@
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
            <div  class="row mt-3">
            <div class="col-4">
-            {{ c }} 
+            <!-- {{ c }}  -->
             <el-card
               v-if="c"
               class="box-card mb-2 pb-3"
@@ -26,7 +26,7 @@
               <b>GROUP NAME:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.facility_group">{{ c.facility_group.name }} </h5>
+               <h5 v-if="c.facilityGroup">{{ c.facilityGroup.name }} </h5>
               <h5 v-else>Unassigned</h5>
               </div>  
            </div>  
@@ -35,7 +35,7 @@
               <b>CUSTOMER:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.contract_customer">{{ c.contract_customer.name }} </h5>
+               <h5 v-if="c.contractCustomer">{{ c.contractCustomer.name }} </h5>
               </div>  
            </div>  
           
@@ -44,7 +44,7 @@
               <b>CONTRACT NUMBER:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.contract_number">{{ c.contract_number.name }}</h5>
+               <h5 v-if="c.contractNumber">{{ c.contractNumber.name }}</h5>
               </div>  
            </div>  
 
@@ -53,7 +53,7 @@
               <b>AWARD/TO NUMBER:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.contract_award_to">{{ c.contract_award_to.name }}</h5>
+               <h5 v-if="c.contractAwardTo">{{ c.contractAwardTo.name }}</h5>
               </div>  
              </div>  
           
@@ -85,7 +85,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass", 'currentContract'], 
+  props: ["contractClass", 'currentContract', "contract"], 
   data() {
     return {
       loading: true,
@@ -105,17 +105,12 @@ export default {
   },
   mounted() {
     this.loading = false;
-
-    if(this.currentContract){
-         console.log(this.currentContract)
-    }
- 
-    if (this.$route.params.contractId) {
-      this.fetchContract({
-        id: this.$route.params.contractId,
-        programId: this.$route.params.programId,
-      });
-    }
+  //  if (this.$route.params.contractId) {
+  //     this.fetchContract({
+  //       id: this.$route.params.contractId,
+  //       programId: this.$route.params.programId,
+  //     });
+  //   }
   },
   methods: {
     ...mapActions([
@@ -129,6 +124,8 @@ export default {
 
     },    
     _isallowed(salut) {
+      console.log(salut)
+        console.log(this.$route)
       return this.checkPrivileges("SheetContract", salut, this.$route)
     },
     log(e){
@@ -140,12 +137,11 @@ export default {
       "contentLoaded",
       "contractLoaded",
       "contractStatus",
-      "contract",
-      "contracts",
+       "contracts",
     ]),
     c(){
-      if(this.currentContract){
-          return this.currentContract
+      if(this.contract){
+          return this.contract
       }
     },  
   },

@@ -2,7 +2,7 @@
   <div class="notes-form" :class="{'fixed-form-mapView':isMapView}">
       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
         <span class="fbody-icon"> <i class="far fa-file-contract mh-orange-text"></i></span>
-        <h4 class="f-head mb-0">{{ contract.name || contract.nickname}}</h4>
+        <h4 class="f-head mb-0">{{ contract.name }}</h4>
       </div>
        <div class="d-flex form-group sticky mb-2">
         <button

@@ -1,5 +1,5 @@
 <template>
-  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list" >
     <div class="stick">
       <div
         @click="deselectProject"
@@ -76,19 +76,19 @@
               </router-link>
               </div>
                <div                          
-                v-for="c in contracts.filter(t => t.facility_group.id == group.id)" 
+                v-for="c in projectContracts.filter(t => t.facilityGroup && t.facilityGroup.id == group.id)" 
                  v-show="isContractsView && _isallowedContracts('read', c)"    
-                :key="c.project_contract_id + 'a'"
+                :key="c.projectContractId + 'a'"
                 >              
               <router-link               
                 :to="
-                  `/programs/${$route.params.programId}/${tab}/contracts/${c.project_contract_id}${pathTab}`
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.projectContractId}${pathTab}`
                 "
               >
                 <div
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
-                  :class="{ active: c.project_contract_id == $route.params.contractId }"
+                  :class="{ active: c.projectContractId == $route.params.contractId }"
                 >
                 <p class="facility-header" data-cy="facilities">
                   <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.name }}
@@ -140,7 +140,7 @@ export default {
       "getExpandedGroup",
       "facilities",
       'contracts',
-      'projects',
+      'projectContracts',
       "facilityGroups",
       'filteredContracts',
       "filteredFacilities",
@@ -215,7 +215,7 @@ export default {
    ...mapActions(["createContract", "updateContract"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
-         group = this.currentContract.facility_group.id
+         group = this.currentContract.facilityGroup.id
        }
       this.$emit("on-expand-facility-group", group);
 
@@ -225,7 +225,7 @@ export default {
 
     // },
     _isallowedContracts(salut, c) {
-        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.project_contract_id})
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
     },
     _isallowedProgramSettings(salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
@@ -273,7 +273,7 @@ export default {
         if (this.currentFacility && !this.$route.params.contractId && this.currentFacilityGroup ){             
           this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
-         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facility_group_id) {
+         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facilityGroup.id) {
           this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
         }
          // Expand the project tree if there is only one project group on refresh

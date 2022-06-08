@@ -276,8 +276,8 @@ class Lesson < ApplicationRecord
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
-    project = self.contract_id ? self.contract_project : self.project
-    facility_group = self.contract_id ? self.contract_facility_group : self.facility_group
+    project = self.project_contract_id ? self.contract_project : self.project
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
     fp = self.facility_project
 
     self.as_json.merge(
@@ -293,7 +293,7 @@ class Lesson < ApplicationRecord
       last_update: latest_update,
       notes: s_notes.map(&:json_for_lasson),
       lesson_stage_id: self.lesson_stage_id,
-      program_name: project.name,  
+      program_name: project&.name,  
       program_id: project.id,
       
       project_id: fp.try(:facility_id),

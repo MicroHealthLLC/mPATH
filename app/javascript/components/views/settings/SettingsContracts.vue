@@ -1062,6 +1062,7 @@ export default {
           this.SET_CONTRACTS_STATUS(0);
           this.fetchContracts(this.$route.params.programId);
           this.fetchContractProjects();
+           this.fetchCurrentProject(this.$route.params.programId);
         }
       },
     },
@@ -1076,6 +1077,7 @@ export default {
           this.SET_ASSOCIATED_CONTRACTS_STATUS(0);
           this.fetchContractProjects();
           this.fetchContracts(this.$route.params.programId);
+          this.fetchCurrentProject(this.$route.params.programId);
         }
       },
 

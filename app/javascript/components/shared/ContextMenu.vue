@@ -162,14 +162,14 @@ export default {
               id: index,
               label: group.name,         
               children: [
-                  ...contractGroups.filter(t => t.facilityGroupId == group.id)
+                  ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowedFacility("write", 'tasks', contract.id) && contract.id !== this.task.contractId
+                    (contract) => this.isAllowed("write", 'tasks', contract.projectContractId) && contract.projectContractId !== this.task.projectContractId
                   )
                   .map((contract) => {
                     return {
-                      id: contract.id,
-                      label: contract.nickname,
+                      id: contract.projectContractId,
+                      label: contract.name,
                     };
                   }),
               ],
@@ -205,30 +205,15 @@ export default {
     // },
 
       // Temporary _isallowed method until contract projectPrivileges is fixed
-     isAllowed(salut, module) {
-       if (this.$route.params.contractId) {
-        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege[module].includes(s); 
-        }         
-      },
+      isAllowed(salut) {
+      return this.checkPrivileges("task_form", salut, this.$route)
+     },
       isAllowedFacility(salut, module, facility_id) {
-       if (this.$route.params.contractId) {
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+       if (this.$route.params.projectId) {
+         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
+          return fPrivilege[module].includes(s);          
         }
       },
     // closes context menu
@@ -276,14 +261,16 @@ export default {
              formData.append("task[facility_project_id]", facilityProjectId);
          }
 
-       let url;
+         let url;
+         let method;
         if (this.$route.params.contractId) {
-             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
          } else {
+             method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
          }
-        let method = "PUT";
-        let callback = "task-updated";
+         let callback = "task-updated";
 
         axios({
           method: method,
@@ -340,12 +327,11 @@ export default {
         }
       });
     },
-  updateContracts(updatedTask, id) {
+  updateContracts(updatedTask) {
       var contracts = this.currentProject.contracts;
-      contracts.forEach((c) => {
-        if (c.facilityProjectId === id) {
+      contracts.forEach((c) => {       
           c.tasks.push(updatedTask);
-        }
+    
       });
     },
     updateFacilityTask(task) {

@@ -27,15 +27,15 @@
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView && task">
-                    {{ task.facilityName || task.contractNickname }}
+                    {{ task.facilityName || task.name }}
                </span>
-                 <span v-if="!isProgramView && (contract || !facility)">
-                    {{ task.contractNickname }}
-               </span>
+                 <!-- <span v-if="!isProgramView && (contract || !facility)">
+                    {{ task }}
+               </span> -->
             </router-link>
             <router-link :to="backToContract">
               <span v-if="contract && !isProgramView">{{
-                  contract.nickname || contract.name
+                        contract.name
                   }}
               </span>
             </router-link>     
@@ -1428,23 +1428,7 @@ export default {
     },
     _isallowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
-
-      //  if (this.$route.params.contractId) {
-      //   //  console.log("yes, contract route")      
-      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //     let s = permissionHash[salut]
-      //   // console.log(fPrivilege.tasks.includes(s))
-      //     return fPrivilege.tasks.includes(s);
-      //   } else if (this.$route.params.projectId) {
-      //     // console.log("project route")
-      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //     let s = permissionHash[salut]
-      //     //  console.log(fPrivilege.tasks.includes(s))
-      //     return fPrivilege.tasks.includes(s); 
-      //   }
-     },
+    },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedTaskStage = item;
@@ -1829,14 +1813,16 @@ export default {
         let callback = "task-created";
 
         if (this.task && this.task.id) {        
-          method = "PUT";
           callback = "task-updated";
         }
         if (this.task && this.task.id && this.task.facilityId) {
+            method = "PUT";
           url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${this.task.facilityId}/tasks/${this.task.id}.json`;
          }
-        if (this.task && this.task.id && this.task.contractId) {
+        if (this.task && this.task.id && this.task.projectContractId) {
+           method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+        
         }
         // var beforeSaveTask = this.task
 
@@ -1886,7 +1872,7 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`
               );
-             }  else if (this.isProgramView && this.task.contractId) { this.$router.push(
+             }  else if (this.isProgramView && this.task.projectContractId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
               );
               } else this.$router.push(

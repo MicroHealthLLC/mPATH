@@ -207,6 +207,7 @@
       size="small"
       v-if="scope.$index == createRow"
       type="number"
+      v-on:keypress="NumbersOnly"
       style="text-align:center"
       placeholder=""
       v-model="scope.row.ceiling"
@@ -214,8 +215,9 @@
       ></el-input>
       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
      <el-input
-      size="small"      
+      size="small"    
       type="text"
+      v-on:keypress="NumbersOnly"
       placeholder=""
       style="text-align:center"
       v-model="updateCeiling"
@@ -437,6 +439,8 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
     });
     return formatter.format(value);
 });
+
+
 export default {
   name: "PortfolioVehicles",
   components: {
@@ -460,6 +464,7 @@ export default {
         search: '',
        };
   },
+  
   methods: {
     ...mapMutations([
        "SET_CONTRACT_VEHICLES_STATUS"
@@ -470,115 +475,124 @@ export default {
       "updateContractVehicle",
       "deleteContractVehicle",
     ]),
-  formatCurrency(value) {
-    let val = (value/1).toFixed(2).replace('.', ',')
-    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-  },
-  editMode(index, rows) {
-    this.rowIndex = index,
-    console.log(rows);    
-    this.rowId = rows.id
-    let formattedCeiling = parseFloat(rows.ceiling)
-    if(rows.ceiling == null) {
-      this.updateCeiling = ""
-    } else this.updateCeiling = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling);
-    console.log(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling));  
-    if(rows.base_period_start){
-      this.bpStart = rows.base_period_start;
-    }
-    if(rows.base_period_end){
-      this.bpEnd = rows.base_period_end;
-    }
-    if(rows.option_period_start){
-      this.opStart = rows.option_period_start;
-    }
-    if(rows.option_period_end){
-      this.opEnd = rows.option_period_end;
-    }
- },  
-  disabledBpEndDate(date) {
-  if (this.bpStart){
-    date.setHours(0, 0, 0, 0);
-    const startDate = new Date(this.bpStart);
-    startDate.setHours(48, 0, 0, 0);
-    return date < startDate;  
-    }      
-  },  
-  disabledOpEndDate(date) {
-  if (this.opStart){
-    // console.log(this.contractStartDate, date)
-    date.setHours(0, 0, 0, 0);
-    const startDate = new Date(this.opStart);
-    startDate.setHours(48, 0, 0, 0);
-    return date < startDate;  
-    }      
-  },  
-  disabledNewBpEndDate(date) {
-  if (this.newBpStart){
-    date.setHours(0, 0, 0, 0);
-    const startDate = new Date(this.newBpStart);
-    startDate.setHours(48, 0, 0, 0);
-    return date < startDate;  
-    }      
-  },  
-  disabledNewOpEndDate(date) {
-  if (this.newOpStart){
-    // console.log(this.contractStartDate, date)
-    date.setHours(0, 0, 0, 0);
-    const startDate = new Date(this.newOpStart);
-    startDate.setHours(48, 0, 0, 0);
-    return date < startDate;  
-    }      
-  },  
-  saveContractVehicle(index, rows){
-    this.rowIndex = null;
-    this.rowId = null;
-    let id = null;    
-    if (rows.id) {
-      id = rows.id
-      if (!this.bpEnd) {
-        this.bpEnd = rows.base_period_end
+    NumbersOnly(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault();;
+      } else {
+        return true;
+        }
+    },
+    formatCurrency(value) {
+      let val = (value/1).toFixed(2).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    },
+    editMode(index, rows) {
+      this.rowIndex = index,
+      console.log(rows);    
+      this.rowId = rows.id
+      let formattedCeiling = parseFloat(rows.ceiling)
+      if(rows.ceiling == null) {
+        this.updateCeiling = ""
+      } else this.updateCeiling = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling);
+      console.log(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling));  
+      if(rows.base_period_start){
+        this.bpStart = rows.base_period_start;
       }
-      if (!this.bpStart) {
-        this.bpStart = rows.base_period_start
-      }       
-      if (!this.opStart){
-        this.opStart = rows.option_period_start
+      if(rows.base_period_end){
+        this.bpEnd = rows.base_period_end;
       }
-      if (!this.opEnd){
-        this.opEnd = rows.option_period_end
+      if(rows.option_period_start){
+        this.opStart = rows.option_period_start;
       }
-    }
-    if (!rows.id){
-        this.bpStart = this.newBpStart;
-        this.bpEnd = this.newBpEnd
-        this.opStart = this.newOpStart;
-        this.opEnd = this.newOpEnd;   
-    }
-    // Row edit action will occur here
-  let contractVehicleData = {
-        cVehicleData: {
-          name: rows.name,
-          fullName: rows.full_name,
-          subCatId: rows.contract_sub_category_id,
-          cAgencyId: rows.contract_agency_id,        
-          type: rows.contract_vehicle_type_id,
-          cNumber: rows.contract_number_id,         
-          ceiling: rows.ceiling,
-          bp_startDate: this.bpStart,
-          bp_endDate: this.bpEnd,
-          op_startDate: this.opStart,
-          op_endDate: this.opEnd,
-      },
-    };
-    // console.log(contractVehicleData)
-    if (id){
-      this.updateContractVehicle({...contractVehicleData, id})
-      console.log(contractVehicleData)
-    } else {
-      this.createContractVehicle({...contractVehicleData})     
-    }
-  }, 
+      if(rows.option_period_end){
+        this.opEnd = rows.option_period_end;
+      }
+    },  
+    disabledBpEndDate(date) {
+    if (this.bpStart){
+      date.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.bpStart);
+      startDate.setHours(48, 0, 0, 0);
+      return date < startDate;  
+      }      
+    },  
+    disabledOpEndDate(date) {
+    if (this.opStart){
+      // console.log(this.contractStartDate, date)
+      date.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.opStart);
+      startDate.setHours(48, 0, 0, 0);
+      return date < startDate;  
+      }      
+    },  
+    disabledNewBpEndDate(date) {
+    if (this.newBpStart){
+      date.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.newBpStart);
+      startDate.setHours(48, 0, 0, 0);
+      return date < startDate;  
+      }      
+    },  
+    disabledNewOpEndDate(date) {
+    if (this.newOpStart){
+      // console.log(this.contractStartDate, date)
+      date.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.newOpStart);
+      startDate.setHours(48, 0, 0, 0);
+      return date < startDate;  
+      }      
+    },  
+    saveContractVehicle(index, rows){
+      this.rowIndex = null;
+      this.rowId = null;
+      let id = null;    
+      if (rows.id) {
+        id = rows.id
+        if (!this.bpEnd) {
+          this.bpEnd = rows.base_period_end
+        }
+        if (!this.bpStart) {
+          this.bpStart = rows.base_period_start
+        }       
+        if (!this.opStart){
+          this.opStart = rows.option_period_start
+        }
+        if (!this.opEnd){
+          this.opEnd = rows.option_period_end
+        }
+      }
+      if (!rows.id){
+          this.bpStart = this.newBpStart;
+          this.bpEnd = this.newBpEnd
+          this.opStart = this.newOpStart;
+          this.opEnd = this.newOpEnd;   
+      }
+      // Row edit action will occur here
+    let contractVehicleData = {
+          cVehicleData: {
+            name: rows.name,
+            fullName: rows.full_name,
+            subCatId: rows.contract_sub_category_id,
+            cAgencyId: rows.contract_agency_id,        
+            type: rows.contract_vehicle_type_id,
+            cNumber: rows.contract_number_id,         
+            ceiling: rows.ceiling,
+            bp_startDate: this.bpStart,
+            bp_endDate: this.bpEnd,
+            op_startDate: this.opStart,
+            op_endDate: this.opEnd,
+        },
+      };
+      // console.log(contractVehicleData)
+      if (id){
+        this.updateContractVehicle({...contractVehicleData, id})
+        console.log(contractVehicleData)
+      } else {
+        this.createContractVehicle({...contractVehicleData})     
+      }
+    }, 
   cancelEdits(index, rows) {
     this.rowIndex = null;
     this.rowId = null;

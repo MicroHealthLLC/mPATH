@@ -27,12 +27,12 @@
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView && risk">
-                    {{ risk.facilityName || risk.contractNickname }}
+                    {{ risk.facilityName || risk.name }}
                </span>
              </router-link>
              <router-link :to="backToContract">
               <span v-if="contract && !isProgramView">               
-                {{ contract.nickname || contract.name }}
+                {{ contract.name }}
               </span>
              </router-link>          
               <el-icon
@@ -2700,22 +2700,23 @@ export default {
 
        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/risks.json`;
         if (this.contract) {
-            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks.json`
+            url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks.json`
          }
-     
         let method = "POST";
         let callback = "risk-created";
        
-       if (this.risk && this.risk.id) {        
-          method = "PUT";
+       if (this.risk && this.risk.id) {         
           callback = "risk-updated";
         }
 
         if (this.risk && this.risk.id && this.risk.facilityId) {
+          method = "PUT";
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}.json`;
         }
-        if (this.risk && this.risk.id && this.risk.contractId) {
-          url = `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
+        if (this.risk && this.risk.id && this.risk.projectContractId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
+        
         }
         // var beforeRisk = this.risk
         axios({
@@ -2761,7 +2762,7 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
               );
-             } else if (this.isProgramView && this.risk.contractId) { this.$router.push(
+             } else if (this.isProgramView && this.risk.projectContractId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/risk/${response.data.risk.id}`
               );
               } else this.$router.push(
