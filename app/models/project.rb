@@ -338,7 +338,7 @@ class Project < SortableRecord
     all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: project.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
-    all_authorized_contract_ids = user.authorized_contract_ids
+    all_authorized_contract_ids = ProjectContract.where(project_id: project.id).map(&:id).compact.uniq #user.authorized_contract_ids
 
     all_users = []
     all_user_ids = []
@@ -378,7 +378,7 @@ class Project < SortableRecord
     fph = {} #user.facility_privileges_hash
     cph = {} #user.contract_privileges_hash[project.id.to_s] || {}
 
-    contract_ids = user.authorized_contract_ids(project_ids: [project.id] )
+    contract_ids = all_authorized_contract_ids
     # binding.pry
     all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
     all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)

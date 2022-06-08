@@ -1,7 +1,5 @@
 <template>
-  <div 
-   class="row"
-  >
+  <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -261,12 +259,15 @@
                   </el-button>
                  <el-button
                   type="default" 
-                    v-tooltip="`Go To Contract`"              
+                  v-tooltip="`Go To Contract`"              
                   @click.prevent="goToContract(scope.$index, scope.row)"
                   class="bg-success text-light btn-sm"
                   >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
+               
+               
+
                 <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
               </template>
             </el-table-column>
@@ -581,6 +582,7 @@ import SettingsSidebar from "./SettingsSidebar.vue";
 // import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsContracts",
+  props: ["currentContract"],
   components: {
     SettingsSidebar,
   },
@@ -654,7 +656,8 @@ export default {
       "fetchRoles",
       "removeUserRole",
       "associateContractToProgram",
-      "removeContract"
+      "removeContract",
+      "projectContracts"
     ]),
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})

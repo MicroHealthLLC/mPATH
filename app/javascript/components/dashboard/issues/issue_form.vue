@@ -275,7 +275,7 @@
 
           <!-- Row begins -->
           <div class="d-flex mb-0 mx-4 form-group">
-            <div class="simple-select w-100 form-group">
+            <div class="simple-select w-50 form-group">
               <label class="font-md">Process Area</label>
               <el-select
                 v-model="selectedTaskType"
