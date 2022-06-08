@@ -284,7 +284,7 @@
       </div>
     </div>
     <!-- Related Tab -->
-    <div v-show="currentTab == 'tab2'">
+    <!-- <div v-show="currentTab == 'tab2'">
       <div class="row mt-1">
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
@@ -425,7 +425,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'" class="mt-2">
       <span>Successes</span>
@@ -818,17 +818,17 @@ export default {
             "Stage",
           ],
         },
-        {
-          label: "Related",
-          key: "tab2",
-          closable: false,
-          form_fields: [
-            "Projects",
-            "Related Task",
-            "Related Issue",
-            "Related Risk",
-          ],
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab2",
+        //   closable: false,
+        //   form_fields: [
+        //     "Projects",
+        //     "Related Task",
+        //     "Related Issue",
+        //     "Related Risk",
+        //   ],
+        // },
         {
           label: "Successes",
           key: "tab3",

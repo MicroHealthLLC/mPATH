@@ -273,7 +273,9 @@ export default {
         if (this.currentFacility && !this.$route.params.contractId && this.currentFacilityGroup ){             
           this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
-         if (this.currentContract && !this.$route.params.projectId && this.currentContract.facilityGroup.id) {
+         if (this.currentContract && !this.$route.params.projectId && this.currentContractGroup) {
+           console.log(this.currentContract)
+             console.log(this.currentContractGroup)
           this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
         }
          // Expand the project tree if there is only one project group on refresh
