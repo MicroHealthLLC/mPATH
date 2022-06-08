@@ -1050,7 +1050,7 @@ export default {
       }
       if (this.isEditingContractRoles) {
         let cIds = this.contractRoleUsers.map(t => t.id);
-        let assignedContracts =  this.assignedUserContracts.map(t => t.id); 
+        let assignedContracts =  this.assignedUserContracts.map(t => t.project_contract_id);
         let aCids =  assignedContracts.filter(t => !cIds.includes(t));
         let projectUserRoleData = {
                 userData: {
