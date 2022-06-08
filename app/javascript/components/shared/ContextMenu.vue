@@ -253,10 +253,9 @@ export default {
 
         this.loading = true;
         let formData = new FormData();
-
       
         if (this.$route.params.contractId) {
-             formData.append("task[contract_id]", facilityProjectId);
+             formData.append("task[project_contract_id]", task.projectContractId);
          } else {
              formData.append("task[facility_project_id]", facilityProjectId);
          }

@@ -27,8 +27,7 @@
               </div>  
               <div class="col">
                <h5 v-if="c.facilityGroup">{{ c.facilityGroup.name }} </h5>
-              <h5 v-else>Unassigned</h5>
-              </div>  
+               </div>  
            </div>  
            <div class="row">
              <div class="col">

@@ -668,7 +668,7 @@ export default {
       this.rowIndex_1 = index;
       this.roleRowId = rowData
       this.isEditingRoles = true;
-      console.log(this.userids)
+      // console.log(this.userids)
   
     },
     saveRemoveUsers(index, rowData){     
@@ -703,7 +703,7 @@ export default {
             contractId: this.projId          
          },
       };
-      console.log(contractUserRoleData)
+      // console.log(contractUserRoleData)
       this.addUserToRole({
         ...contractUserRoleData,
       });
@@ -715,10 +715,10 @@ export default {
       this.openUserPrivilegesDialog = true
       this.projId = rows.project_contract_id
       this.contractData = rows
-      console.log(rows)
+      // console.log(rows)
     },
     addExistingContract(index, rows) {
-     console.log(rows)
+    //  console.log(rows)
          let contractData = {
           contract: {
             id: rows.id,            
@@ -747,7 +747,7 @@ export default {
 		},
     removeContractBtn(index, rows) {
 
-    console.log(rows)
+    // console.log(rows)
       // let id = [rows.id];
       let contract = {
         g: {
@@ -840,15 +840,12 @@ export default {
       this.dialogVisible = false;
       this.hideSaveBtn = false;
     },
-    addContract() {
- 
-       if (this.allContracts  && this.allContracts.length > 0){
-            console.log(this.allContracts)
-                console.log('tableData', this.tableData)
-       }
-    
-
-       this.contractDialogVisible = true;
+    addContract() { 
+      //  if (this.allContracts  && this.allContracts.length > 0){
+      //       console.log(this.allContracts)
+      //           console.log('tableData', this.tableData)
+      //  }
+      this.contractDialogVisible = true;
        this.fetchContractProjects();
     },
     openUserPrivileges(index, rows) {
@@ -934,14 +931,7 @@ export default {
       let roleUsers = this.getRoles.map(t => t.role_users).filter(t => t.length > 0)   
       if (this.projId)  {
         let groupByRoles = [].concat.apply([], roleUsers).filter(t => this.projId == t.project_contract_id)   
-        // const reducedRoles = groupByRoles.reduce((acc, { role_id, role_name, user_full_name, user_id, facility_project_id }) => (
-        //     { 
-        //       ...acc, 
-        //       [role_id]: acc[role_id] ? [ ...acc[role_id], { role_name, user_full_name, user_id, facility_project_id }] : [ { role_name, user_full_name, user_id, facility_project_id } ],
-        //     }
-        // ), {});
-        console.log(groupByRoles)
-            return {
+          return {
                     data: groupByRoles,
                     roleIds: _.uniq(groupByRoles.map(t => t.role_id)),
                     }
@@ -1012,7 +1002,6 @@ export default {
       },
       set(value) {
          this.SET_CONTRACT_ROLE_USERS(value)
-         console.log(value)
         }      
     },
     contractRoleNames: {     
@@ -1021,7 +1010,6 @@ export default {
       },
       set(value) {
          this.SET_CONTRACT_ROLE_NAMES(value)
-         console.log(value)
         }      
     },
 

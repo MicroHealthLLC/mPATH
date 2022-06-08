@@ -3266,12 +3266,30 @@ export default new Vuex.Store({
           });
       });
     },
+    // contractTaskDeleted({ commit }, { task}) {
+    //    let pCid = task.projectContractId
+      
+    //   return new Promise((resolve, reject) => {
+    //     http
+    //       .delete(
+    //         `${API_BASE_PATH}/project_contracts/${pCid}/tasks/${task.id}.json`
+    //       )
+    //       .then((res) => {          
+    //         commit("updateContractTasks", { task: task, action: "delete" });                   
+    //         resolve("Success");
+    //       })
+    //       .catch((err) => {
+    //         console.log(err);
+    //         reject();
+    //       });
+    //   });
+    // },
 
   taskDeleted({ commit }, { task, programId }) {
       let deleteUrl = `programs/${programId}/projects/${task.facilityId}/tasks/${task.id}.json`   
       if(task.projectContractId){
-         pCid = task.projectContractId
-         deleteUrl = `/project_contracts/${pcId}/tasks/${task.id}.json`
+         let pcid = task.projectContractId
+         deleteUrl = `/project_contracts/${pcid}/tasks/${task.id}.json`
       } 
       return new Promise((resolve, reject) => {
         http
@@ -3295,8 +3313,8 @@ export default new Vuex.Store({
     noteDeleted({ commit }, { note, projectId, facilityId, cb }) {
       let deleteUrl = `programs/${projectId}/projects/${facilityId}/notes/${note.id}.json`   
         if(note.projectContractId){
-          pCid = note.projectContractId
-          deleteUrl = `/project_contracts/${pcId}/notes/${note.id}.json`
+          let pcid = note.projectContractId
+          deleteUrl = `/project_contracts/${pcid}/notes/${note.id}.json`
         } 
       return new Promise((resolve, reject) => {
         http
@@ -3325,8 +3343,8 @@ export default new Vuex.Store({
     issueDeleted({ commit }, { issue, programId }) {
       let deleteUrl = `programs/${programId}/projects/${issue.facilityId}/issues/${issue.id}.json`   
         if(issue.projectContractId){
-          pCid = issue.projectContractId
-          deleteUrl = `/project_contracts/${pcId}/issues/${issue.id}.json`
+          let pcid = issue.projectContractId
+          deleteUrl = `/project_contracts/${pcid}/issues/${issue.id}.json`
         } 
       return new Promise((resolve, reject) => {
         http
@@ -3350,8 +3368,8 @@ export default new Vuex.Store({
     riskDeleted({ commit }, { risk, programId }) {
         let deleteUrl = `programs/${programId}/projects/${risk.facilityId}/risks/${risk.id}.json`   
         if(risk.projectContractId){
-          pCid = risk.projectContractId
-          deleteUrl = `/project_contracts/${pcId}/risks/${risk.id}.json`
+          let pcid = risk.projectContractId
+          deleteUrl = `/project_contracts/${pcid}/risks/${risk.id}.json`
         } 
        return new Promise((resolve, reject) => {
         http
