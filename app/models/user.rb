@@ -850,7 +850,7 @@ class User < ApplicationRecord
     user = self
     # project_contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.project_contract_id is not null and role_users.user_id = ? ", user.id).distinct.pluck(:project_contract_id)
     role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
-    project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id)
+    project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
     if project_ids.any?
       project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
     end

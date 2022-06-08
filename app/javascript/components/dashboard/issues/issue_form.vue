@@ -1431,19 +1431,7 @@ export default {
     },
     _isallowed(salut) {
       return this.checkPrivileges("issue_form", salut, this.$route)
-      //  if (this.$route.params.contractId) {
-      //     // return this.defaultPrivileges
-      //     let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
-      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //     let s = permissionHash[salut]
-      //     return fPrivilege.issues.includes(s);
-      //   } else {
-      //     let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]
-      //     let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //     let s = permissionHash[salut]
-      //     return fPrivilege.issues.includes(s);
-      //   }
-     },
+    },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
