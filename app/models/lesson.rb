@@ -298,7 +298,7 @@ class Lesson < ApplicationRecord
       
       project_id: fp.try(:facility_id),
       project_name: fp.try(:facility)&.facility_name,
-      contract_nickname: self.contract.try(:nickname),
+      contract_nickname: self.contract_project_data.try(:name),
       
       project_group: facility_group.try(:name),
       category: task_type&.name,
