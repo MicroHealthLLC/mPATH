@@ -504,8 +504,6 @@ class Project < SortableRecord
         c_hash[:notes] = notes.map(&:to_json)
       end
 
-
-
       contract_hash << c_hash
     end
 
