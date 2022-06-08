@@ -91,7 +91,6 @@ export default {
     return {
       currentFacility: {},
       currentContract: {},
-      // projectContracts: [],
       facGroupId:null,
       currentContractGroup: {},
       currentFacilityGroup: {},
@@ -101,7 +100,7 @@ export default {
     };
   },
   methods: {
-     ...mapActions(["fetchContracts"]),
+     ...mapActions([]),
      ...mapMutations([
       "SET_EXPANDED_GROUP"
      ]), 
@@ -117,16 +116,16 @@ export default {
         // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};     
       }
     },
-    //  expandContractGroup(group) {
-    //   if (group &&  this.getExpandedGroup !== group.id) {
-    //      this.SET_EXPANDED_GROUP(group.id);
-    //      this.currentContractGroup = group;
-    //   } else {
-    //    this.SET_EXPANDED_GROUP('');
-    //    this.currentContractGroup = {};
-    //   //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
-    //   }
-    // },
+     expandContractGroup(group) {
+      if (group &&  this.getExpandedGroup !== group.id) {
+         this.SET_EXPANDED_GROUP(group.id);
+         this.currentContractGroup = group;
+      } else {
+       this.SET_EXPANDED_GROUP('');
+       this.currentContractGroup = {};
+      //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
+      }
+    },
     showFacility(facility) {
       this.currentFacility = facility;
     },
@@ -144,14 +143,13 @@ export default {
       "contractsLoaded",
       "currentProject",
       "facilities",
-      "contracts",
       "projectContracts",
       "getExpandedGroup",
       "facilityGroupFacilities",
       "facilityGroups",
       "getPreviousRoute",
       "getUnfilteredFacilities",
-      "contracts"
+
     ]),
 
     C_expanded: {
@@ -165,13 +163,7 @@ export default {
     },
  },
   mounted() { 
-    // this.fetchContracts(this.$route.params.programId)
-    // if(this.contracts && this.contracts.length > 0){
-    //     console.log(this.contracts)   
-    // }
-   
-    // Display notification when leaving map view to another page and conditions met
-   if (
+  if (
       this.getPreviousRoute.includes("Map") &&
       this.facilities.length !== this.getUnfilteredFacilities.length
     ) {
@@ -192,36 +184,25 @@ export default {
         (facility) => facility.facilityId == this.$route.params.projectId
       );
     }
-    // if (this.contractsLoaded && this.contracts) {
-    //     this.projectContracts = this.contracts
-    // }
-     if (this.contentLoaded && this.$route.params.contractId) {
- 
-      this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
+   if (this.contentLoaded && this.$route.params.contractId) { 
+        this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
     }
   },
   watch: {
     contentLoaded: {
       handler() {
-         if (this.$route.params.projectId) {
+      if (this.$route.params.projectId) {
           this.currentFacility = this.facilities.find(
             (facility) => facility.id == this.$route.params.projectId
           );
         }
          else if (this.$route.params.contractId) {
-           this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId);
-           console.log(this.currentContract)   
+         this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
+           
         }
       },
     },
-    // projectContracts: {
-    //   handler() {
-    //     if(this.contracts && this.contracts.length > 0) {
-    //       this.projectContracts = this.contracts
-    //     }      
-    //   },
-    // },
-     currentFacility: {
+   currentFacility: {
       handler() {
         if(this.$route.params.projectId) {
           this.currentFacility = this.currentProject.facilities.find((facility) => facility.facilityId == this.$route.params.projectId)         
@@ -244,7 +225,7 @@ export default {
           this.currentFacility = this.facilities.find(facility => facility.id == this.$route.params.projectId);
          }
          if (this.$route.params.contractId) {
-           this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
+             this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
          }
 
       },

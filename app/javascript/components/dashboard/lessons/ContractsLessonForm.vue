@@ -19,7 +19,7 @@
             ><i class="far fa-file-contract mh-orange-text"></i></span>
            <router-link :to="backToContract">
               <span v-if="contract">{{
-                  contract.nickname || contract.name
+                   contract.name
                   }}
               </span>
             </router-link>     

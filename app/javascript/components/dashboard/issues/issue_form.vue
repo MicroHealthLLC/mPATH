@@ -31,12 +31,12 @@
                  {{  issue.facilityName }}
                 </span>
                 <span v-if="isProgramView && issue">
-                    {{ issue.facilityName || issue.contractNickname }}
+                    {{ issue.facilityName || issue.name }}
                </span>
               </router-link>
               <router-link :to="backToContract">
                 <span v-if="contract  && !isProgramView">
-                  {{ contract.nickname || contract.name }}
+                  {{ contract.name }}
                 </span>
               </router-link>    
             <el-icon
@@ -1848,21 +1848,22 @@ export default {
         }
 
        let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/issues.json`;
-       if (this.contract) {
-            url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/issues.json`
-         }       
+         if (this.contract) {
+            url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues.json`
+         }
         let method = "POST";
         let callback = "issue-created";
 
-        if (this.issue && this.issue.id) {       
-          method = "PUT";
+        if (this.issue && this.issue.id) {        
           callback = "issue-updated";
         }        
-        if (this.issue && this.issue.id && this.issue.facilityId) {       
+        if (this.issue && this.issue.id && this.issue.facilityId) {  
+           method = "PUT";     
            url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.issue.facilityId}/issues/${this.issue.id}.json`;
         }
-        if (this.issue && this.issue.id && this.issue.contractId) {
-          url =  `${API_BASE_PATH}/${this.object}/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
+        if (this.issue && this.issue.id && this.issue.projectContractId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
         }
        axios({
           method: method,
@@ -1909,7 +1910,7 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
-            }  else if (this.isProgramView && this.issue.contractId) { this.$router.push(
+            }  else if (this.isProgramView && this.issue.projectContractId) { this.$router.push(
               `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/issue/${response.data.issue.id}`
             );
             } else this.$router.push(

@@ -85,7 +85,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass", 'currentContract', 'contract'], 
+  props: ["contractClass", 'currentContract', "contract"], 
   data() {
     return {
       loading: true,
@@ -105,17 +105,12 @@ export default {
   },
   mounted() {
     this.loading = false;
-
-    if(this.currentContract){
-         console.log(this.currentContract)
-    }
- 
-    if (this.$route.params.contractId) {
-      this.fetchContract({
-        id: this.$route.params.contractId,
-        programId: this.$route.params.programId,
-      });
-    }
+  //  if (this.$route.params.contractId) {
+  //     this.fetchContract({
+  //       id: this.$route.params.contractId,
+  //       programId: this.$route.params.programId,
+  //     });
+  //   }
   },
   methods: {
     ...mapActions([
@@ -129,6 +124,8 @@ export default {
 
     },    
     _isallowed(salut) {
+      console.log(salut)
+        console.log(this.$route)
       return this.checkPrivileges("SheetContract", salut, this.$route)
     },
     log(e){
@@ -140,8 +137,7 @@ export default {
       "contentLoaded",
       "contractLoaded",
       "contractStatus",
-      // "contract",
-      "contracts",
+       "contracts",
     ]),
     c(){
       if(this.contract){

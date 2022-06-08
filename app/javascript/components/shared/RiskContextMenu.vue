@@ -160,14 +160,14 @@ export default {
               id: index,
               label: group.name,         
               children: [
-                  ...contractGroups.filter(t => t.facilityGroupId == group.id)
+                  ...contractGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (contract) => this.isAllowedFacility("write", 'risks', contract.id) && contract.id !== this.risk.contractId
+                    (contract) => this.isAllowedFacility("write", 'risks', contract.projectContractId) && contract.projectContractId !== this.risk.projectContractId
                   )
                   .map((contract) => {
                     return {
-                      id: contract.id,
-                      label: contract.nickname,
+                      id: contract.projectContractId,
+                      label: contract.name,
                     };
                   }),
               ],
@@ -192,41 +192,17 @@ export default {
   methods: {
     ...mapActions(["riskDeleted"]),
     ...mapMutations(["updateRisksHash", "updateContractRisks"]),
-   isAllowed(salut) {
-      if (this.$route.params.contractId) {
-        let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut];
-        return fPrivilege.risks.includes(s);
-        } else {
-        let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return fPrivilege.risks.includes(s); 
-        }         
-    },
-    isAllowedFacility(salut, module, facility_id) {
-       if (this.$route.params.contractId) {
-          let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]
+    isAllowed(salut) {
+      return this.checkPrivileges("task_form", salut, this.$route)
+     },
+      isAllowedFacility(salut, module, facility_id) {
+       if (this.$route.params.projectId) {
+         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
           let permissionHash = {"write": "W", "read": "R", "delete": "D"}
           let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
-        } else {
-          let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
-          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-          let s = permissionHash[salut];
-          return fPrivilege[module].includes(s);
+          return fPrivilege[module].includes(s);          
         }
       },
-    // isAllowed(salut, module) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege[module].includes(s); 
-    // },
-    // closes context menu
     close() {
       this.show = false;
       this.left = 0;
@@ -268,14 +244,15 @@ export default {
              formData.append("risk[facility_project_id]", facilityProjectId);
          }
         
-        let url;
-
+         let url;
+         let method;    
         if (this.$route.params.contractId) {
-             url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/risks/${risk.id}.json`;
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${risk.id}.json`;
          } else {
+             method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
          }         
-        let method = "PUT";
         let callback = "risk-updated";
 
         axios({
@@ -344,7 +321,7 @@ export default {
     createDuplicate() {
       let url;
       if (this.$route.params.contractId) {
-          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_duplicate.json`;
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_duplicate.json`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
       }
@@ -419,14 +396,17 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-    let url;
+      let url;
+      let method;
       if (this.$route.params.contractId) {
-          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_bulk_duplicate?`;
       } else {
+          method = "POST";
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
       }
 
-      let method = "POST";
+     
       let callback = "risk-created";
 
       ids.forEach((id, index) => {

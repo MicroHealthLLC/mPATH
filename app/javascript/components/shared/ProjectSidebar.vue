@@ -1,5 +1,5 @@
 <template>
-  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list" >
     <div class="stick">
       <div
         @click="deselectProject"
@@ -40,7 +40,7 @@
            <div class="col py-0 text-right">
             <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
               facilityGroupFacilities(group).projects.a.length +  
-              facilityGroupFacilities(group).contracts.b.length
+              facilityGroupContracts(group).contracts.b.length
               }}
             </span>
 
@@ -76,7 +76,7 @@
               </router-link>
               </div>
                <div                          
-                v-for="c in contracts.filter(t => t.facilityGroup.id == group.id)" 
+                v-for="c in projectContracts.filter(t => t.facilityGroup && t.facilityGroup.id == group.id)" 
                  v-show="isContractsView && _isallowedContracts('read', c)"    
                 :key="c.projectContractId + 'a'"
                 >              
@@ -140,13 +140,14 @@ export default {
       "getExpandedGroup",
       "facilities",
       'contracts',
-      'projects',
+      'projectContracts',
       "facilityGroups",
       'filteredContracts',
       "filteredFacilities",
       'getProjectGroupFilter',
       "filteredFacilityGroups",
       "facilityGroupFacilities",
+       "facilityGroupContracts",
     ]),
    isContractsView() {
      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
@@ -224,7 +225,7 @@ export default {
 
     // },
     _isallowedContracts(salut, c) {
-        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.project_contract_id})
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
     },
     _isallowedProgramSettings(salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})

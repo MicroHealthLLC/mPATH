@@ -1327,7 +1327,7 @@ const settingsStore = {
       contracts: { 
           b: getters.contracts
           .filter(f => 
-              f.facility_group.id == group.id
+            f.facilityGroup && f.facilityGroup.id == group.id
               ).sort((a, b) => a.name.localeCompare(b.name)),
          }      
       }

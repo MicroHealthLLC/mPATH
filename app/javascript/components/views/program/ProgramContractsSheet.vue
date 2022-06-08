@@ -52,7 +52,6 @@
       prop="name"  
       sortable  
       width="200"
-      fixed  
       label="Project Name"
       > 
    </el-table-column>
@@ -75,9 +74,8 @@
       </template>
       </el-table-column>
       <el-table-column
-        label="Award/TO #"
-  
-        prop="contract_award_to_id">
+        label="Award/TO #"  
+        prop="contractAwardToId">
         <template slot-scope="scope" >
         <span v-if="scope.row.contractAwardTo && scope.row.contractAwardTo.name !== null">
         {{ scope.row.contractAwardTo.name }}
@@ -85,7 +83,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="facilityGoup"
+        prop="facilityGroup"
         sortable
         filterable
         label="Group"
@@ -102,6 +100,7 @@
       width="300"      
       >
         <template slot-scope="scope">
+  
         <el-button
           v-tooltip="`Go to Contract`"
           type="default"       
@@ -243,7 +242,7 @@ export default {
         //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
             let group = this.C_projectGroupFilter.map((t) => t.id);
-            return group.includes(td.facility_group.id);
+            return group.includes(td.facilityGroup.id);
            
           } else return true;
         });

@@ -379,7 +379,7 @@ class Project < SortableRecord
     cph = {} #user.contract_privileges_hash[project.id.to_s] || {}
 
     contract_ids = user.authorized_contract_ids(project_ids: [project.id] )
-    binding.pry
+    # binding.pry
     all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
     all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)
     all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )

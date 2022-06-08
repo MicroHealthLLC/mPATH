@@ -16,7 +16,7 @@ const notesStore = {
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}/notes.json`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/notes.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -39,7 +39,7 @@ const notesStore = {
       // Retrieve lesson by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}/notes/${id}.json`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/notes/${id}.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -63,7 +63,7 @@ const notesStore = {
 
     axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contracts/${contractId}/notes.json`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/notes.json`,
         data: formData,
         headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -91,7 +91,7 @@ const notesStore = {
 
       axios({
         method: "PATCH",
-        url: `${API_BASE_PATH}/contracts/${contractId}/notes/${noteId}`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/notes/${noteId}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -113,7 +113,7 @@ const notesStore = {
       // Delete a single lesson
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/contracts/${contractId}/notes/${id}`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/notes/${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
