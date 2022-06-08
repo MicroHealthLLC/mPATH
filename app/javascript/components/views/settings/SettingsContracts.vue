@@ -214,11 +214,11 @@
               <template slot-scope="scope">
               <el-button  
                 type="default" 
-                v-tooltip="`Edit Project`"
+                v-tooltip="`Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
                 v-if="scope.$index !== rowIndex"
                 class="bg-light btn-sm">
-                <i class="fal fa-edit text-primary" ></i>
+                <i class="fal fa-network-wired mh-blue-text"></i>
                </el-button>  
                 <el-button
                   type="default"

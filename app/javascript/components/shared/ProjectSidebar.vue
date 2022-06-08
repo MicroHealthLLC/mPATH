@@ -40,7 +40,7 @@
            <div class="col py-0 text-right">
             <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
               facilityGroupFacilities(group).projects.a.length +  
-              facilityGroupContracts(group).contracts.b.length
+              facilityGroupFacilities(group).contracts.b.length
               }}
             </span>
 

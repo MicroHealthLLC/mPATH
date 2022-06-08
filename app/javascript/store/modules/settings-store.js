@@ -188,7 +188,7 @@ const settingsStore = {
         });
     },
     removeContract({ commit }, { g } ) {
-      commit("TOGGLE_CONTRACTS_LOADED", false);
+      commit("TOGGLE_CONTRACT_LOADED", false);
         console.log(g)
       axios({
         method: "DELETE",
@@ -199,14 +199,14 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          commit("SET_CONTRACTS", res.data.contracts);
-          commit("SET_CONTRACTS_STATUS", res.status);
+          commit("SET_CONTRACT", res.data.contracts);
+          commit("SET_CONTRACT_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_CONTRACTS_LOADED", true);
+          commit("TOGGLE_CONTRACT_LOADED", true);
         });
       },
     //
