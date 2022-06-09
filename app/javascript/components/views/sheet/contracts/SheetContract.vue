@@ -55,9 +55,6 @@
                <h5 v-if="c.contractAwardTo">{{ c.contractAwardTo.name }}</h5>
               </div>  
              </div>  
-          
-          
-
            </el-card>  
            </div>
            </div>

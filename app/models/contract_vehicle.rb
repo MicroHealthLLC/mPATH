@@ -1,10 +1,13 @@
 class ContractVehicle < ApplicationRecord
-  has_many :contracts
-  belongs_to :contract_number, optional: true
+
   belongs_to :contract_sub_category, optional: true
   belongs_to :contract_agency, optional: true
   belongs_to :contract_vehicle_type, optional: true
   belongs_to :user
+
+  has_many :contract_project_data
+  has_many :contract_numbers, through: :contract_project_data 
+
   validates_presence_of :name
 
   def to_json
@@ -13,6 +16,7 @@ class ContractVehicle < ApplicationRecord
     h.merge!({contract_sub_category: vehicle.contract_sub_category.as_json}) if contract_sub_category_id
     h.merge!({contract_agency: vehicle.contract_agency.as_json}) if contract_agency_id
     h.merge!({contract_vehicle_type: vehicle.contract_vehicle_type.as_json}) if contract_vehicle_type_id
+    h.merge!({contract_numbers: vehicle.contract_numbers.uniq.as_json})
     h
   end
 

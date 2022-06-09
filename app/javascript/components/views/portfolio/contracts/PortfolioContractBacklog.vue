@@ -92,7 +92,7 @@
        width="115"
       >
       <template slot-scope="scope">
-     <span >
+     <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
       {{Math.trunc(scope.row.billings_to_date / scope.row.total_contract_value)}}%
      </span>
       </template>
@@ -102,7 +102,7 @@
        width="115"
       >
        <template slot-scope="scope">
-        <span>
+       <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
          {{ (scope.row.total_founded_value - scope.row.billings_to_date) | toCurrency }}
         </span>     
        </template>       
@@ -112,7 +112,7 @@
        width="115"
       >
      <template slot-scope="scope">
-      <span>
+    <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
       {{ (scope.row.total_contract_value - scope.row.billings_to_date) | toCurrency }}
       </span>
      </template>

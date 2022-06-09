@@ -365,26 +365,26 @@ const contractStore = {
         commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
       });
     },
-    deleteVehiclesData({ commit }, id ) {
-        commit("TOGGLE_ROLES_LOADED", false);
+    deleteContractVehicle({ commit }, id ) {
+        commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);
       
         axios({
-          method: "PUT",
-          url: ``,
+          method: "DELETE",
+          url: `${API_BASE_PATH}/contract_vehicles/${id}`,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
               .attributes["content"].value,
           },
         })
           .then((res) => {
-            commit("SET_ROLES", res.data.roles);
-            // console.log(res.data.roles)
+            commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
+            commit("SET_CONTRACT_VEHICLES_STATUS", res.status);
           })
           .catch((err) => {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_ROLES_LOADED", true);
+            commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
           });
     },
     deletePOCData({ commit }, id ) {
