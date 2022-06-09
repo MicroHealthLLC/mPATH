@@ -284,7 +284,7 @@
       </div>
     </div>
     <!-- Related Tab -->
-    <div v-show="currentTab == 'tab2'">
+    <!-- <div v-show="currentTab == 'tab2'">
       <div class="row mt-1">
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
@@ -425,7 +425,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'" class="mt-2">
       <span>Successes</span>
@@ -818,17 +818,17 @@ export default {
             "Stage",
           ],
         },
-        {
-          label: "Related",
-          key: "tab2",
-          closable: false,
-          form_fields: [
-            "Projects",
-            "Related Task",
-            "Related Issue",
-            "Related Risk",
-          ],
-        },
+        // {
+        //   label: "Related",
+        //   key: "tab2",
+        //   closable: false,
+        //   form_fields: [
+        //     "Projects",
+        //     "Related Task",
+        //     "Related Issue",
+        //     "Related Risk",
+        //   ],
+        // },
         {
           label: "Successes",
           key: "tab3",
@@ -952,19 +952,7 @@ export default {
       return [...sFBP];
     },
     _isallowed(salut) {
-      return this.checkPrivileges("ContractsLessonForm", salut, this.$route)
-
-      // if (this.$route.params.contractId) {
-      //   let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return fPrivilege.lessons.includes(s);
-      // } else {
-      //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return fPrivilege.lessons.includes(s); 
-      // }
+      return this.checkPrivileges("ContractLessonForm", salut, this.$route)
      },
     close() {  
           this.$router.push(

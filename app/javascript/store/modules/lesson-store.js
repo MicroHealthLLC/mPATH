@@ -137,7 +137,7 @@ const lessonModule = {
       // Retrieve lesson by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${id}.json`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/lessons/${id}.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -280,7 +280,7 @@ const lessonModule = {
       // Delete a single lesson
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/contracts/${contractId}/lessons/${id}`,
+        url: `${API_BASE_PATH}/project_contracts/${contractId}/lessons/${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

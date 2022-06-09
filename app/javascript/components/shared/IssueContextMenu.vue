@@ -11,11 +11,12 @@
       <el-menu-item @click="openIssue">Open</el-menu-item>
       <hr />
       <el-menu-item
+       v-if="$route.params.projectId"
         @click="createDuplicate"
         :disabled="!isAllowed('write', 'issues')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'issues')">
+      <el-submenu index="1" :disabled="!isAllowed('write', 'issues')"  v-if="$route.params.projectId">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -57,7 +58,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'issues')">
+      <el-submenu index="2" :disabled="!isAllowed('write', 'issues')"  v-if="$route.params.projectId">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
