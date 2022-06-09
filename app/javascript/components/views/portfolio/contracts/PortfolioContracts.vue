@@ -47,7 +47,7 @@
     style="width: 95%">
     <el-table-column
       fixed
-      label="Code"
+      label="Code*"
       width=""
       prop="charge_code">
       <template slot-scope="scope">
@@ -75,7 +75,7 @@
     </el-table-column>
     <el-table-column
       fixed
-      label="Project Name"
+      label="Project Name*"
       width="200"
       prop="name">
       <template slot-scope="scope">
@@ -100,7 +100,7 @@
         </template>
      </el-table-column>
      <el-table-column    
-      label="Customer"
+      label="Customer*"
       width="200"
       prop="contract_customer_id">
      <template slot-scope="scope" >
@@ -132,7 +132,7 @@
       </template>
     </el-table-column>
       <el-table-column    
-      label="Vehicle/ Schedule"
+      label="Vehicle/ Schedule*"
       width="125"
       prop="contract_vehicle_id">
        <template slot-scope="scope" >
@@ -163,7 +163,7 @@
       </template>
     </el-table-column>
       <el-table-column
-      label="Contract #"
+      label="Contract Number*"
       width="125"
       prop="contract_number_id">
     <template slot-scope="scope" >
@@ -195,7 +195,7 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Award/TO #"
+      label="Award/ TO Number*"
       width="125"
       prop="contract_award_to_id">
        <template slot-scope="scope" >
@@ -227,7 +227,7 @@
       </template>
     </el-table-column>
      <el-table-column
-      label="NAICS"
+      label="NAICS*"
       width="70"
       prop="contract_naic_id">
      <template slot-scope="scope" >
@@ -259,7 +259,7 @@
       </template>
     </el-table-column>
      <el-table-column
-      label="Award Type"
+      label="Award Type*"
       width="70"
       prop="contract_award_type_id">
       <template slot-scope="scope" >
@@ -291,7 +291,7 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Contract Type"
+      label="Contract Type*"
       width="75"
       prop="contract_type_id">
       <template slot-scope="scope" >
@@ -352,7 +352,7 @@
       </template>
     </el-table-column>
      <el-table-column
-      label="Contract Start Date"
+      label="Contract Start Date*"
       width="100"
       prop="contract_start_date">
        <template slot-scope="scope">
@@ -383,7 +383,7 @@
      </template>
     </el-table-column>
      <el-table-column
-      label="Contract End Date"
+      label="Contract End Date*"
       width="100"
       prop="contract_end_date">
       <template slot-scope="scope">
@@ -416,7 +416,7 @@
      </template>
     </el-table-column>
      <el-table-column
-      label="Total Contract Value"
+      label="Total Contract Value*"
        width="115"
       prop="total_contract_value">
      <template slot-scope="scope">
@@ -444,7 +444,7 @@
 
     </el-table-column>
     <el-table-column
-      label="PoP's"
+      label="PoP's*"
        width="100"
       prop="contract_pop_id">
       <template slot-scope="scope" >
@@ -508,7 +508,7 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Contract PoP Start Date"
+      label="Contract PoP Start Date*"
        width="100"
       prop="contract_current_pop_start_date">
       <template slot-scope="scope">
@@ -538,7 +538,7 @@
      </template>
     </el-table-column>
        <el-table-column
-      label="Contract PoP End Date"
+      label="Contract PoP End Date*"
        width="100"
       prop="contract_current_pop_end_date">
      <template slot-scope="scope">
@@ -968,7 +968,11 @@
     </span>
    <PortfolioExpiredContracts/>
     </el-tab-pane>
+    <span class="mt-2 requiredFields">
+    *Required fields
+    </span>
   </el-tabs>
+
   </div>
       
 </template>
@@ -1558,6 +1562,7 @@ export default {
           this.newPopEndDate = null,         
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects();
+          this.fetchContractVehicles()
         }
       },
     }, 
@@ -1590,6 +1595,9 @@ export default {
 </script>
     
 <style scoped lang="scss">
+.requiredFields{
+    font-size: .88rem;
+  }
   .bottomTabs{
     position: absolute;
     bottom: 2.5%;
@@ -1600,6 +1608,9 @@ export default {
  }
 /deep/.el-input__inner {
   padding: 1px 1px 1px 2px;
+}
+/deep/.el-tabs__content {
+  padding-bottom: 0;
 }
 /deep/.el-table {
     font-size: 13px !important;
