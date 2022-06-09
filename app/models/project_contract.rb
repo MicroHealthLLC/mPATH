@@ -13,6 +13,11 @@ class ProjectContract < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   before_create :assign_default_facility_group 
+  after_destroy :remove_roles
+
+  def remove_roles
+    RoleUser.where(project_contract_id: self.id).destroy_all
+  end
 
   def assign_default_facility_group
     if self.facility_group.nil?

@@ -16,6 +16,11 @@ class FacilityProject < ApplicationRecord
   validates :facility, uniqueness: {scope: :project}
 
   before_save :assign_default_status
+  after_destroy :remove_roles
+
+  def remove_roles
+    RoleUser.where(facility_project_id: self.id).destroy_all
+  end
 
   def as_json(options=nil)
     json = super(options)
