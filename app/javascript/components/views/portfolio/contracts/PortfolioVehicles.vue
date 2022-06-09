@@ -8,7 +8,7 @@
     style="width: 95%">
    <el-table-column
       fixed
-      label="Vehicle"
+      label="Vehicle*"
       width="175"
       prop="name">
     <template slot-scope="scope">
@@ -36,7 +36,7 @@
         </template>
     </el-table-column>
     <el-table-column
-      label="Vehicle Full Name"
+      label="Vehicle Full Name*"
       width="300"
       prop="full_name">
     <template slot-scope="scope">
@@ -67,7 +67,7 @@
 
     </el-table-column>
       <el-table-column
-      label="SINS or Subcategories"      
+      label="SINS or Subcategories*"      
       width="250"
       prop="contract_sub_category_id">
 
@@ -101,7 +101,7 @@
       </template>
     </el-table-column>
      <el-table-column
-      label="Contracting Agency"
+      label="Contracting Agency*"
       width="175"
       prop="contract_agency_id">
 
@@ -135,7 +135,7 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Vehicle Type"
+      label="Vehicle Type*"
       width="125"
       prop="contract_vehicle_type_id">
      <template slot-scope="scope" >
@@ -170,32 +170,17 @@
      <el-table-column
       label="Contract Number"
       width="125"
-      prop="contract_number_id">
+      prop="contract_numbers">
 
-    <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
-       <el-select
-        v-model="scope.row.contract_number_id"
-        filterable       
-        track-by="name"        
-        value-key="id"
-        class="w-100"
-        default-first-option
-        placeholder=""
-      >
-        <el-option
-          v-for="item in contractNumber"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        >
-        </el-option>
-      </el-select>
+    <template slot-scope="scope" >    
+       <span v-if="scope.row.contract_numbers && scope.row.contract_numbers.length > 0">
+       {{ scope.row.contract_numbers.map(t => t.name).toString().replace(/,/g, ', ') }}
       </span>
-       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-        (scope.row.contract_number && scope.row.contract_number.name !== null)">
-       {{ scope.row.contract_number.name }}
-      </span>
+       <span v-else>
+         <span v-if="scope.$index !== createRow">
+           N/A
+         </span>
+        </span>
       </template>
     </el-table-column>
      <el-table-column
@@ -238,7 +223,7 @@
     </el-table-column>
 
     <el-table-column
-      label="Base Period Start"
+      label="Base Period Start*"
       width="100"
       prop="base_period_start">
      <template slot-scope="scope">
@@ -269,7 +254,7 @@
      </template>
    </el-table-column>
     <el-table-column
-      label="Base Period End"
+      label="Base Period End*"
       width="100"
       prop="base_period_end">
          <template slot-scope="scope">
@@ -364,7 +349,7 @@
     </el-table-column>
     <el-table-column
      label="Actions"
-      width="95"
+      width="120"
       fixed="right"
       align="center"
       >
@@ -394,6 +379,13 @@
           class="bg-light btn-sm"
            v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
+          </el-button>
+           <el-button
+          type="default"
+           v-tooltip="`Delete`" 
+          class="bg-light btn-sm"
+           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+          @click="deleteContractVeh(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
           <el-button
           type="default"
@@ -429,7 +421,7 @@
     
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-  Vue.filter('toCurrency', function (value) {
+ Vue.filter('toCurrency', function (value) {
     if (typeof value !== "number") {
         return value;
     }
@@ -451,6 +443,7 @@ export default {
         newCeiling: null, 
         nothing: true,
         rowIndex: null, 
+        lo: _.uniq(),
         rowId: null, 
         tabPosition: 'bottom',
         bpStart: null,
@@ -496,7 +489,7 @@ export default {
       if(rows.ceiling == null) {
         this.updateCeiling = ""
       } else this.updateCeiling = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling);
-      console.log(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(formattedCeiling));  
+     
       if(rows.base_period_start){
         this.bpStart = rows.base_period_start;
       }
@@ -510,6 +503,19 @@ export default {
         this.opEnd = rows.option_period_end;
       }
     },  
+    deleteContractVeh(index, rows) {
+        this.$confirm(
+        `Are you sure you want to delete ${rows.name} from Vehicles?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+        this.deleteContractVehicle(rows.id);
+      });     
+    },
     disabledBpEndDate(date) {
     if (this.bpStart){
       date.setHours(0, 0, 0, 0);
@@ -577,7 +583,6 @@ export default {
             subCatId: rows.contract_sub_category_id,
             cAgencyId: rows.contract_agency_id,        
             type: rows.contract_vehicle_type_id,
-            cNumber: rows.contract_number_id,         
             ceiling: rows.ceiling,
             bp_startDate: this.bpStart,
             bp_endDate: this.bpEnd,
@@ -662,15 +667,6 @@ contractAgencyOptions(){
       types.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
       return unique
      }
-    },
-    contractNumber(){
-     if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueContractNums = _.uniq(this.contractProjects.filter(t => t.contract_number_id))
-        let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t && t.id && t !== undefined && t !== null)
-        let unique = [];
-        contractNums.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
-      }
     },
   },
   watch: {

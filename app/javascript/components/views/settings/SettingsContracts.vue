@@ -718,7 +718,7 @@ export default {
       this.openUserPrivilegesDialog = true
       this.projId = rows.project_contract_id
       this.contractData = rows
-      // console.log(rows)
+    console.log(rows)
     },
     addExistingContract(index, rows) {
     //  console.log(rows)

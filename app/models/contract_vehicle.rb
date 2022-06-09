@@ -16,7 +16,7 @@ class ContractVehicle < ApplicationRecord
     h.merge!({contract_sub_category: vehicle.contract_sub_category.as_json}) if contract_sub_category_id
     h.merge!({contract_agency: vehicle.contract_agency.as_json}) if contract_agency_id
     h.merge!({contract_vehicle_type: vehicle.contract_vehicle_type.as_json}) if contract_vehicle_type_id
-    h.merge!({contract_numbers: vehicle.contract_numbers.as_json})
+    h.merge!({contract_numbers: vehicle.contract_numbers.uniq.as_json})
     h
   end
 
