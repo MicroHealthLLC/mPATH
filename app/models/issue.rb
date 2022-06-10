@@ -18,8 +18,8 @@ class Issue < ApplicationRecord
   before_update :validate_states
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
-  after_save :update_facility_project, if: Proc.new {|issue| issue.contract_id.nil?}
-  after_destroy :update_facility_project, if: Proc.new {|issue| issue.contract_id.nil?}
+  after_save :update_facility_project, if: Proc.new {|issue| issue.project_contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|issue| issue.project_contract_id.nil?}
 
   attr_accessor :file_links
 

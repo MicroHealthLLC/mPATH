@@ -467,6 +467,7 @@ export default {
       "fetchContractVehicles",
       "updateContractVehicle",
       "deleteContractVehicle",
+      'fetchContractProjects',
     ]),
     NumbersOnly(evt) {
       evt = (evt) ? evt : window.event;
@@ -514,7 +515,7 @@ export default {
         }
        ).then(() => {
         this.deleteContractVehicle(rows.id);
-      });     
+      });        
     },
     disabledBpEndDate(date) {
     if (this.bpStart){
@@ -688,6 +689,7 @@ contractAgencyOptions(){
           });
           this.SET_CONTRACT_VEHICLES_STATUS(0);
           this.fetchContractVehicles();
+          this.fetchContractProjects()
           this.bpStart = null;
           this.bpEnd = null;
           this.opStart = null;

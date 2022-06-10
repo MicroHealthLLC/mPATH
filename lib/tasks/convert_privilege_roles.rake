@@ -106,58 +106,58 @@ task :convert_privilege_roles => :environment do
         end
       end
 
-      cph = user.contract_privileges_hash
-      cph.each do |project_id, cph2|
-        project_id = project_id.to_i
-        project = Project.where(id: project_id).first
-        next if !project
-        cph2.each do |contract_id, privileges_hash|
-          next if contract_id == "authorized_contract_ids"
-          contract_id  = contract_id.to_i
-          # puts privileges_hash
-          # puts "User id #{user.id}"
-          # puts "Project id #{project_id}"
-          # puts "fph2 id #{contract_id}"
-          # puts "fph2 id #{privileges_hash["overview"]}"
-          next if !privileges_hash["overview"] || !privileges_hash["tasks"] || !privileges_hash["notes"] || !privileges_hash["issues"] || !privileges_hash["risks"] || !privileges_hash["lessons"]
+      # cph = user.contract_privileges_hash
+      # cph.each do |project_id, cph2|
+      #   project_id = project_id.to_i
+      #   project = Project.where(id: project_id).first
+      #   next if !project
+      #   cph2.each do |contract_id, privileges_hash|
+      #     next if contract_id == "authorized_contract_ids"
+      #     contract_id  = contract_id.to_i
+      #     # puts privileges_hash
+      #     # puts "User id #{user.id}"
+      #     # puts "Project id #{project_id}"
+      #     # puts "fph2 id #{contract_id}"
+      #     # puts "fph2 id #{privileges_hash["overview"]}"
+      #     next if !privileges_hash["overview"] || !privileges_hash["tasks"] || !privileges_hash["notes"] || !privileges_hash["issues"] || !privileges_hash["risks"] || !privileges_hash["lessons"]
 
-          if ( ["R", "D", "W"] & privileges_hash["overview"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["tasks"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["notes"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["issues"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["risks"] ).size == 3 &&
-            ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
+      #     if ( ["R", "D", "W"] & privileges_hash["overview"] ).size == 3 &&
+      #       ( ["R", "D", "W"] & privileges_hash["tasks"] ).size == 3 &&
+      #       ( ["R", "D", "W"] & privileges_hash["notes"] ).size == 3 &&
+      #       ( ["R", "D", "W"] & privileges_hash["issues"] ).size == 3 &&
+      #       ( ["R", "D", "W"] & privileges_hash["risks"] ).size == 3 &&
+      #       ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
             
-            next if user.role_users.where(role_id: update_contract_role_id, contract_id:  contract_id,project_id: project_id ).count > 0 || new_role_users.detect{|ru| ru.role_id == update_contract_role_id && ru.contract_id == contract_id  &&  ru.project_id == project_id} 
+      #       next if user.role_users.where(role_id: update_contract_role_id, contract_id:  contract_id,project_id: project_id ).count > 0 || new_role_users.detect{|ru| ru.role_id == update_contract_role_id && ru.contract_id == contract_id  &&  ru.project_id == project_id} 
 
-            new_role_users << RoleUser.new(user_id: user.id, role_id: update_contract_role_id, contract_id: contract_id, project_id: project_id)
+      #       new_role_users << RoleUser.new(user_id: user.id, role_id: update_contract_role_id, contract_id: contract_id, project_id: project_id)
 
-          elsif ( ["R", "W"] & privileges_hash["overview"] ).size == 2 &&
-            ( ["R", "W"] & privileges_hash["tasks"] ).size == 2 &&
-            ( ["R", "W"] & privileges_hash["notes"] ).size == 2 &&
-            ( ["R", "W"] & privileges_hash["issues"] ).size == 2 &&
-            ( ["R", "W"] & privileges_hash["risks"] ).size == 2 &&
-            ( ["R", "W"] & privileges_hash["lessons"] ).size == 2
+      #     elsif ( ["R", "W"] & privileges_hash["overview"] ).size == 2 &&
+      #       ( ["R", "W"] & privileges_hash["tasks"] ).size == 2 &&
+      #       ( ["R", "W"] & privileges_hash["notes"] ).size == 2 &&
+      #       ( ["R", "W"] & privileges_hash["issues"] ).size == 2 &&
+      #       ( ["R", "W"] & privileges_hash["risks"] ).size == 2 &&
+      #       ( ["R", "W"] & privileges_hash["lessons"] ).size == 2
 
-            next if user.role_users.where(role_id: contribute_contract_role_id, contract_id:  contract_id,project_id:project_id ).count > 0 || new_role_users.detect{|ru| ru.role_id == contribute_contract_role_id && ru.contract_id == contract_id  &&  ru.project_id == project_id} 
+      #       next if user.role_users.where(role_id: contribute_contract_role_id, contract_id:  contract_id,project_id:project_id ).count > 0 || new_role_users.detect{|ru| ru.role_id == contribute_contract_role_id && ru.contract_id == contract_id  &&  ru.project_id == project_id} 
 
-            new_role_users << RoleUser.new(user_id: user.id, role_id: contribute_contract_role_id, contract_id: contract_id, project_id: project_id)
+      #       new_role_users << RoleUser.new(user_id: user.id, role_id: contribute_contract_role_id, contract_id: contract_id, project_id: project_id)
 
-          elsif ( ["R"] & privileges_hash["overview"] ).size == 1 &&
-            ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
-            ( ["R"] & privileges_hash["notes"] ).size == 1 &&
-            ( ["R"] & privileges_hash["issues"] ).size == 1 &&
-            ( ["R"] & privileges_hash["risks"] ).size == 1 &&
-            ( ["R"] & privileges_hash["lessons"] ).size == 1
+      #     elsif ( ["R"] & privileges_hash["overview"] ).size == 1 &&
+      #       ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
+      #       ( ["R"] & privileges_hash["notes"] ).size == 1 &&
+      #       ( ["R"] & privileges_hash["issues"] ).size == 1 &&
+      #       ( ["R"] & privileges_hash["risks"] ).size == 1 &&
+      #       ( ["R"] & privileges_hash["lessons"] ).size == 1
 
-            next if user.role_users.where(role_id: read_contract_role_id, contract_id: contract_id, project_id:project_id ).count > 0 || new_role_users.detect{|ru| ru.role_id == read_contract_role_id && ru.contract_id == contract_id  &&  ru.project_id == project_id} 
+      #       next if user.role_users.where(role_id: read_contract_role_id, contract_id: contract_id, project_id:project_id ).count > 0 || new_role_users.detect{|ru| ru.role_id == read_contract_role_id && ru.contract_id == contract_id  &&  ru.project_id == project_id} 
 
-            new_role_users << RoleUser.new(user_id: user.id, role_id: read_contract_role_id, contract_id: contract_id, project_id: project_id)            
+      #       new_role_users << RoleUser.new(user_id: user.id, role_id: read_contract_role_id, contract_id: contract_id, project_id: project_id)            
 
-          end
+      #     end
 
-        end
-      end
+      #   end
+      # end
 
     end
     RoleUser.import(new_role_users)

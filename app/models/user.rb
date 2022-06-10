@@ -787,7 +787,7 @@ class User < ApplicationRecord
         end
         contarct_hash[role_user.project_contract_id] = h2
       elsif role_user.project_id.present? && role_user.project_contract_id.nil?
-        contracts = contracts_group_by_project[role_user.project_id]
+        contracts = contracts_group_by_project[role_user.project_id] || []
         contracts.each do |contract|
           next if contarct_hash[contract.id] || !role_privilegs
           h2 = {}
