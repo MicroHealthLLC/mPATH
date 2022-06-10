@@ -27,7 +27,7 @@
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView && risk">
-                    {{ risk.facilityName || risk.name }}
+                    {{ risk.facilityName || risk.contractNickname }}
                </span>
              </router-link>
              <router-link :to="backToContract">

@@ -31,7 +31,7 @@
                  {{  issue.facilityName }}
                 </span>
                 <span v-if="isProgramView && issue">
-                    {{ issue.facilityName || issue.name }}
+                    {{ issue.facilityName || issue.contractNickname }}
                </span>
               </router-link>
               <router-link :to="backToContract">
