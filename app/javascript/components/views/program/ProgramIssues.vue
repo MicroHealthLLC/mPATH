@@ -73,7 +73,7 @@
                 </div>    
             
                 <div class="col truncate-line-two">    
-                      <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
+                      <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
                   <h4 v-if="dynamicObj[currentIssueSlide] && dynamicObj[currentIssueSlide].projectGroup"> {{dynamicObj[currentIssueSlide].projectGroup}}  </h4>
                                                 
                 </div>  
