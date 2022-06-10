@@ -2,6 +2,7 @@ describe('Sheets Tasks View', function() {
   before(() => {
     cy.app('clean')
     cy.appScenario('basic')
+    // cy.appScenario('provide_all_privileges')
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
     cy.get('#customtabs > :nth-child(2)').contains('Tasks').should('be.visible').click()
@@ -106,4 +107,12 @@ describe('Sheets Tasks View', function() {
     cy.get('[data-cy=task_row]').first().contains('No Updates').should('be.visible')
     // cy.logout()
   })
+
+  // it('Create New Task', function() {
+  //   cy.get('[data-cy=add_task]').click()
+  //   cy.get('[data-cy="task_name"').clear().type('1 New task').should('have.value', '1 New task')
+  //   cy.get('[data-cy="task_description"').clear().type('1 New task description').should('have.value', '1 New task description')
+  //   cy.get('data-cy="task_type"').click()
+  // })
+
 })
