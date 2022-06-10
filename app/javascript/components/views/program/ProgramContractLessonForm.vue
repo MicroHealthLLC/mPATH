@@ -1,13 +1,14 @@
 <template>
-  <LessonForm :lesson="lesson" @on-close-form="redirectBack" style="padding:30px" />
+  <ContractsLessonForm :lesson="lesson" @on-close-form="redirectBack" style="padding:30px" />
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import LessonForm from "./../../dashboard/lessons/LessonForm";
+import ContractsLessonForm from "./../../dashboard/lessons/ContractsLessonForm";
 export default {
+ name:  "ProgramContractLessonForm",
  components: { 
-   LessonForm
+   ContractsLessonForm
    },
   data() {
     return {
@@ -26,15 +27,18 @@ export default {
     ...mapGetters(["contentLoaded", 'programLessons', 'getShowProjectStats']),
   },
   mounted() {
+    
     if(!this.getShowProjectStats){
         this.allProgramLessons = this.programLessons.filter(l => l.project_id)
       } else if (this.getShowProjectStats){
-         this.allProgramLessons =  this.programLessons.filter(l => l.contract_id)
+         this.allProgramLessons =  this.programLessons.filter(l => l && l.project_contract_id)
+       
       } 
     if (this.contentLoaded) {
       this.lesson =  this.allProgramLessons.find(
         (lesson) => lesson.id == this.$route.params.lessonId
       );
+        console.log(this.lesson)
     }
   },
   watch: {
@@ -42,6 +46,7 @@ export default {
       handler() {
         this.lesson =  this.allProgramLessons.find(
           (lesson) => lesson.id == this.$route.params.lessonId
+          
         );
       },
     },

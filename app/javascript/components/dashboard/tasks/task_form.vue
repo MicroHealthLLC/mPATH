@@ -27,7 +27,7 @@
                  {{ facility.facilityName }}
                </span>
                <span v-if="isProgramView && task">
-                    {{ task.facilityName || task.name }}
+                    {{ task.facilityName || task.contractNickname }}
                </span>
                  <!-- <span v-if="!isProgramView && (contract || !facility)">
                     {{ task }}
