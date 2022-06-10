@@ -9,10 +9,16 @@ module Tasker
     scope :complete, -> {where("progress = ?", 100)}
     scope :incomplete, -> {where("progress < ?", 100)}
 
-    belongs_to :facility_project
+    belongs_to :facility_project, optional: true #since now we can create task under contract
+    belongs_to :contract, optional: true
+    # New contract functionality
+    belongs_to :project_contract, optional: true
+    has_one :contract_project_data, through: :project_contract
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project
     has_one :facility_group, through: :facility
+    has_one :contract_project, class_name: "Project", through: :project_contract
+    has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
 
     has_many :checklists, as: :listable, dependent: :destroy
 
@@ -33,16 +39,20 @@ module Tasker
     after_save :handle_related_taskers
     after_validation :setup_facility_project
 
-
     def valid_url?(url)
       uri = URI.parse(url)
       (uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS) ) && !uri.host.nil?
     rescue URI::InvalidURIError
       false
     end
+    
+    def is_contract_resource?
+      self.contract_id.present?
+    end
 
     def setup_facility_project
       return unless facility_project.present?
+      return if self.is_contract_resource?
       if facility_project.facility_id_changed? || facility_project.project_id_changed?
         self.facility_project = FacilityProject.find_or_initialize_by(project: self.project, facility: self.facility)
       end
@@ -62,7 +72,7 @@ module Tasker
 
     def remove_on_watch
       if self.progress == 100 && self.watched == true
-        self.update_attributes(watched: false)
+        self.update(watched: false)
       end
     end
 

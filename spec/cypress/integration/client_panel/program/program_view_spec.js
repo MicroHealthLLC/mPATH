@@ -64,7 +64,7 @@ describe('Program Viewer ', function() {
     })
 
     cy.get('[data-cy="issue_save_btn"]').click()
-      cy.wait(3000)
+    cy.wait(3000)
     cy.get('[data-cy="issue_close_btn"]').click({force: true})
     cy.get('#portIssues > tbody > tr').first().contains('1 New Issue 1 - Update').should('be.visible')
 
@@ -93,7 +93,7 @@ describe('Program Viewer ', function() {
     })
 
     cy.get('[data-cy="risk_save_btn"]').click()
-      cy.wait(3000)
+    cy.wait(3000)
     cy.get('[data-cy="risk_close_btn"]').click({force: true})
     cy.get('#portRisks > tbody > tr').first().contains('1 New Risk 1 - Update').should('be.visible')
 

@@ -10,12 +10,14 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Tabsbar from "./../shared/tabsbar";
 import FilterSidebar from "./../shared/filter_sidebar";
+import SettingsSidebar from "../views/settings/SettingsSidebar.vue";
 
 export default {
   name: "Dashboard",
   components: {
     Tabsbar,
     FilterSidebar,
+    SettingsSidebar
   },
   mounted() {
     let id = this.$route.params.programId;

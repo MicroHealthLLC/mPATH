@@ -82,7 +82,6 @@ describe('Admin Panel Project', function() {
     cy.get('#facility_submit_action').contains('Create Project').click()
     cy.get('.errors').contains("Phone number can't be blank")
     cy.get('#page_title').contains('New Project').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Could not create new Project if email is blank', function() {
@@ -96,9 +95,7 @@ describe('Admin Panel Project', function() {
     cy.get('#phone-number__input_phone_number').type('07400 123456')
     cy.get('#facility_submit_action').contains('Create Project').click()
     cy.get('.errors').contains("Email can't be blank")
-    cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New Project').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Sort Project according to Project Name', function() {
@@ -108,7 +105,6 @@ describe('Admin Panel Project', function() {
     cy.get('#index_table_facilities > tbody > tr').first().contains('Test Facility 1').should('be.visible')
     cy.get('.sortable').contains('Project Name').click()
     cy.get('#index_table_facilities > tbody > tr').first().contains('Test Facility 4').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Sort Project according to Address', function() {
@@ -118,13 +114,11 @@ describe('Admin Panel Project', function() {
     cy.get('#index_table_facilities > tbody > tr').first().contains('2-20 Western Rd, Park Royal, London NW10 7LW, UK').should('be.visible')
     cy.get('.sortable').contains('Address').click()
     cy.get('#index_table_facilities > tbody > tr').first().contains('Axford, Marlborough SN8, UK').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Sort Project according to Point Of Contact', function() {
     cy.get('.sortable').contains('Point Of Contact').click()
     cy.get('#index_table_facilities > tbody > tr').first().contains('Test points').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Sort Project according to Email', function() {
@@ -134,7 +128,6 @@ describe('Admin Panel Project', function() {
     cy.get('#index_table_facilities > tbody > tr').first().contains('facility1@test.com').should('be.visible')
     cy.get('.sortable').contains('Email').click()
     cy.get('#index_table_facilities > tbody > tr').first().contains('facility4@test.com').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Sort Project according to Phone Number', function() {
@@ -144,7 +137,6 @@ describe('Admin Panel Project', function() {
     cy.get('#index_table_facilities > tbody > tr').first().contains('+447400123451').should('be.visible')
     cy.get('.sortable').contains('Phone Number').click()
     cy.get('#index_table_facilities > tbody > tr').first().contains('+447400123454').should('be.visible')
-    // cy.get('#logout').click()
   })
 
   it('Search Project by creator', function() {
@@ -158,7 +150,6 @@ describe('Admin Panel Project', function() {
     cy.get('#q_creator_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
-    // cy.get('#logout').click()
   })
 
   it('Search Project by facility group', function() {
@@ -172,7 +163,6 @@ describe('Admin Panel Project', function() {
     cy.get('#q_facility_group_id').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
-    // cy.get('#logout').click()
   })
 
   it('Search Project contains name', function() {
@@ -186,7 +176,6 @@ describe('Admin Panel Project', function() {
     cy.get('.current_filter').contains('Project Name contains Test Facility 1').should('be.visible')
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    // cy.get('#logout').click()
   })
 
   it('Search Project contains address', function() {
@@ -200,7 +189,6 @@ describe('Admin Panel Project', function() {
     cy.get('.current_filter').contains('Address contains Axford, Marlborough SN8, UK').should('be.visible')
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    // cy.get('#logout').click()
   })
 
   it('Search Project contains point of contact', function() {
@@ -214,7 +202,6 @@ describe('Admin Panel Project', function() {
     cy.get('.current_filter').contains('Point of contact contains Test points').should('be.visible')
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    // cy.get('#logout').click()
   })
 
   it('Search Project contains Email', function() {
@@ -228,7 +215,6 @@ describe('Admin Panel Project', function() {
     cy.get('.current_filter').contains('Email contains facility1@test.com').should('be.visible')
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    // cy.get('#logout').click()
   })
 
   it('Search Project contains Phone number', function() {
@@ -242,7 +228,6 @@ describe('Admin Panel Project', function() {
     cy.get('.current_filter').contains('Phone number contains +447400123451').should('be.visible')
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    // cy.get('#logout').click()
   })
 
   it('Search Project by state', function() {
@@ -256,7 +241,6 @@ describe('Admin Panel Project', function() {
     cy.get('#q_status').select('Any')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
-    // cy.get('#logout').click()
   })
 
   it('Delete Project', function() {
@@ -266,7 +250,6 @@ describe('Admin Panel Project', function() {
     })
     cy.get('.flashes').contains('Project was successfully destroyed.').should('be.visible')
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 3)
-    // cy.get('#logout').click()
   })
 
   // TODO: Fix this test case

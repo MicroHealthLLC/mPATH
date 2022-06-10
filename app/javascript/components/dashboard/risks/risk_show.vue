@@ -165,12 +165,14 @@
       ]),
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
+        return this.checkPrivileges("risk_show", salut, this.$route)
+
+      // var programId = this.$route.params.programId;
+      // var projectId = this.$route.params.projectId
+      // let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return  fPrivilege.risks.includes(s); 
     },
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
@@ -203,11 +205,15 @@
       },
       toggleWatched() {
         if (this.DV_risk.watched) {
-          let confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
-          if (!confirm) {return}
+          this.$confirm(`Are you sure you want to remove this risk from on-watch?`, 'Confirm Remove', {
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
+            this.updateWatchedRisks(this.DV_risk)
+          });
         }
-        this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
-        this.updateWatchedRisks(this.DV_risk)
       },
       updateRelatedTaskIssue(task) {     
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})

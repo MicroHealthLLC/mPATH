@@ -11,11 +11,12 @@
       <el-menu-item @click="openTask">Open</el-menu-item>
       <hr />
       <el-menu-item
+        v-if="$route.params.projectId"
         @click="createDuplicate"
         :disabled="!isAllowed('write', 'tasks')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!isAllowed('write', 'tasks')">
+      <el-submenu index="1" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -23,7 +24,7 @@
           <div class="menu-subwindow-title">Duplicate to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -57,7 +58,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!isAllowed('write', 'tasks')">
+      <el-submenu index="2" :disabled="!isAllowed('write', 'tasks')"  v-if="$route.params.projectId">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
@@ -65,7 +66,7 @@
           <div class="menu-subwindow-title">Move to...</div>
           <el-input
             class="filter-input"
-            placeholder="Filter Projects..."
+            :placeholder="placeholder"
             v-model="filterTree"
           ></el-input>
           <el-tree
@@ -91,6 +92,7 @@ import Vue from "vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import axios from "axios";
 import humps from "humps";
+import {API_BASE_PATH} from './../../mixins/utils'
 
 export default {
   name: "ContextMenu",
@@ -123,9 +125,14 @@ export default {
         left: this.left + "px",
       };
     },
-    treeFormattedData() {
-      var data = [];
-
+    placeholder(){
+      if(this.$route.params.contractId){
+        return "Filter Contracts"
+      } else return "Filter Projects"
+    },
+   treeFormattedData() {
+    if(this.$route.params.projectId){
+      let data = [];
       this.facilityGroups.forEach((group, index) => {
         data.push({
           id: index,
@@ -133,7 +140,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.task.facilityId
+                (facility) => this.isAllowedFacility("write", 'tasks', facility.facility.id) && facility.facility.id !== this.task.facilityId
               )
               .map((facility) => {
                 return {
@@ -144,8 +151,35 @@ export default {
           ],
         });
       });
-
+      // debugger
       return [...data];
+    }
+
+      if(this.$route.params.contractId){
+          let data = [];
+        let contractGroups = this.currentProject.contracts
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...contractGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (contract) => this.isAllowed("write", 'tasks', contract.projectContractId) && contract.projectContractId !== this.task.projectContractId
+                  )
+                  .map((contract) => {
+                    return {
+                      id: contract.projectContractId,
+                      label: contract.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
+   
     },
     submitDisabled() {
       if (this.$refs.duplicatetree) {
@@ -160,30 +194,35 @@ export default {
   },
   methods: {
     ...mapActions(["taskDeleted"]),
-    ...mapMutations(["updateTasksHash"]),
+    ...mapMutations(["updateTasksHash", "updateContractTasks"]),
     //TODO: change the method name of isAllowed
-    isAllowed(salut, module) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege[module].includes(s); 
-    },
+    // isAllowed(salut, module) {
+    //   var programId = this.$route.params.programId;
+    //   var projectId = this.$route.params.projectId
+    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    //   let s = permissionHash[salut]
+    //   return  fPrivilege[module].includes(s); 
+    // },
+
+      // Temporary _isallowed method until contract projectPrivileges is fixed
+      isAllowed(salut) {
+      return this.checkPrivileges("task_form", salut, this.$route)
+     },
+      isAllowedFacility(salut, module, facility_id) {
+       if (this.$route.params.projectId) {
+         let fPrivilege = this.$projectPrivileges[this.$route.params.programId][facility_id]
+          let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+          let s = permissionHash[salut];
+          return fPrivilege[module].includes(s);          
+        }
+      },
     // closes context menu
     close() {
       this.show = false;
       this.left = 0;
       this.top = 0;
     },
-    // isAllowed(salut) {
-    //   var programId = this.$route.params.programId;
-    //   var projectId = this.$route.params.projectId
-    //   let fPrivilege = this.$projectPrivileges[programId][projectId]
-    //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-    //   let s = permissionHash[salut]
-    //   return  fPrivilege.tasks.includes(s); 
-    // },
     open(evt) {
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
@@ -215,12 +254,23 @@ export default {
 
         this.loading = true;
         let formData = new FormData();
+      
+        if (this.$route.params.contractId) {
+             formData.append("task[project_contract_id]", task.projectContractId);
+         } else {
+             formData.append("task[facility_project_id]", facilityProjectId);
+         }
 
-        formData.append("task[facility_project_id]", facilityProjectId);
-
-        let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
-        let method = "PUT";
-        let callback = "task-updated";
+         let url;
+         let method;
+        if (this.$route.params.contractId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+         } else {
+             method = "PUT";
+             url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
+         }
+         let callback = "task-updated";
 
         axios({
           method: method,
@@ -232,11 +282,18 @@ export default {
           },
         })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data.task));
-            this.updateFacilities(
-              humps.camelizeKeys(response.data.task),
+            let responseTask = humps.camelizeKeys(response.data.task);
+            this.$emit(callback, responseTask);
+
+           if (this.$route.params.contractId){
+               this.updateContractTasks({ task: responseTask });
+            } else {
+              this.updateFacilities(
+              responseTask,
               facilityProjectId
             );
+            }           
+           
             if (response.status === 200) {
               this.$message({
                 message: `${task.text} was moved successfully.`,
@@ -257,6 +314,7 @@ export default {
           .finally(() => {
             this.loading = false;
             this.updateTasksHash({ task: task, action: "delete" });
+             this.updateContractTasks({ task: task, action: "delete" });
           });
       });
     },
@@ -269,6 +327,13 @@ export default {
         }
       });
     },
+  updateContracts(updatedTask) {
+      var contracts = this.currentProject.contracts;
+      contracts.forEach((c) => {       
+          c.tasks.push(updatedTask);
+    
+      });
+    },
     updateFacilityTask(task) {
       var facilities = this.getUnfilteredFacilities;
 
@@ -279,7 +344,12 @@ export default {
       facilities[facilityIndex].tasks.push(task);
     },
     createDuplicate() {
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_duplicate.json`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      }
       let method = "POST";
       let callback = "task-created";
 
@@ -296,11 +366,19 @@ export default {
         },
       })
         .then((response) => {
+          let responseTask = humps.camelizeKeys(response.data.task);
           this.$emit(callback, humps.camelizeKeys(response.data.task));
-          this.updateFacilityTask(
-            humps.camelizeKeys(response.data.task),
-            this.task.facilityProjectId
-          );
+
+          if (this.$route.params.contractId){
+              this.updateContractTasks({
+               task: responseTask 
+              });
+            } else {
+              this.updateFacilityTask(
+              responseTask,
+              this.task.facilityProjectId
+             );
+            }      
           if (response.status === 200) {
             this.$message({
               message: `${this.task.text} was duplicated successfully.`,
@@ -331,6 +409,7 @@ export default {
     move(node) {
       if (!node.hasOwnProperty("children")) {
         this.moveTask(this.task, node.id);
+        // console.log(node.id)
       }
     },
     duplicateSelectedTasks() {
@@ -342,22 +421,37 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      let url;
+      if (this.$route.params.contractId) {
+          url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      } else {
+          url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      }
+     
       let method = "POST";
       let callback = "task-created";
 
       ids.forEach((id, index) => {
-        if (index === 0) {
+        if (index === 0 && this.$route.params.projectId) {
           url += `facility_project_ids[]=${id}`;
-        } else {
+        } else if (index !== 0 && this.$route.params.projectId)  {
           url += `&facility_project_ids[]=${id}`;
-        }
+        } if (index === 0 && this.$route.params.contractId) {
+          url += `contract_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.contractId)  {
+          url += `&contract_ids[]=${id}`;
+        } 
       });
 
       let formData = new FormData();
-      formData.append("id", this.task.id);
-      formData.append("facility_project_ids", ids);
+          formData.append("id", this.task.id);
+      if ( this.$route.params.contractId){
+         formData.append("contract_ids", ids);
+      } else {
+       formData.append("facility_project_ids", ids);
+      } 
 
+  // debugger
       axios({
         method: method,
         url: url,
@@ -368,14 +462,26 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task));
-
-          response.data.tasks.forEach((task) => {
-            this.updateFacilityTask(
+          // let responseTask ;
+          this.$emit(callback, humps.camelizeKeys(response.data.task) );
+          // debugger
+                     
+         if (this.$route.params.contractId){
+            response.data.tasks.forEach((task) => {
+                 console.log(`task: ${task}`)
+                this.updateContractTasks({
+                task: humps.camelizeKeys(task)
+               });
+              });
+           
+         } else {
+           response.data.tasks.forEach((task) => {
+              this.updateFacilityTask(
               humps.camelizeKeys(task),
               task.facilityProjectId
-            );
-          });
+             );
+           });
+         }
           if (response.status === 200) {
             this.$message({
               message: `${this.task.text} was duplicated successfully to selected projects.`,
@@ -402,12 +508,15 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteTask() {
+      // console.log(this.task)
+      let task = this.task
+      let programId = this.$route.params.programId
       this.$confirm(`Are you sure you want to delete ${this.task.text}?`, 'Confirm Delete', {
           confirmButtonText: 'Delete',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.taskDeleted(this.task).then((value) => {
+          this.taskDeleted({task, programId}).then((value) => {
             if (value === 'Success') {
               this.$message({
                 message: `${this.task.text} was deleted successfully.`,

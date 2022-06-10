@@ -24,6 +24,14 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
+  after_save :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
+  after_destroy :update_facility_project, if: Proc.new {|risk| risk.project_contract_id.nil?}
+
+  scope :inactive_project, -> { where.not(facility_project: { projects: { status: 0 } }) }
+  scope :inactive_facility, -> { where.not(facility_project: { facilities: { status: 0 } }) }
+  scope :exclude_closed_in, -> (dummy) { where(ongoing: true).where.not(due_date: nil) }
+  scope :exclude_inactive_in, -> (dummy) { inactive_facility.inactive_project }
+
   attr_accessor :file_links
 
   amoeba do
@@ -44,6 +52,21 @@ class Risk < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:exclude_closed_in, :exclude_inactive_in]
+  end
+
+  def update_facility_project
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progress)
+    end
   end
 
   def files_as_json
@@ -225,6 +248,7 @@ class Risk < ApplicationRecord
       :risk_approach,
       :on_hold,
       :draft,
+      :project_contract_id, 
       :ongoing,
       :duration,
       :duration_name,
@@ -388,6 +412,9 @@ class Risk < ApplicationRecord
     end
 
     sorted_notes = notes.sort_by(&:created_at).reverse
+    
+    project = self.project_contract_id ? self.contract_project : self.project
+    facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
       priority_level_name: priority_level_name,
@@ -401,8 +428,8 @@ class Risk < ApplicationRecord
       class_name: self.class.name,
       completed: completed,
       planned: planned,
-      project_group: self.facility_group.name,
-      program_name: project.name, 
+      project_group: facility_group&.name,
+      program_name: project&.name, 
       closed: closed,
       in_progress: in_progress,
       attach_files: attach_files,
@@ -446,6 +473,7 @@ class Risk < ApplicationRecord
       risk_approver_user_ids: risk_approver_user_ids,
 
       notes: sorted_notes.as_json,
+      contract_nickname: self.contract.try(:nickname),
       notes_updated_at: sorted_notes.map(&:created_at).uniq,
       last_update: sorted_notes.first.as_json,
       project_id: fp.try(:project_id),
@@ -474,7 +502,9 @@ class Risk < ApplicationRecord
 
     risk.attributes = r_params
 
-    if !risk.facility_project_id.present?
+    if params[:project_contract_id]
+      risk.project_contract_id = params[:project_contract_id]
+    elsif !risk.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 

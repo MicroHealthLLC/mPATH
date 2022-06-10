@@ -1,4 +1,5 @@
-class Api::V1::NotesController < Api::ApplicationController
+class Api::V1::NotesController < AuthenticatedController 
+# class Api::V1::NotesController < Api::ApplicationController
   before_action :set_noteable
   before_action :set_note, only: [:update, :destroy]
 
@@ -14,39 +15,91 @@ class Api::V1::NotesController < Api::ApplicationController
       action = "delete"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
+    if params[:project_contract_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'notes', project_contract: params[:project_contract_id])
+    else
+      raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
+    end
 
+  end
+
+  def index
+
+    fph = current_user.facility_privileges_hash
+
+    # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
+    if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["notes"].present?
+      # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
+      facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
+      
+      if facility_project
+        notes = Note.where(facility_project_id: facility_project.id)
+        response_hash = {notes: notes.map(&:to_json)}
+        status_code = 200
+      else
+        response_hash = {errors: "Program or Project not found"}
+        status_code = 404
+      end
+    elsif params[:project_id]
+      allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["notes"].present? }.compact
+
+      fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
+      
+      if fp_ids.any?
+        notes = Note.joins(:facility_project).where(facility_project_id: fp_ids)
+        response_hash = {notes: notes.map(&:to_json)}
+        status_code = 200
+      end
+    elsif params[:project_contract_id]
+      notes = Note.where(noteable_id: params[:project_contract_id], noteable_type: "ProjectContract")
+      response_hash = {notes: notes.map(&:to_json)}
+      status_code = 200
+    else
+      response_hash = {errors: "Program or Project not found"}
+      status_code = 404
+    end
+
+    render json: response_hash, status: status_code
+
+  end
+
+  def show
+    @note = Note.find(params[:id])    
+    render json: {notes: @note.to_json}, status: 200
   end
 
   def create
     @note = @noteable.notes.new(note_params)
     @note.user = current_user
     if @note.save
-      render json: @note.to_json, status: 200
+      render json: {note: @note.to_json, message: "Note created successfully!!!" }, status: 200
     else
-      render json: {}, status: 500
+      render json: {errors: @note.errors.full_messages}, status: 406
     end
   end
 
   def update
     destroy_files_first if destroy_file_ids.present?
     if @note.update(note_params.merge({noteable: @noteable}))
-      render json: @note.to_json, status: 200
+      render json: {note: @note.to_json, message: "Note updated successfully!!!" }, status: 200
     else
-      render json: {}, status: 500
+      render json: {errors: @note.errors.full_messages}, status: 406
     end
   end
 
   def destroy
-    @note.destroy!
-    render json: {}, status: 200
-  rescue
-    render json: {}, status: 500
+    if @note.destroy
+      render json: {note: @note.to_json, message: "Note destroyed successfully!!!"}, status: 200
+    else
+      render json: {errors: @note.errors.full_messages}, status: 406
+    end
   end
 
   private
   def set_noteable
-    if params[:project_id].present? && params[:facility_id].present?
+    if params[:project_contract_id]
+      @noteable = current_user.authorized_contracts.find_by(id: params[:project_contract_id] )
+    elsif params[:project_id].present? && params[:facility_id].present?
       @project = current_user.authorized_programs.find(params[:project_id])
       @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
     elsif params[:facility_project_id].present?
@@ -57,6 +110,7 @@ class Api::V1::NotesController < Api::ApplicationController
   def set_note
     @note = Note.find(params[:id])    
   end
+
   def note_params
     params.require(:note).permit(
       :id,

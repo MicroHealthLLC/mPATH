@@ -37,7 +37,6 @@ class ApplicationController < ActionController::Base
   end
 
   def render_error(error_obj = Exception.new("Error occurred!"), status_code = 500, options = {})
-    
     if error_obj.is_a?(Exception)
       error_msg = error_obj.message
       Rails.logger.error error_obj.message
@@ -66,7 +65,7 @@ class ApplicationController < ActionController::Base
   # end
 
   def require_admin
-    render_404 unless current_user.admin?
+    render_404 unless current_user.admin?(params)
   end
 
   def user_time_zone(&block)

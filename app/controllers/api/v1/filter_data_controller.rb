@@ -68,7 +68,6 @@ class Api::V1::FilterDataController < AuthenticatedController
     program_ids = params[:program_id] ? [ params[:program_id] ] : current_user.authorized_programs.distinct.ids
     if resource_name == "task"
       all_stages = TaskStage.joins(:project_task_stages).where(project_task_stages: {project_id: program_ids }).distinct.select(:id, :name, :percentage)
-      # binding.pry
       program_stages = ProjectTaskStage.includes(:task_stage).where(project_id: program_ids).group_by{|p| p.project_id}.transform_values{|v| v.map(&:task_stage).compact.map{|ts| ts.attributes.except("created_at", "updated_at") } }
 
     elsif resource_name == "issue"

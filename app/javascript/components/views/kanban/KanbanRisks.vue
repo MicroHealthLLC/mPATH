@@ -213,12 +213,14 @@ export default {
 
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.risks.includes(s); 
+        return this.checkPrivileges("KanbanRisks", salut, this.$route)
+
+      // var programId = this.$route.params.programId;
+      // var projectId = this.$route.params.projectId
+      // let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return  fPrivilege.risks.includes(s); 
     },
     log(e){
       console.log({e})
@@ -479,7 +481,7 @@ export default {
       );
      let onHold = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.onHold == true );
      let ongoing = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoing == true );
-     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.ongoingClosed == true );
+     let ongoingClosed = _.filter(this.filteredRisks.unfiltered.risks, (t) => t && t.closed == true );
      let overdue = _.filter(this.filteredRisks.unfiltered.risks, (t) => t.isOverdue == true);
 
       return {

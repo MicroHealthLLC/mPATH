@@ -1,18 +1,19 @@
 ActiveAdmin.register FacilityGroup do
-  menu parent: "Facilities", label: "Project Groups"
+  menu label: "Groups"
   actions :all, except: [:show]
 
   permit_params do
     permitted = [
       :name,
       :code,
-      :status
+      :status,
+      :is_portfolio
     ]
     permitted
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Project Groups', admin_facility_groups_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Groups', admin_facility_groups_path(is_portfolio: true))]
     if %(show edit).include?(params['action'])
       links << link_to(facility_group.name, edit_admin_facility_group_path)
     end
@@ -25,18 +26,20 @@ ActiveAdmin.register FacilityGroup do
     inputs 'Details' do
       f.input :name
       f.input :code
+      f.input :is_portfolio
       f.input :status, include_blank: false, include_hidden: false, label: "State"
     end
 
     f.actions
   end
 
-  index title: 'Project Groups' do
+  index title: 'Groups' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :id
     column :name
     column :code
+    column :is_portfolio    
     tag_column "State", :status
     actions defaults: false do |facility_group|
       item "Edit", edit_admin_facility_group_path(facility_group), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
@@ -51,9 +54,9 @@ ActiveAdmin.register FacilityGroup do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Facility Groups?" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Groups?" do |ids|
     deleted = FacilityGroup.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Facility Groups"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Groups"
   end
 
   controller do
@@ -92,6 +95,7 @@ ActiveAdmin.register FacilityGroup do
 
   filter :name
   filter :code
+  filter :is_portfolio
   filter :status, label: "State", as: :select, collection: FacilityGroup.statuses
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 end

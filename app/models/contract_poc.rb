@@ -1,0 +1,2 @@
+class ContractPoc < ApplicationRecord
+end

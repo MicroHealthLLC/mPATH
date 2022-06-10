@@ -32,6 +32,12 @@
 # For activeadmin locales: https://github.com/activeadmin/activeadmin/blob/master/config/locales/en.yml
 
 en:
+  active_admin:
+    resources:
+      facility_group:
+        new_model: 'New Group'
+        edit_model: 'Edit Group'
+        delete_model: 'Delete Group'
   activerecord:
     models:
       region:
@@ -50,8 +56,8 @@ en:
         one: Program Type
         other: Program Types
       facility_group:
-        one: Project Group
-        other: Project Groups
+        one: Group
+        other: Groups
     attributes:
       task:
         text: "Name"

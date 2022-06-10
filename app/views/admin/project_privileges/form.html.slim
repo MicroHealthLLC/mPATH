@@ -14,13 +14,13 @@ fieldset(class="inputs has_many_fields" id=(fieldset_id))
         - @projects_to_select.each do |project|
           option{value=(project.id) }= project.name
 
-    - ProjectPrivilege::PRIVILEGE_MODULE.each do |m_name|
+    - ProjectPrivilege::PRIVILEGE_MODULE.each do |k, m_name|
       li(class="select input required")
         label(class="label")= m_name
-        input{type="hidden" value="" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}
+        input{type="hidden" value="" name="user[project_privileges_attributes][#{index}][#{k}][]"}
         
         - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
-          input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}= permission[0]
+          input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{k}][]"}= permission[0]
 
 
     

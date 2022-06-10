@@ -198,12 +198,14 @@ export default {
 
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.issues.includes(s); 
+        return this.checkPrivileges("KanbanIsues", salut, this.$route)
+
+      // var programId = this.$route.params.programId;
+      // var projectId = this.$route.params.projectId
+      // let fPrivilege = this.$projectPrivileges[programId][projectId]
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return  fPrivilege.issues.includes(s); 
     },
      toggleWatched(){
       this.setHideWatched(!this.getHideWatched)    

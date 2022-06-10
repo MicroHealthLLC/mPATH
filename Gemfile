@@ -2,13 +2,14 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.6'
+# updating dev 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '6.1.3.2' #'~> 5.2.3'
+gem 'rails', '6.1.4.6' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
-gem "puma", ">= 5.5.2"
+gem "puma", ">= 5.6.4"
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -57,7 +58,7 @@ group :development, :test do
   gem 'letter_opener'
   # gem 'bullet', '6.1.0'
   gem 'pry', '~> 0.13.1'
-  gem 'pry-rails'
+  # gem 'pry-rails'
   gem 'pry-byebug'
 end
 
@@ -100,3 +101,4 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'jwt'
 
 gem "addressable", ">= 2.8.0"
+

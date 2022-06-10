@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { API_BASE_PATH } from '../../../mixins/utils'
   import http from './../../../common/http'
 
   export default {
@@ -108,7 +109,7 @@
           }
           var data = {facility: this.DV_facility}
           if (this.facility && this.facility.id) {
-            http.put(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}.json`, data)
+            http.put(`${API_BASE_PATH}/programs/${this.$route.params.projectId}/projects/${this.facility.id}.json`, data)
               .then((res) => {
                 this.$emit('facility-update', res.data.facility);
               })
@@ -117,7 +118,7 @@
               })
           }
           else {
-            http.post(`/projects/${this.$route.params.projectId}/facilities.json`, data)
+            http.post(`${API_BASE_PATH}/programs/${this.$route.params.projectId}/projects.json`, data)
               .then((res) => {
                 this.$emit('facility-created', res.data.facility);
               })

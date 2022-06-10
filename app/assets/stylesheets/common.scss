@@ -24,11 +24,17 @@ body {
     background: lightgray;
     border-radius: 4px;
   }
-} 
-
-
+}
+.w-60 {
+  width: 60%;
+}
 .allCaps {
   text-transform: uppercase;
+}
+.contract {
+  .v-application--wrap {
+    min-height: auto !important;
+  }
 }
 
 .portfolio {
@@ -36,6 +42,35 @@ body {
     margin-bottom: 0;
     color: #007bff !important;
   }
+}
+//Removing default arrows from numeral inputs
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.portfolio-contracts-module {
+  
+  .el-table {
+    td.el-table__cell div {
+      word-break: break-word;
+    }
+    font-size: 13px !important;
+    th.el-table__cell>.cell {
+      word-break: break-word;
+      font-size: .88rem;
+    }
+    th {
+      color: #383838;
+    }
+  }    
 }
 .portfolioResultsBtn {
   font-size: .9rem;
@@ -1886,6 +1921,11 @@ a:hover {
 }
 
 
+.v-calendar-daily__body {
+  display: none !important;
+}
+
+
 .todayBtn, .back-forth-btn {
   border-radius: 4px;
   border-style: solid;
@@ -1906,7 +1946,9 @@ background-color: #9EC64C !important;
 //  dark blue
  background-color: #1D336F !important;
 }
-
+.mh-green-text {
+  color: #9EC64C !important;
+  }
 .mh-blue-text {
   //  dark blue
    color: #1D336F !important;
@@ -1914,6 +1956,13 @@ background-color: #9EC64C !important;
 .mh-orange {
   background-color: #DD9036 !important;
 }
+.mh-orange-text {
+  color: #DD9036 !important;
+}
+.bootstrap-purple-text {
+  color: #7952b3
+}
+
 .light {
   color: lightgray;
 }
@@ -2146,6 +2195,7 @@ td.col-issue_type, td.col-issue_severity {
 .portfolioViewerBtn {
   background-color: #DD9036;
   border-radius: 3px;
+  text-decoration-line: none !important;
   color: white !important;
   padding: 3px 6px;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
@@ -2154,6 +2204,18 @@ td.col-issue_type, td.col-issue_severity {
 .portfolioViewerBtn:hover {
   transform: scale(1.05); 
 }
+.portfolioContractsBtn {
+  border-radius: 3px;
+  color: black !important;
+  text-decoration-line: none !important;
+  padding: 3px 6px;
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  transition: all .2s ease-in;
+}
+.portfolioContractsBtn:hover {
+  transform: scale(1.05); 
+}
+
 
 .program-name a {
  text-decoration: none !important;
@@ -2584,6 +2646,9 @@ body /deep/ .mx-input.disabled {
 .mw-95 {
   min-width: 95%;
 }
+.mw-90 {
+  min-width: 90%;
+}
 .load-spinner {
   display: flex;
   position: absolute;
@@ -2976,6 +3041,7 @@ i.el-icon-circle-close {
   margin-right: 10px;
   white-space: nowrap;
 }
+
 .breakWord {
   /* These are technically the same, but use both */
   overflow-wrap: break-word;
@@ -2993,4 +3059,7 @@ i.el-icon-circle-close {
   -webkit-hyphens: auto;
   hyphens: auto;
 }
+//   .el-select-dropdown {
+//     display: none !important; 
+//   }
 

@@ -23,10 +23,13 @@ ActiveAdmin.register Risk do
       :task_type,
       :task_type_id,
       :risk_stage_id,
+      :contract_id,
+      :facility_project_id,
       :progress,
       :start_date,
       :due_date,
       :auto_calculate,
+      :contract_id,
       user_ids: [],
       risk_files: [],
       file_links: [],
@@ -64,6 +67,9 @@ ActiveAdmin.register Risk do
     column :priority_level
     column :risk_approach
     column :risk_approach_description, sortable: false
+    column :contract, nil, sortable: 'contracts.name' do |risk|
+      "<span>#{risk.contract&.name}</span>".html_safe
+    end
     column :task_type, nil, sortable: 'task_types.name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.task_type.name}", "#{edit_admin_task_type_path(risk.task_type)}" if risk.task_type.present?
@@ -129,11 +135,29 @@ ActiveAdmin.register Risk do
       f.input :risk_description, label: 'Risk Description', input_html: { rows: 8 }
       f.input :impact_description, label: 'Impact Description', input_html: { rows: 8 }
       f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
-      div id: 'facility_projects' do
-        f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, input_html: {class: 'program_select'}
-            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, input_html: {class: 'project_privileges_select'}
+      if f.object.is_contract_resource?
+        f.input :contract, include_blank: false
+      else
+        # div id: 'facility_projects' do
+        #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+        #     fp.input :project_id, label: 'Program', as: :select, collection: Project.pluck(:name, :id),
+        #                           include_blank: false
+        #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.pluck(:facility_name, :id),
+        #                           include_blank: false
+        #   end
+        # end
+        facility_project_options = []
+      
+        Project.includes([{facility_projects: :facility }]).in_batches(of: 1000) do |projects|
+          projects.each do |project|
+            facility_project_options << [project.name, project.id, {disabled: true}]
+            project.facility_projects.each do |fp|
+              facility_project_options << ["&nbsp;&nbsp;&nbsp;#{fp.facility.facility_name}".html_safe, fp.id]
+            end
+          end
         end
+        
+        f.input :facility_project_id, label: 'Project', as: :select, collection: facility_project_options, input_html: {class: "select2"}
       end
       f.input :start_date, label: 'Identified Date', as: :datepicker
       f.input :due_date, label: 'Risk Approach Due Date', as: :datepicker
@@ -205,8 +229,16 @@ ActiveAdmin.register Risk do
   end
 
   controller do
+    before_action :exclude_inactive_items, only: [:index]
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def exclude_inactive_items
+      return unless params.keys == ["controller", "action"]
+      extra_params = { "q" => { "exclude_inactive_in" => ["true"] }}
+      params.merge! extra_params
+      request.query_parameters.merge! extra_params
+    end
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -272,4 +304,6 @@ ActiveAdmin.register Risk do
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, "data-placeholder" => "Select Checklist user" }
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
+  filter :exclude_closed, as: :check_boxes, collection: [['Exclude Closed Items', true]], label: ''
+  filter :exclude_inactive, as: :check_boxes, collection: [['Exclude Inactive Items', true]], label: ''
 end

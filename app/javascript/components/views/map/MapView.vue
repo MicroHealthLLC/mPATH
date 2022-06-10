@@ -83,7 +83,7 @@
         "
         class="d-flex align-items-center my-2"
       >
-        <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
+        <i class="fal fa-clipboard-list mh-green-text pr-2"></i>
         <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
       </div>
       <ProjectTabs
@@ -154,6 +154,7 @@ export default {
       "currentProject",
       "filterFacilitiesWithActiveFacilityGroups",
       "filteredFacilities",
+      "getShowProjectStats",
       "getMapZoomFilter",
       "getUnfilteredFacilities",
       "getNewSession",
@@ -174,7 +175,7 @@ export default {
       } else if (url.includes("kanban")) {
         return "/tasks";
       } else {
-        return "/overview";
+        return "/";
       }
     },
   },
@@ -184,6 +185,7 @@ export default {
       "setCurrentFacility",
       "setMapZoomFilter",
       "setFacilities",
+      'setShowProjectStats',
       "setPreviousRoute",
       "setNewSession",
     ]),
@@ -306,6 +308,10 @@ export default {
   },
   mounted() {
     // Display notification if the Map Boundary Filter is still on
+    if(this.getShowProjectStats){
+     this.setShowProjectStats(!this.getShowProjectStats)
+    }
+
     if (this.facilities.length !== this.getUnfilteredFacilities.length) {
       this.$notify.info({
         title: "Filter Set",

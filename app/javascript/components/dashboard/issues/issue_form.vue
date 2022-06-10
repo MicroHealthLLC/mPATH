@@ -17,19 +17,28 @@
     <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span style="font-size: 16px; margin-right: 2.5px"
-              > <i class="fas fa-suitcase mb-1"></i>
+            <span v-if="!this.facility && this.contract" style="font-size: 16px; margin-right: 2.5px"
+              >  <i class="far fa-file-contract mb-1 mh-orange-text"></i>
             </span>
-            <router-link :to="projectNameLink">
-               <span v-if="!isProgramView">{{
-                facility.facilityName
-                }}
+            <span v-if="this.facility && !this.contract" style="font-size: 16px; margin-right: 2.5px"
+              > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
-            <span v-else>{{
-                issue.facilityName
-            }}
-            </span>            
-            </router-link>
+             <router-link :to="projectNameLink">
+               <span v-if="!isProgramView && (!contract || facility)">
+                 {{ facility.facilityName }}
+               </span>
+               <span v-if="this.$route.params.projectId && issue && !isProgramView">
+                 {{  issue.facilityName }}
+                </span>
+                <span v-if="isProgramView && issue">
+                    {{ issue.facilityName || issue.name }}
+               </span>
+              </router-link>
+              <router-link :to="backToContract">
+                <span v-if="contract  && !isProgramView">
+                  {{ contract.name }}
+                </span>
+              </router-link>    
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -48,7 +57,7 @@
             <span v-else style="color: gray">(Issue Name)</span>
           </h5>
         </div>
-       
+
         <div class="ml-auto d-flex" v-if="_isallowed('read')">
           <button
             v-if="_isallowed('write')"
@@ -266,7 +275,7 @@
 
           <!-- Row begins -->
           <div class="d-flex mb-0 mx-4 form-group">
-            <div class="simple-select w-100 form-group">
+            <div class="simple-select w-50 form-group">
               <label class="font-md">Process Area</label>
               <el-select
                 v-model="selectedTaskType"
@@ -289,8 +298,8 @@
               </el-select>
             </div>
             </div>
-
-            <div class="simple-select form-group mx-4">
+          <div class="d-flex mb-0 mx-4 form-group">
+            <div class="simple-select form-group mr-2 w-50">
               <label class="font-md"
                 >Issue Type <span style="color: #dc3545">*</span></label
               >
@@ -326,8 +335,8 @@
          
           <!-- Tab 1 Row ends here -->
           <!-- Tab 1 Row begins here -->
-          <div class="d-flex mx-4">
-            <div class="simple-select form-group w-100">
+      
+            <div class="simple-select form-group w-50">
               <label class="font-md"
                 >Issue Severity <span style="color: #dc3545">*</span></label
               >
@@ -1297,10 +1306,11 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from "./../../shared/FormTabs";
 import RelatedIssueMenu from "./../../shared/RelatedIssueMenu";
+import { API_BASE_PATH } from '../../../mixins/utils'
 
 export default {
   name: "IssueForm",
-  props: ["facility", "issue", "task", "fixedStage"],
+  props: ["facility", "issue", "task", "fixedStage", "contract"],
   components: {
     AttachmentInput,
     Draggable,
@@ -1388,7 +1398,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setTaskForManager", "updateIssuesHash"]),
+    ...mapMutations(["setTaskForManager", "updateIssuesHash", "updateContractIssues"]),
     ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues"]),
     INITIAL_ISSUE_STATE() {
       return {
@@ -1419,18 +1429,9 @@ export default {
         notes: [],
       };
     },
-    //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return  fPrivilege.issues.includes(s); 
+      return this.checkPrivileges("issue_form", salut, this.$route)
     },
-    // log(e){
-    //   console.log("issue stages sorted: " + JSON.stringify(e))
-    // },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
@@ -1556,41 +1557,42 @@ export default {
       this.DV_issue.issueFiles = _files;
     },
     deleteIssue() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this issue?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.issueDeleted(this.DV_issue);
-      this.cancelIssueSave();
+      this.$confirm(`Are you sure you want to delete this issue?`, 'Confirm Delete', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.issueDeleted(this.DV_issue);
+        this.cancelIssueSave();
+      });
     },
     deleteFile(file) {
       if (!file) return;
-      let confirm = window.confirm(
-        `Are you sure you want to delete attachment?`
-      );
-      if (!confirm) return;
+      this.$confirm(`Are you sure you want to delete attachment?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          if (file.uri || file.link) {
+            let index = this.DV_issue.issueFiles.findIndex(
+              (f) => f.guid === file.guid
+            );
 
-      if (file.uri || file.link) {
-        let index = this.DV_issue.issueFiles.findIndex(
-          (f) => f.guid === file.guid
-        );
-
-        if (file.id) {
-          Vue.set(this.DV_issue.issueFiles, index, { ...file, _destroy: true });
-          this.destroyedFiles.push(file);
-        }
-        this.DV_issue.issueFiles.splice(
-          this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      } else if (file.name) {
-        this.DV_issue.issueFiles.splice(
-          this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
-          1
-        );
-      }
+            if (file.id) {
+              Vue.set(this.DV_issue.issueFiles, index, { ...file, _destroy: true });
+              this.destroyedFiles.push(file);
+            }
+            this.DV_issue.issueFiles.splice(
+              this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
+              1
+            );
+          } else if (file.name) {
+            this.DV_issue.issueFiles.splice(
+              this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
+              1
+            );
+          }
+        });
     },
     toggleWatched() {
       if(!this._isallowed('write')){
@@ -1833,18 +1835,25 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/issues.json`;
+       let url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.$route.params.projectId}/issues.json`;
+         if (this.contract) {
+            url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues.json`
+         }
         let method = "POST";
         let callback = "issue-created";
 
-        if (this.issue && this.issue.id) {
-          url = `/projects/${this.currentProject.id}/facilities/${this.issue.facilityId}/issues/${this.issue.id}.json`;
-          method = "PUT";
+        if (this.issue && this.issue.id) {        
           callback = "issue-updated";
+        }        
+        if (this.issue && this.issue.id && this.issue.facilityId) {  
+           method = "PUT";     
+           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/${this.object}/${this.issue.facilityId}/issues/${this.issue.id}.json`;
         }
-        // var beforeIssue = this.issue
-
-        axios({
+        if (this.issue && this.issue.id && this.issue.projectContractId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues/${this.issue.id}.json`;
+        }
+       axios({
           method: method,
           url: url,
           data: formData,
@@ -1860,8 +1869,12 @@ export default {
 
             var responseIssue = humps.camelizeKeys(response.data.issue);
             this.loadIssue(responseIssue);
-            //this.$emit(callback, responseIssue)
-            this.updateIssuesHash({ issue: responseIssue });
+          if (this.$route.params.contractId){
+               this.updateContractIssues({ issue: responseIssue });
+            } else {
+             this.updateIssuesHash({ issue: responseIssue });
+            }  
+           
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
@@ -1869,9 +1882,9 @@ export default {
                 showClose: true,
               });
             }
-            if (this.$route.path.includes("sheet")) {
+            if (this.$route.path.includes("sheet"))  {
               this.$router.push(
-                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
+                `/programs/${this.$route.params.programId}/sheet/${this.object}/${this.route}/issues/${response.data.issue.id}`
               );
             } else if (this.$route.path.includes("map")) {
               this.$router.push(
@@ -1885,9 +1898,12 @@ export default {
               this.$router.push(
                 `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`
               );
-             } else this.$router.push(
-                `/programs/${this.$route.params.programId}/dataviewer/${this.$route.params.projectId}/issue/${response.data.issue.id}`
-              );
+            }  else if (this.isProgramView && this.issue.projectContractId) { this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/issue/${response.data.issue.id}`
+            );
+            } else this.$router.push(
+              `/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/issue/${response.data.issue.id}`
+            );
           })
           .catch((err) => {
             console.log(err);
@@ -1901,14 +1917,16 @@ export default {
       this.DV_issue.notes.unshift({ body: "", user_id: "", guid: this.guid() });
     },
     destroyNote(note) {
-      let confirm = window.confirm(
-        `Are you sure, you want to delete this update note?`
-      );
-      if (!confirm) return;
-      let i = note.id
-        ? this.DV_issue.notes.findIndex((n) => n.id === note.id)
-        : this.DV_issue.notes.findIndex((n) => n.guid === note.guid);
-      Vue.set(this.DV_issue.notes, i, { ...note, _destroy: true });
+      this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          let i = note.id
+            ? this.DV_issue.notes.findIndex((n) => n.id === note.id)
+            : this.DV_issue.notes.findIndex((n) => n.guid === note.guid);
+          Vue.set(this.DV_issue.notes, i, { ...note, _destroy: true });
+        });
     },
     noteBy(note) {
       return note.user
@@ -1922,16 +1940,17 @@ export default {
       window.open(url, "_blank");
     },
     destroyProgressList(check, progressList, index) {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this Progress List item?`
-      );
-      if (!confirm) return;
-
-      let i = progressList.id
-        ? check.progressLists.findIndex((c) => c.id === progressList.id)
-        : index;
-      Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
-      this.saveIssue();
+      this.$confirm(`Are you sure you want to delete this Progress List item?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+            let i = progressList.id
+            ? check.progressLists.findIndex((c) => c.id === progressList.id)
+            : index;
+          Vue.set(check.progressLists, i, { ...progressList, _destroy: true });
+          this.saveIssue();
+        });
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
@@ -1954,16 +1973,17 @@ export default {
       this.editToggle = true;
     },
     destroyCheck(check, index) {
-      let confirm = window.confirm(
-        `Are you sure, you want to delete this checklist item?`
-      );
-      if (!confirm) return;
-
-      let i = check.id
-        ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
-        : index;
-      Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
-      this.saveIssue();
+      this.$confirm(`Are you sure you want to delete this checklist item?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          let i = check.id
+            ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
+            : index;
+          Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
+          this.saveIssue();
+        });
     },
     calculateProgress(checks = null) {
       try {
@@ -2033,28 +2053,46 @@ export default {
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related task?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedTasks.splice(
+            this.relatedTasks.findIndex((task) => task.id == id),
+            1
+          );
+        });
     },
     addRelatedIssues(issues) {
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related issue?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedIssues.splice(
+            this.relatedIssues.findIndex((issue) => issue.id == id),
+            1
+          );
+        });
     },
     addRelatedRisks(risks) {
       risks.forEach((risk) => this.relatedRisks.push(risk));
     },
     removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
+      this.$confirm(`Are you sure you want to delete this related risk?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.relatedRisks.splice(
+            this.relatedRisks.findIndex((risk) => risk.id == id),
+            1
+          );
+        });
     },
   },
   computed: {
@@ -2080,6 +2118,16 @@ export default {
       var issueStagesSortedReturn = [...this.issueStages]; 
       return issueStagesSortedReturn.sort((a,b) => (a.percentage > b.percentage) ? 1 : -1);
     },
+   object(){
+       if(this.$route.params.contractId){
+        return 'contracts'
+       } else return 'projects'
+    },
+   route(){
+       if(this.$route.params.contractId){
+        return this.$route.params.contractId
+       } else return this.$route.params.projectId
+    },
     readyToSave() {
       return (
         this.DV_issue &&
@@ -2091,10 +2139,7 @@ export default {
       );
     },
     isProgramView() {
-      return this.$route.name.includes("ProgramTaskForm") ||
-             this.$route.name.includes("ProgramRiskForm") ||
-             this.$route.name.includes("ProgramIssueForm") ||
-             this.$route.name.includes("ProgramLessonForm") ;
+      return this.$route.name.includes("ProgramIssueForm") || this.$route.name.includes("ProgramContractIssueForm") ;
     },
     isMapView() {
       return this.$route.name === "MapIssueForm";
@@ -2152,20 +2197,28 @@ export default {
       }
     },
   backToIssues() {
+     if (this.$route.params.contractId && !this.isProgramView) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/issues`
+      }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
-  projectNameLink() {
-      if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/overview`;
-      } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
-        return `/programs/${this.$route.params.programId}/${this.tab}`;
-      } else {
-        return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/overview`;
-      }
+    backToContract(){
+        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+     },
+    projectNameLink() {
+      if (!this.contract && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
+          return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/`;
+        } else if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
+          return `/programs/${this.$route.params.programId}/${this.tab}`;
+        } else if (this.$route.params.contractId) {
+          return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
+        } else {
+          return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
+        }
     },
   },
   watch: {

@@ -15,6 +15,7 @@ class Privilege < ApplicationRecord
   # serialize :map_view, Array
   # serialize :gantt_view, Array
   # serialize :kanban_view, Array
+  # serialize :settings_view, Array
   # serialize :calendar_view, Array
   # serialize :members, Array
 
@@ -28,13 +29,13 @@ class Privilege < ApplicationRecord
   def check_minimum_privilege
     fp = self
     modify_values
-    if !fp.sheets_view.present? && !fp.map_view.present? && !fp.gantt_view.present? && !fp.kanban_view.present? && !fp.calendar_view.present? && !fp.members.present?
+    if !fp.sheets_view.present? && !fp.map_view.present? && !fp.gantt_view.present? && !fp.kanban_view.present? && !fp.calendar_view.present? && !fp.settings_view.present? && !fp.members.present?
       fp.errors.add(" ", "Please select at least one navigation view in advanced tab.")
     end
   end
   #NOTE: As per new privilege setting we are just checking few settings only.
   def assign_default_privilege
-    if !self.sheets_view.include?("R") && !self.map_view.include?("R") && !self.gantt_view.include?("R") && !self.kanban_view.include?("R") && !self.calendar_view.include?("R") && !self.members.include?("R") 
+    if !self.sheets_view.include?("R") && !self.map_view.include?("R") && !self.gantt_view.include?("R") && !self.kanban_view.include?("R") && !self.settings_view.include?("R") &&  !self.calendar_view.include?("R") && !self.members.include?("R") 
       self.sheets_view = (self.sheets_view.chars + ["R"]).join("")
     end
   end
