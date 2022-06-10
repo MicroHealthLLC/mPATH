@@ -298,8 +298,8 @@
               </el-select>
             </div>
             </div>
-
-            <div class="simple-select form-group mx-4">
+          <div class="d-flex mb-0 mx-4 form-group">
+            <div class="simple-select form-group mr-2 w-50">
               <label class="font-md"
                 >Issue Type <span style="color: #dc3545">*</span></label
               >
@@ -335,8 +335,8 @@
          
           <!-- Tab 1 Row ends here -->
           <!-- Tab 1 Row begins here -->
-          <div class="d-flex mx-4">
-            <div class="simple-select form-group w-100">
+      
+            <div class="simple-select form-group w-50">
               <label class="font-md"
                 >Issue Severity <span style="color: #dc3545">*</span></label
               >

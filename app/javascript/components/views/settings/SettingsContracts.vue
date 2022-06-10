@@ -621,6 +621,10 @@ export default {
     };
   },
   mounted() {  
+    if (Vue.prototype.$contractPrivilegesRoles){
+    console.log(Vue.prototype.$contractPrivilegesRoles)
+    }
+
     this.fetchContracts(this.$route.params.programId)
     this.fetchRoles(this.$route.params.programId)
     if(this.groups && this.groups.length <= 0){
