@@ -3,7 +3,12 @@
     <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
         <template slot="title">
         <div v-if="dynamicObj.length > 0 && dynamicObj[currentRiskSlide] !== undefined" class="container-fluid">
-          <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0">RISK</h3>
+           <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
+          <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractId">
+            <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
+          <span v-else><i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+          RISK
+          </h5>
             <div v-for="number in [currentRiskSlide]" :key="number" >
             <div class="row justify-content-center">
               <div class="col-3 pb-0">
@@ -76,14 +81,20 @@
                   </div>    
               
                   <div class="col truncate-line-two">    
-                        <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
+                        <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
                     <h4> {{dynamicObj[currentRiskSlide].projectGroup}}  </h4>
                                                   
                   </div>  
           
                     <div class="col py-2">    
+                     <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectContractId">                                      
+                      <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
+                      <h4  v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].contractNickname">{{ dynamicObj[currentRiskSlide].contractNickname}}  </h4>  
+                    </span> 
+                    <span v-else>
                         <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
-                    <h4>{{ dynamicObj[currentRiskSlide].facilityName}}  </h4>                                                                 
+                        <h4  v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].facilityName">{{ dynamicObj[currentRiskSlide].facilityName}}  </h4>      
+                    </span>                                                        
                   </div>  
 
                       <div class="col">    
@@ -2036,7 +2047,7 @@ export default {
       name: "ProgramContractRiskForm",
       params: {
         programId: this.$route.params.programId,
-        contractId: risk.contractId,
+        contractId: risk.projectContractId,
         riskId: risk.id,
       },
       })

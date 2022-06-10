@@ -3,7 +3,12 @@
   <el-dialog :visible.sync="dialogVisible" append-to-body center class="portfolioDialogMode">
     <template slot="title">
     <div v-if="dynamicObj.length > 0 && dynamicObj[currentLessonSlide] !== undefined" class="container-fluid">
-      <h3 class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light" style="cursor:pointer; position:absolute; left:0; top:0"> LESSON </h3>
+         <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
+          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_id">
+            <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
+          <span v-else><i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+          LESSON
+          </h5>
         <div v-for="number in [currentLessonSlide]" :key="number" >
         <div class="row justify-content-center">
           <div class="col-3 pb-0">
@@ -56,15 +61,21 @@
                     </div>    
                 
                     <div class="col truncate-line-two">    
-                          <h6 class="leftColLabel text-light mh-orange">PROJECT GROUP</h6>
+                          <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
                       <h4> {{dynamicObj[currentLessonSlide].project_group}}  </h4>
                                                     
                     </div>  
             
-                      <div class="col py-2">    
-                          <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
-                      <h4>{{ dynamicObj[currentLessonSlide].project_name}}  </h4>                                                                 
-                    </div>  
+                      <div class="col py-2">   
+                          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_id">
+                          <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
+                            <h4>{{ dynamicObj[currentLessonSlide].contract_nickname}}  </h4>   
+                          </span> 
+                          <span v-else>
+                            <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
+                            <h4>{{ dynamicObj[currentLessonSlide].project_name}}  </h4>       
+                          </span>                                                                                 
+                       </div>  
 
                         <div class="col">    
                           <h6 class="leftColLabel mh-blue text-light">PROCESS AREA</h6>
@@ -732,8 +743,8 @@ v-if="filteredLessons.filtered.lessons.length > 0"
            
     </thead>
     <tbody>
-        <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
-     
+        <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
+        <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover">
           <td>{{ lesson.project_group }}</td>
           <td>{{ lesson.project_name || lesson.contract_nickname }}</td>
           <td>{{ lesson.title }}</td>
@@ -1065,7 +1076,7 @@ export default {
      let programLessonsObj = [];
       if(!this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.project_id)
-      } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
 
       let lessons = programLessonsObj
       .filter(lesson => {
@@ -1242,31 +1253,31 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-  openLesson(lesson) {  
-    if(!this.getShowProjectStats){
-      this.$router.push({
-      name: "ProgramLessonForm",
-      params: {
-        programId: lesson.program_id,
-        projectId: lesson.project_id,
-        // id: lesson.id,
-        lessonId: lesson.id, 
-      },
-    });
-    }   
-     if(this.getShowProjectStats){
-      this.$router.push({
-      name: "ProgramContractLessonForm",
-      params: {
-        programId: lesson.program_id,
-        contractId: lesson.contract_id,
-        lessonId: lesson.id, 
-      },
-    });
-    }       
+  // openLesson(lesson) {  
+  //   if(!this.getShowProjectStats){
+  //     this.$router.push({
+  //     name: "ProgramLessonForm",
+  //     params: {
+  //       programId: lesson.program_id,
+  //       projectId: lesson.project_id,
+  //       // id: lesson.id,
+  //       lessonId: lesson.id, 
+  //     },
+  //   });
+  //   }   
+  //    if(this.getShowProjectStats){
+  //     this.$router.push({
+  //     name: "ProgramContractLessonForm",
+  //     params: {
+  //       programId: lesson.program_id,
+  //       contractId: lesson.project_contract_id,
+  //       lessonId: lesson.id, 
+  //     },
+  //   });
+  //   }       
  
-    // console.log(this.$route.params)
-    },
+  //   console.log(this.$route.params)
+  //   },
   exportLessonsToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;
