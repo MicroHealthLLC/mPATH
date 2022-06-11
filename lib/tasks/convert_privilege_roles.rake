@@ -165,36 +165,6 @@ task :convert_privilege_roles => :environment do
   puts "----- Assigning Roles using Program privileges -----"
   assign_roles_using_program_privileges
 
-  def assign_default_roles_to_users
-    role_ids = Role.where(name: ["update-project"]).pluck(:id)
-    role_users = []
-    users = User.includes(:role_users, :projects, :facility_projects)
-    users.in_batches(of: 500) do |users|
-      users.find_each do |user|
-        next if user.role_users.where("role_users.role_id in (?)", role_ids).count > 0
-
-        # project_ids = user.project_ids
-        # project_ids.each do |pid|
-        #   role_ids.each do |role_id|          
-        #     role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
-        #   end
-        # end
-        facility_projects = user.facility_projects
-
-        facility_projects.each do |fp|
-          role_ids.each do |role_id|
-            project_id = fp.project_id
-            role_users << RoleUser.new(user_id: user.id, role_id: role_id, facility_project_id: fp.id, project_id: project_id)
-          end
-        end
-      end
-    end
-    RoleUser.import(role_users)
-  end
-
-  # puts "----- Assigning Default Roles -----"
-  # assign_default_roles_to_users
-
   def create_project_privileges_roles
     new_roles = []
     ProjectPrivilege.all.each do |pp|
@@ -418,5 +388,40 @@ task :convert_privilege_roles => :environment do
     puts "Total Role users #{role_users_count}"  
 
   end
+
+end
+
+
+desc  "Assign update-project roles to users"
+task :assign_default_roles_to_users => :environment do
+  def assign_default_roles_to_users
+    role_ids = Role.where(name: ["update-project"]).pluck(:id)
+    role_users = []
+    users = User.includes(:role_users, :projects, :facility_projects)
+    users.in_batches(of: 500) do |users|
+      users.find_each do |user|
+        next if user.role_users.where("role_users.role_id in (?)", role_ids).count > 0
+
+        # project_ids = user.project_ids
+        # project_ids.each do |pid|
+        #   role_ids.each do |role_id|          
+        #     role_users << RoleUser.new(user_id: user.id, role_id: role_id, project_id: pid)
+        #   end
+        # end
+        facility_projects = user.facility_projects
+
+        facility_projects.each do |fp|
+          role_ids.each do |role_id|
+            project_id = fp.project_id
+            role_users << RoleUser.new(user_id: user.id, role_id: role_id, facility_project_id: fp.id, project_id: project_id)
+          end
+        end
+      end
+    end
+    RoleUser.import(role_users)
+  end
+
+  puts "----- Assigning Default Roles -----"
+  assign_default_roles_to_users
 
 end
