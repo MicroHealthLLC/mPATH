@@ -4,7 +4,7 @@ class Api::V1::ContractProjectPocsController < AuthenticatedController
   before_action :check_contract_delete_permission, only: [:destroy]
   
   def check_contract_read_permission
-    raise CanCan::AccessDenied if !current_user.can_read_contract_data?
+    raise CanCan::AccessDenied if !current_user.can_access_contract_data?
   end
   def check_contract_write_permission
     raise CanCan::AccessDenied if !current_user.can_write_contract_data?

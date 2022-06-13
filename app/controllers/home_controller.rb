@@ -1,11 +1,14 @@
 class HomeController < AuthenticatedController
   layout "application"
-  layout "portfolio_viewer", only: [:portfolio]
+  layout "portfolio_viewer", only: [:portfolio, :contracts]
   
-  def contract
+  def contracts
+    if !current_user.can_access_contract_data?
+      raise CanCan::AccessDenied
+    end
     respond_to do |format|
       format.json {}
-      format.html {render action: :index}
+      format.html {render action: :portfolio}
     end
   end
 

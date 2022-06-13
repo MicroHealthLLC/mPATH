@@ -354,12 +354,12 @@ Rails.application.routes.draw do
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
   # Strictly matching programs/<program_id>/dataviewer
-  get '*all', to: "home#contract", constraints: -> (req) do
+  get '*all', to: "home#contracts", constraints: -> (req) do
     # (p = req.path.split("/")[1] ) && p.split("portfolio").size == 1 && p.split("portfolio").include?("portfolio")
     spath = req.path.split("/")
-    i = spath.index("contract")
+    i = spath.index("contracts")
     # TODO: create regex for pattern programs/<program_id>/dataviewer
-    i && (p = spath[i] ) && p.match(/^[contract]+$/)
+    i && (p = spath[i] ) && p.match(/^[contracts]+$/)
   end
 
   # Strictly matching programs/<program_id>/dataviewer
