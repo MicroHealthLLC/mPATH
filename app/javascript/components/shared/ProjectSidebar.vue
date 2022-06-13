@@ -77,7 +77,7 @@
               </div>
                <div                          
                 v-for="c in projectContracts.filter(t => t.facilityGroup && t.facilityGroup.id == group.id)" 
-                 v-show="isContractsView && _isallowedContracts('read', c)"    
+                 v-show="isContractsView"    
                 :key="c.projectContractId + 'a'"
                 >              
               <router-link               

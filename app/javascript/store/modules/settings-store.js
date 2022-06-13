@@ -439,7 +439,7 @@ const settingsStore = {
         let formData = new FormData();
      
           if (userData.projectIds){
-              formData.append("role_from_projects", true);   
+              formData.append("role_from_users", true);   
               userData.projectIds.forEach((ids) => {        
               formData.append("user_id", userData.userId);
               formData.append("project_id", userData.programId)
@@ -449,7 +449,7 @@ const settingsStore = {
            } 
           
            if (userData.contractIds){
-              formData.append("contract_from_roles", true);
+              formData.append("role_from_users", true);
               userData.contractIds.forEach((ids) => {
               formData.append("user_id", userData.userId);
               formData.append("project_id", userData.programId)

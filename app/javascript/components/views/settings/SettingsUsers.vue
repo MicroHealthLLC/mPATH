@@ -580,7 +580,7 @@
             > 
             <el-option
                 v-for="item in contractNames"
-                :value="item.project_contract_id"
+                :value="item"
                 :key="item.project_contract_id"
                 :label="item.name"
               > 
@@ -1043,7 +1043,7 @@ export default {
                   projectIds: ids,   
               },
             };
-            // console.log(projectUserRoleData)
+            console.log(projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });
@@ -1061,7 +1061,7 @@ export default {
               },
             };
             // console.log("editAdmin in progress", this.isEditingContractRoles)
-            //   console.log("data", projectUserRoleData)
+            console.log("data", projectUserRoleData)
             this.removeUserRole({
               ...projectUserRoleData,
             });
