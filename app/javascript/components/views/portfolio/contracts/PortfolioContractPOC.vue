@@ -25,12 +25,21 @@
       prop="pm_contract_poc_id">
      <template slot-scope="scope" >
      <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.pm_contract_poc_id"> -->
-       <el-select
+   <!-- <el-popover
+    placement="top-start"
+    title="Title"
+    width="200"
+    trigger="hover"
+    :content="scope.row.pm_contract_poc_id">
+   -->
+
+      <el-select
         v-model="scope.row.pm_contract_poc_id"
         filterable       
         track-by="name"        
         value-key="id"
         class="w-100"
+         slot="reference"
         clearable
         allow-create
         default-first-option
@@ -44,6 +53,7 @@
         >
         </el-option>
       </el-select>
+      <!-- </el-popover>  -->
       <!-- </span> -->
       <!-- <span v-else>
       {{ scope.row.pm_contract_poc_id }}

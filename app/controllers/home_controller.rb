@@ -1,11 +1,14 @@
 class HomeController < AuthenticatedController
   layout "application"
-  layout "portfolio_viewer", only: [:portfolio]
+  layout "portfolio_viewer", only: [:portfolio, :contracts]
   
-  def contract
+  def contracts
+    if !current_user.can_access_contract_data?
+      raise CanCan::AccessDenied
+    end
     respond_to do |format|
       format.json {}
-      format.html {render action: :index}
+      format.html {render action: :portfolio}
     end
   end
 
@@ -38,7 +41,7 @@ class HomeController < AuthenticatedController
   def landing
     # there is no need of eager loading here..
     @preferences = current_user.get_preferences
-    @active_projects = current_user.authorized_programs.includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ])
+    @active_projects = current_user.authorized_programs.includes([:facilities, :users, :tasks, :issues, :risks, :lessons, :facility_projects ])
   end
 
   def index

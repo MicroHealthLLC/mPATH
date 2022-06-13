@@ -71,7 +71,11 @@ class User < ApplicationRecord
     can_contract_data?('delete')
   end
 
-   def provide_view_privileges
+  def can_access_contract_data?
+    can_read_contract_data? || can_write_contract_data? || can_delete_contract_data?
+  end
+
+  def provide_view_privileges
     user = self
     privilege = user.privilege || user.create_privilege
     privilege.update( {"map_view": ["R"], "gantt_view": ["R"],  "members": ["R"], "sheets_view": ["R"], "kanban_view": ["R"], "calendar_view": ["R"]})
