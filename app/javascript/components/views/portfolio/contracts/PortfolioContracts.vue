@@ -44,7 +44,10 @@
     :data="tableData"
     border
     height="800"
-    style="width: 95%">
+    style="width: 95%"
+    :summary-method="getSummaries"
+    show-summary
+    >
     <el-table-column
       fixed
       label="Code*"
@@ -102,7 +105,7 @@
      <el-table-column    
       label="Customer*"
       width="200"
-      prop="contract_customer_id">
+     >
      <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -132,9 +135,9 @@
       </template>
     </el-table-column>
       <el-table-column    
-      label="Vehicle/ Schedule*"
+      label="Vehicle/ Schedule"
       width="125"
-      prop="contract_vehicle_id">
+      >
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -144,6 +147,7 @@
         value-key="id"
         class="w-100"
         clearable
+        allow-create
         placeholder=""
         default-first-option
        >
@@ -163,9 +167,9 @@
       </template>
     </el-table-column>
       <el-table-column
-      label="Contract Number*"
+      label="Contract Number**"
       width="125"
-      prop="contract_number_id">
+     >
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -195,9 +199,9 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Award/ TO Number*"
+      label="Award/ TO Number**"
       width="125"
-      prop="contract_award_to_id">
+     >
        <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -229,7 +233,7 @@
      <el-table-column
       label="NAICS*"
       width="70"
-      prop="contract_naic_id">
+      >
      <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -261,7 +265,7 @@
      <el-table-column
       label="Award Type*"
       width="70"
-      prop="contract_award_type_id">
+      >
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -293,7 +297,7 @@
     <el-table-column
       label="Contract Type*"
       width="75"
-      prop="contract_type_id">
+      >
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -446,7 +450,7 @@
     <el-table-column
       label="PoP's*"
        width="100"
-      prop="contract_pop_id">
+       >
       <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -478,7 +482,7 @@
      <el-table-column
       label="Current PoP"
       width="100"
-      prop="contract_current_pop_id">
+       >
     <template slot-scope="scope" >
       <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -580,8 +584,8 @@
         @click="saveContractProject(scope.$index, scope.row)"
         v-if="scope.$index == rowIndex &&  (
           scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
-          scope.row.contract_vehicle_id && scope.row.contract_number_id && 
-          scope.row.contract_award_to_id && scope.row.contract_naic_id && scope.row.contract_award_type_id &&
+          (scope.row.contract_number_id || scope.row.contract_award_to_id) && 
+           scope.row.contract_naic_id && scope.row.contract_award_type_id &&
           scope.row.contract_type_id && contractStartDate && contractEndDate &&  scope.row.total_contract_value
           && scope.row.contract_pop_id && popStartDate && popEndDate
           )"  
@@ -616,8 +620,8 @@
           @click="saveContractProject(scope.$index, scope.row)"
           v-if="scope.$index == createRow && (
           scope.row.charge_code && scope.row.name && scope.row.contract_customer_id && 
-          scope.row.contract_vehicle_id && scope.row.contract_number_id && 
-          scope.row.contract_award_to_id && scope.row.contract_naic_id && scope.row.contract_award_type_id &&
+          (scope.row.contract_award_to_id || scope.row.contract_number_id) && 
+          scope.row.contract_naic_id && scope.row.contract_award_type_id &&
           scope.row.contract_type_id && newContractStartDate && newContractEndDate &&  scope.row.total_contract_value
           && scope.row.contract_pop_id && newPopStartDate && newPopEndDate
           )" 
@@ -648,218 +652,155 @@
         style="width: 95%">
         <el-table-column
           fixed
-          label="Name"
+          label="Name*"
           width="150"
           prop="name">
-          <template slot-scope="scope">
-            <el-form      
-             v-if="scope.$index == pocCreateRow"     
-             :model="dynamicValidateForm" 
-             ref="form0" 
-             label-width="0" 
-             class="demo-dynamic">
-            <el-form-item             
-              prop="newName"          
-              :rules="[
-                  { required: true, message: 'Please enter POC name', trigger: 'blur' },
-                  { min: 3, max: 35, message: 'Please enter valid name', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.newName"></el-input>
-            </el-form-item>
-           </el-form>
-            <el-form     
-             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"          
-            :model="dynamicValidateForm" 
-             ref="form00" 
-             label-width="0" 
-             class="demo-dynamic">
-            <el-form-item
-              prop="updateName" 
-                   
-              :rules="[
-                  { required: true, message: 'Please enter POC name', trigger: 'blur' },
-                  { min: 3, max: 35, message: 'Please enter valid name', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.updateName"></el-input>
-            </el-form-item>
-            </el-form>
-          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+         <template slot-scope="scope" >
+         <span v-if="scope.$index == pocCreateRow">
+          <el-input
+          size="small"
+          style="text-align:center"
+          onkeydown="return /[a-z]/i.test(event.key)"
+          placeholder=""
+          v-model="scope.row.name"
+          controls-position="right"
+          ></el-input>
+          </span> 
+          <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+          <el-input
+            size="small"
+            onkeydown="return /[a-z]/i.test(event.key)"
+            style="text-align:center"
+            placeholder=""
+            v-model="scope.row.name"
+            controls-position="right"
+            ></el-input>
+          </span>   
+           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.name }} 
-            </span>
-            </template>
+            </span>    
+          </template>
+          
         </el-table-column>
         <el-table-column
-          label="POC Title"
+          label="POC Title*"
           width="150"
           prop="title">
           <template slot-scope="scope">
-            <el-form
-              v-if="scope.$index == pocCreateRow"              
-             :model="dynamicValidateForm" 
-             ref="form1" 
-             label-width="0" 
-             class="demo-dynamic">
-             <el-form-item            
-              prop="newTitle"          
-              :rules="[
-                  { required: true, message: 'Please enter POC title', trigger: 'blur' },
-                  { min: 1, max: 15, message: 'Please enter valid title', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.newTitle"></el-input>
-              </el-form-item> 
-             
-            </el-form>
-             <el-form  
-              v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"            
-             :model="dynamicValidateForm" 
-             ref="form11" 
-             label-width="0" 
-             class="demo-dynamic">
-           <el-form-item
-              prop="updateTitle"          
-              :rules="[
-                  { required: true, message: 'Please enter POC title', trigger: 'blur' },
-                  { min: 1, max: 15, message: 'Please enter valid title', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.updateTitle"></el-input>
-            </el-form-item>
-            </el-form>
-           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+          <el-input
+          size="small"
+          v-if="scope.$index == pocCreateRow"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.title"
+          controls-position="right"
+        ></el-input>
+        <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+        <el-input
+          size="small"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.title"
+          controls-position="right"
+          ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.title }} 
             </span>
             </template>
         </el-table-column>    
         <el-table-column
-          label="Email"
+          label="Email*"
           width="300"
           prop="email">
           <template slot-scope="scope">
-            <el-form  
-            v-if="scope.$index == pocCreateRow"
-            :model="dynamicValidateForm" 
-             ref="form2" 
-             label-width="0" 
-             class="demo-dynamic">
-            <el-form-item           
-               prop="newEmail"          
-              :rules="[
-                { required: true, message: 'Email address required', trigger: 'blur' },
-                { type: 'email', message: 'Valid email address required', trigger: ['blur', 'change'] }
-              ]"
-            >
-            <el-input v-model="dynamicValidateForm.newEmail"></el-input>
-            </el-form-item>
-           </el-form>  
-            
-           <el-form  
-             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
-            :model="dynamicValidateForm" 
-             ref="form22" 
-             label-width="0" 
-             class="demo-dynamic">
-         
-            <el-form-item             
-              prop="updateEmail"          
-              :rules="[
-                { required: true, message: 'Email address required', trigger: 'blur' },
-                { type: 'email', message: 'Valid email address required', trigger: ['blur', 'change'] }
-              ]"
-            >
-            <el-input v-model="dynamicValidateForm.updateEmail"></el-input>
-            </el-form-item>
-            </el-form> 
-           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+               v-if="scope.$index == pocCreateRow"
+              placeholder=""
+              v-model="scope.row.email"
+              @blur="validateEmail(scope.row.email)"
+              type="email" 
+              name="email"
+              style="text-align:center"            
+              controls-position="right"
+            ></el-input>
+            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+            <el-input
+              size="small"
+              type="email" 
+              @blur="validateEmail(scope.row.email)"
+              placeholder=""
+              style="text-align:center"
+              v-model="scope.row.email"
+              controls-position="right"
+              ></el-input>
+            </span>
+          <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.email }} 
             </span>
             </template>
         </el-table-column>
         <el-table-column
-          label="POC Work Phone #"
+          label="POC Work Phone #**"
           width="175"
           prop="work_number">
           <template slot-scope="scope">
-           <el-form  
-             v-if="scope.$index == pocCreateRow"
-             :model="dynamicValidateForm" 
-             ref="form3" 
-             label-width="0" 
-             class="demo-dynamic">
-            <el-form-item            
-              prop="newWorkNumber"          
-              :rules="[
-                  // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
-                  { min: 14, max: 14, message: 'Valid phone number required', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.newWorkNumber"  @input="acceptNumber"></el-input>
-            </el-form-item>
-      
-            </el-form>
+          <el-input
+            size="small"
+           v-if="scope.$index == pocCreateRow"
+            placeholder=""
+            style="text-align:center"
+            type="text"           
+            @input="acceptNumber"
+            @blur="validatePhoneNumber(workNumberValNew)"
+            v-model="workNumberValNew"
+            controls-position="right"
+          ></el-input>
+          <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+          <el-input
+            size="small"
+            placeholder=""
+            type="text"
+            style="text-align:center"
+             @input="acceptNumber"
+             @blur="validatePhoneNumber(workNumberVal)"
+            v-model="workNumberVal"
+            controls-position="right"
+            ></el-input>
+            </span>
 
-             <el-form  
-             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
-             :model="dynamicValidateForm" 
-             ref="form33" 
-             label-width="0" 
-             class="demo-dynamic">
-             <el-form-item
-              
-              prop="updateWorkNumber"          
-              :rules="[
-                  // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
-                  { min: 14, max: 14, message: 'Valid phone number required', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.updateWorkNumber"  @input="acceptNumber"></el-input>
-            </el-form-item>
-            </el-form>
           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.work_number }} 
             </span>
             </template>
         </el-table-column>
         <el-table-column
-          label="POC Mobile Phone #"
+          label="POC Mobile Phone #**"
           width="175"
           prop="mobile_number">
           <template slot-scope="scope">
-            <el-form  
+            <el-input
+            size="small"
             v-if="scope.$index == pocCreateRow"
-            :model="dynamicValidateForm" 
-             ref="form4" 
-             label-width="0" 
-             class="demo-dynamic">
-            <el-form-item
-            
-              prop="newMobileNumber"          
-              :rules="[
-                  // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
-                  { min: 14, max: 14, message: 'Valid phone number required', trigger: 'blur' }
-              ]"
-            >
-            <el-input v-model="dynamicValidateForm.newMobileNumber"  @input="acceptNumber"></el-input>
-            </el-form-item>
-            </el-form>
-            <el-form  
-             v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow"
-            :model="dynamicValidateForm" 
-             ref="form44" 
-             label-width="0" 
-             class="demo-dynamic">
-            <el-form-item            
-              prop="updateMobileNumber"          
-              :rules="[
-                  // { required: true, message: 'Please enter POC work number', trigger: 'blur' },
-                  { min: 14, max: 14, message: 'Valid phone number required', trigger: 'blur' }
-              ]"
-            >
-              <el-input v-model="dynamicValidateForm.updateMobileNumber"  @input="acceptNumber"></el-input>
-            </el-form-item>
-            </el-form>
+            placeholder=""           
+            style="text-align:center"
+            @input="acceptNumber"
+            @blur="validateMobPhoneNumber(mobNumberValNew)"
+            v-model="mobNumberValNew"
+            controls-position="right"
+          ></el-input>
+          <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+          <el-input
+            size="small"
+            placeholder=""          
+            style="text-align:center"
+            @input="acceptNumber"
+            @blur="validateMobPhoneNumber(mobNumberVal)"
+            v-model="mobNumberVal"
+            controls-position="right"
+            ></el-input>
+            </span>
            <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.mobile_number }} 
             </span>
@@ -875,7 +816,6 @@
               size="small"
               v-if="scope.$index == pocCreateRow"
               placeholder=""
-              class="mb-3"
               style="text-align:center"
               v-model="scope.row.notes"
               controls-position="right"
@@ -885,7 +825,6 @@
               size="small"
               placeholder=""
               style="text-align:center"
-              class="mb-3"
               v-model="scope.row.notes"
               controls-position="right"
               ></el-input>
@@ -899,7 +838,7 @@
         </el-table-column>
         <el-table-column
           label="Actions"
-          width="95"
+          width="115"
           fixed="right"
           align="center">
          <template slot-scope="scope">
@@ -926,13 +865,22 @@
               v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
+              <el-button
+              type="default"
+              v-tooltip="`Delete`" 
+              class="bg-light btn-sm"
+              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
+              @click="deleteContractPoc(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
+              </el-button>
             <el-button
               type="default"
               @click="saveContractPOC(scope.$index, scope.row)"
-              v-if="scope.$index == pocCreateRow && dynamicValidateForm.newName && dynamicValidateForm.newEmail && (dynamicValidateForm.newWorkNumber || dynamicValidateForm.newMobileNumber)" 
+              v-if="scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
+               scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew)" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
+            
             </el-button>
           </template>
 
@@ -968,8 +916,11 @@
     </span>
    <PortfolioExpiredContracts/>
     </el-tab-pane>
+    <span class="mt-2 requiredFields mr-5">
+    *Required fields, 
+    </span>
     <span class="mt-2 requiredFields">
-    *Required fields
+    **At least one field required
     </span>
   </el-tabs>
 
@@ -1006,28 +957,13 @@ export default {
     data() {    
       return {
         today: new Date().toISOString().slice(0, 10),
-        validName: false, 
-        validEmail: false, 
-        validWorkNum: false, 
-        validMobileNum: false, 
-        validTitle: false, 
-        pocName: null, 
-        email: null, 
-        title: null, 
-        work_number: null, 
-        mobile_number: null, 
-        dynamicValidateForm: {
-           newEmail: '',
-           newTitle:'',
-           newName: '',
-           newWorkNumber: '',
-           newMobileNumber: '',
-           updateEmail: '',
-           updateTitle:'',
-           updateName: '',
-           updateWorkNumber: '',
-           updateMobileNumber: '',
-        },        
+        workNumberVal: '', 
+        workNumberValNew: '', 
+        mobNumberVal: '', 
+        mobNumberValNew: '', 
+        isValidWorkNum: false,
+        isValidMobNum: false, 
+        isValidEmail: false,
         contractStartDate: null,
         contractEndDate: null,
         popStartDate: null,
@@ -1042,6 +978,7 @@ export default {
         rowId: null, 
         pocRowIndex: null, 
         pocRowId: null, 
+        email: null, 
         pane0: true, 
         pane1: false, 
         pane2: false, 
@@ -1062,6 +999,7 @@ export default {
       "fetchContractProjects",
       "updateContractProject",
       "deleteContractProject",
+
       //POCs
       "createContractPOC",
       "fetchContractPOCs",
@@ -1069,25 +1007,107 @@ export default {
       "deleteContractPOC",
       //Vehicles
       "fetchContractVehicles"
-    ]),  
+    ]),
+ getSummaries(param) {
+    const { columns, data } = param;
+    const sums = [];
+    columns.forEach((column, index) => {
+      if (index === 0) {
+        sums[index] = 'Total Cost';
+        return;
+      }
+      const values = data.map(item => Number(item[column.property]));
+      if (!values.every(value => isNaN(value))) {
+        sums[index] = '$ ' + values.reduce((prev, curr) => {
+          const value = Number(curr);
+          if (!isNaN(value)) {
+            return prev + curr;
+          } else {
+            return prev;
+          }
+        }, 0);
+      } else {
+        sums[index] = 'N/A';
+      }
+    });
+
+    return sums;
+  },
+validateEmail(m){
+  if (m) {
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(m))
+  {
+    this.isValidEmail = true
+    return (true)
+  }
+   this.$message({
+    message: `Please enter a valid email address.  Example: "john@example.com"`,
+    type: "warning",
+    showClose: true,
+  });
+    this.isValidEmail = false
+    return (false)
+  }
+} ,
+validatePhoneNumber(m){
+  if (m) {
+ if (m.length == 14)
+  {
+    console.log(m.length)
+    this.isValidWorkNum = true
+    return (true)    
+  }
+   this.$message({
+    message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
+    type: "warning",
+    showClose: true,
+  });
+    this.isValidWorkNum = false
+    return (false)
+  }
+ },
+ validateMobPhoneNumber(m){
+  if (m) {
+ if (m.length == 14)
+  {
+    console.log(m.length)
+    this.isValidMobNum = true
+    return (true)    
+  }
+   this.$message({
+    message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
+    type: "warning",
+    showClose: true,
+  });
+    this.isValidMobNum = false
+    return (false)
+  }
+ },
+  acceptNumber() {
+    if(this.workNumberVal){
+      let x = this.workNumberVal.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      this.workNumberVal = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    }
+      if(this.workNumberValNew){
+      let  x = this.workNumberValNew.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      this.workNumberValNew = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    }
+    if(this.mobNumberVal){
+      let x = this.mobNumberVal.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      this.mobNumberVal = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    }
+    if(this.mobNumberValNew){
+      let  x = this.mobNumberValNew.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      this.mobNumberValNew = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    }
+     
+    },
   backHomeBtn() {
       window.location.pathname = "/";
     }, 
   log(e){
     // console.log(e)
   },
-  acceptNumber() {
-     let dvf = this.dynamicValidateForm
-     let x = dvf.newWorkNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/)
-     let z = dvf.newMobileNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-     let ux = dvf.updateWorkNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-     let uz = dvf.updateMobileNumber.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-
-     dvf.newWorkNumber = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-     dvf.newMobileNumber = !z[2] ? z[1] : '(' + z[1] + ') ' + z[2] + (z[3] ? '-' + z[3] : '');
-     dvf.updateWorkNumber = !ux[2] ? ux[1] : '(' + ux[1] + ') ' + ux[2] + (ux[3] ? '-' + ux[3] : '');
-     dvf.updateMobileNumber = !uz[2] ? uz[1] : '(' + uz[1] + ') ' + uz[2] + (uz[3] ? '-' + uz[3] : '');
-   },
   openPocModal(){
     this.pocDialogVisible = true;
     this.fetchContractPOCs()
@@ -1110,26 +1130,11 @@ export default {
     }
   }, 
   editPocRow(index, rows) {
-    console.log(this.$refs[this.dynamicValidateForm])
-    console.log(this.dynamicValidateForm)
-    let dvf = this.dynamicValidateForm;
+    console.log(rows)
     this.pocRowIndex = index,
     this.pocRowId = rows.id
-    if(rows.email){
-      dvf.updateEmail = rows.email;
-    }
-    if(rows.name){
-      dvf.updateName = rows.name;
-    }
-    if(rows.title){
-      dvf.updateTitle = rows.title;
-    }
-    if(rows.work_number){
-      dvf.updateWorkNumber = rows.work_number;
-    }
-    if(rows.mobile_number){
-      dvf.updateMobileNumber = rows.mobile_number;
-    }
+    this.workNumberVal = rows.work_number
+    this.mobNumberVal = rows.mobile_number
   },  
   saveNewPocRow(){
     // Row create action will occur here
@@ -1137,6 +1142,19 @@ export default {
      this.pocRowIndex = null;
     this.pocRowId = null;
   },
+ deleteContractPoc(index, rows) {
+        this.$confirm(
+        `Are you sure you want to delete ${rows.name} from your Contract POC's?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+        this.deleteContractPOC(rows.id);
+      });     
+    },
   deleteContractProj(index, rows) {
         this.$confirm(
         `Are you sure you want to delete ${rows.name} from your Contract Projects?`,
@@ -1206,120 +1224,46 @@ export default {
    
   },
   saveContractPOC(index, row){
-    let d = this.dynamicValidateForm;
-
-    if (row.id) {
-      if (!this.pocName) {
-        this.pocName = row.name
-      } else this.pocName = d.updateName
-      if (!this.email) {
-        this.email = row.email
-      } else this.email = d.updateEmail
-      if (!this.title){
-        this.title = row.title
-      } else this.title = d.updateTitle
-      if (!this.work_number){
-        this.work_number = row.work_number
-      } else this.work_number = d.updateWorkNumber
-      if (!this.mobile_number){
-        this.mobile_number = row.mobile_number
-      } else this.mobile_number = d.updateMobileNumber
-       this.$refs.form00.validate((valid) => {
-          if (valid) {
-           this.validName = true
-          }
-        });
-        this.$refs.form11.validate((valid) => {
-          if (valid) {
-           this.validTitle = true
-          }
-        });
-        this.$refs.form22.validate((valid) => {
-          if (valid) {
-           this.validEmail = true
-          }
-        });
-        this.$refs.form33.validate((valid) => {
-          if (valid) {
-           this.validWorkNum = true
-          }
-        });
-         this.$refs.form44.validate((valid) => {
-          if (valid) {
-           this.validMobileNum = true
-          }
-        });
-    }
-    if (!row.id){
-      this.pocName = d.newName; 
-      this.email = d.newEmail;
-      this.title = d.newTitle;
-      this.work_number = d.newWorkNumber;
-      this.mobile_number = d.newMobileNumber;
-      this.$refs.form0.validate((valid) => {
-          if (valid) {
-           this.validName = true
-          }
-        });
-        this.$refs.form1.validate((valid) => {
-          if (valid) {
-           this.validTitle = true
-          }
-        });
-        this.$refs.form2.validate((valid) => {
-          if (valid) {
-           this.validEmail = true
-          }
-        });
-        this.$refs.form3.validate((valid) => {
-          if (valid) {
-           this.validWorkNum = true
-          }
-        });
-         this.$refs.form4.validate((valid) => {
-          if (valid) {
-           this.validMobileNum = true
-          }
-        });
-    }
+    let workNumber = ''
+    let mobNumber = ''
+    if (row.id){
+        workNumber = this.workNumberVal
+        mobNumber = this.mobNumberVal
+    } else {
+        workNumber = this.workNumberValNew
+        mobNumber = this.mobNumberValNew
+    } 
     let contractPOCdata = {
           cPOCsData: {
-            name: this.pocName, 
-            pocType: this.poc_type, 
-            email: this.email, 
-            title: this.title, 
-            workNum: this.work_number, 
-            mobileNum: this.mobile_number, 
-            notes: row.notes,             
+            name: row.name, 
+            pocType: row.poc_type, 
+            email: row.email, 
+            title: row.title, 
+            workNum: workNumber, 
+            mobileNum: mobNumber, 
+            notes: row.notes,   
         },
       };
-    // console.log(formNa)
-    //  console.log('1188', this.$refs.form0.validate(valid => valid))
+     if (!this.isValidWorkNum || !this.isValidEmail || !this.isValidMobNum){
+         this.$message({
+              message: `Please fix invalid field(s) before saving.`,
+              type: "warning",
+              showClose: true,
+            });
 
-    if (this.validName == true && this.validTitle == true && this.validEmail &&
-        this.validWorkNum == true && this.validMobileNum == true){
-        this.pocRowIndex = null;
-        this.pocRowId = null;
-        if (row.id){
+        } else {
+          if (row.id){
               let id = row.id
               this.updateContractPOC({...contractPOCdata, id})
             } else {
               this.createContractPOC({...contractPOCdata})
             }
-
-        } else {
-          this.$message({
-              message: `Please fix invalid field(s) before saving.`,
-              type: "warning",
-              showClose: true,
-            });
-        }
-   
-   
+        }   
   },
   cancelPocEdits() {
     this.pocRowIndex = null;
     this.pocRowId = null;
+    this.workNumberVal = null;
        
   },
   cancelEdits(index, rows) {
@@ -1532,6 +1476,13 @@ export default {
          return unique
       }
     },
+  //  validEmail() {
+  //     if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+  //         this.msg[this.email] = 'Please enter a valid email address';
+  //     } else {
+  //         this.msg[this.email] = '';
+  //     }
+  //   },
     contractTypes(){
      if (this.contractProjects && this.contractProjects.length > 0){
         let uniqueContractTypes = _.uniq(this.contractProjects.filter(t => t.contract_type_id))
@@ -1577,16 +1528,23 @@ export default {
           this.SET_CONTRACT_POCS_STATUS(0);
           this.fetchContractPOCs();
           this.fetchContractProjects();
-          this.dynamicValidateForm.newEmail = ''; 
-          this.dynamicValidateForm.newName = ''; 
-          this.dynamicValidateForm.newWorkNumber = ''; 
-          this.dynamicValidateForm.newMobileNumber = ''; 
-          this.dynamicValidateForm.newTitle = '';   
-          this.validName = false; 
-          this.validEmail = false; 
-          this.validWorkNum = false;
-          this.validMobileNum = false; 
-          this.validTitle = false;
+          this.workNumberVal = '';
+          this.workNumberValNew = '';
+          this.mobNumberVal = '', 
+          this.mobNumberValNew = '',
+          this.pocRowIndex = null;
+          this.pocRowId = null;
+
+          // this.dynamicValidateForm.newEmail = ''; 
+          // this.dynamicValidateForm.newName = ''; 
+          // this.dynamicValidateForm.newWorkNumber = ''; 
+          // this.dynamicValidateForm.newMobileNumber = ''; 
+          // this.dynamicValidateForm.newTitle = '';   
+          // this.validName = false; 
+          // this.validEmail = false; 
+          // this.validWorkNum = false;
+          // this.validMobileNum = false; 
+          // this.validTitle = false;
         }
       },
     },     

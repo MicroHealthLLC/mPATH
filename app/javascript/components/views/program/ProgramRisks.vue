@@ -4,7 +4,7 @@
         <template slot="title">
         <div v-if="dynamicObj.length > 0 && dynamicObj[currentRiskSlide] !== undefined" class="container-fluid">
            <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
-          <span v-if="dynamicObj[currentTaskSlide] && dynamicObj[currentTaskSlide].projectContractId">
+          <span v-if="dynamicObj[currentRiskSlide] && dynamicObj[currentRiskSlide].projectContractId">
             <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
           <span v-else><i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
           RISK

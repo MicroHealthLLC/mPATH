@@ -46,6 +46,9 @@ class Project < SortableRecord
   has_many :roles, dependent: :destroy
   has_many :role_users, dependent: :destroy
 
+  has_many :project_contracts, dependent: :destroy
+  has_many :contract_project_data, through: :project_contracts
+
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false
@@ -92,13 +95,18 @@ class Project < SortableRecord
     end
   end
 
-  def get_program_admins
-    role_id = Role.program_admin_user_role.id
-    User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
+  def get_program_admins(role_id = nil)
+    if !role_id
+      role_id = Role.program_admin_user_role.id
+    end
+    user_ids = role_users.select{|ru| ru.role_id == role_id }.map(&:user_id).compact.uniq
+    users.select{|user| user_ids.include?(user.id)}
+    
+    # User.joins(:role_users).where("role_users.role_id": role_id, "role_users.project_id": self.id)
   end
 
   def get_program_admin_ids
-    get_program_admins.pluck(:id)
+    get_program_admins.map(&:id)
   end
 
   def total_progress

@@ -17,7 +17,7 @@ ActiveAdmin.register Lesson do
       :date, 
       :task_type_id,  
       :facility_project_id,
-      :contract_id,
+      :project_contract_id,
       :user_id, 
       :lesson_stage_id,
       file_links: [],
@@ -46,8 +46,8 @@ ActiveAdmin.register Lesson do
         "<span>#{lesson.task_type&.name}</span>".html_safe
       end
     end
-    column :contract, nil, sortable: 'contracts.name' do |lesson|
-      "<span>#{lesson.contract&.name}</span>".html_safe
+    column :contract_project_data, "Contract", sortable: 'contract_project_data.name' do |lesson|
+      "<span>#{lesson.contract_project_data&.name}</span>".html_safe
     end
     column "Stage", :lesson_stage, nil, sortable: 'lesson_stages.name' do |lesson|
       if current_user.admin_write?
@@ -126,7 +126,19 @@ ActiveAdmin.register Lesson do
           f.input :description
           f.input :date, label: 'Date', as: :datepicker
           if f.object.is_contract_resource?
-            f.input :contract, include_blank: false
+            f.input :project_contract, include_blank: false
+            project_contract_options = []
+          
+            Project.includes([{project_contracts: :conrtract_project_datum }]).in_batches(of: 1000) do |projects|
+              projects.each do |project|
+                project_contract_options << [project.name, project.id, {disabled: true}]
+                project.project_contracts.each do |pc|
+                  project_contract_options << ["&nbsp;&nbsp;&nbsp;#{pc.contract_project_datum.name}".html_safe, pc.id]
+                end
+              end
+            end
+            
+            f.input :project_contract_id, label: 'Conract', as: :select, collection: project_contract_options, input_html: {class: "select2"}
           else
             # div id: 'facility_projects' do
             #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|

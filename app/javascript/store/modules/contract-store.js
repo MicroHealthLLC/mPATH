@@ -387,28 +387,28 @@ const contractStore = {
             commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
           });
     },
-    deletePOCData({ commit }, id ) {
-        commit("TOGGLE_ROLES_LOADED", false);
-      
-        axios({
-          method: "PUT",
-          url: ``,
-          headers: {
-            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-              .attributes["content"].value,
-          },
+    deleteContractPOC({ commit }, id ) {
+      commit("TOGGLE_CONTRACT_POCS_LOADED", false);
+    
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/contract_project_pocs/${id}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_CONTRACT_POCS", res.data.contract_project_pocs);
+          commit("SET_CONTRACT_POCS_STATUS", res.status);
         })
-          .then((res) => {
-            commit("SET_ROLES", res.data.roles);
-            // console.log(res.data.roles)
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-          .finally(() => {
-            commit("TOGGLE_ROLES_LOADED", true);
-          });
-    },
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_CONTRACT_POCS_LOADED", true);
+        });
+  },
   },
   mutations: {
     SET_ASSOCIATED_CONTRACTS: (state, value) => (state.associated_contracts = value),

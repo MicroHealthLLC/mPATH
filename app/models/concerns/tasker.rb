@@ -47,7 +47,7 @@ module Tasker
     end
     
     def is_contract_resource?
-      self.contract_id.present?
+      self.project_contract_id.present?
     end
 
     def setup_facility_project

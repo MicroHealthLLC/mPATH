@@ -23,7 +23,7 @@ ActiveAdmin.register Risk do
       :task_type,
       :task_type_id,
       :risk_stage_id,
-      :contract_id,
+      :project_contract_id,
       :facility_project_id,
       :progress,
       :start_date,

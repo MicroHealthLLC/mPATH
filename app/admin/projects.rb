@@ -53,13 +53,13 @@ ActiveAdmin.register Project do
     end
     column "Program Admins", :get_program_admins do |project|
       if current_user.admin_write?
-        project.get_program_admins
+        project.get_program_admins(program_admin_role_id)
       else
-        "<span>#{project.get_program_admins.map(&:full_name).join(', ')}</span>".html_safe
+        "<span>#{project.get_program_admins(program_admin_role_id).map(&:full_name).join(', ')}</span>".html_safe
       end
     end
     column "Users", :users do |project|
-      (project.users - project.get_program_admins)
+      (project.users - project.get_program_admins(program_admin_role_id) )
     end
     tag_column "State", :status
     actions defaults: false do |project|
@@ -69,7 +69,7 @@ ActiveAdmin.register Project do
   end
 
   form do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors.attribute_names
 
     tabs do
       tab 'Basic' do
@@ -241,6 +241,7 @@ ActiveAdmin.register Project do
     end
 
     def index
+      @program_admin_role_id = Role.program_admin_user_role.id
       super do |format|
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end

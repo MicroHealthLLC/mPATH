@@ -3,6 +3,8 @@
     <div  style="height: 100%; overflow-y:auto">
     <el-table
     :data="tableData"
+    :summary-method="getSummaries"
+    show-summary
     border
     height="800"
     style="width: 95%">
@@ -38,7 +40,7 @@
     <el-table-column
       label="Vehicle Full Name*"
       width="300"
-      prop="full_name">
+       >
     <template slot-scope="scope">
      <el-input
       size="small"
@@ -56,9 +58,7 @@
       v-model="scope.row.full_name"
       controls-position="right"
       ></el-input>
-       
-       
-       </span>
+     </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
       {{ scope.row.full_name }}
       </span>
@@ -69,8 +69,7 @@
       <el-table-column
       label="SINS or Subcategories*"      
       width="250"
-      prop="contract_sub_category_id">
-
+      >
       <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -103,7 +102,7 @@
      <el-table-column
       label="Contracting Agency*"
       width="175"
-      prop="contract_agency_id">
+     >
 
     <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
@@ -137,7 +136,7 @@
     <el-table-column
       label="Vehicle Type*"
       width="125"
-      prop="contract_vehicle_type_id">
+     >
      <template slot-scope="scope" >
      <span v-if="rowId == scope.row.id || scope.$index == createRow">
        <el-select
@@ -170,7 +169,7 @@
      <el-table-column
       label="Contract Number"
       width="125"
-      prop="contract_numbers">
+     >
 
     <template slot-scope="scope" >    
        <span v-if="scope.row.contract_numbers && scope.row.contract_numbers.length > 0">
@@ -225,7 +224,7 @@
     <el-table-column
       label="Base Period Start*"
       width="100"
-      prop="base_period_start">
+       >
      <template slot-scope="scope">
       <v2-date-picker
         name="Date"       
@@ -256,7 +255,7 @@
     <el-table-column
       label="Base Period End*"
       width="100"
-      prop="base_period_end">
+      >
          <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
@@ -288,7 +287,7 @@
      <el-table-column
       label="Option Period Start"
       width="100"
-      prop="option_period_start">
+      >
        <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
@@ -318,7 +317,7 @@
     <el-table-column
       label="Option Period End"
       width="100"
-      prop="option_period_end">
+       >
       <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
@@ -469,6 +468,31 @@ export default {
       "deleteContractVehicle",
       'fetchContractProjects',
     ]),
+    getSummaries(param) {
+    const { columns, data } = param;
+    const sums = [];
+    columns.forEach((column, index) => {
+      if (index === 0) {
+        sums[index] = 'Total Cost';
+        return;
+      }
+      const values = data.map(item => Number(item[column.property]));
+      if (!values.every(value => isNaN(value))) {
+        sums[index] = '$ ' + values.reduce((prev, curr) => {
+          const value = Number(curr);
+          if (!isNaN(value)) {
+            return prev + curr;
+          } else {
+            return prev;
+          }
+        }, 0);
+      } else {
+        sums[index] = 'N/A';
+      }
+    });
+console.log(sums)
+    return sums;
+  },
     NumbersOnly(evt) {
       evt = (evt) ? evt : window.event;
       var charCode = (evt.which) ? evt.which : evt.keyCode;

@@ -5,7 +5,10 @@
     :data="tableData"
     border
     height="800"
-    style="width: 95%">
+    style="width: 95%"
+    :summary-method="getSummaries"
+    show-summary
+    >
     <el-table-column
       fixed
       label="Code"
@@ -98,8 +101,9 @@
       </template>
     </el-table-column>
     <el-table-column
-      label="Funded Remaining"
+       label="Funding Remaining"
        width="115"
+
       >
        <template slot-scope="scope">
        <span v-if="scope.row.billings_to_date && scope.row.total_founded_value ">
@@ -213,6 +217,31 @@ export default {
     "updateContractProject",
     "fetchContractProjects",
   ]),  
+  getSummaries(param) {
+    const { columns, data } = param;
+    const sums = [];
+    columns.forEach((column, index) => {
+      if (index === 0) {
+        sums[index] = 'Total Cost';
+        return;
+      }
+      const values = data.map(item => Number(item[column.property]));
+      if (!values.every(value => isNaN(value))) {
+        sums[index] = '$ ' + values.reduce((prev, curr) => {
+          const value = Number(curr);
+          if (!isNaN(value)) {
+            return prev + curr;
+          } else {
+            return prev;
+          }
+        }, 0);
+      } else {
+        sums[index] = 'N/A';
+      }
+    });
+
+    return sums;
+  },
   saveBacklogValues(index, row){
     this.rowIndex = null;
     this.rowId = null;

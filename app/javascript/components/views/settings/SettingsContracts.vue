@@ -461,7 +461,7 @@
               sortable
               width="200"
               filterable
-              label="Users">
+              label="Role">
               <template slot-scope="scope">
               <span v-if="contractUsers.data.map(t => t.role_id == scope.row)" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
@@ -474,7 +474,7 @@
               sortable
               width="675"
               filterable
-              label="Roles">
+              label="Users">
              <template slot-scope="scope">
                <span v-if="scope.$index !== rowIndex_1" >        
               <span  v-for="(item, i) in contractUsers.data" :key="i">    
