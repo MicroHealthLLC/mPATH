@@ -37,6 +37,10 @@ class Lesson < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   attr_accessor :file_links
+  
+  def is_contract_resource?
+    self.project_contract_id.present?
+  end
 
   def lesson_json
     {

@@ -23,7 +23,7 @@ ActiveAdmin.register Issue do
       :start_date,
       :facility_project_id,
       :auto_calculate,
-      :contract_id,
+      :project_contract_id,
       issue_files: [],
       file_links: [],
       user_ids: [],

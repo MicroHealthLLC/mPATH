@@ -20,7 +20,7 @@ ActiveAdmin.register Task do
       :task_stage_id,
       :start_date,
       :auto_calculate,
-      :contract_id,
+      :project_contract_id,
       :facility_project_id,
       task_files: [],
       file_links: [],
