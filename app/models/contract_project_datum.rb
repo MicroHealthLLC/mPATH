@@ -38,11 +38,12 @@ class ContractProjectDatum < ApplicationRecord
   def create_or_update_contract_project_data(params, user)
     contract_params = params.require(:contract_project_data).permit(ContractProjectDatum.params_to_permit)
     c_params = contract_params.dup
-    if c_params[:id]
-      contract_project_data = ContractProjectDatum.find(c_params[:id])
+    if params[:id]
+      contract_project_data = ContractProjectDatum.find(params[:id])
     else
       contract_project_data = self
     end
+   
     contract_project_data.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
       
