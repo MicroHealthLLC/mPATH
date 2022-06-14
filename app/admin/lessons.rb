@@ -126,10 +126,9 @@ ActiveAdmin.register Lesson do
           f.input :description
           f.input :date, label: 'Date', as: :datepicker
           if f.object.is_contract_resource?
-            f.input :project_contract, include_blank: false
             project_contract_options = []
-          
-            Project.includes([{project_contracts: :conrtract_project_datum }]).in_batches(of: 1000) do |projects|
+            binding.pry
+            Project.includes([{project_contracts: :contract_project_datum }]).in_batches(of: 1000) do |projects|
               projects.each do |project|
                 project_contract_options << [project.name, project.id, {disabled: true}]
                 project.project_contracts.each do |pc|
