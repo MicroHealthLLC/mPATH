@@ -368,7 +368,7 @@ Rails.application.routes.draw do
     spath = req.path.split("/")
     i = spath.index("contracts")
     # TODO: create regex for pattern programs/<program_id>/dataviewer
-    i && (p = spath[i] ) && p.match(/^[contracts]+$/)
+    i && (p = spath[i] ) && p.match(/^[contracts]+$/) && (pp = req.path.split("/")[1] ) && pp.downcase == "portfolio".downcase
   end
 
   # Strictly matching programs/<program_id>/dataviewer

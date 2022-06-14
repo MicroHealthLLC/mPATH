@@ -138,7 +138,7 @@ ActiveAdmin.register Project do
     before_action :check_writeability, only: [:new, :edit, :update, :create]
 
     def scoped_collection
-      super.includes [:roles, {role_users: :user }, :users, :project_users, :project_type]
+      super.includes([:project_type]).preload(:role_users, :users, :project_users)
     end
 
     def check_readability
