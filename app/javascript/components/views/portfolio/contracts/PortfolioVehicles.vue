@@ -473,7 +473,7 @@ export default {
     const sums = [];
     columns.forEach((column, index) => {
       if (index === 0) {
-        sums[index] = 'Total Cost';
+        sums[index] = 'Totals';
         return;
       }
       const values = data.map(item => Number(item[column.property]));
@@ -487,10 +487,10 @@ export default {
           }
         }, 0);
       } else {
-        sums[index] = 'N/A';
+        sums[index] = '';
       }
     });
-console.log(sums)
+console.log(sums.map(t => t))
     return sums;
   },
     NumbersOnly(evt) {
