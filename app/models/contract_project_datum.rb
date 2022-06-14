@@ -14,6 +14,7 @@ class ContractProjectDatum < ApplicationRecord
     h = self.as_json
     h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]
     h.merge!({facility_group: options[:project_contract].facility_group.as_json }) if options[:project_contract]
+    h.merge!({facility_group_id: options[:project_contract].facility_group_id }) if options[:project_contract]
     h.merge!({contract_customer: contract_customer.as_json}) if contract_customer_id
     h.merge!({contract_vehicle: self.contract_vehicle.as_json}) if contract_vehicle_id
     h.merge!({contract_award_to: contract_award_to.as_json}) if contract_award_to_id
@@ -38,11 +39,12 @@ class ContractProjectDatum < ApplicationRecord
   def create_or_update_contract_project_data(params, user)
     contract_params = params.require(:contract_project_data).permit(ContractProjectDatum.params_to_permit)
     c_params = contract_params.dup
-    if c_params[:id]
-      contract_project_data = ContractProjectDatum.find(c_params[:id])
+    if params[:id]
+      contract_project_data = ContractProjectDatum.find(params[:id])
     else
       contract_project_data = self
     end
+   
     contract_project_data.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
       

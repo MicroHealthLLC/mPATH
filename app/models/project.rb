@@ -472,7 +472,7 @@ class Project < SortableRecord
     end
 
     contract_hash = []
-    
+    project_contract_hash2 = {}
     all_project_contracts.each do |pc|
       c = all_contract_poject_data.detect{|cp| cp.id == pc.contract_project_datum_id}
       
@@ -512,6 +512,7 @@ class Project < SortableRecord
         c_hash[:notes] = notes.map(&:to_json)
       end
 
+      project_contract_hash2[pc.id] = c_hash
       contract_hash << c_hash
     end
 
@@ -521,14 +522,21 @@ class Project < SortableRecord
       h2[:facilities] = []
       h2[:project_ids] = []
 
-      # h2[:contracts] = (all_contracts[fg.id] || []).map(&:to_json)
-
+      h2[:contracts] = []
+      h2[:contract_project_ids] = []
+      
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
         h2[:project_ids] << fp.project_id
         # h2[:project_ids] << fp.facility_id
       end
       h2[:project_ids] = h2[:project_ids].compact.uniq
+
+      fg.project_contracts.each do |pc|
+        h2[:contracts] << project_contract_hash2[pc.id] if project_contract_hash2[pc.id]
+        h2[:contract_project_ids] << pc.project_id
+      end
+
       facility_groups_hash << h2
     end
 
