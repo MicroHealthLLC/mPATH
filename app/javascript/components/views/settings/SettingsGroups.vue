@@ -252,13 +252,13 @@
                         v-if="
                           groupContracts &&
                             groupContracts
-                              .map((t) => t.facility_group_id)
+                              .map((t) => t.facility_group.id)
                               .filter((t) => t == props.row.id).length
                         "
                       >
                         {{
                           groupContracts
-                            .map((t) => t.facility_group_id)
+                            .map((t) => t.facility_group.id)
                             .filter((t) => t == props.row.id).length
                         }}
                       </span>
@@ -324,7 +324,7 @@
                             class="badge badge-secondary badge-pill pill"
                             >{{
                               groupContracts
-                                .map((t) => t.facility_group_id)
+                                .map((t) => t.facility_group.id)
                                 .filter((t) => t == props.row.id).length
                             }}
                           </span>
@@ -338,7 +338,7 @@
                           <ul class="pl-3 mb-0">
                             <li
                               v-for="(item, i) in groupContracts.filter(
-                                (t) => t.facility_group_id == props.row.id
+                                (t) => t.facility_group.id == props.row.id
                               )"
                               :key="i"
                             >
@@ -530,6 +530,7 @@ export default {
     },
     openPortfolioGroup() {
       this.dialog2Visible = true;
+      console.log(this.groupContracts)
      },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";

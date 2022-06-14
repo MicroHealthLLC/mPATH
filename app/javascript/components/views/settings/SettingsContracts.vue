@@ -736,15 +736,16 @@ export default {
      this.associateContractToProgram({...contractData})
     },
     goToContract(index, rows) {
+      console.log(rows)
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
-      // this.$router.push({
-      //   name: "SheetContract",
-      //   params: {
-      //     programId: this.$route.params.programId,
-      //     contractId: rows.id.toString(),
-      //   },
-      // });
+      // window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
+      this.$router.push({
+        name: "SheetContract",
+        params: {
+          programId: this.$route.params.programId,
+          contractId: rows.project_contract_id,
+        },
+      });
     },
 	  handleExpandChange (row, expandedRows) {
 			this.projId = row.id;
