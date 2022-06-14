@@ -60,7 +60,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
   end
 
   def add_users
-    role = Role.find(params[:id])
+    role = Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract] }]).find(params[:id])
     role_users = role_users_params["role_users"]
     errors = []
     role_users.each do |role_user_hash|
