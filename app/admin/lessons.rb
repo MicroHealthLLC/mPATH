@@ -46,7 +46,7 @@ ActiveAdmin.register Lesson do
         "<span>#{lesson.task_type&.name}</span>".html_safe
       end
     end
-    column :contract_project_data, "Contract", sortable: 'contract_project_data.name' do |lesson|
+    column "Contract",  sortable: 'contract_project_data.name' do |lesson|
       "<span>#{lesson.contract_project_data&.name}</span>".html_safe
     end
     column "Stage", :lesson_stage, nil, sortable: 'lesson_stages.name' do |lesson|
@@ -127,7 +127,6 @@ ActiveAdmin.register Lesson do
           f.input :date, label: 'Date', as: :datepicker
           if f.object.is_contract_resource?
             project_contract_options = []
-            binding.pry
             Project.includes([{project_contracts: :contract_project_datum }]).in_batches(of: 1000) do |projects|
               projects.each do |project|
                 project_contract_options << [project.name, project.id, {disabled: true}]
@@ -229,7 +228,7 @@ ActiveAdmin.register Lesson do
     end
 
     def scoped_collection
-      super.includes(:task_type, :lesson_stage, :project, :facility, :user, :lesson_details)
+      super.includes(:task_type, :lesson_stage, :user, :lesson_details, :contract_project_data, facility_project: [:project, :facility])
     end
   end
 
