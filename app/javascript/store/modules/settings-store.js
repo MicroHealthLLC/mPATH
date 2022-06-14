@@ -1087,6 +1087,27 @@ const settingsStore = {
             reject();
           });
       });
+    }, 
+    removeProgramUser({ commit }, id) {
+      commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", false);
+      axios({
+        method: "DELETE",
+        url: `${API_BASE_PATH}/users/${id}`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_ADD_USERS_TO_PROGRAM", res.data);
+          commit("SET_ADD_USERS_TO_PROGRAM_STATUS", res.status);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", true);
+        });
     },
     deleteProgramProject({ commit }, {programId, id} ) {
       return new Promise((resolve, reject) => {

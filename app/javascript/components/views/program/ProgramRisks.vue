@@ -1115,7 +1115,7 @@ v-if="filteredRisks.filtered.risks.length > 0"
             moment(risk.dueDate).format("DD MMM YYYY")
             }}</span>
         </td>
-        <td>{{ risk.users.fullName }}</td>
+        <td>{{ risk.userNames }}</td>
         <td class="text-center">                          
             <span v-if="risk.ongoing && !risk.closed" v-tooltip="`Ongoing`"
             ><i class="fas fa-retweet text-success"></i
