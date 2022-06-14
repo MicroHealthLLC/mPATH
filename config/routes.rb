@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         resources :users do
           collection do
             post :add_to_program
+            delete :remove_from_program
           end
         end
 

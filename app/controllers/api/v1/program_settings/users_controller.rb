@@ -46,6 +46,28 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
     end
   end
 
+  def remove_from_program
+    @program = Project.find(params[:project_id])
+    @users = User.where(id: params[:user_id])
+    user_ids = @users.pluck(:id)
+    all_user_ids = (@program.project_users.pluck(:user_id) - user_ids).compact.uniq
+    role_id = Role.program_admin_user_role.id
+
+    program_admin_user_ids = @program.get_program_admin_ids
+    if (program_admin_user_ids - user_ids).size < 1
+      render json: {msg: "There must be at least 1 program admin exists in program! Please retry."}, status: 406
+    else
+      @program.user_ids = all_user_ids
+    
+      if @program.save
+        render json: {msg: "Users are removed from program successfully!"}, status: 200
+      else
+        render json: {msg: @program.errors.full_messages.join(",")}, status: 406
+      end
+    end
+
+  end
+
   private
   def user_params
     params.require(:user).permit(:first_name, :last_name, :email, :title)
