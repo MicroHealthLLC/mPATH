@@ -371,8 +371,16 @@ class Project < SortableRecord
 
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
 
+    contract_ids = all_authorized_contract_ids
+
+    all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
+    all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)
+    all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
+
+    all_contracts = []
+
     all_facilities = Facility.where(id: all_facility_ids)
-    all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
+    all_facility_group_ids = (all_facilities.map(&:facility_group_id) + all_project_contracts.map(&:facility_group_id) ).compact.uniq
     all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?)", all_facility_group_ids)
 
@@ -385,14 +393,6 @@ class Project < SortableRecord
     pph = {} #user.project_privileges_hash
     fph = {} #user.facility_privileges_hash
     cph = {} #user.contract_privileges_hash[project.id.to_s] || {}
-
-    contract_ids = all_authorized_contract_ids
-    # binding.pry
-    all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
-    all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)
-    all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
-
-    all_contracts = []
 
     all_facility_projects.each do |fp|
 

@@ -20,6 +20,7 @@ class FacilityGroup < SortableRecord
     unassigned = FacilityGroup.unassigned
     contracts.update_all(facility_group_id: unassigned.id)
     facilities.update_all(facility_group_id: unassigned.id)
+    project_contracts.update_all(facility_group_id: unassigned.id)
   end
 
   def set_status
