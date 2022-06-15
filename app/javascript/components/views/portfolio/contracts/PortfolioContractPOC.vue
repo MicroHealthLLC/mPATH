@@ -24,26 +24,26 @@
       width="420"
       prop="pm_contract_poc_id">
      <template slot-scope="scope" >
-     <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.pm_contract_poc_id"> -->
-    <el-popover
+   <el-popover
     placement="top-start"
-    title="Title"
-    v-if="pocOptions && pocOptions.length > 0"
-    width="200"
+    width="400"
     trigger="hover"
-    :content="this.pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.pm_contract_poc_id ).name"> 
-    
-<!--     
-      <el-popover
-    placement="top-start"
-    title="Title"
-    v-if="pocOptions && pocOptions.length > 0"
-    width="200"
-    trigger="hover"
-    :content="scope.row.pm_contract_poc_id">  -->
-    
-
-      <el-select
+    >
+   <p v-if="scope.row.pm_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.pm_contract_poc_id )"> 
+   {{ pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.pm_contract_poc_id ).name }} 
+   </p>
+   <p v-if="scope.row.pm_contract_poc_id && pocOptions.filter(t => t && t.email).find(t => t.id == scope.row.pm_contract_poc_id )"> 
+     <small><b>Email:</b></small>
+    {{ pocOptions.filter(t => t && t.email).find(t => t.id == scope.row.pm_contract_poc_id ).email }} </p>
+   <p v-if="scope.row.pm_contract_poc_id && pocOptions.filter(t => t && t.work_number).find(t => t.id == scope.row.pm_contract_poc_id )"> 
+       <small><b>Work Number:</b></small>
+       {{ pocOptions.filter(t => t && t.work_number).find(t => t.id == scope.row.pm_contract_poc_id ).work_number }}</p>
+   <p v-if="scope.row.pm_contract_poc_id && pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.pm_contract_poc_id )"> 
+      <small><b>Mobile Number:</b></small>
+   {{  pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.pm_contract_poc_id ).mobile_number}} 
+   </p>
+   
+    <el-select
         v-model="scope.row.pm_contract_poc_id"
         filterable       
         track-by="name"        
@@ -64,7 +64,7 @@
         </el-option>
       </el-select>
        </el-popover>    
-      <!-- </span> -->
+  
       <!-- <span v-else>
       {{ scope.row.pm_contract_poc_id }}
       </span> -->
@@ -77,26 +77,55 @@
       prop="gov_contract_poc_id">
      <template slot-scope="scope" >
      <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.gov_contract_poc_id"> -->
-       <el-select
+      <!-- <span  v-if="pocOptions && pocOptions.length > 0  && pocOptions.map(t => t && t !== null) && 
+    pocOptions.filter(t => t && t.name).find(t => t.id == scope.gov_contract_poc_id)
+    ">  -->
+    <el-popover
+    placement="top-start"
+    width="400"
+    trigger="hover"
+    >
+   <p v-if="scope.row.gov_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.gov_contract_poc_id )"> 
+      {{ pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.gov_contract_poc_id ).name }}
+   </p>
+   <p>
+    <small><b>Email:</b></small>
+    <span v-if="scope.row.gov_contract_poc_id && pocOptions.filter(t => t && t.email).find(t => t.id == scope.row.gov_contract_poc_id )">
+      {{ pocOptions.filter(t => t && t.email).find(t => t.id == scope.row.gov_contract_poc_id ).email }} 
+    </span> 
+    </p>
+    <p v-if="scope.row.gov_contract_poc_id && pocOptions.filter(t => t && t.work_number).find(t => t.id == scope.row.gov_contract_poc_id )">
+     <small><b>Work Number:</b></small>
+       {{ pocOptions.filter(t => t && t.work_number).find(t => t.id == scope.row.gov_contract_poc_id ).work_number }}
+    </p>
+  <p v-if="scope.row.gov_contract_poc_id && pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.gov_contract_poc_id )"> 
+        <small><b>Mobile Number:</b></small>
+   {{  pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.gov_contract_poc_id ).mobile_number}} 
+   </p>
+      
+      
+      <el-select
         v-model="scope.row.gov_contract_poc_id"
         filterable       
         track-by="name"        
         value-key="id"
         class="w-100"
+        slot="reference"
         clearable
         allow-create
         default-first-option
            placeholder="Select Government COR POC or Prime POC"
       >
         <el-option
-          v-for="item in pocOptions"
+         v-for="item in pocOptions"
           :key="item.id"
           :label="item.name"
           :value="item.id"
         >
         </el-option>
       </el-select>
-      <!-- </span> -->
+      </el-popover> 
+      <!-- </span>  -->
       <!-- <span v-else>
       {{ scope.row.gov_contract_poc_id }}
       </span> -->
@@ -108,13 +137,35 @@
       width="420"
       prop="co_contract_poc_id">
      <template slot-scope="scope" >
-     <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.co_contract_poc_id"> -->
+        <el-popover
+          placement="top-start"
+          width="400"
+          trigger="hover"
+          >
+       <p v-if="scope.row.co_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.co_contract_poc_id )"> 
+      {{ pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.co_contract_poc_id ).name }}
+      </p>
+      <p>
+      <small><b>Email:</b></small>
+      <span v-if="scope.row.co_contract_poc_id && pocOptions.filter(t => t && t.email).find(t => t.id == scope.row.co_contract_poc_id )">
+      {{ pocOptions.filter(t => t && t.email).find(t => t.id == scope.row.co_contract_poc_id ).email }} 
+     </span> 
+     </p>
+     <p v-if="scope.row.co_contract_poc_id && pocOptions.filter(t => t && t.work_number).find(t => t.id == scope.row.co_contract_poc_id )">
+     <small><b>Work Number:</b></small>
+       {{ pocOptions.filter(t => t && t.work_number).find(t => t.id == scope.row.co_contract_poc_id ).work_number }}
+      </p>
+       <p v-if="scope.row.co_contract_poc_id && pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.co_contract_poc_id )"> 
+        <small><b>Mobile Number:</b></small>
+      {{  pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.co_contract_poc_id ).mobile_number}} 
+       </p>
        <el-select
         v-model="scope.row.co_contract_poc_id"
         filterable       
         track-by="name"        
         value-key="id"
         class="w-100"
+        slot="reference"
         clearable
         allow-create
         default-first-option
@@ -129,7 +180,8 @@
         >
         </el-option>
       </el-select>
-      <!-- </span> -->
+      </el-popover> 
+    
       <!-- <span v-else>
       {{ scope.row.co_contract_poc_id }}
       </span> -->
@@ -236,7 +288,7 @@ export default {
   editMode(index, rows) {
     
     this.rowIndex = index,
-     console.log(this.pocOptions.filter(t => t && t.name).find(t => t.id == 7).name);
+     console.log(this.pocOptions);
       console.log(this.tableData);
     this.rowId = rows.id
   },  
@@ -266,7 +318,7 @@ export default {
     }, 
   pocOptions(){
      if (this.contractPOCs && this.contractPOCs.length > 0){
-        return this.contractPOCs.map(t => t).filter(pocs => pocs && pocs.id)
+        return this.contractPOCs.map(t => t).filter(pocs => pocs && pocs.id && pocs.name !== null )
       }
     },
      pocOption(){
