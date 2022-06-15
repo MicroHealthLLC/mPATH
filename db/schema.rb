@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_14_191902) do
+ActiveRecord::Schema.define(version: 2022_06_15_170431) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -198,13 +198,13 @@ ActiveRecord::Schema.define(version: 2022_06_14_191902) do
     t.string "prime_or_sub"
     t.datetime "contract_start_date"
     t.datetime "contract_end_date"
-    t.decimal "total_contract_value", precision: 10, scale: 5, default: "0.0"
+    t.decimal "total_contract_value", precision: 11, scale: 4, default: "0.0"
     t.integer "contract_pop_id"
     t.integer "contract_current_pop_id"
     t.datetime "contract_current_pop_start_date"
     t.datetime "contract_current_pop_end_date"
-    t.decimal "total_founded_value", precision: 10, scale: 5, default: "0.0"
-    t.decimal "billings_to_date", precision: 10, scale: 5, default: "0.0"
+    t.decimal "total_founded_value", precision: 11, scale: 4, default: "0.0"
+    t.decimal "billings_to_date", precision: 11, scale: 4, default: "0.0"
     t.string "comments"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -275,7 +275,7 @@ ActiveRecord::Schema.define(version: 2022_06_14_191902) do
     t.integer "user_id"
     t.string "full_name"
     t.string "contract_number"
-    t.string "ceiling"
+    t.decimal "ceiling", precision: 11, scale: 4, default: "0.0"
     t.datetime "base_period_start"
     t.datetime "base_period_end"
     t.datetime "option_period_start"
