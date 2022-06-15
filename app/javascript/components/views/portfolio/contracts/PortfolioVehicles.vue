@@ -478,7 +478,7 @@ export default {
       }
       const values = data.map(item => Number(item[column.property]));
       if (!values.every(value => isNaN(value))) {
-        sums[index] = '$ ' + values.reduce((prev, curr) => {
+        sums[index] = values.reduce((prev, curr) => {
           const value = Number(curr);
           if (!isNaN(value)) {
             return prev + curr;
@@ -490,8 +490,16 @@ export default {
         sums[index] = '';
       }
     });
-console.log(sums.map(t => t))
-    return sums;
+     let newSums = ['Totals']
+      for (const ele of sums) {
+        if (ele !== 'Totals'){          
+            newSums.push(ele.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }))
+        }          
+      }       
+     return newSums
   },
     NumbersOnly(evt) {
       evt = (evt) ? evt : window.event;

@@ -428,16 +428,18 @@
       size="small"
       v-if="scope.$index == createRow"
       type="number"
+      step="0.01"  
       style="text-align:center"
       v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
      <el-input
-      size="small"      
+      size="small"    
+      :step="0.01"  
       type="number"
       style="text-align:center"
-      v-model="scope.row.total_contract_value"
+       v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       </span>
@@ -677,8 +679,7 @@
            <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.name }} 
             </span>    
-          </template>
-          
+          </template>          
         </el-table-column>
         <el-table-column
           label="POC Title*"
@@ -767,7 +768,6 @@
             controls-position="right"
             ></el-input>
             </span>
-
           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.work_number }} 
             </span>
@@ -802,38 +802,36 @@
            <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.mobile_number }} 
             </span>
-            </template>
-      
+            </template>      
         </el-table-column>
-        <el-table-column
+         <el-table-column
           label="Notes"
           width="350"
           prop="notes">
           <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-if="scope.$index == pocCreateRow"
-              placeholder=""
-              style="text-align:center"
-              v-model="scope.row.notes"
-              controls-position="right"
-            ></el-input>
-            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
-            <el-input
-              size="small"
-              placeholder=""
-              style="text-align:center"
-              v-model="scope.row.notes"
-              controls-position="right"
-              ></el-input>
+          <el-input
+          size="small"
+          v-if="scope.$index == pocCreateRow"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.notes"
+          controls-position="right"
+        ></el-input>
+        <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+        <el-input
+          size="small"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.notes"
+          controls-position="right"
+          ></el-input>
             </span>
           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
-            <span v-if="scope.row.notes !== 'undefined'">
-              {{ scope.row.notes }} 
-            </span>     
+            {{ scope.row.notes }} 
             </span>
             </template>
-        </el-table-column>
+        </el-table-column>   
+     
         <el-table-column
           label="Actions"
           width="115"
@@ -959,6 +957,7 @@ export default {
     data() {    
       return {
         today: new Date().toISOString().slice(0, 10),
+        totalContractValue: 0,
         workNumberVal: '', 
         workNumberValNew: '', 
         mobNumberVal: '', 
@@ -1010,10 +1009,6 @@ export default {
       //Vehicles
       "fetchContractVehicles"
     ]),
-     formatPrice(value) {
-        let val = (value/1).toFixed(2).replace('.', ',')
-        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    },
     getSummaries(param) {
       const { columns, data } = param;
       const sums = [];
@@ -1024,20 +1019,29 @@ export default {
         }
         const values = data.map(item => Number(item[column.property]));
         if (!values.every(value => isNaN(value))) {
-          sums[index] = '$ ' + values.reduce((prev, curr) => {
+          sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);
             if (!isNaN(value)) {
-              return prev + curr;
+              return prev + curr
             } else {
-              return prev;
+              return prev
             }
           }, 0);
         } else {
           sums[index] = '';
         }
       });
-
-      return sums;
+      let newSums = ['Totals']
+      for (const ele of sums) {
+        if (ele !== 'Totals'){          
+            newSums.push(ele.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }))
+        }          
+      }    
+     
+     return newSums
     },
   validateEmail(m){
     if (m) {
@@ -1232,6 +1236,10 @@ export default {
    
   },
   saveContractPOC(index, row){
+    let filteredNote = ''
+    if(row.notes) {
+    filteredNote = row.notes
+    }
     let workNumber = ''
     let mobNumber = ''
     if (row.id){
@@ -1249,9 +1257,10 @@ export default {
             title: row.title, 
             workNum: workNumber, 
             mobileNum: mobNumber, 
-            notes: row.notes,   
+            notes: filteredNote,   
         },
       };
+       console.log(row)
       if (row.id){
       if ((this.workNumberVal && this.workNumberVal.length !== 14) || (this.mobNumberVal && this.mobNumberVal.length !== 14)){
          this.$message({
@@ -1264,8 +1273,7 @@ export default {
               let id = row.id
               this.updateContractPOC({...contractPOCdata, id})
            }
-      } else {
-
+      }  else {
          if ((this.workNumberValNew && this.workNumberValNew.length !== 14) || (this.mobNumberValNew && this.mobNumberValNew.length !== 14)){
          this.$message({
               message: `Please fix invalid field(s) before saving.`,
@@ -1273,11 +1281,10 @@ export default {
               showClose: true,
             });
 
-        } else {          
-              this.createContractPOC({...contractPOCdata})
+        } else {      
+            this.createContractPOC({...contractPOCdata})
             }
-
-      }     
+       }     
      
     },
   cancelPocEdits() {
