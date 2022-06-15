@@ -66,7 +66,6 @@ if(!window.google){
 Vue.prototype.$portfolio_heading = window.portfolio_heading
 Vue.prototype.$portfolio_title = window.portfolio_heading
 
-
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 // Format: {<program_id> : {
     // <project_id>:{
@@ -94,6 +93,12 @@ Vue.prototype.$topNavigationPermissions = topNavigationPermissions
 Vue.prototype.$projectPrivileges = projectPrivileges
 
 Vue.prototype.$preferences = preferences
+
+Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData) => {
+  let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+  let s = permissionHash[salut]
+  return privilege && privilege.contract_data && privilege.contract_data.includes(s)
+}
 
 // eslint-disable-next-line no-unused-vars
 const portfolioApp = new Vue({

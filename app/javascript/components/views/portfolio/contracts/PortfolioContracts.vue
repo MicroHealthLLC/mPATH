@@ -607,14 +607,14 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) && _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
           type="default"
            v-tooltip="`Delete`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)  && _isallowed('delete')"
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
         <el-button
@@ -1010,8 +1010,7 @@ export default {
       "fetchContractVehicles"
     ]),
     _isallowed(salut) {
-            return  []
-        // return this.checkPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+        return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
     getSummaries(param) {
       const { columns, data } = param;
