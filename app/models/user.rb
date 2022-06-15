@@ -78,7 +78,9 @@ class User < ApplicationRecord
   def provide_view_privileges
     user = self
     privilege = user.privilege || user.create_privilege
-    privilege.update( {"map_view": ["R"], "gantt_view": ["R"],  "members": ["R"], "sheets_view": ["R"], "kanban_view": ["R"], "calendar_view": ["R"]})
+    if !privilege.map_view.present? && !privilege.gantt_view.present? && !privilege.members.present? && !privilege.sheets_view.present? && !privilege.kanban_view.present? && !privilege.calendar_view.present?
+      privilege.update( {"map_view": ["R"], "gantt_view": ["R"],  "members": ["R"], "sheets_view": ["R"], "kanban_view": ["R"], "calendar_view": ["R"]})
+    end    
   end
 
   def provide_program_privileges
