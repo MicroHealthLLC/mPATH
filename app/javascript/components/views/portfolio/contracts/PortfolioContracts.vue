@@ -659,8 +659,7 @@
          <span v-if="scope.$index == pocCreateRow">
           <el-input
           size="small"
-          style="text-align:center"
-          onkeydown="return /[a-z]/i.test(event.key)"
+          style="text-align:center"     
           placeholder=""
           v-model="scope.row.name"
           controls-position="right"
@@ -669,7 +668,6 @@
           <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
           <el-input
             size="small"
-            onkeydown="return /[a-z]/i.test(event.key)"
             style="text-align:center"
             placeholder=""
             v-model="scope.row.name"
@@ -844,6 +842,7 @@
          <template slot-scope="scope">
           <el-button
             type="default"
+          
             @click="saveContractPOC(scope.$index, scope.row)"
             v-if="scope.$index == pocRowIndex" 
             v-tooltip="`Save`" 
@@ -875,6 +874,7 @@
             <el-button
               type="default"
               @click="saveContractPOC(scope.$index, scope.row)"
+             
               v-if="scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
                scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew)" 
               v-tooltip="`Save`" 
@@ -935,12 +935,14 @@ import PortfolioContractBacklog from "./PortfolioContractBacklog.vue";
 import PortfolioContractPOC from "./PortfolioContractPOC.vue";
 import PortfolioExpiredContracts from "./PortfolioExpiredContracts.vue";
 Vue.filter('toCurrency', function (value) {
-    if (typeof value !== "number") {
+    if (isNaN(parseFloat(value))) {
         return value;
     }
     var formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'USD',
+        minimumFractionDigits: 2
+
     });
     return formatter.format(value);
 });
@@ -961,9 +963,9 @@ export default {
         workNumberValNew: '', 
         mobNumberVal: '', 
         mobNumberValNew: '', 
-        isValidWorkNum: false,
-        isValidMobNum: false, 
-        isValidEmail: false,
+        isValidWorkNum: null,
+        isValidMobNum: null, 
+        isValidEmail: null,
         contractStartDate: null,
         contractEndDate: null,
         popStartDate: null,
@@ -1008,81 +1010,87 @@ export default {
       //Vehicles
       "fetchContractVehicles"
     ]),
- getSummaries(param) {
-    const { columns, data } = param;
-    const sums = [];
-    columns.forEach((column, index) => {
-      if (index === 0) {
-        sums[index] = 'Total Cost';
-        return;
-      }
-      const values = data.map(item => Number(item[column.property]));
-      if (!values.every(value => isNaN(value))) {
-        sums[index] = '$ ' + values.reduce((prev, curr) => {
-          const value = Number(curr);
-          if (!isNaN(value)) {
-            return prev + curr;
-          } else {
-            return prev;
-          }
-        }, 0);
-      } else {
-        sums[index] = 'N/A';
-      }
-    });
+     formatPrice(value) {
+        let val = (value/1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    },
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = 'Totals';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = '$ ' + values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+        } else {
+          sums[index] = '';
+        }
+      });
 
-    return sums;
+      return sums;
+    },
+  validateEmail(m){
+    if (m) {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(m))
+    {
+      this.isValidEmail = true
+      return (true)
+    }
+    this.$message({
+      message: `Please enter a valid email address.  Example: "john@example.com"`,
+      type: "warning",
+      showClose: true,
+    });
+      this.isValidEmail = false
+       console.log( this.isValidEmail)
+      return (false)
+    }
+  } ,
+  validatePhoneNumber(m){
+    if (m) {
+      if (m.length == 14){
+        console.log(m.length)
+        this.isValidWorkNum = true
+        return (true)    
+      } else {
+        this.isValidWorkNum = false
+          console.log(this.isValidWorkNum )
+        this.$message({
+          message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
+          type: "warning",
+          showClose: true,
+        });
+      }  
+    }
   },
-validateEmail(m){
-  if (m) {
- if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(m))
-  {
-    this.isValidEmail = true
-    return (true)
-  }
-   this.$message({
-    message: `Please enter a valid email address.  Example: "john@example.com"`,
-    type: "warning",
-    showClose: true,
-  });
-    this.isValidEmail = false
-    return (false)
-  }
-} ,
-validatePhoneNumber(m){
-  if (m) {
- if (m.length == 14)
-  {
-    console.log(m.length)
-    this.isValidWorkNum = true
-    return (true)    
-  }
-   this.$message({
-    message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
-    type: "warning",
-    showClose: true,
-  });
-    this.isValidWorkNum = false
-    return (false)
-  }
- },
- validateMobPhoneNumber(m){
-  if (m) {
- if (m.length == 14)
-  {
-    console.log(m.length)
-    this.isValidMobNum = true
-    return (true)    
-  }
-   this.$message({
-    message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
-    type: "warning",
-    showClose: true,
-  });
-    this.isValidMobNum = false
-    return (false)
-  }
- },
+  validateMobPhoneNumber(m){
+    if (m) {
+  if (m.length == 14)
+    {
+      console.log(m.length)
+      this.isValidMobNum = true
+      return (true)    
+    }
+       console.log(this.isValidMobNum )
+    this.$message({
+      message: `Please enter a valid 10 digit phone number.  Example: (508) 345-2342`,
+      type: "warning",
+      showClose: true,
+    });
+      this.isValidMobNum = false
+      return (false)
+    }
+  },
   acceptNumber() {
     if(this.workNumberVal){
       let x = this.workNumberVal.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
@@ -1244,7 +1252,8 @@ validatePhoneNumber(m){
             notes: row.notes,   
         },
       };
-     if (!this.isValidWorkNum || !this.isValidEmail || !this.isValidMobNum){
+      if (row.id){
+      if ((this.workNumberVal && this.workNumberVal.length !== 14) || (this.mobNumberVal && this.mobNumberVal.length !== 14)){
          this.$message({
               message: `Please fix invalid field(s) before saving.`,
               type: "warning",
@@ -1252,14 +1261,25 @@ validatePhoneNumber(m){
             });
 
         } else {
-          if (row.id){
               let id = row.id
               this.updateContractPOC({...contractPOCdata, id})
-            } else {
+           }
+      } else {
+
+         if ((this.workNumberValNew && this.workNumberValNew.length !== 14) || (this.mobNumberValNew && this.mobNumberValNew.length !== 14)){
+         this.$message({
+              message: `Please fix invalid field(s) before saving.`,
+              type: "warning",
+              showClose: true,
+            });
+
+        } else {          
               this.createContractPOC({...contractPOCdata})
             }
-        }   
-  },
+
+      }     
+     
+    },
   cancelPocEdits() {
     this.pocRowIndex = null;
     this.pocRowId = null;

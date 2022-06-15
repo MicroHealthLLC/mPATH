@@ -67,8 +67,8 @@ ActiveAdmin.register Risk do
     column :priority_level
     column :risk_approach
     column :risk_approach_description, sortable: false
-    column :contract, nil, sortable: 'contracts.name' do |risk|
-      "<span>#{risk.contract&.name}</span>".html_safe
+    column "Contract", :contract_project_data, sortable: 'contract_project_data.name' do |risk|
+      "<span>#{risk.contract_project_data&.name}</span>".html_safe
     end
     column :task_type, nil, sortable: 'task_types.name' do |risk|
       if current_user.admin_write?
@@ -136,7 +136,17 @@ ActiveAdmin.register Risk do
       f.input :impact_description, label: 'Impact Description', input_html: { rows: 8 }
       f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
       if f.object.is_contract_resource?
-        f.input :contract, include_blank: false
+        project_contract_options = []
+        Project.includes([{project_contracts: :contract_project_datum }]).in_batches(of: 1000) do |projects|
+          projects.each do |project|
+            project_contract_options << [project.name, project.id, {disabled: true}]
+            project.project_contracts.each do |pc|
+              project_contract_options << ["&nbsp;&nbsp;&nbsp;#{pc.contract_project_datum.name}".html_safe, pc.id]
+            end
+          end
+        end
+        
+        f.input :project_contract_id, label: 'Conract', as: :select, collection: project_contract_options, input_html: {class: "select2"}
       else
         # div id: 'facility_projects' do
         #   f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
@@ -281,7 +291,7 @@ ActiveAdmin.register Risk do
     end
 
     def scoped_collection
-      super.includes(:task_type, :risk_stage, facility_project: [:project, :facility])
+      super.includes(:contract_project_data, :task_type, :risk_stage, facility_project: [:project, :facility])
     end
   end
 

@@ -1005,7 +1005,8 @@ export default {
     "SET_USERS_PROJECT_ROLES",
     "SET_USERS_CONTRACT_ROLES",
     "SET_USERS_ADMIN_ROLES",
-    "SET_REMOVE_ROLE_STATUS"
+    "SET_REMOVE_ROLE_STATUS",
+    "SET_PROGRAM_USERS_STATUS"
 
     ]),
   ...mapActions([
@@ -1251,6 +1252,13 @@ export default {
       //  console.log(this.projectUsers.length)
     },
    removeUser(index, rows) {  
+
+     let projectUserRoleData = {
+                userData: {
+                  id: rows.id,
+                  programId: this.$route.params.programId, 
+               },
+            };
         this.$confirm(
         `Are you sure you want to remove ${rows.full_name} from your Program?`,
         "Confirm Delete",
@@ -1259,8 +1267,8 @@ export default {
           cancelButtonText: "Cancel",
           type: "warning",
         }
-       ).then(() => {
-        this.removeProgramUser(rows.id);
+       ).then(() => {        
+        this.removeProgramUser({...projectUserRoleData});
       });     
     },
    saveUserEdits() {
@@ -1315,6 +1323,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+        "programUsersStatus",
         "contentLoaded",
         "currentProject",
         "contracts",
@@ -1341,10 +1350,9 @@ export default {
         "getUsersAdminRoles",
          "removeRoleStatus"
     ]),
-
     portfolioUsersOnly(){
       //line 231
-    if (this.getPortfolioUsers && this.programUsers
+    if (this.getPortfolioUsers && this.programUsers && this.programUsers.length > 0
           ){  
         let programUserIds = this.programUsers.map(p => p.id)
         return this.getPortfolioUsers.filter(u => !programUserIds.includes(u.id) )     
@@ -1603,18 +1611,24 @@ export default {
           }
           this.addMoreUsersBtn = true;
           this.SET_ADD_USERS_TO_PROGRAM_STATUS(0);
-          this.fetchProgramUsers(this.programId);         
-        
+          this.fetchProgramUsers(this.programId);       
         }
       },
     },
-  //  getUsersAdminRoles:{
-  //     handler() {
-  //       if(this.openUserRoles && this.assignedAdminRoles ){       
-  //         this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])  
-  //       }
-  //     }
-  //   },
+    programUsersStatus: {
+      handler() {
+        if (this.programUsersStatus == 200) {
+  
+          this.$message({
+            message: `Successfully removed user from program.`,
+            type: "success",
+            showClose: true,
+          });
+           this.fetchProgramUsers(this.programId);  
+            this.SET_PROGRAM_USERS_STATUS(0);   
+          }       
+        }
+      },
     addUserToRoleStatus: {
       handler() {
         if (this.addUserToRoleStatus == 204  || this.addUserToRoleStatus == 200) {
@@ -1654,9 +1668,8 @@ export default {
           this.rowIndex_1 = null;
         }
       },
-    },   
-   
-  },
+    }, 
+  }  
 };
 </script>
 
