@@ -17,6 +17,7 @@ const settingsStore = {
     checked_groups:[],  
     checked_projects:[],
     portfolio_users: [],
+    portfolio_users_status: 0,
     contract: {},
     contracts: [],
     check_all: false, 
@@ -63,6 +64,7 @@ const settingsStore = {
     portfolio_users_loaded: true,
     program_users_loaded: true,
     program_users:[],
+    program_users_status:0,
     added_program_users_loaded:true,  
     new_user_status: 0,
 
@@ -1088,25 +1090,31 @@ const settingsStore = {
           });
       });
     }, 
-    removeProgramUser({ commit }, id) {
-      commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", false);
+    removeProgramUser({ commit }, { userData }) {
+      commit("TOGGLE_PROGRAM_USERS_LOADED", false);
+      let formData = new FormData();
+
+      formData.append("project_id", userData.programId);  
+      formData.append("user_id", userData.id);      
+      
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/users/${id}`,
+        data: formData,
+        url: `${API_BASE_PATH}/program_settings/users/remove_from_program`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_ADD_USERS_TO_PROGRAM", res.data);
-          commit("SET_ADD_USERS_TO_PROGRAM_STATUS", res.status);
+          commit("SET_PROGRAM_USERS", res.data);
+          commit("SET_PROGRAM_USERS_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_ADDED_PROGRAM_USERS_LOADED", true);
+          commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
     deleteProgramProject({ commit }, {programId, id} ) {
@@ -1224,8 +1232,10 @@ const settingsStore = {
     SET_GROUP: (state, value) => (state.group = value),
     SET_GROUPS: (state, value) => (state.groups = value),
     SET_PORTFOLIO_USERS: (state, value) => (state.portfolio_users = value),
+    SET_PORTFOLIO_USERS_STATUS: (state, value) => (state.portfolio_users_status = value),
 
     SET_PROGRAM_USERS: (state, value) => (state.program_users = value),
+    SET_PROGRAM_USERS_STATUS: (state, value) => (state.program_users_status = value),
     SET_GROUP_STATUS: (state, status) => (state.group_status = status),
     SET_PORTFOLIO_PROJECTS_STATUS: (state, status) => (state.portfolio_projects_status = status),
   
@@ -1323,8 +1333,10 @@ const settingsStore = {
     portfolioProjectsLoaded: (state) => state.portfolio_projects_loaded,
 
     getPortfolioUsers: (state) => state.portfolio_users,
+    getPortfolioUsersStatus: (state) => state.portfolio_users_status,
     programUsersLoaded: (state) => state.program_users_loaded,
     programUsers: (state) => state.program_users,
+    programUsersStatus: (state) => state.program_users_status,
     groupStatus: (state) => state.group_status,
     portfolioProjectsStatus: (state) => state.portfolio_projects_status,
     programProjectsStatus: (state) => state.program_projects_status,

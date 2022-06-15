@@ -659,8 +659,7 @@
          <span v-if="scope.$index == pocCreateRow">
           <el-input
           size="small"
-          style="text-align:center"
-          onkeydown="return /[a-z]/i.test(event.key)"
+          style="text-align:center"     
           placeholder=""
           v-model="scope.row.name"
           controls-position="right"
@@ -669,7 +668,6 @@
           <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
           <el-input
             size="small"
-            onkeydown="return /[a-z]/i.test(event.key)"
             style="text-align:center"
             placeholder=""
             v-model="scope.row.name"
@@ -1268,7 +1266,7 @@ export default {
            }
       } else {
 
-         if ((this.workNumberValNew && this.workNumberNew.length !== 14) || (this.mobNumberValNew && this.mobNumberValNew.length !== 14)){
+         if ((this.workNumberValNew && this.workNumberValNew.length !== 14) || (this.mobNumberValNew && this.mobNumberValNew.length !== 14)){
          this.$message({
               message: `Please fix invalid field(s) before saving.`,
               type: "warning",
