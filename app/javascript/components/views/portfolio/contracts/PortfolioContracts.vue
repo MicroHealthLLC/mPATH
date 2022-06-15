@@ -682,7 +682,7 @@
           </template>          
         </el-table-column>
         <el-table-column
-          label="POC Title*"
+          label="Title*"
           width="150"
           prop="title">
           <template slot-scope="scope">
@@ -741,7 +741,7 @@
             </template>
         </el-table-column>
         <el-table-column
-          label="POC Work Phone #**"
+          label="Work Phone #**"
           width="175"
           prop="work_number">
           <template slot-scope="scope">
@@ -774,7 +774,7 @@
             </template>
         </el-table-column>
         <el-table-column
-          label="POC Mobile Phone #**"
+          label="Mobile Phone #**"
           width="175"
           prop="mobile_number">
           <template slot-scope="scope">
@@ -842,7 +842,7 @@
             type="default"
           
             @click="saveContractPOC(scope.$index, scope.row)"
-            v-if="scope.$index == pocRowIndex" 
+            v-if="scope.$index == pocRowIndex && _isallowed('write')" 
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
@@ -859,14 +859,14 @@
               type="default"
               v-tooltip="`Edit`" 
               class="bg-light btn-sm"
-              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
+              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow) && _isallowed('write')"
               @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
               type="default"
               v-tooltip="`Delete`" 
               class="bg-light btn-sm"
-              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
+              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow) &&  _isallowed('delete')"
               @click="deleteContractPoc(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
               </el-button>
             <el-button
@@ -874,7 +874,7 @@
               @click="saveContractPOC(scope.$index, scope.row)"
              
               v-if="scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
-               scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew)" 
+               scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew) && _isallowed('write')" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
@@ -1009,6 +1009,10 @@ export default {
       //Vehicles
       "fetchContractVehicles"
     ]),
+    _isallowed(salut) {
+            return  []
+        // return this.checkPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+    }, 
     getSummaries(param) {
       const { columns, data } = param;
       const sums = [];

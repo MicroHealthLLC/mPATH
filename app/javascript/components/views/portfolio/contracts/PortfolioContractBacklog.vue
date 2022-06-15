@@ -105,6 +105,7 @@
     <el-table-column
        label="Funded Remaining"
        width="115"
+       prop="scope.row.total_founded_value - scope.row.billings_to_date"
       >
        <template slot-scope="scope">
        <span v-if="scope.row.billings_to_date && scope.row.total_founded_value ">
@@ -217,6 +218,10 @@ export default {
     "updateContractProject",
     "fetchContractProjects",
   ]),  
+   _isallowed(salut) {
+            return  []
+        // return this.checkPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+  }, 
   getSummaries(param) {
     const { columns, data } = param;
     const sums = [];

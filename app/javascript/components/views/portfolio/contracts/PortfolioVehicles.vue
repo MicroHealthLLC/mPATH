@@ -191,7 +191,6 @@
       size="small"
       v-if="scope.$index == createRow"
       type="number"
-      v-on:keypress="NumbersOnly"
       style="text-align:center"
       placeholder=""
       v-model="scope.row.ceiling"
@@ -201,17 +200,16 @@
      <el-input
       size="small"    
       type="text"
-      v-on:keypress="NumbersOnly"
-      placeholder=""
+     placeholder=""
       style="text-align:center"
-      v-model="updateCeiling"
+      v-model="scope.row.ceiling"
       controls-position="right"
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
       scope.row.ceiling !== null
       ">
-      {{ parseFloat(scope.row.ceiling) | toCurrency }}
+      {{  scope.row.ceiling | toCurrency }}
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
       scope.row.ceiling == null
@@ -468,6 +466,10 @@ export default {
       "deleteContractVehicle",
       'fetchContractProjects',
     ]),
+    _isallowed(salut) {
+            return  []
+        // return this.checkPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+    }, 
     getSummaries(param) {
     const { columns, data } = param;
     const sums = [];

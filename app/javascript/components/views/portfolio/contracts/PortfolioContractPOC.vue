@@ -25,13 +25,23 @@
       prop="pm_contract_poc_id">
      <template slot-scope="scope" >
      <!-- <span v-if="(scope.row.id && rowId == scope.row.id) || !scope.row.pm_contract_poc_id"> -->
-   <!-- <el-popover
+    <el-popover
     placement="top-start"
     title="Title"
+    v-if="pocOptions && pocOptions.length > 0"
     width="200"
     trigger="hover"
-    :content="scope.row.pm_contract_poc_id">
-   -->
+    :content="this.pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.pm_contract_poc_id ).name"> 
+    
+<!--     
+      <el-popover
+    placement="top-start"
+    title="Title"
+    v-if="pocOptions && pocOptions.length > 0"
+    width="200"
+    trigger="hover"
+    :content="scope.row.pm_contract_poc_id">  -->
+    
 
       <el-select
         v-model="scope.row.pm_contract_poc_id"
@@ -53,7 +63,7 @@
         >
         </el-option>
       </el-select>
-      <!-- </el-popover>  -->
+       </el-popover>    
       <!-- </span> -->
       <!-- <span v-else>
       {{ scope.row.pm_contract_poc_id }}
@@ -156,13 +166,13 @@
         class="bg-secondary btn-sm text-light mx-0">
       <i class="fas fa-ban"></i>
         </el-button> -->
-         <!-- <el-button
+          <el-button
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
            v-if="scope.$index !== rowIndex"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
-          </el-button> -->
+          </el-button> 
         </template>
 
     </el-table-column>
@@ -203,6 +213,10 @@ export default {
   log(e){
    console.log(e)
   },
+  _isallowed(salut) {
+            return  []
+        // return this.checkPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+  }, 
   saveContractPOCs(index, row){
     this.rowIndex = null;
     this.rowId = null;
@@ -220,8 +234,10 @@ export default {
       window.location.pathname = "/";
     },    
   editMode(index, rows) {
+    
     this.rowIndex = index,
-     console.log(rows);
+     console.log(this.pocOptions.filter(t => t && t.name).find(t => t.id == 7).name);
+      console.log(this.tableData);
     this.rowId = rows.id
   },  
   saveEdits(){
