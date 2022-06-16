@@ -56,13 +56,13 @@
       <template slot-scope="scope">
         <el-input
           size="small"
-          v-if="scope.$index == createRow"
+          v-if="_isallowed('write') && scope.$index == createRow"
           class="p-0"
           style="text-align:center"
           v-model="scope.row.charge_code"
           controls-position="right"
         ></el-input>
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
         <el-input
           size="small"
           style="text-align:center"
@@ -84,12 +84,12 @@
       <template slot-scope="scope">
         <el-input
           size="small"
-          v-if="scope.$index == createRow"
+          v-if="_isallowed('write') && scope.$index == createRow"
           style="text-align:center"
           v-model="scope.row.name"
           controls-position="right"
         ></el-input>
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
         <el-input
           size="small"
           style="text-align:center"
@@ -107,7 +107,7 @@
       width="200"
      >
      <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_customer_id"
         filterable       
@@ -139,7 +139,7 @@
       width="125"
       >
        <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_vehicle_id"
         filterable       
@@ -171,7 +171,7 @@
       width="125"
      >
     <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_number_id"
         filterable       
@@ -203,7 +203,7 @@
       width="125"
      >
        <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_award_to_id"
         filterable       
@@ -235,7 +235,7 @@
       width="70"
       >
      <template slot-scope="scope" >
-      <span v-if="rowId == scope.row.id || scope.$index == createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_naic_id"
         filterable       
@@ -267,7 +267,7 @@
       width="70"
       >
       <template slot-scope="scope" >
-      <span v-if="rowId == scope.row.id || scope.$index == createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_award_type_id"
         filterable       
@@ -299,7 +299,7 @@
       width="75"
       >
       <template slot-scope="scope" >
-      <span v-if="rowId == scope.row.id || scope.$index == createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_type_id"
         filterable       
@@ -331,7 +331,7 @@
       width="55"
       prop="prime_or_sub">
      <template slot-scope="scope" >
-      <span v-if="rowId == scope.row.id || scope.$index == createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.prime_or_sub"
         track-by="name"  
@@ -362,13 +362,13 @@
        <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
-          v-if="scope.$index == createRow"
+          v-if="_isallowed('write') && scope.$index == createRow"
           v-model="newContractStartDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
-       <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+       <span v-if="_isallowed('write') && (rowId == scope.row.id && scope.$index !== createRow)">
          <v2-date-picker
           name="Date"     
           v-model="contractStartDate"  
@@ -394,13 +394,13 @@
         <v2-date-picker
           name="Date"     
           v-model="newContractEndDate"  
-          v-if="scope.$index == createRow"
+          v-if="(scope.$index == createRow) && _isallowed('write')"
           :disabled-date="disabledNewContractEndDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"     
           :disabled-date="disabledContractEndDate"
@@ -426,18 +426,20 @@
      <template slot-scope="scope">
      <el-input
       size="small"
-      v-if="scope.$index == createRow"
+      v-if="_isallowed('write') && scope.$index == createRow "
       type="number"
+      step="0.01"  
       style="text-align:center"
       v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
-      <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id && scope.$index !== createRow)">
      <el-input
-      size="small"      
+      size="small"    
+      :step="0.01"  
       type="number"
       style="text-align:center"
-      v-model="scope.row.total_contract_value"
+       v-model="scope.row.total_contract_value"
       controls-position="right"
       ></el-input>
       </span>
@@ -452,7 +454,7 @@
        width="100"
        >
       <template slot-scope="scope" >
-      <span v-if="rowId == scope.row.id || scope.$index == createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_pop_id"
         filterable       
@@ -484,7 +486,7 @@
       width="100"
        >
     <template slot-scope="scope" >
-      <span v-if="rowId == scope.row.id || scope.$index == createRow">
+      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_current_pop_id"
         filterable       
@@ -519,7 +521,7 @@
         <v2-date-picker
           name="Date"   
           v-model="newPopStartDate"      
-          v-if="scope.$index == createRow"
+          v-if="scope.$index == createRow  && _isallowed('write')"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
@@ -549,7 +551,7 @@
         <v2-date-picker
         name="Date" 
         v-model="newPopEndDate"        
-        v-if="scope.$index == createRow"
+        v-if="scope.$index == createRow && _isallowed('write')"
         :disabled-date="disabledNewPoPEndDate"
         value-type="YYYY-MM-DD"                     
         format="M/DD/YYYY"
@@ -576,6 +578,7 @@
     <el-table-column
       label="Actions"
       width="120"
+      v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
       align="center">
    <template slot-scope="scope">
@@ -605,14 +608,14 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow) && _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
           <el-button
           type="default"
            v-tooltip="`Delete`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)  && _isallowed('delete')"
           @click="deleteContractProj(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
         <el-button
@@ -656,7 +659,7 @@
           width="150"
           prop="name">
          <template slot-scope="scope" >
-         <span v-if="scope.$index == pocCreateRow">
+         <span v-if="_isallowed('write') && (scope.$index == pocCreateRow)">
           <el-input
           size="small"
           style="text-align:center"     
@@ -677,17 +680,16 @@
            <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.name }} 
             </span>    
-          </template>
-          
+          </template>          
         </el-table-column>
         <el-table-column
-          label="POC Title*"
+          label="Title*"
           width="150"
           prop="title">
           <template slot-scope="scope">
           <el-input
           size="small"
-          v-if="scope.$index == pocCreateRow"
+          v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
           placeholder=""
           style="text-align:center"
           v-model="scope.row.title"
@@ -714,7 +716,7 @@
           <template slot-scope="scope">
             <el-input
               size="small"
-               v-if="scope.$index == pocCreateRow"
+               v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
               placeholder=""
               v-model="scope.row.email"
               @blur="validateEmail(scope.row.email)"
@@ -740,13 +742,13 @@
             </template>
         </el-table-column>
         <el-table-column
-          label="POC Work Phone #**"
+          label="Work Phone #**"
           width="175"
           prop="work_number">
           <template slot-scope="scope">
           <el-input
             size="small"
-           v-if="scope.$index == pocCreateRow"
+           v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
             placeholder=""
             style="text-align:center"
             type="text"           
@@ -767,20 +769,19 @@
             controls-position="right"
             ></el-input>
             </span>
-
           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.work_number }} 
             </span>
             </template>
         </el-table-column>
         <el-table-column
-          label="POC Mobile Phone #**"
+          label="Mobile Phone #**"
           width="175"
           prop="mobile_number">
           <template slot-scope="scope">
             <el-input
             size="small"
-            v-if="scope.$index == pocCreateRow"
+            v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
             placeholder=""           
             style="text-align:center"
             @input="acceptNumber"
@@ -802,41 +803,40 @@
            <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
             {{ scope.row.mobile_number }} 
             </span>
-            </template>
-      
+            </template>      
         </el-table-column>
-        <el-table-column
+         <el-table-column
           label="Notes"
           width="350"
           prop="notes">
           <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-if="scope.$index == pocCreateRow"
-              placeholder=""
-              style="text-align:center"
-              v-model="scope.row.notes"
-              controls-position="right"
-            ></el-input>
-            <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
-            <el-input
-              size="small"
-              placeholder=""
-              style="text-align:center"
-              v-model="scope.row.notes"
-              controls-position="right"
-              ></el-input>
+          <el-input
+          size="small"
+          v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.notes"
+          controls-position="right"
+        ></el-input>
+        <span v-if="pocRowId == scope.row.id && scope.$index !== pocCreateRow">
+        <el-input
+          size="small"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.notes"
+          controls-position="right"
+          ></el-input>
             </span>
           <span v-if="pocRowId !== scope.row.id && scope.$index !== pocCreateRow">
-            <span v-if="scope.row.notes !== 'undefined'">
-              {{ scope.row.notes }} 
-            </span>     
+            {{ scope.row.notes }} 
             </span>
             </template>
-        </el-table-column>
+        </el-table-column>   
+     
         <el-table-column
           label="Actions"
           width="115"
+           v-if="_isallowed('write') || _isallowed('delete')"
           fixed="right"
           align="center">
          <template slot-scope="scope">
@@ -844,7 +844,7 @@
             type="default"
           
             @click="saveContractPOC(scope.$index, scope.row)"
-            v-if="scope.$index == pocRowIndex" 
+            v-if="(_isallowed('write')) && scope.$index == pocRowIndex" 
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
@@ -861,21 +861,20 @@
               type="default"
               v-tooltip="`Edit`" 
               class="bg-light btn-sm"
-              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
+              v-if="(_isallowed('write')) && (scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="editPocRow(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
               type="default"
               v-tooltip="`Delete`" 
               class="bg-light btn-sm"
-              v-if="(scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
+              v-if="(_isallowed('delete')) && (scope.$index !== pocRowIndex) && (scope.$index !== pocCreateRow)"
               @click="deleteContractPoc(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
               </el-button>
             <el-button
               type="default"
-              @click="saveContractPOC(scope.$index, scope.row)"
-             
-              v-if="scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
+              @click="saveContractPOC(scope.$index, scope.row)"             
+              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
                scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew)" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
@@ -959,6 +958,7 @@ export default {
     data() {    
       return {
         today: new Date().toISOString().slice(0, 10),
+        totalContractValue: 0,
         workNumberVal: '', 
         workNumberValNew: '', 
         mobNumberVal: '', 
@@ -1010,10 +1010,9 @@ export default {
       //Vehicles
       "fetchContractVehicles"
     ]),
-     formatPrice(value) {
-        let val = (value/1).toFixed(2).replace('.', ',')
-        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    },
+    _isallowed(salut) {
+        return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+    }, 
     getSummaries(param) {
       const { columns, data } = param;
       const sums = [];
@@ -1024,20 +1023,29 @@ export default {
         }
         const values = data.map(item => Number(item[column.property]));
         if (!values.every(value => isNaN(value))) {
-          sums[index] = '$ ' + values.reduce((prev, curr) => {
+          sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);
             if (!isNaN(value)) {
-              return prev + curr;
+              return prev + curr
             } else {
-              return prev;
+              return prev
             }
           }, 0);
         } else {
           sums[index] = '';
         }
       });
-
-      return sums;
+      let newSums = ['Totals']
+      for (const ele of sums) {
+        if (ele !== 'Totals'){          
+            newSums.push(ele.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }))
+        }          
+      }    
+     
+     return newSums
     },
   validateEmail(m){
     if (m) {
@@ -1232,6 +1240,10 @@ export default {
    
   },
   saveContractPOC(index, row){
+    let filteredNote = ''
+    if(row.notes) {
+    filteredNote = row.notes
+    }
     let workNumber = ''
     let mobNumber = ''
     if (row.id){
@@ -1249,9 +1261,10 @@ export default {
             title: row.title, 
             workNum: workNumber, 
             mobileNum: mobNumber, 
-            notes: row.notes,   
+            notes: filteredNote,   
         },
       };
+       console.log(row)
       if (row.id){
       if ((this.workNumberVal && this.workNumberVal.length !== 14) || (this.mobNumberVal && this.mobNumberVal.length !== 14)){
          this.$message({
@@ -1264,8 +1277,7 @@ export default {
               let id = row.id
               this.updateContractPOC({...contractPOCdata, id})
            }
-      } else {
-
+      }  else {
          if ((this.workNumberValNew && this.workNumberValNew.length !== 14) || (this.mobNumberValNew && this.mobNumberValNew.length !== 14)){
          this.$message({
               message: `Please fix invalid field(s) before saving.`,
@@ -1273,11 +1285,10 @@ export default {
               showClose: true,
             });
 
-        } else {          
-              this.createContractPOC({...contractPOCdata})
+        } else {      
+            this.createContractPOC({...contractPOCdata})
             }
-
-      }     
+       }     
      
     },
   cancelPocEdits() {

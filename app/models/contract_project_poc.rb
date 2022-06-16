@@ -3,6 +3,6 @@ class ContractProjectPoc < ApplicationRecord
   before_save :filter_values
 
   def filter_values
-    self.attributes.reject!{|k,v| v == nil || v == 'undefined' }
+    self.attributes.reject!{|k,v| v == 'undefined' }
   end
 end
