@@ -250,15 +250,15 @@
                       ></i>
                       <span
                         v-if="
-                          groupContracts &&
+                          groupContracts && groupContracts.length > 0 &&
                             groupContracts
-                              .map((t) => t.facility_group_id)
+                              .map((t) => t && t.facility_group && t.facility_group.id)
                               .filter((t) => t == props.row.id).length
                         "
                       >
                         {{
                           groupContracts
-                            .map((t) => t.facility_group_id)
+                            .map((t) => t.facility_group.id)
                             .filter((t) => t == props.row.id).length
                         }}
                       </span>
@@ -316,15 +316,15 @@
                           Contracts
                           <span
                             v-if="
-                              groupContracts &&
+                              groupContracts && groupContracts.length > 0 &&
                                 groupContracts
-                                  .map((t) => t.facility_group_id)
-                                  .filter((t) => t == props.row.id).length
+                                  .map((t) => t && t.facility_group)
+                                  
                             "
                             class="badge badge-secondary badge-pill pill"
                             >{{
                               groupContracts
-                                .map((t) => t.facility_group_id)
+                                .map((t) => t.facility_group.id)
                                 .filter((t) => t == props.row.id).length
                             }}
                           </span>
@@ -334,11 +334,11 @@
                             >{{ 0 }}
                           </span>
                         </h5>
-                        <span v-if="groupContracts">
+                        <span v-if="groupContracts && groupContracts.length > 0">
                           <ul class="pl-3 mb-0">
                             <li
                               v-for="(item, i) in groupContracts.filter(
-                                (t) => t.facility_group_id == props.row.id
+                                (t) => t.facility_group.id == props.row.id
                               )"
                               :key="i"
                             >
@@ -530,6 +530,7 @@ export default {
     },
     openPortfolioGroup() {
       this.dialog2Visible = true;
+      console.log(this.groupContracts)
      },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
@@ -780,8 +781,8 @@ export default {
   groupContracts() {
      if (this.contracts && this.contracts.length > 0) {
           // console.log(this.contracts)
-          return this.contracts;
-      }
+          return this.contracts.filter(t => t !== 'null');
+      } else return []
     },
     // groupContracts() {
       // contracts array no longer in currentProject response

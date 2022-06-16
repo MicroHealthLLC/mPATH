@@ -103,6 +103,14 @@
               class="bg-primary text-light btn-sm">
               <i class="fal fa-user-lock mr-1 text-light"></i>
             </el-button>
+            <el-button
+              type="default"
+              v-tooltip="`Remove User from Program`"
+              @click.prevent="removeUser(scope.$index, scope.row)"
+              v-if="scope.$index !== rowIndex"
+              class="bg-light btn-sm">
+             <i class="fal fa-user-slash text-danger"></i>
+            </el-button>
             <el-button  
                 type="default" 
                 v-tooltip="`Edit User info`"  
@@ -997,7 +1005,8 @@ export default {
     "SET_USERS_PROJECT_ROLES",
     "SET_USERS_CONTRACT_ROLES",
     "SET_USERS_ADMIN_ROLES",
-    "SET_REMOVE_ROLE_STATUS"
+    "SET_REMOVE_ROLE_STATUS",
+    "SET_PROGRAM_USERS_STATUS"
 
     ]),
   ...mapActions([
@@ -1010,6 +1019,7 @@ export default {
     "createNewUser", 
     "updateUserData", 
     "removeUserRole",
+    "removeProgramUser",
     "addUsersToProgram"
     ]),
    handleExpandChange(row, expandedRows) {   
@@ -1018,10 +1028,6 @@ export default {
 			const lastId = this.expandRowKeys[0];
 			// disable mutiple row expanded 
 			this.expandRowKeys = this.projId  === lastId ? [] : [this.projId];  
-      // if (this.projectUsers && this.projectUsers.length > 0) {
-          // console.log(this.contractNames)
-      // }
-   
 		},
    _isallowed(salut) {
       return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
@@ -1029,8 +1035,7 @@ export default {
    log(e){
     //  console.log(`contracts:  ${e}` )
    },
-   removeRoles(index, rowData){   
- 
+   removeRoles(index, rowData){    
       if (this.isEditingRoles) {
         let projIds = this.projectRoleUsers.map(t => t.facilityProjectId); 
         let assigned =  this.assignedUserProjects.map(t => t.facilityProjectId);   
@@ -1043,13 +1048,13 @@ export default {
                   projectIds: ids,   
               },
             };
-            console.log(projectUserRoleData)
+            // console.log(ids)
             this.removeUserRole({
               ...projectUserRoleData,
             });
       }
       if (this.isEditingContractRoles) {
-        let cIds = this.contractRoleUsers.map(t => t.id);
+        let cIds = this.contractRoleUsers.map(t => t.project_contract_id);
         let assignedContracts =  this.assignedUserContracts.map(t => t.project_contract_id);
         let aCids =  assignedContracts.filter(t => !cIds.includes(t));
         let projectUserRoleData = {
@@ -1060,32 +1065,16 @@ export default {
                   contractIds: aCids,   
               },
             };
-            // console.log("editAdmin in progress", this.isEditingContractRoles)
-            console.log("data", projectUserRoleData)
+            // console.log(aCids)
             this.removeUserRole({
               ...projectUserRoleData,
             });
-      } 
-      
-      // if (this.isEditingAdminRoles) {
-      //   let projectUserRoleData = {
-      //           userData: {
-      //             roleId: this.assignedAdminRoles[0].id,
-      //             userId: [this.userData.id],
-      //             programId: this.$route.params.programId, 
-      //             adminRole: true, 
-      //         },
-      //       };
-      //       console.log(projectUserRoleData )
-      //       this.removeUserRole({
-      //         ...projectUserRoleData,
-      //       });
-      // }          
+      }     
     },
   editRoles(index, rowData){
     this.roleRowId = rowData   
     this.editRoleRowData = rowData;
-    console.log(this.projectUsers)
+    // console.log(this.projectUsers)
     this.rowIndex_1 = index;
     this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects)   
     this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts)
@@ -1162,10 +1151,10 @@ export default {
    
     },
     addRoleToUser(index, rows){
-      console.log(rows)
+      // console.log(rows)
     },
     associateUserRole(index, rows){
-      console.log(rows)
+      // console.log(rows)
     },
     addPortfolioUsersToProgram(){
       if (this.portfolioUsers && this.portfolioUsers.length > 0) {
@@ -1215,7 +1204,7 @@ export default {
       if(this.getRoles && this.getRoles.length <= 0){
       this.fetchRoles(this.$route.params.programId) 
       }    
-      console.log(this.projectUsers)
+      // console.log(this.projectUsers)
       this.openUserRoles = true    
       this.userData = rows    
       this.fetchContracts(this.$route.params.programId)
@@ -1261,6 +1250,26 @@ export default {
       this.rowUser = rows
       // console.log(rows)
       //  console.log(this.projectUsers.length)
+    },
+   removeUser(index, rows) {  
+
+     let projectUserRoleData = {
+                userData: {
+                  id: rows.id,
+                  programId: this.$route.params.programId, 
+               },
+            };
+        this.$confirm(
+        `Are you sure you want to remove ${rows.full_name} from your Program?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {        
+        this.removeProgramUser({...projectUserRoleData});
+      });     
     },
    saveUserEdits() {
     let editUserData = {
@@ -1314,6 +1323,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+        "programUsersStatus",
         "contentLoaded",
         "currentProject",
         "contracts",
@@ -1340,10 +1350,9 @@ export default {
         "getUsersAdminRoles",
          "removeRoleStatus"
     ]),
-
     portfolioUsersOnly(){
       //line 231
-    if (this.getPortfolioUsers && this.programUsers
+    if (this.getPortfolioUsers && this.programUsers && this.programUsers.length > 0
           ){  
         let programUserIds = this.programUsers.map(p => p.id)
         return this.getPortfolioUsers.filter(u => !programUserIds.includes(u.id) )     
@@ -1466,7 +1475,7 @@ export default {
          return {                
                   data: data,
                   dataRow: data.filter(t => this.roleRowId == t.role_id),
-                  roleIds: _.uniq(data.filter(t => t.project_id == this.$route.params.programId).map(t => t.role_id)),     
+                  roleIds: _.uniq(data.filter(t => t.project_id == this.$route.params.programId && (t.facility_project_id || t.project_contract_id )).map(t => t.role_id)),     
                   roleNames: _.uniq(data.map(t => t.role_name))                 
                 }      
          }   
@@ -1527,15 +1536,6 @@ export default {
         //  console.log(value)
         }      
     },
-  //  adminRoles(){
-  //     if(this.getRoles && this.getRoles.length > 0 ){   
-  //       let roleUsers = this.getRoles.map(t => t.type_of == 'admin' && t.role_users).filter(t => t.length > 0)
-  //      if (this.projId)  {
-  //           return [].concat.apply([], roleUsers).filter(t => this.projId == t.user_id)
-  //       } else return [].concat.apply([], roleUsers)
-       
-  //     }
-  //   },
     projectRoles(){
       if(this.getRoles && this.getRoles.length > 0 ){   
         let roleUsers = this.getRoles.map(t => t.type_of == 'project' && t.role_users).filter(t => t.length > 0)
@@ -1611,18 +1611,24 @@ export default {
           }
           this.addMoreUsersBtn = true;
           this.SET_ADD_USERS_TO_PROGRAM_STATUS(0);
-          this.fetchProgramUsers(this.programId);         
-        
+          this.fetchProgramUsers(this.programId);       
         }
       },
     },
-  //  getUsersAdminRoles:{
-  //     handler() {
-  //       if(this.openUserRoles && this.assignedAdminRoles ){       
-  //         this.SET_USERS_ADMIN_ROLES(this.assignedAdminRoles[0])  
-  //       }
-  //     }
-  //   },
+    programUsersStatus: {
+      handler() {
+        if (this.programUsersStatus == 200) {
+  
+          this.$message({
+            message: `Successfully removed user from program.`,
+            type: "success",
+            showClose: true,
+          });
+           this.fetchProgramUsers(this.programId);  
+            this.SET_PROGRAM_USERS_STATUS(0);   
+          }       
+        }
+      },
     addUserToRoleStatus: {
       handler() {
         if (this.addUserToRoleStatus == 204  || this.addUserToRoleStatus == 200) {
@@ -1662,9 +1668,8 @@ export default {
           this.rowIndex_1 = null;
         }
       },
-    },   
-   
-  },
+    }, 
+  }  
 };
 </script>
 

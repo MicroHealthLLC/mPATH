@@ -146,6 +146,7 @@
                 class="w-100"               
                 filterable
                 track-by="id"
+                clearable
                 value-key="id"
                 placeholder="Search and select Group"
                 >
@@ -161,7 +162,8 @@
                <span v-if="rowId == scope.row.id && !scope.row.facility_group">
                 <el-select
                 v-model="newGroup"
-                class="w-100"               
+                class="w-100"     
+                clearable          
                 filterable
                 track-by="id"
                 value-key="id"
@@ -736,15 +738,16 @@ export default {
      this.associateContractToProgram({...contractData})
     },
     goToContract(index, rows) {
+      console.log(rows)
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-      window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
-      // this.$router.push({
-      //   name: "SheetContract",
-      //   params: {
-      //     programId: this.$route.params.programId,
-      //     contractId: rows.id.toString(),
-      //   },
-      // });
+      // window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
+      this.$router.push({
+        name: "SheetContract",
+        params: {
+          programId: this.$route.params.programId,
+          contractId: rows.project_contract_id,
+        },
+      });
     },
 	  handleExpandChange (row, expandedRows) {
 			this.projId = row.id;
@@ -787,26 +790,27 @@ export default {
     //     return { formData }
     
     saveEdits(index, rows) {
-      // console.log(this.facilityGroups)
       let groupId = null
-      if (this.newGroup){
-          groupId = this.newGroup
-      } else groupId = rows.facility_group.id
-      
-      let id = rows.project_contract_id;
-      let contractData = {
-        contract: {
-          facility_group_id: groupId,
-          programId: this.$route.params.programId,
-        },
-      };
-      // this.setNewContractGroupFilter(rows.facility_group_id);
+      if (rows.facility_group.id){
+            groupId = rows.facility_group.id  
+        }
+        if (!rows.facility_group.id ) {
+              groupId = 169
+              // 169 is Unassigned Group facility_group.id
+        } 
+        let id = rows.project_contract_id;
+        let contractData = {
+          contract: {
+            facility_group_id: groupId,
+            programId: this.$route.params.programId,
+          },
+        };
+      this.setNewContractGroupFilter(rows.facility_group_id);
       this.updateContract({
         ...contractData,
         id,
       });
-        // console.log(rows)
-      // console.log(groupId)
+      console.log(groupId)
       this.rowIndex = null;
       this.rowId = null;
     },
@@ -852,6 +856,7 @@ export default {
       //       console.log(this.allContracts)
       //           console.log('tableData', this.tableData)
       //  }
+      console.log(this.tableData)
       this.contractDialogVisible = true;
        this.fetchContractProjects();
     },
@@ -895,9 +900,9 @@ export default {
     tableData(){
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
-        // console.log(this.contacts)
+        let con = this.contracts.filter(t => t !== 'null')
         return (
-            this.contracts.filter((td) => {
+              con.filter((td) => {
                 if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0) {
                   let group = this.C_projectGroupFilter.map((t) => t.name);
                   return group.includes(td.facility_group.name);

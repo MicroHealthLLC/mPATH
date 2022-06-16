@@ -96,14 +96,15 @@
       >
       <template slot-scope="scope">
      <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
-      {{Math.trunc(scope.row.billings_to_date / scope.row.total_contract_value)}}%
+      <!-- {{(scope.row.billings_to_date / scope.row.total_contract_value).toFixed(2) }}% -->
+      {{ Number((scope.row.billings_to_date / scope.row.total_contract_value)/1).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0}) }}
+      
      </span>
       </template>
     </el-table-column>
     <el-table-column
-       label="Funding Remaining"
+       label="Funded Remaining"
        width="115"
-
       >
        <template slot-scope="scope">
        <span v-if="scope.row.billings_to_date && scope.row.total_founded_value ">
@@ -112,7 +113,7 @@
        </template>       
     </el-table-column>
     <el-table-column
-      label="Total Backlog (Sum of A & B)"
+      label="Total Backlog"
        width="115"
       >
      <template slot-scope="scope">
@@ -125,7 +126,6 @@
      <el-table-column
        label="Notes/Questions"
        width="300"
-       prop="comments"
       >
       <template slot-scope="scope">
        <span v-if="rowId == scope.row.id">
@@ -147,12 +147,13 @@
       label="Actions"
       width="95"
       fixed="right"
+      v-if="_isallowed('write') || _isallowed('delete')"
       align="center">
    <template slot-scope="scope">
       <el-button
         type="default"
         @click="saveBacklogValues(scope.$index, scope.row)"
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowed('write')" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
@@ -169,7 +170,7 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex)"
+           v-if="(scope.$index !== rowIndex) &&  _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
         </template>
@@ -177,7 +178,7 @@
     </el-table-column>
   </el-table>
       </div>
-      </div>
+    </div>
 
 
  
@@ -217,30 +218,41 @@ export default {
     "updateContractProject",
     "fetchContractProjects",
   ]),  
+   _isallowed(salut) {
+     return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+  }, 
   getSummaries(param) {
     const { columns, data } = param;
     const sums = [];
     columns.forEach((column, index) => {
       if (index === 0) {
-        sums[index] = 'Total Cost';
+        sums[index] = 'Totals';
         return;
       }
       const values = data.map(item => Number(item[column.property]));
       if (!values.every(value => isNaN(value))) {
-        sums[index] = '$ ' + values.reduce((prev, curr) => {
+        sums[index] = values.reduce((prev, curr) => {
           const value = Number(curr);
-          if (!isNaN(value)) {
+         if (!isNaN(value)) {
             return prev + curr;
           } else {
             return prev;
           }
         }, 0);
       } else {
-        sums[index] = 'N/A';
+        sums[index] = '';
       }
     });
-
-    return sums;
+     let newSums = ['Totals']
+      for (const ele of sums) {
+        if (ele !== 'Totals'){          
+            newSums.push(ele.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }))
+        }          
+      }       
+     return newSums
   },
   saveBacklogValues(index, row){
     this.rowIndex = null;
@@ -261,7 +273,7 @@ export default {
  editMode(index, rows) {
     this.rowIndex = index,
     this.rowId = rows.id
-    console.log(rows)
+    // console.log(rows)
   },  
   saveEdits(){
     // Row edit action will occur here
@@ -269,22 +281,13 @@ export default {
     this.rowId = null;
   }, 
   saveNewRow(){
-    // Row create action will occur here
-    //After save, dont forget to push new empty object to append new create row
     this.rowIndex = null;
     this.rowId = null;
   },
   cancelEdits(index, rows) {
     this.rowIndex = null;
-    this.rowId = null;
-       
+    this.rowId = null;       
   },    
-  handleEdit(index, row) {
-        console.log(index, row);
-      },
-  handleDelete(index, row) {
-    console.log(index, row);
-  }
   },
   mounted() {
     

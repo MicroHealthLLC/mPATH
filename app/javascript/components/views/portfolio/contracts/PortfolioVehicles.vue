@@ -16,13 +16,13 @@
     <template slot-scope="scope">
     <el-input
       size="small"
-      v-if="scope.$index == createRow"
+      v-if="( _isallowed('write') ) && scope.$index == createRow"
       placeholder=""
       style="text-align:center"
       v-model="scope.row.name"
       controls-position="right"
     ></el-input>
-    <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+    <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
      <el-input
       size="small"
       placeholder=""
@@ -44,13 +44,13 @@
     <template slot-scope="scope">
      <el-input
       size="small"
-      v-if="scope.$index == createRow"
+      v-if="( _isallowed('write') ) && scope.$index == createRow"
       placeholder=""
       style="text-align:center"
       v-model="scope.row.full_name"
       controls-position="right"
       ></el-input>
-    <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+    <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
      <el-input
       size="small"
       placeholder=""
@@ -71,7 +71,7 @@
       width="250"
       >
       <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if="_isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_sub_category_id"
         filterable       
@@ -105,7 +105,7 @@
      >
 
     <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if=" _isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_agency_id"
         filterable       
@@ -138,7 +138,7 @@
       width="125"
      >
      <template slot-scope="scope" >
-     <span v-if="rowId == scope.row.id || scope.$index == createRow">
+     <span v-if=" _isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_vehicle_type_id"
         filterable       
@@ -189,29 +189,27 @@
       <template slot-scope="scope">
      <el-input
       size="small"
-      v-if="scope.$index == createRow"
+      v-if="( _isallowed('write') ) && scope.$index == createRow"
       type="number"
-      v-on:keypress="NumbersOnly"
       style="text-align:center"
       placeholder=""
       v-model="scope.row.ceiling"
       controls-position="right"
       ></el-input>
-      <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+      <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
      <el-input
       size="small"    
       type="text"
-      v-on:keypress="NumbersOnly"
-      placeholder=""
+     placeholder=""
       style="text-align:center"
-      v-model="updateCeiling"
+      v-model="scope.row.ceiling"
       controls-position="right"
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
       scope.row.ceiling !== null
       ">
-      {{ parseFloat(scope.row.ceiling) | toCurrency }}
+      {{  scope.row.ceiling | toCurrency }}
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
       scope.row.ceiling == null
@@ -228,13 +226,13 @@
      <template slot-scope="scope">
       <v2-date-picker
         name="Date"       
-        v-if="scope.$index == createRow"
+        v-if="( _isallowed('write') ) && scope.$index == createRow"
         v-model="newBpStart"  
         value-type="YYYY-MM-DD"                      
         format="MM/DD/YYYY"
         class="w-100"
         />
-      <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+      <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
         <v2-date-picker
         name="Date"    
         v-model="bpStart"     
@@ -256,33 +254,33 @@
       label="Base Period End*"
       width="100"
       >
-         <template slot-scope="scope">
-        <v2-date-picker
-          name="Date"       
-          v-if="scope.$index == createRow"
-          v-model="newBpEnd"  
-          :disabled-date="disabledNewBpEndDate"
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
-         <v2-date-picker
-          name="Date"    
-          v-model="bpEnd"  
-         :disabled-date="disabledBpEndDate"
-          value-type="YYYY-MM-DD"                     
-          format="M/DD/YYYY"
-          class="w-100"
-          />
-        </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-        <span v-if="scope.row.base_period_end == null || scope.row.base_period_end == undefined" >        
-        </span>
-        <span v-else> {{ moment(scope.row.base_period_end).format("MM-DD-YYYY") }}
-        </span>      
-      </span>
-     </template>
+      <template slot-scope="scope">
+    <v2-date-picker
+      name="Date"       
+      v-if="( _isallowed('write') ) && scope.$index == createRow"
+      v-model="newBpEnd"  
+      :disabled-date="disabledNewBpEndDate"
+      value-type="YYYY-MM-DD"                     
+      format="M/DD/YYYY"
+      class="w-100"
+      />
+    <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+      <v2-date-picker
+      name="Date"    
+      v-model="bpEnd"  
+      :disabled-date="disabledBpEndDate"
+      value-type="YYYY-MM-DD"                     
+      format="M/DD/YYYY"
+      class="w-100"
+      />
+    </span>
+  <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+    <span v-if="scope.row.base_period_end == null || scope.row.base_period_end == undefined" >        
+    </span>
+    <span v-else> {{ moment(scope.row.base_period_end).format("MM-DD-YYYY") }}
+    </span>      
+  </span>
+  </template>
     </el-table-column>
      <el-table-column
       label="Option Period Start"
@@ -291,13 +289,13 @@
        <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
-          v-if="scope.$index == createRow"
+          v-if="_isallowed('write') && scope.$index == createRow"
           v-model="newOpStart"  
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if=" _isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"    
           v-model="opStart"     
@@ -321,14 +319,14 @@
       <template slot-scope="scope">
         <v2-date-picker
           name="Date"       
-          v-if="scope.$index == createRow"
+          v-if="scope.$index == createRow && _isallowed('write')"
           v-model="newOpEnd" 
           :disabled-date="disabledNewOpEndDate"
           value-type="YYYY-MM-DD"                     
           format="M/DD/YYYY"
           class="w-100"
           />
-        <span v-if="rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
          <v2-date-picker
           name="Date"    
           v-model="opEnd"   
@@ -348,6 +346,7 @@
     </el-table-column>
     <el-table-column
      label="Actions"
+      v-if="_isallowed('write') || _isallowed('delete') "
       width="120"
       fixed="right"
       align="center"
@@ -356,7 +355,7 @@
          <el-button
         type="default"
         @click="saveContractVehicle(scope.$index, scope.row)"
-        v-if="scope.$index == rowIndex && (scope.row.name && 
+        v-if="( _isallowed('write') )  && scope.$index == rowIndex && (scope.row.name && 
           scope.row.full_name && scope.row.contract_sub_category_id &&
            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
           bpStart && bpEnd)" 
@@ -376,20 +375,20 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+           v-if="( _isallowed('write') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
            <el-button
           type="default"
            v-tooltip="`Delete`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex) && (scope.$index !== createRow)"
+           v-if="( _isallowed('delete') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
           @click="deleteContractVeh(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
           </el-button>
           <el-button
           type="default"
           @click="saveContractVehicle(scope.$index, scope.row)"
-          v-if="scope.$index == createRow && (scope.row.name && 
+          v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
           scope.row.full_name && scope.row.contract_sub_category_id &&
            scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
           newBpStart && newBpEnd)" 
@@ -459,7 +458,7 @@ export default {
   
   methods: {
     ...mapMutations([
-       "SET_CONTRACT_VEHICLES_STATUS"
+       "SET_CONTRACT_VEHICLE_STATUS"
     ]),
     ...mapActions([
       "createContractVehicle",
@@ -468,17 +467,20 @@ export default {
       "deleteContractVehicle",
       'fetchContractProjects',
     ]),
+    _isallowed(salut) {     
+     return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+    }, 
     getSummaries(param) {
     const { columns, data } = param;
     const sums = [];
     columns.forEach((column, index) => {
       if (index === 0) {
-        sums[index] = 'Total Cost';
+        sums[index] = 'Totals';
         return;
       }
       const values = data.map(item => Number(item[column.property]));
       if (!values.every(value => isNaN(value))) {
-        sums[index] = '$ ' + values.reduce((prev, curr) => {
+        sums[index] = values.reduce((prev, curr) => {
           const value = Number(curr);
           if (!isNaN(value)) {
             return prev + curr;
@@ -487,11 +489,19 @@ export default {
           }
         }, 0);
       } else {
-        sums[index] = 'N/A';
+        sums[index] = '';
       }
     });
-console.log(sums)
-    return sums;
+     let newSums = ['Totals']
+      for (const ele of sums) {
+        if (ele !== 'Totals'){          
+            newSums.push(ele.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }))
+        }          
+      }       
+     return newSums
   },
     NumbersOnly(evt) {
       evt = (evt) ? evt : window.event;
@@ -645,9 +655,12 @@ console.log(sums)
       "contractVehiclesStatus",
       "contractVehicles",
       "contractVehiclesLoaded",
+      "contractVehicleStatus",
+      "contractVehicle",
+      "contractVehicleLoaded",
     ]),   
     tableData(){
-      if (this.contractVehicles && this.contractVehicles.length > 0){
+      if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
         let data = this.contractVehicles
         data.push({})
         return data
@@ -703,15 +716,15 @@ contractAgencyOptions(){
        }
      }
     },
-     contractVehiclesStatus: {
+     contractVehicleStatus: {
       handler() {
-        if (this.contractVehiclesStatus == 200) {
+        if (this.contractVehicleStatus == 200) {
           this.$message({
             message: `Vehicle data saved successfully.`,
             type: "success",
             showClose: true,
           });
-          this.SET_CONTRACT_VEHICLES_STATUS(0);
+          this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();
           this.fetchContractProjects()
           this.bpStart = null;

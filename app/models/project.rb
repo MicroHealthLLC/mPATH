@@ -371,8 +371,16 @@ class Project < SortableRecord
 
     all_notes = Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
 
+    contract_ids = all_authorized_contract_ids
+
+    all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
+    all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)
+    all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
+
+    all_contracts = []
+
     all_facilities = Facility.where(id: all_facility_ids)
-    all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
+    all_facility_group_ids = (all_facilities.map(&:facility_group_id) + all_project_contracts.map(&:facility_group_id) ).compact.uniq
     all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where("id in (?)", all_facility_group_ids)
 
@@ -385,14 +393,6 @@ class Project < SortableRecord
     pph = {} #user.project_privileges_hash
     fph = {} #user.facility_privileges_hash
     cph = {} #user.contract_privileges_hash[project.id.to_s] || {}
-
-    contract_ids = all_authorized_contract_ids
-    # binding.pry
-    all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: contract_ids, noteable_type: "ProjectContract")
-    all_project_contracts = ProjectContract.includes(:contract_project_datum).where(id: contract_ids)
-    all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
-
-    all_contracts = []
 
     all_facility_projects.each do |fp|
 
@@ -472,7 +472,7 @@ class Project < SortableRecord
     end
 
     contract_hash = []
-    
+    project_contract_hash2 = {}
     all_project_contracts.each do |pc|
       c = all_contract_poject_data.detect{|cp| cp.id == pc.contract_project_datum_id}
       
@@ -512,6 +512,7 @@ class Project < SortableRecord
         c_hash[:notes] = notes.map(&:to_json)
       end
 
+      project_contract_hash2[pc.id] = c_hash
       contract_hash << c_hash
     end
 
@@ -521,14 +522,21 @@ class Project < SortableRecord
       h2[:facilities] = []
       h2[:project_ids] = []
 
-      # h2[:contracts] = (all_contracts[fg.id] || []).map(&:to_json)
-
+      h2[:contracts] = []
+      h2[:contract_project_ids] = []
+      
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
         h2[:project_ids] << fp.project_id
         # h2[:project_ids] << fp.facility_id
       end
       h2[:project_ids] = h2[:project_ids].compact.uniq
+
+      fg.project_contracts.each do |pc|
+        h2[:contracts] << project_contract_hash2[pc.id] if project_contract_hash2[pc.id]
+        h2[:contract_project_ids] << pc.project_id
+      end
+
       facility_groups_hash << h2
     end
 

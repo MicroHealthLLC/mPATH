@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_03_164121) do
+ActiveRecord::Schema.define(version: 2022_06_15_170431) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -127,13 +127,6 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_contract_client_types", charset: "utf8", force: :cascade do |t|
-    t.integer "contract_id", null: false
-    t.integer "contract_client_type_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "contract_current_pops", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -205,13 +198,13 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.string "prime_or_sub"
     t.datetime "contract_start_date"
     t.datetime "contract_end_date"
-    t.integer "total_contract_value"
+    t.decimal "total_contract_value", precision: 11, scale: 2, default: "0.0"
     t.integer "contract_pop_id"
     t.integer "contract_current_pop_id"
     t.datetime "contract_current_pop_start_date"
     t.datetime "contract_current_pop_end_date"
-    t.decimal "total_founded_value", precision: 10
-    t.decimal "billings_to_date", precision: 10
+    t.decimal "total_founded_value", precision: 11, scale: 2, default: "0.0"
+    t.decimal "billings_to_date", precision: 11, scale: 2, default: "0.0"
     t.string "comments"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -276,18 +269,17 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "vehicle_number"
-    t.string "full_name"
-    t.string "contract_number"
-    t.string "ceiling"
-    t.datetime "base_period_start"
-    t.datetime "base_period_end"
-    t.datetime "option_period_start"
-    t.datetime "option_period_end"
     t.integer "contract_sub_category_id"
     t.integer "contract_agency_id"
     t.integer "contract_vehicle_type_id"
     t.integer "user_id"
+    t.string "full_name"
+    t.string "contract_number"
+    t.decimal "ceiling", precision: 11, scale: 2, default: "0.0"
+    t.datetime "base_period_start"
+    t.datetime "base_period_end"
+    t.datetime "option_period_start"
+    t.datetime "option_period_end"
     t.integer "contract_number_id"
   end
 
@@ -319,10 +311,9 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.bigint "facility_group_id"
     t.bigint "project_id"
     t.string "name"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.integer "total_subcontracts", default: 0
     t.integer "contract_category_id"
+    t.integer "contract_client_type_id"
     t.text "remarks"
     t.index ["facility_group_id"], name: "index_contracts_on_facility_group_id"
     t.index ["project_id"], name: "index_contracts_on_project_id"
@@ -361,10 +352,11 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.integer "status", default: 0
     t.integer "region_type", default: 0
     t.string "center"
+    t.bigint "project_id"
     t.integer "progress", default: 0
-    t.integer "project_id"
     t.boolean "is_portfolio", default: true
     t.integer "user_id"
+    t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
@@ -462,8 +454,6 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.boolean "on_hold", default: false
     t.boolean "reportable", default: false
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.integer "project_contract_id"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
@@ -513,8 +503,6 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.integer "project_contract_id"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
@@ -692,6 +680,7 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["id"], name: "index_project_types_on_id"
   end
 
   create_table "project_users", charset: "utf8", force: :cascade do |t|
@@ -837,8 +826,6 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.boolean "reportable", default: false
     t.date "closed_date"
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.integer "project_contract_id"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
@@ -967,8 +954,6 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
     t.boolean "reportable", default: false
     t.date "closed_date"
     t.integer "contract_id"
-    t.integer "owner_id"
-    t.string "owner_type"
     t.integer "project_contract_id"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
@@ -1015,6 +1000,7 @@ ActiveRecord::Schema.define(version: 2022_06_03_164121) do
   add_foreign_key "contracts", "facility_groups"
   add_foreign_key "contracts", "projects"
   add_foreign_key "facilities", "users", column: "creator_id"
+  add_foreign_key "facility_groups", "projects"
   add_foreign_key "facility_projects", "facilities"
   add_foreign_key "facility_projects", "projects"
   add_foreign_key "facility_projects", "statuses"
