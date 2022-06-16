@@ -458,7 +458,7 @@ export default {
   
   methods: {
     ...mapMutations([
-       "SET_CONTRACT_VEHICLES_STATUS"
+       "SET_CONTRACT_VEHICLE_STATUS"
     ]),
     ...mapActions([
       "createContractVehicle",
@@ -655,9 +655,12 @@ export default {
       "contractVehiclesStatus",
       "contractVehicles",
       "contractVehiclesLoaded",
+      "contractVehicleStatus",
+      "contractVehicle",
+      "contractVehicleLoaded",
     ]),   
     tableData(){
-      if (this.contractVehicles && this.contractVehicles.length > 0){
+      if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
         let data = this.contractVehicles
         data.push({})
         return data
@@ -713,15 +716,15 @@ contractAgencyOptions(){
        }
      }
     },
-     contractVehiclesStatus: {
+     contractVehicleStatus: {
       handler() {
-        if (this.contractVehiclesStatus == 200) {
+        if (this.contractVehicleStatus == 200) {
           this.$message({
             message: `Vehicle data saved successfully.`,
             type: "success",
             showClose: true,
           });
-          this.SET_CONTRACT_VEHICLES_STATUS(0);
+          this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();
           this.fetchContractProjects()
           this.bpStart = null;

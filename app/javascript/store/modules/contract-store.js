@@ -14,8 +14,17 @@ const contractStore = {
     contract_projects: [],
     contract_project_status: 0,
     contract_projects_loaded: true,
+
+    //CONTRACT PROJECTS DATA
+    contract_project: {},
+    contract_project_status: 0,
+    contract_project_loaded: true,
     
     //VEHICLES
+    contract_vehicles: {},
+    contract_vehicle_status: 0,
+    contract_vehicle_loaded: true,
+
     contract_vehicles: [],
     contract_vehicles_status: 0,
     contract_vehicles_loaded: true,
@@ -127,7 +136,7 @@ const contractStore = {
       },
     })
       .then((res) => {
-        commit("SET_CONTRACT_PROJECTS", res.data.contract_project_data);
+        commit("SET_CONTRACT_PROJECT", res.data.contract_project_data);
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
@@ -138,7 +147,7 @@ const contractStore = {
       });
     },
     createContractVehicle({ commit }, { cVehicleData }) {
-      commit("TOGGLE_CONTRACT_VECHILES_LOADED", false);
+      commit("TOGGLE_CONTRACT_VECHILE_LOADED", false);
       let formData = new FormData();
       console.log(cVehicleData)
         formData.append("contract_vehicle[name]",  cVehicleData.name);
@@ -162,14 +171,14 @@ const contractStore = {
         },
       })
         .then((res) => {
-          commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-          commit("SET_CONTRACT_VEHICLES_STATUS", res.status);
+          commit("SET_CONTRACT_VEHICLE", res.data.contract_vehicles);
+          commit("SET_CONTRACT_VEHICLE_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
+          commit("TOGGLE_CONTRACT_VEHICLE_LOADED", true);
         });
     },
     createContractPOC({ commit }, { cPOCsData }) {
@@ -266,7 +275,7 @@ const contractStore = {
       },
     })
       .then((res) => {
-        commit("SET_CONTRACT_PROJECTS", res.data.contract_project_data);
+        commit("SET_CONTRACT_PROJECT", res.data.contract_project_data);
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
@@ -277,7 +286,7 @@ const contractStore = {
       });
   },
   updateContractVehicle({ commit }, { cVehicleData, id } ) {    
-    commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
+    commit("TOGGLE_CONTRACT_VEHICLE_LOADED", false);   
     console.log(id)
     let formData = new FormData();
     formData.append("contract_vehicle[id]", id);
@@ -302,14 +311,14 @@ const contractStore = {
       },
     })
       .then((res) => {
-        commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-        commit("SET_CONTRACT_VEHICLES_STATUS", res.status);
+        commit("SET_CONTRACT_VEHICLE", res.data.contract_vehicles);
+        commit("SET_CONTRACT_VEHICLE_STATUS", res.status);
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => {
-        commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
+        commit("TOGGLE_CONTRACT_VEHICLE_LOADED", true);
       });
   },
   updateContractPOC({ commit }, { cPOCsData, id }) {
@@ -355,7 +364,7 @@ const contractStore = {
       },
     })
       .then((res) => {
-        commit("SET_CONTRACT_PROJECTS", res.data.contract_project_data);
+        commit("SET_CONTRACT_PROJECT", res.data.contract_project_data);
         commit("SET_CONTRACT_PROJECT_STATUS", res.status);
       })
       .catch((err) => {
@@ -366,7 +375,7 @@ const contractStore = {
       });
     },
     deleteContractVehicle({ commit }, id ) {
-        commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);
+        commit("TOGGLE_CONTRACT_VEHICLE_LOADED", false);
       
         axios({
           method: "DELETE",
@@ -377,14 +386,14 @@ const contractStore = {
           },
         })
           .then((res) => {
-            commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-            commit("SET_CONTRACT_VEHICLES_STATUS", res.status);
+            commit("SET_CONTRACT_VEHICLE", res.data.contract_vehicles);
+            commit("SET_CONTRACT_VEHICLE_STATUS", res.status);
           })
           .catch((err) => {
             console.log(err);
           })
           .finally(() => {
-            commit("TOGGLE_CONTRACT_VEHICLES_LOADED", true);
+            commit("TOGGLE_CONTRACT_VEHICLE_LOADED", true);
           });
     },
     deleteContractPOC({ commit }, id ) {
@@ -420,10 +429,17 @@ const contractStore = {
     SET_CONTRACT_PROJECT_STATUS: (state, status) => (state.contract_project_status = status), 
     TOGGLE_CONTRACT_PROJECTS_LOADED: (state, loaded) => (state.contract_projects_loaded = loaded),
 
+    SET_CONTRACT_PROJECT: (state, value) => (state.contract_project = value),
+    TOGGLE_CONTRACT_PROJECT_LOADED: (state, loaded) => (state.contract_project_loaded = loaded),
+
     //VEHICLES
     SET_CONTRACT_VEHICLES: (state, value) => (state.contract_vehicles = value),
     SET_CONTRACT_VEHICLES_STATUS: (state, status) => (state.contract_vehicles_status = status), 
     TOGGLE_CONTRACT_VEHICLES_LOADED: (state, loaded) => (state.contract_vehicles_loaded = loaded),
+
+    SET_CONTRACT_VEHICLE: (state, value) => (state.contract_vehicle = value),
+    SET_CONTRACT_VEHICLE_STATUS: (state, status) => (state.contract_vehicle_status = status), 
+    TOGGLE_CONTRACT_VEHICLE_LOADED: (state, loaded) => (state.contract_vehicle_loaded = loaded),
 
     //POCS
     SET_CONTRACT_POCS: (state, value) => (state.contract_pocs = value),
@@ -440,10 +456,17 @@ const contractStore = {
    contractProjectStatus: (state) => state.contract_project_status,
    contractProjectsLoaded: (state) => state.contract_projects_loaded,
 
+   contractProject: (state) => state.contract_project, 
+   contractProjectLoaded: (state) => state.contract_project_loaded,
+
    //VEHICLES
    contractVehicles: (state) => state.contract_vehicles, 
    contractVehiclesStatus: (state) => state.contract_vehicles_status,
    contractVehiclesLoaded: (state) => state.contract_vehicles_loaded,
+
+   contractVehicle: (state) => state.contract_vehicle, 
+   contractVehicleStatus: (state) => state.contract_vehicle_status,
+   contractVehicleLoaded: (state) => state.contract_vehicle_loaded,
 
    //POCS
    contractPOCs: (state) => state.contract_pocs, 
