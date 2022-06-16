@@ -139,7 +139,7 @@
       width="125"
       >
        <template slot-scope="scope" >
-     <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
+     <span v-if="_isallowed('write') && (scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_vehicle_id"
         filterable       
@@ -159,6 +159,51 @@
         >
         </el-option>
       </el-select>
+      </span>
+        <span v-if="_isallowed('write') && (rowId == scope.row.id && scope.$index !== createRow)">
+     
+       <span v-if="(!scope.row.contract_vehicle && scope.row.contract_vehicle_id) || (!scope.row.contract_vehicle && !scope.row.contract_vehicle_id) ">
+      <el-select
+        v-model="blankVehicle"
+        filterable       
+        track-by="name"        
+        value-key="id"
+        class="w-100"
+        clearable
+        allow-create
+        placeholder=""
+        default-first-option
+       >
+        <el-option
+          v-for="item in vehicleOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        >
+        </el-option>
+      </el-select>
+       </span>
+      <span v-if="scope.row.contract_vehicle && scope.row.contract_vehicle_id">
+       <el-select
+        v-model="scope.row.contract_vehicle_id"
+        filterable       
+        track-by="name"        
+        value-key="id"
+        class="w-100"
+        clearable
+        allow-create
+        placeholder=""
+        default-first-option
+       >
+        <el-option
+          v-for="item in vehicleOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        >
+        </el-option>
+      </el-select>     
+      </span>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow && 
       (scope.row.contract_vehicle && scope.row.contract_vehicle.name !== null)">
@@ -958,6 +1003,7 @@ export default {
     data() {    
       return {
         today: new Date().toISOString().slice(0, 10),
+        blankVehicle: '',
         totalContractValue: 0,
         workNumberVal: '', 
         workNumberValNew: '', 
@@ -1188,9 +1234,16 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     let id = null;
+    let vehicle = ""
     
     if (row.id) {
       id = row.id
+      if(this.blankVehicle !== '') {
+        vehicle = this.blankVehicle
+      }
+      if(row.contract_vehicle_id && row.contract_vehicle && row.contract_vehicle.name) {
+        vehicle = row.contract_vehicle_id
+      }
       if (!this.contractEndDate) {
         this.contractEndDate = rows.contract_end_date
       }
@@ -1205,6 +1258,7 @@ export default {
       }
     }
     if (!row.id){
+        vehicle = row.contract_vehicle_id;
         this.contractStartDate = this.newContractStartDate;
         this.contractEndDate = this.newContractEndDate;
         this.popStartDate = this.newPopStartDate;
@@ -1221,7 +1275,7 @@ export default {
             total_contract_value: row.total_contract_value,
             contract_current_pop_start_date: this.popStartDate,
             contract_current_pop_end_date: this.popEndDate,
-            contract_vehicle_id: row.contract_vehicle_id,
+            contract_vehicle_id: vehicle,
             number:  row.contract_number_id,
             contract_naic_id: row.contract_naic_id,
             contract_award_type_id: row.contract_award_type_id,
@@ -1231,7 +1285,7 @@ export default {
             contract_current_pop_id: row.contract_current_pop_id,        
         },
       };
-    console.log(contractProjectData)
+    console.log(vehicle)
     if (id){
       this.updateContractProject({...contractProjectData, id})
     } else {
@@ -1538,10 +1592,11 @@ export default {
           this.contractEndDate = null;
           this.popStartDate = null;
           this.popEndDate = null;
-          this.newContractStartDate = null,
-          this.newContractEndDate = null,
-          this.newPopStartDate = null,
-          this.newPopEndDate = null,         
+          this.newContractStartDate = null;
+          this.newContractEndDate = null;
+          this.newPopStartDate = null;
+          this.newPopEndDate = null;  
+          this.blankVehicle = '';  
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects();
           this.fetchContractVehicles()
