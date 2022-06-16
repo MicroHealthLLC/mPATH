@@ -146,6 +146,7 @@
                 class="w-100"               
                 filterable
                 track-by="id"
+                clearable
                 value-key="id"
                 placeholder="Search and select Group"
                 >
@@ -161,7 +162,8 @@
                <span v-if="rowId == scope.row.id && !scope.row.facility_group">
                 <el-select
                 v-model="newGroup"
-                class="w-100"               
+                class="w-100"     
+                clearable          
                 filterable
                 track-by="id"
                 value-key="id"
@@ -788,26 +790,27 @@ export default {
     //     return { formData }
     
     saveEdits(index, rows) {
-      // console.log(this.facilityGroups)
       let groupId = null
-      if (this.newGroup){
-          groupId = this.newGroup
-      } else groupId = rows.facility_group.id
-      
-      let id = rows.project_contract_id;
-      let contractData = {
-        contract: {
-          facility_group_id: groupId,
-          programId: this.$route.params.programId,
-        },
-      };
-      // this.setNewContractGroupFilter(rows.facility_group_id);
+      if (rows.facility_group.id){
+            groupId = rows.facility_group.id  
+        }
+        if (!rows.facility_group.id ) {
+              groupId = 169
+              // 169 is Unassigned Group facility_group.id
+        } 
+        let id = rows.project_contract_id;
+        let contractData = {
+          contract: {
+            facility_group_id: groupId,
+            programId: this.$route.params.programId,
+          },
+        };
+      this.setNewContractGroupFilter(rows.facility_group_id);
       this.updateContract({
         ...contractData,
         id,
       });
-        // console.log(rows)
-      // console.log(groupId)
+      console.log(groupId)
       this.rowIndex = null;
       this.rowId = null;
     },

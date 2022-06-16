@@ -137,6 +137,7 @@
                 v-if="rowId == scope.row.id"
                 filterable
                 track-by="id"
+                clearable
                 value-key="id"
                 placeholder="Search and select Group"
                 >
@@ -869,12 +870,17 @@ removeProject(index, rows) {
       });
     },
     saveEdits(index, rows) {
+      let groupId;
+      if (rows.facilityGroupId == '' || rows.facilityGroupId == null ){         
+          groupId = 169  // 169 is Unassigned Group facility_group.id
+      } else groupId = rows.facilityGroupId 
       let updatedProjectName = rows.facilityName;
       let projectId = rows.id;
       let formData = new FormData();
+      console.log(rows)
       formData.append("facility[facility_name]", updatedProjectName);
       // Need one url to support these two data name edits
-      formData.append("facility[facility_group_id]", rows.facilityGroupId);
+      formData.append("facility[facility_group_id]", groupId);
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${projectId}`;
       let method = "PUT";
       axios({
@@ -1078,10 +1084,15 @@ removeProject(index, rows) {
     programProjects() {
       //Removes current Program  Projects from checkbox options in Add Protfolio Group popup
     if (this.projectData && this.portfolioProjects && this.portfolioProjects.length > 0) {
+      
       let filteredProjects = this.portfolioProjects.filter(
         (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
       )
       return filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
+    } 
+    if (!this.projectData || this.projectData && !(this.projectData.length > 0)) {
+        console.log('nada')
+       return  this.portfolioProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
     }
     },
      checkAllProjects: {
