@@ -140,10 +140,10 @@
               label="Group"
             >
             <template slot-scope="scope">
-              <span v-if="rowId == scope.row.id && scope.row.facility_group">
-                <el-select
-                v-model="scope.row.facility_group.id"
-                class="w-100"               
+               <el-select
+                v-model="scope.row.facility_group_id"
+                class="w-100"
+                v-if="rowId == scope.row.id"
                 filterable
                 track-by="id"
                 clearable
@@ -157,46 +157,9 @@
                   :label="item.name"
                 >
                 </el-option>
-                </el-select>
-              </span>
-               <span v-if="rowId == scope.row.id && !scope.row.facility_group">
-                <el-select
-                v-model="newGroup"
-                class="w-100"     
-                clearable          
-                filterable
-                track-by="id"
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-                </el-select>
-              </span>
-            
-               <!-- <el-select
-                v-model="scope.row.facility_group.id"
-                class="w-100"
-                v-if="rowId == scope.row.id"
-                filterable
-                track-by="id"
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-              </el-select>    -->
+              </el-select>   
 
+             
                <span v-else> 
                  <span v-if="scope.row.facility_group && scope.row.facility_group.name && rowId !== scope.row.id">
                     {{ scope.row.facility_group.name }}
@@ -790,27 +753,29 @@ export default {
     //     return { formData }
     
     saveEdits(index, rows) {
-      let groupId = null
-      if (rows.facility_group.id){
-            groupId = rows.facility_group.id  
-        }
-        if (!rows.facility_group.id ) {
-              groupId = 169
-              // 169 is Unassigned Group facility_group.id
-        } 
-        let id = rows.project_contract_id;
-        let contractData = {
-          contract: {
-            facility_group_id: groupId,
+      let id = rows.project_contract_id;
+      let contractData = null
+      if (rows.facility_group_id) {
+          contractData = {      
+            contract: {
+            facility_group_id: rows.facility_group_id,
             programId: this.$route.params.programId,
           },
         };
-      this.setNewContractGroupFilter(rows.facility_group_id);
+      } else {
+         contractData = {
+          contract: {
+            programId: this.$route.params.programId,
+          },
+        };
+
+      }
+     // this.setNewContractGroupFilter(rows.facility_group_id);
       this.updateContract({
         ...contractData,
         id,
       });
-      console.log(groupId)
+      // console.log(groupId)
       this.rowIndex = null;
       this.rowId = null;
     },
@@ -900,7 +865,7 @@ export default {
     tableData(){
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
-        let con = this.contracts.filter(t => t !== 'null')
+        let con = this.contracts.filter(t => t && t !== 'null')
         return (
               con.filter((td) => {
                 if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0) {
