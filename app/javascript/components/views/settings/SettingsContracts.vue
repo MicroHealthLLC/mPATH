@@ -856,6 +856,7 @@ export default {
       //       console.log(this.allContracts)
       //           console.log('tableData', this.tableData)
       //  }
+      console.log(this.tableData)
       this.contractDialogVisible = true;
        this.fetchContractProjects();
     },
@@ -899,9 +900,9 @@ export default {
     tableData(){
       //Need to add filter for associated contracts only
       if (this.contracts && this.contracts.length > 0 ) {
-        // console.log(this.contacts)
+        let con = this.contracts.filter(t => t !== 'null')
         return (
-            this.contracts.filter((td) => {
+              con.filter((td) => {
                 if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0) {
                   let group = this.C_projectGroupFilter.map((t) => t.name);
                   return group.includes(td.facility_group.name);

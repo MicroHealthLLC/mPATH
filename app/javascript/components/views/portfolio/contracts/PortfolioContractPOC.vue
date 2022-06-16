@@ -50,9 +50,7 @@
         track-by="name"        
         value-key="id"
         class="w-100"
-         slot="reference"
-        clearable
-        allow-create
+        slot="reference"
         default-first-option
         placeholder="Select Contract Program Manager POC"
       >
@@ -129,10 +127,8 @@
         value-key="id"
         class="w-100"
         slot="reference"
-        clearable
-        allow-create
         default-first-option
-           placeholder="Select Government COR POC or Prime POC"
+        placeholder="Select Government COR POC or Prime POC"
       >
         <el-option
          v-for="item in pocOptions"
@@ -208,8 +204,6 @@
         value-key="id"
         class="w-100"
         slot="reference"
-        clearable
-        allow-create
         default-first-option
         placeholder="Select Contracting Office POC"
 
@@ -333,14 +327,33 @@ export default {
   saveContractPOCs(index, row){
     this.rowIndex = null;
     this.rowId = null;
+    let pm;
+    let gov;
+    let co;
+    if (!row.pm_contract_poc_id){
+      pm = ''
+    } else pm = row.pm_contract_poc_id
+    
+    if (!row.gov_contract_poc_id){
+      gov = ''
+    } else gov = row.gov_contract_poc_id
+    
+    if (!row.co_contract_poc_id || row.co_contract_poc_id == ''){
+      co = ''
+    } else co = row.co_contract_poc_id
+
     let contractProjectData = {
           cProjectData: {
-            pm_poc_id: row.pm_contract_poc_id,
-            gov_poc_id: row.gov_contract_poc_id,
-            co_poc_id: row.co_contract_poc_id,        
+            pm_poc_id: pm,
+            gov_poc_id: gov,
+            co_poc_id: co,        
         },
       };
       let id = row.id
+       console.log(row)
+      console.log("pm: ", pm)
+            console.log("gov: ", gov)
+          console.log("co: ", co)
       this.updateContractProject({...contractProjectData, id})    
   },
   backHomeBtn() {

@@ -250,9 +250,9 @@
                       ></i>
                       <span
                         v-if="
-                          groupContracts &&
+                          groupContracts && groupContracts.length > 0 &&
                             groupContracts
-                              .map((t) => t.facility_group.id)
+                              .map((t) => t && t.facility_group && t.facility_group.id)
                               .filter((t) => t == props.row.id).length
                         "
                       >
@@ -316,10 +316,10 @@
                           Contracts
                           <span
                             v-if="
-                              groupContracts &&
+                              groupContracts && groupContracts.length > 0 &&
                                 groupContracts
-                                  .map((t) => t.facility_group_id)
-                                  .filter((t) => t == props.row.id).length
+                                  .map((t) => t && t.facility_group)
+                                  
                             "
                             class="badge badge-secondary badge-pill pill"
                             >{{
@@ -334,7 +334,7 @@
                             >{{ 0 }}
                           </span>
                         </h5>
-                        <span v-if="groupContracts">
+                        <span v-if="groupContracts && groupContracts.length > 0">
                           <ul class="pl-3 mb-0">
                             <li
                               v-for="(item, i) in groupContracts.filter(
@@ -781,8 +781,8 @@ export default {
   groupContracts() {
      if (this.contracts && this.contracts.length > 0) {
           // console.log(this.contracts)
-          return this.contracts;
-      }
+          return this.contracts.filter(t => t !== 'null');
+      } else return []
     },
     // groupContracts() {
       // contracts array no longer in currentProject response
