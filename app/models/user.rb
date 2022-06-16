@@ -167,7 +167,7 @@ class User < ApplicationRecord
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
-    self.projects
+    self.projects.active
   end
 
   def full_name
