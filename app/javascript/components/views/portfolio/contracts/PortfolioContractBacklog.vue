@@ -105,7 +105,6 @@
     <el-table-column
        label="Funded Remaining"
        width="115"
-       prop="scope.row.total_founded_value - scope.row.billings_to_date"
       >
        <template slot-scope="scope">
        <span v-if="scope.row.billings_to_date && scope.row.total_founded_value ">
@@ -114,7 +113,7 @@
        </template>       
     </el-table-column>
     <el-table-column
-      label="Total Backlog (Sum of A & B)"
+      label="Total Backlog"
        width="115"
       >
      <template slot-scope="scope">
@@ -148,12 +147,13 @@
       label="Actions"
       width="95"
       fixed="right"
+      v-if="_isallowed('write') || _isallowed('delete')"
       align="center">
    <template slot-scope="scope">
       <el-button
         type="default"
         @click="saveBacklogValues(scope.$index, scope.row)"
-        v-if="scope.$index == rowIndex" 
+        v-if="scope.$index == rowIndex && _isallowed('write')" 
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
@@ -170,7 +170,7 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="(scope.$index !== rowIndex)"
+           v-if="(scope.$index !== rowIndex) &&  _isallowed('write')"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button>
         </template>
@@ -219,8 +219,7 @@ export default {
     "fetchContractProjects",
   ]),  
    _isallowed(salut) {
-            return  []
-        // return this.checkPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
+     return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
   }, 
   getSummaries(param) {
     const { columns, data } = param;
