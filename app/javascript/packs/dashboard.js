@@ -259,10 +259,9 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     
     }else if(extraData["method"] == "isallowedContracts"){
       
-      let pPrivileges = Vue.prototype.$contractPrivilegesRoles
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[extraData["project_contract_id"]]  
 
-      let contract_privileges = pPrivileges[extraData["contract_id"]]
-      console.log(extraData["contract_id"])
+      console.log(contract_privileges, extraData["project_contract_id"])
 
       return contract_privileges && (contract_privileges.contract_analytics || contract_privileges.contract_issues || contract_privileges.contract_lessons || contract_privileges.contract_notes || contract_privileges.contract_risks || contract_privileges.contract_tasks);
     }else{
