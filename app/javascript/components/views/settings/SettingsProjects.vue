@@ -815,7 +815,7 @@ removeProject(index, rows) {
       e.preventDefault();
       let formData = new FormData();
       formData.append("facility[facility_name]", this.newProjectNameText);
-      if (this.C_projectGroupFilter !== null) {
+      if (this.C_projectGroupFilter) {
         formData.append(
           "facility[facility_group_id]",
           this.C_projectGroupFilter.id
@@ -829,7 +829,7 @@ removeProject(index, rows) {
       let method = "POST";
 
 
-      // console.log(formData)
+      console.log(this.C_projectGroupFilter)
       axios({
         method: method,
         url: url,
@@ -870,17 +870,16 @@ removeProject(index, rows) {
       });
     },
     saveEdits(index, rows) {
-      let groupId;
-      if (rows.facilityGroupId == '' || rows.facilityGroupId == null ){         
-          groupId = 169  // 169 is Unassigned Group facility_group.id
-      } else groupId = rows.facilityGroupId 
       let updatedProjectName = rows.facilityName;
       let projectId = rows.id;
       let formData = new FormData();
-      console.log(rows)
+      // console.log(rows)
       formData.append("facility[facility_name]", updatedProjectName);
       // Need one url to support these two data name edits
-      formData.append("facility[facility_group_id]", groupId);
+
+      if (rows.facilityGroupId ){         
+        formData.append("facility[facility_group_id]", rows.facilityGroupId);
+      }     
       let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${projectId}`;
       let method = "PUT";
       axios({
@@ -1091,7 +1090,7 @@ removeProject(index, rows) {
       return filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
     } 
     if (!this.projectData || this.projectData && !(this.projectData.length > 0)) {
-        console.log('nada')
+        // console.log('nada')
        return  this.portfolioProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
     }
     },
