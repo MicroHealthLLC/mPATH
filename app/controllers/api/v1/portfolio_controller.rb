@@ -6,35 +6,18 @@ class Api::V1::PortfolioController < AuthenticatedController
   def tab_counts
     json_response = {tasks_count: 0, issues_count: 0, risks_count: 0, lessons_count: 0}
     program_ids = authorized_program_ids
-    fph = current_user.authorized_facility_project_id_hash
+    json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
+    json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
+    json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
+    json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
 
-    if fph[:tasks].any?
-      # json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-      json_response[:tasks_count] = Task.unscoped.where("facility_project_id" => fph[:tasks]).count
-    end
-    if fph[:issues].any?
-      json_response[:issues_count] = Issue.unscoped.where("facility_project_id" => fph[:issues]).count
-
-      # json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-    end
-    if fph[:risks].any?
-      json_response[:risks_count] = Risk.unscoped.where("facility_project_id" => fph[:risks]).count
-
-      # json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-
-    end
-    if fph[:lessons].any?
-      json_response[:lessons_count] =  Lesson.unscoped.where("facility_project_id" => fph[:lessons]).count
-
-      # json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-    end
 
     render json: json_response
   end
 
   def lessons
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
 
     if params[:pagination] && params[:pagination] == "true"
       all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_projects.project_id" => authorized_program_ids ).paginate(per_page: params[:per_page], page: params[:page])
@@ -96,8 +79,8 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def tasks
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
 
     if params[:pagination] && params[:pagination] == "true"
       all_resources = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).paginate(per_page: params[:per_page], page: params[:page])
@@ -144,8 +127,8 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def issues
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
 
     if params[:pagination] && params[:pagination] == "true"
 
@@ -191,8 +174,8 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def risks
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
 
     if params[:pagination] && params[:pagination] == "true"
       all_resources = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).paginate(per_page: params[:per_page], page: params[:page])

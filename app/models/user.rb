@@ -622,6 +622,7 @@ class User < ApplicationRecord
     fph.with_indifferent_access
   end
 
+  #NOTE: This method is used in convert_privilege_roles rake task.
   def project_privileges_hash
 
     # return {}
@@ -659,6 +660,7 @@ class User < ApplicationRecord
 
   end
 
+  #NOTE: This method is used in convert_privilege_roles rake task.
   #This will build has like this
   # {<project_id> : { <facility_id>: { <all_perissions> } }
   def facility_privileges_hash
@@ -734,7 +736,7 @@ class User < ApplicationRecord
     program_ids = user.project_ids if !program_ids.any?
     project_hash = {}
     role_users = user.role_users.where.not(facility_project_id: nil)
-    project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id) ).group_by(&:role_id)
+    project_role_privileges = RolePrivilege.where(role_type: RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES, role_id: role_users.pluck(:role_id).uniq ).group_by(&:role_id)
     all_facility_projects = FacilityProject.where(id: role_users.map(&:facility_project_id).compact.uniq ) 
     facility_project_hash = all_facility_projects.group_by{|fp| fp.id}.transform_values{|values| values.map{|v| [v.project_id, v.facility_id] }.flatten.compact }
 
