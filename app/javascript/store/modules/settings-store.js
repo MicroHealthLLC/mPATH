@@ -1056,7 +1056,10 @@ const settingsStore = {
       // Utilize utility function to prep Lesson form data
       // let formData = contractFormData(contract);
       formData.append("project_id", contract.programId);
-      formData.append("project_contract[facility_group_id]", contract.facility_group_id);
+      if(contract.facility_group_id){
+        formData.append("project_contract[facility_group_id]", contract.facility_group_id);
+      }
+      
       axios({
         method: "PUT",
         url: `${API_BASE_PATH}/program_settings/contracts/${id}`,
