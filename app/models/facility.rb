@@ -24,6 +24,12 @@ class Facility < ApplicationRecord
     end
   end
 
+  def update_with_default_group
+    if self.facility_group.nil?
+      self.update(facility_group_id: FacilityGroup.unassigned.id)
+    end
+  end
+
   def as_json(options=nil)
     json = super(options)
     json.merge(

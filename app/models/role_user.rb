@@ -84,4 +84,43 @@ class RoleUser < ApplicationRecord
     #   contract_name: role_user.contract&.name || ''
     # })
   end
+
+  def self.remove_duplicate_records
+    update_project_role = Role.find_by_name("update-project")
+    read_project_role = Role.find_by_name("read-project")
+    contribute_project_role = Role.find_by_name("contribute-project")
+    
+    # find duplicate record with facility_project
+    _update_project_role = RoleUser.select(:role_id,:project_id, :facility_project_id, :user_id).where(role_id: update_project_role.id).group(:role_id,:project_id, :facility_project_id, :user_id).having("count(*) > 1")
+    
+    _read_project_role = RoleUser.select(:role_id,:project_id, :facility_project_id, :user_id).where(role_id: read_project_role.id).group(:role_id,:project_id, :facility_project_id, :user_id).having("count(*) > 1")
+    
+    _contribute_project_role = RoleUser.select(:role_id,:project_id, :facility_project_id, :user_id).where(role_id: contribute_project_role.id).group(:role_id,:project_id, :facility_project_id, :user_id).having("count(*) > 1")
+    
+    update_contract_role = Role.find_by_name("update-contract")
+    read_contract_role = Role.find_by_name("read-contract")
+    contribute_contract_role = Role.find_by_name("contribute-contract")
+    
+    # find duplicate record with contract
+    _update_contract_role = RoleUser.select(:role_id,:project_id, :project_contract_id, :user_id).where(role_id: update_contract_role.id).group(:role_id,:project_id, :project_contract_id, :user_id).having("count(*) > 1")
+    
+    _read_contract_role = RoleUser.select(:role_id,:project_id, :project_contract_id, :user_id).where(role_id: read_contract_role.id).group(:role_id,:project_id, :project_contract_id, :user_id).having("count(*) > 1")
+    
+    _contribute_contract_role = RoleUser.select(:role_id,:project_id, :project_contract_id, :user_id).where(role_id: contribute_contract_role.id).group(:role_id,:project_id, :project_contract_id, :user_id).having("count(*) > 1")
+    
+    program_admin_role = Role.find_by_name("program-admin")
+    # find duplicate record with project
+    _program_admin_role = RoleUser.select(:role_id,:project_id,:user_id).where(role_id: program_admin_role.id).group(:role_id,:project_id, :user_id).having("count(*) > 1")
+
+
+    puts "Duplicate #{update_project_role.name} roles: #{_update_project_role.size}"
+    puts "Duplicate #{read_project_role.name} roles: #{_read_project_role.size}"
+    puts "Duplicate #{contribute_project_role.name} roles: #{_contribute_project_role.size}"
+    puts "Duplicate #{update_contract_role.name} roles: #{_update_contract_role.size}"
+    puts "Duplicate #{read_contract_role.name} roles: #{_read_contract_role.size}"
+    puts "Duplicate #{contribute_contract_role.name} roles: #{_contribute_contract_role.size}"
+    puts "Duplicate #{program_admin_role.name} roles: #{_program_admin_role.size}"
+
+  end
+
 end
