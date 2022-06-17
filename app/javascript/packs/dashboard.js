@@ -250,7 +250,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       // console.log("facility_project_id", facility_project_id)          
       return facility_project_privileges && facility_project_privileges.project_issues && facility_project_privileges.project_issues.includes(s);
     }
-  }else if(["ProjectSidebar"].includes(page)){
+  }else if(["ProjectSidebar", "ProjectSettingContractList"].includes(page)){
 
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
     
@@ -261,8 +261,8 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       
       let pPrivileges = Vue.prototype.$contractPrivilegesRoles
 
-      let contract_privileges = pPrivileges[extraData["project_contract_id"]]
-      // console.log()
+      let contract_privileges = pPrivileges[extraData["contract_id"]]
+      console.log(extraData["contract_id"])
 
       return contract_privileges && (contract_privileges.contract_analytics || contract_privileges.contract_issues || contract_privileges.contract_lessons || contract_privileges.contract_notes || contract_privileges.contract_risks || contract_privileges.contract_tasks);
     }else{

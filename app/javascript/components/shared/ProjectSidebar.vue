@@ -90,7 +90,7 @@
                   @click="showFacility(c)"
                   :class="{ active: c.projectContractId == $route.params.contractId }"
                 >
-                <p class="facility-header" data-cy="facilities">
+                <p class="facility-header" data-cy="facilities"  v-if="_isallowedContracts(c, 'read')">
                   <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.name }}
                   </p>
                 </div>
@@ -224,7 +224,8 @@ export default {
     //       console.log(e)
 
     // },
-    _isallowedContracts(salut, c) {
+    _isallowedContracts(c, salut) {
+      console.log(this.$route)
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
     },
     _isallowedProgramSettings(salut) {

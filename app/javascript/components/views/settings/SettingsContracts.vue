@@ -222,15 +222,24 @@
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>
-                 <el-button
+                 <!-- <el-button
                   type="default" 
-                  v-tooltip="`Go To Contract`"              
+                  v-tooltip="`Go To Contract`"    
+                  v-if=" _isallowedThisContract(scope.row.project_contract_id, 'read')"          
+                  @click.prevent="goToContract(scope.$index, scope.row)"
+                  class="bg-success text-light btn-sm"
+                  >
+                  <i class="fas fa-arrow-alt-circle-right"></i>
+                </el-button> -->
+                <el-button
+                  type="default" 
+                  v-tooltip="`Go To Contract`"  
+                  v-if="_isallowedContracts(scope.row.project_contract_id, 'read')"  
                   @click.prevent="goToContract(scope.$index, scope.row)"
                   class="bg-success text-light btn-sm"
                   >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
-               
                
 
                 <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
@@ -631,6 +640,10 @@ export default {
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
+    _isallowedContracts(c, salut) {
+      // console.log(c, salut)
+        return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", contract_id: c})
+    },
     log(e){
       // console.log('tableData:',  e)
     },
@@ -754,23 +767,13 @@ export default {
     
     saveEdits(index, rows) {
       let id = rows.project_contract_id;
-      let contractData = null
-      if (rows.facility_group_id) {
-          contractData = {      
+        let contractData = {      
             contract: {
             facility_group_id: rows.facility_group_id,
             programId: this.$route.params.programId,
           },
         };
-      } else {
-         contractData = {
-          contract: {
-            programId: this.$route.params.programId,
-          },
-        };
-
-      }
-     // this.setNewContractGroupFilter(rows.facility_group_id);
+        // this.setNewContractGroupFilter(rows.facility_group_id);
       this.updateContract({
         ...contractData,
         id,
