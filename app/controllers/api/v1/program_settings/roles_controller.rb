@@ -81,7 +81,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
   def remove_role
     project = Project.includes(:users, :role_users).find(params[:project_id])
     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-
+    
     conditions = {
       project_id: project.id,
       role_id: role_ids
@@ -102,8 +102,24 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     if !conditions[:role_id] || !conditions[:role_id].any?
       render json: {message: "Invalid parameter: Role must be provided."}, status: 406
     else
-      RoleUser.where(conditions).destroy_all
-      render json: {message: "Successfully removed role!!"}, status: 200
+      role_users = RoleUser.where(conditions)
+      program_admin_role = Role.program_admin_user_role
+      program_admin_user_ids = project.get_program_admin_ids
+      errors = []
+      role_users.each do |role_user|
+        if program_admin_role.id == role_user.role_id && program_admin_user_ids.size < 2
+          errors << "Program must have at least one program admin user."
+        else
+          if !role_user.destroy
+            errors += role_user.errors.full_messages
+          end
+        end
+      end
+      if errors.size > 0
+        render json: {errors: errors.join(", ")}, status: 406
+      else
+        render json: {message: "Successfully removed role!!"}, status: 200
+      end
     end
   end
 
