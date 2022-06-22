@@ -957,7 +957,7 @@
                       <el-button
                         type="default"
                         v-tooltip="`Manage Admin Role User(s)`"
-                        v-if="!isEditting"
+                        v-if="!isEditting && _isallowed('write')"
                         @click.prevent="addUserRole(scope.$index, scope.row)"
                         class="bg-primary text-light btn-sm"
                       >
@@ -985,7 +985,8 @@
                           !isEditting &&
                             scope.row.name !== 'program-admin-not-users' &&
                             scope.row.name !== 'program-admin' &&
-                            scope.row.name !== 'program-admin-not-contract'
+                            scope.row.name !== 'program-admin-not-contract' &&
+                            _isallowed('write')
                         "
                         class="bg-light btn-sm"
                         v-tooltip="`Edit Role`"

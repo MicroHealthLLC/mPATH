@@ -1,8 +1,27 @@
 class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
   
-  before_action :check_program_admin
+  # before_action :check_program_admin
   before_action :set_project
   before_action :set_facility, only: [:show]
+
+  before_action :check_permission
+
+  def check_permission
+    program_id = params[:project_id]
+
+    raise(CanCan::AccessDenied) if !program_id
+    action = nil
+
+    if ["index", "show" ].include?(params[:action]) 
+      action = "R"
+    elsif ["create", "update", "bulk_project_update"].include?(params[:action]) 
+      action = "W"
+    elsif ["destroy", "remove_facility_project"].include?(params[:action]) 
+      action = "D"
+    end    
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_PROJECTS)
+  end
 
   def index
     response_hash = {}

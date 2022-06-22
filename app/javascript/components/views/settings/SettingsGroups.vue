@@ -381,7 +381,7 @@
                     @click.prevent="editMode(scope.$index, scope.row)"
                     v-if="
                       !scope.row.isPortfolio &&
-                      scope.$index !== rowIndex 
+                      scope.$index !== rowIndex &&  _isallowed('write')
                     "
                     class="bg-light btn-sm "
                   >
@@ -394,7 +394,7 @@
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        scope.row.isPortfolio
+                        scope.row.isPortfolio && _isallowed('delete')
                     "        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
@@ -405,7 +405,7 @@
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        !scope.row.isPortfolio
+                        !scope.row.isPortfolio && _isallowed('delete')
                     "
                     class="bg-light btn-sm"
                   >    

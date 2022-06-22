@@ -897,7 +897,7 @@ export default {
        "updateRole"
        ]),
   _isallowed(salut) {
-     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
+     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Projects"})    
   },
   analyticsRead(index, rowData) {
     this.isAnalyticsRead = !this.isAnalyticsRead;

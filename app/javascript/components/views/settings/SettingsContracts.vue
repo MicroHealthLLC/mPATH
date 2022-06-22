@@ -179,7 +179,7 @@
                 type="default" 
                 v-tooltip="`Change Group`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex"
+                v-if="scope.$index !== rowIndex && _isallowed('write')"
                 class="bg-light btn-sm">
                 <i class="fal fa-network-wired mh-blue-text"></i>
                </el-button>  
@@ -187,7 +187,7 @@
                   type="default"
                   v-tooltip="`Manage User(s)`"
                   @click.prevent="addUserRole(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex"
+                  v-if="scope.$index !== rowIndex && _isallowed('write')"
                   class="bg-primary text-light btn-sm">
                     <i class="fas fa-users-medical mr-1"></i>
                 </el-button>

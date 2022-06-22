@@ -193,7 +193,7 @@
                     @click.prevent="removeProject(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        scope.row.isPortfolio
+                        scope.row.isPortfolio && _isallowed('delete')
                     "        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
@@ -214,7 +214,7 @@
                 type="default"
                 v-tooltip="`Manage User(s)`"
                 @click.prevent="addUserRole(scope.$index, scope.row)"
-                v-if="scope.$index !== rowIndex"
+                v-if="scope.$index !== rowIndex && _isallowed('write')"
                 class="bg-primary text-light btn-sm">
                 <i class="fas fa-users-medical mr-1"></i>
               </el-button>
@@ -224,6 +224,7 @@
                 v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
                 class="bg-success text-light btn-sm"
+                v-if="_isallowed('read')"
               >
              <i class="fas fa-arrow-alt-circle-right"></i>
               </el-button>

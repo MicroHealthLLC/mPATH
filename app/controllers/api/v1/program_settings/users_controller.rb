@@ -1,6 +1,21 @@
 class Api::V1::ProgramSettings::UsersController < AuthenticatedController
-  before_action :check_program_admin
+  before_action :check_permission
 
+  def check_permission
+    program_id = params[:project_id]
+
+    raise(CanCan::AccessDenied) if !program_id
+    action = nil
+    if ["index", "show" ].include?(params[:action]) 
+      action = "R"
+    elsif ["create", "update", "add_to_program","remove_from_program"].include?(params[:action]) 
+      action = "W"
+    elsif ["destroy", "remove_role"].include?(params[:action]) 
+      action = "D"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_USERS_ROLES)
+  end
   def index
     @users = []    
     status_code = 200
