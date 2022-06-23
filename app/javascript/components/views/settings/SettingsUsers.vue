@@ -679,6 +679,7 @@
       </div>
      <div class="mt-2 row">
       <div class="col-12 pt-0">
+        <span v-if="filteredProjects && filteredProjects.length > 0">
         <label class="font-md mb-0 d-flex">Associate Projects to Role </label>
         <el-select
         v-model="associatedProjects"
@@ -698,7 +699,10 @@
         >
         </el-option>
       </el-select>
-    
+       </span>
+         <span class="mt-3" v-else>
+          User has role(s) assigned to all projects (or no projects available).  To change role, first remove association.
+        </span>
       </div>
         </div>
      <div class="mt-2 row">
@@ -781,7 +785,7 @@
             </el-select>
         </span>
         <span class="mt-3" v-else>
-          User has role(s) assigned to all contracts.  To change role, first remove association.
+          User has role(s) assigned to all contracts (or no contracts available).  To change role, first remove association.
         </span>
     
       </div>
