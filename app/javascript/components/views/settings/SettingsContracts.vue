@@ -642,7 +642,7 @@ export default {
     }, 
     _isallowedContracts(c, salut) {
       // console.log(c, salut)
-        return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", contract_id: c})
+        return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", project_contract_id: c})
     },
     log(e){
       // console.log('tableData:',  e)
