@@ -42,7 +42,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
     if project_contract && project_contract.update(project_contract_params)
       render json: {message: "Successfully updated contract "}
     else
-      render json: {error: "Error updating contract!"}, staus: 406
+      render json: {error: project_contract.errors.full_messages}, staus: 406
     end
   end
 
