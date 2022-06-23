@@ -9,8 +9,8 @@ import settingsStore from "./modules/settings-store";
 import programStore from "./modules/program-store";
 import contractStore from "./modules/contract-store";
 import projectStore from "./modules/project-store";
-import taskStore from "./modules/task-store";
-import issueStore from "./modules/issue-store";
+// import taskStore from "./modules/task-store";
+// import issueStore from "./modules/issue-store";
 import riskStore from "./modules/risk-store";
 import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
@@ -34,9 +34,9 @@ export default new Vuex.Store({
     programStore,
     contractStore,
     projectStore,
-    taskStore,
+    // taskStore,
     settingsStore,
-    issueStore,
+    // issueStore,
     riskStore,
     lessonStore,
     notesStore,

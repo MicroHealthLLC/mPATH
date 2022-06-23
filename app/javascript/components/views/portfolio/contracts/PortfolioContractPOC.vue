@@ -28,6 +28,7 @@
    <el-popover
     placement="top-start"
     width="400"
+    v-if="pocOptions"
     trigger="hover"
     >
    <p v-if="scope.row.pm_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.pm_contract_poc_id )"> 
@@ -68,6 +69,7 @@
     <el-popover
     placement="top-start"
     width="400"
+    v-if="pocOptions"
     trigger="hover"
     >
     <p v-if="scope.row.pm_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.pm_contract_poc_id )"> 
@@ -101,6 +103,7 @@
     <span v-if=" _isallowed('write')">
     <el-popover
     placement="top-start"
+     v-if="pocOptions"
     width="400"
     trigger="hover"
     >
@@ -144,6 +147,7 @@
         <el-popover
         placement="top-start"
         width="400"
+         v-if="pocOptions"
         trigger="hover"
         >
       <p v-if="scope.row.gov_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.gov_contract_poc_id )"> 
@@ -180,6 +184,7 @@
     <el-popover
       placement="top-start"
       width="400"
+      v-if="pocOptions"
       trigger="hover"
       >
        <p v-if="scope.row.co_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.co_contract_poc_id )"> 
@@ -222,6 +227,7 @@
       <el-popover
       placement="top-start"
       width="400"
+      v-if="pocOptions"
       trigger="hover"
       >
        <p v-if="scope.row.co_contract_poc_id && pocOptions.filter(t => t && t.name).find(t => t.id == scope.row.co_contract_poc_id )"> 
@@ -261,19 +267,19 @@
         <el-button
         type="default"
         @click="saveContractPOCs(scope.$index, scope.row)"
-        v-if="(_isallowed('write'))"
+        v-if="scope.$index == rowIndex && (_isallowed('write')) "
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
         </el-button>
-      <!-- <el-button 
+      <el-button 
         type="default" 
         v-tooltip="`Cancel Edit`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary btn-sm text-light mx-0">
       <i class="fas fa-ban"></i>
-        </el-button> -->
+        </el-button>
           <el-button
           type="default"
            v-tooltip="`Edit`" 
@@ -327,33 +333,14 @@ export default {
   saveContractPOCs(index, row){
     this.rowIndex = null;
     this.rowId = null;
-    let pm;
-    let gov;
-    let co;
-    if (!row.pm_contract_poc_id){
-      pm = ''
-    } else pm = row.pm_contract_poc_id
-    
-    if (!row.gov_contract_poc_id){
-      gov = ''
-    } else gov = row.gov_contract_poc_id
-    
-    if (!row.co_contract_poc_id || row.co_contract_poc_id == ''){
-      co = ''
-    } else co = row.co_contract_poc_id
-
     let contractProjectData = {
           cProjectData: {
-            pm_poc_id: pm,
-            gov_poc_id: gov,
-            co_poc_id: co,        
+            pm_poc_id: row.pm_contract_poc_id,
+            gov_poc_id: row.gov_contract_poc_id,
+            co_poc_id: row.co_contract_poc_id,        
         },
       };
       let id = row.id
-       console.log(row)
-      console.log("pm: ", pm)
-            console.log("gov: ", gov)
-          console.log("co: ", co)
       this.updateContractProject({...contractProjectData, id})    
   },
   backHomeBtn() {

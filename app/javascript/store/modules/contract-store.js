@@ -259,9 +259,15 @@ const contractStore = {
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
       formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
       formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
-      formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
-      formData.append("contract_project_data[gov_contract_poc_id]", cProjectData.gov_poc_id)
-      formData.append("contract_project_data[pm_contract_poc_id]", cProjectData.pm_poc_id)  
+      if(cProjectData.co_poc_id){
+        formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
+      }
+      if(cProjectData.gov_poc_id){
+        formData.append("contract_project_data[gov_contract_poc_id]", cProjectData.gov_poc_id)
+      }
+      if(cProjectData.pm_poc_id){
+        formData.append("contract_project_data[pm_contract_poc_id]", cProjectData.pm_poc_id)  
+      }
       formData.append("contract_project_data[total_founded_value]", cProjectData.tfv)
       formData.append("contract_project_data[billings_to_date]", cProjectData.btd)
       formData.append("contract_project_data[comments]", cProjectData.notes)      
