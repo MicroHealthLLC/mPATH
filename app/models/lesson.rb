@@ -312,7 +312,7 @@ class Lesson < ApplicationRecord
   end
 
   def self.lesson_preload_array
-    [:user, :task_type, :lesson_details, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, :project, :facility, {facility_project: :facility} ]
+    [:user, :task_type, {lesson_details: :user}, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, :project, :facility, {facility_project: :facility} ]
   end
 
   def self.params_to_permit
