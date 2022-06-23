@@ -818,15 +818,15 @@ class User < ApplicationRecord
     role_privileges.as_json(only: [:name, :privilege, :role_type])
   end
 
-  def has_program_setting_role?(program_id)
+  def has_program_setting_role?(program_id, action, role_type)
     user = self
     role_ids = user.roles.joins(:role_users).where( "role_users.project_id" => program_id).distinct.pluck(:id)
-    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
+    role_privileges = RolePrivilege.where(role_id: role_ids,role_type: role_type)
     # role_privileges.group_by(&:role_type).transform_values{|v| v.first.privileges }
     # role_privileges.as_json(only: [:name, :privilege, :role_type])
     has_access = false
     role_privileges.each do |rp|
-      has_access = (rp.privilege.chars & ["R", "W", "D"]).size > 0
+      has_access = (rp.privilege.chars.include?(action))
       break if has_access
     end
     has_access

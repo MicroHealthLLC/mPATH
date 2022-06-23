@@ -322,11 +322,11 @@
             </span>
           </td>
           <td v-if="lesson.notes.length > 0">
-            <span v-tooltip="('By: ' + lesson.lastUpdate.user.fullName)">
-            {{ moment(lesson.lastUpdate.createdAt).format('DD MMM YYYY, h:mm a')}} <br>
+            <span v-tooltip="('By: ' + lesson.last_update.user.fullName)">
+            {{ moment(lesson.last_update.createdAt).format('DD MMM YYYY, h:mm a')}} <br>
             </span>
             <span>
-              {{lesson.lastUpdate.body}}
+              {{lesson.last_update.body}}
             </span>
           </td>
           <td v-else >No Updates</td>

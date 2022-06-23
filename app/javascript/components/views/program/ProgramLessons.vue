@@ -744,7 +744,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
     </thead>
     <tbody>
         <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
-        <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover">
+        <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
           <td>{{ lesson.project_group }}</td>
           <td>{{ lesson.project_name || lesson.contract_nickname }}</td>
           <td>{{ lesson.title }}</td>
@@ -1253,31 +1253,31 @@ export default {
     	this.dialogVisible = false;
       done();
     },
-  // openLesson(lesson) {  
-  //   if(!this.getShowProjectStats){
-  //     this.$router.push({
-  //     name: "ProgramLessonForm",
-  //     params: {
-  //       programId: lesson.program_id,
-  //       projectId: lesson.project_id,
-  //       // id: lesson.id,
-  //       lessonId: lesson.id, 
-  //     },
-  //   });
-  //   }   
-  //    if(this.getShowProjectStats){
-  //     this.$router.push({
-  //     name: "ProgramContractLessonForm",
-  //     params: {
-  //       programId: lesson.program_id,
-  //       contractId: lesson.project_contract_id,
-  //       lessonId: lesson.id, 
-  //     },
-  //   });
-  //   }       
+  openLesson(lesson) {  
+    if(!this.getShowProjectStats){
+      this.$router.push({
+      name: "ProgramLessonForm",
+      params: {
+        programId: lesson.program_id,
+        projectId: lesson.project_id,
+        // id: lesson.id,
+        lessonId: lesson.id, 
+      },
+    });
+    }   
+     if(this.getShowProjectStats){
+      this.$router.push({
+      name: "ProgramContractLessonForm",
+      params: {
+        programId: lesson.program_id,
+        contractId: lesson.project_contract_id,
+        lessonId: lesson.id, 
+      },
+    });
+    }       
  
-  //   console.log(this.$route.params)
-  //   },
+    console.log(this.$route.params)
+    },
   exportLessonsToPdf() {
       const doc = new jsPDF("l");
       const html = this.$refs.table.innerHTML;

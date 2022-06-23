@@ -105,6 +105,7 @@ Vue.prototype.$programPrivilegesRoles = programPrivilegesRoles
 Vue.prototype.$contractPrivilegesRoles = contractPrivilegesRoles
 Vue.prototype.$programSettingPrivilegesRoles = programSettingPrivilegesRoles
 
+Vue.prototype.program_admin_role = JSON.parse(window.program_admin_role.replace(/&quot;/g,'"'))
 
 Vue.prototype.$preferences = preferences
 

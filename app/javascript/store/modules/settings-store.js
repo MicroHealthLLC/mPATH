@@ -535,7 +535,7 @@ const settingsStore = {
 
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/facility_groups/bulk_project_update`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups/bulk_project_update`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -584,7 +584,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contracts/${id}?project_id=${programId}`,
+        url: `${API_BASE_PATH}/program_settings/contracts/${id}?project_id=${programId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -627,7 +627,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/users`,
+        url: `${API_BASE_PATH}/program_settings/users`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -648,7 +648,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/users.json?project_id=${id}`,
+        url: `${API_BASE_PATH}/program_settings/users.json?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -677,7 +677,7 @@ const settingsStore = {
       formData.append("user[phone_number]", userData.phNumber)
       axios({
         method: "PATCH",
-        url: `${API_BASE_PATH}/users/${userData.id}`,
+        url: `${API_BASE_PATH}/program_settings/users/${userData.id}`,
         data: formData, 
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -708,7 +708,7 @@ const settingsStore = {
 
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/users/add_to_program`,
+        url: `${API_BASE_PATH}/program_settings/users/add_to_program`,
         data: formData, 
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -735,7 +735,7 @@ const settingsStore = {
         formData.append("user[email]", newUser.email)
         axios({
           method: "POST",
-          url: `${API_BASE_PATH}/users`,
+          url: `${API_BASE_PATH}/program_settings/users`,
           data: formData,
           headers: {
             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -1010,7 +1010,7 @@ const settingsStore = {
       commit("TOGGLE_PORTFOLIO_PROJECTS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/facilities?program_id=${id}`,
+        url: `${API_BASE_PATH}/program_settings/facilities?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1084,7 +1084,7 @@ const settingsStore = {
     deleteContract({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/contracts/${id}`)
+          .delete(`${API_BASE_PATH}/program_settings/contracts/${id}`)
           .then((res) => {
             resolve(res.status);
           }).catch((err) => {
