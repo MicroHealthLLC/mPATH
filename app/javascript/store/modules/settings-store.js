@@ -1056,9 +1056,8 @@ const settingsStore = {
       // Utilize utility function to prep Lesson form data
       // let formData = contractFormData(contract);
       formData.append("project_id", contract.programId);
-      if(contract.facility_group_id){
-        formData.append("project_contract[facility_group_id]", contract.facility_group_id);
-      }
+      formData.append("project_contract[facility_group_id]", contract.facility_group_id);
+
       
       axios({
         method: "PUT",

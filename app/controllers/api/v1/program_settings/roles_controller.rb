@@ -21,30 +21,19 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     project = Project.find(params[:project_id])
     project_user_ids = project.user_ids
 
-    if params[:page] == "user_tab_role_assign"
-      roles = project.roles.distinct.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract ] }]).map{|r| r.to_json( params.merge({include: [:all]}) )}
-
-      default_roles = Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id)
-
-      default_role_ids = default_roles.pluck(:id)
-
-      roles += default_roles.map{|r| r.to_json({include: [:all]}) }
-
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where.not(id: default_role_ids).map{|r| r.to_json(params.merge({include: [:all]}) ) }
-      
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id).map{|r| r.to_json( params.merge({include: [:all]}) ) }
-      
-    else
-      roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map{|r| r.to_json({include: [:all]}) }
-      
-      default_roles = Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id)
-
-      default_role_ids = default_roles.pluck(:id)
-      
-      roles += default_roles.map{|r| r.to_json({include: [:all]}) }
-
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where.not(id: default_role_ids).map{|r| r.to_json({include: [:role_privileges]}) }
-
+    roles = []
+    role_users =  RoleUser.includes([ {role: [:role_privileges] } ] ).where(project_id: project.id, user_id: project_user_ids).group_by(&:role)
+    role_ids = []
+    role_users.each do |role, role_users|
+      h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
+      h[:role_users] = role_users.as_json
+      roles << h
+    end
+    default_roles = Role.includes(:role_privileges).default_roles.where.not(id: role_ids)
+    default_roles.each do |role|
+      h = role.to_json({include: [:role_privileges]})
+      roles << h
     end
 
     render json: {roles: roles}

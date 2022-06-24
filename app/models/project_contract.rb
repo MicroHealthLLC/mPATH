@@ -13,6 +13,7 @@ class ProjectContract < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   before_create :assign_default_facility_group 
+  before_update :assign_default_facility_group 
   after_destroy :remove_roles
 
   def remove_roles
