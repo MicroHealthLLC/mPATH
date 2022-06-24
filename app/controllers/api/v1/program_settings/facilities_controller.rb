@@ -14,12 +14,11 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
 
     if ["index", "show" ].include?(params[:action]) 
       action = "R"
-    elsif ["create", "update", "bulk_project_update"].include?(params[:action]) 
+    elsif ["create", "update", "bulk_projects_update"].include?(params[:action]) 
       action = "W"
     elsif ["destroy", "remove_facility_project"].include?(params[:action]) 
       action = "D"
     end    
-
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_PROJECTS)
   end
 
@@ -35,6 +34,10 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
         response_hash[project.id] = {facility_ids: project.facility_ids}
       end
     end
+
+    all_facilities = Facility.includes(:facility_group).all.as_json
+    response_hash[:facilities] = all_facilities.as_json
+
     render json: response_hash
   end
 

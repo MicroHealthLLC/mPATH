@@ -648,7 +648,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/users.json?project_id=${id}`,
+        url: `${API_BASE_PATH}/program_settings/users.json?program_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
