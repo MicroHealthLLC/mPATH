@@ -109,3 +109,4 @@ const portfolioApp = new Vue({
   template: '<Portfolio />',
   components: { Portfolio }
 })
+Vue.prototype.$log = console.log

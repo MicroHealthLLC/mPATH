@@ -385,3 +385,7 @@ const dashboardApp = new Vue({
   template: '<Dashboard />',
   components: { Dashboard }
 })
+
+// Adding global logger so that we can debug data in template 
+// e.g. {{$log("projectUsers", projectUsers)}} and it will do console.log
+Vue.prototype.$log = console.log
