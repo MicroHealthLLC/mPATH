@@ -20,7 +20,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
 
   def index
 
-    project_contracts = ProjectContract.includes(:contract_project_datum, :facility_group).where(project_id: params[:project_id])
+    project_contracts = ProjectContract.includes( [{ contract_project_datum: ContractProjectDatum.preload_array}, :facility_group ]).where(project_id: params[:project_id])
     c = []
     project_contracts.in_batches do |_project_contracts|
       c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract: pc}) }
@@ -42,7 +42,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
     if project_contract && project_contract.update(project_contract_params)
       render json: {message: "Successfully updated contract "}
     else
-      render json: {error: "Error updating contract!"}, staus: 406
+      render json: {error: project_contract.errors.full_messages}, staus: 406
     end
   end
 

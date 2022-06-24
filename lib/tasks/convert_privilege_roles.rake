@@ -38,8 +38,9 @@ task :convert_privilege_roles => :environment do
             ( ["R", "D", "W"] & privileges_hash["lessons"] ).size == 3
             
             next if (role_users + new_role_users).detect{|ru| ru.role_id == program_admin_role_id  &&  ru.project_id == project_id} 
-  
-            new_role_users << RoleUser.new(user_id: user.id, role_id: program_admin_role_id, project_id: project_id)  
+            
+            # We are not going to assign program-admin role to any user. That will be done manually.
+            # new_role_users << RoleUser.new(user_id: user.id, role_id: program_admin_role_id, project_id: project_id)  
   
           elsif ( ["R"] & privileges_hash["overview"] ).size == 1 &&
             ( ["R"] & privileges_hash["tasks"] ).size == 1 &&
@@ -107,7 +108,8 @@ task :convert_privilege_roles => :environment do
             end
           end
         end
-        RoleUser.import(new_role_users) if new_role_users.any?
+        # To prevent any accident we will not assing any role.
+        # RoleUser.import(new_role_users) if new_role_users.any?
       end
 
     end

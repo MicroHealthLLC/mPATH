@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_15_170431) do
+ActiveRecord::Schema.define(version: 2022_06_23_190645) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -841,6 +841,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.string "role_type", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["role_id", "role_type"], name: "index_role_privileges_on_role_id_and_role_type"
   end
 
   create_table "role_users", charset: "utf8", force: :cascade do |t|
@@ -851,6 +852,8 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "project_contract_id"
+    t.index ["facility_project_id", "project_contract_id"], name: "index_role_users_on_facility_project_id_and_project_contract_id"
+    t.index ["role_id", "user_id", "project_id"], name: "index_role_users_on_role_id_and_user_id_and_project_id"
   end
 
   create_table "roles", charset: "utf8", force: :cascade do |t|
@@ -862,6 +865,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.string "type_of"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id", "user_id", "is_default"], name: "index_roles_on_project_id_and_user_id_and_is_default"
   end
 
   create_table "settings", charset: "utf8", force: :cascade do |t|

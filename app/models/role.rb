@@ -21,6 +21,9 @@ class Role < ApplicationRecord
   #   raise "Can not destroy default role." if !prevent_default_role_update
   #   super
   # end
+  def self.preload_array
+    [:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract] }]
+  end
 
   def to_json(options = {})
     hash = self.attributes
@@ -38,7 +41,7 @@ class Role < ApplicationRecord
     end
 
     if options[:include] && ( options[:include].include?(:role_users)|| options[:include].include?(:all) )
-      hash[:role_users] = self.role_users.map(&:to_json)      
+      hash[:role_users] = self.role_users.map(&:to_json)
     end
     
     hash
