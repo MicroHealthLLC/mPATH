@@ -8,7 +8,7 @@ class Api::V1::FacilitiesController < AuthenticatedController
     response_hash = {facilities: all_facilities.as_json}
     if params[:program_id]
       project = Project.find(params[:program_id])
-      response_hash[:facility_ids] = project.project_groups.pluck(:id)
+      response_hash[:facility_ids] = project.facility_ids.pluck(:id)
     end
     render json: response_hash
   end
