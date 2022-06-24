@@ -2,7 +2,7 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
   before_action :check_permission
 
   def check_permission
-    program_id = params[:project_id]
+    program_id = params[:program_id]
 
     raise(CanCan::AccessDenied) if !program_id
     action = nil
@@ -21,8 +21,8 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
     status_code = 200
     if params[:all].present?
       @users = User.active.map(&:as_json)
-    elsif params[:project_id].present?
-      @users = Project.where(id: params[:project_id]).first.users.includes(:organization).as_json
+    elsif params[:program_id].present?
+      @users = Project.where(id: params[:program_id]).first.users.includes(:organization).as_json
     else
       status_code = 406
     end
@@ -62,7 +62,7 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
   end
 
   def remove_from_program
-    @program = Project.find(params[:project_id])
+    @program = Project.find(params[:program_id])
     @users = User.where(id: params[:user_id])
     user_ids = @users.pluck(:id)
     all_user_ids = (@program.project_users.pluck(:user_id) - user_ids).compact.uniq

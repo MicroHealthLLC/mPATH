@@ -22,12 +22,12 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     project_user_ids = project.user_ids
 
     roles = []
-    role_users =  RoleUser.includes([ {role: [:role_privileges] } ] ).where(project_id: project.id, user_id: project_user_ids).group_by(&:role)
+    role_users =  RoleUser.includes([ {role: [:role_privileges] }, :user ] ).where(project_id: project.id, user_id: project_user_ids).group_by(&:role)
     role_ids = []
     role_users.each do |role, role_users|
       h = role.to_json({include: [:role_privileges]})
       role_ids << role.id
-      h[:role_users] = role_users.as_json
+      h[:role_users] = role_users.map(&:to_json)
       roles << h
     end
     default_roles = Role.includes(:role_privileges).default_roles.where.not(id: role_ids)

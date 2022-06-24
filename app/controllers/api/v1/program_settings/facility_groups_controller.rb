@@ -3,7 +3,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   before_action :check_permission
 
   def check_permission
-    program_id = params[:project_id]
+    program_id = params[:program_id]
 
     raise(CanCan::AccessDenied) if !program_id
     action = nil
@@ -74,7 +74,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
 
   def destroy
     group = FacilityGroup.find(params[:id])
-    program = Project.find(params[:project_id])
+    program = Project.find(params[:program_id])
     
     if program.project_groups.include?(group) 
       if !group.is_portfolio?

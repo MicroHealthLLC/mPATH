@@ -52,3 +52,4 @@ const app = new Vue({
   template: '<Users />',
   components: { Users }
 })
+Vue.prototype.$log = console.log

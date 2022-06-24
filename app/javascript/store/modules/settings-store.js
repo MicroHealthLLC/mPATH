@@ -648,7 +648,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/users.json?project_id=${id}`,
+        url: `${API_BASE_PATH}/program_settings/users.json?program_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -989,7 +989,7 @@ const settingsStore = {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/facility_groups?project_id=${id}&all=true`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups?program_id=${id}&all=true`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
