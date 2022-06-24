@@ -307,19 +307,32 @@
           </form>
         </el-dialog>
      <el-dialog
-          :visible.sync="dialog2Visible"
-          append-to-body
-          center
-          class="portfolioNames p-0"
-          v-if="portfolioProjects && portfolioProjects.length > 0"
+      :visible.sync="dialog2Visible"
+      append-to-body
+      center
+      class="portfolioNames p-0"
+      v-if="portfolioProjects && portfolioProjects.length > 0"
         >
-          <div>
+        <div>
             <template>
               <div class="sticky">
               <div class="row mb-2"> 
                <div slot="title" class="col-8 pr-0 text-left">
                 <h5 class="text-dark addGroupsHeader">   <i class="fal fa-clipboard-list mr-2 mh-green-text"></i>Select Portfolio Project(s) to Add </h5>
               </div>
+               <div class="col-7 pt-0 text-left">
+                  <el-input
+                  type="search"
+                  placeholder="Search Projects"
+                  aria-label="Search"
+                  class="w-100"
+                  aria-describedby="search-addon"
+                  v-model="searchProjects"
+                  data-cy=""
+                >
+                  <el-button slot="prepend" icon="el-icon-search"></el-button>
+                </el-input>
+                </div>
                 <div class="col text-right">
           
                     <el-button
@@ -585,7 +598,8 @@ export default {
   props: ["currentFacility", "facility"],
   data() {
     return {
-      userids: null,   
+      userids: null,  
+      searchProjects: '', 
       isIndeterminate: true,  
       dialogVisible: false,
       dialog2Visible: false,  
@@ -1092,8 +1106,15 @@ removeProject(index, rows) {
     } 
     if (!this.projectData || this.projectData && !(this.projectData.length > 0)) {
         // console.log('nada')
-       return  this.portfolioProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
-    }
+      let data =  this.portfolioProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name)).filter(t => {
+          if (this.searchProjects !== '' && t) {           
+              return (            
+                t.facility_name.toLowerCase().match(this.searchProjects.toLowerCase()) 
+              ) 
+          } else return true
+          })
+          return data
+      }
     },
      checkAllProjects: {
       get() {
@@ -1315,7 +1336,14 @@ h5 {
 
   /deep/.el-dialog__body {
     padding-top: 0 !important;
+    height: 70vh; 
   }
+
+  /deep/.el-checkbox-group {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 45vh;
+   } 
 }
 
 div.sticky {
