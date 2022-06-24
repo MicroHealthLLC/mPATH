@@ -127,7 +127,20 @@
                <div slot="title" class="col-8 pr-0 text-left">
                 <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Portfolio Group(s) to Add </h5>
               </div>
-                <div class="col text-right">
+           <div class="col-7 pt-0 text-left">
+            <el-input
+            type="search"
+            placeholder="Search Groups"
+            aria-label="Search"
+            class="w-100"
+            aria-describedby="search-addon"
+            v-model="searchGroups"
+            data-cy=""
+          >
+            <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+          </div>
+                <div class="col pt-0 text-right">
                   <el-button
                     class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Group(s)`"
@@ -449,6 +462,7 @@ export default {
 
     data() {    
       return {
+      searchGroups: '',
       currentFacility: {},
       dialogVisible: false,
       dialog2Visible: false,
@@ -761,7 +775,14 @@ export default {
       if (this.groups && this.groups.length > 0) {
        let filteredGroups = this.groups.filter(
           (pG) => !this.tableData.map((g) => g.id).includes(pG.id))
-       return filteredGroups.sort((a, b) => a.name.localeCompare(b.name))
+       let data = filteredGroups.sort((a, b) => a.name.localeCompare(b.name)).filter(t => {
+          if (this.searchGroups !== '' && t) {           
+              return (            
+                t.name.toLowerCase().match(this.searchGroups.toLowerCase()) 
+              ) 
+          } else return true
+          })
+          return data
       }
     },
     tableData() {
@@ -968,8 +989,17 @@ div.sticky {
 
   /deep/.el-dialog__body {
     padding-top: 0 !important;
+    height: 70vh; 
   }
+
+  /deep/.el-checkbox-group {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 45vh;
+   } 
 }
+
+
 
 .createNewGroup{
   /deep/.el-dialog__body {
