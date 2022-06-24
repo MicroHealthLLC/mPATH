@@ -832,6 +832,10 @@ class User < ApplicationRecord
     has_access
   end
 
+  def authorized_facility_project_id
+    self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+  end
+
   def program_settings_privileges_hash_by_role(program_ids: [])
     user = self
     program_ids = user.project_ids if !program_ids.any?
@@ -955,8 +959,11 @@ class User < ApplicationRecord
 
       result = false
       short_action_code = action_code_hash[action]
-
-      result = role_privileges.include?(short_action_code)
+      if short_action_code == "R"
+        result = role_privileges.include?("R") || role_privileges.include?("W") || role_privileges.include?("D")
+      else
+        result = role_privileges.include?(short_action_code)
+      end
 
     rescue Exception => e
       puts "Exception in  User#has_permission_by_role? #{e.message}"
