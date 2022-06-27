@@ -65,15 +65,18 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
     @program = Project.find(params[:program_id])
     @users = User.where(id: params[:user_id])
     user_ids = @users.pluck(:id)
-    all_user_ids = (@program.project_users.pluck(:user_id) - user_ids).compact.uniq
+    project_users = @program.project_users.where(user_id: user_ids)
+    # all_user_ids = (@program.project_users.pluck(:user_id) - user_ids).compact.uniq
     role_id = Role.program_admin_user_role.id
 
     program_admin_user_ids = @program.get_program_admin_ids
     if (program_admin_user_ids - user_ids).size < 1
       render json: {msg: "There must be at least 1 program admin exists in program! Please retry."}, status: 406
     else
-      @program.user_ids = all_user_ids
-    
+      # @program.user_ids = all_user_ids
+      project_users.destroy_all
+
+
       if @program.save
         render json: {msg: "Users are removed from program successfully!"}, status: 200
       else
