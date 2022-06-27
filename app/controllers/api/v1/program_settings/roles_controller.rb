@@ -33,9 +33,16 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     default_roles = Role.includes(:role_privileges).default_roles.where.not(id: role_ids)
     default_roles.each do |role|
       h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
       roles << h
     end
+    project_roles = Role.includes(:role_privileges).where("roles.id not in (?) and roles.project_id = ?", role_ids, project.id)
 
+    project_roles.each do |role|
+      h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
+      roles << h
+    end
     render json: {roles: roles}
   end
 
