@@ -439,7 +439,13 @@ const settingsStore = {
         // let formData =  userRoleData(userData);
         // console.log(userData)
         let formData = new FormData();
-     
+
+          if (userData.removeRole){            
+              formData.append("user_id", userData.userId);
+              formData.append("project_id", userData.programId)
+              formData.append("role_id", userData.roleId)                  
+          } 
+      
           if (userData.projectIds){
               formData.append("role_from_users", true);   
               userData.projectIds.forEach((ids) => {        
@@ -497,8 +503,8 @@ const settingsStore = {
          })
            .then((res) => {
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
-            commit("SET_NEW_ROLE", res);
-            if(userData.projectIds || userData.contractIds || userData.adminRole ){
+              // commit("SET_NEW_ROLE", res);
+            if(userData.projectIds || userData.contractIds || userData.adminRole || userData.removeRole ){
               console.log("removed from ProgramSettingUsers")
               commit("SET_REMOVE_ROLE_STATUS", res.status);
             }
@@ -525,6 +531,7 @@ const settingsStore = {
              commit("TOGGLE_ROLE_REMOVED", true);
            });
        },
+      
       //*****************ROLES ACTIONS ABOVE*******************
 
     updateGroup({ commit }, { groupData }) {
@@ -622,12 +629,12 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    fetchPortfolioUsers({ commit }) {
+    fetchPortfolioUsers({ commit }, id) {
       commit("TOGGLE_USERS_LOADED", false);
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/users`,
+        url: `${API_BASE_PATH}/program_settings/users?program_id=${id}&all=true`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1096,7 +1103,7 @@ const settingsStore = {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
 
-      formData.append("project_id", userData.programId);  
+      formData.append("program_id", userData.programId);  
       formData.append("user_id", userData.id);      
       
       axios({

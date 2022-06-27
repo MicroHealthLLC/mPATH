@@ -989,18 +989,15 @@ div.sticky {
 
   /deep/.el-dialog__body {
     padding-top: 0 !important;
-    height: 70vh; 
+    height: 68vh; 
   }
 
   /deep/.el-checkbox-group {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 45vh;
+    height: 35vh;
    } 
 }
-
-
-
 .createNewGroup{
   /deep/.el-dialog__body {
   padding-top: 0 !important;
