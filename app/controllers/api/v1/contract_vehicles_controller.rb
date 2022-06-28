@@ -47,6 +47,6 @@ class Api::V1::ContractVehiclesController < AuthenticatedController
 
   private
   def contract_vehicle_params
-    params.required(:contract_vehicle).permit(:name, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id)
+    params.required(:contract_vehicle).permit(:name, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :caf_fees)
   end
 end
