@@ -168,6 +168,32 @@
       </template>
     </el-table-column>
      <el-table-column
+      label="CAF Fee"
+      width="175"
+      >
+      <template slot-scope="scope">
+     <el-input
+      size="small"
+      v-if="( _isallowed('write') ) && (rowId == scope.row.id || scope.$index == createRow)"
+      type="number"
+      style="text-align:center"
+      placeholder=""
+      v-model="scope.row.caf_fees"
+      controls-position="right"
+      ></el-input>
+    
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+      scope.row.caf_fees && scope.row.caf_fees !== '0.0'
+      ">
+      {{ scope.row.caf_fees }}%
+      </span>
+      <span v-if="scope.row.caf_fees == '0.0' && scope.$index !== createRow && rowId !== scope.row.id ">
+        N/A
+      </span>
+     
+    </template>
+    </el-table-column>
+     <el-table-column
       label="Contract Number"
       width="125"
      >
@@ -190,32 +216,23 @@
       <template slot-scope="scope">
      <el-input
       size="small"
-      v-if="( _isallowed('write') ) && scope.$index == createRow"
+      v-if="( _isallowed('write') ) && (rowId == scope.row.id || scope.$index == createRow)"
       type="number"
       style="text-align:center"
       placeholder=""
       v-model="scope.row.ceiling"
       controls-position="right"
       ></el-input>
-      <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
-     <el-input
-      size="small"    
-      type="text"
-     placeholder=""
-      style="text-align:center"
-      v-model="scope.row.ceiling"
-      controls-position="right"
-      ></el-input>
-      </span>
+          
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-      scope.row.ceiling !== null &&  scope.row.ceiling !== '0.0'">
-      {{  scope.row.ceiling | toCurrency }}
-      </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-      scope.row.ceiling == null ||  scope.row.ceiling == '0.0'
+      scope.row.ceiling && scope.row.ceiling !== '0.0'
       ">
-       N/A 
+      {{ scope.row.ceiling }}
       </span>
+      <span v-if="scope.row.ceiling == '0.0' && scope.$index !== createRow && rowId !== scope.row.id ">
+        N/A
+      </span>
+
     </template>
     </el-table-column>
 
@@ -618,6 +635,7 @@ export default {
             subCatId: rows.contract_sub_category_id,
             cAgencyId: rows.contract_agency_id,        
             type: rows.contract_vehicle_type_id,
+            cafFees: rows.caf_fees,
             ceiling: rows.ceiling,
             bp_startDate: this.bpStart,
             bp_endDate: this.bpEnd,
