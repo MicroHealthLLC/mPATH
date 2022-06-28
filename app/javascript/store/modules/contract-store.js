@@ -117,9 +117,15 @@ const contractStore = {
       formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
       formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
-      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
-      formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
-      formData.append("contract_project_data[contract_number_id]", cProjectData.number)
+      if(cProjectData.contract_vehicle_id){
+        formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
+      }
+      if(cProjectData.contract_award_to_id){
+        formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
+      }
+      if(cProjectData.number){
+        formData.append("contract_project_data[contract_number_id]", cProjectData.number)
+      }
       formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
       formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
@@ -259,14 +265,21 @@ const contractStore = {
       formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
       formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
-      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
-      formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
-      formData.append("contract_project_data[contract_number_id]", cProjectData.number)
       formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
       formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
       formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
-      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
+      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)    
+      if(cProjectData.contract_vehicle_id){
+      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
+      }
+      if(cProjectData.contract_award_to_id){
+        formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
+      }
+      if(cProjectData.number){
+        formData.append("contract_project_data[contract_number_id]", cProjectData.number)
+      }
+
       if(cProjectData.co_poc_id){
         formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
       }

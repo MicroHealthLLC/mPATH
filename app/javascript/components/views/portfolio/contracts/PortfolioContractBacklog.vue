@@ -114,7 +114,7 @@
     </el-table-column>
     <el-table-column
       label="Total Backlog"
-       width="115"
+       width="115"       
       >
      <template slot-scope="scope">
     <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
@@ -251,9 +251,11 @@ export default {
             currency: 'USD',
           }))
         }          
-      }       
-     return newSums
-  },
+      }      
+      console.log(newSums) 
+   
+    return newSums
+   },
   saveBacklogValues(index, row){
     this.rowIndex = null;
     this.rowId = null;
