@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_23_190645) do
+ActiveRecord::Schema.define(version: 2022_06_27_204451) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -198,13 +198,13 @@ ActiveRecord::Schema.define(version: 2022_06_23_190645) do
     t.string "prime_or_sub"
     t.datetime "contract_start_date"
     t.datetime "contract_end_date"
-    t.decimal "total_contract_value", precision: 11, scale: 2, default: "0.0"
+    t.decimal "total_contract_value", precision: 19, scale: 4, default: "0.0"
     t.integer "contract_pop_id"
     t.integer "contract_current_pop_id"
     t.datetime "contract_current_pop_start_date"
     t.datetime "contract_current_pop_end_date"
-    t.decimal "total_founded_value", precision: 11, scale: 2, default: "0.0"
-    t.decimal "billings_to_date", precision: 11, scale: 2, default: "0.0"
+    t.decimal "total_founded_value", precision: 19, scale: 4, default: "0.0"
+    t.decimal "billings_to_date", precision: 19, scale: 4, default: "0.0"
     t.string "comments"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -239,7 +239,7 @@ ActiveRecord::Schema.define(version: 2022_06_23_190645) do
   end
 
   create_table "contract_sub_categories", charset: "utf8", force: :cascade do |t|
-    t.string "name"
+    t.text "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
@@ -275,7 +275,7 @@ ActiveRecord::Schema.define(version: 2022_06_23_190645) do
     t.integer "user_id"
     t.string "full_name"
     t.string "contract_number"
-    t.decimal "ceiling", precision: 11, scale: 2, default: "0.0"
+    t.decimal "ceiling", precision: 19, scale: 4, default: "0.0"
     t.datetime "base_period_start"
     t.datetime "base_period_end"
     t.datetime "option_period_start"

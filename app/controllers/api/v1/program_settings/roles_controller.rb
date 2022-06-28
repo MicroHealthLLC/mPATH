@@ -97,6 +97,10 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
 
     if !conditions[:role_id] || !conditions[:role_id].any?
       render json: {message: "Invalid parameter: Role must be provided."}, status: 406
+    
+    elsif !conditions[:user_id] || !conditions[:user_id].any?
+      render json: {message: "Invalid parameter: User id must be provided."}, status: 406
+      
     else
       role_users = RoleUser.where(conditions)
       program_admin_role = Role.program_admin_user_role
