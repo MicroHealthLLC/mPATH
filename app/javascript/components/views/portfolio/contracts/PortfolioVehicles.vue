@@ -69,6 +69,7 @@
       <el-table-column
       label="SINS or Subcategories*"      
       width="250"
+      class=""
       >
       <template slot-scope="scope" >
      <span v-if="_isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
@@ -93,7 +94,7 @@
         </el-option>
       </el-select>
       </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+      <span  class="truncate-line-five" v-if="rowId !== scope.row.id && scope.$index !== createRow &&
         (scope.row.contract_sub_category && scope.row.contract_sub_category.name !== null)">
        {{ scope.row.contract_sub_category.name }}
       </span>
@@ -207,12 +208,11 @@
       ></el-input>
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-      scope.row.ceiling !== null
-      ">
+      scope.row.ceiling !== null &&  scope.row.ceiling !== '0.0'">
       {{  scope.row.ceiling | toCurrency }}
       </span>
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-      scope.row.ceiling == null
+      scope.row.ceiling == null ||  scope.row.ceiling == '0.0'
       ">
        N/A 
       </span>
@@ -744,12 +744,33 @@ contractAgencyOptions(){
 </script>
     
 <style scoped lang="scss">
+  /deep/.el-scrollbar__view.el-select-dropdown__list{
+    width: 450px !important;
+  }
   .bottomTabs{
     position: absolute;
     bottom: 2.5%;
     width: 100%;
   }
-/deep/.el-table {
+  option {
+    width: 200px; // Adjustable
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+.truncate-line-five
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    &:hover
+    {
+      display: -webkit-box;
+      -webkit-line-clamp: unset;
+    }
+  }
+  /deep/.el-table {
     font-size: 13px !important;
     th.el-table__cell>.cell {
       word-break: break-word;
@@ -758,6 +779,13 @@ contractAgencyOptions(){
     th {
       color: #383838;
     }
+    td {
+    max-width: 0;
+    overflow: hidden;
+    padding: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+   }
     tr, td {
       word-break: break-word;
     }

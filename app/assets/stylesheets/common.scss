@@ -28,6 +28,9 @@ body {
 .w-60 {
   width: 60%;
 }
+.el-scrollbar__view.el-select-dropdown__list {
+  max-width: 400px;
+}
 .allCaps {
   text-transform: uppercase;
 }
