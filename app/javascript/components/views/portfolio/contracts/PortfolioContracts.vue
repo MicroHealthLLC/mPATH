@@ -728,7 +728,7 @@
           </template>          
         </el-table-column>
         <el-table-column
-          label="Title*"
+          label="Title"
           width="150"
           prop="title">
           <template slot-scope="scope">
@@ -919,8 +919,8 @@
             <el-button
               type="default"
               @click="saveContractPOC(scope.$index, scope.row)"             
-              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
-               scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew)" 
+              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.email && scope.row.name) 
+              && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew || mobNumberValNew || mobNumberVal )" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
