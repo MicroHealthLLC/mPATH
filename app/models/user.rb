@@ -832,8 +832,12 @@ class User < ApplicationRecord
     has_access
   end
 
-  def authorized_facility_project_id
-    self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+  def authorized_facility_project_ids(project_ids: [])
+    fids = self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+    if project_ids.any?
+      fids = FacilityProject.where(project_id: project_ids, id: fids).pluck(:id)
+    end
+    fids
   end
 
   def program_settings_privileges_hash_by_role(program_ids: [])

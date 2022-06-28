@@ -343,10 +343,12 @@ class Project < SortableRecord
   
   def build_json_response(user)
     project = self
-    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: project.id, facility: {status: :active})
-    all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
+    authorized_facility_project_ids = user.authorized_facility_project_ids(project_ids: [project.id])
+    # all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: project.id, facility: {status: :active})
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(id: authorized_facility_project_ids, facility: {status: :active})
+    all_facility_project_ids = authorized_facility_project_ids #all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
-    all_authorized_contract_ids = ProjectContract.where(project_id: project.id).map(&:id).compact.uniq #user.authorized_contract_ids
+    all_authorized_contract_ids = user.authorized_contract_ids(project_ids: [project.id]) #ProjectContract.where(project_id: project.id).map(&:id).compact.uniq
 
     all_users = []
     all_user_ids = []
