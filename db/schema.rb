@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_27_204451) do
+ActiveRecord::Schema.define(version: 2022_06_28_190328) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -217,6 +217,7 @@ ActiveRecord::Schema.define(version: 2022_06_27_204451) do
     t.integer "gov_contract_poc_id"
     t.integer "pm_contract_poc_id"
     t.integer "contract_number_id"
+    t.text "notes"
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
@@ -281,6 +282,7 @@ ActiveRecord::Schema.define(version: 2022_06_27_204451) do
     t.datetime "option_period_start"
     t.datetime "option_period_end"
     t.integer "contract_number_id"
+    t.decimal "caf_fees", precision: 4, scale: 2, default: "0.0"
   end
 
   create_table "contracts", charset: "utf8", force: :cascade do |t|
