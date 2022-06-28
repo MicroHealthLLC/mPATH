@@ -37,18 +37,16 @@
            </span>
          </div>
 
-           <div class="col py-0 text-right">
+           <div class="col py-0 text-right"  v-if="_isallowedProjectCounts(group, 'read')">
             <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
               }}
             </span>
 
-             <span class="badge badge-secondary badge-pill pill" 
-          
-             v-else>
-               {{ facilityGroupFacilities(group).projects.a.length }}
-            </span>
+             <span class="badge badge-secondary badge-pill pill">
+                {{ facilityGroupFacilities(group).projects.a.length }}
+            </span> 
          </div>
              
           </div>
@@ -66,6 +64,7 @@
               >
                 <div
                   class="d-flex align-items-center expandable fac-name"
+                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
                   :class="{ active: facility.id == $route.params.projectId }"
                 >
@@ -86,11 +85,12 @@
                 "
               >
                 <div
+                  v-if="_isallowedContracts(c, 'read')"
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{ active: c.projectContractId == $route.params.contractId }"
                 >
-                <p class="facility-header" data-cy="facilities"  v-if="_isallowedContracts(c, 'read')">
+                <p class="facility-header" data-cy="facilities">
                   <i class="far fa-file-contract mr-1 mh-orange-text"></i>   {{ c.name }}
                   </p>
                 </div>
@@ -128,7 +128,8 @@ export default {
       return {
         value: '',
         totalGroupContract: 0,
-        filteredGroupSize: null,
+        filteredGroupSize: null, 
+        projectCount: 0
         
       }
     },
@@ -225,8 +226,21 @@ export default {
 
     // },
     _isallowedContracts(c, salut) {
-      console.log(this.$route)
+      // console.log(this.$route)
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
+    },
+    _isallowedProjects(c, salut) {
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.facilityProjectId})
+    },
+    _isallowedProjectCounts(c, salut) {
+      if (c) {
+        let group = this.sortedGroups.map(t => t)
+       console.log(this.facilityGroupFacilities(group).projects.a)
+          // console.log(group)
+      }
+
+
+      //  this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.map(t => t.facilityProjectId)})
     },
     _isallowedProgramSettings(salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})

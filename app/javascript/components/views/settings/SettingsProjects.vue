@@ -224,7 +224,7 @@
                 v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
                 class="bg-success text-light btn-sm"
-                v-if="_isallowed('read')"
+                v-if="_isallowedProject(scope.row.facilityProjectId, 'read')"
               >
              <i class="fas fa-arrow-alt-circle-right"></i>
               </el-button>
@@ -822,7 +822,8 @@ removeProject(index, rows) {
       this.C_projectGroupFilter = null;
       this.newProjectNameText = "";
     },
-    editMode(index, rows) {
+    editMode(index, rows) {   
+      console.log(rows)
       this.rowIndex = index
       this.rowId = rows.id
      },
@@ -917,6 +918,10 @@ removeProject(index, rows) {
        this.rowId = null;
         }
       });
+    },
+    _isallowedProject(c, salut) {
+      // console.log(c, salut)
+        return this.checkPrivileges("ProjectSettingProjectList", salut, this.$route, {method: "isallowedProject", facility_project_id: c})
     },
     _isallowed(salut) {
       return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
