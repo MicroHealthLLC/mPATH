@@ -10,6 +10,17 @@ class ContractProjectDatum < ApplicationRecord
   belongs_to :contract_number, optional: true
   belongs_to :user, optional: true
   
+  validates :charge_code, :name, :contract_customer_id, :contract_naic_id, :contract_award_type_id, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, presence: true
+  
+  validate :number_check
+
+  def number_check
+    if contract_number_id.blank? && number.blank?
+      errors.add(:base, "Contract number or Awared/TO number is required")
+      return false
+    end
+  end
+
   def to_json(options = {})
     h = self.as_json
     h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]

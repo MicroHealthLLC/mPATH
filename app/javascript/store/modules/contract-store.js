@@ -188,10 +188,18 @@ const contractStore = {
         formData.append("contract_project_poc[name]", cPOCsData.name);
         // formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
         formData.append("contract_project_poc[email]", cPOCsData.email);
-        formData.append("contract_project_poc[title]", cPOCsData.title);
-        formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
-        formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);
+        if(cPOCsData.title){
+          formData.append("contract_project_poc[title]", cPOCsData.title);
+        }
+        if(cPOCsData.workNum){
+          formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
+        }
+       if (cPOCsData.mobileNum){
+          formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);
+       }
+       if(cPOCsData.notes){
         formData.append("contract_project_poc[notes]", cPOCsData.notes);
+       }       
       axios({
         method: "POST",
         url: `${API_BASE_PATH}/contract_project_pocs`,

@@ -497,6 +497,7 @@
         v-loading="!getRolesLoaded"
         style="width: 100%"
         element-loading-spinner="el-icon-loading"   
+        element-loading-text="Fetching or Updating data. Please wait..."
          >
         <el-table
           v-if="projectUsers && projectUsers.data && projectUsers.roleIds.length > 0"
@@ -601,7 +602,7 @@
           </el-table-column> 
           <el-table-column
           width="125"
-          align="right"
+          align="center"
         >
           <!-- <template slot="header" slot-scope="scope">
             <el-input
@@ -610,13 +611,23 @@
               placeholder="Enter User or Role Name"/>
           </template> -->
                 <template slot-scope="scope">
+                  
                 <el-button  
                   type="default"          
                   v-if="(isEditingRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
-                  @click.prevent="removeRoles(scope.$index, scope.row)" 
+                  @click.prevent="removeAssociations(scope.$index, scope.row)" 
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light">               
                   <i class="far fa-save"></i>
+                </el-button>  
+                 <el-button  
+                  type="default"          
+                  v-if="scope.$index !== rowIndex_1"
+                  @click.prevent="removeRole(scope.$index, scope.row)" 
+                  v-tooltip="`Remove Role`" 
+                   class="bg-light btn-sm"
+                  >    
+                <i class="far fa-trash-alt text-danger "></i>   
                 </el-button>  
                   <el-button  
                   type="default" 
@@ -862,7 +873,7 @@
           </el-button>
            <el-button
            type="default"
-            @click="removeRoles()"
+            @click="removeAssociations()"
             v-if="!adminRoleUsers && assignedAdminRoles &&  assignedAdminRoles[0]"
             v-tooltip="`Remove Admin Role from User`" 
            class="btn btn-sm bg-danger text-light">               
@@ -1039,7 +1050,7 @@ export default {
    log(e){
     //  console.log(`contracts:  ${e}` )
    },
-   removeRoles(index, rowData){    
+   removeAssociations(index, rowData){    
       if (this.isEditingRoles) {
         let projIds = this.projectRoleUsers.map(t => t.facilityProjectId); 
         let assigned =  this.assignedUserProjects.map(t => t.facilityProjectId);   
@@ -1074,6 +1085,31 @@ export default {
               ...projectUserRoleData,
             });
       }     
+    },
+  removeRole(index, rowData){    
+     
+        let projectUserRoleData = {
+                userData: {
+                  removeRole: true,
+                  roleId: rowData,
+                  userId: this.userData.id,
+                  programId: this.$route.params.programId,        
+              },
+            };
+
+     this.$confirm(
+        `Removing role will also remove all assocations.  Are you sure you want to remove this role?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {        
+       this.removeUserRole({
+              ...projectUserRoleData,
+            });
+      });        
     },
   editRoles(index, rowData){
     this.roleRowId = rowData   
@@ -1320,8 +1356,7 @@ export default {
    if (this.programUsers.length <= 0)    {
         this.fetchProgramUsers(this.$route.params.programId)
       }
-
-      this.fetchPortfolioUsers()
+      this.fetchPortfolioUsers(this.$route.params.programId)
 
 
   },

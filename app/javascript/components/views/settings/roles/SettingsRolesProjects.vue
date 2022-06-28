@@ -1474,9 +1474,9 @@ export default {
       }  
     },
   },
-  mounted() {
-    this.fetchRoles(this.$route.params.programId)
-  },
+  // mounted() {
+  //   this.fetchRoles(this.$route.params.programId)
+  // },
   computed: {
     ...mapGetters([
         "contentLoaded",

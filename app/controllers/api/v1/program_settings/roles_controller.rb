@@ -33,9 +33,16 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     default_roles = Role.includes(:role_privileges).default_roles.where.not(id: role_ids)
     default_roles.each do |role|
       h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
       roles << h
     end
+    project_roles = Role.includes(:role_privileges).where("roles.id not in (?) and roles.project_id = ?", role_ids, project.id)
 
+    project_roles.each do |role|
+      h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
+      roles << h
+    end
     render json: {roles: roles}
   end
 
@@ -90,6 +97,10 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
 
     if !conditions[:role_id] || !conditions[:role_id].any?
       render json: {message: "Invalid parameter: Role must be provided."}, status: 406
+    
+    elsif !conditions[:user_id] || !conditions[:user_id].any?
+      render json: {message: "Invalid parameter: User id must be provided."}, status: 406
+      
     else
       role_users = RoleUser.where(conditions)
       program_admin_role = Role.program_admin_user_role

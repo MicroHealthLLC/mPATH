@@ -224,7 +224,7 @@
                 v-tooltip="`Go to Project`"
                 @click.prevent="goToProject(scope.$index, scope.row)"
                 class="bg-success text-light btn-sm"
-                v-if="_isallowed('read')"
+                v-if="_isallowedProject(scope.row.facilityProjectId, 'read')"
               >
              <i class="fas fa-arrow-alt-circle-right"></i>
               </el-button>
@@ -674,13 +674,13 @@ export default {
         this.roleRowId = rowData
         this.isEditingRoles = true;
     },
- closeImportProjectBtn() {
-    this.dialog2Visible = false;
-    this.SET_CHECKED_PORTFOLIO_PROJECTS([0]);
-  },
-  checkAllChange() {
-    this.isIndeterminate = false;
-  },
+   closeImportProjectBtn() {
+      this.dialog2Visible = false;
+      this.SET_CHECKED_PORTFOLIO_PROJECTS([0]);
+    },
+    checkAllChange() {
+      this.isIndeterminate = false;
+    },
   // removeProject(index, rows) {
   //     // let id = [rows.id];
   //     let project = {
@@ -822,7 +822,8 @@ removeProject(index, rows) {
       this.C_projectGroupFilter = null;
       this.newProjectNameText = "";
     },
-    editMode(index, rows) {
+    editMode(index, rows) {   
+      console.log(rows)
       this.rowIndex = index
       this.rowId = rows.id
      },
@@ -917,6 +918,10 @@ removeProject(index, rows) {
        this.rowId = null;
         }
       });
+    },
+    _isallowedProject(c, salut) {
+      // console.log(c, salut)
+        return this.checkPrivileges("ProjectSettingProjectList", salut, this.$route, {method: "isallowedProject", facility_project_id: c})
     },
     _isallowed(salut) {
       return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
@@ -1102,7 +1107,14 @@ removeProject(index, rows) {
       let filteredProjects = this.portfolioProjects.filter(
         (pG) => !this.projectData.map((g) => g.id).includes(pG.id)
       )
-      return filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name))
+    let data = filteredProjects.sort((a, b) => a.facility_name.localeCompare(b.facility_name)).filter(t => {
+          if (this.searchProjects !== '' && t) {           
+              return (            
+                t.facility_name.toLowerCase().match(this.searchProjects.toLowerCase()) 
+              ) 
+          } else return true
+          })
+          return data
     } 
     if (!this.projectData || this.projectData && !(this.projectData.length > 0)) {
         // console.log('nada')
@@ -1336,13 +1348,13 @@ h5 {
 
   /deep/.el-dialog__body {
     padding-top: 0 !important;
-    height: 70vh; 
+    height: 68vh; 
   }
 
   /deep/.el-checkbox-group {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 45vh;
+    height: 35vh;
    } 
 }
 
