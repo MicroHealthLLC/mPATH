@@ -119,7 +119,7 @@ const contractStore = {
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
       if(cProjectData.notes){
         formData.append("contract_project_data[notes]", cProjectData.notes)   
-        }   
+        } 
       if(cProjectData.contract_vehicle_id){
         formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
       }
@@ -279,6 +279,7 @@ const contractStore = {
       if(cProjectData.notes){
         formData.append("contract_project_data[notes]", cProjectData.notes)   
        } else formData.append("contract_project_data[notes]", "") 
+      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)    
       if(cProjectData.contract_vehicle_id){
       formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
       }
