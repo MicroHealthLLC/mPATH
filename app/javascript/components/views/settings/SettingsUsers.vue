@@ -557,7 +557,6 @@
               filterable
               multiple
               class="w-100 el-popper"
-              clearable
               track-by="id"
               placeholder="No projects assigned to this role"   
               value-key="id"
@@ -581,7 +580,6 @@
               filterable
               multiple
               class="w-100 el-popper"
-              clearable
               track-by="id"
               value-key="id"
               :popper-append-to-body="false"

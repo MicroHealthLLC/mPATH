@@ -36,15 +36,20 @@
            <p class="clickable groupName expandText">{{ group.name }}</p>
            </span>
          </div>
+         <!-- v-if="_isallowedProjectCounts(group, 'read')" -->
 
-           <div class="col py-0 text-right"  v-if="_isallowedProjectCounts(group, 'read')">
-            <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
+           <div class="col py-0 text-right"  >
+            <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">
+             <!-- <span v-if="_isallowedProjectCounts(facilityGroupFacilities(group).projects.a, 'read')">  -->
+
+            
+             {{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
               }}
-            </span>
-
-             <span class="badge badge-secondary badge-pill pill">
+             </span> 
+            <!-- </span>  -->
+             <span v-else class="badge badge-secondary badge-pill pill">
                 {{ facilityGroupFacilities(group).projects.a.length }}
             </span> 
          </div>
@@ -53,7 +58,8 @@
           <!-- <span    :load="log(facilityGroupFacilities(group))"> </span> -->
          <div v-show="getExpandedGroup == group.id" class="ml-2">
               <div
-              v-for="facility in facilityGroupFacilities(group).projects.a"            
+              v-for="facility in facilityGroupFacilities(group).projects.a" 
+              :load="log(facilityGroupFacilities(group).projects.a)"           
               :key="facility.id"  
               
             >
@@ -221,10 +227,10 @@ export default {
       this.$emit("on-expand-facility-group", group);
 
     },
-    // log(e){
-    //       console.log(e)
+    log(e){
+          // console.log(e.forEach(t => t))
 
-    // },
+    },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
@@ -232,16 +238,12 @@ export default {
     _isallowedProjects(c, salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.facilityProjectId})
     },
-    _isallowedProjectCounts(c, salut) {
-      if (c) {
-        let group = this.sortedGroups.map(t => t)
-       console.log(this.facilityGroupFacilities(group).projects.a)
-          // console.log(group)
-      }
-
-
-      //  this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.map(t => t.facilityProjectId)})
-    },
+    // _isallowedProjectCounts(c, salut) {
+    //   // console.log(c)
+    //   if (c && c.length > 0) {       
+    //    return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.map(t => t.facilityProjectId)})
+    //   }     
+    // },
     _isallowedProgramSettings(salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
     },
