@@ -44,7 +44,7 @@
      </el-table-column>
      <el-table-column
       label="Total Contract Value"
-       width="115"
+       width="175"
       prop="total_contract_value">
        <template slot-scope="scope">
         {{ scope.row.total_contract_value | toCurrency }}
@@ -52,7 +52,7 @@
     </el-table-column>
     <el-table-column
       label="Total Funded Value"
-       width="115"
+       width="175"
       prop="total_founded_value">
      <template slot-scope="scope">
      <span v-if="rowId == scope.row.id">
@@ -72,7 +72,7 @@
     </el-table-column>  
      <el-table-column
       label="Billings to Date"
-       width="115"
+       width="175"
       prop="billings_to_date">
      <template slot-scope="scope">
      <span v-if="rowId == scope.row.id">
@@ -102,9 +102,9 @@
       </template>
     </el-table-column>
     <el-table-column
-       label="Funded Remaining"
-       width="115"
-      >
+       label="Funding Remaining"
+       width="175"
+            >
        <template slot-scope="scope">
        <span v-if="scope.row.billings_to_date && scope.row.total_founded_value ">
          {{ (scope.row.total_founded_value - scope.row.billings_to_date) | toCurrency }}
@@ -113,7 +113,7 @@
     </el-table-column>
     <el-table-column
       label="Total Backlog"
-       width="115"       
+       width="175"       
       >
      <template slot-scope="scope">
     <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
@@ -228,6 +228,14 @@ export default {
         sums[index] = 'Totals';
         return;
       }
+     if (index === 9) {
+        sums[index] = 'FR';
+        return;
+      }
+     if (index === 10) {
+        sums[index] = 'BL';
+        return;
+      }
       const values = data.map(item => Number(item[column.property]));
       if (!values.every(value => isNaN(value))) {
         sums[index] = values.reduce((prev, curr) => {
@@ -243,7 +251,23 @@ export default {
       }
     });
      let newSums = ['Totals']
-      for (const ele of sums) {
+     
+         
+      let fundRemaining = (sums[6] - sums[7]);
+      let totalBacklog = (sums[5] - sums[7]);      
+      //  console.log(fundRemaining)  
+ 
+      const newArr = sums.map(element => {
+          if (element === 'FR' ) {
+            return fundRemaining;
+          }
+          if (element === 'BL' ) {
+            return totalBacklog
+          }
+          return element;
+        });
+
+      for (const ele of newArr) {
         if (ele !== 'Totals'){          
             newSums.push(ele.toLocaleString('en-US', {
             style: 'currency',
@@ -251,8 +275,7 @@ export default {
           }))
         }          
       }      
-      console.log(newSums) 
-   
+
     return newSums
    },
   saveBacklogValues(index, row){
