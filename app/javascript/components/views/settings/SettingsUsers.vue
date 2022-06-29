@@ -196,7 +196,7 @@
             @click.prevent="createUser"
             v-show="email && lastName && firstName && !createAnotherUserBtn"
             class="btn btn-md bg-primary text-light modalBtns"
-            v-tooltip="`Save New User`"               
+            v-tooltip="`Save`"               
           >
           <i class="fal fa-save"></i> 
         </button>
@@ -411,7 +411,7 @@
          <button
             @click.prevent="saveUserEdits"
             class="btn btn-md bg-primary text-light mr-2 modalBtns"
-            v-tooltip="`Save New User`"               
+            v-tooltip="`Save`"               
           >
           <i class="fal fa-save"></i>
         </button>
@@ -1313,6 +1313,7 @@ export default {
     },
    saveUserEdits() {
     let editUserData = {
+     program_id: this.$route.params.programId,
      userData: {
           fName: this.rowUser.first_name,
           lName: this.rowUser.last_name,

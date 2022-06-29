@@ -95,8 +95,7 @@
        width="115"
       >
       <template slot-scope="scope">
-     <span v-if="scope.row.billings_to_date && scope.row.total_contract_value ">
-      <!-- {{(scope.row.billings_to_date / scope.row.total_contract_value).toFixed(2) }}% -->
+     <span v-if="scope.row.billings_to_date && scope.row.total_contract_value && scope.row.billings_to_date > 0 && scope.row.total_contract_value > 0">
       {{ Number((scope.row.billings_to_date / scope.row.total_contract_value)/1).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:0}) }}
       
      </span>
