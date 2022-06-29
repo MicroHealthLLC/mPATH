@@ -1313,6 +1313,7 @@ export default {
     },
    saveUserEdits() {
     let editUserData = {
+     program_id: this.$route.params.programId,
      userData: {
           fName: this.rowUser.first_name,
           lName: this.rowUser.last_name,
