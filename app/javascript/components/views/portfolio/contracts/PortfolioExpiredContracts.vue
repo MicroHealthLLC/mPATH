@@ -504,7 +504,7 @@
       </span>
      </template>
     </el-table-column>
-      <el-table-column
+    <el-table-column
       label="Notes"
       width="350"
       prop="notes">
