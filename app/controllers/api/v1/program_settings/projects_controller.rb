@@ -1,21 +1,17 @@
 class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController 
 
-  # before_action :check_permission
+  before_action :check_permission
 
   def check_permission
-    program_id = params[:project_id]
+    program_id = params[:id]
 
     raise(CanCan::AccessDenied) if !program_id
     action = nil
-    if ["index", "show","task_issues" ].include?(params[:action]) 
+    if ["show" ].include?(params[:action]) 
       action = "R"
-    elsif ["create", "update", "add_users"].include?(params[:action]) 
-      action = "W"
-    elsif ["destroy", "remove_role"].include?(params[:action]) 
-      action = "D"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id,action,  RolePrivilege::PROGRAM_SETTING_USERS_ROLES)
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id,action,  RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
   end
 
   def show
