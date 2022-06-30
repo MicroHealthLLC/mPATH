@@ -35,13 +35,13 @@ class ContractVehicle < ApplicationRecord
     contract_vehicle.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
 
-      if c_params[:contract_sub_category_id] && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
+      if c_params[:contract_sub_category_id] && !( a = (Integer(c_params[:contract_sub_category_id]) rescue nil) ) && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])
         c_params[:contract_sub_category_id] = ContractSubCategory.create(name: c_params[:contract_sub_category_id], user_id: user.id).id
       end
-      if c_params[:contract_agency_id] && !ContractAgency.exists?(id: c_params[:contract_agency_id])
+      if c_params[:contract_agency_id] && !( a = (Integer(c_params[:contract_agency_id]) rescue nil) ) && !ContractAgency.exists?(id: c_params[:contract_agency_id])
         c_params[:contract_agency_id] = ContractAgency.create(name: c_params[:contract_agency_id], user_id: user.id).id
       end
-      if c_params[:contract_vehicle_type_id] && !ContractVehicleType.exists?(id: c_params[:contract_vehicle_type_id])
+      if c_params[:contract_vehicle_type_id] && !( a = (Integer(c_params[:contract_vehicle_type_id]) rescue nil) ) && !ContractVehicleType.exists?(id: c_params[:contract_vehicle_type_id])
         c_params[:contract_vehicle_type_id] = ContractVehicleType.create(name: c_params[:contract_vehicle_type_id], user_id: user.id).id
       end
  
