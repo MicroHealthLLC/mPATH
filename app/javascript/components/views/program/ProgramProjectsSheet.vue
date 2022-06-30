@@ -231,17 +231,17 @@ export default {
     ...mapMutations(["setProjectGroupFilter", "setGroupFilter"]),
     goToProject(index, rows) {  
       if(this.isMapView){
-        window.location.pathname = `/programs/${this.programId}/map/projects/${rows.id}/`
-      } else  window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
-     
-      // router.push more efficient but programPrivileges errors persist unless reload
-      // this.$router.push({
-      //   name: "SheetProject",
-      //   params: {
-      //     programId: this.$route.params.programId,
-      //     projectId: rows.id.toString(),          
-      //   },
-      // });
+        // window.location.pathname = `/programs/${this.programId}/map/projects/${rows.id}/`
+      } else  {
+      //  window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
+     this.$router.push({
+        name: "SheetProject",
+        params: {
+          programId: this.$route.params.programId,
+          projectId: rows.id.toString(),          
+        },
+      });    
+     }   
     },
   
     addProject() {

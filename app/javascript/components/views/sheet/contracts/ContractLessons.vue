@@ -123,7 +123,7 @@
         </button>
       </div>
       <!-- Lessons Learned Table -->
-        <div style="margin-bottom:50px" data-cy="lessons_table">
+        <div style="margin-bottom:30px" data-cy="lessons_table">
           <table
             v-if="filteredLessons.filtered.lessons.length > 0"
             class="table table-sm table-bordered stickyTableHeader mb-3"
@@ -256,7 +256,7 @@
         <!-- Lessons Per Page Toggle -->
         <div
           v-if="filteredLessons.filtered.lessons.length > 0"
-          class="float-right mb-4 mt-2 font-sm"
+          class="text-right mb-4 mt-2 font-sm"
         >
           <div class="simple-select d-inline-block text-right font-sm">
             <span>Displaying </span>

@@ -1266,6 +1266,7 @@ export default {
     });
     }   
      if(this.getShowProjectStats){
+      // console.log(lesson)
       this.$router.push({
       name: "ProgramContractLessonForm",
       params: {
@@ -1276,7 +1277,7 @@ export default {
     });
     }       
  
-    console.log(this.$route.params)
+    // console.log(this.$route.params)
     },
   exportLessonsToPdf() {
       const doc = new jsPDF("l");

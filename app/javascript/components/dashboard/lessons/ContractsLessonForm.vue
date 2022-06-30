@@ -22,6 +22,10 @@
                    contract.name
                   }}
               </span>
+             <span v-else>{{
+                   contractLesson.contract_nickname
+                  }}
+              </span>
             </router-link>     
           <el-icon
             class="el-icon-arrow-right"
@@ -954,10 +958,14 @@ export default {
     _isallowed(salut) {
       return this.checkPrivileges("ContractLessonForm", salut, this.$route)
      },
-    close() {  
-          this.$router.push(
-            `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
-          ); 
+    close() {
+    if (this.$route.params.contractId && this.contract) {
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
+      );
+    } else this.$router.push(
+        `/programs/${this.$route.params.programId}/dataviewer`
+      ); 
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
@@ -1215,25 +1223,29 @@ export default {
   return this.$route.name.includes("ProgramTaskForm") ||
           this.$route.name.includes("ProgramRiskForm") ||
           this.$route.name.includes("ProgramIssueForm") ||
+          this.$route.name.includes("ProgramContractLessonForm") ||
           this.$route.name.includes("ProgramLessonForm") ;
     },
   backToLessons() {
-    if  (this.$route.params.contractId) {
+    if (this.$route.params.contractId && !this.isProgramView) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/lessons`
       } else {
         return `/programs/${this.$route.params.programId}/dataviewer`;
       }
     },
    backToContract(){
-        return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
+    if (this.isProgramView){
+      return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/` 
+    } else return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
      },
     isMapView() {
       return this.$route.name === "MapLessonForm";
     },
   },
   mounted() {
-     if (this.$route.params.lessonId && this.$route.params.lessonId != "new" && this.contract) {
-      this.fetchContractLesson({
+     if (this.$route.params.lessonId && this.$route.params.lessonId != "new" ) {
+    // console.log(this.$route.params)
+    this.fetchContractLesson({
         id: this.$route.params.lessonId,
         ...this.$route.params,
       });
