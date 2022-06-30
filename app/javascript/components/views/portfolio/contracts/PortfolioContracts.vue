@@ -466,7 +466,7 @@
     </el-table-column>
      <el-table-column
       label="Total Contract Value*"
-       width="115"
+       width="175"
       prop="total_contract_value">
      <template slot-scope="scope">
      <el-input

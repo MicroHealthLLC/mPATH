@@ -832,8 +832,12 @@ class User < ApplicationRecord
     has_access
   end
 
-  def authorized_facility_project_id
-    self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+  def authorized_facility_project_ids(project_ids: [])
+    fids = self.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+    if project_ids.any?
+      fids = FacilityProject.where(project_id: project_ids, id: fids).pluck(:id)
+    end
+    fids
   end
 
   def program_settings_privileges_hash_by_role(program_ids: [])
@@ -851,22 +855,20 @@ class User < ApplicationRecord
   end 
 
   def authorized_contract_ids(project_ids: []) 
-    # c_ids = []
-    # cph = self.contract_privileges_hash
-    # if project_ids.any?
-    #   project_ids.map{|pid| c_ids += cph[pid][:authorized_contract_ids] }
-    # else
-    #   cph.map{|pid, h| c_ids += h[:authorized_contract_ids] }
-    # end
-    # c_ids
     user = self
-    # project_contract_ids = RoleUser.joins(:user, {role: :role_privileges}).where("role_users.project_contract_id is not null and role_users.user_id = ? ", user.id).distinct.pluck(:project_contract_id)
-    role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
-    project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
+    # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
+    # if project_ids.any?
+    #   project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
+    # end
+    # project_contract_ids
+
+    fids = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_id is not null").select("distinct(project_contract_id)").map(&:project_contract_id)
     if project_ids.any?
-      project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
+      fids = ProjectContract.where(project_id: project_ids, id: fids).pluck(:id)
     end
-    project_contract_ids
+    fids
+
   end
 
   def authorized_contracts(project_ids: [])

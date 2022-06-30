@@ -20,7 +20,7 @@ class Api::V1::PortfolioController < AuthenticatedController
   def lessons
     pph = {} #current_user.project_privileges_hash
     fph = {} #current_user.facility_privileges_hash
-    facility_project_ids = current_user.authorized_facility_project_id
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
       all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
@@ -84,7 +84,7 @@ class Api::V1::PortfolioController < AuthenticatedController
     pph = {} #current_user.project_privileges_hash
     fph = {} #current_user.facility_privileges_hash
 
-    facility_project_ids = current_user.authorized_facility_project_id
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
       all_resources = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
@@ -132,7 +132,7 @@ class Api::V1::PortfolioController < AuthenticatedController
   def issues
     pph = {} #current_user.project_privileges_hash
     fph = {} #current_user.facility_privileges_hash
-    facility_project_ids = current_user.authorized_facility_project_id
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
 
@@ -179,7 +179,7 @@ class Api::V1::PortfolioController < AuthenticatedController
   def risks
     pph = {} #current_user.project_privileges_hash
     fph = {} #current_user.facility_privileges_hash
-    facility_project_ids = current_user.authorized_facility_project_id
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
       all_resources = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
