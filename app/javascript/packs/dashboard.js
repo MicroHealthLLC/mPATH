@@ -267,7 +267,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     } else if(extraData["method"] == "isallowedProject"){
       
       let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[extraData["facility_project_id"]]
-      // console.log(facility_project_privileges, extraData["facility_project_id"])
+    // console.log(facility_project_privileges, extraData["facility_project_id"])
 
       return facility_project_privileges && (facility_project_privileges.project_analytics || facility_project_privileges.project_issues || facility_project_privileges.project_lessons || facility_project_privileges.project_notes || facility_project_privileges.project_risks || facility_project_privileges.project_tasks);
     } else{

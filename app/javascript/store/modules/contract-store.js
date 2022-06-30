@@ -117,9 +117,18 @@ const contractStore = {
       formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
       formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
-      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
-      formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
-      formData.append("contract_project_data[contract_number_id]", cProjectData.number)
+      if(cProjectData.notes){
+        formData.append("contract_project_data[notes]", cProjectData.notes)   
+        } 
+      if(cProjectData.contract_vehicle_id){
+        formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
+      }
+      if(cProjectData.contract_award_to_id){
+        formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
+      }
+      if(cProjectData.number){
+        formData.append("contract_project_data[contract_number_id]", cProjectData.number)
+      }
       formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
       formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
@@ -157,6 +166,9 @@ const contractStore = {
         formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
         formData.append("contract_vehicle[contract_number_id]", cVehicleData.cNumber);
         formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
+        if (cVehicleData.cafFees){
+          formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
+        }
         formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
         formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
         formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
@@ -259,14 +271,25 @@ const contractStore = {
       formData.append("contract_project_data[contract_end_date]", cProjectData.contract_end_date)
       formData.append("contract_project_data[contract_current_pop_start_date]", cProjectData.contract_current_pop_start_date)
       formData.append("contract_project_data[contract_current_pop_end_date]", cProjectData.contract_current_pop_end_date)
-      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)     
-      formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
-      formData.append("contract_project_data[contract_number_id]", cProjectData.number)
       formData.append("contract_project_data[contract_type_id]", cProjectData.contract_type_id)
       formData.append("contract_project_data[contract_award_type_id]", cProjectData.contract_award_type_id)
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
       formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
       formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
+      if(cProjectData.notes){
+        formData.append("contract_project_data[notes]", cProjectData.notes)   
+       } else formData.append("contract_project_data[notes]", "") 
+      formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)    
+      if(cProjectData.contract_vehicle_id){
+      formData.append("contract_project_data[contract_vehicle_id]", cProjectData.contract_vehicle_id)   
+      }
+      if(cProjectData.contract_award_to_id){
+        formData.append("contract_project_data[contract_award_to_id]", cProjectData.contract_award_to_id)
+      }
+      if(cProjectData.number){
+        formData.append("contract_project_data[contract_number_id]", cProjectData.number)
+      }
+
       if(cProjectData.co_poc_id){
         formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
       }
@@ -311,6 +334,9 @@ const contractStore = {
     formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
     formData.append("contract_vehicle[contract_number_id]", cVehicleData.cNumber);
     formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
+    if (cVehicleData.cafFees){
+      formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
+    }
     formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
     formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
     formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);

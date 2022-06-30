@@ -3034,9 +3034,16 @@ export default new Vuex.Store({
       });
     },
     fetchCurrentProject({ commit, dispatch }, id) {
+      let spaths = window.location.pathname.split("/")
+      let url = `${API_BASE_PATH}/programs/${id}.json`
+      if(spaths.length > 0){
+        if(spaths.indexOf("settings") > 0){
+          url = `${API_BASE_PATH}/program_settings/programs/${id}.json`
+        }
+      }
       return new Promise((resolve, reject) => {
         http
-          .get(`${API_BASE_PATH}/programs/${id}.json`)
+          .get(url)
           .then((res) => {
             let facilities = [];
             for (let facility of res.data.project.facilities) {

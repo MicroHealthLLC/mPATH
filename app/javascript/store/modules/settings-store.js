@@ -671,7 +671,7 @@ const settingsStore = {
           commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
-    updateUserData({ commit }, { userData }) {
+    updateUserData({ commit }, { userData, program_id }) {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
       console.log(userData)
@@ -682,6 +682,7 @@ const settingsStore = {
       formData.append("user[organization_id]", userData.org)
       formData.append("user[address]", userData.address)
       formData.append("user[phone_number]", userData.phNumber)
+      formData.append("program_id", program_id);
       axios({
         method: "PATCH",
         url: `${API_BASE_PATH}/program_settings/users/${userData.id}`,
@@ -740,6 +741,7 @@ const settingsStore = {
         formData.append("user[first_name]", newUser.fName)
         formData.append("user[last_name]", newUser.lName)
         formData.append("user[email]", newUser.email)
+        formData.append("program_id", newUser.pId)
         axios({
           method: "POST",
           url: `${API_BASE_PATH}/program_settings/users`,

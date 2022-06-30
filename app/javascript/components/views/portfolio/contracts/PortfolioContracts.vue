@@ -466,7 +466,7 @@
     </el-table-column>
      <el-table-column
       label="Total Contract Value*"
-       width="115"
+       width="175"
       prop="total_contract_value">
      <template slot-scope="scope">
      <el-input
@@ -620,6 +620,31 @@
       </span>
      </template>
     </el-table-column>
+     <el-table-column
+      label="Notes"
+      width="350"
+      prop="notes">
+      <template slot-scope="scope">
+        <el-input
+          size="small"
+          v-if="_isallowed('write') && scope.$index == createRow"
+          style="text-align:center"
+          v-model="scope.row.name"
+          controls-position="right"
+        ></el-input>
+        <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
+        <el-input
+          size="small"
+          style="text-align:center"
+          v-model="scope.row.notes"
+          controls-position="right"
+          ></el-input>
+        </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        {{ scope.row.notes }} 
+        </span>
+        </template>
+     </el-table-column>
     <el-table-column
       label="Actions"
       width="120"
@@ -1268,6 +1293,7 @@ export default {
           cProjectData: {
             charge_code: row.charge_code,
             name: row.name,   
+            notes: row.notes,   
             prime_or_sub: row.prime_or_sub,
             contract_customer_id: row.contract_customer_id, 
             contract_start_date: this.contractStartDate,

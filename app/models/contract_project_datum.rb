@@ -39,12 +39,12 @@ class ContractProjectDatum < ApplicationRecord
   end
 
   def self.preload_array
-    [:contract_customer, :contract_vehicle, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
+    [:contract_customer, {contract_vehicle: [:contract_numbers] }, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
   end
 
   def self.params_to_permit
     [
-      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id
+      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id, :notes
     ]
   end
 
@@ -60,39 +60,47 @@ class ContractProjectDatum < ApplicationRecord
     else
       contract_project_data = self
     end
-   
+
     contract_project_data.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
       
-      if c_params[:contract_number_id] && !ContractNumber.exists?(id: c_params[:contract_number_id])
+      if c_params[:contract_number_id] && !( a = (Integer(c_params[:contract_number_id]) rescue nil) ) && !ContractNumber.exists?(id: a)
         c_params[:contract_number_id] = ContractNumber.create(name: c_params[:contract_number_id], user_id: user.id).id
       end
       
-      if c_params[:contract_customer_id] && !ContractCustomer.exists?(id: c_params[:contract_customer_id])
+      if c_params[:contract_customer_id] && !( a = (Integer(c_params[:contract_customer_id]) rescue nil) ) && !ContractCustomer.exists?(id: a)
         c_params[:contract_customer_id] = ContractCustomer.create(name: c_params[:contract_customer_id], user_id: user.id).id
       end
-      if c_params[:contract_vehicle_id] && !ContractVehicle.exists?(id: c_params[:contract_vehicle_id])
+
+      if c_params[:contract_vehicle_id] && !( a = (Integer(c_params[:contract_vehicle_id]) rescue nil) ) && !ContractVehicle.exists?(id: a)
         c_params[:contract_vehicle_id] = ContractVehicle.create(name: c_params[:contract_vehicle_id], user_id: user.id).id
       end
-      if c_params[:contract_award_to_id] && !ContractAwardTo.exists?(id: c_params[:contract_award_to_id])
+      
+      if c_params[:contract_award_to_id] && !( a = (Integer(c_params[:contract_award_to_id]) rescue nil) ) && !ContractAwardTo.exists?(id: a)
         c_params[:contract_award_to_id] = ContractAwardTo.create(name: c_params[:contract_award_to_id], user_id: user.id).id
       end
-      if c_params[:contract_naic_id] && !ContractNaic.exists?(id: c_params[:contract_naic_id])
+      
+      if c_params[:contract_naic_id] && !( a = (Integer(c_params[:contract_naic_id]) rescue nil) ) && !ContractNaic.exists?(id: a)
         c_params[:contract_naic_id] = ContractNaic.create(name: c_params[:contract_naic_id], user_id: user.id).id
       end
-      if c_params[:contract_award_type_id] && !ContractAwardType.exists?(id: c_params[:contract_award_type_id])
+      
+      if c_params[:contract_award_type_id] && !( a = (Integer(c_params[:contract_award_type_id]) rescue nil) ) && !ContractAwardType.exists?(id: a)
         c_params[:contract_award_type_id] = ContractAwardType.create(name: c_params[:contract_award_type_id], user_id: user.id).id
       end
-      if c_params[:contract_type_id] && !ContractType.exists?(id: c_params[:contract_type_id])
+      
+      if c_params[:contract_type_id] && !( a = (Integer(c_params[:contract_type_id]) rescue nil) ) && !ContractType.exists?(id: a)
         c_params[:contract_type_id] = ContractType.create(name: c_params[:contract_type_id], user_id: user.id).id
       end
-      if c_params[:contract_current_pop_id] && !ContractCurrentPop.exists?(id: c_params[:contract_current_pop_id])
+      
+      if c_params[:contract_current_pop_id] && !( a = (Integer(c_params[:contract_current_pop_id]) rescue nil) ) && !ContractCurrentPop.exists?(id: a)
         c_params[:contract_current_pop_id] = ContractCurrentPop.create(name: c_params[:contract_current_pop_id], user_id: user.id).id
       end
-      if c_params[:contract_pop_id] && !ContractPop.exists?(id: c_params[:contract_pop_id])
+      
+      if c_params[:contract_pop_id] && !( a = (Integer(c_params[:contract_pop_id]) rescue nil) ) && !ContractPop.exists?(id: a)
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id], user_id: user.id).id
       end
-      if c_params[:co_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:co_contract_poc_id])
+      
+      if c_params[:co_contract_poc_id] && !( a = (Integer(c_params[:co_contract_poc_id]) rescue nil) ) && !ContractProjectPoc.exists?(id: a)
         c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id], user_id: user.id).id
       end
       contract_project_data.attributes = c_params
