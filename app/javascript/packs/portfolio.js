@@ -108,10 +108,8 @@ Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData)
 
 // }
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
-  // console.log("***************** ", page)
-  
-
-  // return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)
+ console.log("portfolio page privileges***************** ", page, route) 
+   // return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)
 
   
   if(["portfolio_issue_form"].includes(page) ){
@@ -137,6 +135,18 @@ Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
       return fPrivilege.tasks.includes(s); 
+    }
+  } else if(["portfolio_lesson_form"].includes(page) ){
+    if (route.params.contractId) {
+      let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s);
+    } else {
+      let fPrivilege = Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]    
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return fPrivilege.lessons.includes(s); 
     }
   } else if(["portfolio_risk_form"].includes(page) ){
     if (route.params.contractId) {
