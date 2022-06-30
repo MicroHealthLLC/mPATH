@@ -250,7 +250,7 @@
         </div>
       </div>
 
-      <div class="col-12 p-0">
+      <div class="col-12 p-0"  v-if="validStages.length > 0 && lessonStages[programId] && lessonStages[programId].length >= 0">
         <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
@@ -262,11 +262,9 @@
             Clear Stages
           </button>
         </div>
-
-        <el-steps
-          v-if="validStages.length > 0 && lessonStages[this.programId].length >= 0"
+         <el-steps         
           :active="
-            lessonStages[this.programId].findIndex(
+            lessonStages[programId].findIndex(
               (stage) => stage.id == lesson.lesson_stage_id
             )
           "
@@ -274,10 +272,10 @@
           v-model="lesson.lesson_stage_id"
           value-key="id"
           track-by="id"
-          :class="{ 'over-six-steps': lessonStages[this.programId].length >= 6 }"
+          :class="{ 'over-six-steps': lessonStages[programId].length >= 6 }"
         >
           <el-step
-            v-for="stage in lessonStages[this.programId]"
+            v-for="stage in lessonStages[programId]"
             :key="stage.id"
             :value="stage"
             :title="stage.name"
@@ -285,7 +283,8 @@
             class="clickable"
           >
           </el-step>
-        </el-steps>
+        </el-steps> 
+        
       </div>
     </div>
     <!-- Related Tab -->
