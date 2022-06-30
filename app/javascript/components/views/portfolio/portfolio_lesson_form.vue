@@ -885,7 +885,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioUsers", "fetchPortfolioLessons"]),
+    ...mapActions(["addLesson", "fetchLesson", "updateLesson","fetchPortfolioAssignees", "fetchPortfolioLessons"]),
     ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS", "TOGGLE_LESSONS_LOADED"]),
 
     saveLesson() {
@@ -1246,7 +1246,7 @@ export default {
         ...this.$route.params,
       });
       if(this.portfolioUsers && this.portfolioUsers.length < 1){
-        this.fetchPortfolioUsers()
+        this.fetchPortfolioAssignees()
       }    
       this.loading = false;
   },

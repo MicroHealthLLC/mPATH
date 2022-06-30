@@ -1360,6 +1360,7 @@ export default {
     }    
     this.loading = false;
     this._ismounted = true;
+    console.log(this.$route)
   },
   methods: {
     ...mapMutations(["setTaskForManager", "updateTasksHash", 'setPortfolioCategoriesFilter']),
