@@ -228,7 +228,7 @@
       </button>
        </div>
       <div v-if="filteredTasks.filtered.tasks.length > 0">
-        <div  style="margin-bottom:50px" data-cy="tasks_table" class="mt-2">
+        <div  style="margin-bottom:30px" data-cy="tasks_table" class="mt-2">
           <table data-cy="tasks_table" class="table table-sm table-bordered table-striped stickyTableHeader">
             <colgroup>
               <col class="oneSix" />
@@ -381,7 +381,7 @@
               :task="task"
               :from-view="from"
             />
-          <div class="float-right mb-4 mt-2 font-sm">
+          <div class="text-right mb-4 mt-2 font-sm">
            <div class="simple-select d-inline-block text-right font-sm">
            <span class="mr-1">Displaying </span>
             <el-select
