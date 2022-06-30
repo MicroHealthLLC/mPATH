@@ -102,3 +102,4 @@ gem 'jwt'
 
 gem "addressable", ">= 2.8.0"
 
+gem "rspec-rails", group: [:development, :test]
