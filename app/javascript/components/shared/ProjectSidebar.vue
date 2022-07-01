@@ -13,8 +13,8 @@
     <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded" >
         <div
-          v-for="(group, index) in sortedGroups"
-          :key="index + 'a'"  
+          v-for="(group, index) in sortedGroups.filter(t => t.contracts.length > 0 || t.facilities.length > 0)"
+           :key="index + 'a'"  
            class="my-2 px-2 container"
         >
           <div
@@ -91,7 +91,6 @@
                 "
               >
                 <div
-                  v-if="_isallowedContracts(c, 'read')"
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{ active: c.projectContractId == $route.params.contractId }"
@@ -228,8 +227,7 @@ export default {
 
     },
     log(e){
-          // console.log(e.forEach(t => t))
-
+          // console.log(e)
     },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
