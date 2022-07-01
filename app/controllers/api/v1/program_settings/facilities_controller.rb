@@ -18,7 +18,8 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
       action = "W"
     elsif ["destroy", "remove_facility_project"].include?(params[:action]) 
       action = "D"
-    end    
+    end
+
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_PROJECTS)
   end
 
