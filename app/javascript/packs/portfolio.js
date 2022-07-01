@@ -109,6 +109,11 @@ Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData)
 // }
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
  console.log("portfolio page privileges***************** ", page, route) 
+ if(Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]){
+  console.log(" Vue.prototype.$projectPrivileges", Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]  ) 
+ }
+
+ console.log("programID + projectId", route.params.programId, "+", route.params.projectId  ) 
    // return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)
 
   
