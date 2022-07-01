@@ -890,13 +890,14 @@ removeProject(index, rows) {
       let projectId = rows.id;
       let formData = new FormData();
       // console.log(rows)
+      formData.append("project_id", this.$route.params.programId);
       formData.append("facility[facility_name]", updatedProjectName);
       // Need one url to support these two data name edits
-
+formData.append("facility[facility_group_id]", rows.facilityGroupId);
       if (rows.facilityGroupId ){         
         formData.append("facility[facility_group_id]", rows.facilityGroupId);
-      }     
-      let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${projectId}`;
+      }
+      let url = `${API_BASE_PATH}/program_settings/facilities/${projectId}`;
       let method = "PUT";
       axios({
         method: method,
