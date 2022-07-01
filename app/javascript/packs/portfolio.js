@@ -92,6 +92,17 @@ Vue.prototype.$currentUser = current_user
 Vue.prototype.$topNavigationPermissions = topNavigationPermissions
 Vue.prototype.$projectPrivileges = projectPrivileges
 
+var projectPrivilegesRoles = JSON.parse(window.project_privilegs_roles.replace(/&quot;/g,'"'))
+var programPrivilegesRoles = JSON.parse(window.program_privilegs_roles.replace(/&quot;/g,'"'))
+var contractPrivilegesRoles = JSON.parse(window.contract_privilegs_roles.replace(/&quot;/g,'"'))
+var programSettingPrivilegesRoles = JSON.parse(window.program_settings_privileges_roles.replace(/&quot;/g,'"'))
+var projectFacilityHash = JSON.parse(window.project_facility_hash.replace(/&quot;/g,'"'))
+Vue.prototype.$projectPrivilegesRoles = projectPrivilegesRoles
+Vue.prototype.$programPrivilegesRoles = programPrivilegesRoles
+Vue.prototype.$contractPrivilegesRoles = contractPrivilegesRoles
+Vue.prototype.$programSettingPrivilegesRoles = programSettingPrivilegesRoles
+Vue.prototype.$projectFacilityHash = projectFacilityHash
+
 Vue.prototype.$preferences = preferences
 
 Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData) => {
@@ -100,76 +111,175 @@ Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData)
   return privilege && privilege.contract_data && privilege.contract_data.includes(s)
 }
 
-// Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
-//   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-//   let s = permissionHash[salut]
-//   return privilege && privilege.project_data && privilege.project_data.includes(s)
-  
-
-// }
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
- console.log("portfolio page privileges***************** ", page, route) 
- if(Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]){
-  console.log(" Vue.prototype.$projectPrivileges", Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]  ) 
- }
-
- console.log("programID + projectId", route.params.programId, "+", route.params.projectId  ) 
-   // return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)
-
-  
-  if(["portfolio_issue_form"].includes(page) ){
-    if (route.params.contractId) {
-      let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.issues.includes(s);
-    } else {
-      let fPrivilege = Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.issues.includes(s); 
-    }
-  } else if(["portfolio_task_form"].includes(page) ){
-    if (route.params.contractId) {
-      let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.tasks.includes(s);
-    } else {
-      let fPrivilege = Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.tasks.includes(s); 
-    }
-  } else if(["portfolio_lesson_form"].includes(page) ){
-    if (route.params.contractId) {
-      let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.lessons.includes(s);
-    } else {
-      let fPrivilege = Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.lessons.includes(s); 
-    }
-  } else if(["portfolio_risk_form"].includes(page) ){
-    if (route.params.contractId) {
-      let fPrivilege = Vue.prototype.$contractPrivileges[route.params.programId][route.params.contractId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.risks.includes(s);
-    } else {
-      let fPrivilege = Vue.prototype.$projectPrivileges[route.params.programId][route.params.projectId]    
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-      return fPrivilege.risks.includes(s); 
-    }
-
-  } 
-  return false;
+ return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)  
 }
 
+Vue.prototype.findFacilityProjectId = (programId, projectId) => {
+  let arr = Vue.prototype.$projectFacilityHash[programId]
+  let facilityProjectId = '';
+  for(var i = 0; i < arr.length; i++){
+    if(arr[i].facility_id == projectId){
+      facilityProjectId = arr[i].facility_project_id
+      break
+    }
+  }
+  return facilityProjectId;
+} 
+
+Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
+  // console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
+
+  let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+  let s = permissionHash[salut]
+  let program_id = route.params.programId
+  let contract_id = route.params.contractId
+  let project_id = route.params.projectId
+
+  if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
+
+
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_issues && contract_privileges.contract_issues.includes(s);
+
+    } else {
+
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
+      // console.log("facility_project_id", facility_project_id)          
+      return facility_project_privileges && facility_project_privileges.project_issues && facility_project_privileges.project_issues.includes(s);
+    }
+  }else if(["ProjectSidebar", "ProjectSettingContractList", "ProjectSettingProjectList"].includes(page)){
+
+    let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
+    
+    if(extraData["method"] == "isallowedProgramSettings"){
+      return pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(s) || pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(s) || pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(s) ||  pPrivileges['program_setting_users_roles']  && pPrivileges['program_setting_users_roles'].includes(s)
+    
+    }else if(extraData["method"] == "isallowedContracts"){
+      
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[extraData["project_contract_id"]]  
+      // console.log(contract_privileges, extraData["project_contract_id"])
+
+      return contract_privileges && (contract_privileges.contract_analytics || contract_privileges.contract_issues || contract_privileges.contract_lessons || contract_privileges.contract_notes || contract_privileges.contract_risks || contract_privileges.contract_tasks);
+    } else if(extraData["method"] == "isallowedProject"){
+      
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[extraData["facility_project_id"]]
+    console.log(facility_project_privileges, extraData["facility_project_id"])
+
+      return facility_project_privileges && (facility_project_privileges.project_analytics || facility_project_privileges.project_issues || facility_project_privileges.project_lessons || facility_project_privileges.project_notes || facility_project_privileges.project_risks || facility_project_privileges.project_tasks);
+    } else{
+      return false
+    }
+
+  }else if(["ProjectRollup"].includes(page)){
+
+    let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
+    
+     if(extraData["method"] == "isallowedContracts"){
+      
+      return pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(s)
+      
+    }else{
+      return false
+    }
+
+  }else if(["ContractLessons", "SheetLessons", "portfolio_lesson_form", "MapLessons", "LessonContextMenu", "ContractLessonForm", "LessonForm"].includes(page) ){
+
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_lessons && contract_privileges.contract_lessons.includes(s);
+
+    } else {
+
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]             
+      return facility_project_privileges && facility_project_privileges.project_lessons && facility_project_privileges.project_lessons.includes(s);
+    }
+
+  }else if( ["notes_show", "notes_sheets", "contract_notes_form", "notes_form", "notes_index","notes_sheets_index"].includes(page) ){
+
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_notes && contract_privileges.contract_notes.includes(s);
+
+    } else {
+
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]             
+      return facility_project_privileges && facility_project_privileges.project_notes && facility_project_privileges.project_notes.includes(s);
+    }
+
+  }else if( ["KanbanRisks", "risk_sheets_index", "risk_calendar", "risk_index", "risk_show", "risk_form"].includes(page) ){
+
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_risks && contract_privileges.contract_risks.includes(s);
+
+    } else {
+
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]             
+      return facility_project_privileges && facility_project_privileges.project_risks && facility_project_privileges.project_risks.includes(s);
+    }
+
+  }else if(["portfolio_task_form", "KanbanTasks", "task_sheet", "facility_show", "task_sheets_index", "task_index", "task_calendar", "task_form"].includes(page) ){
+
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_tasks && contract_privileges.contract_tasks.includes(s);
+
+    } else {
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
+      return facility_project_privileges && facility_project_privileges.project_tasks && facility_project_privileges.project_tasks.includes(s);
+    }
+
+  }else if( ["SheetContract", "MapAnalytics", "MapOverview", "MapProject", "SheetAnalytics", "SheetProject", "ContractAnalytics", "Kanban"].includes(page)){
+
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_analytics && contract_privileges.contract_analytics.includes(s);
+
+    } else {
+
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
+      return facility_project_privileges && facility_project_privileges.project_analytics && facility_project_privileges.project_analytics.includes(s);
+    }
+
+  }else if( ["ProgramContractsSheet", "ProgramView","SettingsSidebar" ].includes(page)){
+    let pPrivilege = Vue.prototype.$programPrivileges[route.params.programId]        
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    if (pPrivilege && pPrivilege.contracts){
+      return pPrivilege.contracts.includes(s);
+    }
+  }else if( ["SettingsView", "SettingsGroups", "SettingsProjects", "SettingsContracts", "SettingsUsers", "SettingsRolesIndex" ].includes(page)){
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
+
+    if(extraData['settingType'] == 'Groups' && pPrivileges['program_setting_groups'] && pPrivileges['program_setting_groups'].includes(permissionHash[salut])){
+      return true
+    }else if(extraData['settingType'] == 'Contracts' && pPrivileges['program_setting_contracts']  && pPrivileges['program_setting_contracts'].includes(permissionHash[salut])){
+      return true
+    }else if(extraData['settingType'] == 'Projects'  && pPrivileges['program_setting_projects']  && pPrivileges['program_setting_projects'].includes(permissionHash[salut])){
+      return true
+    }else if(extraData['settingType'] == 'Users'  && pPrivileges['program_setting_users_roles']  && pPrivileges['program_setting_users_roles'].includes(permissionHash[salut])){
+      return true
+    }
+
+  }
+
+  return false;
+}
 
 
 // eslint-disable-next-line no-unused-vars

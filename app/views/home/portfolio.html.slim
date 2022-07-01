@@ -11,6 +11,13 @@
   |var project_privilegs = "#{JSON.generate(current_user.facility_privileges_hash)}";
   |var privilege = "#{JSON.generate(current_user.privilege_hash)}";
   |var preferences = "#{JSON.generate(current_user.get_preferences.value )}";
+  |var program_admin_role = "#{JSON.generate(Role.program_admin_user_role.to_json) }";
+  |var program_privilegs_roles = "#{JSON.generate(current_user.project_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var contract_privilegs_roles = "#{JSON.generate(current_user.contract_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var project_privilegs_roles = "#{JSON.generate(current_user.facility_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var program_settings_privileges_roles = "#{JSON.generate(current_user.program_settings_privileges_hash_by_role(program_ids: [@program_id]))}";
+  |var project_facility_hash = "#{JSON.generate(generate_project_facility_hash )}";
+
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
 
 = javascript_pack_tag "portfolio", async: true
