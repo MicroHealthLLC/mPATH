@@ -91,7 +91,6 @@
                 "
               >
                 <div
-                  v-if="_isallowedContracts(c, 'read')"
                   class="d-flex align-items-center expandable fac-name"
                   @click="showFacility(c)"
                   :class="{ active: c.projectContractId == $route.params.contractId }"

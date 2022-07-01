@@ -164,6 +164,12 @@ class User < ApplicationRecord
     h
   end
   
+  def authorized_program_ids
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    self.projects.active.pluck(:id)
+  end
+
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
