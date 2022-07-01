@@ -145,7 +145,7 @@
         class="p-0 users"       
       >
       <span slot="title" class="text-left">
-        <h5 class="text-dark"><i class="fas fa-user-plus mr-2"></i>Create New User </h5>
+        <h5 class="text-dark"><i class="fas fa-user-plus mr-2"></i>Create User </h5>
       </span>
       <form accept-charset="UTF-8">
        <div class="container">
