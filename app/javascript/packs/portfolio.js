@@ -112,6 +112,8 @@ Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData)
 }
 
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
+
+  console.log(Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData))
  return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)  
 }
 
@@ -136,7 +138,20 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
   let contract_id = route.params.contractId
   let project_id = route.params.projectId
 
-  if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
+  
+  if(["portfolio_risk_form"].includes(page) ){
+    if (contract_id) {
+
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[contract_id]             
+      return contract_privileges && contract_privileges.contract_risks && contract_privileges.contract_risks.includes(s);
+
+    } else {
+      let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
+      // console.log("facility_project_id", facility_project_id)          
+      return facility_project_privileges && facility_project_privileges.project_risks && facility_project_privileges.project_risks.includes(s);
+     }
+    } else if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
 
 
     if (contract_id) {
