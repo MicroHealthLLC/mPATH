@@ -1263,6 +1263,7 @@ export default {
       if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
         return this.currentProject.facilities
       } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowProjectStats){
+        console.log(this.projectContracts)
         return this.projectContracts
       }
     },
