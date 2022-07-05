@@ -815,10 +815,12 @@
                     </div>
                     <div class="row text-center mb-4 mt-0">
                       <div class="col-6 pb-0 mb-0">
-                        <h4 class="">{{ lessonVariation.completes.length }}</h4>
+                        <h4 class="" v-if="lessonVariation && lessonVariation.completes">{{ lessonVariation.completes.length }}</h4>
+                         <h4 class="" v-else>0</h4>
                       </div>
                       <div class="col-6 pb-0 mb-0">
-                        <h4>{{ lessonVariation.drafts.length }}</h4>
+                        <h4  v-if="lessonVariation && lessonVariation.drafts">{{ lessonVariation.drafts.length }}</h4>
+                        <h4 class="" v-else>0</h4>
                       </div>
                     </div>
                   </div>
@@ -1566,12 +1568,14 @@ export default {
       }
     },
      lessonVariation() {
-      let completes = this.filteredLessons.filter(l => !l.draft )
-      let drafts = this.filteredLessons.filter(l => l.draft)
-      return {
-        completes,
-        drafts
-      }
+      if( this.filteredLessons && this.filteredLessons.length > 0){
+        let completes = this.filteredLessons.filter(l => !l.draft )
+        let drafts = this.filteredLessons.filter(l => l.draft)
+        return {
+          completes,
+          drafts
+        }
+      }     
     },
     currentRiskTypes() {
       let names =
