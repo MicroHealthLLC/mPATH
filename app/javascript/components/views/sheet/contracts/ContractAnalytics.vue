@@ -784,7 +784,7 @@
                       <h5 v-if="contentLoaded" class="d-inline">
                         <b
                           class="pill badge badge-secondary badge-pill pill mr-1"
-                          >{{ projectLessons.length }}</b
+                          >{{ contractLessons.length }}</b
                         >
                       </h5>
                     </div>
@@ -973,10 +973,10 @@ export default {
   mounted() {
     // this.dueDate = this.facility.dueDate;
     // this.statusId = this.facility.statusId;
-    this.fetchProgramLessons(this.$route.params);
+    this.fetchContractLessons(this.$route.params);
   },
   methods: {
-    ...mapActions(['fetchProgramLessons']),
+    ...mapActions(['fetchContractLessons']),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
     onChange() {
       this.$nextTick(() => {
@@ -1004,7 +1004,7 @@ export default {
       "taskTypes",
       "getAllFilterNames",
       "getFilterValue",
-      "projectLessons",
+      "contractLessons",
       "contentLoaded",
       "currentProject",
       "programLessons",
@@ -1554,16 +1554,16 @@ export default {
       };
     },
     filteredLessons() {
-      let programLessonsObj = this.programLessons.filter(l => l.project_contract_id == this.$route.params.contractId )
-
+      if(this.contractLessons && this.contractLessons.length > 0) {        
       let typeIds = _.map(this.taskTypeFilter, "id");
-      return _.filter(programLessonsObj, (resource) => {
+      return _.filter(this.contractLessons, (resource) => {
         let valid = true;
         valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
         if (typeIds.length > 0)
           valid = valid && typeIds.includes(resource.task_type_id);
         return valid;
-      })
+       })        
+      }
     },
      lessonVariation() {
       let completes = this.filteredLessons.filter(l => !l.draft )
