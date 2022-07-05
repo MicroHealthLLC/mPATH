@@ -70,7 +70,20 @@ class Api::V1::LessonsController < AuthenticatedController
         raise ActiveRecord::RecordNotFound
       end
 
-    else
+    elsif project_id && params[:facility_id]
+      
+      facility_project = FacilityProject.where(project_id: project_id, facility_id: params[:facility_id]).first
+      if facility_project
+        lessons_count = Lesson.where(facility_project_id: facility_project.id).count
+        progress = Lesson.where(facility_project_id: facility_project.id, draft: true).count
+        completed = lessons_count - progress
+        response_hash =  {total_count: lessons_count, progress: progress, completed: completed }
+        status_code = 200
+      else
+        raise ActiveRecord::RecordNotFound
+      end
+
+else
       raise ActionController::BadRequest 
     end
     render json: response_hash, status: status_code
