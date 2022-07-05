@@ -1,8 +1,8 @@
 <template>
   <div style="height:80vh" class="portfolio-contracts-module">
-   <div  style="height: 100%; overflow-y:auto" v-if="contractProjects && contractProjects.length > 0">
+     <div  style="height: 100%; overflow-y:auto" v-if="contractProjects && contractProjects.length > 0">
      <el-table
-    :data="contractProjects.filter(t => t && t.id && t.contract_end_date < today)"
+    :data="contractProjects.filter(t => t && t.id && t.contract_end_date < today && t.ignore_expired == false)"
     border
     height="800"
     style="width: 95%"
@@ -531,7 +531,7 @@
      </el-table-column>
     <el-table-column
       label="Actions"
-      width="120"
+      width="145"
       v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
       align="center">
@@ -558,6 +558,14 @@
         class="bg-secondary btn-sm text-light mx-0">
       <i class="fas fa-ban"></i>
         </el-button>
+        <el-button 
+        type="default" 
+        v-tooltip="`Ignore Expired Status`"       
+        v-if="scope.$index == rowIndex"
+        @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
+        class="bg-light btn-sm mx-0">
+        <i class="fa-solid fa-calendar-xmark text-success"></i>
+        </el-button>
          <el-button
           type="default"
            v-tooltip="`Edit`" 
@@ -578,6 +586,7 @@
   </el-table>
   
       </div>
+     
       </div>
           
 </template>
@@ -627,6 +636,7 @@ export default {
       "fetchContractProjects",
       "updateContractProject",
       "deleteContractProject",
+      "updateIgnoreExpired",
 
       //POCs
       "createContractPOC",
@@ -874,6 +884,19 @@ export default {
     }
    
   },
+ setIgnoreStatus(index, row){
+    this.rowIndex = null;
+    this.rowId = null;
+    let id = row.id;
+  
+   let contractProjectData = {
+          cProjectData: {
+            isExpired: true
+        },
+      };
+    this.updateIgnoreExpired({...contractProjectData, id})
+   
+  },
   saveContractPOC(index, row){
     let filteredNote = ''
     if(row.notes) {
@@ -926,6 +949,7 @@ export default {
        }     
      
     },
+    
   cancelPocEdits() {
     this.pocRowIndex = null;
     this.pocRowId = null;

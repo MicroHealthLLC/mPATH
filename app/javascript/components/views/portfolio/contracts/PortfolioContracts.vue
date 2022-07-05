@@ -402,7 +402,7 @@
     </el-table-column>
      <el-table-column
       label="Contract Start Date*"
-      width="100"
+      width="125"
       prop="contract_start_date">
        <template slot-scope="scope">
         <v2-date-picker
@@ -433,7 +433,7 @@
     </el-table-column>
      <el-table-column
       label="Contract End Date*"
-      width="100"
+      width="125"
       prop="contract_end_date">
       <template slot-scope="scope">
         <v2-date-picker
@@ -459,6 +459,9 @@
         <span v-if="scope.row.contract_end_date == null || scope.row.contract_end_date == undefined">      
         </span>
         <span v-else>
+            <span v-if="scope.row.ignore_expired == true" v-tooltip="`Expired Status Ignored`" >
+              <i class="fa-solid fa-calendar-xmark text-success"></i>
+            </span>
           {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
         </span>     
       </span>
@@ -647,7 +650,7 @@
      </el-table-column>
     <el-table-column
       label="Actions"
-      width="120"
+      width="140"
       v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
       align="center">
@@ -673,6 +676,14 @@
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary btn-sm text-light mx-0">
       <i class="fas fa-ban"></i>
+        </el-button>
+        <el-button 
+        type="default" 
+        v-tooltip="`Allow Expired Status`"       
+        v-if="scope.$index == rowIndex && scope.row.ignore_expired == true"
+        @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
+        class="bg-light btn-sm mx-0">
+        <i class="fa-solid fa-calendar-xmark text-danger"></i>
         </el-button>
          <el-button
           type="default"
@@ -1072,6 +1083,7 @@ export default {
       "fetchContractProjects",
       "updateContractProject",
       "deleteContractProject",
+      "updateIgnoreExpired",
 
       //POCs
       "createContractPOC",
@@ -1259,27 +1271,32 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     let id = null;
-    let vehicle = ""
+    let vehicle = "";
+    let updateExpired = false;
+    let ignoreExpired = false;
     
     if (row.id) {
       id = row.id
       if(this.blankVehicle !== '') {
         vehicle = this.blankVehicle
       }
+      if(row.ignore_expired == true && this.contractEndDate > this.today) {
+       updateExpired = true
+      }
       if(row.contract_vehicle_id && row.contract_vehicle && row.contract_vehicle.name) {
         vehicle = row.contract_vehicle_id
       }
       if (!this.contractEndDate) {
-        this.contractEndDate = rows.contract_end_date
+        this.contractEndDate = row.contract_end_date
       }
       if (!this.contractStartDate) {
-        this.contractStartDate = rows.contract_start_date
+        this.contractStartDate = row.contract_start_date
       }       
       if (!this.popStartDate){
-        this.popStartDate = rows.contract_current_pop_start_date
+        this.popStartDate = row.contract_current_pop_start_date
       }
       if (!this.popEndDate){
-        this.popEndDate = rows.contract_current_pop_end_date
+        this.popEndDate = row.contract_current_pop_end_date
       }
     }
     if (!row.id){
@@ -1291,6 +1308,8 @@ export default {
     }
     let contractProjectData = {
           cProjectData: {
+            expiredStatus: updateExpired,
+            expired: ignoreExpired,
             charge_code: row.charge_code,
             name: row.name,   
             notes: row.notes,   
@@ -1317,6 +1336,19 @@ export default {
     } else {
       this.createContractProject({...contractProjectData})     
     }
+   
+  },
+   setIgnoreStatus(index, row){
+    this.rowIndex = null;
+    this.rowId = null;
+    let id = row.id;
+  
+   let contractProjectData = {
+          cProjectData: {
+            isExpired: false
+        },
+      };
+    this.updateIgnoreExpired({...contractProjectData, id})
    
   },
   saveContractPOC(index, row){
@@ -1478,7 +1510,7 @@ export default {
     ]), 
    tableData(){
       if (this.contractProjects && this.contractProjects.length > 0){
-        let data = this.contractProjects.filter(t => t.contract_end_date > this.today)
+        let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
          return data    
      } else {
@@ -1665,6 +1697,9 @@ export default {
 </script>
     
 <style scoped lang="scss">
+/deep/.el-tabs--border-card {
+  padding-bottom: 0;
+}
 .requiredFields{
     font-size: .88rem;
   }
