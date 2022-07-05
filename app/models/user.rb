@@ -800,16 +800,16 @@ class User < ApplicationRecord
           h2[rp.role_type] = rp.privilege&.chars
         end
         contarct_hash[role_user.project_contract_id] = h2
-      elsif role_user.project_id.present? && role_user.project_contract_id.nil?
-        contracts = contracts_group_by_project[role_user.project_id] || []
-        contracts.each do |contract|
-          next if contarct_hash[contract.id] || !role_privilegs
-          h2 = {}
-          role_privilegs.each do |rp|          
-            h2[rp.role_type] = rp.privilege&.chars
-          end
-          contarct_hash[contract.id] = h2
-        end
+      # elsif role_user.project_id.present? && role_user.project_contract_id.nil?
+      #   contracts = contracts_group_by_project[role_user.project_id] || []
+      #   contracts.each do |contract|
+      #     next if contarct_hash[contract.id] || !role_privilegs
+      #     h2 = {}
+      #     role_privilegs.each do |rp|          
+      #       h2[rp.role_type] = rp.privilege&.chars
+      #     end
+      #     contarct_hash[contract.id] = h2
+      #   end
       end
       
     end
