@@ -36,20 +36,24 @@ class Api::V1::LessonsController < AuthenticatedController
 
       fp_ids = FacilityProject.where(project_id: project_id, id: authorized_facility_project_ids).pluck(:id)
       lesson_ids = []
+      c_lesson_ids = []
 
       if authorized_project_contract_ids.any?
-        lesson_ids += Lesson.where(project_contract_id: authorized_project_contract_ids).pluck(:id)
+        c_lesson_ids = Lesson.where(project_contract_id: authorized_project_contract_ids).pluck(:id)
       end
       if fp_ids.any?
         lesson_ids += Lesson.where(facility_project_id: fp_ids).pluck(:id)
       end
       if lesson_ids.any?
         lessons_count = Lesson.where(id: lesson_ids).count
+        c_lessons_count = Lesson.where(id: c_lesson_ids).count
         progress = Lesson.where(id: lesson_ids, draft: true).count
+        c_lessons_progress = Lesson.where(id: c_lesson_ids, draft: true).count
 
         completed = lessons_count - progress
+        c_lessons_completed = c_lessons_count - c_lessons_progress
 
-        response_hash =  {total_count: lessons_count, progress: progress, completed: completed }
+        response_hash =  {total_count: lessons_count, progress: progress, completed: completed, total_contract_lessons: c_lessons_count }
         status_code = 200
       end
 
