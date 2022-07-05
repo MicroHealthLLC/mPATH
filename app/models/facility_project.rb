@@ -33,6 +33,7 @@ class FacilityProject < ApplicationRecord
       issues: issues.map(&:to_json),
       risks: risks.map(&:to_json),
       notes: notes.map(&:to_json),
+      lessons: lessons.map(&:to_json),
       project_status: status_name,
       color: color,
       progress: progress

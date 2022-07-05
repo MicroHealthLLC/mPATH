@@ -641,7 +641,7 @@ export default {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
     _isallowedContracts(c, salut) {
-      // console.log(c, salut)
+      console.log(c)
         return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", project_contract_id: c})
     },
     log(e){

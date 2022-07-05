@@ -1554,14 +1554,7 @@ export default {
       };
     },
     filteredLessons() {
-      // let programLessonsObj = [];
-      console.log("*******")
-      console.log(!this.getShowProjectStats)
-      // if(!this.getShowProjectStats){
-      //   programLessonsObj = this.programLessons.filter(l => l.project_id)
-      // } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
-
-      let programLessonsObj = this.programLessons.filter(l => l.contract_id == this.$route.params.contractId )
+      let programLessonsObj = this.programLessons.filter(l => l.project_contract_id == this.$route.params.contractId )
 
       let typeIds = _.map(this.taskTypeFilter, "id");
       return _.filter(programLessonsObj, (resource) => {
