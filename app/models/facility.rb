@@ -17,6 +17,7 @@ class Facility < ApplicationRecord
   enum status: [:inactive, :active].freeze
 
   before_create :assign_default_facility_group 
+  before_update :assign_default_facility_group 
 
   def assign_default_facility_group
     if self.facility_group.nil?
