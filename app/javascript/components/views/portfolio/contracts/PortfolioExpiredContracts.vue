@@ -560,7 +560,7 @@
         </el-button>
         <el-button 
         type="default" 
-        v-tooltip="`Ignore Expired Status`"       
+        v-tooltip="`Exempt expiration date`"       
         v-if="scope.$index == rowIndex"
         @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
         class="bg-light btn-sm mx-0">

@@ -459,7 +459,7 @@
         <span v-if="scope.row.contract_end_date == null || scope.row.contract_end_date == undefined">      
         </span>
         <span v-else>
-            <span v-if="scope.row.ignore_expired == true" v-tooltip="`Expired Status Ignored`" >
+            <span v-if="scope.row.ignore_expired == true" v-tooltip="`Exempt from expiration`" >
               <i class="fa-solid fa-calendar-xmark text-success"></i>
             </span>
           {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
@@ -679,7 +679,7 @@
         </el-button>
         <el-button 
         type="default" 
-        v-tooltip="`Allow Expired Status`"       
+        v-tooltip="`Remove expiration date exemption`"       
         v-if="scope.$index == rowIndex && scope.row.ignore_expired == true"
         @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
         class="bg-light btn-sm mx-0">
