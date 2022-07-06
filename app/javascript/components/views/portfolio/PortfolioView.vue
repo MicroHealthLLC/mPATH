@@ -49,12 +49,13 @@
               "
               class="container-fluid"
             >
-              <h3
-                class="pl-2 pr-5 mt-3 d-inline-block mh-blue px-3 text-light"
+              <h5
+                class="pl-2 mt-3 d-inline-block mh-blue px-3 text-light"
                 style="cursor:pointer; position:absolute; left:0; top:0"
               >
+                <i class="fal fa-clipboard-list text-light py-2 mr-1"></i>
                 {{ action }}
-              </h3>
+              </h5>
               <div v-for="number in [currentTaskSlide]" :key="number">
                 <div class="row justify-content-center">
                   <div class="col-3 pb-0">
@@ -176,16 +177,17 @@
                     ></span>
 
                     <span v-if="dynamicObj[currentTaskSlide].text">
-                      <h2 class="mt-2 d-inline text-truncate breakWord">
+                      <h2 class="mt-2 d-inline text-truncate">
                         {{ dynamicObj[currentTaskSlide].text }}
                       </h2>
                     </span>
                     <span v-if="dynamicObj[currentTaskSlide].title">
-                      <h2 class="mt-2 d-inline text-truncate breakWord">
+                      <h2 class="mt-2 d-inline text-truncate">
                         {{ dynamicObj[currentTaskSlide].title }}
                       </h2>
                     </span>
                   </div>
+
                   <div class="col-3 mt-3">
                     <img
                       style="width: 145px"
@@ -212,7 +214,7 @@
 
                     <div class="col truncate-line-two">
                       <h6 class="leftColLabel text-light mh-orange">
-                        PROJECT GROUP
+                        GROUP
                       </h6>
                       <h4
                         v-if="

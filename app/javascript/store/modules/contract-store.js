@@ -255,7 +255,32 @@ const contractStore = {
           commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", true);
         });
       },
-
+        // UPDATE REQUESTS
+  updateIgnoreExpired({ commit }, { cProjectData, id }) {
+    commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
+    let formData = new FormData();
+    console.log(cProjectData)
+    formData.append("contract_project_data[ignore_expired]", cProjectData.isExpired)    
+    axios({
+      method: "PUT",
+      url: `${API_BASE_PATH}/contract_project_data/${id}`,
+      data: formData,
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .attributes["content"].value,
+      },
+    })
+      .then((res) => {
+        commit("SET_CONTRACT_PROJECT", res.data.contract_project_data);
+        commit("SET_CONTRACT_PROJECT_STATUS", res.status);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        commit("TOGGLE_CONTRACT_PROJECT_LOADED", true);
+      });
+  },
   // UPDATE REQUESTS
   updateContractProject({ commit }, { cProjectData, id }) {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
@@ -276,7 +301,7 @@ const contractStore = {
       formData.append("contract_project_data[contract_pop_id]", cProjectData.contract_pop_id)
       formData.append("contract_project_data[contract_current_pop_id]", cProjectData.contract_current_pop_id)
       formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)
-      if(cProjectData.notes){
+     if(cProjectData.notes){
         formData.append("contract_project_data[notes]", cProjectData.notes)   
        } else formData.append("contract_project_data[notes]", "") 
       formData.append("contract_project_data[contract_naic_id]", cProjectData.contract_naic_id)    
@@ -289,7 +314,10 @@ const contractStore = {
       if(cProjectData.number){
         formData.append("contract_project_data[contract_number_id]", cProjectData.number)
       }
-
+      if(cProjectData.expiredStatus){
+        console.log(cProjectData.expired)
+        formData.append("contract_project_data[ignore_expired]", cProjectData.expired)
+      }
       if(cProjectData.co_poc_id){
         formData.append("contract_project_data[co_contract_poc_id]", cProjectData.co_poc_id)
       }

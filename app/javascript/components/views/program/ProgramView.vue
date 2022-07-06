@@ -30,7 +30,8 @@
                            <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
                           <span v-else>
                            <i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
-                           {{ action }}</h5>
+                           {{ action }}
+                           </h5>
                            <div v-for="number in [currentTaskSlide]" :key="number" >
                            <div class="row justify-content-center">
                              <div class="col-3 pb-0">
