@@ -68,6 +68,18 @@ class Project < SortableRecord
   # i.e. check Role#get_program_admins 
   attr_accessor :admin_program_admins
 
+  def default_facility_group
+    create_default_facility_group
+  end
+
+  def create_default_facility_group
+    g = project_groups.where(is_default: true, is_portfolio: false, status: :active).first
+    if !g
+      g = project_groups.create(is_default: true, name: "Undefined", is_portfolio: false, status: :active)
+    end
+    g
+  end
+
   def self.ransackable_scopes(_auth_object = nil)
     [:program_admins_equals, :program_admins_ends_with, :program_admins_starts_with, :program_admins_contains]
   end

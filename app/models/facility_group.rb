@@ -7,20 +7,20 @@ class FacilityGroup < SortableRecord
   has_many :projects, through: :project_facility_groups
   has_many :contracts
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true #, uniqueness: true
 
   enum status: [:inactive, :active].freeze
   before_save :set_status
-
-  def self.unassigned
-    FacilityGroup.where(name: 'Unassigned').first
-  end
   
-  def apply_unassigned_to_resource
-    unassigned = FacilityGroup.unassigned
-    contracts.update_all(facility_group_id: unassigned.id)
-    facilities.update_all(facility_group_id: unassigned.id)
-    project_contracts.update_all(facility_group_id: unassigned.id)
+  def apply_unassigned_to_resource(project)
+    
+    unassigned = project.default_facility_group
+    if unassigned
+      facilities.update_all(facility_group_id: unassigned.id)
+      project_contracts.update_all(facility_group_id: unassigned.id)
+    else
+      false
+    end
   end
 
   def set_status
@@ -52,6 +52,6 @@ class FacilityGroup < SortableRecord
   # end
 
   def destroy
-    facilities.present? ? (raise ActiveRecord::StatementInvalid.new("Can't destroy") ) : super
+    (is_default || is_portoflio.present?) ? (raise ActiveRecord::StatementInvalid.new("Can't destroy") ) : super
   end
 end

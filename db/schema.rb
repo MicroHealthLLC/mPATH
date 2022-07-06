@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_28_190328) do
+ActiveRecord::Schema.define(version: 2022_07_06_172525) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -218,6 +218,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_190328) do
     t.integer "pm_contract_poc_id"
     t.integer "contract_number_id"
     t.text "notes"
+    t.boolean "ignore_expired", default: false
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
@@ -358,6 +359,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_190328) do
     t.integer "progress", default: 0
     t.boolean "is_portfolio", default: true
     t.integer "user_id"
+    t.boolean "is_default", default: false
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 

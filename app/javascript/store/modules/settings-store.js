@@ -146,7 +146,7 @@ const settingsStore = {
 
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/facility_groups`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -164,14 +164,16 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
-   updateGroupName({ commit }, { id, newNameData }) {
+   updateGroupName({ commit }, { id, newNameData, project_id }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = new FormData();
       // console.log(newNameData.name)
       formData.append("facility_group[name]", newNameData.name); //Required
+      debugger
+      formData.append("project_id", project_id);
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/facility_groups/${id}`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -218,7 +220,7 @@ const settingsStore = {
       formData.append("project_id", g.programId)
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/facility_groups/${g.id}`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups/${g.id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -998,7 +1000,7 @@ const settingsStore = {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/facility_groups?program_id=${id}&all=true`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups?project_id=${id}&all=true`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,

@@ -556,10 +556,11 @@ export default {
         newNameData: {
           name: rows.name,
         },
+        project_id: this.$route.params.programId,
       };
       this.updateGroupName({
         ...groupNameData,
-        id,
+        id        
       });
       this.rowIndex = null;
       this.rowId = null;

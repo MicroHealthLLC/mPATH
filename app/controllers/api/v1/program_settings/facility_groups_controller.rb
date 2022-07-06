@@ -3,7 +3,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   before_action :check_permission
 
   def check_permission
-    program_id = params[:program_id]
+    program_id = params[:project_id]
 
     raise(CanCan::AccessDenied) if !program_id
     action = nil
@@ -31,8 +31,8 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
     response_hash = {}
     all_facility_groups = FacilityGroup.all.as_json
     response_hash = {facility_groups: all_facility_groups.as_json}
-    if params[:program_id]
-      project = Project.find(params[:program_id])
+    if params[:project_id]
+      project = Project.find(params[:project_id])
       response_hash[:program_group_ids] = project.project_groups.pluck(:id)
     end
     render json: response_hash
@@ -56,7 +56,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   end
 
   def bulk_project_update
-    project = Project.find(params[:program_id])
+    project = Project.find(params[:project_id])
     groups = FacilityGroup.where(id: params[:facility_group_ids])
     project.project_groups = groups
     render json: groups
@@ -74,20 +74,25 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
 
   def destroy
     group = FacilityGroup.find(params[:id])
-    program = Project.find(params[:program_id])
+    program = Project.find(params[:project_id])
     
-    if program.project_groups.include?(group) 
-      if !group.is_portfolio?
-        group.apply_unassigned_to_resource
+    if program.project_groups.include?(group)
+      if !group.is_portfolio? && !group.is_default?
+        group.apply_unassigned_to_resource(program)
         if group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
           render json: {errors: group.errors.full_messages}, status: 406
         end
+      elsif group.is_portfolio? && !group.is_default?
+        if group.apply_unassigned_to_resource(program)
+          program.project_facility_groups.where(facility_group_id: group.id ).destroy_all
+          render json: {message: "Group removed successfully"}, status: 200
+        else
+          render json: {message: "Error removing group"}, status: 406
+        end
       else
-        program.project_facility_groups.where(facility_group_id: group.id ).destroy_all
-        group.apply_unassigned_to_resource
-        render json: {message: "Group removed successfully"}, status: 200
+        render json: {message: "Can't remove deafult group!"}, status: 406
       end
     else
       render json: {errors: "Group is not part of current program!"}, status: 406

@@ -312,3 +312,10 @@ task :populate_database => :environment do
   end
 
 end
+
+desc "Creating default facility groups for project"
+task :create_default_project_group => :environment do
+  Project.all.each do |project|
+    project.create_default_facility_group
+  end
+end
