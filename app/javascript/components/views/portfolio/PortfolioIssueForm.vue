@@ -14,7 +14,7 @@ export default {
     ...mapActions([
       'fetchPortfolioIssue', 
       'fetchPortfolioIssues', 
-      'fetchPortfolioUsers', 
+      'fetchPortfolioAssignees', 
       'fetchPortfolioIssueStages', 
       'fetchPortfolioIssueTypes', 
       'fetchPortfolioIssueSeverities',
@@ -32,7 +32,7 @@ export default {
   beforeMount(){
     this.fetchPortfolioIssue(this.$route.params)
     this.fetchPortfolioIssueStages()
-    this.fetchPortfolioUsers()
+    this.fetchPortfolioAssignees()
     this.fetchPortfolioIssueTypes()
     this.fetchPortfolioIssueSeverities()
     this.fetchPortfolioCategories()

@@ -358,7 +358,7 @@
         </span>
            <div class="container-fluid p-0">
 
-             <div class="pl-3 mt-0 row">
+             <div class="pl-3 mt-0 row" v-if="viableContractUsers && viableContractUsers.length > 0" >
             <div class="col-5 pt-0 pl-0">
              <label class="font-md mb-0 d-flex">Add User(s) To Contract</label>
              <el-select
@@ -419,7 +419,9 @@
               
              
             </div>
-      
+            <div class="pl-3 mt-0 row" v-if="getRolesLoaded && contentLoaded && viableContractUsers && viableContractUsers.length <= 0">
+                There are currently no program users to assign to this contract.  You can either add new program users from portfolio or remove desired user from current role in this contract.
+            </div>
       <div class="mt-4 row">
         <div class="col-12 pt-0"> 
            <el-table
@@ -641,7 +643,7 @@ export default {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
     }, 
     _isallowedContracts(c, salut) {
-      // console.log(c, salut)
+      console.log(c)
         return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", project_contract_id: c})
     },
     log(e){

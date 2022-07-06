@@ -17,7 +17,7 @@ class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController
   def show
     @project = current_user.authorized_programs.find_by(id: params[:id])
     unless @project.nil?
-    render json: {project: @project.build_json_response_for_program_settings(current_user)}, status: 200
+    render json: {project: @project.build_json_response(current_user, response_for: 'program_settings')}, status: 200
      else
       render json: {error: "Project not found"}, status: :not_found
     end

@@ -43,7 +43,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
       role_ids << role.id
       roles << h
     end
-    render json: {roles: roles}
+    render json: {roles: roles.as_json}
   end
 
   def create

@@ -390,7 +390,7 @@
         </span>
          <div class="container-fluid p-0">
 
-             <div class="pl-3 mt-0 row">
+             <div class="pl-3 mt-0 row" v-if="viableProjectUsers && viableProjectUsers.length > 0" >
             <div class="col-5 pt-0 pl-0">
              <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
              <el-select
@@ -448,6 +448,9 @@
       
               </div>             
              
+            </div>
+              <div class="pl-3 mt-0 row" v-if="getRolesLoaded && contentLoaded && viableProjectUsers && viableProjectUsers.length <= 0">
+                There are currently no program users to assign to this project.  You can either add new program users from portfolio or remove desired user from current role in this project.
             </div>
       
       <div class="mt-4 row">
@@ -890,13 +893,14 @@ removeProject(index, rows) {
       let projectId = rows.id;
       let formData = new FormData();
       // console.log(rows)
+      formData.append("project_id", this.$route.params.programId);
       formData.append("facility[facility_name]", updatedProjectName);
       // Need one url to support these two data name edits
-
+formData.append("facility[facility_group_id]", rows.facilityGroupId);
       if (rows.facilityGroupId ){         
         formData.append("facility[facility_group_id]", rows.facilityGroupId);
-      }     
-      let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects/${projectId}`;
+      }
+      let url = `${API_BASE_PATH}/program_settings/facilities/${projectId}`;
       let method = "PUT";
       axios({
         method: method,

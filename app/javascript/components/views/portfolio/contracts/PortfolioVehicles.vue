@@ -227,7 +227,7 @@
       <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
       scope.row.ceiling && scope.row.ceiling !== '0.0'
       ">
-      {{ scope.row.ceiling }}
+      {{ scope.row.ceiling | toCurrency  }}
       </span>
       <span v-if="scope.row.ceiling == '0.0' && scope.$index !== createRow && rowId !== scope.row.id ">
         N/A

@@ -1073,7 +1073,7 @@
               </h5>
             </span>
             <div class="container-fluid p-0">
-              <div class="mt-0 row">
+              <div class="mt-0 row"  v-if="viableAdminUsers && viableAdminUsers.length > 0">
                 <div class="col-9 py-0">
                   <label class="font-md mb-0 d-flex"
                     >Add User(s) to this Role
@@ -1113,6 +1113,9 @@
                   </el-button>
                 </div>
               </div>
+               <div class="pl-3 mt-0 row" v-if="getRolesLoaded && contentLoaded && viableAdminUsers && viableAdminUsers.length <= 0">
+                There are currently no program users to assign to this role.  You can either add new program users from portfolio or remove desired user from current role.
+            </div>
 
               <!-- <div class="mt-0 row">
             <div class="col-5 text-right">

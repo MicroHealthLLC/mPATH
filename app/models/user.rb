@@ -164,6 +164,12 @@ class User < ApplicationRecord
     h
   end
   
+  def authorized_program_ids
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
+    # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
+    self.projects.active.pluck(:id)
+  end
+
   def authorized_programs
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active.distinct
     # Project.where(id: self.project_privileges.pluck(:project_ids).flatten.uniq).active.distinct
@@ -794,16 +800,16 @@ class User < ApplicationRecord
           h2[rp.role_type] = rp.privilege&.chars
         end
         contarct_hash[role_user.project_contract_id] = h2
-      elsif role_user.project_id.present? && role_user.project_contract_id.nil?
-        contracts = contracts_group_by_project[role_user.project_id] || []
-        contracts.each do |contract|
-          next if contarct_hash[contract.id] || !role_privilegs
-          h2 = {}
-          role_privilegs.each do |rp|          
-            h2[rp.role_type] = rp.privilege&.chars
-          end
-          contarct_hash[contract.id] = h2
-        end
+      # elsif role_user.project_id.present? && role_user.project_contract_id.nil?
+      #   contracts = contracts_group_by_project[role_user.project_id] || []
+      #   contracts.each do |contract|
+      #     next if contarct_hash[contract.id] || !role_privilegs
+      #     h2 = {}
+      #     role_privilegs.each do |rp|          
+      #       h2[rp.role_type] = rp.privilege&.chars
+      #     end
+      #     contarct_hash[contract.id] = h2
+      #   end
       end
       
     end
@@ -941,22 +947,16 @@ class User < ApplicationRecord
 
         program_id = project_contract.project_id.to_s
 
-        # role_ids = user.role_users.where(project_id: program_id, project_contract_id: project_contract_id).pluck(:role_id)
         role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_id == project_contract.id }.map(&:role_id).compact.uniq
         role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
         project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
-        # facility_project_id = FacilityProject.where(project_id: program_id, facility_id: project_id).first&.id
         facility_project_id = user.facility_projects.detect{|fp| fp.project_id == program_id.to_i && fp.facility_id == project_id.to_i}.id
         
-        # role_ids = user.role_users.where(facility_project_id: facility_project_id).pluck(:role_id)
         role_ids = user.role_users.select{|ru| ru.facility_project_id == facility_project_id}.map(&:role_id).compact.uniq
         role_type = RolePrivilege::PROJECT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
-      end
-
-      # role_privileges = RolePrivilege.where(role_id: role_ids, role_type: role_type).pluck(:privilege).flatten.join.chars.uniq
-      
+      end      
       role_privileges = user.role_privileges.select{|rp| role_ids.include?(rp.role_id) && rp.role_type == role_type}.map(&:privilege).compact.flatten.join.chars.uniq
 
       result = false
