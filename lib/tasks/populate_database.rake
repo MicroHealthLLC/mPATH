@@ -329,6 +329,7 @@ task :update_facility_projects_with_groups => :environment do
     if facility_group
       facility_projects.each do |fp|      
         fp.update(facility_group_id: facility_group.id)
+        (fp.project.project_groups << facility_group) rescue nil
       end
     else
       facility_projects.each do |fp|      

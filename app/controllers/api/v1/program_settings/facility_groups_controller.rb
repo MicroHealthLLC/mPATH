@@ -20,17 +20,9 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   end
 
   def index
-    # authorized_program_ids = current_user.authorized_programs.pluck(:id)
-    # all_facility_groups = []
-    # if params[:project_id].present? && authorized_program_ids.include?(params[:project_id].to_i)
-    #   facility_ids = FacilityProject.where(project_id: params[:project_id]).map(&:facility_id).compact.uniq
-    #   all_facility_groups = FacilityGroup.where(facility_id: facility_ids)
-    # else
-    #   all_facility_groups = FacilityGroup.where(project_id: authorized_program_ids )
-    # end
     response_hash = {}
-    all_facility_groups = FacilityGroup.all.as_json
-    response_hash = {facility_groups: all_facility_groups.as_json}
+    all_facility_groups = FacilityGroup.includes(:project_facility_groups).all.as_json
+    response_hash = {facility_groups: all_facility_groups}
     if params[:project_id]
       project = Project.find(params[:project_id])
       response_hash[:program_group_ids] = project.project_groups.pluck(:id)
@@ -80,14 +72,14 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
     if program.project_groups.include?(group)
       project_facility_group = program.project_facility_groups.find_by(facility_group_id: group.id)
       if !group.is_portfolio? && !project_facility_group.is_default?
-        group.apply_unassigned_to_resource
+        project_facility_group.apply_unassigned_to_resource
         if group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
           render json: {errors: group.errors.full_messages}, status: 406
         end
       elsif group.is_portfolio? && !project_facility_group.is_default?
-        if group.apply_unassigned_to_resource
+        if project_facility_group.apply_unassigned_to_resource
           project_facility_group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
