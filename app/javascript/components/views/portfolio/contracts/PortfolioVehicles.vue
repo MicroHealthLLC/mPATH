@@ -15,6 +15,7 @@
       prop="name">
     <template slot-scope="scope">
     <el-input
+      tabindex="1"
       size="small"
       v-if="( _isallowed('write') ) && scope.$index == createRow"
       placeholder=""
@@ -43,6 +44,7 @@
        >
     <template slot-scope="scope">
      <el-input
+      tabindex="2"
       size="small"
       v-if="( _isallowed('write') ) && scope.$index == createRow"
       placeholder=""
@@ -74,6 +76,7 @@
       <template slot-scope="scope" >
      <span v-if="_isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="3"
         v-model="scope.row.contract_sub_category_id"
         filterable       
         track-by="name"        
@@ -108,6 +111,7 @@
     <template slot-scope="scope" >
      <span v-if=" _isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="4"
         v-model="scope.row.contract_agency_id"
         filterable       
         track-by="name"        
@@ -141,6 +145,7 @@
      <template slot-scope="scope" >
      <span v-if=" _isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="5"
         v-model="scope.row.contract_vehicle_type_id"
         filterable       
         track-by="name"        
@@ -173,6 +178,7 @@
       >
       <template slot-scope="scope">
      <el-input
+      tabindex="6"
       size="small"
       v-if="( _isallowed('write') ) && (rowId == scope.row.id || scope.$index == createRow)"
       type="number"
@@ -198,7 +204,8 @@
       width="125"
      >
     <template slot-scope="scope" >    
-       <el-input
+      <el-input
+      tabindex="7"
       size="small"
       v-if="( _isallowed('write') ) && scope.$index == createRow"
       placeholder=""
@@ -228,6 +235,7 @@
       <template slot-scope="scope">
      <el-input
       size="small"
+      tabindex="8"
       v-if="( _isallowed('write') ) && (rowId == scope.row.id || scope.$index == createRow)"
       type="number"
       style="text-align:center"
@@ -254,6 +262,7 @@
        >
      <template slot-scope="scope">
       <v2-date-picker
+        tabindex="9"
         name="Date"       
         v-if="( _isallowed('write') ) && scope.$index == createRow"
         v-model="newBpStart"  
@@ -285,7 +294,8 @@
       >
       <template slot-scope="scope">
     <v2-date-picker
-      name="Date"       
+      name="Date" 
+      tabindex="10"      
       v-if="( _isallowed('write') ) && scope.$index == createRow"
       v-model="newBpEnd"  
       :disabled-date="disabledNewBpEndDate"
@@ -317,7 +327,8 @@
       >
        <template slot-scope="scope">
         <v2-date-picker
-          name="Date"       
+          name="Date" 
+          tabindex="11"            
           v-if="_isallowed('write') && scope.$index == createRow"
           v-model="newOpStart"  
           value-type="YYYY-MM-DD"                     
@@ -347,7 +358,8 @@
        >
       <template slot-scope="scope">
         <v2-date-picker
-          name="Date"       
+          name="Date"  
+          tabindex="12"        
           v-if="scope.$index == createRow && _isallowed('write')"
           v-model="newOpEnd" 
           :disabled-date="disabledNewOpEndDate"
