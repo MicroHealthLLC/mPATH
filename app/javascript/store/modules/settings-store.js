@@ -1279,6 +1279,7 @@ const settingsStore = {
 
     getProjectRoleNames: (state) => state.project_role_names,
     getBulkProjectRoleNames: (state) => state.bulk_project_role_names,
+    getBulkContractRoleNames: (state) => state.bulk_contract_role_names,
 
     isEdittingRole: (state) => state.is_editting_role, 
 
