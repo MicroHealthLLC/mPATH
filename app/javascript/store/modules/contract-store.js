@@ -360,7 +360,8 @@ const contractStore = {
     formData.append("contract_vehicle[contract_sub_category_id]", cVehicleData.subCatId);
     formData.append("contract_vehicle[contract_agency_id]", cVehicleData.cAgencyId);
     formData.append("contract_vehicle[contract_vehicle_type_id]", cVehicleData.type);
-    formData.append("contract_vehicle[contract_number]", cVehicleData.number);
+    debugger
+    formData.append("contract_vehicle[contract_number_id]", cVehicleData.contract_number_id);
     formData.append("contract_vehicle[ceiling]", cVehicleData.ceiling);
     if (cVehicleData.cafFees){
       formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);

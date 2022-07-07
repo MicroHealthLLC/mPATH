@@ -207,23 +207,23 @@
       <el-input
       tabindex="7"
       size="small"
-      v-if="( _isallowed('write') ) && scope.$index == createRow"
+      v-if="( _isallowed('write') ) && scope.$index == createRow && scope.row.contract_number"
       placeholder=""
       style="text-align:center"
-      v-model="scope.row.contract_number"
+      v-model="scope.row.contract_number.name"
       controls-position="right"
     ></el-input>
-    <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+    <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow  && scope.row.contract_number">
      <el-input
       size="small"
       placeholder=""
       style="text-align:center"
-      v-model="scope.row.contract_number"
+      v-model="scope.row.contract_number.name"
       controls-position="right"
       ></el-input>
      </span>
-  <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-   {{ scope.row.contract_number }} 
+  <span v-if="rowId !== scope.row.id && scope.$index !== createRow && scope.row.contract_number">
+   {{ scope.row.contract_number.name }} 
    </span>
 
       </template>
@@ -654,6 +654,7 @@ export default {
           this.opEnd = this.newOpEnd;   
       }
       // Row edit action will occur here
+      debugger
     let contractVehicleData = {
           cVehicleData: {
             name: rows.name,
@@ -662,7 +663,7 @@ export default {
             cAgencyId: rows.contract_agency_id,        
             type: rows.contract_vehicle_type_id,
             cafFees: rows.caf_fees,
-            number:  rows.contract_number,
+            contract_number_id:  rows.contract_number.name,
             ceiling: rows.ceiling,
             bp_startDate: this.bpStart,
             bp_endDate: this.bpEnd,
