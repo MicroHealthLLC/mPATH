@@ -197,16 +197,28 @@
       label="Contract Number"
       width="125"
      >
-
     <template slot-scope="scope" >    
-       <span v-if="scope.row.contract_numbers && scope.row.contract_numbers.length > 0">
-       {{ scope.row.contract_numbers.map(t => t.name).toString().replace(/,/g, ', ') }}
-      </span>
-       <span v-else>
-         <span v-if="scope.$index !== createRow">
-           N/A
-         </span>
-        </span>
+       <el-input
+      size="small"
+      v-if="( _isallowed('write') ) && scope.$index == createRow"
+      placeholder=""
+      style="text-align:center"
+      v-model="scope.row.contract_number"
+      controls-position="right"
+    ></el-input>
+    <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+     <el-input
+      size="small"
+      placeholder=""
+      style="text-align:center"
+      v-model="scope.row.contract_number"
+      controls-position="right"
+      ></el-input>
+     </span>
+  <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+   {{ scope.row.contract_number }} 
+   </span>
+
       </template>
     </el-table-column>
      <el-table-column
@@ -455,6 +467,8 @@ export default {
       data() {    
       return {
         updateCeiling: 0,
+        oneOne: 1,
+        twoTwo: 2,
         newCeiling: null, 
         nothing: true,
         rowIndex: null, 
@@ -636,6 +650,7 @@ export default {
             cAgencyId: rows.contract_agency_id,        
             type: rows.contract_vehicle_type_id,
             cafFees: rows.caf_fees,
+            number:  rows.contract_number,
             ceiling: rows.ceiling,
             bp_startDate: this.bpStart,
             bp_endDate: this.bpEnd,
@@ -643,7 +658,7 @@ export default {
             op_endDate: this.opEnd,
         },
       };
-      // console.log(contractVehicleData)
+      console.log(contractVehicleData)
       if (id){
         this.updateContractVehicle({...contractVehicleData, id})
         console.log(contractVehicleData)

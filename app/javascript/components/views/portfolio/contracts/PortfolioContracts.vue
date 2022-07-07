@@ -1559,7 +1559,15 @@ export default {
         let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t && t.id && t !== undefined && t !== null)
         let unique = [];
         contractNums.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
+
+        if(this.contractVehicles && this.contractVehicles.length > 0){
+          let vehicleContractNums = this.contractVehicles.map(t => t.contract_number).filter(t => t && t !== undefined && t !== null )
+          console.log(vehicleContractNums)        
+        }
+
         return unique
+
+        
       }
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
