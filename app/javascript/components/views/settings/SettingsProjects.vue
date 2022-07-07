@@ -465,14 +465,13 @@
             width="100%"
              > 
                <el-table-column  prop="role_name"
-               width="200"
+              width="200"
               sortable
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && !changeRoleMode" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
-                  <!-- {{ scope.row}}   -->
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
                  <el-select
@@ -495,7 +494,6 @@
                   <!-- {{ scope.row}}   -->
                 </span>
               </template>
-
             </el-table-column>
            <el-table-column  
              width="675"
@@ -541,80 +539,78 @@
 
             </el-table-column>
           
-
-    <el-table-column
-       label="Actions"
-       fixed="right"
-       align="center"      
-        width="140"
-        class="px-0"
-      >
-        <!-- <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Enter User or Role Name"/>
-        </template> -->
-        <template slot-scope="scope" class="px-0">
-           <el-button
-            type="default"
-            @click="bulkChangeRole(scope.$index, scope.row)"
-            v-if="scope.$index !== rowIndex_1"
-            v-tooltip="`Change Role`" 
-            class="bg-light btn-sm mx-0">               
-           <i class="fa-solid fa-users-gear text-primary"></i>
-           </el-button>
-            <el-button
-            type="default"
-            @click="saveBulkChangeRole(scope.$index, scope.row)"
-            v-if="scope.$index == rowIndex_1 && changeRoleMode"
-            v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light">               
-            <i class="far fa-save"></i>
-           </el-button>
-           <el-button
-            type="default"
-            @click="saveRemoveUsers(scope.$index, scope.row)"
-            v-if="isEditingRoles && scope.$index == rowIndex_1"
-            v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light">               
-            <i class="far fa-save"></i>
-           </el-button>
-           <el-button  
-          type="default" 
-          v-if="scope.$index !== rowIndex_1"
-          v-tooltip="`Remove All Users from Project`"  
-          @click.prevent="removeAllUsers(scope.$index, scope.row)"                
-          class="bg-danger btn-sm mx-0">
-        <i class="fa-solid fa-users-slash mr-1 text-light"></i>
-          </el-button>  
-          <el-button  
-          type="default" 
-          v-if="scope.$index !== rowIndex_1"
-          v-tooltip="`Remove User(s) from Project`"
-          @click.prevent="editUsers(scope.$index, scope.row)"           
-          class="bg-danger btn-sm mx-0">
-          <i class="fa-solid fa-user-slash text-light"></i>
-          </el-button>  
-            <el-button  
-            type="default" 
-            v-if="isEditingRoles && scope.$index == rowIndex_1"
-            v-tooltip="`Cancel`"
-            @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
-          class="btn btn-sm bg-secondary text-light">
-            <i class="fas fa-ban"></i> 
-          </el-button>  
-           <el-button  
-            type="default" 
-            v-if="changeRoleMode && scope.$index == rowIndex_1"
-            v-tooltip="`Cancel`"
-            @click.prevent="cancelBulkChangeRole(scope.$index, scope.row)"             
-            class="btn btn-sm bg-secondary text-light">
-            <i class="fas fa-ban"></i> 
-          </el-button>  
-           
-        </template>
-      </el-table-column>
+            <el-table-column
+            fixed="right"
+            align="center"      
+            width="140"
+            class="px-0"
+            >
+              <!-- <template slot="header" slot-scope="scope">
+                <el-input
+                  v-model="searchRoleUsers"
+                  size="mini"
+                  placeholder="Enter User or Role Name"/>
+              </template> -->
+              <template slot-scope="scope" class="px-0">
+                <el-button
+                  type="default"
+                  @click="bulkChangeRole(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex_1"
+                  v-tooltip="`Change Role`" 
+                  class="bg-light btn-sm mx-0">               
+                <i class="fa-solid fa-users-gear text-primary"></i>
+                </el-button>
+                  <el-button
+                  type="default"
+                  @click="saveBulkChangeRole(scope.$index, scope.row)"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode"
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  @click="saveRemoveUsers(scope.$index, scope.row)"
+                  v-if="isEditingRoles && scope.$index == rowIndex_1"
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button  
+                type="default" 
+                v-if="scope.$index !== rowIndex_1"
+                v-tooltip="`Remove all users from this role`"  
+                @click.prevent="removeAllUsers(scope.$index, scope.row)"                
+                class="bg-danger btn-sm mx-0">
+              <i class="fa-solid fa-users-slash mr-1 text-light"></i>
+                </el-button>  
+                <el-button  
+                type="default" 
+                v-if="scope.$index !== rowIndex_1"
+                v-tooltip="`Remove user(s) from this role`"
+                @click.prevent="editUsers(scope.$index, scope.row)"           
+                class="bg-danger btn-sm mx-0">
+                <i class="fa-solid fa-user-slash text-light"></i>
+                </el-button>  
+                  <el-button  
+                  type="default" 
+                  v-if="isEditingRoles && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
+                class="btn btn-sm bg-secondary text-light">
+                  <i class="fas fa-ban"></i> 
+                </el-button>  
+                <el-button  
+                  type="default" 
+                  v-if="changeRoleMode && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelBulkChangeRole(scope.$index, scope.row)"             
+                  class="btn btn-sm bg-secondary text-light">
+                  <i class="fas fa-ban"></i> 
+                </el-button>  
+                
+              </template>
+            </el-table-column>
         
           </el-table> 
           <span  class="" v-else>
@@ -854,15 +850,7 @@ removeProject(index, rows) {
     saveBulkChangeRole(index, rowData){
     this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
     this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
-    //  this.$confirm(
-    //     `Are you sure you want to change the project role for all these users?`,
-    //     "Confirm Remove",
-    //     {
-    //       confirmButtonText: "Yes",
-    //       cancelButtonText: "Cancel",
-    //       type: "warning",
-    //     }
-    //    ).then(() => {
+
       let user_ids = this.assignedProjectUsers.map(t => t.id);
       let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
       let projectUserRoleData = {
