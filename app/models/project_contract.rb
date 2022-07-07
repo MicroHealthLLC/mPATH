@@ -22,7 +22,7 @@ class ProjectContract < ApplicationRecord
 
   def assign_default_facility_group
     if self.facility_group.nil?
-      self.facility_group_id = FacilityGroup.unassigned.id
+      self.facility_group_id = project.default_facility_group.id
     end
   end
 end

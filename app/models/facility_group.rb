@@ -1,7 +1,7 @@
 class FacilityGroup < SortableRecord
   # default_scope {order(FacilityGroup.order_humanize)}
   has_many :facilities
-  has_many :facility_projects, through: :facilities
+  has_many :facility_projects
   has_many :project_contracts
   has_many :project_facility_groups
   has_many :projects, through: :project_facility_groups
@@ -11,15 +11,25 @@ class FacilityGroup < SortableRecord
 
   enum status: [:inactive, :active].freeze
   before_save :set_status
-  
-  def apply_unassigned_to_resource(project)
+  after_destroy :apply_unassigned_to_resource
+
+  def apply_unassigned_to_resource
     
-    unassigned = project.default_facility_group
-    if unassigned
-      facilities.update_all(facility_group_id: unassigned.id)
-      project_contracts.update_all(facility_group_id: unassigned.id)
-    else
-      false
+    facility_projects_group = self.facility_projects.includes(:project).group_by{|fp| fp.project }
+    project_contract_group = self.project_contracts.includes(:project).group_by{|fp| fp.project }
+
+    facility_projects_group.each do |project, facility_projects|
+      unassigned = project.default_facility_group
+      facility_projects.each do |fp|
+        fp.update(facility_group_id: unassigned.id)
+      end
+    end
+    
+    project_contract_group.each do |project, project_contracts|
+      unassigned = project.default_facility_group
+      project_contracts.each do |pc|
+        pc.update(facility_group_id: unassigned.id)
+      end
     end
   end
 
@@ -52,6 +62,10 @@ class FacilityGroup < SortableRecord
   # end
 
   def destroy
-    (is_default || is_portoflio.present?) ? (raise ActiveRecord::StatementInvalid.new("Can't destroy") ) : super
+    if project_facility_groups.where(is_default: true).exists? || is_portfolio
+      (raise ActiveRecord::StatementInvalid.new("Can't destroy because Groups is either default or portoflio group.") )
+    else
+      super
+    end
   end
 end

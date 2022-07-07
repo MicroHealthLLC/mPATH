@@ -41,12 +41,13 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   def create
     facility_group = FacilityGroup.new(facility_group_params)
     facility_group.status = :active
-    facility_group.is_portfolio = false
     facility_group.user_id = current_user.id
+    project = Project.find(params[:project_id])
+    facility_group.owner_id = project.id
+    facility_group.owner_type = project.class.name
     
     if facility_group.save
-      if params[:facility_group][:project_id]
-        project = Project.find( params[:facility_group][:project_id])
+      if project
         project.project_groups << facility_group
       end
       render json: facility_group
@@ -77,16 +78,17 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
     program = Project.find(params[:project_id])
     
     if program.project_groups.include?(group)
-      if !group.is_portfolio? && !group.is_default?
-        group.apply_unassigned_to_resource(program)
+      project_facility_group = program.project_facility_groups.find_by(facility_group_id: group.id)
+      if !group.is_portfolio? && !project_facility_group.is_default?
+        group.apply_unassigned_to_resource
         if group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
           render json: {errors: group.errors.full_messages}, status: 406
         end
-      elsif group.is_portfolio? && !group.is_default?
-        if group.apply_unassigned_to_resource(program)
-          program.project_facility_groups.where(facility_group_id: group.id ).destroy_all
+      elsif group.is_portfolio? && !project_facility_group.is_default?
+        if group.apply_unassigned_to_resource
+          project_facility_group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
           render json: {message: "Error removing group"}, status: 406

@@ -171,7 +171,6 @@ const settingsStore = {
       let formData = new FormData();
       // console.log(newNameData.name)
       formData.append("facility_group[name]", newNameData.name); //Required
-      debugger
       formData.append("project_id", project_id);
       axios({
         method: "PUT",
@@ -1425,6 +1424,8 @@ const groupFormData = (group) => {
   formData.append("facility_group[name]", group.name); //Required
   formData.append("facility_group[status]", group.status); //Required
   formData.append("facility_group[project_id]", group.project_id); //Required; This is actually the Program ID
+  formData.append("project_id", group.project_id); //Required; This is actually the Program ID
+
   return formData;
 };
 
@@ -1433,7 +1434,7 @@ const portfolioGroupData = (groupData) => {
   groupData.ids.forEach((ids) => {
     formData.append("facility_group_ids[]",ids);
   });
-  formData.append("program_id", groupData.programId);
+  formData.append("project_id", groupData.programId);
   return formData;
 };
 

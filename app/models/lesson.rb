@@ -11,7 +11,7 @@ class Lesson < ApplicationRecord
 
   has_one :facility, through: :facility_project
   has_one :project, through: :facility_project
-  has_one :facility_group, through: :facility
+  has_one :facility_group, through: :facility_project
 
   belongs_to :project_contract, optional: true
   has_one :contract_project_data, through: :project_contract
