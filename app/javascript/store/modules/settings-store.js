@@ -97,6 +97,8 @@ const settingsStore = {
     project_role_users: [],
     users_project_roles: [],
     project_role_names: [],
+    bulk_project_role_names: [],
+    bulk_contract_role_names: [],
     assigned_project_users: [],
     assigned_contract_users: [],
     users_contract_roles: [],
@@ -1164,6 +1166,8 @@ const settingsStore = {
     SET_USERS_CONTRACT_ROLES: (state, value) => (state.users_contract_roles = value),
     SET_USERS_ADMIN_ROLES: (state, value) => (state.users_admin_roles = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
+    SET_BULK_PROJECT_ROLE_NAMES: (state, value) => (state.bulk_project_role_names = value),
+    SET_BULK_CONTRACT_ROLE_NAMES: (state, value) => (state.bulk_contract_role_names = value),
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
     SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
 
@@ -1276,6 +1280,7 @@ const settingsStore = {
     getUsersAdminRoles: (state) => state.users_admin_roles,
 
     getProjectRoleNames: (state) => state.project_role_names,
+    getBulkProjectRoleNames: (state) => state.bulk_project_role_names,
 
     isEdittingRole: (state) => state.is_editting_role, 
 

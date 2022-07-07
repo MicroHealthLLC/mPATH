@@ -508,14 +508,22 @@
             v-tooltip="`Save`" 
             class="bg-primary btn-sm text-light">               
             <i class="far fa-save"></i>
-               </el-button>
+          </el-button>
+           <el-button  
+          type="default" 
+          v-if="scope.$index !== rowIndex_1"
+          v-tooltip="`Remove All Users from Project`"  
+          @click.prevent="removeAllUsers(scope.$index, scope.row)"                
+          class="bg-danger btn-sm">
+        <i class="fa-solid fa-users-slash mr-1 text-light"></i>
+          </el-button>  
           <el-button  
           type="default" 
           v-if="scope.$index !== rowIndex_1"
           v-tooltip="`Remove User(s) from Project`"
           @click.prevent="editUsers(scope.$index, scope.row)"           
           class="bg-danger text-light btn-sm">
-         <i class="fal fa-user-lock mr-1 text-light"></i> 
+         <i class="fa-solid fa-user-slash text-light"></i>
           </el-button>  
             <el-button  
             type="default" 
@@ -674,6 +682,36 @@ export default {
             this.removeUserRole({
               ...projectUserRoleData,
             });     
+    },
+    removeAllUsers(index, rowData){   
+       this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
+       this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
+        this.$confirm(
+        `Are you sure you want to remove all users from this contract role?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+       let user_ids = this.assignedContractUsers.map(t => t.id);
+       let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+       let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  contractId: this.projId,
+                  programId: this.$route.params.programId, 
+                  userIds: ids,   
+              },
+            };
+        
+             console.log(this.assignedUsers)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });     
+      });
+     
     },
     cancelEditRoles(index, rowData){
     this.isEditingRoles = false;
@@ -903,7 +941,7 @@ export default {
             return !associatedContractIds.includes(t.id)
           }) 
           .filter( (t) => {
-            return t.contract_end_date > this.today
+            return t.contract_end_date > this.today || t.ignore_expired == true
           })
           return data       
           }      
