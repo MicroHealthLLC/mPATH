@@ -415,9 +415,6 @@
                </el-button>
       
               </div>
-
-              
-             
             </div>
             <div class="pl-3 mt-0 row" v-if="getRolesLoaded && contentLoaded && viableContractUsers && viableContractUsers.length <= 0">
                 There are currently no program users to assign to this contract.  You can either add new program users from portfolio or remove desired user from current role in this contract.
@@ -434,25 +431,45 @@
             width="100%"
             > 
            <el-table-column  prop="user_full_name"
-              sortable
               width="200"
+              sortable              
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row)" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
+
+               </span>
+                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
+                 <el-select
+                  v-model="bulkChangeContractRoleNames"
+                  filterable           
+                  class="w-100"
+                  clearable
+                  track-by="id"
+                  value-key="id"
+                  placeholder="Search and select Project Users"          
+                >
+                  <el-option
+                    v-for="item in getRoles.filter(t => t.type_of == 'contract')"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.name"
+                  >
+              </el-option>
+            </el-select>
                   <!-- {{ scope.row}}   -->
                 </span>
               </template>
 
             </el-table-column>
             <el-table-column  prop="role_name"
-              sortable
-              width="675"
-              filterable
-              label="Users">
+             width="675"
+             sortable              
+             filterable
+             label="Users">
              <template slot-scope="scope">
-               <span v-if="scope.$index !== rowIndex_1" >        
+               <span v-if="scope.$index !== rowIndex_1 || changeRoleMode" >        
               <span  v-for="(item, i) in contractUsers.data" :key="i">    
                 <span v-if="(item.user_id && programUsers.map(t => t.id == item.user_id)) && item.role_id == scope.row &&                  
                   programUsers.filter(t => item.user_id == t.id).map(t => t.fullName).length > 0" class="userNames" >   
@@ -489,53 +506,70 @@
 
 
             </el-table-column>
-
-       <el-table-column
-        width="125"
-        align="right"
-      >
-        <!-- <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Enter User or Role Name"/>
-        </template> -->
-        <template slot-scope="scope">
-           <el-button
-            type="default"
-            @click="saveRemoveUsers(scope.$index, scope.row)"
-            v-if="isEditingRoles   && scope.$index == rowIndex_1"
-            v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light">               
-            <i class="far fa-save"></i>
-          </el-button>
-           <el-button  
-          type="default" 
-          v-if="scope.$index !== rowIndex_1"
-          v-tooltip="`Remove All Users from Project`"  
-          @click.prevent="removeAllUsers(scope.$index, scope.row)"                
-          class="bg-danger btn-sm">
-        <i class="fa-solid fa-users-slash mr-1 text-light"></i>
-          </el-button>  
-          <el-button  
-          type="default" 
-          v-if="scope.$index !== rowIndex_1"
-          v-tooltip="`Remove User(s) from Project`"
-          @click.prevent="editUsers(scope.$index, scope.row)"           
-          class="bg-danger text-light btn-sm">
-         <i class="fa-solid fa-user-slash text-light"></i>
-          </el-button>  
-            <el-button  
-            type="default" 
-            v-if="isEditingRoles && scope.$index == rowIndex_1"
-            v-tooltip="`Cancel`"
-            @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
-          class="btn btn-sm bg-secondary text-light">
-            <i class="fas fa-ban"></i> 
-          </el-button>  
-           
-        </template>
-      </el-table-column>
+            <el-table-column
+             width="145"
+             fixed="right"
+             align="center" 
+            >
+            <template slot-scope="scope"  class="px-0">
+                <el-button
+                  type="default"
+                  @click="bulkChangeRole(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex_1"
+                  v-tooltip="`Change Role`" 
+                  class="bg-light btn-sm mx-0">               
+                <i class="fa-solid fa-users-gear text-primary"></i>
+                </el-button>
+                  <el-button
+                  type="default"
+                  @click="saveBulkChangeRole(scope.$index, scope.row)"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode"
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light mx-0">               
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  @click="saveRemoveUsers(scope.$index, scope.row)"
+                  v-if="isEditingRoles   && scope.$index == rowIndex_1"
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button  
+                type="default" 
+                v-if="scope.$index !== rowIndex_1"
+                v-tooltip="`Remove all users from this role`"  
+                @click.prevent="removeAllUsers(scope.$index, scope.row)"                
+                class="bg-danger btn-sm mx-0">
+              <i class="fa-solid fa-users-slash mr-1 text-light"></i>
+                </el-button>  
+                <el-button  
+                type="default" 
+                v-if="scope.$index !== rowIndex_1"
+                v-tooltip="`Remove user(s) from this role`"
+                @click.prevent="editUsers(scope.$index, scope.row)"           
+                class="bg-danger text-light btn-sm mx-0">
+                 <i class="fa-solid fa-user-slash text-light"></i>
+                </el-button>  
+                  <el-button  
+                  type="default" 
+                  v-if="isEditingRoles && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
+                class="btn btn-sm bg-secondary text-light">
+                  <i class="fas fa-ban"></i> 
+                </el-button> 
+                 <el-button  
+                  type="default" 
+                  v-if="changeRoleMode && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelBulkChangeRole(scope.$index, scope.row)"             
+                  class="btn btn-sm bg-secondary text-light mx-0">
+                  <i class="fas fa-ban"></i> 
+                </el-button>                
+              </template>
+            </el-table-column>
           </el-table>     
         <span  class="" v-else>
             No Users Assigned
@@ -581,6 +615,7 @@ export default {
       isEditingRoles: false,
       roleRowId: null, 
       userids: null, 
+      changeRoleMode: false, 
       expandRowKeys: [],
       currentFacility: {},
       contractData: null, 
@@ -627,9 +662,10 @@ export default {
       "SET_ADD_USER_TO_ROLE_STATUS", 
       "SET_CONTRACT_ROLE_USERS",
       "SET_CONTRACT_ROLE_NAMES",
+      "SET_BULK_CONTRACT_ROLE_NAMES",
       "SET_ASSIGNED_CONTRACT_USERS",
       "SET_REMOVE_CONTRACT_ROLE_STATUS",
-       "SET_ASSOCIATED_CONTRACTS_STATUS",
+      "SET_ASSOCIATED_CONTRACTS_STATUS",
        "SET_CONTRACTS_STATUS"
     ]),
     ...mapActions([
@@ -683,6 +719,44 @@ export default {
               ...projectUserRoleData,
             });     
     },
+    bulkChangeRole(index, rowData){
+       this.changeRoleMode = true
+       this.rowIndex_1 = index;
+       this.roleRowId = rowData
+    },
+    saveBulkChangeRole(index, rowData){
+    this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
+    this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
+    let user_ids = this.assignedContractUsers.map(t => t.id);
+    let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  contractId: this.projId,
+                  programId: this.$route.params.programId, 
+                  userIds: ids,   
+              },
+            };
+        
+             console.log(this.assignedUsers)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            }).then(() => {
+              let user_ids = this.assignedContractUsers.map(t => t.id);
+              let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+              let contractUserRoleData = {
+                  userData: {
+                    roleId:  this.bulkChangeContractRoleNames.id,
+                    userIds:  ids,
+                    programId: this.$route.params.programId, 
+                    contractId: this.projId  
+                },
+              };
+            this.addUserToRole({
+              ...contractUserRoleData,
+            });
+         });    
+    },
     removeAllUsers(index, rowData){   
        this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
        this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
@@ -715,6 +789,11 @@ export default {
     },
     cancelEditRoles(index, rowData){
     this.isEditingRoles = false;
+    this.roleRowId = null;
+    this.rowIndex_1 = null;
+    },
+   cancelBulkChangeRole(){
+    this.changeRoleMode = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
     },
@@ -887,6 +966,7 @@ export default {
       "addUserToRoleStatus",
       "getContractRoleUsers",
       "getContractRoleNames",
+      "getBulkContractRoleNames",
       "getTransferData",
       "getContractTable",
       "getProjectGroupFilter",
@@ -1032,7 +1112,14 @@ export default {
          this.SET_CONTRACT_ROLE_NAMES(value)
         }      
     },
-
+    bulkChangeContractRoleNames: {     
+     get() {
+       return this.getBulkContractRoleNames
+      },
+      set(value) {
+         this.SET_BULK_CONTRACT_ROLE_NAMES(value)
+        }      
+    },
     C_newContractGroupFilter: {
       get() {
         return this.getNewContractGroupFilter;
@@ -1102,6 +1189,7 @@ export default {
           this.SET_REMOVE_CONTRACT_ROLE_STATUS(0);   
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
+          this.changeRoleMode = false
          }
       },
     },    
@@ -1116,7 +1204,9 @@ export default {
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
           this.SET_CONTRACT_ROLE_NAMES([])
+          this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
+          this.changeRoleMode = false
         }
       },
     },
@@ -1174,14 +1264,14 @@ export default {
   }
   
 }
-/deep/.el-dialog.contractUsers{
- width: 60% !important; 
-  }
-.contractUsers{
- /deep/.el-dialog__body {
-   padding-top: 0;
- }
-}
+// /deep/.el-dialog.contractUsers{
+//  width: 60% !important; 
+//   }
+// .contractUsers{
+//  /deep/.el-dialog__body {
+//    padding-top: 0;
+//  }
+// }
 .tabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
