@@ -44,6 +44,9 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
 
   def create
     @facility = @project.facilities.create(facility_params.merge({creator: current_user, is_portfolio: false}))
+    if params[:facility][:facility_group_id]
+      @project.facility_projects.where(facility_id: @facility.id).first&.update(facility_group_id: params[:facility][:facility_group_id] )
+    end
     render json: {facility: @facility.as_json}
   end
 
