@@ -90,7 +90,9 @@ ActiveAdmin.register FacilityGroup do
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
-
+    def scoped_collection
+      super.where(is_portfolio: true)
+    end
   end
 
   filter :name
