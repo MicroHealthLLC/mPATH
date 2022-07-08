@@ -15,6 +15,7 @@
             <i class="fal fa-network-wired mr-1 mh-blue-text"></i> GROUPS
             <span
               v-if="tableData && tableData.length"
+              :load="log(tableData)"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ tableData.length }}
             </span>
@@ -416,7 +417,7 @@
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
-                    v-if="
+                    v-if="!scope.row.isDefault &&
                       scope.$index !== rowIndex &&
                         !scope.row.isPortfolio && _isallowed('delete')
                     "
@@ -506,6 +507,9 @@ export default {
       "fetchContracts",
       "fetchCurrentProject",
     ]),
+    log(e){
+      console.log(e)
+    },
        tableRowClassName({row, rowIndex}) {
         if (!row.isPortfolio) {
           return 'warning-row';
@@ -556,10 +560,11 @@ export default {
         newNameData: {
           name: rows.name,
         },
+        project_id: this.$route.params.programId,
       };
       this.updateGroupName({
         ...groupNameData,
-        id,
+        id        
       });
       this.rowIndex = null;
       this.rowId = null;
@@ -846,7 +851,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
-
+          this.fetchContracts(this.$route.params.programId);
           //  this.newGroupName =
         }
       },

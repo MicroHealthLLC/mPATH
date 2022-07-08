@@ -97,6 +97,8 @@ const settingsStore = {
     project_role_users: [],
     users_project_roles: [],
     project_role_names: [],
+    bulk_project_role_names: [],
+    bulk_contract_role_names: [],
     assigned_project_users: [],
     assigned_contract_users: [],
     users_contract_roles: [],
@@ -146,7 +148,7 @@ const settingsStore = {
 
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/facility_groups`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -164,14 +166,15 @@ const settingsStore = {
           commit("TOGGLE_GROUPS_LOADED", true);
         });
     },
-   updateGroupName({ commit }, { id, newNameData }) {
+   updateGroupName({ commit }, { id, newNameData, project_id }) {
       commit("TOGGLE_GROUPS_LOADED", false);
       let formData = new FormData();
       // console.log(newNameData.name)
       formData.append("facility_group[name]", newNameData.name); //Required
+      formData.append("project_id", project_id);
       axios({
         method: "PUT",
-        url: `${API_BASE_PATH}/facility_groups/${id}`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups/${id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -218,7 +221,7 @@ const settingsStore = {
       formData.append("project_id", g.programId)
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/facility_groups/${g.id}`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups/${g.id}`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -998,7 +1001,7 @@ const settingsStore = {
       commit("TOGGLE_GROUPS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/facility_groups?program_id=${id}&all=true`,
+        url: `${API_BASE_PATH}/program_settings/facility_groups?project_id=${id}&all=true`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1162,6 +1165,8 @@ const settingsStore = {
     SET_USERS_CONTRACT_ROLES: (state, value) => (state.users_contract_roles = value),
     SET_USERS_ADMIN_ROLES: (state, value) => (state.users_admin_roles = value),
     SET_PROJECT_ROLE_NAMES: (state, value) => (state.project_role_names = value),
+    SET_BULK_PROJECT_ROLE_NAMES: (state, value) => (state.bulk_project_role_names = value),
+    SET_BULK_CONTRACT_ROLE_NAMES: (state, value) => (state.bulk_contract_role_names = value),
     SET_CONTRACT_ROLE_USERS: (state, value) => (state.contract_role_users = value),
     SET_CONTRACT_ROLE_NAMES: (state, value) => (state.contract_role_names = value),
 
@@ -1274,6 +1279,8 @@ const settingsStore = {
     getUsersAdminRoles: (state) => state.users_admin_roles,
 
     getProjectRoleNames: (state) => state.project_role_names,
+    getBulkProjectRoleNames: (state) => state.bulk_project_role_names,
+    getBulkContractRoleNames: (state) => state.bulk_contract_role_names,
 
     isEdittingRole: (state) => state.is_editting_role, 
 
@@ -1418,6 +1425,8 @@ const groupFormData = (group) => {
   formData.append("facility_group[name]", group.name); //Required
   formData.append("facility_group[status]", group.status); //Required
   formData.append("facility_group[project_id]", group.project_id); //Required; This is actually the Program ID
+  formData.append("project_id", group.project_id); //Required; This is actually the Program ID
+
   return formData;
 };
 
@@ -1426,7 +1435,7 @@ const portfolioGroupData = (groupData) => {
   groupData.ids.forEach((ids) => {
     formData.append("facility_group_ids[]",ids);
   });
-  formData.append("program_id", groupData.programId);
+  formData.append("project_id", groupData.programId);
   return formData;
 };
 

@@ -465,17 +465,33 @@
             width="100%"
              > 
                <el-table-column  prop="role_name"
-               width="200"
+              width="200"
               sortable
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row)" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1)" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
+                </span>
+                 <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
+                 <el-select
+                  v-model="bulkChangeProjectRoleNames"
+                  filterable           
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"                  
+                >
+                  <el-option
+                    v-for="item in getRoles.filter(t => t.type_of == 'project' && t.name !=='crud-row-project-20220407')"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.name"
+                  >
+              </el-option>
+            </el-select>
                   <!-- {{ scope.row}}   -->
                 </span>
               </template>
-
             </el-table-column>
            <el-table-column  
              width="675"
@@ -483,7 +499,7 @@
               filterable
               label="Users">
               <template slot-scope="scope">
-               <span v-if="scope.$index !== rowIndex_1" >        
+               <span v-if="scope.$index !== rowIndex_1 || changeRoleMode" >        
               <span  v-for="(item, i) in projectUsers.data" :key="i">    
                 <span v-if="(item.user_id && programUsers.map(t => t.id == item.user_id)) && item.role_id == scope.row &&
                   
@@ -518,48 +534,79 @@
          
              </span>
               </template>
-
+            </el-table-column>          
+            <el-table-column
+            fixed="right"
+            align="center"      
+            width="140"
+            class="px-0"
+            >
+              <!-- <template slot="header" slot-scope="scope">
+                <el-input
+                  v-model="searchRoleUsers"
+                  size="mini"
+                  placeholder="Enter User or Role Name"/>
+              </template> -->
+              <template slot-scope="scope" class="px-0">
+                <el-button
+                  type="default"
+                  @click="bulkChangeRole(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex_1"
+                  v-tooltip="`Change Role`" 
+                  class="bg-light btn-sm mx-0">               
+                <i class="fa-solid fa-users-gear text-primary"></i>
+                </el-button>
+                  <el-button
+                  type="default"
+                  @click="saveBulkChangeRole(scope.$index, scope.row)"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode && bulkChangeProjectRoleNames.id"
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  @click="saveRemoveUsers(scope.$index, scope.row)"
+                  v-if="isEditingRoles && scope.$index == rowIndex_1"
+                  v-tooltip="`Save`" 
+                  class="bg-primary btn-sm text-light">               
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button  
+                type="default" 
+                v-if="scope.$index !== rowIndex_1"
+                v-tooltip="`Remove all users from this role`"  
+                @click.prevent="removeAllUsers(scope.$index, scope.row)"                
+                class="bg-danger btn-sm mx-0">
+              <i class="fa-solid fa-users-slash mr-1 text-light"></i>
+                </el-button>  
+                <el-button  
+                type="default" 
+                v-if="scope.$index !== rowIndex_1"
+                v-tooltip="`Remove user(s) from this role`"
+                @click.prevent="editUsers(scope.$index, scope.row)"           
+                class="bg-danger btn-sm mx-0">
+                <i class="fa-solid fa-user-slash text-light"></i>
+                </el-button>  
+                  <el-button  
+                  type="default" 
+                  v-if="isEditingRoles && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
+                class="btn btn-sm bg-secondary text-light">
+                  <i class="fas fa-ban"></i> 
+                </el-button>  
+                <el-button  
+                  type="default" 
+                  v-if="changeRoleMode && scope.$index == rowIndex_1"
+                  v-tooltip="`Cancel`"
+                  @click.prevent="cancelBulkChangeRole(scope.$index, scope.row)"             
+                  class="btn btn-sm bg-secondary text-light">
+                  <i class="fas fa-ban"></i> 
+                </el-button>  
+                
+              </template>
             </el-table-column>
-          
-
-    <el-table-column
-        align="right"
-        width="125"
-      >
-        <!-- <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="searchRoleUsers"
-            size="mini"
-            placeholder="Enter User or Role Name"/>
-        </template> -->
-        <template slot-scope="scope">
-           <el-button
-            type="default"
-            @click="saveRemoveUsers(scope.$index, scope.row)"
-            v-if="isEditingRoles   && scope.$index == rowIndex_1"
-            v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light">               
-            <i class="far fa-save"></i>
-               </el-button>
-          <el-button  
-          type="default" 
-          v-if="scope.$index !== rowIndex_1"
-          v-tooltip="`Remove User(s) from Project`"
-          @click.prevent="editUsers(scope.$index, scope.row)"           
-          class="bg-danger text-light btn-sm">
-         <i class="fal fa-user-lock mr-1 text-light"></i> 
-          </el-button>  
-            <el-button  
-            type="default" 
-            v-if="isEditingRoles && scope.$index == rowIndex_1"
-            v-tooltip="`Cancel`"
-            @click.prevent="cancelEditRoles(scope.$index, scope.row)"             
-          class="btn btn-sm bg-secondary text-light">
-            <i class="fas fa-ban"></i> 
-          </el-button>  
-           
-        </template>
-      </el-table-column>
         
           </el-table> 
           <span  class="" v-else>
@@ -602,7 +649,10 @@ export default {
   data() {
     return {
       userids: null,  
+      currentUserRoleUpdated: false, 
+      currentUserId: [this.$currentUser.id],
       searchProjects: '', 
+      changeRoleMode: false, 
       isIndeterminate: true,  
       dialogVisible: false,
       dialog2Visible: false,  
@@ -631,6 +681,7 @@ export default {
  mounted(){
   this.fetchGroups(this.$route.params.programId);
     //Move fetchRole back to row click method
+    console.log(this.$currentUser)
   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
   // this.fetchProgramSettingsProjects(this.$route.params.programId)
@@ -661,6 +712,7 @@ export default {
       "SET_ASSIGNED_PROJECT_USERS",
       "SET_REMOVE_PROJECT_ROLE_STATUS",
       "SET_PROJECT_ROLE_NAMES",
+      "SET_BULK_PROJECT_ROLE_NAMES",
       "SET_REMOVE_PORTFOLIO_PROJECTS_STATUS",
       "SET_PROGRAM_SETTINGS_PROJECTS_STATUS"  
       ]),
@@ -764,8 +816,8 @@ removeProject(index, rows) {
           programId: this.$route.params.programId,
         },
       };
-      console.log("Without filter: ",[...new Set(data)])
-        console.log("With filter: ", [...new Set(data)].filter(t => t !== 0))
+      // console.log("Without filter: ",[...new Set(data)])
+      //   console.log("With filter: ", [...new Set(data)].filter(t => t !== 0))
       
       this.updateProjects({
         ...projects,
@@ -776,6 +828,10 @@ removeProject(index, rows) {
       let user_ids = this.assignedProjectUsers.map(t => t.id);
       let assigned =  this.assignedUsers.map(t => t.id);   
       let ids = assigned.filter(t => !user_ids.includes(t)); 
+      if(ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      console.log(this.currentUserRoleUpdated)
+       }
       let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -789,10 +845,90 @@ removeProject(index, rows) {
               ...projectUserRoleData,
             });     
     },
+    bulkChangeRole(index, rowData){
+      this.changeRoleMode = true
+       this.rowIndex_1 = index;
+       this.roleRowId = rowData
+    },
+    saveBulkChangeRole(index, rowData){
+    this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
+    this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
+
+      let user_ids = this.assignedProjectUsers.map(t => t.id);
+      let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  projectId: this.projId,
+                  programId: this.$route.params.programId, 
+                  userIds: ids,   
+              },
+            };
+        
+             console.log(this.assignedUsers)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            }).then(() => {
+          let user_ids = this.assignedProjectUsers.map(t => t.id);
+          let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+          let projectUserRoleData = {
+              userData: {
+                roleId: this.bulkChangeProjectRoleNames.id,
+                userIds: ids,
+                programId: this.$route.params.programId, 
+                projectId: this.projId          
+            },
+          };
+      this.addUserToRole({
+        ...projectUserRoleData,
+      });
+      });
+    
+    },
+    removeAllUsers(index, rowData){   
+        this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
+        this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
+        this.$confirm(
+        `Are you sure you want to remove all users from this project role?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+       ).then(() => {
+      let user_ids = this.assignedProjectUsers.map(t => t.id);
+      let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      if(ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      console.log(this.currentUserRoleUpdated)
+     }
+      let projectUserRoleData = {
+                userData: {
+                  roleId: rowData,
+                  projectId: this.projId,
+                  programId: this.$route.params.programId, 
+                  userIds: ids,   
+              },
+            };
+        
+             console.log(this.assignedUsers)
+            this.removeUserRole({
+              ...projectUserRoleData,
+            });     
+      });
+     
+    },
     cancelEditRoles(index, rowData){
     this.isEditingRoles = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
+    },
+   cancelBulkChangeRole(){
+    this.changeRoleMode = false;
+    this.roleRowId = null;
+    this.rowIndex_1 = null;
+    this.bulkChangeProjectRoleNames = {}
     },
     openProjectGroup() {
       this.dialog2Visible = true;
@@ -803,6 +939,8 @@ removeProject(index, rows) {
     closeUserRoles() {
       this.rolesVisible = false;
       this.isEditingRoles = false;
+      this.roleRowId = null;
+     this.rowIndex_1 = null;
       this.SET_PROJECT_ROLE_USERS([])
     },
     addAnotherProject() {
@@ -844,11 +982,9 @@ removeProject(index, rows) {
       formData.append("facility[project_ids][]", this.$route.params.programId);
       formData.append("facility[is_portfolio]", false);
       formData.append("commit", "Create Project");
-      let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
+      let url = `${API_BASE_PATH}/program_settings/facilities?project_id=${this.$route.params.programId}`
       let method = "POST";
 
-
-      console.log(this.C_projectGroupFilter)
       axios({
         method: method,
         url: url,
@@ -871,11 +1007,14 @@ removeProject(index, rows) {
     },
   cancelEdits(index, rows) {
        this.rowIndex = null;
-       this.rowId = null;
-       
+       this.rowId = null;       
     },
-  saveProjectUserRole(index, rows){
+  saveProjectUserRole(index, rows){ 
     let user_ids = this.projectRoleUsers.map(t => t.id)
+    if(user_ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      console.log(this.currentUserRoleUpdated)
+    }
     let projectUserRoleData = {
           userData: {
             roleId: this.projectRoleNames.id,
@@ -887,7 +1026,9 @@ removeProject(index, rows) {
       this.addUserToRole({
         ...projectUserRoleData,
       });
+
     },
+
     saveEdits(index, rows) {
       let updatedProjectName = rows.facilityName;
       let projectId = rows.id;
@@ -896,7 +1037,7 @@ removeProject(index, rows) {
       formData.append("project_id", this.$route.params.programId);
       formData.append("facility[facility_name]", updatedProjectName);
       // Need one url to support these two data name edits
-formData.append("facility[facility_group_id]", rows.facilityGroupId);
+      formData.append("facility[facility_group_id]", rows.facilityGroupId);
       if (rows.facilityGroupId ){         
         formData.append("facility[facility_group_id]", rows.facilityGroupId);
       }
@@ -952,7 +1093,8 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
       "projectUserRoles",
       "getProjectGroupFilter",
       "getProjectRoleUsers",
-       "getProjectRoleNames",     
+       "getProjectRoleNames",   
+       "getBulkProjectRoleNames",     
       "getGroupFilter",
       "facilityGroupFacilities",
       "filteredFacilityGroups",
@@ -1088,6 +1230,15 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
         //  console.log(value)
         }      
     },
+    bulkChangeProjectRoleNames: {     
+     get() {
+       return this.getBulkProjectRoleNames
+      },
+      set(value) {
+         this.SET_BULK_PROJECT_ROLE_NAMES(value)
+        //  console.log(value)
+        }      
+    },
     projectData() {
       if (
         // this.projectsLoaded &&
@@ -1169,11 +1320,18 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
             message: `Succesfully added user/role to project.`,
             type: "success",
             showClose: true,
-          });         
+          });      
+
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
+          this.fetchCurrentProject(this.$route.params.programId)
           this.SET_PROJECT_ROLE_NAMES([])
+          this.SET_BULK_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
+          this.changeRoleMode = false;
+          if(this.currentUserRoleUpdated = true){
+          this.$router.go()
+          }
         }
       },
     },  
@@ -1187,7 +1345,7 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
           });
           this.SET_PROGRAM_SETTINGS_PROJECTS_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);
-
+        
           //  this.newGroupName =
         }
       },
@@ -1235,6 +1393,10 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
           this.SET_REMOVE_PROJECT_ROLE_STATUS(0);   
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
+          this.changeRoleMode = false;
+          if(this.currentUserRoleUpdated = true){
+          this.$router.go()
+          }
          }
       },
     },    
