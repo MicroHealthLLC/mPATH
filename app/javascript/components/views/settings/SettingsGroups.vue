@@ -416,7 +416,7 @@
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
-                    v-if="
+                    v-if="scope.row.name !== 'Unassigned' &&
                       scope.$index !== rowIndex &&
                         !scope.row.isPortfolio && _isallowed('delete')
                     "

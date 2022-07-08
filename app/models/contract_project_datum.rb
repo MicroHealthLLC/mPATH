@@ -39,7 +39,7 @@ class ContractProjectDatum < ApplicationRecord
   end
 
   def self.preload_array
-    [:contract_customer, {contract_vehicle: [:contract_number] }, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
+    [:contract_customer, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
   end
 
   def self.params_to_permit
