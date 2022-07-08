@@ -604,8 +604,7 @@ export default {
   data() {
     return {
         today: new Date().toISOString().slice(0, 10),
-      currentUserId: [this.$currentUser.id],
-      currentUserRoleUpdated: false, 
+
       searchContractData: '',
       newGroup: null, 
       contractDialogVisible: false, 
@@ -704,10 +703,6 @@ export default {
       let user_ids = this.assignedContractUsers.map(t => t.id);
       let assigned =  this.assignedUsers.map(t => t.id);   
       let ids = assigned.filter(t => !user_ids.includes(t)); 
-       if(ids.filter(t => this.currentUserId.includes(t))){
-      this.currentUserRoleUpdated = true
-      // console.log(this.currentUserRoleUpdated)
-       }
       let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -773,10 +768,6 @@ export default {
        ).then(() => {
        let user_ids = this.assignedContractUsers.map(t => t.id);
        let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
-       if(ids.filter(t => this.currentUserId.includes(t))){
-        this.currentUserRoleUpdated = true
-        console.log(this.currentUserRoleUpdated)
-      }
        let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -799,17 +790,13 @@ export default {
     this.rowIndex_1 = null;
     },
    cancelBulkChangeRole(){
-    this.changeRoleMode = false;
+   this.changeRoleMode = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
      this.bulkChangeContractRoleNames = {}
     },
    saveContractUserRole(index, rows){
     let user_ids = this.contractRoleUsers.map(t => t.id)
-    if(user_ids.filter(t => this.currentUserId.includes(t))){
-      this.currentUserRoleUpdated = true
-      // console.log(this.currentUserRoleUpdated)
-     }
     let contractUserRoleData = {
           userData: {
             roleId:    this.contractRoleNames.id,
@@ -1204,9 +1191,6 @@ export default {
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false
-          if(this.currentUserRoleUpdated = true){
-          this.$router.go()
-          }
          }
       },
     },    
@@ -1224,9 +1208,6 @@ export default {
           this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
           this.changeRoleMode = false
-         if(this.currentUserRoleUpdated = true){
-          this.$router.go()
-          }
         }
       },
     },
