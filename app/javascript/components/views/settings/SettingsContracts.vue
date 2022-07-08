@@ -436,7 +436,7 @@
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1)" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
 
                </span>
@@ -445,10 +445,9 @@
                   v-model="bulkChangeContractRoleNames"
                   filterable           
                   class="w-100"
-                  clearable
                   track-by="id"
                   value-key="id"
-                  placeholder="Search and select Project Users"          
+            
                 >
                   <el-option
                     v-for="item in getRoles.filter(t => t.type_of == 'contract')"
@@ -521,7 +520,7 @@
                   <el-button
                   type="default"
                   @click="saveBulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index == rowIndex_1 && changeRoleMode"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode && bulkChangeContractRoleNames.id"
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light mx-0">               
                   <i class="far fa-save"></i>
@@ -605,7 +604,8 @@ export default {
   data() {
     return {
         today: new Date().toISOString().slice(0, 10),
-
+      currentUserId: [this.$currentUser.id],
+      currentUserRoleUpdated: false, 
       searchContractData: '',
       newGroup: null, 
       contractDialogVisible: false, 
@@ -704,6 +704,10 @@ export default {
       let user_ids = this.assignedContractUsers.map(t => t.id);
       let assigned =  this.assignedUsers.map(t => t.id);   
       let ids = assigned.filter(t => !user_ids.includes(t)); 
+       if(ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      // console.log(this.currentUserRoleUpdated)
+       }
       let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -769,6 +773,10 @@ export default {
        ).then(() => {
        let user_ids = this.assignedContractUsers.map(t => t.id);
        let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+       if(ids.filter(t => this.currentUserId.includes(t))){
+        this.currentUserRoleUpdated = true
+        console.log(this.currentUserRoleUpdated)
+      }
        let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -794,9 +802,14 @@ export default {
     this.changeRoleMode = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
+     this.bulkChangeContractRoleNames = {}
     },
    saveContractUserRole(index, rows){
     let user_ids = this.contractRoleUsers.map(t => t.id)
+    if(user_ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      // console.log(this.currentUserRoleUpdated)
+     }
     let contractUserRoleData = {
           userData: {
             roleId:    this.contractRoleNames.id,
@@ -811,7 +824,10 @@ export default {
       });
     },
    closeUserRoles() {
-   this.openUserPrivilegesDialog = false;
+    this.openUserPrivilegesDialog = false;
+    this.isEditingRoles = false;
+    this.roleRowId = null;
+    this.rowIndex_1 = null;
     },
     addUserRole(index, rows) {
       this.openUserPrivilegesDialog = true
@@ -1188,6 +1204,9 @@ export default {
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false
+          if(this.currentUserRoleUpdated = true){
+          this.$router.go()
+          }
          }
       },
     },    
@@ -1205,6 +1224,9 @@ export default {
           this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
           this.changeRoleMode = false
+         if(this.currentUserRoleUpdated = true){
+          this.$router.go()
+          }
         }
       },
     },

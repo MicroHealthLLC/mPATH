@@ -1541,7 +1541,9 @@ export default {
       if (this.contractProjects && this.contractProjects.length > 0){
         let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
-         return data    
+         console.log(data)
+         return data   
+
      } else {
         let data = []
          data.push({})
@@ -1583,10 +1585,14 @@ export default {
       return ['Prime', 'Sub']
     },                  
     contractNumbers(){
-     if (this.contractDataOptions && this.contractDataOptions.contract_numbers && 
+     if (this.tableData && this.contractDataOptions && this.contractDataOptions.contract_numbers && 
        this.contractDataOptions.contract_numbers.length > 0){
-        // console.log(this.contractDataOptions.contract_numbers)
-       return this.contractDataOptions.contract_numbers.filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')        
+          let viableContractNums = this.tableData.map(t => t.contract_number_id)
+          let vehicleContractNums = this.contractVehicles.map(t => t.contract_number_id)   
+          let contractNums = this.contractDataOptions.contract_numbers
+          .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
+          .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
+         return contractNums        
       } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
