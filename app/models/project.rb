@@ -75,7 +75,7 @@ class Project < SortableRecord
   def create_default_facility_group
     g = self.project_facility_groups.where(is_default: true).first
     if !g
-      group = FacilityGroup.create(name: "Undefined", owner_id: self.id, owner_type: self.class.name)
+      group = FacilityGroup.create(name: "Unassigned", owner_id: self.id, owner_type: self.class.name)
       g = self.project_facility_groups.create(facility_group_id: group.id, is_default: true)
     end
     g.project_group

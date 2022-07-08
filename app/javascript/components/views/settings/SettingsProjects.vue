@@ -972,11 +972,9 @@ removeProject(index, rows) {
       formData.append("facility[project_ids][]", this.$route.params.programId);
       formData.append("facility[is_portfolio]", false);
       formData.append("commit", "Create Project");
-      let url = `${API_BASE_PATH}/programs/${this.$route.params.programId}/projects`;
+      let url = `${API_BASE_PATH}/program_settings/facilities?project_id=${this.$route.params.programId}`
       let method = "POST";
 
-
-      console.log(this.C_projectGroupFilter)
       axios({
         method: method,
         url: url,
@@ -1024,7 +1022,7 @@ removeProject(index, rows) {
       formData.append("project_id", this.$route.params.programId);
       formData.append("facility[facility_name]", updatedProjectName);
       // Need one url to support these two data name edits
-formData.append("facility[facility_group_id]", rows.facilityGroupId);
+      formData.append("facility[facility_group_id]", rows.facilityGroupId);
       if (rows.facilityGroupId ){         
         formData.append("facility[facility_group_id]", rows.facilityGroupId);
       }

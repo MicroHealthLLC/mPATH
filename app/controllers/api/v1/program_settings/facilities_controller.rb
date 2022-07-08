@@ -79,7 +79,7 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
       @facility.update(facility_params)
     end
     @facility_project = @facility.facility_projects.find_by(project_id: params[:project_id])
-    @facility_project&.update(status_id: params[:status_id], due_date: params[:due_date])
+    @facility_project&.update(status_id: params[:status_id], due_date: params[:due_date], facility_group_id: params[:facility][:facility_group_id])
     render json: {facility: @facility.as_json}
   end
 
