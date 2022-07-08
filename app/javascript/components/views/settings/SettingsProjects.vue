@@ -470,7 +470,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1) && !changeRoleMode" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1)" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
@@ -649,6 +649,8 @@ export default {
   data() {
     return {
       userids: null,  
+      currentUserRoleUpdated: false, 
+      currentUserId: [this.$currentUser.id],
       searchProjects: '', 
       changeRoleMode: false, 
       isIndeterminate: true,  
@@ -679,6 +681,7 @@ export default {
  mounted(){
   this.fetchGroups(this.$route.params.programId);
     //Move fetchRole back to row click method
+    console.log(this.$currentUser)
   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
   // this.fetchProgramSettingsProjects(this.$route.params.programId)
@@ -825,6 +828,10 @@ removeProject(index, rows) {
       let user_ids = this.assignedProjectUsers.map(t => t.id);
       let assigned =  this.assignedUsers.map(t => t.id);   
       let ids = assigned.filter(t => !user_ids.includes(t)); 
+      if(ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      console.log(this.currentUserRoleUpdated)
+       }
       let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -892,6 +899,10 @@ removeProject(index, rows) {
        ).then(() => {
       let user_ids = this.assignedProjectUsers.map(t => t.id);
       let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      if(ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      console.log(this.currentUserRoleUpdated)
+     }
       let projectUserRoleData = {
                 userData: {
                   roleId: rowData,
@@ -928,6 +939,8 @@ removeProject(index, rows) {
     closeUserRoles() {
       this.rolesVisible = false;
       this.isEditingRoles = false;
+      this.roleRowId = null;
+     this.rowIndex_1 = null;
       this.SET_PROJECT_ROLE_USERS([])
     },
     addAnotherProject() {
@@ -996,8 +1009,12 @@ removeProject(index, rows) {
        this.rowIndex = null;
        this.rowId = null;       
     },
-  saveProjectUserRole(index, rows){
+  saveProjectUserRole(index, rows){ 
     let user_ids = this.projectRoleUsers.map(t => t.id)
+    if(user_ids.filter(t => this.currentUserId.includes(t))){
+      this.currentUserRoleUpdated = true
+      console.log(this.currentUserRoleUpdated)
+    }
     let projectUserRoleData = {
           userData: {
             roleId: this.projectRoleNames.id,
@@ -1009,6 +1026,7 @@ removeProject(index, rows) {
       this.addUserToRole({
         ...projectUserRoleData,
       });
+
     },
 
     saveEdits(index, rows) {
@@ -1302,7 +1320,8 @@ removeProject(index, rows) {
             message: `Succesfully added user/role to project.`,
             type: "success",
             showClose: true,
-          });         
+          });      
+
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
           this.fetchCurrentProject(this.$route.params.programId)
@@ -1310,6 +1329,9 @@ removeProject(index, rows) {
           this.SET_BULK_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
           this.changeRoleMode = false;
+          if(this.currentUserRoleUpdated = true){
+          this.$router.go()
+          }
         }
       },
     },  
@@ -1323,7 +1345,7 @@ removeProject(index, rows) {
           });
           this.SET_PROGRAM_SETTINGS_PROJECTS_STATUS(0);
           this.fetchCurrentProject(this.$route.params.programId);
-
+        
           //  this.newGroupName =
         }
       },
@@ -1372,6 +1394,9 @@ removeProject(index, rows) {
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false;
+          if(this.currentUserRoleUpdated = true){
+          this.$router.go()
+          }
          }
       },
     },    
