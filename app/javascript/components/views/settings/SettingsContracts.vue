@@ -436,7 +436,7 @@
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1) && !changeRoleMode" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
 
                </span>
@@ -445,10 +445,9 @@
                   v-model="bulkChangeContractRoleNames"
                   filterable           
                   class="w-100"
-                  clearable
                   track-by="id"
                   value-key="id"
-                  placeholder="Search and select Project Users"          
+            
                 >
                   <el-option
                     v-for="item in getRoles.filter(t => t.type_of == 'contract')"
@@ -521,7 +520,7 @@
                   <el-button
                   type="default"
                   @click="saveBulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index == rowIndex_1 && changeRoleMode"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode && bulkChangeContractRoleNames.id"
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light mx-0">               
                   <i class="far fa-save"></i>

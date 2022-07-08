@@ -520,6 +520,7 @@ export default {
       "updateContractVehicle",
       "deleteContractVehicle",
       'fetchContractProjects',
+      "fetchContractDataOptions"
     ]),
     _isallowed(salut) {     
      return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -796,7 +797,8 @@ contractAgencyOptions(){
           });
           this.SET_CONTRACT_VEHICLE_STATUS(0);
           this.fetchContractVehicles();
-          this.fetchContractProjects()
+          this.fetchContractProjects();
+         this.fetchContractDataOptions();
           this.bpStart = null;
           this.newContractNum = '';
           this.updateContractNum = '';
