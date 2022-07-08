@@ -847,7 +847,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
-
+          this.fetchContracts(this.$route.params.programId);
           //  this.newGroupName =
         }
       },

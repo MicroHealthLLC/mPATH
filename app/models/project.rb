@@ -268,6 +268,7 @@ class Project < SortableRecord
       g = all_facility_groups.detect{|gg| gg.id == fp.facility_group_id}
 
       h[:facility] = facility.attributes.merge({
+        facility_group_id: g&.id,
         facility_group_name: g&.name,
         facility_group_status: g&.status,
         project_id: fp.project_id
