@@ -470,7 +470,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1) && !changeRoleMode" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
@@ -478,10 +478,8 @@
                   v-model="bulkChangeProjectRoleNames"
                   filterable           
                   class="w-100"
-                  clearable
                   track-by="id"
-                  value-key="id"
-                  placeholder="Search and select Project Users"          
+                  value-key="id"                  
                 >
                   <el-option
                     v-for="item in getRoles.filter(t => t.type_of == 'project' && t.name !=='crud-row-project-20220407')"
@@ -561,7 +559,7 @@
                   <el-button
                   type="default"
                   @click="saveBulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index == rowIndex_1 && changeRoleMode"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode && bulkChangeProjectRoleNames.id"
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light">               
                   <i class="far fa-save"></i>
@@ -919,6 +917,7 @@ removeProject(index, rows) {
     this.changeRoleMode = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
+    this.bulkChangeProjectRoleNames = {}
     },
     openProjectGroup() {
       this.dialog2Visible = true;
@@ -1308,6 +1307,7 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
           });         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
+          this.fetchCurrentProject(this.$route.params.programId)
           this.SET_PROJECT_ROLE_NAMES([])
           this.SET_BULK_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
