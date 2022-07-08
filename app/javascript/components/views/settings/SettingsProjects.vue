@@ -536,9 +536,7 @@
          
              </span>
               </template>
-
-            </el-table-column>
-          
+            </el-table-column>          
             <el-table-column
             fixed="right"
             align="center"      

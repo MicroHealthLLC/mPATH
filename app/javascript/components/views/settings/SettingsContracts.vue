@@ -503,8 +503,6 @@
          
              </span>
               </template>
-
-
             </el-table-column>
             <el-table-column
              width="145"
