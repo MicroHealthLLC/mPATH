@@ -793,6 +793,7 @@ export default {
     this.changeRoleMode = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
+     this.bulkChangeContractRoleNames = {}
     },
    saveContractUserRole(index, rows){
     let user_ids = this.contractRoleUsers.map(t => t.id)

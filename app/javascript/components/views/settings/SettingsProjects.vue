@@ -470,7 +470,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1)" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1) && !changeRoleMode" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
@@ -917,6 +917,7 @@ removeProject(index, rows) {
     this.changeRoleMode = false;
     this.roleRowId = null;
     this.rowIndex_1 = null;
+    this.bulkChangeProjectRoleNames = {}
     },
     openProjectGroup() {
       this.dialog2Visible = true;
@@ -1306,6 +1307,7 @@ formData.append("facility[facility_group_id]", rows.facilityGroupId);
           });         
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.fetchRoles(this.$route.params.programId)  
+          this.fetchCurrentProject(this.$route.params.programId)
           this.SET_PROJECT_ROLE_NAMES([])
           this.SET_BULK_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
