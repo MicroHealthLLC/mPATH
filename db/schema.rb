@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_07_103353) do
+ActiveRecord::Schema.define(version: 2022_07_08_165712) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -276,7 +276,6 @@ ActiveRecord::Schema.define(version: 2022_07_07_103353) do
     t.integer "contract_vehicle_type_id"
     t.integer "user_id"
     t.string "full_name"
-    t.string "contract_number"
     t.decimal "ceiling", precision: 19, scale: 4, default: "0.0"
     t.datetime "base_period_start"
     t.datetime "base_period_end"
