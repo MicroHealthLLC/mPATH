@@ -234,7 +234,7 @@
         default-first-option
       >
         <el-option
-          v-for="item in contractNumber"
+          v-for="item in contractNumbers"
           :key="item.id"
           :label="item.name"
           :value="item.id"
@@ -1115,7 +1115,8 @@ export default {
       "updateContractPOC",
       "deleteContractPOC",
       //Vehicles
-      "fetchContractVehicles"
+      "fetchContractVehicles",
+      "fetchContractDataOptions"
     ]),
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -1516,6 +1517,7 @@ export default {
   mounted() {
     this.fetchContractProjects()
     this.fetchContractVehicles()
+    this.fetchContractDataOptions()
   },
   computed: {
     ...mapGetters([
@@ -1530,6 +1532,9 @@ export default {
       //Vehicles
       "contractVehicles",
       "contractVehiclesLoaded",
+
+      //Option items for all dropdowns
+      "contractDataOptions"
 
     ]), 
    tableData(){
@@ -1577,22 +1582,12 @@ export default {
     primeOrSub(){
       return ['Prime', 'Sub']
     },                  
-    contractNumber(){
-     if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueContractNums = _.uniq(this.contractProjects.filter(t => t.contract_number_id))
-        let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t && t.id && t !== undefined && t !== null)
-        let unique = [];
-        contractNums.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-
-        if(this.contractVehicles && this.contractVehicles.length > 0){
-          let vehicleContractNums = this.contractVehicles.map(t => t.contract_number).filter(t => t && t !== undefined && t !== null )
-          console.log(vehicleContractNums)        
-        }
-
-        return unique
-
-        
-      }
+    contractNumbers(){
+     if (this.contractDataOptions && this.contractDataOptions.contract_numbers && 
+       this.contractDataOptions.contract_numbers.length > 0){
+        // console.log(this.contractDataOptions.contract_numbers)
+       return this.contractDataOptions.contract_numbers.filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')        
+      } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
