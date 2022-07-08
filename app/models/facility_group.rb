@@ -12,17 +12,23 @@ class FacilityGroup < SortableRecord
   enum status: [:inactive, :active].freeze
   before_save :set_status
 
+  def is_default
+    project_facility_groups.any?(&:is_default)
+  end
+
   def set_status
     if !status
       status = :active
     end
   end
+
   def as_json(options=nil)
     json = super(options)
     json.merge(
-      is_default: project_facility_groups.any?(&:is_default) ,
+      is_default: is_default,
     ).as_json
   end
+
   def update_progress
     t = self.facility_projects
     p = 0
