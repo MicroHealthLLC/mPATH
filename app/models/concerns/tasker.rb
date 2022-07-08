@@ -16,7 +16,7 @@ module Tasker
     has_one :contract_project_data, through: :project_contract
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project
-    has_one :facility_group, through: :facility
+    has_one :facility_group, through: :facility_project
     has_one :contract_project, class_name: "Project", through: :project_contract
     has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
 

@@ -16,28 +16,13 @@ class Facility < ApplicationRecord
 
   enum status: [:inactive, :active].freeze
 
-  before_create :assign_default_facility_group 
-  before_update :assign_default_facility_group 
-
-  def assign_default_facility_group
-    if self.facility_group.nil?
-      self.facility_group_id = FacilityGroup.unassigned.id
-    end
-  end
-
-  def update_with_default_group
-    if self.facility_group.nil?
-      self.update(facility_group_id: FacilityGroup.unassigned.id)
-    end
-  end
-
-  def as_json(options=nil)
-    json = super(options)
-    json.merge(
-      facility_group_name: self.facility_group.try(:name),
-      facility_group_status: self.facility_group.try(:status)
-    ).as_json
-  end
+  # def as_json(options=nil)
+  #   json = super(options)
+  #   json.merge(
+  #     facility_group_name: self.facility_group.try(:name),
+  #     facility_group_status: self.facility_group.try(:status)
+  #   ).as_json
+  # end
   
   def portfolio_json
     self.attributes.to_json

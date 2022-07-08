@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_05_200201) do
+ActiveRecord::Schema.define(version: 2022_07_08_165712) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -276,7 +276,6 @@ ActiveRecord::Schema.define(version: 2022_07_05_200201) do
     t.integer "contract_vehicle_type_id"
     t.integer "user_id"
     t.string "full_name"
-    t.string "contract_number"
     t.decimal "ceiling", precision: 19, scale: 4, default: "0.0"
     t.datetime "base_period_start"
     t.datetime "base_period_end"
@@ -352,13 +351,15 @@ ActiveRecord::Schema.define(version: 2022_07_05_200201) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "code"
-    t.integer "status", default: 0
+    t.integer "status", default: 1
     t.integer "region_type", default: 0
     t.string "center"
     t.bigint "project_id"
     t.integer "progress", default: 0
-    t.boolean "is_portfolio", default: true
+    t.boolean "is_portfolio", default: false
     t.integer "user_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
@@ -389,6 +390,7 @@ ActiveRecord::Schema.define(version: 2022_07_05_200201) do
     t.bigint "status_id"
     t.integer "progress", default: 0
     t.string "color", default: "#ff0000"
+    t.integer "facility_group_id"
     t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
     t.index ["project_id"], name: "index_facility_projects_on_project_id"
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
@@ -582,6 +584,7 @@ ActiveRecord::Schema.define(version: 2022_07_05_200201) do
     t.integer "facility_group_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_default", default: false
   end
 
   create_table "project_issue_severities", charset: "utf8", force: :cascade do |t|

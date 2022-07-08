@@ -61,6 +61,9 @@ class RoleUser < ApplicationRecord
     if !facility_project_id && !project_contract_id && !project_id
       self.errors.add(:base, "One of the facility project, contract or project must be assigned!")
     end
+    if RoleUser.where(user_id: self.user_id, project_id: self.project_id, facility_project_id: self.facility_project_id, project_contract_id: self.project_contract_id ).count > 0
+      self.errors.add(:base, "Can't assign multiple roles on same project or contract!")
+    end
   end
 
   def check_authorized_data

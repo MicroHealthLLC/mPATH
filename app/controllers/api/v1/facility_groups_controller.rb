@@ -55,11 +55,11 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
 
   def destroy
     group = FacilityGroup.find(params[:id])
-    program = Project.find(params[:project_id])
+    program = Project.find(params[:program_id])
     
-    if program.project_groups.include?(group) 
-      if !group.is_portfolio?
-        group.apply_unassigned_to_resource
+    if program.project_groups.include?(group)
+      if !group.is_portfolio? && !group.is_default?
+        group.apply_unassigned_to_resource(program)
         if group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
@@ -67,7 +67,7 @@ class Api::V1::FacilityGroupsController < AuthenticatedController
         end
       else
         program.project_facility_groups.where(facility_group_id: group.id ).destroy_all
-        group.apply_unassigned_to_resource
+        group.apply_unassigned_to_resource(program)
         render json: {message: "Group removed successfully"}, status: 200
       end
     else
