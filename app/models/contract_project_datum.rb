@@ -26,20 +26,20 @@ class ContractProjectDatum < ApplicationRecord
     h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]
     h.merge!({facility_group: options[:project_contract].facility_group.as_json }) if options[:project_contract]
     h.merge!({facility_group_id: options[:project_contract].facility_group_id }) if options[:project_contract]
-    h.merge!({contract_customer: contract_customer.as_json}) if contract_customer_id
-    h.merge!({contract_vehicle: contract_vehicle.as_json}) if contract_vehicle_id
-    h.merge!({contract_award_to: contract_award_to.as_json}) if contract_award_to_id
-    h.merge!({contract_pop: contract_pop.as_json}) if contract_pop_id
-    h.merge!({contract_naic: contract_naic.as_json}) if contract_naic_id
-    h.merge!({contract_award_type: contract_award_type.as_json}) if contract_award_type_id
-    h.merge!({contract_type: contract_type.as_json}) if contract_type_id
-    h.merge!({contract_current_pop: contract_current_pop.as_json}) if contract_current_pop_id
-    h.merge!({contract_number: contract_number.as_json}) if contract_number_id
+    h.merge!({contract_customer: contract_customer.as_json})
+    h.merge!({contract_vehicle: contract_vehicle.to_json})
+    h.merge!({contract_award_to: contract_award_to.as_json})
+    h.merge!({contract_pop: contract_pop.as_json})
+    h.merge!({contract_naic: contract_naic.as_json})
+    h.merge!({contract_award_type: contract_award_type.as_json})
+    h.merge!({contract_type: contract_type.as_json})
+    h.merge!({contract_current_pop: contract_current_pop.as_json})
+    h.merge!({contract_number: contract_number.as_json})
     h
   end
 
   def self.preload_array
-    [:contract_customer, {contract_vehicle: [:contract_numbers] }, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
+    [:contract_customer, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
   end
 
   def self.params_to_permit

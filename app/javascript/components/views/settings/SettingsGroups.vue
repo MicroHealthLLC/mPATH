@@ -416,7 +416,7 @@
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
-                    v-if="
+                    v-if="scope.row.name !== 'Unassigned' &&
                       scope.$index !== rowIndex &&
                         !scope.row.isPortfolio && _isallowed('delete')
                     "
@@ -556,10 +556,11 @@ export default {
         newNameData: {
           name: rows.name,
         },
+        project_id: this.$route.params.programId,
       };
       this.updateGroupName({
         ...groupNameData,
-        id,
+        id        
       });
       this.rowIndex = null;
       this.rowId = null;
@@ -846,7 +847,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
-
+          this.fetchContracts(this.$route.params.programId);
           //  this.newGroupName =
         }
       },

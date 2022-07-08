@@ -13,10 +13,10 @@ class ContractVehicle < ApplicationRecord
   def to_json
     h = self.as_json
     vehicle = self
-    h.merge!({contract_sub_category: vehicle.contract_sub_category.as_json}) if contract_sub_category_id
-    h.merge!({contract_agency: vehicle.contract_agency.as_json}) if contract_agency_id
-    h.merge!({contract_vehicle_type: vehicle.contract_vehicle_type.as_json}) if contract_vehicle_type_id
-    h.merge!({contract_number: vehicle.contract_number.as_json}) if contract_number_id
+    h.merge!({contract_sub_category: contract_sub_category.as_json})
+    h.merge!({contract_agency: contract_agency.as_json})
+    h.merge!({contract_vehicle_type: contract_vehicle_type.as_json})
+    h.merge!({contract_number: contract_number.as_json})
     h
   end
 
@@ -34,9 +34,15 @@ class ContractVehicle < ApplicationRecord
     end
     contract_vehicle.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
-      
-      if c_params[:contract_number_id] &&  !( a = (Integer(c_params[:contract_number_id]) rescue nil) ) && (!ContractNumber.exists?(id: c_params[:contract_number_id]) || !ContractNumber.exists?(name: c_params[:contract_number_id]) )
-        c_params[:contract_number_id] = ContractNumber.create(name: c_params[:contract_number_id], user_id: user.id).id
+      # NOTE: Requirement is, user will always enter contract_number in contract_vehicle form in front end. So we will always recieve
+      # string value in parameter. This contract_number should also be available in contract_project_data i.e. contract_detail tab
+      # So to achieve this we will save this as contract_number_id and allow contract_project_data to use contract_number as select
+      # options
+      if c_params[:contract_number_id]
+        cn = ContractNumber.find_or_create_by(name: c_params[:contract_number_id]) do |c|
+          c.user_id = user.id
+        end
+        c_params[:contract_number_id] = cn.id
       end
 
       if c_params[:contract_sub_category_id] && !( a = (Integer(c_params[:contract_sub_category_id]) rescue nil) ) && !ContractSubCategory.exists?(id: c_params[:contract_sub_category_id])

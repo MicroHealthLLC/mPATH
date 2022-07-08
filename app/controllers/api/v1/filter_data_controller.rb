@@ -6,14 +6,14 @@ class Api::V1::FilterDataController < AuthenticatedController
 
     programs = current_user.authorized_programs.distinct.includes({facility_projects: :facility}).select(:id, :name).where("projects.id": program_ids )
 
-    facility_group_ids = Facility.joins(:facility_projects).where("facility_projects.project_id" => programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
+    facility_group_ids = FacilityProject.where(project_id: programs.pluck(:id) ).order("facility_group_id").pluck(:facility_group_id).uniq
     facility_groups = FacilityGroup.select(:id, :name).where(id: facility_group_ids)
 
     programs.in_batches(of: 1000) do |pp|
       pp.find_each do |p|
 
         projects_group_by_facility_group = p.facility_projects.group_by do |f|
-          f.facility.facility_group_id
+          f.facility_group_id
         end.transform_values{|v| v.map{|vv| {id: SecureRandom.uuid, project_id: vv.facility.id, label: vv.facility.facility_name, facility_project_id: vv.id } } }
         project_children = []
         

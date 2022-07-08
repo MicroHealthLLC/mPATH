@@ -3,7 +3,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   before_action :check_permission
 
   def check_permission
-    program_id = params[:program_id]
+    program_id = params[:project_id]
 
     raise(CanCan::AccessDenied) if !program_id
     action = nil
@@ -20,19 +20,11 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   end
 
   def index
-    # authorized_program_ids = current_user.authorized_programs.pluck(:id)
-    # all_facility_groups = []
-    # if params[:project_id].present? && authorized_program_ids.include?(params[:project_id].to_i)
-    #   facility_ids = FacilityProject.where(project_id: params[:project_id]).map(&:facility_id).compact.uniq
-    #   all_facility_groups = FacilityGroup.where(facility_id: facility_ids)
-    # else
-    #   all_facility_groups = FacilityGroup.where(project_id: authorized_program_ids )
-    # end
     response_hash = {}
-    all_facility_groups = FacilityGroup.all.as_json
-    response_hash = {facility_groups: all_facility_groups.as_json}
-    if params[:program_id]
-      project = Project.find(params[:program_id])
+    all_facility_groups = FacilityGroup.includes(:project_facility_groups).all.as_json
+    response_hash = {facility_groups: all_facility_groups}
+    if params[:project_id]
+      project = Project.find(params[:project_id])
       response_hash[:program_group_ids] = project.project_groups.pluck(:id)
     end
     render json: response_hash
@@ -41,12 +33,13 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   def create
     facility_group = FacilityGroup.new(facility_group_params)
     facility_group.status = :active
-    facility_group.is_portfolio = false
     facility_group.user_id = current_user.id
+    project = Project.find(params[:project_id])
+    facility_group.owner_id = project.id
+    facility_group.owner_type = project.class.name
     
     if facility_group.save
-      if params[:facility_group][:project_id]
-        project = Project.find( params[:facility_group][:project_id])
+      if project
         project.project_groups << facility_group
       end
       render json: facility_group
@@ -56,7 +49,7 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
   end
 
   def bulk_project_update
-    project = Project.find(params[:program_id])
+    project = Project.find(params[:project_id])
     groups = FacilityGroup.where(id: params[:facility_group_ids])
     project.project_groups = groups
     render json: groups
@@ -74,20 +67,26 @@ class Api::V1::ProgramSettings::FacilityGroupsController < AuthenticatedControll
 
   def destroy
     group = FacilityGroup.find(params[:id])
-    program = Project.find(params[:program_id])
+    program = Project.find(params[:project_id])
     
-    if program.project_groups.include?(group) 
-      if !group.is_portfolio?
-        group.apply_unassigned_to_resource
+    if program.project_groups.include?(group)
+      project_facility_group = program.project_facility_groups.find_by(facility_group_id: group.id)
+      if !group.is_portfolio? && !project_facility_group.is_default?
+        project_facility_group.apply_unassigned_to_resource
         if group.destroy
           render json: {message: "Group removed successfully"}, status: 200
         else
           render json: {errors: group.errors.full_messages}, status: 406
         end
+      elsif group.is_portfolio? && !project_facility_group.is_default?
+        if project_facility_group.apply_unassigned_to_resource
+          project_facility_group.destroy
+          render json: {message: "Group removed successfully"}, status: 200
+        else
+          render json: {message: "Error removing group"}, status: 406
+        end
       else
-        program.project_facility_groups.where(facility_group_id: group.id ).destroy_all
-        group.apply_unassigned_to_resource
-        render json: {message: "Group removed successfully"}, status: 200
+        render json: {message: "Can't remove deafult group!"}, status: 406
       end
     else
       render json: {errors: "Group is not part of current program!"}, status: 406
