@@ -6,6 +6,7 @@
 
 = javascript_tag nonce: true do
   |var current_user = "#{JSON.generate(current_user.as_json( methods: :full_name))}";
+  |var current_program_id = "#{@program_id}";
   |var mpath_instance = "#{ENV['MPATH_INSTANCE']}";
   |var program_privilegs = "#{JSON.generate(current_user.project_privileges_hash)}";
   |var contract_privilegs = "#{JSON.generate(current_user.contract_privileges_hash)}";

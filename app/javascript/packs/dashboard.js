@@ -26,7 +26,8 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
-
+import axios from "axios";
+import { API_BASE_PATH } from './../mixins/utils';
 
 Vue.use(vco)
 Vue.mixin(utils)
@@ -108,6 +109,30 @@ Vue.prototype.$programSettingPrivilegesRoles = programSettingPrivilegesRoles
 Vue.prototype.program_admin_role = JSON.parse(window.program_admin_role.replace(/&quot;/g,'"'))
 
 Vue.prototype.$preferences = preferences
+
+
+Vue.prototype.getRolePrivileges = () => {
+  axios({
+    method: "GET",
+    url: `${API_BASE_PATH}/program_settings/users/get_user_privileges?program_id=${window.current_program_id}`,
+    headers: {
+      "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+        .attributes["content"].value,
+    },
+  })
+    .then((res) => {
+      Vue.prototype.$projectPrivilegesRoles = res.data.project_privilegs_roles;
+      Vue.prototype.$programPrivilegesRoles = res.data.program_privilegs_roles;
+      Vue.prototype.$contractPrivilegesRoles = res.data.contract_privilegs_roles;
+      Vue.prototype.$programSettingPrivilegesRoles = res.data.program_settings_privileges_roles;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {});
+};
+
+Vue.prototype.getRolePrivileges()
 
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
   // console.log("***************** ", page)
