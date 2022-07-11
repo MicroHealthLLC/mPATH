@@ -679,8 +679,7 @@ export default {
  mounted(){
   this.fetchGroups(this.$route.params.programId);
     //Move fetchRole back to row click method
-    cosole.log(this.$currentUser)
-  this.fetchRoles(this.$route.params.programId)
+   this.fetchRoles(this.$route.params.programId)
   this.fetchPortfolioProjects(this.$route.params.programId)
   // this.fetchProgramSettingsProjects(this.$route.params.programId)
   },
