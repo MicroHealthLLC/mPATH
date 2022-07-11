@@ -8,7 +8,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     action = nil
     if ["index", "show" ].include?(params[:action]) 
       action = "R"
-    elsif ["create", "update", "add_users"].include?(params[:action]) 
+    elsif ["create", "update","update_role_users", "add_users"].include?(params[:action]) 
       action = "W"
     elsif ["destroy", "remove_role"].include?(params[:action]) 
       action = "D"
@@ -71,6 +71,21 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
       render json: {message: "User added to role successfully!!", role: role.to_json({page: 'user_tab_role_assign', include: [:all] })}
     else
       render json: {errors: errors.compact.uniq}, status: 422
+    end
+  end
+
+  def update_role_users
+    project = Project.find(params[:project_id])
+    role_users = RoleUser.where(id: params[:role_user_ids], project_id: project.id)
+    role = Role.find_by(id: params[:role_id])
+
+    if !params[:role_id] || !role
+      render json: {message: "Role id must be provided"}, status: 406
+    elsif !params[:role_user_ids] || !role_users.any?
+      render json: {message: "User ids must be provided"}, status: 406
+    else
+      role_users.update_all(role_id: params[:role_id])
+      render json: {message: "Successfully updated role users!!", role_users: role_users}, status: 200
     end
   end
 

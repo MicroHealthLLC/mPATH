@@ -40,6 +40,7 @@ Rails.application.routes.draw do
         resources :roles do
           collection do
             post :remove_role
+            post :update_role_users
           end
           member do
             post :add_users
