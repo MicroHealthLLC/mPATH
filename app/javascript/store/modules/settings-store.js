@@ -539,9 +539,9 @@ const settingsStore = {
           
             let formData = new FormData();          
 
-            formData.append("role_users[][role_user_ids]", userData.userIds)
-            formData.append("role_users[][project_id]", userData.programId)
-            formData.append("role_users[][role_id]", userData.roleId)
+            formData.append("role_user_ids", userData.userIds)
+            formData.append("project_id", userData.programId)
+            formData.append("role_id", userData.roleId)
             console.log(userData)
 
          commit("TOGGLE_NEW_ROLE_LOADED", false);   
