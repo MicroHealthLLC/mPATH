@@ -696,7 +696,8 @@ export default {
       "removeUserRole",
       "removeOrDeleteProject",
       "deleteProgramProject",
-      "removePortfolioProject"
+      "removePortfolioProject",
+      "bulkUpdateUserRoles"
       ]),
     ...mapMutations([
       "setProjectGroupFilter", 
@@ -846,35 +847,19 @@ removeProject(index, rows) {
     saveBulkChangeRole(index, rowData){
     this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
     this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
-
-      let user_ids = this.assignedProjectUsers.map(t => t.id);
-      let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
-      let projectUserRoleData = {
-                userData: {
-                  roleId: rowData,
-                  projectId: this.projId,
-                  programId: this.$route.params.programId, 
-                  userIds: ids,   
-              },
-            };
-        
-             console.log(this.assignedUsers)
-            this.removeUserRole({
-              ...projectUserRoleData,
-            }).then(() => {
+ 
           let user_ids = this.assignedProjectUsers.map(t => t.id);
           let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
           let projectUserRoleData = {
               userData: {
                 roleId: this.bulkChangeProjectRoleNames.id,
                 userIds: ids,
-                programId: this.$route.params.programId, 
-                projectId: this.projId          
+                programId: this.$route.params.programId,                    
             },
           };
-      this.addUserToRole({
+          console.log(ids)
+      this.bulkUpdateUserRoles({
         ...projectUserRoleData,
-      });
       });
     
     },
@@ -1216,7 +1201,7 @@ removeProject(index, rows) {
     },
     bulkChangeProjectRoleNames: {     
      get() {
-       return this.getBulkProjectRoleNames
+       return this.getBulkProjectRoleNames 
       },
       set(value) {
          this.SET_BULK_PROJECT_ROLE_NAMES(value)
