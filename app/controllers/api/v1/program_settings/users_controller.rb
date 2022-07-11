@@ -1,12 +1,12 @@
 class Api::V1::ProgramSettings::UsersController < AuthenticatedController
-  before_action :check_permission
+  before_action :check_permission, except: [:get_user_privileges]
 
   def check_permission
     program_id = params[:program_id]
 
     raise(CanCan::AccessDenied) if !program_id
     action = nil
-    if ["index", "show" ].include?(params[:action]) 
+    if ["index", "show", "get_user_privileges" ].include?(params[:action]) 
       action = "R"
     elsif ["create", "update", "add_to_program","remove_from_program"].include?(params[:action]) 
       action = "W"
@@ -16,6 +16,27 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
 
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_USERS_ROLES)
   end
+
+  def get_user_privileges
+
+    project = Project.find_by(id: params[:program_id])
+    response_hash = {}
+
+    if !project
+      render json: {message: "No program found!!"}, status: 404
+    else
+      response_hash = {
+        program_admin_role: Role.program_admin_user_role.to_json,
+        program_privilegs_roles: current_user.project_privileges_hash_by_role(program_ids: [project.id]),
+        contract_privilegs_roles: current_user.contract_privileges_hash_by_role(program_ids: [project.id]),
+        project_privilegs_roles: current_user.facility_privileges_hash_by_role(program_ids: [project.id]),
+        program_settings_privileges_roles: current_user.program_settings_privileges_hash_by_role(program_ids: [project.id])
+      }
+      render json: response_hash, status: 200
+    end
+
+  end
+
   def index
     @users = []    
     status_code = 200

@@ -525,7 +525,7 @@ const settingsStore = {
               console.log("removed from ProgramSettingContracts")
               commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
              }           
-           
+             Vue.prototype.getRolePrivileges()
            })
            .catch((err) => {
              console.log(err);
