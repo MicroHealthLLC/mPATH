@@ -102,4 +102,9 @@ gem 'jwt'
 
 gem "addressable", ">= 2.8.0"
 
-gem "rspec-rails", group: [:development, :test]
+group :test do
+  gem 'rspec-rails'
+  gem 'database_cleaner-active_record'
+  gem 'factory_bot_rails'
+  gem 'faker'
+end

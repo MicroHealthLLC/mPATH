@@ -120,6 +120,10 @@ GEM
     crass (1.0.6)
     cypress-on-rails (1.10.1)
       rack
+    database_cleaner-active_record (2.0.1)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     devise (4.7.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -133,6 +137,13 @@ GEM
       railties (>= 3.2)
     erubi (1.10.0)
     execjs (2.8.1)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (2.21.0)
+      i18n (>= 1.8.11, < 2)
     faraday (1.5.1)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
@@ -395,8 +406,11 @@ DEPENDENCIES
   cancancan
   coffee-rails (~> 4.2)
   cypress-on-rails (~> 1.0)
+  database_cleaner-active_record
   devise (~> 4.7.1)
   dotenv-rails
+  factory_bot_rails
+  faker
   fasterer
   geocoder
   jbuilder (~> 2.5)
