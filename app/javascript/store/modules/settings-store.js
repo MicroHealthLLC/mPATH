@@ -361,7 +361,8 @@ const settingsStore = {
             }
             if (res.data && res.data.role.type_of == "contract" ){
               commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
-            }                    
+            }    
+            Vue.prototype.getRolePrivileges()                
            })
            .catch((err) => {
              console.log(err);
@@ -429,6 +430,7 @@ const settingsStore = {
             commit("SET_NEW_ROLE", res);
             // console.log(res)
              commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
+             Vue.prototype.getRolePrivileges()
            })
            .catch((err) => {
              console.log(err);
@@ -559,6 +561,7 @@ const settingsStore = {
             commit("SET_NEW_ROLE", res);
             // console.log(res)
              commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
+             Vue.prototype.getRolePrivileges()
            })
            .catch((err) => {
              console.log(err);
@@ -1102,8 +1105,6 @@ const settingsStore = {
       // let formData = contractFormData(contract);
       formData.append("project_id", contract.programId);
       formData.append("project_contract[facility_group_id]", contract.facility_group_id);
-
-      
       axios({
         method: "PUT",
         url: `${API_BASE_PATH}/program_settings/contracts/${id}`,
