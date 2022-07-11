@@ -845,19 +845,22 @@ removeProject(index, rows) {
        this.roleRowId = rowData
     },
     saveBulkChangeRole(index, rowData){
-    this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
-    this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
- 
-          let user_ids = this.assignedProjectUsers.map(t => t.id);
-          let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
-          let projectUserRoleData = {
-              userData: {
-                roleId: this.bulkChangeProjectRoleNames.id,
-                userIds: ids,
-                programId: this.$route.params.programId,                    
-            },
-          };
-          console.log(ids)
+      this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
+      this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
+      let old_role = this.getRoles[index]
+      let new_role = this.bulkChangeProjectRoleNames
+      let user_ids = this.assignedProjectUsers.map(t => t.id);
+      let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      debugger
+      let projectUserRoleData = {
+          userData: {
+            roleId: new_role.id,
+            roleUserIds: old_role.role_users.map(t => t.id),
+            userIds: ids,
+            programId: this.$route.params.programId,                    
+        },
+      };
+      console.log(ids)
       this.bulkUpdateUserRoles({
         ...projectUserRoleData,
       });

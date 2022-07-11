@@ -540,8 +540,7 @@ const settingsStore = {
         // let formData =  userRoleData(userData);
           
             let formData = new FormData();          
-
-            formData.append("role_user_ids", userData.userIds)
+            formData.append("role_user_ids", userData.roleUserIds)
             formData.append("project_id", userData.programId)
             formData.append("role_id", userData.roleId)
             console.log(userData)
