@@ -42,12 +42,12 @@ const contractStore = {
 
   actions: {
   // GET REQUESTS
-    fetchContractProjects({ commit }) {
+    fetchContractProjects({ commit }, id) {
       commit("TOGGLE_CONTRACT_PROJECTS_LOADED", false);
-   
+      
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_project_data`,
+        url: `${API_BASE_PATH}/contract_project_data?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
