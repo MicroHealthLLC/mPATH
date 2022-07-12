@@ -1250,6 +1250,9 @@ export default {
           this.SET_CONTRACT_ROLE_NAMES([])
           this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
+               this.changeRoleMode = false;
+          this.rowIndex_1 = null;
+          this.roleRowId = null; 
           this.changeRoleMode = false
         }
       },
