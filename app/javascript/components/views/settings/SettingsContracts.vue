@@ -752,6 +752,7 @@ export default {
       } else new_role = this.currentRoleName
       let user_ids = this.assignedContractUsers.map(t => t.id);
       let ids = this.assignedContractUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      let roleUsers = this.contractUsers.data.filter(t => t.role_id == rowData)
       // debugger
       let projectUserRoleData = {
           userData: {
