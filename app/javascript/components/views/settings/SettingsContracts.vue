@@ -745,15 +745,18 @@ export default {
       saveBulkChangeRole(index, rowData){
       this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
       this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
-      let old_role = this.getRoles[index]
-      let new_role = this.bulkChangeContractRoleNames
+      let old_role = this.getRoles.filter(t => t.id == rowData).map(t => t)[0]
+      let new_role;
+      if(this.bulkChangeContractRoleNames.id) {
+        new_role = this.bulkChangeContractRoleNames
+      } else new_role = this.currentRoleName
       let user_ids = this.assignedContractUsers.map(t => t.id);
       let ids = this.assignedContractUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
       // debugger
       let projectUserRoleData = {
           userData: {
             roleId: new_role.id,
-            roleUserIds: old_role.role_users.map(t => t.id),
+            roleUserIds: roleUsers.map(t => t.id),
             userIds: ids,
             programId: this.$route.params.programId,                    
         },
@@ -1250,7 +1253,6 @@ export default {
           this.SET_CONTRACT_ROLE_NAMES([])
           this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
-               this.changeRoleMode = false;
           this.rowIndex_1 = null;
           this.roleRowId = null; 
           this.changeRoleMode = false
