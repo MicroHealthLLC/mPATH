@@ -4,8 +4,23 @@ class Api::V1::ContractProjectDataController < AuthenticatedController
   before_action :check_contract_delete_permission, only: [:destroy]
   
   def check_contract_read_permission
-    raise CanCan::AccessDenied if !current_user.can_access_contract_data?
+
+    program_id = params[:project_id]
+
+    action = nil
+
+    if ["index", "show" ].include?(params[:action]) 
+      action = "R"
+    elsif ["create", "update"].include?(params[:action]) 
+      action = "W"
+    elsif ["destroy"].include?(params[:action]) 
+      action = "D"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action, RolePrivilege::PROGRAM_SETTING_CONTRACTS) && !current_user.can_access_contract_data?
+
   end
+
   def check_contract_write_permission
     raise CanCan::AccessDenied if !current_user.can_write_contract_data?
   end
