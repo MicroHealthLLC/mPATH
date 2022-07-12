@@ -101,7 +101,7 @@ class Project < SortableRecord
         return false
       end
     else
-      if admin_program_admins.reject { |c| c.empty? }.size < 1
+      if !admin_program_admins || admin_program_admins.reject { |c| c.empty? }.size < 1
         self.errors.add(:base, "There must be at least one program admin assigned")
         return false
       end
