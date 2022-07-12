@@ -436,7 +436,7 @@
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1 || scope.$index == rowIndex_1 && isEditingRoles" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
 
                </span>

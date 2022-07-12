@@ -470,7 +470,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1 || scope.$index == rowIndex_1 && isEditingRoles" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  

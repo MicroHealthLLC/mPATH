@@ -509,6 +509,7 @@ const settingsStore = {
            .then((res) => {
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
               // commit("SET_NEW_ROLE", res);
+              Vue.prototype.getRolePrivileges()
             if(userData.projectIds || userData.contractIds || userData.adminRole || userData.removeRole ){
               console.log("removed from ProgramSettingUsers")
               commit("SET_REMOVE_ROLE_STATUS", res.status);
@@ -527,7 +528,7 @@ const settingsStore = {
               console.log("removed from ProgramSettingContracts")
               commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
              }           
-             Vue.prototype.getRolePrivileges()
+      
            })
            .catch((err) => {
              console.log(err);
