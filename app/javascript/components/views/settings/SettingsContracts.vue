@@ -436,7 +436,7 @@
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1 || scope.$index == rowIndex_1 && isEditingRoles" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
 
                </span>
@@ -989,7 +989,7 @@ export default {
       //  }
       console.log(this.tableData)
       this.contractDialogVisible = true;
-       this.fetchContractProjects();
+       this.fetchContractProjects(this.$route.params.programId);
     },
     openUserPrivileges(index, rows) {
       this.openUserPrivilegesDialog = true;
@@ -1200,7 +1200,7 @@ export default {
           });
           this.SET_CONTRACTS_STATUS(0);
           this.fetchContracts(this.$route.params.programId);
-          this.fetchContractProjects();
+          this.fetchContractProjects(this.$route.params.programId);
            this.fetchCurrentProject(this.$route.params.programId);
         }
       },
@@ -1214,7 +1214,7 @@ export default {
             showClose: true,
           });
           this.SET_ASSOCIATED_CONTRACTS_STATUS(0);
-          this.fetchContractProjects();
+          this.fetchContractProjects(this.$route.params.programId);
           this.fetchContracts(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
         }
@@ -1250,6 +1250,9 @@ export default {
           this.SET_CONTRACT_ROLE_NAMES([])
           this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
+               this.changeRoleMode = false;
+          this.rowIndex_1 = null;
+          this.roleRowId = null; 
           this.changeRoleMode = false
         }
       },
