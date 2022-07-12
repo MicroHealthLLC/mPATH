@@ -361,7 +361,8 @@ const settingsStore = {
             }
             if (res.data && res.data.role.type_of == "contract" ){
               commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
-            }                    
+            }    
+            Vue.prototype.getRolePrivileges()                
            })
            .catch((err) => {
              console.log(err);
@@ -429,6 +430,7 @@ const settingsStore = {
             commit("SET_NEW_ROLE", res);
             // console.log(res)
              commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
+             Vue.prototype.getRolePrivileges()
            })
            .catch((err) => {
              console.log(err);
@@ -525,7 +527,7 @@ const settingsStore = {
               console.log("removed from ProgramSettingContracts")
               commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
              }           
-           
+             Vue.prototype.getRolePrivileges()
            })
            .catch((err) => {
              console.log(err);
@@ -534,7 +536,40 @@ const settingsStore = {
              commit("TOGGLE_ROLE_REMOVED", true);
            });
        },
-      
+       bulkUpdateUserRoles({ commit }, { userData }) {         
+        // let formData =  userRoleData(userData);
+          
+            let formData = new FormData();          
+            formData.append("role_user_ids", userData.roleUserIds)
+            formData.append("project_id", userData.programId)
+            formData.append("role_id", userData.roleId)
+            console.log(userData)
+
+         commit("TOGGLE_NEW_ROLE_LOADED", false);   
+         axios({
+           method: "POST",
+           url: `${API_BASE_PATH}/program_settings/roles/update_role_users`,
+           data: formData,
+           headers: {
+             "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+               .attributes["content"].value,
+           },
+         })
+           .then((res) => {
+            //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
+            commit("SET_NEW_ROLE", res);
+            // console.log(res)
+             commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
+             Vue.prototype.getRolePrivileges()
+           })
+           .catch((err) => {
+             console.log(err);
+           })
+           .finally(() => {
+             commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", true);
+           });
+       },
+          
       //*****************ROLES ACTIONS ABOVE*******************
 
     updateGroup({ commit }, { groupData }) {
@@ -1069,8 +1104,6 @@ const settingsStore = {
       // let formData = contractFormData(contract);
       formData.append("project_id", contract.programId);
       formData.append("project_contract[facility_group_id]", contract.facility_group_id);
-
-      
       axios({
         method: "PUT",
         url: `${API_BASE_PATH}/program_settings/contracts/${id}`,

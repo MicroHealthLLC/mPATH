@@ -40,6 +40,7 @@ Rails.application.routes.draw do
         resources :roles do
           collection do
             post :remove_role
+            post :update_role_users
           end
           member do
             post :add_users
@@ -50,6 +51,7 @@ Rails.application.routes.draw do
           collection do
             post :add_to_program
             delete :remove_from_program
+            get :get_user_privileges
           end
         end
 
