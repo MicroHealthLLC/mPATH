@@ -436,13 +436,31 @@
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1)" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
 
                </span>
                   <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
                  <el-select
+                  v-if="bulkChangeContractRoleNames.id"
                   v-model="bulkChangeContractRoleNames"
+                  filterable           
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+            
+                >
+                  <el-option
+                    v-for="item in getRoles.filter(t => t.type_of == 'contract')"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.name"
+                  >
+              </el-option>
+              </el-select>
+              <el-select
+                  v-if="currentRoleName && !bulkChangeRoleNames.id" 
+                  v-model="currentRoleName"
                   filterable           
                   class="w-100"
                   track-by="id"
@@ -520,7 +538,8 @@
                   <el-button
                   type="default"
                   @click="saveBulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index == rowIndex_1 && changeRoleMode && bulkChangeContractRoleNames.id"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode && (bulkChangeContractRoleNames.id || currentRoleName.id) && 
+                  (scope.row !== bulkChangeContractRoleNames.id && scope.row !== currentRoleName.id)"
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light mx-0">               
                   <i class="far fa-save"></i>
@@ -603,8 +622,8 @@ export default {
   },
   data() {
     return {
-        today: new Date().toISOString().slice(0, 10),
-
+      today: new Date().toISOString().slice(0, 10),
+      currentRoleName:{},
       searchContractData: '',
       newGroup: null, 
       contractDialogVisible: false, 
@@ -678,7 +697,8 @@ export default {
       "removeUserRole",
       "associateContractToProgram",
       "removeContract",
-      "projectContracts"
+      "projectContracts",
+      "bulkUpdateUserRoles"
     ]),
     _isallowed(salut) {
         return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -717,43 +737,66 @@ export default {
             });     
     },
     bulkChangeRole(index, rowData){
+       this.currentRoleName = this.getRoles.filter(t => t.id == rowData).map(t => t)[0];
        this.changeRoleMode = true
        this.rowIndex_1 = index;
        this.roleRowId = rowData
     },
-    saveBulkChangeRole(index, rowData){
-    this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
-    this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
-    let user_ids = this.assignedContractUsers.map(t => t.id);
-    let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      saveBulkChangeRole(index, rowData){
+      this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
+      this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
+      let old_role = this.getRoles[index]
+      let new_role = this.bulkChangeContractRoleNames
+      let user_ids = this.assignedContractUsers.map(t => t.id);
+      let ids = this.assignedContractUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      // debugger
       let projectUserRoleData = {
-                userData: {
-                  roleId: rowData,
-                  contractId: this.projId,
-                  programId: this.$route.params.programId, 
-                  userIds: ids,   
-              },
-            };
-        
-             console.log(this.assignedUsers)
-            this.removeUserRole({
-              ...projectUserRoleData,
-            }).then(() => {
-              let user_ids = this.assignedContractUsers.map(t => t.id);
-              let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
-              let contractUserRoleData = {
-                  userData: {
-                    roleId:  this.bulkChangeContractRoleNames.id,
-                    userIds:  ids,
-                    programId: this.$route.params.programId, 
-                    contractId: this.projId  
-                },
-              };
-            this.addUserToRole({
-              ...contractUserRoleData,
-            });
-         });    
+          userData: {
+            roleId: new_role.id,
+            roleUserIds: old_role.role_users.map(t => t.id),
+            userIds: ids,
+            programId: this.$route.params.programId,                    
+        },
+      };
+      console.log(ids)
+      this.bulkUpdateUserRoles({
+        ...projectUserRoleData,
+      });
+    
     },
+    // saveBulkChangeRole(index, rowData){
+    // let user_ids = this.assignedContractUsers.map(t => t.id);
+    // this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
+    // let user_ids = this.assignedContractUsers.map(t => t.id);
+    // let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+    //   let projectUserRoleData = {
+    //             userData: {
+    //               roleId: rowData,
+    //               contractId: this.projId,
+    //               programId: this.$route.params.programId, 
+    //               userIds: ids,   
+    //           },
+    //         };
+        
+    //          console.log(this.assignedUsers)
+    //         this.removeUserRole({
+    //           ...projectUserRoleData,
+    //         }).then(() => {
+    //           let user_ids = this.assignedContractUsers.map(t => t.id);
+    //           let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+    //           let contractUserRoleData = {
+    //               userData: {
+    //                 roleId:  this.bulkChangeContractRoleNames.id,
+    //                 userIds:  ids,
+    //                 programId: this.$route.params.programId, 
+    //                 contractId: this.projId  
+    //             },
+    //           };
+    //         this.addUserToRole({
+    //           ...contractUserRoleData,
+    //         });
+    //      });    
+    // },
     removeAllUsers(index, rowData){   
        this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
        this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)

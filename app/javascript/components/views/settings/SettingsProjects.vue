@@ -470,12 +470,29 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && (scope.$index !== rowIndex_1 || scope.$index == rowIndex_1)" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
                  <el-select
+                  v-if="bulkChangeProjectRoleNames.id" 
                   v-model="bulkChangeProjectRoleNames"
+                  filterable           
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"                  
+                >
+                  <el-option
+                    v-for="item in getRoles.filter(t => t.type_of == 'project' && t.name !=='crud-row-project-20220407')"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.name"
+                  >
+              </el-option>
+              </el-select>
+                <el-select
+                  v-if="currentRoleName && !bulkChangeProjectRoleNames.id" 
+                  v-model="currentRoleName"
                   filterable           
                   class="w-100"
                   track-by="id"
@@ -559,7 +576,8 @@
                   <el-button
                   type="default"
                   @click="saveBulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index == rowIndex_1 && changeRoleMode && bulkChangeProjectRoleNames.id"
+                  v-if="scope.$index == rowIndex_1 && changeRoleMode && (bulkChangeProjectRoleNames.id || currentRoleName.id) && 
+                  (scope.row !== bulkChangeProjectRoleNames.id && scope.row !== currentRoleName.id)"
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light">               
                   <i class="far fa-save"></i>
@@ -649,6 +667,7 @@ export default {
   data() {
     return {
       userids: null,  
+      currentRoleName: {},
       searchProjects: '', 
       changeRoleMode: false, 
       isIndeterminate: true,  
@@ -840,18 +859,23 @@ removeProject(index, rows) {
             });     
     },
     bulkChangeRole(index, rowData){
-      this.changeRoleMode = true
+       this.currentRoleName = this.getRoles.filter(t => t.id == rowData).map(t => t)[0];
+       this.changeRoleMode = true
        this.rowIndex_1 = index;
-       this.roleRowId = rowData
+       this.roleRowId = rowData; 
     },
     saveBulkChangeRole(index, rowData){
       this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
       this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
-      let old_role = this.getRoles[index]
-      let new_role = this.bulkChangeProjectRoleNames
+      // let old_role = this.getRoles[index]
+      let old_role = this.getRoles.filter(t => t.id == rowData).map(t => t)[0]
+      let new_role;
+      if(this.bulkChangeProjectRoleNames.id) {
+        new_role = this.bulkChangeProjectRoleNames
+      } else new_role = this.currentRoleName
       let user_ids = this.assignedProjectUsers.map(t => t.id);
       let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
-      debugger
+      // debugger
       let projectUserRoleData = {
           userData: {
             roleId: new_role.id,
@@ -860,7 +884,9 @@ removeProject(index, rows) {
             programId: this.$route.params.programId,                    
         },
       };
-      console.log(ids)
+      //   console.log(old_role)
+      //    console.log(ole)
+       console.log(projectUserRoleData)
       this.bulkUpdateUserRoles({
         ...projectUserRoleData,
       });
