@@ -459,7 +459,7 @@
               </el-option>
               </el-select>
               <el-select
-                  v-if="currentRoleName && !bulkChangeRoleNames.id" 
+                  v-if="currentRoleName && !bulkChangeContractRoleNames.id" 
                   v-model="currentRoleName"
                   filterable           
                   class="w-100"
@@ -1135,7 +1135,7 @@ export default {
       if (this.currentProject){
          if (this.currentProject.users && this.currentProject.users.length > 0){
            return this.currentProject.users.filter(t => t)
-       }
+       } else return []
       }       
     },
    viableContractUsers(){
