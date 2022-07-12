@@ -869,7 +869,7 @@ removeProject(index, rows) {
       this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
       this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
       let old_role = this.getRoles.filter(t => t.id == rowData).map(t => t)[0]
-      let new_role;
+     
       if(this.bulkChangeProjectRoleNames.id) {
         new_role = this.bulkChangeProjectRoleNames
       } else new_role = this.currentRoleName
@@ -1156,7 +1156,7 @@ removeProject(index, rows) {
       if (this.currentProject){
          if (this.currentProject.users && this.currentProject.users.length > 0){
            return this.currentProject.users.filter(t => t)
-       }
+       } else return []
       }       
     },
     groupList() {
