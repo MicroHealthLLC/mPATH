@@ -539,10 +539,16 @@ const settingsStore = {
        bulkUpdateUserRoles({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
           
-            let formData = new FormData();          
-            formData.append("role_user_ids", userData.roleUserIds)
+            let formData = new FormData();       
+            userData.roleUserIds.forEach((id) => {        
+              formData.append("role_user_ids[]", id)
+            })  
             formData.append("project_id", userData.programId)
             formData.append("role_id", userData.roleId)
+            formData.append("old_role_id", userData.oldRoleId)
+            userData.userIds.forEach((id) => {        
+              formData.append("user_ids[]", id)
+            })  
             console.log(userData)
 
          commit("TOGGLE_NEW_ROLE_LOADED", false);   
