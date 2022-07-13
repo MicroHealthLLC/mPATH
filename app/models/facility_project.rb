@@ -27,7 +27,7 @@ class FacilityProject < ApplicationRecord
   
   def assign_default_facility_group
     if self.facility_group.nil?
-      self.facility_group_id = project.default_facility_group.id
+      self.facility_group_id = project.default_facility_group.id if project
     end
   end
 
