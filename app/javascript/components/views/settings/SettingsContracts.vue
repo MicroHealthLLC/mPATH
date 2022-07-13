@@ -436,7 +436,7 @@
               filterable
               label="Role">
               <template slot-scope="scope">
-              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+              <span v-if="contractUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1 || scope.$index == rowIndex_1 && isEditingRoles" >  
                  {{ contractUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
 
                </span>
@@ -459,7 +459,7 @@
               </el-option>
               </el-select>
               <el-select
-                  v-if="currentRoleName && !bulkChangeRoleNames.id" 
+                  v-if="currentRoleName && !bulkChangeContractRoleNames.id" 
                   v-model="currentRoleName"
                   filterable           
                   class="w-100"
@@ -745,15 +745,19 @@ export default {
       saveBulkChangeRole(index, rowData){
       this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)
       this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
-      let old_role = this.getRoles[index]
-      let new_role = this.bulkChangeContractRoleNames
+      let old_role = this.getRoles.filter(t => t.id == rowData).map(t => t)[0]
+      let new_role;
+      if(this.bulkChangeContractRoleNames.id) {
+        new_role = this.bulkChangeContractRoleNames
+      } else new_role = this.currentRoleName
       let user_ids = this.assignedContractUsers.map(t => t.id);
       let ids = this.assignedContractUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
+      let roleUsers = this.contractUsers.data.filter(t => t.role_id == rowData)
       // debugger
       let projectUserRoleData = {
           userData: {
             roleId: new_role.id,
-            roleUserIds: old_role.role_users.map(t => t.id),
+            roleUserIds: roleUsers.map(t => t.id),
             userIds: ids,
             programId: this.$route.params.programId,                    
         },
@@ -989,7 +993,7 @@ export default {
       //  }
       console.log(this.tableData)
       this.contractDialogVisible = true;
-       this.fetchContractProjects();
+       this.fetchContractProjects(this.$route.params.programId);
     },
     openUserPrivileges(index, rows) {
       this.openUserPrivilegesDialog = true;
@@ -1131,7 +1135,7 @@ export default {
       if (this.currentProject){
          if (this.currentProject.users && this.currentProject.users.length > 0){
            return this.currentProject.users.filter(t => t)
-       }
+       } else return []
       }       
     },
    viableContractUsers(){
@@ -1200,7 +1204,7 @@ export default {
           });
           this.SET_CONTRACTS_STATUS(0);
           this.fetchContracts(this.$route.params.programId);
-          this.fetchContractProjects();
+          this.fetchContractProjects(this.$route.params.programId);
            this.fetchCurrentProject(this.$route.params.programId);
         }
       },
@@ -1214,7 +1218,7 @@ export default {
             showClose: true,
           });
           this.SET_ASSOCIATED_CONTRACTS_STATUS(0);
-          this.fetchContractProjects();
+          this.fetchContractProjects(this.$route.params.programId);
           this.fetchContracts(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
         }
@@ -1250,6 +1254,8 @@ export default {
           this.SET_CONTRACT_ROLE_NAMES([])
           this.SET_BULK_CONTRACT_ROLE_NAMES([])
           this.SET_CONTRACT_ROLE_USERS([])
+          this.rowIndex_1 = null;
+          this.roleRowId = null; 
           this.changeRoleMode = false
         }
       },

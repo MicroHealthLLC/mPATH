@@ -84,7 +84,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     elsif !params[:role_user_ids] || !role_users.any?
       render json: {message: "User ids must be provided"}, status: 406
     else
-      role_users.update_all(role_id: params[:role_id])
+      role_users.update_all(role_id: role.id)
       render json: {message: "Successfully updated role users!!", role_users: role_users}, status: 200
     end
   end

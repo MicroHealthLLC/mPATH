@@ -398,7 +398,7 @@ export default {
             showClose: true,
           });
           this.SET_CONTRACT_PROJECT_STATUS(0);
-          this.fetchContractProjects();
+          this.fetchContractProjects(this.$route.params.programId);
         }
       },
     },    

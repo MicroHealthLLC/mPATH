@@ -82,8 +82,8 @@ const settingsStore = {
     updated_role_status: 0,
     updated_project_role_status: 0,
     updated_contract_role_status: 0,
-
-
+    bulk_update_role_status: 0,
+    bulk_update_user_role_loaded: true, 
     add_user_to_role: [],
     add_user_to_role_loaded: true,
     add_user_to_role_status: 0, 
@@ -509,6 +509,7 @@ const settingsStore = {
            .then((res) => {
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
               // commit("SET_NEW_ROLE", res);
+              Vue.prototype.getRolePrivileges()
             if(userData.projectIds || userData.contractIds || userData.adminRole || userData.removeRole ){
               console.log("removed from ProgramSettingUsers")
               commit("SET_REMOVE_ROLE_STATUS", res.status);
@@ -527,7 +528,7 @@ const settingsStore = {
               console.log("removed from ProgramSettingContracts")
               commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
              }           
-             Vue.prototype.getRolePrivileges()
+      
            })
            .catch((err) => {
              console.log(err);
@@ -539,10 +540,16 @@ const settingsStore = {
        bulkUpdateUserRoles({ commit }, { userData }) {         
         // let formData =  userRoleData(userData);
           
-            let formData = new FormData();          
-            formData.append("role_user_ids", userData.roleUserIds)
+            let formData = new FormData();       
+            userData.roleUserIds.forEach((id) => {        
+              formData.append("role_user_ids[]", id)
+            })  
             formData.append("project_id", userData.programId)
             formData.append("role_id", userData.roleId)
+            formData.append("old_role_id", userData.oldRoleId)
+            userData.userIds.forEach((id) => {        
+              formData.append("user_ids[]", id)
+            })  
             console.log(userData)
 
          commit("TOGGLE_NEW_ROLE_LOADED", false);   
@@ -556,9 +563,8 @@ const settingsStore = {
            },
          })
            .then((res) => {
-            //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
             commit("SET_NEW_ROLE", res);
-            // console.log(res)
+            console.log(res)
              commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
              Vue.prototype.getRolePrivileges()
            })
@@ -566,7 +572,7 @@ const settingsStore = {
              console.log(err);
            })
            .finally(() => {
-             commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", true);
+            commit("TOGGLE_ADD_USER_TO_ROLE_LOADED", true);
            });
        },
           
@@ -1233,7 +1239,12 @@ const settingsStore = {
     SET_UPDATED_PROJECT_ROLE_STATUS:(state, status) => (state.updated_project_role_status = status),
     SET_UPDATED_CONTRACT_ROLE_STATUS:(state, status) => (state.updated_contract_role_status = status),
     TOGGLE_ADD_USER_TO_ROLE_LOADED: (state, loaded) => (state.add_user_to_role_loaded = loaded),
+    TOGGLE_BULK_UPDATE_USER_ROLE_LOADED: (state, loaded) => (state.bulk_update_user_role_loaded = loaded),
+    
+    
     SET_ADD_USER_TO_ROLE_STATUS:(state, status) => (state.add_user_to_role_status = status),
+    SET_BULK_UPDATE_ROLE_STATUS:(state, status) => (state.bulk_update_role_status = status),
+       
     SET_REMOVE_ROLE_STATUS:(state, status) => (state.remove_role_status = status),
     SET_REMOVE_PROJECT_ROLE_STATUS:(state, status) => (state.remove_project_role_status = status),
     SET_REMOVE_CONTRACT_ROLE_STATUS:(state, status) => (state.remove_contract_role_status = status),
@@ -1316,6 +1327,8 @@ const settingsStore = {
     getBulkContractRoleNames: (state) => state.bulk_contract_role_names,
 
     isEdittingRole: (state) => state.is_editting_role, 
+
+    bulkUpdateRoleStatus: (state) => state.bulk_update_role_status, 
 
     getContractRoleUsers: (state) => state.contract_role_users,
     getContractRoleNames: (state) => state.contract_role_names,

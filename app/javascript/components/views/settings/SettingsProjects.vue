@@ -470,7 +470,7 @@
               filterable
               label="Roles">
               <template slot-scope="scope">
-               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1" >  
+               <span v-if="projectUsers.data.map(t => t.role_id == scope.row) && scope.$index !== rowIndex_1 || scope.$index == rowIndex_1 && isEditingRoles" >  
                  {{ projectUsers.data.filter(t => t.role_id == scope.row).map(t => t.role_name)[0] }}
                 </span>
                  <span v-if="changeRoleMode && scope.$index == rowIndex_1" >  
@@ -731,7 +731,8 @@ export default {
       "SET_PROJECT_ROLE_NAMES",
       "SET_BULK_PROJECT_ROLE_NAMES",
       "SET_REMOVE_PORTFOLIO_PROJECTS_STATUS",
-      "SET_PROGRAM_SETTINGS_PROJECTS_STATUS"  
+      "SET_PROGRAM_SETTINGS_PROJECTS_STATUS",
+      "SET_BULK_UPDATE_ROLE_STATUS" 
       ]),
       goToProject(index, rows) {  
       window.location.pathname = `/programs/${this.programId}/sheet/projects/${rows.id}/`
@@ -867,7 +868,6 @@ removeProject(index, rows) {
     saveBulkChangeRole(index, rowData){
       this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
       this.SET_ASSIGNED_PROJECT_USERS(this.assignedUsers)
-      // let old_role = this.getRoles[index]
       let old_role = this.getRoles.filter(t => t.id == rowData).map(t => t)[0]
       let new_role;
       if(this.bulkChangeProjectRoleNames.id) {
@@ -875,22 +875,26 @@ removeProject(index, rows) {
       } else new_role = this.currentRoleName
       let user_ids = this.assignedProjectUsers.map(t => t.id);
       let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t)); 
-      // debugger
+      let roleUsers = this.projectUsers.data.filter(t => t.role_id == rowData)
+      
       let projectUserRoleData = {
           userData: {
             roleId: new_role.id,
-            roleUserIds: old_role.role_users.map(t => t.id),
+            roleUserIds: roleUsers.map(t => t.id),
             userIds: ids,
             programId: this.$route.params.programId,                    
         },
       };
-      //   console.log(old_role)
-      //    console.log(ole)
-       console.log(projectUserRoleData)
+
       this.bulkUpdateUserRoles({
         ...projectUserRoleData,
       });
-    
+      // this.fetchRoles(this.$route.params.programId)   
+      //  this.rowIndex_1 = null;
+      //  this.roleRowId = null; 
+      //  if (this.rowIndex_1 == null && this.roleRowId == null){
+      //     this.changeRoleMode = false;      
+      //  }
     },
     removeAllUsers(index, rowData){   
         this.userids = this.projectUsers.data.filter(t => t.role_id == rowData)
@@ -1100,7 +1104,8 @@ removeProject(index, rows) {
       "getAssignedProjectUsers",
       "removeProjectRoleStatus",
       "removePortfolioProjectsStatus",
-      "bulkProjectAddStatus"
+      "bulkProjectAddStatus",
+      " bulkUpdateRoleStatus"
     ]),
     // Filter for Projects Table
     C_groupFilter: {
@@ -1326,6 +1331,30 @@ removeProject(index, rows) {
           this.SET_BULK_PROJECT_ROLE_NAMES([])
           this.SET_PROJECT_ROLE_USERS([])
           this.changeRoleMode = false;
+          this.rowIndex_1 = null;
+          this.roleRowId = null; 
+        }
+      },
+    }, 
+    bulkUpdateRoleStatus: {
+      //This status property is not working.  Once fixed, we need to move all this actions out of the method and uncomment these. 
+      handler() {
+        if (this.bulkUpdateRoleStatus == 204 || this.bulkUpdateRoleStatus == 200) {
+          this.$message({
+            message: `Succesfully changed user roles.`,
+            type: "success",
+            showClose: true,
+          });         
+          console.log("bulkUpdateRoleStatus is good")
+
+
+          // this.SET_BULK_UPDATE_ROLE_STATUS(0);
+          // this.fetchRoles(this.$route.params.programId)  
+          // this.fetchCurrentProject(this.$route.params.programId)
+          // this.SET_PROJECT_ROLE_NAMES([])
+          // this.SET_BULK_PROJECT_ROLE_NAMES([])
+          // this.SET_PROJECT_ROLE_USERS([])
+          // this.changeRoleMode = false;
         }
       },
     },  
