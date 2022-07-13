@@ -15,6 +15,7 @@
             <i class="fal fa-network-wired mr-1 mh-blue-text"></i> GROUPS
             <span
               v-if="tableData && tableData.length"
+              :load="log(tableData)"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ tableData.length }}
             </span>
@@ -127,7 +128,20 @@
                <div slot="title" class="col-8 pr-0 text-left">
                 <h5 class="text-dark addGroupsHeader"> <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Select Portfolio Group(s) to Add </h5>
               </div>
-                <div class="col text-right">
+           <div class="col-7 pt-0 text-left">
+            <el-input
+            type="search"
+            placeholder="Search Groups"
+            aria-label="Search"
+            class="w-100"
+            aria-describedby="search-addon"
+            v-model="searchGroups"
+            data-cy=""
+          >
+            <el-button slot="prepend" icon="el-icon-search"></el-button>
+          </el-input>
+          </div>
+                <div class="col pt-0 text-right">
                   <el-button
                     class="confirm-save-group-names btn text-light bg-primary modalBtns"
                     v-tooltip="`Save Group(s)`"
@@ -381,7 +395,7 @@
                     @click.prevent="editMode(scope.$index, scope.row)"
                     v-if="
                       !scope.row.isPortfolio &&
-                      scope.$index !== rowIndex 
+                      scope.$index !== rowIndex &&  _isallowed('write')
                     "
                     class="bg-light btn-sm "
                   >
@@ -394,7 +408,7 @@
                     @click.prevent="removeGroup(scope.$index, scope.row)"
                     v-if="
                       scope.$index !== rowIndex &&
-                        scope.row.isPortfolio
+                        scope.row.isPortfolio && _isallowed('delete')
                     "        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
@@ -403,9 +417,9 @@
                     type="default" 
                     v-tooltip="'Delete Program Group'"            
                     @click.prevent="removeGroup(scope.$index, scope.row)"
-                    v-if="
+                    v-if="!scope.row.isDefault &&
                       scope.$index !== rowIndex &&
-                        !scope.row.isPortfolio
+                        !scope.row.isPortfolio && _isallowed('delete')
                     "
                     class="bg-light btn-sm"
                   >    
@@ -449,6 +463,7 @@ export default {
 
     data() {    
       return {
+      searchGroups: '',
       currentFacility: {},
       dialogVisible: false,
       dialog2Visible: false,
@@ -492,6 +507,9 @@ export default {
       "fetchContracts",
       "fetchCurrentProject",
     ]),
+    log(e){
+      console.log(e)
+    },
        tableRowClassName({row, rowIndex}) {
         if (!row.isPortfolio) {
           return 'warning-row';
@@ -542,10 +560,11 @@ export default {
         newNameData: {
           name: rows.name,
         },
+        project_id: this.$route.params.programId,
       };
       this.updateGroupName({
         ...groupNameData,
-        id,
+        id        
       });
       this.rowIndex = null;
       this.rowId = null;
@@ -761,7 +780,14 @@ export default {
       if (this.groups && this.groups.length > 0) {
        let filteredGroups = this.groups.filter(
           (pG) => !this.tableData.map((g) => g.id).includes(pG.id))
-       return filteredGroups.sort((a, b) => a.name.localeCompare(b.name))
+       let data = filteredGroups.sort((a, b) => a.name.localeCompare(b.name)).filter(t => {
+          if (this.searchGroups !== '' && t) {           
+              return (            
+                t.name.toLowerCase().match(this.searchGroups.toLowerCase()) 
+              ) 
+          } else return true
+          })
+          return data
       }
     },
     tableData() {
@@ -825,7 +851,7 @@ export default {
           this.SET_GROUP_STATUS(0);
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
-
+          this.fetchContracts(this.$route.params.programId);
           //  this.newGroupName =
         }
       },
@@ -968,9 +994,15 @@ div.sticky {
 
   /deep/.el-dialog__body {
     padding-top: 0 !important;
+    height: 68vh; 
   }
-}
 
+  /deep/.el-checkbox-group {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 35vh;
+   } 
+}
 .createNewGroup{
   /deep/.el-dialog__body {
   padding-top: 0 !important;

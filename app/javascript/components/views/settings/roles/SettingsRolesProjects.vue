@@ -897,7 +897,7 @@ export default {
        "updateRole"
        ]),
   _isallowed(salut) {
-     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Users"})    
+     return this.checkPrivileges("SettingsRolesIndex", salut, this.$route, {settingType: "Projects"})    
   },
   analyticsRead(index, rowData) {
     this.isAnalyticsRead = !this.isAnalyticsRead;
@@ -1474,9 +1474,9 @@ export default {
       }  
     },
   },
-  mounted() {
-    this.fetchRoles(this.$route.params.programId)
-  },
+  // mounted() {
+  //   this.fetchRoles(this.$route.params.programId)
+  // },
   computed: {
     ...mapGetters([
         "contentLoaded",

@@ -1,7 +1,6 @@
 <template>
   <div
     v-loading="!contentLoaded"
-    :load="log(currentContract)"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"  
     class="row"
@@ -118,7 +117,7 @@ export default {
       }
     },
     log(e){
-      console.log(e)
+      // console.log(e)
     },
      expandContractGroup(group) {
       if (group &&  this.getExpandedGroup !== group.id) {
@@ -202,7 +201,7 @@ export default {
         }
          else if (this.$route.params.contractId) {
          this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
-            console.log(this.currentContract)
+            // console.log(this.currentContract)
            
         }
       },
@@ -219,7 +218,7 @@ export default {
       handler() {
        if(this.$route.params.contractId) {       
             this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
-            console.log(this.currentContract)
+            // console.log(this.currentContract)
             this.currentContractGroup = this.facilityGroups.find((group) => group.id == this.currentContract.facilityGroup.id);
         }
      
@@ -231,7 +230,7 @@ export default {
           this.currentFacility = this.facilities.find(facility => facility.id == this.$route.params.projectId);
          }
          if (this.$route.params.contractId) {
-              console.log(this.currentContract)
+              // console.log(this.currentContract)
              this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
          }
 

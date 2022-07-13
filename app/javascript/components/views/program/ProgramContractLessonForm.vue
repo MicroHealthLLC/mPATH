@@ -38,7 +38,7 @@ export default {
       this.lesson =  this.allProgramLessons.find(
         (lesson) => lesson.id == this.$route.params.lessonId
       );
-        console.log(this.lesson)
+        // console.log(this.lesson)
     }
   },
   watch: {

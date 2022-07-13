@@ -312,3 +312,30 @@ task :populate_database => :environment do
   end
 
 end
+
+desc "Creating default facility groups for project"
+task :create_default_project_group => :environment do
+  Project.all.each do |project|
+    project.create_default_facility_group
+  end
+end
+
+desc "Update facility projects with facility groups"
+task :update_facility_projects_with_groups => :environment do
+  puts "Started processing facility projects"
+  facility_projects = FacilityProject.includes([:facility, :project]).all.group_by{|fp| fp.facility }
+  facility_projects.each do |facility, fps|
+    facility_group = facility.facility_group
+    if facility_group
+      fps.each do |fp|      
+        fp.update(facility_group_id: facility_group.id)
+        (fp.project.project_groups << facility_group) rescue nil
+      end
+    else
+      fps.each do |fp|      
+        fp.assign_default_facility_group
+      end  
+    end
+  end
+  puts "End processing facility projects"
+end

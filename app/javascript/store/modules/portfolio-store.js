@@ -199,7 +199,7 @@ const portfolioModule = {
           commit("TOGGLE_PORTFOLIO_CATEGORIES_LOADED", true);
         });
     },
-    fetchPortfolioUsers({commit}) {
+    fetchPortfolioAssignees({commit}) {
       commit("TOGGLE_PORTFOLIO_USERS_LOADED", false);
       // Send GET request for all lessons contained within a project
       axios({

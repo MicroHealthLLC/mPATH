@@ -466,7 +466,7 @@
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
                 <span v-if="success.updated_at"
-                  >{{ author(success.user_id) }} on
+                  >{{ success.user.full_name }} on
                   {{ new Date(success.updated_at).toLocaleString() }}</span
                 ><span v-else
                   >{{ $currentUser.full_name }} on
@@ -536,7 +536,7 @@
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
                 <span v-if="failure.updated_at"
-                  >{{ author(failure.user_id) }} on
+                  >{{ failure.user.full_name }} on
                   {{ new Date(failure.updated_at).toLocaleString() }}</span
                 ><span v-else
                   >{{ $currentUser.full_name }} on
@@ -607,7 +607,7 @@
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
                 <span v-if="bestPractice.updated_at"
-                  >{{ author(bestPractice.user_id) }} on
+                  >{{ bestPractice.user.full_name }} on
                   {{ new Date(bestPractice.updated_at).toLocaleString() }}</span
                 ><span v-else
                   >{{ $currentUser.full_name }} on
@@ -971,18 +971,6 @@ export default {
     },
     _isallowed(salut) {
       return this.checkPrivileges("LessonForm", salut, this.$route)
-
-      // if (this.$route.params.contractId) {
-      //   let fPrivilege = this.$contractPrivileges[this.$route.params.programId][this.$route.params.contractId]    
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return fPrivilege.lessons.includes(s);
-      // } else {
-      //   let fPrivilege = this.$projectPrivileges[this.$route.params.programId][this.$route.params.projectId]    
-      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      //   let s = permissionHash[salut]
-      //   return fPrivilege.lessons.includes(s); 
-      // }
      },
     close() {
         if (this.$route.params.projectId && this.facility) {

@@ -1,53 +1,49 @@
 class Api::V1::ProgramSettings::RolesController < AuthenticatedController
-  before_action :check_program_admin
+  before_action :check_permission
 
   def check_permission
-    raise(CanCan::AccessDenied) if !params[:project_id]
-    action = nil
-    if ["index", "show" ].include?(params[:action]) 
-      action = "read"
-    elsif ["create", "update"].include?(params[:action]) 
-      action = "write"
-    elsif ["destroy", "remove_role"].include?(params[:action]) 
-      action = "delete"
-    end
-    
     program_id = params[:project_id]
 
-    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id)
+    raise(CanCan::AccessDenied) if !program_id
+    action = nil
+    if ["index", "show" ].include?(params[:action]) 
+      action = "R"
+    elsif ["create", "update","update_role_users", "add_users"].include?(params[:action]) 
+      action = "W"
+    elsif ["destroy", "remove_role"].include?(params[:action]) 
+      action = "D"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id,action,  RolePrivilege::PROGRAM_SETTING_USERS_ROLES)
   end
 
   def index
     project = Project.find(params[:project_id])
     project_user_ids = project.user_ids
 
-    if params[:page] == "user_tab_role_assign"
-      roles = project.roles.distinct.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract ] }]).map{|r| r.to_json( params.merge({include: [:all]}) )}
-
-      default_roles = Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id)
-
-      default_role_ids = default_roles.pluck(:id)
-
-      roles += default_roles.map{|r| r.to_json({include: [:all]}) }
-
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where.not(id: default_role_ids).map{|r| r.to_json(params.merge({include: [:all]}) ) }
-      
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role, {facility_project: :facility}, :project_contract] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id).map{|r| r.to_json( params.merge({include: [:all]}) ) }
-      
-    else
-      roles = project.roles.includes([:role_privileges, {role_users: [:user, :role] }]).map{|r| r.to_json({include: [:all]}) }
-      
-      default_roles = Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where("role_users.user_id" => project_user_ids, "role_users.project_id" => project.id)
-
-      default_role_ids = default_roles.pluck(:id)
-      
-      roles += default_roles.map{|r| r.to_json({include: [:all]}) }
-
-      roles += Role.includes([:role_privileges, {role_users: [:user, :role] }]).default_roles.where.not(id: default_role_ids).map{|r| r.to_json({include: [:role_privileges]}) }
-
+    roles = []
+    role_users =  RoleUser.includes([ {role: [:role_privileges] }, :user ] ).where(project_id: project.id, user_id: project_user_ids).group_by(&:role)
+    role_ids = []
+    role_users.each do |role, role_users|
+      h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
+      h[:role_users] = role_users.map(&:to_json)
+      roles << h
     end
+    default_roles = Role.includes(:role_privileges).default_roles.where.not(id: role_ids)
+    default_roles.each do |role|
+      h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
+      roles << h
+    end
+    project_roles = Role.includes(:role_privileges).where("roles.id not in (?) and roles.project_id = ?", role_ids, project.id)
 
-    render json: {roles: roles}
+    project_roles.each do |role|
+      h = role.to_json({include: [:role_privileges]})
+      role_ids << role.id
+      roles << h
+    end
+    render json: {roles: roles.as_json}
   end
 
   def create
@@ -78,10 +74,25 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
     end
   end
 
+  def update_role_users
+    project = Project.find(params[:project_id])
+    role_users = RoleUser.where(id: params[:role_user_ids], project_id: project.id)
+    role = Role.find_by(id: params[:role_id])
+
+    if !params[:role_id] || !role
+      render json: {message: "Role id must be provided"}, status: 406
+    elsif !params[:role_user_ids] || !role_users.any?
+      render json: {message: "User ids must be provided"}, status: 406
+    else
+      role_users.update_all(role_id: role.id)
+      render json: {message: "Successfully updated role users!!", role_users: role_users}, status: 200
+    end
+  end
+
   def remove_role
     project = Project.includes(:users, :role_users).find(params[:project_id])
     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-
+    
     conditions = {
       project_id: project.id,
       role_id: role_ids
@@ -101,75 +112,31 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
 
     if !conditions[:role_id] || !conditions[:role_id].any?
       render json: {message: "Invalid parameter: Role must be provided."}, status: 406
+    
+    elsif !conditions[:user_id]
+      render json: {message: "Invalid parameter: User id must be provided."}, status: 406
+      
     else
-      RoleUser.where(conditions).destroy_all
-      render json: {message: "Successfully removed role!!"}, status: 200
+      role_users = RoleUser.where(conditions)
+      program_admin_role = Role.program_admin_user_role
+      program_admin_user_ids = project.get_program_admin_ids
+      errors = []
+      role_users.each do |role_user|
+        if program_admin_role.id == role_user.role_id && program_admin_user_ids.size < 2
+          errors << "Program must have at least one program admin user."
+        else
+          if !role_user.destroy
+            errors += role_user.errors.full_messages
+          end
+        end
+      end
+      if errors.size > 0
+        render json: {errors: errors.join(", ")}, status: 406
+      else
+        render json: {message: "Successfully removed role!!"}, status: 200
+      end
     end
   end
-
-  # def remove_role
-  #   project = Project.find(params[:project_id])
-
-  #   # role_from_users is to remove role from users tab.
-  #   # expected params: role_id, array of user_ids, project/program id
-  #   if params[:role_from_users]
-  #     role = Role.find(params[:role_id])
-  #     user_ids = User.where(id: params[:user_id]).pluck(:id)
-  #     RoleUser.where(role_id: role.id, user_id: user_ids, project_id: project.id).destroy_all
-
-  #   # user_from_roles is to remove user from roles tab.
-  #   # expected params: role_id, user_id, project/program id
-  #   elsif params[:user_from_roles]
-  #     user = User.find(params[:user_id])
-  #     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-  #     RoleUser.where(role_id: role_ids, user_id: user.id, project_id: project.id).destroy_all
-
-  #   # role_from_projects is to remove role from projects tab for all users.
-  #   # expected params: role_id, array of facility_project_id , project/program id
-  #   elsif params[:role_from_projects]
-  #     role = Role.find(params[:role_id])
-  #     facility_project_ids = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
-  #     RoleUser.where(role_id: role.id, facility_project_id: facility_project_ids).destroy_all
-      
-  #   # role_from_contracts is to remove role from contracts tab for all users.
-  #   # expected params: role_id, array of project_contract_id , project/program id
-  #   elsif params[:role_from_contracts]
-  #     role = Role.find(params[:role_id])
-  #     project_contract_ids = ProjectContract.where(id: params[:project_contract_id]).pluck(:id)
-  #     RoleUser.where(role_id: role.id, project_contract_id: project_contract_ids).destroy_all
-
-  #   # project_from_roles is to remove project from roles tab for all users.
-  #   # expected params: role_id, array of facility_project_id , project/program id
-  #   elsif params[:project_from_roles]
-  #     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-  #     facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
-  #     RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id).destroy_all
-    
-  #   # contract_from_roles is to remove contract from roles tab for all users.
-  #   # expected params: role_id, array of project_contract_id , project/program id
-  #   elsif params[:contract_from_roles]
-  #     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-  #     project_contract_id = ProjectContract.where(id: params[:project_contract_id]).pluck(:id)
-  #     RoleUser.where(role_id: role_ids, project_contract_id: project_contract_id).destroy_all
-
-  #   # users_from_project_role is to remove users from roles#projects tab.
-  #   # expected params: array of role_id, array of user_ids , facility_project_id, project/program id
-  #   elsif params[:users_from_project_role]
-  #     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-  #     user_ids = User.where(id: params[:user_id]).pluck(:id)
-  #     facility_project_id = FacilityProject.where(id: params[:facility_project_id]).pluck(:id)
-  #     RoleUser.where(role_id: role_ids, facility_project_id: facility_project_id, user_id: user_ids).destroy_all
-    
-  #   # users_from_contract_role is to remove contract from roles tab for all users.
-  #   # expected params: array of role_id, array of user_ids , project_contract_id, project/program id
-  #   elsif params[:users_from_contract_role]
-  #     role_ids = Role.where(id: params[:role_id]).pluck(:id)
-  #     user_ids = User.where(id: params[:user_id]).pluck(:id)
-  #     project_contract_id = ProjectContract.where(id: params[:project_contract_id]).pluck(:id)
-  #     RoleUser.where(role_id: role_ids, project_contract_id: project_contract_id, user_id: user_ids).destroy_all
-  #   end
-  #   render json: {message: "Successfully removed role!!"}
-  # end
 
   def update
     role = Role.new.create_or_update_role(roles_params, current_user)

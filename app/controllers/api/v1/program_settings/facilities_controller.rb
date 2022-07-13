@@ -1,8 +1,27 @@
 class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
   
-  before_action :check_program_admin
+  # before_action :check_program_admin
   before_action :set_project
   before_action :set_facility, only: [:show]
+
+  before_action :check_permission
+
+  def check_permission
+    program_id = params[:project_id]
+
+    raise(CanCan::AccessDenied) if !program_id
+    action = nil
+
+    if ["index", "show" ].include?(params[:action]) 
+      action = "R"
+    elsif ["create", "update", "bulk_projects_update"].include?(params[:action]) 
+      action = "W"
+    elsif ["destroy", "remove_facility_project"].include?(params[:action]) 
+      action = "D"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action,  RolePrivilege::PROGRAM_SETTING_PROJECTS)
+  end
 
   def index
     response_hash = {}
@@ -16,11 +35,18 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
         response_hash[project.id] = {facility_ids: project.facility_ids}
       end
     end
+
+    all_facilities = Facility.includes(:facility_group).all.as_json
+    response_hash[:facilities] = all_facilities.as_json
+
     render json: response_hash
   end
 
   def create
     @facility = @project.facilities.create(facility_params.merge({creator: current_user, is_portfolio: false}))
+    if params[:facility][:facility_group_id]
+      @project.facility_projects.where(facility_id: @facility.id).first&.update(facility_group_id: params[:facility][:facility_group_id] )
+    end
     render json: {facility: @facility.as_json}
   end
 
@@ -56,7 +82,7 @@ class Api::V1::ProgramSettings::FacilitiesController < AuthenticatedController
       @facility.update(facility_params)
     end
     @facility_project = @facility.facility_projects.find_by(project_id: params[:project_id])
-    @facility_project&.update(status_id: params[:status_id], due_date: params[:due_date])
+    @facility_project&.update(status_id: params[:status_id], due_date: params[:due_date], facility_group_id: params[:facility][:facility_group_id])
     render json: {facility: @facility.as_json}
   end
 

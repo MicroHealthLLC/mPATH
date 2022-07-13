@@ -1360,6 +1360,7 @@ export default {
     }    
     this.loading = false;
     this._ismounted = true;
+    console.log(this.$route)
   },
   methods: {
     ...mapMutations(["setTaskForManager", "updateTasksHash", 'setPortfolioCategoriesFilter']),
@@ -1484,26 +1485,18 @@ export default {
     // RACI USERS commented out out here.....Awaiting backend work
     loadTask(task) {
       this.DV_task = { ...this.DV_task, ..._.cloneDeep(task) };
-      if (this.responsibleUsers) {
-          this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
+      this.responsibleUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.responsible_user_ids.includes(u.id)
       )[0];
-      }
-     if ( this.accountableTaskUsers){
       this.accountableTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.accountable_user_ids.includes(u.id)
       )[0];
-     }
-      if (this.consultedTaskUsers){
        this.consultedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.consulted_user_ids.includes(u.id)
-      );
-       }    
-       if ( this.informedTaskUsers){
+      );  
        this.informedTaskUsers = _.filter(this.portfolioUsers, (u) =>
         this.DV_task.informed_user_ids.includes(u.id)
-       );
-       }     
+       );    
       this.relatedIssues = _.filter(this.filteredIssues, (u) =>
         this.DV_task.sub_issue_ids.includes(u.id)
       );

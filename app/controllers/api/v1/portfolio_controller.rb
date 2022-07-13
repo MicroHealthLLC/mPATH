@@ -5,39 +5,25 @@ class Api::V1::PortfolioController < AuthenticatedController
 
   def tab_counts
     json_response = {tasks_count: 0, issues_count: 0, risks_count: 0, lessons_count: 0}
-    program_ids = authorized_program_ids
-    fph = current_user.authorized_facility_project_id_hash
+    
+    facility_project_ids = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
 
-    if fph[:tasks].any?
-      # json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-      json_response[:tasks_count] = Task.unscoped.where("facility_project_id" => fph[:tasks]).count
-    end
-    if fph[:issues].any?
-      json_response[:issues_count] = Issue.unscoped.where("facility_project_id" => fph[:issues]).count
+    json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
+    json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
+    json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
+    json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
 
-      # json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-    end
-    if fph[:risks].any?
-      json_response[:risks_count] = Risk.unscoped.where("facility_project_id" => fph[:risks]).count
-
-      # json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-
-    end
-    if fph[:lessons].any?
-      json_response[:lessons_count] =  Lesson.unscoped.where("facility_project_id" => fph[:lessons]).count
-
-      # json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids).count
-    end
 
     render json: json_response
   end
 
   def lessons
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_projects.project_id" => authorized_program_ids ).paginate(per_page: params[:per_page], page: params[:page])
+      all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -53,8 +39,7 @@ class Api::V1::PortfolioController < AuthenticatedController
       end
       render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
     else
-      program_ids = authorized_program_ids
-      all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_projects.project_id" => program_ids )
+      all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_project_id" => facility_project_ids)
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
       json_response = []
       all_resources.in_batches(of: 1000) do |resources|
@@ -96,11 +81,13 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def tasks
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
+
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).paginate(per_page: params[:per_page], page: params[:page])
+      all_resources = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -119,8 +106,7 @@ class Api::V1::PortfolioController < AuthenticatedController
       render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
 
     else
-      program_ids = authorized_program_ids
-      all_resources = Task.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids)
+      all_resources = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids)
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -144,12 +130,13 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def issues
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
 
-      all_resources = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).paginate(per_page: params[:per_page], page: params[:page])
+      all_resources = Issue.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -167,8 +154,7 @@ class Api::V1::PortfolioController < AuthenticatedController
       render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
 
     else
-      program_ids = authorized_program_ids
-      all_resources = Issue.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids)
+      all_resources = Issue.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids)
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -191,11 +177,12 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def risks
-    pph = current_user.project_privileges_hash
-    fph = current_user.facility_privileges_hash
+    pph = {} #current_user.project_privileges_hash
+    fph = {} #current_user.facility_privileges_hash
+    facility_project_ids = current_user.authorized_facility_project_ids
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => authorized_program_ids).paginate(per_page: params[:per_page], page: params[:page])
+      all_resources = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -212,9 +199,8 @@ class Api::V1::PortfolioController < AuthenticatedController
       end
       render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
     else
-      program_ids = authorized_program_ids
 
-      all_resources = Risk.unscoped.joins(:facility_project).where("facility_projects.project_id" => program_ids)
+      all_resources = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids)
       facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
 
       json_response = []
@@ -235,8 +221,4 @@ class Api::V1::PortfolioController < AuthenticatedController
 
   end
 
-  private
-  def authorized_program_ids
-    current_user.authorized_programs.pluck(:id)
-  end
 end

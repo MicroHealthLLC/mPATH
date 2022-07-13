@@ -30,7 +30,8 @@
                            <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
                           <span v-else>
                            <i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
-                           {{ action }}</h5>
+                           {{ action }}
+                           </h5>
                            <div v-for="number in [currentTaskSlide]" :key="number" >
                            <div class="row justify-content-center">
                              <div class="col-3 pb-0">
@@ -236,12 +237,12 @@
                         </div>
                         </template>
                </el-dialog>
-             <div class="row pb-4" v-if="currentProject && currentProject.contracts || contentLoaded" >
+             <div class="row pb-4" v-if="contentLoaded" >
                <div class="col-3 py-2">
               <!-- <div class="col-3 py-2" :class="{'d-none': !_isallowed('read') || currentProject.contracts.length <= 0 }"> -->
                 <div class="w-100">
                 <div class="d font-sm mt-2 mr-2" style="visibility:hidden">SEARCH</div>
-               <el-button-group >
+               <el-button-group v-if="currentProject && currentProject.contracts && currentProject.contracts.length > 0">
                   <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats">  
                     <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i>
                     PROJECTS

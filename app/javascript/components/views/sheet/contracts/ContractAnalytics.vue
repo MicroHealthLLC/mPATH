@@ -784,7 +784,7 @@
                       <h5 v-if="contentLoaded" class="d-inline">
                         <b
                           class="pill badge badge-secondary badge-pill pill mr-1"
-                          >{{ projectLessons.length }}</b
+                          >{{ contractLessons.length }}</b
                         >
                       </h5>
                     </div>
@@ -815,10 +815,12 @@
                     </div>
                     <div class="row text-center mb-4 mt-0">
                       <div class="col-6 pb-0 mb-0">
-                        <h4 class="">{{ lessonVariation.completes.length }}</h4>
+                        <h4 class="" v-if="lessonVariation && lessonVariation.completes">{{ lessonVariation.completes.length }}</h4>
+                         <h4 class="" v-else>0</h4>
                       </div>
                       <div class="col-6 pb-0 mb-0">
-                        <h4>{{ lessonVariation.drafts.length }}</h4>
+                        <h4  v-if="lessonVariation && lessonVariation.drafts">{{ lessonVariation.drafts.length }}</h4>
+                        <h4 class="" v-else>0</h4>
                       </div>
                     </div>
                   </div>
@@ -973,10 +975,10 @@ export default {
   mounted() {
     // this.dueDate = this.facility.dueDate;
     // this.statusId = this.facility.statusId;
-    this.fetchProgramLessons(this.$route.params);
+    this.fetchContractLessons(this.$route.params);
   },
   methods: {
-    ...mapActions(['fetchProgramLessons']),
+    ...mapActions(['fetchContractLessons']),
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
     onChange() {
       this.$nextTick(() => {
@@ -1004,7 +1006,7 @@ export default {
       "taskTypes",
       "getAllFilterNames",
       "getFilterValue",
-      "projectLessons",
+      "contractLessons",
       "contentLoaded",
       "currentProject",
       "programLessons",
@@ -1554,31 +1556,26 @@ export default {
       };
     },
     filteredLessons() {
-      // let programLessonsObj = [];
-      console.log("*******")
-      console.log(!this.getShowProjectStats)
-      // if(!this.getShowProjectStats){
-      //   programLessonsObj = this.programLessons.filter(l => l.project_id)
-      // } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
-
-      let programLessonsObj = this.programLessons.filter(l => l.contract_id == this.$route.params.contractId )
-
+      if(this.contractLessons && this.contractLessons.length > 0) {        
       let typeIds = _.map(this.taskTypeFilter, "id");
-      return _.filter(programLessonsObj, (resource) => {
+      return _.filter(this.contractLessons, (resource) => {
         let valid = true;
         valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
         if (typeIds.length > 0)
           valid = valid && typeIds.includes(resource.task_type_id);
         return valid;
-      })
+       })        
+      }
     },
      lessonVariation() {
-      let completes = this.filteredLessons.filter(l => !l.draft )
-      let drafts = this.filteredLessons.filter(l => l.draft)
-      return {
-        completes,
-        drafts
-      }
+      if( this.filteredLessons && this.filteredLessons.length > 0){
+        let completes = this.filteredLessons.filter(l => !l.draft )
+        let drafts = this.filteredLessons.filter(l => l.draft)
+        return {
+          completes,
+          drafts
+        }
+      }     
     },
     currentRiskTypes() {
       let names =

@@ -880,7 +880,7 @@
               </div>
             </div>
           <div
-            v-for="(group, index) in facilityGroups"
+            v-for="(group, index) in facilityGroups.filter(t => t.contracts.length > 0)"
             :key="index"
             >
             <div class="row py-1">
@@ -892,7 +892,7 @@
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupContracts(group).contracts.b.length
+                  facilityGroupFacilities(group).contracts.b.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -984,7 +984,7 @@
               </div>
             </div>
           <div
-            v-for="(group, index) in facilityGroups"
+            v-for="(group, index) in facilityGroups.filter(t => t.facilities.length > 0)"
             :key="index"
             >
            
@@ -1263,6 +1263,7 @@ export default {
       if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
         return this.currentProject.facilities
       } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowProjectStats){
+        console.log(this.projectContracts)
         return this.projectContracts
       }
     },
@@ -1329,14 +1330,12 @@ export default {
       }
     },
     filteredLessons() {
-      // let programLessonsObj = [];
-      // console.log("*******")
-      // console.log(!this.getShowProjectStats)
-      // if(!this.getShowProjectStats){
-      //   programLessonsObj = this.programLessons.filter(l => l.project_id)
-      // } else programLessonsObj =  this.programLessons.filter(l => l.contract_id)
-
-      let programLessonsObj = this.programLessons;
+      let programLessonsObj = [];
+      if(!this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      console.log(this.programLessons)
+      // let programLessonsObj = this.programLessons;
 
       let typeIds = _.map(this.taskTypeFilter, "id");
       return _.filter(programLessonsObj, (resource) => {
@@ -1918,7 +1917,6 @@ export default {
   },
   methods: {
       ...mapActions([
-     'fetchProgramLessonCounts',
      'fetchProgramLessons',
      ]), 
      ...mapMutations([
@@ -2129,8 +2127,7 @@ export default {
     // },
   },
   mounted() {
-    this.fetchProgramLessonCounts(this.$route.params)  
-    this.fetchProgramLessons(this.$route.params)
+   this.fetchProgramLessons(this.$route.params)
   },
 };
 </script>

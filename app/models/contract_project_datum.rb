@@ -10,25 +10,41 @@ class ContractProjectDatum < ApplicationRecord
   belongs_to :contract_number, optional: true
   belongs_to :user, optional: true
   
+  validates :charge_code, :name, :contract_customer_id, :contract_naic_id, :contract_award_type_id, :contract_start_date, :contract_end_date, :total_contract_value, :contract_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, presence: true
+  
+  validate :number_check
+
+  def number_check
+    if contract_number_id.blank? && number.blank?
+      errors.add(:base, "Contract number or Awared/TO number is required")
+      return false
+    end
+  end
+
   def to_json(options = {})
     h = self.as_json
     h.merge!({project_contract_id: options[:project_contract].id }) if options[:project_contract]
     h.merge!({facility_group: options[:project_contract].facility_group.as_json }) if options[:project_contract]
     h.merge!({facility_group_id: options[:project_contract].facility_group_id }) if options[:project_contract]
-    h.merge!({contract_customer: contract_customer.as_json}) if contract_customer_id
-    h.merge!({contract_vehicle: self.contract_vehicle.as_json}) if contract_vehicle_id
-    h.merge!({contract_award_to: contract_award_to.as_json}) if contract_award_to_id
-    h.merge!({contract_pop: contract_pop.as_json}) if contract_pop_id
-    h.merge!({contract_naic: contract_naic.as_json}) if contract_naic_id
-    h.merge!({contract_award_type: contract_award_type.as_json}) if contract_award_type_id
-    h.merge!({contract_type: contract_type.as_json}) if contract_type_id
-    h.merge!({contract_current_pop: contract_current_pop.as_json}) if contract_current_pop_id
-    h.merge!({contract_number: contract_number.as_json}) if contract_number_id
+    h.merge!({contract_customer: contract_customer.as_json})
+    h.merge!({contract_vehicle: contract_vehicle.to_json})
+    h.merge!({contract_award_to: contract_award_to.as_json})
+    h.merge!({contract_pop: contract_pop.as_json})
+    h.merge!({contract_naic: contract_naic.as_json})
+    h.merge!({contract_award_type: contract_award_type.as_json})
+    h.merge!({contract_type: contract_type.as_json})
+    h.merge!({contract_current_pop: contract_current_pop.as_json})
+    h.merge!({contract_number: contract_number.as_json})
     h
   end
+
+  def self.preload_array
+    [:contract_customer, :contract_award_to, :contract_pop, :contract_naic, :contract_award_type, :contract_type, :contract_current_pop, :contract_number ]
+  end
+
   def self.params_to_permit
     [
-      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id
+      :id, :contract_vehicle_id, :contract_award_type_id, :name, :charge_code, :contract_customer_id, :contract_award_to_id, :contract_type_id, :prime_or_sub, :contract_start_date, :contract_end_date, :total_contract_value, :contract_current_pop_id, :contract_current_pop_start_date, :contract_current_pop_end_date, :total_founded_value, :billings_to_date, :comments, :pm_contract_poc_id, :gov_contract_poc_id, :co_contract_poc_id, :contract_naic_id, :contract_pop_id, :number, :contract_number_id, :facility_group_id, :notes, :ignore_expired
     ]
   end
 
@@ -44,39 +60,47 @@ class ContractProjectDatum < ApplicationRecord
     else
       contract_project_data = self
     end
-   
+
     contract_project_data.transaction do
       c_params.reject!{|k,v| v == 'undefined'}
       
-      if c_params[:contract_number_id] && !ContractNumber.exists?(id: c_params[:contract_number_id])
+      if c_params[:contract_number_id] && !( a = (Integer(c_params[:contract_number_id]) rescue nil) ) && !ContractNumber.exists?(id: a)
         c_params[:contract_number_id] = ContractNumber.create(name: c_params[:contract_number_id], user_id: user.id).id
       end
       
-      if c_params[:contract_customer_id] && !ContractCustomer.exists?(id: c_params[:contract_customer_id])
+      if c_params[:contract_customer_id] && !( a = (Integer(c_params[:contract_customer_id]) rescue nil) ) && !ContractCustomer.exists?(id: a)
         c_params[:contract_customer_id] = ContractCustomer.create(name: c_params[:contract_customer_id], user_id: user.id).id
       end
-      if c_params[:contract_vehicle_id] && !ContractVehicle.exists?(id: c_params[:contract_vehicle_id])
+
+      if c_params[:contract_vehicle_id] && !( a = (Integer(c_params[:contract_vehicle_id]) rescue nil) ) && !ContractVehicle.exists?(id: a)
         c_params[:contract_vehicle_id] = ContractVehicle.create(name: c_params[:contract_vehicle_id], user_id: user.id).id
       end
-      if c_params[:contract_award_to_id] && !ContractAwardTo.exists?(id: c_params[:contract_award_to_id])
+      
+      if c_params[:contract_award_to_id] && !( a = (Integer(c_params[:contract_award_to_id]) rescue nil) ) && !ContractAwardTo.exists?(id: a)
         c_params[:contract_award_to_id] = ContractAwardTo.create(name: c_params[:contract_award_to_id], user_id: user.id).id
       end
-      if c_params[:contract_naic_id] && !ContractNaic.exists?(id: c_params[:contract_naic_id])
+      
+      if c_params[:contract_naic_id] && !( a = (Integer(c_params[:contract_naic_id]) rescue nil) ) && !ContractNaic.exists?(id: a)
         c_params[:contract_naic_id] = ContractNaic.create(name: c_params[:contract_naic_id], user_id: user.id).id
       end
-      if c_params[:contract_award_type_id] && !ContractAwardType.exists?(id: c_params[:contract_award_type_id])
+      
+      if c_params[:contract_award_type_id] && !( a = (Integer(c_params[:contract_award_type_id]) rescue nil) ) && !ContractAwardType.exists?(id: a)
         c_params[:contract_award_type_id] = ContractAwardType.create(name: c_params[:contract_award_type_id], user_id: user.id).id
       end
-      if c_params[:contract_type_id] && !ContractType.exists?(id: c_params[:contract_type_id])
+      
+      if c_params[:contract_type_id] && !( a = (Integer(c_params[:contract_type_id]) rescue nil) ) && !ContractType.exists?(id: a)
         c_params[:contract_type_id] = ContractType.create(name: c_params[:contract_type_id], user_id: user.id).id
       end
-      if c_params[:contract_current_pop_id] && !ContractCurrentPop.exists?(id: c_params[:contract_current_pop_id])
+      
+      if c_params[:contract_current_pop_id] && !( a = (Integer(c_params[:contract_current_pop_id]) rescue nil) ) && !ContractCurrentPop.exists?(id: a)
         c_params[:contract_current_pop_id] = ContractCurrentPop.create(name: c_params[:contract_current_pop_id], user_id: user.id).id
       end
-      if c_params[:contract_pop_id] && !ContractPop.exists?(id: c_params[:contract_pop_id])
+      
+      if c_params[:contract_pop_id] && !( a = (Integer(c_params[:contract_pop_id]) rescue nil) ) && !ContractPop.exists?(id: a)
         c_params[:contract_pop_id] = ContractPop.create(name: c_params[:contract_pop_id], user_id: user.id).id
       end
-      if c_params[:co_contract_poc_id] && !ContractProjectPoc.exists?(id: c_params[:co_contract_poc_id])
+      
+      if c_params[:co_contract_poc_id] && !( a = (Integer(c_params[:co_contract_poc_id]) rescue nil) ) && !ContractProjectPoc.exists?(id: a)
         c_params[:co_contract_poc_id] = ContractProjectPoc.create(name: c_params[:co_contract_poc_id], user_id: user.id).id
       end
       contract_project_data.attributes = c_params

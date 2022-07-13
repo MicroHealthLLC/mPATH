@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_15_170431) do
+ActiveRecord::Schema.define(version: 2022_07_08_165712) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -198,13 +198,13 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.string "prime_or_sub"
     t.datetime "contract_start_date"
     t.datetime "contract_end_date"
-    t.decimal "total_contract_value", precision: 11, scale: 2, default: "0.0"
+    t.decimal "total_contract_value", precision: 19, scale: 4, default: "0.0"
     t.integer "contract_pop_id"
     t.integer "contract_current_pop_id"
     t.datetime "contract_current_pop_start_date"
     t.datetime "contract_current_pop_end_date"
-    t.decimal "total_founded_value", precision: 11, scale: 2, default: "0.0"
-    t.decimal "billings_to_date", precision: 11, scale: 2, default: "0.0"
+    t.decimal "total_founded_value", precision: 19, scale: 4, default: "0.0"
+    t.decimal "billings_to_date", precision: 19, scale: 4, default: "0.0"
     t.string "comments"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -217,6 +217,8 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.integer "gov_contract_poc_id"
     t.integer "pm_contract_poc_id"
     t.integer "contract_number_id"
+    t.text "notes"
+    t.boolean "ignore_expired", default: false
   end
 
   create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
@@ -239,7 +241,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
   end
 
   create_table "contract_sub_categories", charset: "utf8", force: :cascade do |t|
-    t.string "name"
+    t.text "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
@@ -274,13 +276,13 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.integer "contract_vehicle_type_id"
     t.integer "user_id"
     t.string "full_name"
-    t.string "contract_number"
-    t.decimal "ceiling", precision: 11, scale: 2, default: "0.0"
+    t.decimal "ceiling", precision: 19, scale: 4, default: "0.0"
     t.datetime "base_period_start"
     t.datetime "base_period_end"
     t.datetime "option_period_start"
     t.datetime "option_period_end"
     t.integer "contract_number_id"
+    t.decimal "caf_fees", precision: 4, scale: 2, default: "0.0"
   end
 
   create_table "contracts", charset: "utf8", force: :cascade do |t|
@@ -349,13 +351,15 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "code"
-    t.integer "status", default: 0
+    t.integer "status", default: 1
     t.integer "region_type", default: 0
     t.string "center"
     t.bigint "project_id"
     t.integer "progress", default: 0
-    t.boolean "is_portfolio", default: true
+    t.boolean "is_portfolio", default: false
     t.integer "user_id"
+    t.integer "owner_id"
+    t.string "owner_type"
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
@@ -386,6 +390,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.bigint "status_id"
     t.integer "progress", default: 0
     t.string "color", default: "#ff0000"
+    t.integer "facility_group_id"
     t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
     t.index ["project_id"], name: "index_facility_projects_on_project_id"
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
@@ -579,6 +584,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.integer "facility_group_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_default", default: false
   end
 
   create_table "project_issue_severities", charset: "utf8", force: :cascade do |t|
@@ -841,6 +847,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.string "role_type", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["role_id", "role_type"], name: "index_role_privileges_on_role_id_and_role_type"
   end
 
   create_table "role_users", charset: "utf8", force: :cascade do |t|
@@ -851,6 +858,8 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "project_contract_id"
+    t.index ["facility_project_id", "project_contract_id"], name: "index_role_users_on_facility_project_id_and_project_contract_id"
+    t.index ["role_id", "user_id", "project_id"], name: "index_role_users_on_role_id_and_user_id_and_project_id"
   end
 
   create_table "roles", charset: "utf8", force: :cascade do |t|
@@ -862,6 +871,7 @@ ActiveRecord::Schema.define(version: 2022_06_15_170431) do
     t.string "type_of"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id", "user_id", "is_default"], name: "index_roles_on_project_id_and_user_id_and_is_default"
   end
 
   create_table "settings", charset: "utf8", force: :cascade do |t|

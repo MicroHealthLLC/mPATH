@@ -56,6 +56,7 @@
       <template slot-scope="scope">
         <el-input
           size="small"
+          tabindex="1"  
           v-if="_isallowed('write') && scope.$index == createRow"
           class="p-0"
           style="text-align:center"
@@ -84,6 +85,7 @@
       <template slot-scope="scope">
         <el-input
           size="small"
+          tabindex="2"  
           v-if="_isallowed('write') && scope.$index == createRow"
           style="text-align:center"
           v-model="scope.row.name"
@@ -109,6 +111,7 @@
      <template slot-scope="scope" >
      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="3"  
         v-model="scope.row.contract_customer_id"
         filterable       
         track-by="name"        
@@ -142,7 +145,8 @@
      <span v-if="_isallowed('write') && (scope.$index == createRow)">
        <el-select
         v-model="scope.row.contract_vehicle_id"
-        filterable       
+        filterable  
+        tabindex="4"       
         track-by="name"        
         value-key="id"
         class="w-100"
@@ -218,6 +222,7 @@
     <template slot-scope="scope" >
      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="5"    
         v-model="scope.row.contract_number_id"
         filterable       
         track-by="name"        
@@ -229,7 +234,7 @@
         default-first-option
       >
         <el-option
-          v-for="item in contractNumber"
+          v-for="item in contractNumbers"
           :key="item.id"
           :label="item.name"
           :value="item.id"
@@ -250,6 +255,7 @@
        <template slot-scope="scope" >
      <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="6"    
         v-model="scope.row.contract_award_to_id"
         filterable       
         track-by="id" 
@@ -282,6 +288,7 @@
      <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="7"     
         v-model="scope.row.contract_naic_id"
         filterable       
         track-by="name"        
@@ -314,6 +321,7 @@
       <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="8"    
         v-model="scope.row.contract_award_type_id"
         filterable       
         track-by="name"        
@@ -346,6 +354,7 @@
       <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="9" 
         v-model="scope.row.contract_type_id"
         filterable       
         track-by="name" 
@@ -378,6 +387,7 @@
      <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="10" 
         v-model="scope.row.prime_or_sub"
         track-by="name"  
         placeholder=""      
@@ -402,10 +412,11 @@
     </el-table-column>
      <el-table-column
       label="Contract Start Date*"
-      width="100"
+      width="125"
       prop="contract_start_date">
        <template slot-scope="scope">
         <v2-date-picker
+          tabindex="11" 
           name="Date"       
           v-if="_isallowed('write') && scope.$index == createRow"
           v-model="newContractStartDate"
@@ -433,10 +444,11 @@
     </el-table-column>
      <el-table-column
       label="Contract End Date*"
-      width="100"
+      width="125"
       prop="contract_end_date">
       <template slot-scope="scope">
         <v2-date-picker
+          tabindex="12" 
           name="Date"     
           v-model="newContractEndDate"  
           v-if="(scope.$index == createRow) && _isallowed('write')"
@@ -459,6 +471,9 @@
         <span v-if="scope.row.contract_end_date == null || scope.row.contract_end_date == undefined">      
         </span>
         <span v-else>
+            <span v-if="scope.row.ignore_expired == true" v-tooltip="`Exempt from expiration`" >
+              <i class="fa-solid fa-calendar-xmark text-success"></i>
+            </span>
           {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
         </span>     
       </span>
@@ -466,10 +481,11 @@
     </el-table-column>
      <el-table-column
       label="Total Contract Value*"
-       width="115"
+       width="175"
       prop="total_contract_value">
      <template slot-scope="scope">
      <el-input
+      tabindex="13" 
       size="small"
       v-if="_isallowed('write') && scope.$index == createRow "
       type="number"
@@ -501,6 +517,7 @@
       <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="14" 
         v-model="scope.row.contract_pop_id"
         filterable       
         track-by="name"        
@@ -533,6 +550,7 @@
     <template slot-scope="scope" >
       <span v-if="_isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
        <el-select
+        tabindex="15" 
         v-model="scope.row.contract_current_pop_id"
         filterable       
         track-by="name"        
@@ -564,6 +582,7 @@
       prop="contract_current_pop_start_date">
       <template slot-scope="scope">
         <v2-date-picker
+           tabindex="16" 
           name="Date"   
           v-model="newPopStartDate"      
           v-if="scope.$index == createRow  && _isallowed('write')"
@@ -594,6 +613,7 @@
       prop="contract_current_pop_end_date">
      <template slot-scope="scope">
         <v2-date-picker
+        tabindex="16" 
         name="Date" 
         v-model="newPopEndDate"        
         v-if="scope.$index == createRow && _isallowed('write')"
@@ -620,9 +640,35 @@
       </span>
      </template>
     </el-table-column>
+     <el-table-column
+      label="Notes"
+      width="350"
+      prop="notes">
+      <template slot-scope="scope">
+        <el-input
+          tabindex="17" 
+          size="small"
+          v-if="_isallowed('write') && scope.$index == createRow"
+          style="text-align:center"
+          v-model="scope.row.name"
+          controls-position="right"
+        ></el-input>
+        <span v-if="_isallowed('write') && rowId == scope.row.id && scope.$index !== createRow">
+        <el-input
+          size="small"
+          style="text-align:center"
+          v-model="scope.row.notes"
+          controls-position="right"
+          ></el-input>
+        </span>
+      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+        {{ scope.row.notes }} 
+        </span>
+        </template>
+     </el-table-column>
     <el-table-column
       label="Actions"
-      width="120"
+      width="140"
       v-if="_isallowed('write') || _isallowed('delete')"
       fixed="right"
       align="center">
@@ -648,6 +694,14 @@
         @click.prevent="cancelEdits(scope.$index, scope.row)"  
         class="bg-secondary btn-sm text-light mx-0">
       <i class="fas fa-ban"></i>
+        </el-button>
+        <el-button 
+        type="default" 
+        v-tooltip="`Remove expiration date exemption`"       
+        v-if="scope.$index == rowIndex && scope.row.ignore_expired == true"
+        @click.prevent="setIgnoreStatus(scope.$index, scope.row)"  
+        class="bg-light btn-sm mx-0">
+        <i class="fa-solid fa-calendar-xmark text-danger"></i>
         </el-button>
          <el-button
           type="default"
@@ -699,13 +753,14 @@
         height="400"
         style="width: 95%">
         <el-table-column
-          fixed
+          fixed        
           label="Name*"
           width="150"
           prop="name">
          <template slot-scope="scope" >
          <span v-if="_isallowed('write') && (scope.$index == pocCreateRow)">
           <el-input
+          tabindex="1" 
           size="small"
           style="text-align:center"     
           placeholder=""
@@ -728,11 +783,12 @@
           </template>          
         </el-table-column>
         <el-table-column
-          label="Title*"
+          label="Title"
           width="150"
           prop="title">
           <template slot-scope="scope">
           <el-input
+          tabindex="2" 
           size="small"
           v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
           placeholder=""
@@ -760,6 +816,7 @@
           prop="email">
           <template slot-scope="scope">
             <el-input
+              tabindex="3" 
               size="small"
                v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
               placeholder=""
@@ -792,6 +849,7 @@
           prop="work_number">
           <template slot-scope="scope">
           <el-input
+            tabindex="4" 
             size="small"
            v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
             placeholder=""
@@ -825,6 +883,7 @@
           prop="mobile_number">
           <template slot-scope="scope">
             <el-input
+            tabindex="5" 
             size="small"
             v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
             placeholder=""           
@@ -856,6 +915,7 @@
           prop="notes">
           <template slot-scope="scope">
           <el-input
+          tabindex="6" 
           size="small"
           v-if="_isallowed('write') && (scope.$index == pocCreateRow)"
           placeholder=""
@@ -919,8 +979,8 @@
             <el-button
               type="default"
               @click="saveContractPOC(scope.$index, scope.row)"             
-              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.email && scope.row.name &&
-               scope.row.title) && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew)" 
+              v-if="(_isallowed('write')) && scope.$index == pocCreateRow && (scope.row.email && scope.row.name) 
+              && (scope.row.mobile_number || scope.row.work_number || workNumberVal || workNumberValNew || mobNumberValNew || mobNumberVal )" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
@@ -1047,6 +1107,7 @@ export default {
       "fetchContractProjects",
       "updateContractProject",
       "deleteContractProject",
+      "updateIgnoreExpired",
 
       //POCs
       "createContractPOC",
@@ -1054,7 +1115,8 @@ export default {
       "updateContractPOC",
       "deleteContractPOC",
       //Vehicles
-      "fetchContractVehicles"
+      "fetchContractVehicles",
+      "fetchContractDataOptions"
     ]),
     _isallowed(salut) {
         return this.checkPortfolioContractPrivileges("PortfolioContracts", salut, this.$route, {settingType: 'Contracts'})
@@ -1234,27 +1296,32 @@ export default {
     this.rowIndex = null;
     this.rowId = null;
     let id = null;
-    let vehicle = ""
+    let vehicle = "";
+    let updateExpired = false;
+    let ignoreExpired = false;
     
     if (row.id) {
       id = row.id
       if(this.blankVehicle !== '') {
         vehicle = this.blankVehicle
       }
+      if(row.ignore_expired == true && this.contractEndDate > this.today) {
+       updateExpired = true
+      }
       if(row.contract_vehicle_id && row.contract_vehicle && row.contract_vehicle.name) {
         vehicle = row.contract_vehicle_id
       }
       if (!this.contractEndDate) {
-        this.contractEndDate = rows.contract_end_date
+        this.contractEndDate = row.contract_end_date
       }
       if (!this.contractStartDate) {
-        this.contractStartDate = rows.contract_start_date
+        this.contractStartDate = row.contract_start_date
       }       
       if (!this.popStartDate){
-        this.popStartDate = rows.contract_current_pop_start_date
+        this.popStartDate = row.contract_current_pop_start_date
       }
       if (!this.popEndDate){
-        this.popEndDate = rows.contract_current_pop_end_date
+        this.popEndDate = row.contract_current_pop_end_date
       }
     }
     if (!row.id){
@@ -1266,8 +1333,11 @@ export default {
     }
     let contractProjectData = {
           cProjectData: {
+            expiredStatus: updateExpired,
+            expired: ignoreExpired,
             charge_code: row.charge_code,
             name: row.name,   
+            notes: row.notes,   
             prime_or_sub: row.prime_or_sub,
             contract_customer_id: row.contract_customer_id, 
             contract_start_date: this.contractStartDate,
@@ -1291,6 +1361,19 @@ export default {
     } else {
       this.createContractProject({...contractProjectData})     
     }
+   
+  },
+   setIgnoreStatus(index, row){
+    this.rowIndex = null;
+    this.rowId = null;
+    let id = row.id;
+  
+   let contractProjectData = {
+          cProjectData: {
+            isExpired: false
+        },
+      };
+    this.updateIgnoreExpired({...contractProjectData, id})
    
   },
   saveContractPOC(index, row){
@@ -1434,6 +1517,7 @@ export default {
   mounted() {
     this.fetchContractProjects()
     this.fetchContractVehicles()
+    this.fetchContractDataOptions()
   },
   computed: {
     ...mapGetters([
@@ -1449,12 +1533,17 @@ export default {
       "contractVehicles",
       "contractVehiclesLoaded",
 
+      //Option items for all dropdowns
+      "contractDataOptions"
+
     ]), 
    tableData(){
       if (this.contractProjects && this.contractProjects.length > 0){
-        let data = this.contractProjects.filter(t => t.contract_end_date > this.today)
+        let data = this.contractProjects.filter(t => t.contract_end_date > this.today || t.ignore_expired == true )
          data.push({})
-         return data    
+         console.log(data)
+         return data   
+
      } else {
         let data = []
          data.push({})
@@ -1495,14 +1584,16 @@ export default {
     primeOrSub(){
       return ['Prime', 'Sub']
     },                  
-    contractNumber(){
-     if (this.contractProjects && this.contractProjects.length > 0){
-        let uniqueContractNums = _.uniq(this.contractProjects.filter(t => t.contract_number_id))
-        let contractNums = uniqueContractNums.map(t => t.contract_number).filter(t => t && t.id && t !== undefined && t !== null)
-        let unique = [];
-        contractNums.map(x => unique.filter(a => a.id == x.id).length > 0 ? null : unique.push(x));
-        return unique
-      }
+    contractNumbers(){
+     if (this.tableData && this.contractDataOptions && this.contractDataOptions.contract_numbers && 
+       this.contractDataOptions.contract_numbers.length > 0){
+          let viableContractNums = this.tableData.map(t => t.contract_number_id)
+          let vehicleContractNums = this.contractVehicles.map(t => t.contract_number_id)   
+          let contractNums = this.contractDataOptions.contract_numbers
+          .filter(t => t && t.name !== undefined && t && t.name !== 'undefined' && t.name !== 'null')
+          .filter(t => viableContractNums.includes(t.id) || vehicleContractNums.includes(t.id) ) 
+         return contractNums        
+      } else return []
     },
     // vehicleOptions is foreign key value and must come from contract_vehicles data, not from contractProjects
     vehicleOptions(){
@@ -1639,6 +1730,9 @@ export default {
 </script>
     
 <style scoped lang="scss">
+/deep/.el-tabs--border-card {
+  padding-bottom: 0;
+}
 .requiredFields{
     font-size: .88rem;
   }

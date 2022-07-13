@@ -9,8 +9,8 @@ import settingsStore from "./modules/settings-store";
 import programStore from "./modules/program-store";
 import contractStore from "./modules/contract-store";
 import projectStore from "./modules/project-store";
-import taskStore from "./modules/task-store";
-import issueStore from "./modules/issue-store";
+// import taskStore from "./modules/task-store";
+// import issueStore from "./modules/issue-store";
 import riskStore from "./modules/risk-store";
 import notesStore from "./modules/notes-store";
 import lessonStore from "./modules/lesson-store";
@@ -34,9 +34,9 @@ export default new Vuex.Store({
     programStore,
     contractStore,
     projectStore,
-    taskStore,
+    // taskStore,
     settingsStore,
-    issueStore,
+    // issueStore,
     riskStore,
     lessonStore,
     notesStore,
@@ -3034,9 +3034,16 @@ export default new Vuex.Store({
       });
     },
     fetchCurrentProject({ commit, dispatch }, id) {
+      let spaths = window.location.pathname.split("/")
+      let url = `${API_BASE_PATH}/programs/${id}.json`
+      if(spaths.length > 0){
+        if(spaths.indexOf("settings") > 0){
+          url = `${API_BASE_PATH}/program_settings/programs/${id}.json`
+        }
+      }
       return new Promise((resolve, reject) => {
         http
-          .get(`${API_BASE_PATH}/programs/${id}.json`)
+          .get(url)
           .then((res) => {
             let facilities = [];
             for (let facility of res.data.project.facilities) {

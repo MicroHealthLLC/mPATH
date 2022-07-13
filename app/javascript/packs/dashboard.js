@@ -26,7 +26,8 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
-
+import axios from "axios";
+import { API_BASE_PATH } from './../mixins/utils';
 
 Vue.use(vco)
 Vue.mixin(utils)
@@ -105,8 +106,33 @@ Vue.prototype.$programPrivilegesRoles = programPrivilegesRoles
 Vue.prototype.$contractPrivilegesRoles = contractPrivilegesRoles
 Vue.prototype.$programSettingPrivilegesRoles = programSettingPrivilegesRoles
 
+Vue.prototype.program_admin_role = JSON.parse(window.program_admin_role.replace(/&quot;/g,'"'))
 
 Vue.prototype.$preferences = preferences
+
+
+Vue.prototype.getRolePrivileges = () => {
+  axios({
+    method: "GET",
+    url: `${API_BASE_PATH}/program_settings/users/get_user_privileges?program_id=${window.current_program_id}`,
+    headers: {
+      "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+        .attributes["content"].value,
+    },
+  })
+    .then((res) => {
+      Vue.prototype.$projectPrivilegesRoles = res.data.project_privilegs_roles;
+      Vue.prototype.$programPrivilegesRoles = res.data.program_privilegs_roles;
+      Vue.prototype.$contractPrivilegesRoles = res.data.contract_privilegs_roles;
+      Vue.prototype.$programSettingPrivilegesRoles = res.data.program_settings_privileges_roles;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {});
+};
+
+Vue.prototype.getRolePrivileges()
 
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
   // console.log("***************** ", page)
@@ -250,7 +276,7 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
       // console.log("facility_project_id", facility_project_id)          
       return facility_project_privileges && facility_project_privileges.project_issues && facility_project_privileges.project_issues.includes(s);
     }
-  }else if(["ProjectSidebar"].includes(page)){
+  }else if(["ProjectSidebar", "ProjectSettingContractList", "ProjectSettingProjectList"].includes(page)){
 
     let pPrivileges = Vue.prototype.$programSettingPrivilegesRoles
     
@@ -259,13 +285,17 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     
     }else if(extraData["method"] == "isallowedContracts"){
       
-      let pPrivileges = Vue.prototype.$contractPrivilegesRoles
-
-      let contract_privileges = pPrivileges[extraData["project_contract_id"]]
-      // console.log()
+      let contract_privileges = Vue.prototype.$contractPrivilegesRoles[extraData["project_contract_id"]]  
+      console.log(contract_privileges, extraData["project_contract_id"])
 
       return contract_privileges && (contract_privileges.contract_analytics || contract_privileges.contract_issues || contract_privileges.contract_lessons || contract_privileges.contract_notes || contract_privileges.contract_risks || contract_privileges.contract_tasks);
-    }else{
+    } else if(extraData["method"] == "isallowedProject"){
+      
+      let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[extraData["facility_project_id"]]
+    // console.log(facility_project_privileges, extraData["facility_project_id"])
+
+      return facility_project_privileges && (facility_project_privileges.project_analytics || facility_project_privileges.project_issues || facility_project_privileges.project_lessons || facility_project_privileges.project_notes || facility_project_privileges.project_risks || facility_project_privileges.project_tasks);
+    } else{
       return false
     }
 
@@ -385,3 +415,7 @@ const dashboardApp = new Vue({
   template: '<Dashboard />',
   components: { Dashboard }
 })
+
+// Adding global logger so that we can debug data in template 
+// e.g. {{$log("projectUsers", projectUsers)}} and it will do console.log
+Vue.prototype.$log = console.log

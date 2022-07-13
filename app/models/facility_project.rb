@@ -10,16 +10,25 @@ class FacilityProject < ApplicationRecord
   has_many :lessons, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
-  
+  belongs_to :facility_group, optional: true
+
   scope :active, -> {joins(:facility).where("facilities.status = ?", 1).distinct}
 
   validates :facility, uniqueness: {scope: :project}
 
   before_save :assign_default_status
   after_destroy :remove_roles
+  before_create :assign_default_facility_group 
+  before_update :assign_default_facility_group
 
   def remove_roles
     RoleUser.where(facility_project_id: self.id).destroy_all
+  end
+  
+  def assign_default_facility_group
+    if self.facility_group.nil?
+      self.facility_group_id = project.default_facility_group.id
+    end
   end
 
   def as_json(options=nil)
@@ -33,6 +42,7 @@ class FacilityProject < ApplicationRecord
       issues: issues.map(&:to_json),
       risks: risks.map(&:to_json),
       notes: notes.map(&:to_json),
+      lessons: lessons.map(&:to_json),
       project_status: status_name,
       color: color,
       progress: progress
@@ -67,7 +77,7 @@ class FacilityProject < ApplicationRecord
 
     all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
-    all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
+    all_facility_group_ids = all_facility_projects.map(&:facility_group_id).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
 
     facility_projects_hash = []
@@ -88,7 +98,7 @@ class FacilityProject < ApplicationRecord
         facility_name: facility.facility_name
       })
 
-      g = all_facility_groups.detect{|gg| gg.id == facility.facility_group_id}
+      g = all_facility_groups.detect{|gg| gg.id == fp.facility_group_id}
 
       h[:facility] = facility.attributes.merge({
         facility_group_name: g&.name,

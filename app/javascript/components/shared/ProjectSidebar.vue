@@ -13,8 +13,8 @@
     <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded" >
         <div
-          v-for="(group, index) in sortedGroups"
-          :key="index + 'a'"  
+          v-for="(group, index) in sortedGroups.filter(t => t.contracts.length > 0 || t.facilities.length > 0)"
+           :key="index + 'a'"  
            class="my-2 px-2 container"
         >
           <div
@@ -36,26 +36,30 @@
            <p class="clickable groupName expandText">{{ group.name }}</p>
            </span>
          </div>
+         <!-- v-if="_isallowedProjectCounts(group, 'read')" -->
 
-           <div class="col py-0 text-right">
-            <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">{{ 
+           <div class="col py-0 text-right"  >
+            <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">
+             <!-- <span v-if="_isallowedProjectCounts(facilityGroupFacilities(group).projects.a, 'read')">  -->
+
+            
+             {{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
               }}
-            </span>
-
-             <span class="badge badge-secondary badge-pill pill" 
-          
-             v-else>
-               {{ facilityGroupFacilities(group).projects.a.length }}
-            </span>
+             </span> 
+            <!-- </span>  -->
+             <span v-else class="badge badge-secondary badge-pill pill">
+                {{ facilityGroupFacilities(group).projects.a.length }}
+            </span> 
          </div>
              
           </div>
           <!-- <span    :load="log(facilityGroupFacilities(group))"> </span> -->
          <div v-show="getExpandedGroup == group.id" class="ml-2">
               <div
-              v-for="facility in facilityGroupFacilities(group).projects.a"            
+              v-for="facility in facilityGroupFacilities(group).projects.a" 
+              :load="log(facilityGroupFacilities(group).projects.a)"           
               :key="facility.id"  
               
             >
@@ -66,6 +70,7 @@
               >
                 <div
                   class="d-flex align-items-center expandable fac-name"
+                   v-if="_isallowedProjects(facility, 'read')"
                   @click="showFacility(facility)"
                   :class="{ active: facility.id == $route.params.projectId }"
                 >
@@ -128,7 +133,8 @@ export default {
       return {
         value: '',
         totalGroupContract: 0,
-        filteredGroupSize: null,
+        filteredGroupSize: null, 
+        projectCount: 0
         
       }
     },
@@ -220,13 +226,22 @@ export default {
       this.$emit("on-expand-facility-group", group);
 
     },
-    // log(e){
-    //       console.log(e)
-
-    // },
-    _isallowedContracts(salut, c) {
+    log(e){
+          // console.log(e)
+    },
+    _isallowedContracts(c, salut) {
+      // console.log(this.$route)
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
     },
+    _isallowedProjects(c, salut) {
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.facilityProjectId})
+    },
+    // _isallowedProjectCounts(c, salut) {
+    //   // console.log(c)
+    //   if (c && c.length > 0) {       
+    //    return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.map(t => t.facilityProjectId)})
+    //   }     
+    // },
     _isallowedProgramSettings(salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
     },

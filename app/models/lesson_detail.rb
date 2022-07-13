@@ -24,6 +24,7 @@ class LessonDetail < ApplicationRecord
       recommendation: recommendation,
       detail_type: detail_type,
       user_id: user_id,
+      user: user.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       updated_at: updated_at
     }
   end

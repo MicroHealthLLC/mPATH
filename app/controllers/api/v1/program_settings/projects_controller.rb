@@ -1,22 +1,23 @@
-class Api::V1::ProjectsController < AuthenticatedController 
-# class Api::V1::ProjectsController < Api::ApplicationController
-  before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
-  # before_action :authenticate_request!
+class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController 
 
-  def task_issues
-    collection = Project.find_by(id: params[:id]).as_json(include: {tasks: {only: [:text, :id]}, issues: {only: [:title, :id]}, risks: {only: [:risk_description, :id]}})
-    render json: collection
-  end
+  before_action :check_permission
 
-  def index
-    render json: {projects: current_user.authorized_programs.includes(:project_type).as_json}
+  def check_permission
+    program_id = params[:id]
+
+    raise(CanCan::AccessDenied) if !program_id
+    action = nil
+    if ["show" ].include?(params[:action]) 
+      action = "R"
+    end
+
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id,action,  RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
   end
 
   def show
     @project = current_user.authorized_programs.find_by(id: params[:id])
-    check_permit("map_view")
     unless @project.nil?
-      render json: {project: @project.build_json_response(current_user, response_for: 'client_panel')}, status: 200
+    render json: {project: @project.build_json_response(current_user, response_for: 'program_settings')}, status: 200
      else
       render json: {error: "Project not found"}, status: :not_found
     end
@@ -49,18 +50,7 @@ class Api::V1::ProjectsController < AuthenticatedController
         issue_types: [],
         issue_severities: []
       }
-    @project = current_user.authorized_programs.includes(projects_include_hash).find_by(id: params[:id])
-  end
-
-  def check_permit(view)
-    return unless current_user.allowed?(view)
-  end
-
-  def resolve_layout
-    case action_name
-    when "index" then "portfolio_viewer"
-    else "application"
-    end
+    @project = Project.includes(projects_include_hash).find_by(id: params[:id])
   end
 
 end
