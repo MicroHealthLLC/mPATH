@@ -112,8 +112,6 @@ Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData)
 }
 
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
-
-  console.log(Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData))
  return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)  
 }
 
@@ -130,7 +128,6 @@ Vue.prototype.findFacilityProjectId = (programId, projectId) => {
 } 
 
 Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
-  // console.log("***************** By role ", page, salut, route, extraData, Vue.prototype.$contractPrivilegesRoles, Vue.prototype.$projectPrivilegesRoles, Vue.prototype.$programSettingPrivilegesRoles )
 
   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
   let s = permissionHash[salut]
@@ -148,7 +145,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     } else {
       let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
       let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
-      // console.log("facility_project_id", facility_project_id)          
       return facility_project_privileges && facility_project_privileges.project_risks && facility_project_privileges.project_risks.includes(s);
      }
     } else if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
@@ -163,7 +159,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
 
       let facility_project_id = Vue.prototype.findFacilityProjectId(program_id, project_id)
       let facility_project_privileges = Vue.prototype.$projectPrivilegesRoles[facility_project_id]
-      // console.log("facility_project_id", facility_project_id)          
       return facility_project_privileges && facility_project_privileges.project_issues && facility_project_privileges.project_issues.includes(s);
     }
   }else if(["ProjectSidebar", "ProjectSettingContractList", "ProjectSettingProjectList"].includes(page)){
@@ -176,7 +171,6 @@ Vue.prototype.checkPrivilegesByRoles = (page, salut, route, extraData) => {
     }else if(extraData["method"] == "isallowedContracts"){
       
       let contract_privileges = Vue.prototype.$contractPrivilegesRoles[extraData["project_contract_id"]]  
-      // console.log(contract_privileges, extraData["project_contract_id"])
 
       return contract_privileges && (contract_privileges.contract_analytics || contract_privileges.contract_issues || contract_privileges.contract_lessons || contract_privileges.contract_notes || contract_privileges.contract_risks || contract_privileges.contract_tasks);
     } else if(extraData["method"] == "isallowedProject"){
