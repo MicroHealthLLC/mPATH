@@ -946,8 +946,7 @@
                       </template>
                     </el-table-column>
                   </el-table-column>
-                  <el-table-column 
-                     v-if="_isallowed('write') || _isallowed('delete')"                         
+                  <el-table-column                               
                     label="Actions"
                     fixed="right"
                     width="125"
@@ -958,7 +957,7 @@
                       <el-button
                         type="default"
                         v-tooltip="`Manage Admin Role User(s)`"
-                        v-if="!isEditting && _isallowed('write')"
+                        v-if="!isEditting"
                         @click.prevent="addUserRole(scope.$index, scope.row)"
                         class="bg-primary text-light btn-sm"
                       >
@@ -1074,7 +1073,7 @@
               </h5>
             </span>
             <div class="container-fluid p-0">
-              <div class="mt-0 row"  v-if="viableAdminUsers && viableAdminUsers.length > 0">
+              <div class="mt-0 row"  v-if="viableAdminUsers && viableAdminUsers.length > 0 && _isallowed('write')">
                 <div class="col-9 py-0">
                   <label class="font-md mb-0 d-flex"
                     >Add User(s) to this Role
@@ -1206,7 +1205,7 @@
                         </el-button>
                         <el-button
                           type="default"
-                          v-if="scope.$index !== rowIndex_1"
+                          v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                           v-tooltip="`Remove User from role`"
                           @click.prevent="editUsers(scope.$index, scope.row)"
                           class="bg-danger text-light btn-sm"
