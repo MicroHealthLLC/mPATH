@@ -173,7 +173,7 @@
               ></el-input> -->
             </template>
           </el-table-column>
-           <el-table-column label="Actions" align="right">
+             <el-table-column label="Actions" align="right"  v-if="_isallowed('write') || _isallowed('delete')">
               <template slot-scope="scope">
               <el-button  
                 type="default" 
@@ -218,7 +218,7 @@
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
                     @click.prevent="removeContractBtn(scope.$index, scope.row)"
-                    v-if="scope.$index !== rowIndex"        
+                    v-if="scope.$index !== rowIndex && _isallowed('write')"        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>

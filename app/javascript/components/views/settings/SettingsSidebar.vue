@@ -11,29 +11,29 @@
     </div>
 
 <div id="filter_bar">
-    <h5>
-    <ul class="pt-2 program-name">
-       <router-link :to="adminGroupsView">
+    <h5 class="pt-3">
+    <ul class="program-name">
+       <router-link :to="adminGroupsView" v-if="_isallowedGroups('read')">
         <li class="p-3 mt-3 entity">
           <i class="fal fa-network-wired mr-2 mh-blue-text"></i>Groups
         </li>
     </router-link>
-    <router-link :to="adminProjectsView" >
+    <router-link :to="adminProjectsView" v-if="_isallowedProjects('read')" >
         <li class="p-3 entity">
           <i class="fal fa-clipboard-list mr-3 mh-green-text"></i> Projects
         </li>
     </router-link>
-    <router-link :to="adminContractsView"> 
+    <router-link :to="adminContractsView" v-if="_isallowedContracts('read')"> 
        <li class="p-3 entity">
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
-       <router-link :to="adminRolesView"> 
+       <router-link :to="adminRolesView" v-if="_isallowedUserRoles('read')"> 
        <li class="p-3 entity">
         <i class="fal fa-user-lock mr-2 pr-1 bootstrap-purple-text"></i>Roles
         </li>
     </router-link>
-    <router-link :to="adminUsersView"> 
+    <router-link :to="adminUsersView" v-if="_isallowedUserRoles('read')"> 
        <li class="p-3 entity">
          <i class="fal fa-users mr-2 pr-1 text-secondary"></i>Users
         </li>
@@ -79,6 +79,7 @@ export default {
         return this.currentProject.name;
       }
     },
+
     settingsLanding() {
      return `/programs/${this.$route.params.programId}/settings`;
     },
@@ -116,6 +117,18 @@ export default {
       let s = permissionHash[salut]
       return pPrivilege.contracts.includes(s);     
     },
+    _isallowedUserRoles(salut) {
+      return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
+    },
+    _isallowedProjects(salut) {
+      return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
+    }, 
+    _isallowedGroups(salut) {
+     return this.checkPrivileges("SettingsGroups", salut, this.$route, {settingType: "Groups"})    
+    },
+    _isallowedContracts(salut) {
+        return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
+    }, 
     // _isallowedProgramSettings(settingType, salut) {
     //   let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
     //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
