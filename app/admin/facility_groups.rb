@@ -91,7 +91,7 @@ ActiveAdmin.register FacilityGroup do
       end
     end
     def scoped_collection
-      super.where(is_portfolio: true)
+      super.includes(:project_facility_groups).where(is_portfolio: true, owner_id: nil, owner_type: nil)
     end
   end
 

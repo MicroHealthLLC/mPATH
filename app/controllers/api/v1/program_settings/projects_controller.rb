@@ -9,6 +9,8 @@ class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController
     action = nil
     if ["show" ].include?(params[:action]) 
       action = "R"
+    elsif ["add_contract" ].include?(params[:action]) 
+        action = "W"
     end
 
     raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id,action,  RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES)
@@ -20,6 +22,17 @@ class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController
     render json: {project: @project.build_json_response(current_user, response_for: 'program_settings')}, status: 200
      else
       render json: {error: "Project not found"}, status: :not_found
+    end
+  end
+
+  def add_contract
+    contract_project_data = ContractProjectDatum.find(params[:contract_id])
+    project = Project.find(params[:id])
+    project_contract = ProjectContract.new(project_id: project.id, contract_project_datum_id: contract_project_data.id)
+    if project_contract.save
+      render json: {message: "Contract added successfully"}
+    else
+      render json: {error: project_contract.errors.full_messages}, status: 406
     end
   end
 
@@ -50,7 +63,6 @@ class Api::V1::ProgramSettings::ProjectsController < AuthenticatedController
         issue_types: [],
         issue_severities: []
       }
-    @project = Project.includes(projects_include_hash).find_by(id: params[:id])
   end
 
 end
