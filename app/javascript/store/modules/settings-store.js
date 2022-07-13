@@ -507,7 +507,7 @@ const settingsStore = {
            },
          })
            .then((res) => {
-            console.log(res)
+            // console.log(res)
             //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
           // commit("SET_NEW_ROLE", res);
               Vue.prototype.getRolePrivileges()

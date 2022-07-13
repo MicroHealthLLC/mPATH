@@ -97,7 +97,7 @@
             <template slot-scope="scope" >
             <el-button
               type="default"
-              v-tooltip="`Manage User Roles`"
+              v-tooltip="`Manage User Roles`"              
               @click.prevent="openUserRoleDialog(scope.$index, scope.row)"
               v-if="scope.$index !== rowIndex"
               class="bg-primary text-light btn-sm">
@@ -107,13 +107,14 @@
               type="default"
               v-tooltip="`Remove User from Program`"
               @click.prevent="removeUser(scope.$index, scope.row)"
-              v-if="scope.$index !== rowIndex"
+              v-if="scope.$index !== rowIndex && _isallowed('delete')"
               class="bg-light btn-sm">
              <i class="fal fa-user-slash text-danger"></i>
             </el-button>
             <el-button  
                 type="default" 
                 v-tooltip="`Edit User info`"  
+                 v-if="_isallowed('write')"
                @click.prevent="openEditUser(scope.$index, scope.row)"
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>    
@@ -450,7 +451,7 @@
      </div>
     
      
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="_isallowed('write')" >
           <div class="col-7">
         <el-button-group>
           <el-button 
@@ -527,7 +528,81 @@
         
           </el-table-column>
           <el-table-column
+              v-if="_isallowed('delete')"
               width="675"
+              prop="projects"
+              sortable
+              filterable
+              label="Associations"
+          >       
+           <template slot-scope="scope">
+             <span v-if="scope.$index !== rowIndex_1" >        
+              <span  v-for="(item, i) in projectUsers.data" :key="i">  
+              <!-- {{item}}   -->
+                <span v-if="projectNames && (item.facility_project_id && projectNames.map(t => t.facilityProjectId == item.facility_project_id)) && item.role_id == scope.row &&
+                  projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).length > 0" class="projectNames">   
+                  {{ projectNames.filter(t => item.facility_project_id == t.facilityProjectId).map(t => t.facilityName).join()}}                
+                </span>
+                <span v-if="contractNames && (item.project_contract_id && contractNames.map(t => t.project_contract_id == item.project_contract_id)) && item.role_id == scope.row &&                  
+                  contractNames.filter(t => t.project_contract_id == item.project_contract_id).map(t => t.name).length > 0" class="projectNames" >  
+
+                  {{ contractNames.filter(t => t.project_contract_id == item.project_contract_id).map(t => t.name).join()}} 
+                </span>
+              </span>
+           
+             </span>
+             <span v-if="isEditingRoles && scope.$index == rowIndex_1" >
+           <el-select
+              v-model="projectRoleUsers"
+              v-if="!isEditingContractRoles"
+              :popper-append-to-body="false"
+              filterable
+              multiple
+              class="w-100 el-popper"
+              track-by="id"
+              placeholder="No projects assigned to this role"   
+              value-key="id"
+              popper-class="select-popper"                    
+            > 
+            <el-option
+                v-for="item in projectNames"
+                :value="item"
+                :key="item.facilityProjectId"
+                :label="item.facilityName"
+              > 
+              </el-option> 
+             </el-select>  
+      
+             </span>
+             <span v-if="isEditingContractRoles && scope.$index == rowIndex_1" >
+     
+             <el-select
+              v-model="contractRoleUsers" 
+              v-if="!isEditingRoles"        
+              filterable
+              multiple
+              class="w-100 el-popper"
+              track-by="id"
+              value-key="id"
+              :popper-append-to-body="false"
+              popper-class="select-popper"                 
+            > 
+            <el-option
+                v-for="item in contractNames"
+                :value="item"
+                :key="item.project_contract_id"
+                :label="item.name"
+              > 
+              </el-option> 
+             </el-select>  
+             </span>
+          </template>
+
+
+          </el-table-column> 
+            <el-table-column
+              v-else
+              width="800"
               prop="projects"
               sortable
               filterable
@@ -601,6 +676,7 @@
           <el-table-column
           width="125"
           align="center"
+          v-if="_isallowed('delete')" 
         >
           <!-- <template slot="header" slot-scope="scope">
             <el-input
@@ -612,7 +688,7 @@
                   
                 <el-button  
                   type="default"          
-                  v-if="(isEditingRoles || isEditingContractRoles)  && scope.$index == rowIndex_1"
+                  v-if="(isEditingRoles || isEditingContractRoles)  && scope.$index == rowIndex_1 && (_isallowed('delete'))"
                   @click.prevent="removeAssociations(scope.$index, scope.row)" 
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light">               
@@ -620,7 +696,7 @@
                 </el-button>  
                  <el-button  
                   type="default"          
-                  v-if="scope.$index !== rowIndex_1"
+                  v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                   @click.prevent="removeRole(scope.$index, scope.row)" 
                   v-tooltip="`Remove Role`" 
                    class="bg-light btn-sm"
@@ -631,7 +707,7 @@
                   type="default" 
                   v-tooltip="`Remove Association(s)`"
                   @click.prevent="editRoles(scope.$index, scope.row)" 
-                  v-if="scope.$index !== rowIndex_1"
+                  v-if="scope.$index !== rowIndex_1  && (_isallowed('delete'))"
                   class="bg-danger text-light btn-sm">
                 <i class="fal fa-user-lock mr-1 text-light"></i> 
                 <!-- <i class="fal fa-user-gear mr-1 text-light"></i>  -->
