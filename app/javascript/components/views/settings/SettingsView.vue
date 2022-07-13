@@ -38,10 +38,7 @@
                   <span v-if="item == 'Roles'" >
                     <i class="fal fa-user-lock mr-3 bootstrap-purple-text"></i>
                   </span>
-                  <!-- <span v-if="item == 'MH Data'">
-                    <i class="fal fa-cloud mr-2 text-info"></i>              
-                  </span> -->
-                  <!-- <span v-if="item == 'Users'">   <i class="far fa-users mr-3"></i> </span> -->
+              
                 </div>
                 <div>
                   <h4>
@@ -60,13 +57,6 @@
                     <span v-if="item == 'Roles'">{{
                     settingsCards.roles
                   }} </span>
-<!--                     
-                   
-                      <span v-if="item == 'MH Data'">{{
-                      settingsCards.mhData
-                    }}</span> -->
-                    <!-- <span v-if="item == 'Users'">{{ settingsCards.users }}</span> -->
-                    <!-- <span v-if="item == 'Contracts'"> <i class="far fa-file-contract mr-3"></i>   {{item}}</span> -->
                   </h4>
                 </div>
               </div>
@@ -113,10 +103,6 @@ export default {
     ...mapMutations(["setProjectGroupFilter"]),
       _isallowed(salut) {
       return this.checkPrivileges("SettingsView", salut, this.$route,{})
-      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
-      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      // let s = permissionHash[salut]
-      // return pPrivilege.contracts.includes(s);     
     },
      adminRoute(index) {
       // console.log(event, index, "This")

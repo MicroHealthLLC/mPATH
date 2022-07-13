@@ -325,8 +325,10 @@ task :update_facility_projects_with_groups => :environment do
   puts "Started processing facility projects"
   facility_projects = FacilityProject.includes([:facility, :project]).all.group_by{|fp| fp.facility }
   facility_projects.each do |facility, fps|
-    facility_group = facility.facility_group
-    if facility_group
+    
+    next if !facility
+    
+    if facility_group = facility.facility_group
       fps.each do |fp|      
         fp.update(facility_group_id: facility_group.id)
         (fp.project.project_groups << facility_group) rescue nil
