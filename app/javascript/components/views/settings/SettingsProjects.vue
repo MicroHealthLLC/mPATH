@@ -73,6 +73,7 @@
                 <el-option
                   v-for="item in groupList"
                   :key="item.id"
+                  :class="[item.isDefault ? 'em' : '']"  
                   :label="item.name"
                   :value="item"
                 >
@@ -160,7 +161,7 @@
               ></el-input> -->
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="right">
+          <el-table-column label="Actions" align="right" v-if="_isallowed('delete') || _isallowed('write')" >
             <template slot-scope="scope">              
               <el-button
                 type="default"
@@ -182,7 +183,7 @@
                 type="default" 
                 v-tooltip="`Edit Project`"
                 @click.prevent="editMode(scope.$index, scope.row)" 
-                v-if="scope.$index !== rowIndex && !scope.row.isPortfolio"
+                v-if="scope.$index !== rowIndex && !scope.row.isPortfolio && _isallowed('write')"
                 class="bg-light btn-sm">
                 <i class="fal fa-edit text-primary" ></i>
                </el-button>  
@@ -203,6 +204,7 @@
                     v-tooltip="'Delete Program Project'"            
                     @click.prevent="deleteProject(scope.$index, scope.row)"
                     v-if="
+                     _isallowed('delete') &&
                       scope.$index !== rowIndex &&
                         !scope.row.isPortfolio
                     "
@@ -1496,6 +1498,9 @@ a {
 // }
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;
+}
+.em {
+  font-style: italic;
 }
 /deep/.el-table {
   .el-input__inner {
