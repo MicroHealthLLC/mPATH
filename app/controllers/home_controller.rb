@@ -3,7 +3,7 @@ class HomeController < AuthenticatedController
   layout "portfolio_viewer", only: [:portfolio, :contracts]
   
   def contracts
-    if !current_user.can_access_contract_data?
+    if !current_user.can_read_contract_data?
       raise CanCan::AccessDenied
     end
     respond_to do |format|

@@ -1,6 +1,6 @@
 class Api::V1::ContractProjectDataController < AuthenticatedController
   before_action :check_contract_read_permission, only: [:index]
-  before_action :check_contract_write_permission, only: [:create, :update, :add_project]
+  before_action :check_contract_write_permission, only: [:create, :update]
   before_action :check_contract_delete_permission, only: [:destroy]
   
   def check_contract_read_permission
@@ -17,26 +17,16 @@ class Api::V1::ContractProjectDataController < AuthenticatedController
       action = "D"
     end
 
-    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action, RolePrivilege::PROGRAM_SETTING_CONTRACTS) && !current_user.can_access_contract_data?
+    raise(CanCan::AccessDenied) if !current_user.has_program_setting_role?(program_id, action, RolePrivilege::PROGRAM_SETTING_CONTRACTS) && !current_user.can_read_contract_data?
 
   end
 
   def check_contract_write_permission
-    raise CanCan::AccessDenied if !current_user.can_write_contract_data?
+    raise(CanCan::AccessDenied) if !current_user.can_write_contract_data?
   end
+  
   def check_contract_delete_permission
     raise CanCan::AccessDenied if !current_user.can_delete_contract_data?
-  end
-
-  def add_project
-    contract_project_data = ContractProjectDatum.find(params[:id])
-    project = Project.find(params[:project_id])
-    project_contract = ProjectContract.new(project_id: project.id, contract_project_datum_id: contract_project_data.id)
-    if project_contract.save
-      render json: {message: "Contract added successfully"}
-    else
-      render json: {error: project_contract.errors.full_messages}, status: 406
-    end
   end
 
   def index

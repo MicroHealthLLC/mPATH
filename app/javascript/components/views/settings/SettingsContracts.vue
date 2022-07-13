@@ -173,7 +173,7 @@
               ></el-input> -->
             </template>
           </el-table-column>
-           <el-table-column label="Actions" align="right">
+             <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
               <el-button  
                 type="default" 
@@ -187,7 +187,7 @@
                   type="default"
                   v-tooltip="`Manage User(s)`"
                   @click.prevent="addUserRole(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex && _isallowed('write')"
+                  v-if="scope.$index !== rowIndex"
                   class="bg-primary text-light btn-sm">
                     <i class="fas fa-users-medical mr-1"></i>
                 </el-button>
@@ -218,7 +218,7 @@
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
                     @click.prevent="removeContractBtn(scope.$index, scope.row)"
-                    v-if="scope.$index !== rowIndex"        
+                    v-if="scope.$index !== rowIndex && _isallowed('write')"        
                   >                  
                     <i class="fa-light fa-circle-minus text-danger"></i>                   
                   </el-button>
@@ -358,7 +358,7 @@
         </span>
            <div class="container-fluid p-0">
 
-             <div class="pl-3 mt-0 row" v-if="viableContractUsers && viableContractUsers.length > 0" >
+             <div class="pl-3 mt-0 row" v-if="viableContractUsers && viableContractUsers.length > 0 && _isallowed('write')" >
             <div class="col-5 pt-0 pl-0">
              <label class="font-md mb-0 d-flex">Add User(s) To Contract</label>
              <el-select
@@ -380,7 +380,7 @@
               </el-option>
             </el-select>
               </div>
-           <div class="col-5 pt-0">
+               <div class="col-5 pt-0">
               <label class="font-md mb-0 d-flex">Select Role for User(s) </label>
              <el-select
               v-model="contractRoleNames"
@@ -524,13 +524,14 @@
             <el-table-column
              width="145"
              fixed="right"
-             align="center" 
+             align="center"
+             v-if="(_isallowed('delete') || _isallowed('write'))" 
             >
             <template slot-scope="scope"  class="px-0">
                 <el-button
                   type="default"
                   @click="bulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex_1"
+                  v-if="scope.$index !== rowIndex_1 && _isallowed('write')"
                   v-tooltip="`Change Role`" 
                   class="bg-light btn-sm mx-0">               
                 <i class="fa-solid fa-users-gear text-primary"></i>
@@ -547,14 +548,14 @@
                 <el-button
                   type="default"
                   @click="saveRemoveUsers(scope.$index, scope.row)"
-                  v-if="isEditingRoles   && scope.$index == rowIndex_1"
+                  v-if="isEditingRoles && scope.$index == rowIndex_1"
                   v-tooltip="`Save`" 
                   class="bg-primary btn-sm text-light">               
                   <i class="far fa-save"></i>
                 </el-button>
                 <el-button  
                 type="default" 
-                v-if="scope.$index !== rowIndex_1"
+                v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                 v-tooltip="`Remove all users from this role`"  
                 @click.prevent="removeAllUsers(scope.$index, scope.row)"                
                 class="bg-danger btn-sm mx-0">
@@ -562,7 +563,7 @@
                 </el-button>  
                 <el-button  
                 type="default" 
-                v-if="scope.$index !== rowIndex_1"
+                v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                 v-tooltip="`Remove user(s) from this role`"
                 @click.prevent="editUsers(scope.$index, scope.row)"           
                 class="bg-danger text-light btn-sm mx-0">
