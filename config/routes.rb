@@ -14,7 +14,11 @@ Rails.application.routes.draw do
 
       namespace :program_settings do
 
-        resources :projects, path: 'programs'
+        resources :projects, path: 'programs' do
+          collection do
+            post :add_contract
+          end
+        end
 
         resources :contracts
         
