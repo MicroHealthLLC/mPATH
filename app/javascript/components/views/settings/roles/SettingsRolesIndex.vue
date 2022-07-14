@@ -946,18 +946,18 @@
                       </template>
                     </el-table-column>
                   </el-table-column>
-
-                  <el-table-column
+                  <el-table-column                               
                     label="Actions"
                     fixed="right"
                     width="125"
                     class="text-center"
                   >
-                    <template slot-scope="scope">
+                 <template slot-scope="scope">
+                     
                       <el-button
                         type="default"
                         v-tooltip="`Manage Admin Role User(s)`"
-                        v-if="!isEditting && _isallowed('write')"
+                        v-if="!isEditting"
                         @click.prevent="addUserRole(scope.$index, scope.row)"
                         class="bg-primary text-light btn-sm"
                       >
@@ -1017,8 +1017,8 @@
                       <i class="fas fa-ban"></i>
                       </el-button>
                     </template>
-                  </el-table-column>
-                </el-table>
+                    </el-table-column>  
+                 </el-table>
               </el-tab-pane>
               <el-tab-pane class="px-3" style="postion:relative">
                 <template slot="label" class="text-right" v-if="true">
@@ -1073,7 +1073,7 @@
               </h5>
             </span>
             <div class="container-fluid p-0">
-              <div class="mt-0 row"  v-if="viableAdminUsers && viableAdminUsers.length > 0">
+              <div class="mt-0 row"  v-if="viableAdminUsers && viableAdminUsers.length > 0 && _isallowed('write')">
                 <div class="col-9 py-0">
                   <label class="font-md mb-0 d-flex"
                     >Add User(s) to this Role
@@ -1205,7 +1205,7 @@
                         </el-button>
                         <el-button
                           type="default"
-                          v-if="scope.$index !== rowIndex_1"
+                          v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                           v-tooltip="`Remove User from role`"
                           @click.prevent="editUsers(scope.$index, scope.row)"
                           class="bg-danger text-light btn-sm"
@@ -2212,7 +2212,13 @@ export default {
     },
     removeAdminRoleStatus: {
       handler() {
-        if (
+        if(this.removeAdminRoleStatus == 406){
+           this.$message({
+            message: `Programs must have at least one program-admin assigned. Before removing ${this.removedUserName} from this role, please assign another program-admin.`,
+            type: "success",
+            showClose: true,
+          });
+        } else if (
           this.removeAdminRoleStatus == 200 ||
           this.removeAdminRoleStatus == 204
         ) {
@@ -2226,6 +2232,7 @@ export default {
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
         }
+        
       },
     },
   },

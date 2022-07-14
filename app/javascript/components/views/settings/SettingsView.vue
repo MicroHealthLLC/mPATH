@@ -14,6 +14,9 @@
           <ul class="grid-container">
            <!-- Move back into li attributes after finished with Users module   :class="{'d-none': !_isallowedProgramSettings(item, 'read') }" -->
             <li
+              v-show="item == 'Groups' && _isallowedGroups('read') || item == 'Projects' && _isallowedProjects('read') ||
+              item == 'Contracts' && _isallowedContracts('read') || item == 'Users' && _isallowedUserRoles('read')  ||
+              item == 'Roles' && _isallowedUserRoles('read')"
               class="m-2 cardWrapper list-group-item"
               v-for="(item, index) of settingsCards"
               :key="index" 
@@ -38,7 +41,10 @@
                   <span v-if="item == 'Roles'" >
                     <i class="fal fa-user-lock mr-3 bootstrap-purple-text"></i>
                   </span>
-              
+                  <!-- <span v-if="item == 'MH Data'">
+                    <i class="fal fa-cloud mr-2 text-info"></i>              
+                  </span> -->
+                  <!-- <span v-if="item == 'Users'">   <i class="far fa-users mr-3"></i> </span> -->
                 </div>
                 <div>
                   <h4>
@@ -103,7 +109,23 @@ export default {
     ...mapMutations(["setProjectGroupFilter"]),
       _isallowed(salut) {
       return this.checkPrivileges("SettingsView", salut, this.$route,{})
+      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+      // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      // let s = permissionHash[salut]
+      // return pPrivilege.contracts.includes(s);     
     },
+    _isallowedUserRoles(salut) {
+      return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
+   },
+    _isallowedProjects(salut) {
+      return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
+   }, 
+    _isallowedGroups(salut) {
+     return this.checkPrivileges("SettingsGroups", salut, this.$route, {settingType: "Groups"})    
+    },
+    _isallowedContracts(salut) {
+        return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
+    }, 
      adminRoute(index) {
       // console.log(event, index, "This")
       if (index == "groups") {

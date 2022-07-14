@@ -231,6 +231,13 @@
                   </div>
                 </template>
               </el-table-column>
+               <el-table-column>
+              <template slot-scope="props">
+              <span v-if="props.row.isDefault">
+                <small><em>Default Group</em></small>                        
+              </span>
+                </template>
+              </el-table-column>
               <el-table-column label="Counts" width="165">
                 <template slot-scope="props">
                   <div class="row">
@@ -365,7 +372,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column label="Actions"  align="right">
+              <el-table-column label="Actions"  align="right" v-if="_isallowed('delete') || _isallowed('write')">
                 <template slot-scope="scope">
                   <el-button
                     type="default"
@@ -1002,6 +1009,11 @@ div.sticky {
     overflow-x: hidden;
     height: 35vh;
    } 
+}
+.breakWord {
+  word-break: break-word !important;
+  // white-space: normal !important;
+  word-spacing: 2px !important;
 }
 .createNewGroup{
   /deep/.el-dialog__body {
