@@ -1423,6 +1423,7 @@ export default {
             });
 
         } else {      
+          console.log(contractPOCdata)
             this.createContractPOC({...contractPOCdata})
             }
        }     
