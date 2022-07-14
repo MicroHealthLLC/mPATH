@@ -73,7 +73,6 @@
                 <el-option
                   v-for="item in groupList"
                   :key="item.id"
-                  :class="[item.isDefault ? 'em' : '']"  
                   :label="item.name"
                   :value="item"
                 >
@@ -161,7 +160,7 @@
               ></el-input> -->
             </template>
           </el-table-column>
-          <el-table-column label="Actions" align="right" v-if="_isallowed('delete') || _isallowed('write')" >
+          <el-table-column label="Actions" align="right">
             <template slot-scope="scope">              
               <el-button
                 type="default"
@@ -216,7 +215,7 @@
                 type="default"
                 v-tooltip="`Manage User(s)`"
                 @click.prevent="addUserRole(scope.$index, scope.row)"
-                v-if="scope.$index !== rowIndex && _isallowed('write')"
+                v-if="scope.$index !== rowIndex"
                 class="bg-primary text-light btn-sm">
                 <i class="fas fa-users-medical mr-1"></i>
               </el-button>
@@ -392,7 +391,7 @@
         </span>
          <div class="container-fluid p-0">
 
-             <div class="pl-3 mt-0 row" v-if="viableProjectUsers && viableProjectUsers.length > 0" >
+             <div class="pl-3 mt-0 row" v-if="viableProjectUsers && viableProjectUsers.length > 0 && _isallowed('write')" >
             <div class="col-5 pt-0 pl-0">
              <label class="font-md mb-0 d-flex">Add User(s) To Project </label>
              <el-select
@@ -559,6 +558,7 @@
             align="center"      
             width="140"
             class="px-0"
+            v-if="(_isallowed('delete') || _isallowed('write'))"
             >
               <!-- <template slot="header" slot-scope="scope">
                 <el-input
@@ -570,7 +570,7 @@
                 <el-button
                   type="default"
                   @click="bulkChangeRole(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex_1"
+                  v-if="scope.$index !== rowIndex_1 && _isallowed('write')"
                   v-tooltip="`Change Role`" 
                   class="bg-light btn-sm mx-0">               
                 <i class="fa-solid fa-users-gear text-primary"></i>
@@ -594,7 +594,7 @@
                 </el-button>
                 <el-button  
                 type="default" 
-                v-if="scope.$index !== rowIndex_1"
+                v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                 v-tooltip="`Remove all users from this role`"  
                 @click.prevent="removeAllUsers(scope.$index, scope.row)"                
                 class="bg-danger btn-sm mx-0">
@@ -602,7 +602,7 @@
                 </el-button>  
                 <el-button  
                 type="default" 
-                v-if="scope.$index !== rowIndex_1"
+                v-if="scope.$index !== rowIndex_1 && (_isallowed('delete'))"
                 v-tooltip="`Remove user(s) from this role`"
                 @click.prevent="editUsers(scope.$index, scope.row)"           
                 class="bg-danger btn-sm mx-0">
@@ -1498,9 +1498,6 @@ a {
 // }
 /deep/.hover-row .el-input .el-input__inner {
   border-style: none;
-}
-.em {
-  font-style: italic;
 }
 /deep/.el-table {
   .el-input__inner {
