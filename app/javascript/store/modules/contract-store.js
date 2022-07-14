@@ -223,7 +223,10 @@ const contractStore = {
       console.log(cPOCsData)
         formData.append("contract_project_poc[name]", cPOCsData.name);
         // formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
-        formData.append("contract_project_poc[email]", cPOCsData.email);
+      
+        if(cPOCsData.email){
+          formData.append("contract_project_poc[email]", cPOCsData.email);
+        }
         if(cPOCsData.title){
           formData.append("contract_project_poc[title]", cPOCsData.title);
         }
@@ -420,7 +423,9 @@ const contractStore = {
   console.log(cPOCsData)
     formData.append("contract_project_poc[name]", cPOCsData.name);
     formData.append("contract_project_poc[poc_type]", cPOCsData.pocType);
-    formData.append("contract_project_poc[email]", cPOCsData.email);
+    if(cPOCsData.email){
+      formData.append("contract_project_poc[email]", cPOCsData.email);
+    }
     formData.append("contract_project_poc[title]", cPOCsData.title);
     formData.append("contract_project_poc[work_number]", cPOCsData.workNum);
     formData.append("contract_project_poc[mobile_number]", cPOCsData.mobileNum);

@@ -36,9 +36,12 @@
     </el-table-column>
      <el-table-column
       label="Contract End Date"
-      width="100"
+      width="125"
       prop="contract_end_date">
        <template slot-scope="scope">
+      <span v-if="scope.row.ignore_expired == true" v-tooltip="`Exempt from expiration`" >
+        <i class="fa-solid fa-calendar-xmark text-success"></i>
+      </span>
      {{ moment(scope.row.contract_end_date).format("MM-DD-YYYY") }}
       </template>
      </el-table-column>
@@ -324,7 +327,7 @@ export default {
    tableData(){
     if (this.contractProjects && this.contractProjects.length > 0){
       let validProjects = this.contractProjects.filter(t => t && t.id)
-       return validProjects.filter(t => t.contract_end_date > this.today)
+       return validProjects.filter(t => t.contract_end_date > this.today  || t.ignore_expired == true)
      }      
     }, 
   },

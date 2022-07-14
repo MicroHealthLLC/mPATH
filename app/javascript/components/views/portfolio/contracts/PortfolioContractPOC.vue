@@ -24,7 +24,7 @@
       width="420"
       prop="pm_contract_poc_id">
      <template slot-scope="scope" >
-  <span v-if=" _isallowed('write')">
+  <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
    <el-popover
     placement="top-start"
     width="400"
@@ -45,7 +45,7 @@
    {{  pocOptions.filter(t => t && t.mobile_number).find(t => t.id == scope.row.pm_contract_poc_id ).mobile_number}} 
    </p>
    
-    <el-select
+      <el-select
         v-model="scope.row.pm_contract_poc_id"
         filterable       
         track-by="name"        
@@ -100,7 +100,7 @@
       width="420"
       prop="gov_contract_poc_id">
      <template slot-scope="scope" >
-    <span v-if=" _isallowed('write')">
+    <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
     <el-popover
     placement="top-start"
      v-if="pocOptions"
@@ -180,7 +180,7 @@
       width="420"
       prop="co_contract_poc_id">
      <template slot-scope="scope" >
-      <span v-if=" _isallowed('write')">
+    <span v-if="isEditing && _isallowed('write') && rowIndex == scope.$index">
     <el-popover
       placement="top-start"
       width="400"
@@ -259,7 +259,7 @@
 
    <el-table-column
       label="Actions"
-      v-if="_isallowed('write') || _isallowed('delete')"
+      v-if="_isallowed('write')"
       width="100"
       fixed="right"
       align="center">
@@ -267,7 +267,7 @@
         <el-button
         type="default"
         @click="saveContractPOCs(scope.$index, scope.row)"
-        v-if="scope.$index == rowIndex && (_isallowed('write')) "
+        v-if="scope.$index == rowIndex"
         v-tooltip="`Save`" 
         class="bg-primary btn-sm text-light mx-0">               
         <i class="far fa-save"></i>
@@ -284,7 +284,7 @@
           type="default"
            v-tooltip="`Edit`" 
           class="bg-light btn-sm"
-           v-if="scope.$index !== rowIndex"
+           v-if="scope.$index !== rowIndex && (_isallowed('write'))"
           @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
           </el-button> 
         </template>
@@ -308,6 +308,7 @@ export default {
 
   data() {    
       return {
+        isEditing: false, 
         nothing: true,
         rowIndex: null, 
         rowId: null, 
@@ -349,18 +350,13 @@ export default {
   editMode(index, rows) {
     
     this.rowIndex = index,
-     console.log(this.pocOptions);
-      console.log(this.tableData);
+    this.isEditing = true,
     this.rowId = rows.id
   },  
-  saveEdits(){
-   // Row edit action will occur here
-    this.rowIndex = null;
-    this.rowId = null;
-  }, 
   cancelEdits(index, rows) {
     this.rowIndex = null;
     this.rowId = null;
+    this.isEditing = false
   },    
   },
   mounted() {
@@ -399,6 +395,9 @@ export default {
           });
           this.SET_CONTRACT_PROJECT_STATUS(0);
           this.fetchContractProjects(this.$route.params.programId);
+          this.rowIndex = null;
+          this.rowId = null;
+          this.isEditing = false
         }
       },
     },    
