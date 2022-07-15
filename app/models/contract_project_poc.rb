@@ -1,8 +1,9 @@
 class ContractProjectPoc < ApplicationRecord
   belongs_to :user
   before_save :filter_values
-  validates :email,presence: true, format: { with: URI::MailTo::EMAIL_REGEXP } 
-  validate :number_check
+  validates :name,presence: true
+  # validates :email,presence: true, format: { with: URI::MailTo::EMAIL_REGEXP } 
+  # validate :number_check
   def filter_values
     self.attributes.reject!{|k,v| v == 'undefined' }
   end
