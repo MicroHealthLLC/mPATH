@@ -63,36 +63,15 @@ if(!window.google){
 }
 
 Vue.prototype.$mpath_instance = window.mpath_instance
-var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
-// Format: {<program_id> : {
-    // <project_id>:{
-    //   modules: ["R", "W", "D"]
-    // }
-// }}
 
-var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
-
-var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
-
-var topNavigationPermissions = {}
-for (var key in privilege) {
-  if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
-  var value = privilege[key]
-  topNavigationPermissions[key] = {
-    read: value.includes('R'),
-    write: value.includes('W'),
-    delete: value.includes('D')
-  }
-}
-
-Vue.prototype.$currentUser = current_user
-Vue.prototype.$topNavigationPermissions = topNavigationPermissions
-
-Vue.prototype.$preferences = preferences
 AuthorizationService.getRolePrivileges();
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
-  return AuthorizationService.checkPrivileges(page, salut, route, extraData)
-}
+  return AuthorizationService.checkPrivileges(page, salut, route, extraData);
+};
+
+Vue.prototype.$currentUser = AuthorizationService.current_user;
+Vue.prototype.$topNavigationPermissions = AuthorizationService.topNavigationPermissions();
+Vue.prototype.$preferences = AuthorizationService.preferences;
 
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({

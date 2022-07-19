@@ -7,6 +7,7 @@
 = javascript_tag nonce: true do
   |var portfolio_heading = "#{ENV['PORTFOLIO_HEADING']}";
   |var portfolio_title = "#{ENV['PORTFOLIO_TITLE']}";
+  |var current_program_id = "#{@program_id}";
   |var current_user = "#{JSON.generate(current_user.as_json( methods: :full_name))}";
   |var project_privilegs = "#{JSON.generate(current_user.facility_privileges_hash)}";
   |var privilege = "#{JSON.generate(current_user.privilege_hash)}";
