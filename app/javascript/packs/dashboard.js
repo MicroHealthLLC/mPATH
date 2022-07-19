@@ -69,17 +69,7 @@ var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
     //   modules: ["R", "W", "D"]
     // }
 // }}
-var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
-var programPrivileges = JSON.parse(window.program_privilegs.replace(/&quot;/g,'"'))
-var contractPrivileges = JSON.parse(window.contract_privilegs.replace(/&quot;/g,'"'))
-var programSettingPrivileges = JSON.parse(window.program_settings_privileges.replace(/&quot;/g,'"'))
 
-// var projectPrivilegesRoles = JSON.parse(window.project_privilegs_roles.replace(/&quot;/g,'"'))
-// var programPrivilegesRoles = JSON.parse(window.program_privilegs_roles.replace(/&quot;/g,'"'))
-// var contractPrivilegesRoles = JSON.parse(window.contract_privilegs_roles.replace(/&quot;/g,'"'))
-// var programSettingPrivilegesRoles = JSON.parse(window.program_settings_privileges_roles.replace(/&quot;/g,'"'))
-var projectFacilityHash = JSON.parse(window.project_facility_hash.replace(/&quot;/g,'"')) 
- 
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
 
 var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
@@ -97,25 +87,12 @@ for (var key in privilege) {
 
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$topNavigationPermissions = topNavigationPermissions
-Vue.prototype.$projectPrivileges = projectPrivileges
-Vue.prototype.$programPrivileges = programPrivileges
-Vue.prototype.$contractPrivileges = contractPrivileges
-Vue.prototype.$programSettingPrivileges = programSettingPrivileges
-Vue.prototype.$projectFacilityHash = projectFacilityHash
-
-// Vue.prototype.$projectPrivilegesRoles = projectPrivilegesRoles
-// Vue.prototype.$programPrivilegesRoles = programPrivilegesRoles
-// Vue.prototype.$contractPrivilegesRoles = contractPrivilegesRoles
-// Vue.prototype.$programSettingPrivilegesRoles = programSettingPrivilegesRoles
-
-Vue.prototype.program_admin_role = JSON.parse(window.program_admin_role.replace(/&quot;/g,'"'))
 
 Vue.prototype.$preferences = preferences
-
+AuthorizationService.getRolePrivileges();
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
-  AuthorizationService.checkPrivileges(page, salut, route, extraData)
+  return AuthorizationService.checkPrivileges(page, salut, route, extraData)
 }
-AuthorizationService.getRolePrivileges()
 
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({

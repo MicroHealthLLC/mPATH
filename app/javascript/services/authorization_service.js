@@ -7,6 +7,7 @@ const AuthorizationService = {
   contractPrivilegesRoles: {},
   programSettingPrivilegesRoles: {},
   projectFacilityHash: JSON.parse(window.project_facility_hash.replace(/&quot;/g,'"')),
+  program_admin_role: JSON.parse(window.program_admin_role.replace(/&quot;/g,'"')),
   
   getRolePrivileges: () => {
     axios({
@@ -35,7 +36,7 @@ const AuthorizationService = {
     let program_id = route.params.programId
     let contract_id = route.params.contractId
     let project_id = route.params.projectId
-  
+    
     if(["portfolio_issue_form", "KanbanIssues", "issue_sheets_index", "issue_index", "issue_calendar", "issue_form"].includes(page) ){
   
   
@@ -51,7 +52,7 @@ const AuthorizationService = {
         return facility_project_privileges && facility_project_privileges.project_issues && facility_project_privileges.project_issues.includes(s);
       }
     }else if(["ProjectSidebar", "ProjectSettingContractList", "ProjectSettingProjectList"].includes(page)){
-  
+
       let pPrivileges = AuthorizationService.programSettingPrivilegesRoles
       
       if(extraData["method"] == "isallowedProgramSettings"){
@@ -66,7 +67,7 @@ const AuthorizationService = {
       } else if(extraData["method"] == "isallowedProject"){
         
         let facility_project_privileges = AuthorizationService.projectPrivilegesRoles[extraData["facility_project_id"]]
-  
+
         return facility_project_privileges && (facility_project_privileges.project_analytics || facility_project_privileges.project_issues || facility_project_privileges.project_lessons || facility_project_privileges.project_notes || facility_project_privileges.project_risks || facility_project_privileges.project_tasks);
       } else{
         return false
