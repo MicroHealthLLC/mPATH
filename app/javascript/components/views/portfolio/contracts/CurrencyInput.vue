@@ -1,10 +1,11 @@
 <template>
   <input ref="inputRef" type="text" />
+
 </template>
 
 <script>
 import { useCurrencyInput } from 'vue-currency-input'
-
+//Test comment
 export default {
   name: 'CurrencyInput',
   props: {
