@@ -27,8 +27,6 @@ import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
 import VueDataTables        from 'vue-data-tables'
-import axios from "axios";
-import { API_BASE_PATH } from './../mixins/utils';
 
 Vue.use(vco)
 Vue.mixin(utils)
