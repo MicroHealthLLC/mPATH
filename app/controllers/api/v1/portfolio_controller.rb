@@ -5,55 +5,45 @@ class Api::V1::PortfolioController < AuthenticatedController
 
   def tab_counts
     json_response = {tasks_count: 0, issues_count: 0, risks_count: 0, lessons_count: 0}
+    all_facility_project_ids = current_user.authorized_facility_project_ids
+
+    facility_project_ids_with_project_tasks = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", all_facility_project_ids, RolePrivilege::PROJECT_TASKS).select("distinct(facility_project_id)").map(&:facility_project_id)
+
+    facility_project_ids_with_project_issues = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", all_facility_project_ids, RolePrivilege::PROJECT_ISSUES).select("distinct(facility_project_id)").map(&:facility_project_id)
     
-    facility_project_ids = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id is not null").select("distinct(facility_project_id)").map(&:facility_project_id)
+    facility_project_ids_with_project_risks = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", all_facility_project_ids, RolePrivilege::PROJECT_RISKS).select("distinct(facility_project_id)").map(&:facility_project_id)
+    
+    facility_project_ids_with_project_lessons = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", all_facility_project_ids, RolePrivilege::PROJECT_LESSONS).select("distinct(facility_project_id)").map(&:facility_project_id)
 
-    json_response[:tasks_count] = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
-    json_response[:issues_count] = Issue.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
-    json_response[:risks_count] = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
-    json_response[:lessons_count] =  Lesson.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).count
-
+    json_response[:tasks_count] = Task.unscoped.where("tasks.facility_project_id in (?)", facility_project_ids_with_project_tasks).count
+    json_response[:issues_count] = Issue.unscoped.where("issues.facility_project_id in (?)", facility_project_ids_with_project_issues).count
+    json_response[:risks_count] = Risk.unscoped.where("risks.facility_project_id in (?)", facility_project_ids_with_project_risks).count
+    json_response[:lessons_count] =  Lesson.unscoped.where("lessons.facility_project_id in (?)", facility_project_ids_with_project_lessons).count
 
     render json: json_response
   end
 
   def lessons
-    pph = {} #current_user.project_privileges_hash
-    fph = {} #current_user.facility_privileges_hash
+
     facility_project_ids = current_user.authorized_facility_project_ids
+    facility_project_ids_with_project_lessons = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", facility_project_ids, RolePrivilege::PROJECT_LESSONS).select("distinct(facility_project_id)").map(&:facility_project_id)
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+      all_resources = Lesson.unscoped.where("lessons.facility_project_id in (?)", facility_project_ids_with_project_lessons).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
-      all_resources.each do |resource|
-        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-        project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-        program_id = facility_project_hash[resource.facility_project_id].first.project_id
-
-        if current_user.has_permission?(resource: 'lessons', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
-          json_response << resource.portfolio_json
-        end
-
+      all_resources.includes(Lesson.lesson_preload_array).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+      render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
     else
-      all_resources = Lesson.unscoped.joins(:facility_project).includes(Lesson.lesson_preload_array).where("facility_project_id" => facility_project_ids)
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
-      json_response = []
-      all_resources.in_batches(of: 1000) do |resources|
-        resources.find_each do |resource|
-          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-          project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-          program_id = facility_project_hash[resource.facility_project_id].first.project_id
+      all_resources = Lesson.unscoped.where("lessons.facility_project_id in (?)", facility_project_ids_with_project_lessons)
 
-          if current_user.has_permission?(resource: 'lessons', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
-            json_response << resource.portfolio_json
-          end
-        end        
+      json_response = []
+      all_resources.includes(Lesson.lesson_preload_array).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {lessons: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+      render json: {lessons: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil, total_pages: nil }
     end
 
   end
@@ -70,10 +60,8 @@ class Api::V1::PortfolioController < AuthenticatedController
     else
       all_resources = current_user.authorized_programs.includes(:tasks, :issues, :risks)
       json_response = []
-      all_resources.in_batches(of: 1000) do |resources|
-        resources.find_each do |resource|
-          json_response << resource.portfolio_json
-        end
+      all_resources.find_each do |resource|
+        json_response << resource.portfolio_json
       end
       render json: json_response
     end
@@ -81,142 +69,87 @@ class Api::V1::PortfolioController < AuthenticatedController
   end
 
   def tasks
-    pph = {} #current_user.project_privileges_hash
-    fph = {} #current_user.facility_privileges_hash
 
     facility_project_ids = current_user.authorized_facility_project_ids
+    facility_project_ids_with_project_tasks = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", facility_project_ids, RolePrivilege::PROJECT_TASKS).select("distinct(facility_project_id)").map(&:facility_project_id)
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+
+      all_resources = Task.unscoped.where("tasks.facility_project_id in (?)", facility_project_ids_with_project_tasks).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
-      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status] } ]).find_each do |resource|
-
-        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-
-        project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-        program_id = facility_project_hash[resource.facility_project_id].first.project_id
-  
-        if current_user.has_permission?(resource: 'tasks', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
+      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :facility, {facility_project: [:facility, :status]} ]).find_each do |resource|
           json_response << resource.portfolio_json
         end
-      end
 
-      render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+      render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
 
     else
-      all_resources = Task.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids)
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+
+      all_resources = Task.unscoped.where("tasks.facility_project_id in (?)", facility_project_ids_with_project_tasks)
 
       json_response = []
-
-      all_resources.in_batches(of: 1000) do |resources|
-        resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, :users, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).find_each do |resource|
-
-          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-
-          project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-          program_id = facility_project_hash[resource.facility_project_id].first.project_id
-    
-          if current_user.has_permission?(resource: 'tasks', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
-            json_response << resource.portfolio_json
-          end
-        end
+      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :facility, {facility_project: [:facility, :status]} ]).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {tasks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+
+      render json: {tasks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil, total_pages: nil }
     end
 
   end
 
   def issues
-    pph = {} #current_user.project_privileges_hash
-    fph = {} #current_user.facility_privileges_hash
+    
     facility_project_ids = current_user.authorized_facility_project_ids
+    facility_project_ids_with_project_issues = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", facility_project_ids, RolePrivilege::PROJECT_ISSUES).select("distinct(facility_project_id)").map(&:facility_project_id)
 
     if params[:pagination] && params[:pagination] == "true"
 
-      all_resources = Issue.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+      all_resources = Issue.unscoped.where("issues.facility_project_id in (?)", facility_project_ids_with_project_issues).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
       all_resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).find_each do |resource|
-        
-        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-
-        project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-        program_id = facility_project_hash[resource.facility_project_id].first.project_id
-  
-        if current_user.has_permission?(resource: 'issues', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
           json_response << resource.portfolio_json
-        end
       end
-      render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+        
+      render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
 
     else
-      all_resources = Issue.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids)
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+      all_resources = Issue.unscoped.where("issues.facility_project_id in (?)", facility_project_ids_with_project_issues)
 
       json_response = []
-      all_resources.in_batches(of: 1000) do |resources|
-        resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).find_each do |resource|
-
-          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-
-          project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-          program_id = facility_project_hash[resource.facility_project_id].first.project_id
-    
-          if current_user.has_permission?(resource: 'issues', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
-            json_response << resource.portfolio_json
-          end
-        end
+      all_resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).find_each do |resource|
+          json_response << resource.portfolio_json
       end
-      render json: {issues: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+      render json: {issues: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil , total_pages: nil }
     end
 
   end
 
   def risks
-    pph = {} #current_user.project_privileges_hash
-    fph = {} #current_user.facility_privileges_hash
+
     facility_project_ids = current_user.authorized_facility_project_ids
+    facility_project_ids_with_project_risks = current_user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.facility_project_id in (?) and role_privileges.role_type = ?", facility_project_ids, RolePrivilege::PROJECT_RISKS).select("distinct(facility_project_id)").map(&:facility_project_id)
 
     if params[:pagination] && params[:pagination] == "true"
-      all_resources = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids).paginate(per_page: params[:per_page], page: params[:page])
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+      all_resources = Risk.unscoped.where("risks.facility_project_id in (?)", facility_project_ids_with_project_risks).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
       all_resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).find_each do |resource|
-
-        next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-
-        project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-        program_id = facility_project_hash[resource.facility_project_id].first.project_id
-  
-        if current_user.has_permission?(resource: 'risks', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
-          json_response << resource.portfolio_json
-        end
+        json_response << resource.portfolio_json
       end
-      render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+
+      render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
     else
 
-      all_resources = Risk.unscoped.joins(:facility_project).where("facility_project_id" => facility_project_ids)
-      facility_project_hash = FacilityProject.where(id: all_resources.pluck(:facility_project_id).uniq).group_by(&:id)
+      all_resources = Risk.unscoped.where("risks.facility_project_id in (?)", facility_project_ids_with_project_risks)
 
       json_response = []
-      all_resources.in_batches(of: 1000) do |resources|
-        resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).find_each do |resource|
-          next if !facility_project_hash[resource.facility_project_id] || !facility_project_hash[resource.facility_project_id].any?
-
-          project_id = facility_project_hash[resource.facility_project_id].first.facility_id
-          program_id = facility_project_hash[resource.facility_project_id].first.project_id
-    
-          if current_user.has_permission?(resource: 'risks', program: program_id, project: project_id, project_privileges_hash: pph, facility_privileges_hash: fph)
-            json_response << resource.portfolio_json
-          end
-        end
+      all_resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {risks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+
+      render json: {risks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil, total_pages: nil }
     end
 
   end
