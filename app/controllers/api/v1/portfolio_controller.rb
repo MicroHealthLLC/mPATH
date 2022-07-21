@@ -32,22 +32,18 @@ class Api::V1::PortfolioController < AuthenticatedController
       all_resources = Lesson.unscoped.where("lessons.facility_project_id in (?)", facility_project_ids_with_project_lessons).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
-      all_resources.includes(Lesson.lesson_preload_array).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
-          json_response << resource.portfolio_json
-        end
+      all_resources.includes(Lesson.lesson_preload_array).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+      render json: {lessons: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
     else
       all_resources = Lesson.unscoped.where("lessons.facility_project_id in (?)", facility_project_ids_with_project_lessons)
 
       json_response = []
-      all_resources.includes(Lesson.lesson_preload_array).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
-          json_response << resource.portfolio_json
-        end
+      all_resources.includes(Lesson.lesson_preload_array).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {lessons: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+      render json: {lessons: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil, total_pages: nil }
     end
 
   end
@@ -64,10 +60,8 @@ class Api::V1::PortfolioController < AuthenticatedController
     else
       all_resources = current_user.authorized_programs.includes(:tasks, :issues, :risks)
       json_response = []
-      all_resources.in_batches(of: 1000) do |resources|
-        resources.find_each do |resource|
-          json_response << resource.portfolio_json
-        end
+      all_resources.find_each do |resource|
+        json_response << resource.portfolio_json
       end
       render json: json_response
     end
@@ -84,24 +78,22 @@ class Api::V1::PortfolioController < AuthenticatedController
       all_resources = Task.unscoped.where("tasks.facility_project_id in (?)", facility_project_ids_with_project_tasks).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
-      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :facility, {facility_project: [:facility, :status]} ]).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
+      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :facility, {facility_project: [:facility, :status]} ]).find_each do |resource|
           json_response << resource.portfolio_json
         end
-      end
 
-      render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+      render json: {tasks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
 
     else
 
       all_resources = Task.unscoped.where("tasks.facility_project_id in (?)", facility_project_ids_with_project_tasks)
 
       json_response = []
-      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :facility, :statuses, {facility_project: :facility} ]).find_each do |resource|
+      all_resources.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, :facility_group, :contract_facility_group, :contract_project, :project, :contract_project_data, :facility, {facility_project: [:facility, :status]} ]).find_each do |resource|
         json_response << resource.portfolio_json
       end
 
-      render json: {tasks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+      render json: {tasks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil, total_pages: nil }
     end
 
   end
@@ -115,26 +107,21 @@ class Api::V1::PortfolioController < AuthenticatedController
 
       all_resources = Issue.unscoped.where("issues.facility_project_id in (?)", facility_project_ids_with_project_issues).paginate(per_page: params[:per_page], page: params[:page])
 
-
       json_response = []
-      all_resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
+      all_resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).find_each do |resource|
           json_response << resource.portfolio_json
-        end
       end
         
-      render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+      render json: {issues: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
 
     else
       all_resources = Issue.unscoped.where("issues.facility_project_id in (?)", facility_project_ids_with_project_issues)
 
       json_response = []
-      all_resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
+      all_resources.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]}, :issue_severity ]).find_each do |resource|
           json_response << resource.portfolio_json
-        end
       end
-      render json: {issues: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+      render json: {issues: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil , total_pages: nil }
     end
 
   end
@@ -148,24 +135,21 @@ class Api::V1::PortfolioController < AuthenticatedController
       all_resources = Risk.unscoped.where("risks.facility_project_id in (?)", facility_project_ids_with_project_risks).paginate(per_page: params[:per_page], page: params[:page])
 
       json_response = []
-      all_resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
-          json_response << resource.portfolio_json
-        end
+      all_resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).find_each do |resource|
+        json_response << resource.portfolio_json
       end
-      render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page }
+
+      render json: {risks: json_response, total_count: all_resources.total_entries, next_page: all_resources.next_page, current_page: all_resources.current_page, previous_page: all_resources.previous_page, total_pages: all_resources.total_pages }
     else
 
       all_resources = Risk.unscoped.where("risks.facility_project_id in (?)", facility_project_ids_with_project_risks)
 
       json_response = []
-      all_resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).in_batches(of: 500) do |resources|
-        resources.find_each do |resource|
-          json_response << resource.portfolio_json
-        end
+      all_resources.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {users: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, :project, :facility, :facility_group, {facility_project: [:facility, :status]} ]).find_each do |resource|
+        json_response << resource.portfolio_json
       end
 
-      render json: {risks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil }
+      render json: {risks: json_response, total_count: json_response.size, next_page: nil, current_page: nil, previous_page: nil, total_pages: nil }
     end
 
   end
