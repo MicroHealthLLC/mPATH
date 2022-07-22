@@ -30,4 +30,3 @@ test:
   pool: 25
   # socket: 3306
   # port: 3306
-
