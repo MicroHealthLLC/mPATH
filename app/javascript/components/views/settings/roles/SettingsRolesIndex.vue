@@ -1014,7 +1014,7 @@
                         class="bg-light btn-sm"
                         v-tooltip="`Cancel Create`"
                       >
-                      <i class="fas fa-ban"></i>
+                      <i class="far fa-trash-alt text-danger"></i>
                       </el-button>
                     </template>
                     </el-table-column>  
