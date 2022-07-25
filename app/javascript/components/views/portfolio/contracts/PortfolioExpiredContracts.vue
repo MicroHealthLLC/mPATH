@@ -507,7 +507,7 @@
     <el-table-column
       label="Notes"
       width="350"
-      prop="notes">
+       >
       <template slot-scope="scope">
         <el-input
           size="small"
