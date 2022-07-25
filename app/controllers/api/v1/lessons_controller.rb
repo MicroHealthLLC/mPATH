@@ -184,7 +184,7 @@ else
     if lesson.destroy
       render json: {lesson: lesson.to_json}, status: 200
     else
-      render json: {lesson: lesson.to_json}, status: 402
+      render json: {errors: lesson.errors.full_messages.join(" "), lesson: lesson.to_json}, status: 402
     end
   end
 

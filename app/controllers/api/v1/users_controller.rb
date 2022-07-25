@@ -29,7 +29,7 @@ class Api::V1::UsersController < AuthenticatedController
     if @user.update(user_params)
       render json: {msg: "User updated successfully!"}, status: 200
     else
-      render json: {msg: @user.errors.full_messages.join(",")}, status: 406
+      render json: {errors: @user.errors.full_messages.join(",")}, status: 406
     end
   end
 
@@ -42,7 +42,7 @@ class Api::V1::UsersController < AuthenticatedController
     if @program.save
       render json: {msg: "Users are added to program successfully!"}, status: 200
     else
-      render json: {msg: @program.errors.full_messages.join(",")}, status: 406
+      render json: {errors: @program.errors.full_messages.join(",")}, status: 406
     end
   end
 

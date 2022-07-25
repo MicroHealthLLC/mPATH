@@ -13,7 +13,7 @@ class Api::V1::QueryFiltersController < AuthenticatedController
 
 
     if fav_params.nil? # || p_params.nil? 
-      render json: {error: "No filter found"}, status: 403
+      render json: {errors: "No filter found"}, status: 403
       return
     end
 
@@ -28,7 +28,7 @@ class Api::V1::QueryFiltersController < AuthenticatedController
           raise CanCan::AccessDenied, "You are not authorized to modify filter"
         else
           if !favorite_filter.update(fav_params)
-            render_error({error: favorite_filter.errors.full_messages.join(", ")})
+            render_error({errors: favorite_filter.errors.full_messages.join(", ")})
             return
           end
         end
@@ -36,7 +36,7 @@ class Api::V1::QueryFiltersController < AuthenticatedController
         favorite_filter = FavoriteFilter.new(project_id: project.id, name: fav_params[:name], user_id: current_user.id, shared: fav_params[:shared])
 
         if !favorite_filter.save
-          render_error({error: favorite_filter.errors.full_messages.join(", ")})
+          render_error({errors: favorite_filter.errors.full_messages.join(", ")})
           return
         end
       end
@@ -64,7 +64,7 @@ class Api::V1::QueryFiltersController < AuthenticatedController
       render json: {favorite_filter: favorite_filter.to_json }
 
     rescue Exception => e
-      render json: {error: e.message }, status: 500
+      render json: {errors: e.message }, status: 500
     end
   end
 
@@ -82,10 +82,10 @@ class Api::V1::QueryFiltersController < AuthenticatedController
           render json: {message: "Filters destroyed successfully", id: filter.id}
         end
       else        
-        render json: {error: "No Filter found"}, status: 404
+        render json: {errors: "No Filter found"}, status: 404
       end
     else
-      render json: {error: "Can not found filter without ID"}, status: 404
+      render json: {errors: "Can not found filter without ID"}, status: 404
     end
 
   end
