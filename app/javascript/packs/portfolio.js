@@ -113,7 +113,7 @@ Vue.prototype.checkPortfolioContractPrivileges = (page, salut, route, extraData)
 
 Vue.prototype.checkPrivileges = (page, salut, route, extraData) => {
 
-  console.log(Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData))
+  // console.log(Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData))
  return Vue.prototype.checkPrivilegesByRoles(page, salut, route, extraData)  
 }
 

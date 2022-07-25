@@ -4977,6 +4977,7 @@ export default {
   },
   mounted() {
     this.fetchPortfolioPrograms();
+    this.fetchPortfolioCategories()
     this.$nextTick(function() {
      $(this.currTab).trigger("click");
       this.fetchPortfolioCounts();
@@ -6814,6 +6815,7 @@ export default {
       "fetchPortfolioRisks",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
+      "fetchPortfolioCategories"
     ]),
     log(e) {
       console.log(e);
