@@ -644,7 +644,7 @@
      <el-table-column
       label="Notes"
       width="350"
-      prop="notes">
+      >
       <template slot-scope="scope">
         <el-input
           tabindex="17" 
@@ -913,7 +913,7 @@
          <el-table-column
           label="Notes"
           width="350"
-          prop="notes">
+          >
           <template slot-scope="scope">
           <el-input
           tabindex="6" 
@@ -1152,7 +1152,7 @@ export default {
           }))
         }          
       }    
-     
+    //  console.log(newSums.filter(t => !t[17]))
      return newSums
     },
   validateEmail(m){
