@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="row"
-  >
+  <div class="row">
     <div class="col-md-2">
       <SettingsSidebar />
     </div>
@@ -12,17 +10,20 @@
         </h4>
         <div class="px-5">
           <ul class="grid-container">
-           <!-- Move back into li attributes after finished with Users module   :class="{'d-none': !_isallowedProgramSettings(item, 'read') }" -->
+            <!-- Move back into li attributes after finished with Users module   :class="{'d-none': !_isallowedProgramSettings(item, 'read') }" -->
             <li
-              v-show="item == 'Groups' && _isallowedGroups('read') || item == 'Projects' && _isallowedProjects('read') ||
-              item == 'Contracts' && _isallowedContracts('read') || item == 'Users' && _isallowedUserRoles('read')  ||
-              item == 'Roles' && _isallowedUserRoles('read')"
+              v-show="
+                (item == 'Groups' && _isallowedGroups('read')) ||
+                  (item == 'Projects' && _isallowedProjects('read')) ||
+                  ((item == 'Contracts' || item == 'Vehicles') && _isallowedContracts('read')) ||
+                  (item == 'Users' && _isallowedUserRoles('read')) ||
+                  (item == 'Roles' && _isallowedUserRoles('read'))
+              "
               class="m-2 cardWrapper list-group-item"
               v-for="(item, index) of settingsCards"
-              :key="index" 
-              style="width:350px"   
+              :key="index"
+              style="width:350px"
               @click.prevent="adminRoute(index)"
-             
             >
               <div>
                 <div class="p-2" style="font-size:3.5rem">
@@ -32,13 +33,16 @@
                   <span v-if="item == 'Projects'">
                     <i class="fal fa-clipboard-list mr-3 mh-green-text"></i
                   ></span>
-                  <span v-if="item == 'Contracts'" >
+                  <span v-if="item == 'Contracts'">
                     <i class="far fa-file-contract mr-3 mh-orange-text"></i>
                   </span>
-                   <span v-if="item == 'Users'" >
-                     <i class="fal fa-users mr-3 text-secondary"></i>
+                  <span v-if="item == 'Vehicles'">
+                    <i class="fal fa-car mr-3 text-info"></i>
                   </span>
-                  <span v-if="item == 'Roles'" >
+                  <span v-if="item == 'Users'">
+                    <i class="fal fa-users mr-3 text-secondary"></i>
+                  </span>
+                  <span v-if="item == 'Roles'">
                     <i class="fal fa-user-lock mr-3 bootstrap-purple-text"></i>
                   </span>
                   <!-- <span v-if="item == 'MH Data'">
@@ -54,15 +58,18 @@
                     <span v-if="item == 'Projects'">
                       {{ settingsCards.projects }}</span
                     >
-                    <span v-if="item == 'Contracts'">{{
-                      settingsCards.contracts
-                    }} </span>
-                    <span v-if="item == 'Users'">{{
-                      settingsCards.users
-                    }} </span>
-                    <span v-if="item == 'Roles'">{{
-                    settingsCards.roles
-                  }} </span>
+                    <span v-if="item == 'Contracts'"
+                      >{{ settingsCards.contracts }}
+                    </span>
+                    <span v-if="item == 'Vehicles'"
+                      >{{ settingsCards.vehicles }}
+                    </span>
+                    <span v-if="item == 'Users'"
+                      >{{ settingsCards.users }}
+                    </span>
+                    <span v-if="item == 'Roles'"
+                      >{{ settingsCards.roles }}
+                    </span>
                   </h4>
                 </div>
               </div>
@@ -88,8 +95,9 @@ export default {
         groups: "Groups",
         projects: "Projects",
         contracts: "Contracts",
+        vehicles: "Vehicles",
         users: "Users",
-        roles:"Roles"
+        roles: "Roles",
         // mhData: "MH Data",
         // users: "Users"
       },
@@ -107,26 +115,34 @@ export default {
   },
   methods: {
     ...mapMutations(["setProjectGroupFilter"]),
-      _isallowed(salut) {
-      return this.checkPrivileges("SettingsView", salut, this.$route,{})
-      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]        
+    _isallowed(salut) {
+      return this.checkPrivileges("SettingsView", salut, this.$route, {});
+      // let pPrivilege = this.$programPrivileges[this.$route.params.programId]
       // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       // let s = permissionHash[salut]
-      // return pPrivilege.contracts.includes(s);     
+      // return pPrivilege.contracts.includes(s);
     },
     _isallowedUserRoles(salut) {
-      return this.checkPrivileges("SettingsUsers", salut, this.$route,  {settingType: "Users"})
-   },
+      return this.checkPrivileges("SettingsUsers", salut, this.$route, {
+        settingType: "Users",
+      });
+    },
     _isallowedProjects(salut) {
-      return this.checkPrivileges("SettingsProjects", salut, this.$route, {settingType: "Projects"})
-   }, 
+      return this.checkPrivileges("SettingsProjects", salut, this.$route, {
+        settingType: "Projects",
+      });
+    },
     _isallowedGroups(salut) {
-     return this.checkPrivileges("SettingsGroups", salut, this.$route, {settingType: "Groups"})    
+      return this.checkPrivileges("SettingsGroups", salut, this.$route, {
+        settingType: "Groups",
+      });
     },
     _isallowedContracts(salut) {
-        return this.checkPrivileges("SettingsContracts", salut, this.$route, {settingType: 'Contracts'})
-    }, 
-     adminRoute(index) {
+      return this.checkPrivileges("SettingsContracts", salut, this.$route, {
+        settingType: "Contracts",
+      });
+    },
+    adminRoute(index) {
       // console.log(event, index, "This")
       if (index == "groups") {
         this.$router.push(
@@ -143,24 +159,31 @@ export default {
           `/programs/${this.$route.params.programId}/settings/contracts`
         );
       }
+      if (index == "vehicles") {
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/settings/vehicles`
+        );
+      }
       if (index == "mhData") {
         this.$router.push(
           `/programs/${this.$route.params.programId}/settings/test_cloud_data`
         );
       }
-     if (index == "users") {
+      if (index == "users") {
         this.$router.push(
           `/programs/${this.$route.params.programId}/settings/users`
         );
       }
-       if (index == "roles") {
+      if (index == "roles") {
         this.$router.push(
           `/programs/${this.$route.params.programId}/settings/roles`
         );
       }
     },
     _isallowedProgramSettings(salut, settingType) {
-      return this.checkPrivileges("SettingsView", salut, this.$route, {settingType: settingType} )
+      return this.checkPrivileges("SettingsView", salut, this.$route, {
+        settingType: settingType,
+      });
       // let pPrivilege = this.$programSettingPrivileges[this.$route.params.programId]
       // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       // let settingTypeHash = {"Groups": "admin_groups", "Contracts": "admin_contracts", "Projects": "admin_facilities"}
@@ -168,7 +191,7 @@ export default {
       // let type = settingTypeHash[settingType]
       // return pPrivilege[type].includes(s);
     },
-   },
+  },
   computed: {
     ...mapGetters([
       "contentLoaded",
