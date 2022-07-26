@@ -21,7 +21,7 @@ export default {
   computed: {
     ...mapGetters(['portfolioRisk', 'portfolioRisks'])
   },
-  beforeMount(){
+  mounted(){
     this.fetchPortfolioRisk(this.$route.params)
     this.fetchPortfolioAssignees()
     this.fetchPortfolioCategories()
