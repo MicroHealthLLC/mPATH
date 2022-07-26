@@ -1,5 +1,6 @@
 class Api::V1::ProgramSettings::ContractsController < AuthenticatedController 
   before_action :check_permission
+  before_action :set_project
 
   def check_permission
     program_id = params[:project_id]
@@ -20,7 +21,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
 
   def index
 
-    project_contracts = ProjectContract.includes( [{ contract_project_datum: ContractProjectDatum.preload_array}, :facility_group ]).where(project_id: params[:project_id])
+    project_contracts = @project.project_contracts.includes( [{ contract_project_datum: ContractProjectDatum.preload_array}, :facility_group ])
     c = []
     project_contracts.in_batches do |_project_contracts|
       c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract: pc}) }
@@ -29,7 +30,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
 
   def show
-    project_contract = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    project_contract = @project.project_contracts.find(params[:id])
     if project_contract
       render json: {contract: project_contract.contract_project_datum.to_json({project_contract: project_contract}), message: "Successfully updated contract "}
     else
@@ -38,7 +39,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
   
   def update
-    project_contract = ProjectContract.where(id: params[:id],project_id: params[:project_id]).first
+    project_contract = @project.project_contracts.find(params[:id])
     if project_contract && project_contract.update(project_contract_params)
       render json: {message: "Successfully updated contract "}
     else
@@ -47,7 +48,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
 
   def destroy
-    project_contract = ProjectContract.where(id: params[:id], project_id: params[:project_id]).first
+    project_contract = @project.project_contracts.find(params[:id])
 
     if project_contract && project_contract.destroy
       render json: {message: "Successfully removed association!"}
@@ -57,6 +58,11 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   end
 
   private
+
+  def set_project
+    @project = Project.find(params[:project_id])
+  end
+
   def project_contract_params
     params.require(:project_contract).permit(:facility_group_id)
   end

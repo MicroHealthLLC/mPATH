@@ -49,6 +49,9 @@ class Project < SortableRecord
   has_many :project_contracts, dependent: :destroy
   has_many :contract_project_data, through: :project_contracts
 
+  has_many :project_contract_vehicles, dependent: :destroy
+  has_many :contract_vehicles, through: :project_contract_vehicles
+
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false

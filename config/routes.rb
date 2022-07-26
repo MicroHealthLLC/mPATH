@@ -17,8 +17,11 @@ Rails.application.routes.draw do
         resources :projects, path: 'programs' do
           collection do
             post :add_contract
+            post :add_contract_vehicle
           end
         end
+  
+        resources :contract_vehicles
 
         resources :contracts
         
