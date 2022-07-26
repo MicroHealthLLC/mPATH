@@ -6815,7 +6815,15 @@ export default {
       "fetchPortfolioRisks",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
-      "fetchPortfolioCategories"
+      "fetchPortfolioCategories",
+      'fetchPortfolioAssignees', 
+      'fetchPortfolioIssueStages', 
+      'fetchPortfolioLessonStages',
+      'fetchPortfolioRiskStages',
+      'fetchPortfolioIssueTypes', 
+      'fetchPortfolioIssueSeverities',
+      
+
     ]),
     log(e) {
       console.log(e);
@@ -7258,6 +7266,7 @@ export default {
           this.tasksObj.filtered.tasks.length < 1
         ) {
           this.fetchPortfolioTasks({page});
+          this.fetchPortfolioAssignees()
         }
       } else if (tab_id == "tab-issues" || tab.name == "issues") {
         this.currentTab = "issues";
@@ -7266,6 +7275,9 @@ export default {
           this.issuesObj.filtered.issues.length < 1
         ) {
           this.fetchPortfolioIssues({page});
+          this.fetchPortfolioIssueStages()
+          this.fetchPortfolioIssueTypes()
+          this.fetchPortfolioIssueSeverities()
         }
       } else if (tab_id == "tab-risks" || tab.name == "risks") {
         this.currentTab = "risks";
@@ -7273,8 +7285,10 @@ export default {
           this.risksObj.filtered.risks &&
           this.risksObj.filtered.risks.length < 1
         ) {
-          this.fetchPortfolioRisks({page});
-        }
+          this.fetchPortfolioRisks({page});     
+          this.fetchPortfolioRiskStages()
+
+         }
       } else if (tab_id == "tab-lessons" || tab.name == "lessons") {
         this.currentTab = "lessons";
         if (
@@ -7282,6 +7296,7 @@ export default {
           this.lessonsObj.filtered.lessons.length < 1
         ) {
           this.fetchPortfolioLessons({page});
+          this.fetchPortfolioLessonStages();
         }
       }
     },
