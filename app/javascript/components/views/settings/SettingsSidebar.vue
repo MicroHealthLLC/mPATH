@@ -30,7 +30,7 @@
     </router-link>
     <router-link :to="adminVehiclesView" v-if="_isallowedContracts('read')"> 
        <li class="p-3 entity">
-          <i class="far fa-car mr-3 text-info"></i> Vehicles
+          <i class="far fa-car mr-3 text-info"></i>Vehicles
         </li>
     </router-link>
        <router-link :to="adminRolesView" v-if="_isallowedUserRoles('read')"> 

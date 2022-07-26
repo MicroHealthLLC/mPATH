@@ -26,24 +26,19 @@
         </el-breadcrumb>
         <div class="my-1 pb-2 buttonWrapper container-fluid">
           <div class="row px-0">
-            <div class="col-6">
+            <div class="col">
               <el-button
-                @click.prevent="addVehicle"
-                class="bg-primary text-light mb-2"
-              >
-                <i class="far fa-plus-circle mr-1"></i> Create Vehicle
-              </el-button>
-              <el-button
-                @click.prevent="openPortfolioVehicle"
+                v-if="_isallowed('write')"
+                @click.prevent="addContract"
                 class="bg-success text-light mb-2"
               >
-                <i class="far fa-plus-circle mr-1"></i> Add Portfolio Vehicle(s)
+                <i class="far fa-plus-circle mr-1"></i> Add Existing Vehicle(s)
               </el-button>
             </div>
-            <div class="col-6">
+            <div class="col">
               <el-input
                 type="search"
-                placeholder="Search Vehicles"
+                placeholder="Search by Project Name, Customer or Vehicle #"
                 aria-label="Search"
                 aria-describedby="search-addon"
                 v-model="search"
@@ -52,422 +47,676 @@
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
               </el-input>
             </div>
+            <div class="col pl-0">
+              <el-select
+                class="w-100 mx-2"
+                v-model="C_projectGroupFilter"
+                track-by="id"
+                value-key="id"
+                multiple
+                filterable
+                clearable
+                name="Project Group"
+                placeholder="Filter Vehicles By Group"
+              >
+                <el-option
+                  v-for="item in groupList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
+            </div>
           </div>
         </div>
+        <div
+          v-loading="!contractsLoaded"
+          element-loading-text="Fetching your data. Please wait..."
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
+          class=""
+          v-if="_isallowed('read')"
+        >
+          <el-table
+            v-if="tableData"
+            :data="
+              tableData
+                .filter(
+                  (data) =>
+                    !search ||
+                    data.name.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_number.name
+                      .toLowerCase()
+                      .includes(search.toLowerCase()) ||
+                    data.contract_customer.name
+                      .toLowerCase()
+                      .includes(search.toLowerCase())
+                )
+                .reverse()
+            "
+            style="width: 100%"
+            highlight-current-row
+            height="450"
+            ref="table"
+            :row-key="(row) => row.id"
+            :expand-row-keys="expandRowKeys"
+            @expand-change="handleExpandChange"
+            :default-sort="{ prop: 'name', order: 'ascending' }"
+          >
+            <el-table-column prop="name" label="Project Name">
+            </el-table-column>
+            <el-table-column label="Customer" prop="contract_customer_id">
+              <template slot-scope="scope">
+                <span
+                  v-if="
+                    scope.row.contract_customer &&
+                      scope.row.contract_customer.name !== null
+                  "
+                >
+                  {{ scope.row.contract_customer.name }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="Vehicle #" prop="contract_number_id">
+              <template slot-scope="scope">
+                <span
+                  v-if="
+                    scope.row.contract_number &&
+                      scope.row.contract_number.name !== null
+                  "
+                >
+                  {{ scope.row.contract_number.name }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="Award/TO #" prop="contract_award_to_id">
+              <template slot-scope="scope">
+                <span
+                  v-if="
+                    scope.row.contract_award_to &&
+                      scope.row.contract_award_to.name !== null
+                  "
+                >
+                  {{ scope.row.contract_award_to.name }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="facility_group"
+              sortable
+              filterable
+              label="Group"
+            >
+              <template slot-scope="scope">
+                <el-select
+                  v-model="scope.row.facility_group_id"
+                  class="w-100"
+                  v-if="rowId == scope.row.id"
+                  filterable
+                  track-by="id"
+                  clearable
+                  value-key="id"
+                  placeholder="Search and select Group"
+                >
+                  <el-option
+                    v-for="item in facilityGroups"
+                    :value="item.id"
+                    :key="item.id"
+                    :label="item.name"
+                  >
+                  </el-option>
+                </el-select>
+
+                <span v-else>
+                  <span
+                    v-if="
+                      scope.row.facility_group &&
+                        scope.row.facility_group.name &&
+                        rowId !== scope.row.id
+                    "
+                  >
+                    {{ scope.row.facility_group.name }}
+                  </span>
+                </span>
+                <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="Actions" align="right">
+              <template slot-scope="scope">
+                <el-button
+                  type="default"
+                  v-tooltip="`Change Group`"
+                  @click.prevent="editMode(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex && _isallowed('write')"
+                  class="bg-light btn-sm"
+                >
+                  <i class="fal fa-network-wired mh-blue-text"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  v-tooltip="`Manage User(s)`"
+                  @click.prevent="addUserRole(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex"
+                  class="bg-primary text-light btn-sm"
+                >
+                  <i class="fas fa-users-medical mr-1"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  v-if="scope.$index == rowIndex"
+                  @click.prevent="saveEdits(scope.$index, scope.row)"
+                  v-tooltip="`Save`"
+                  class="bg-primary btn-sm text-light"
+                >
+                  <i class="far fa-save"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  v-tooltip="`Cancel Edit`"
+                  v-if="scope.$index == rowIndex"
+                  @click.prevent="cancelEdits(scope.$index, scope.row)"
+                  class="bg-secondary btn-sm text-light"
+                >
+                  <i class="fas fa-ban"></i>
+                </el-button>
+                <el-button
+                  type="default"
+                  class="bg-light btn-sm"
+                  v-tooltip="'Remove Vehicle'"
+                  @click.prevent="removeContractBtn(scope.$index, scope.row)"
+                  v-if="scope.$index !== rowIndex && _isallowed('write')"
+                >
+                  <i class="fa-light fa-circle-minus text-danger"></i>
+                </el-button>
+                <!-- <el-button
+                  type="default" 
+                  v-tooltip="`Go To Contract`"    
+                  v-if=" _isallowedThisContract(scope.row.project_contract_id, 'read')"          
+                  @click.prevent="goToContract(scope.$index, scope.row)"
+                  class="bg-success text-light btn-sm"
+                  >
+                  <i class="fas fa-arrow-alt-circle-right"></i>
+                </el-button> -->
+                <el-button
+                  type="default"
+                  v-tooltip="`Go To Vehicle`"
+                  v-if="
+                    _isallowedContracts(scope.row.project_contract_id, 'read')
+                  "
+                  @click.prevent="goToContract(scope.$index, scope.row)"
+                  class="bg-success text-light btn-sm"
+                >
+                  <i class="fas fa-arrow-alt-circle-right"></i>
+                </el-button>
+
+                <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div v-else class="text-danger mx-2 mt-5">
+          <h5>
+            <i
+              >Sorry, you don't have read-permissions for this page! Please
+              contact your Program Administrator for access.</i
+            >
+          </h5>
+        </div>
         <el-dialog
-          :visible.sync="dialogVisible"
+          :visible.sync="vehicleDialogVisable"
           append-to-body
           center
-          class="contractForm p-0 createNewVehicle"
+          class="contractForm addContract p-0"
         >
-          <span slot="title" class="text-left add-groups-header">
-            <h5 class="text-dark">
-              <i class="far fa-plus-circle mr-1"></i>Create Program Vehicle
-            </h5>
-          </span>
-          <form accept-charset="UTF-8">
-            <div class="form-group mx-3">
+          <div class="row mb-3">
+            <div class="col-7">
+              <span slot="title" class="text-left add-groups-header ">
+                <h5 class="text-dark">
+                  <i class="far fa-plus-circle mr-1 mb-3"></i>Add Exisiting
+                  Vehicle
+                </h5>
+              </span>
+            </div>
+            <div class="col-5 text-right">
               <el-input
-                v-model="newVehicleName"
-                placeholder="Enter new Vehicle Name"
-                rows="1"
-                name="Vehicle Name"
-              />
+                type="search"
+                placeholder="Search by Project Name, Customer or Vehicle #"
+                aria-label="Search"
+                class="w-100"
+                aria-describedby="search-addon"
+                v-model="searchVehicleData"
+                data-cy=""
+              >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
             </div>
-            <div class="right mr-2">
-              <button
-                @click.prevent="createNewVehicle"
-                v-show="newVehicleName"
-                class="btn btn-md bg-primary text-light  modalBtns"
-                v-tooltip="`Save New Vehicle`"
-                :class="[hideSaveBtn ? 'd-none' : '']"
+          </div>
+          <template>
+            <div
+              v-loading="!contractProjectsLoaded"
+              element-loading-text="Fetching your data. Please wait..."
+              element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)"
+              class="addContractModal"
+            >
+              <el-table
+                :data="allContracts"
+                v-if="allContracts && allContracts.length > 0"
+                style="width: 100%"
               >
-                <i class="fal fa-save"></i>
-              </button>
-              <button
-                @click.prevent="cancelCreateVehicle"
-                class="btn btn-md bg-secondary text-light modalBtns"
-                v-tooltip="`Close`"
-                :class="[hideSaveBtn ? 'd-none' : '']"
-              >
-                <i class="fas fa-ban"></i>
-              </button>
-              <button
-                @click.prevent="addAnotherVehicle"
-                v-tooltip="`Add Another Vehicle`"
-                :class="[!hideSaveBtn ? 'd-none' : '']"
-                class="btn btn-md bg-primary text-light modalBtns"
-              >
-                <i class="far fa-plus-circle"></i>
-              </button>
-              <button
-                @click.prevent="closeAddVehicleBtn"
-                v-tooltip="`Close`"
-                class="btn btn-md bg-secondary text-light modalBtns mr-2"
-                :class="[!hideSaveBtn ? 'd-none' : '']"
-              >
-                <i class="fas fa-ban"></i>
-              </button>
-            </div>
-          </form>
-        </el-dialog>
-        <el-dialog
-          :visible.sync="dialog2Visible"
-          append-to-body
-          center
-          class="portfolioNames p-0"
-          v-if="vehicles && vehicles.length > 0"
-        >
-          <div>
-            <template>
-              <div class="sticky">
-                <div class="row">
-                  <div slot="title" class="col-8 pr-0 text-left">
-                    <h5 class="text-dark addVehiclesHeader">
-                      <i class="fal fa-network-wired mr-2 mh-blue-text"></i
-                      >Select Portfolio Vehicle(s) to Add
-                    </h5>
-                  </div>
-                  <div class="col-7 pt-0 text-left">
-                    <el-input
-                      type="search"
-                      placeholder="Search Vehicles"
-                      aria-label="Search"
-                      class="w-100"
-                      aria-describedby="search-addon"
-                      v-model="searchVehicles"
-                      data-cy=""
+                <el-table-column prop="name" label="Project Name" width="180">
+                </el-table-column>
+                <el-table-column
+                  label="Customer"
+                  width="200"
+                  prop="contract_customer_id"
+                >
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_customer &&
+                          scope.row.contract_customer.name !== null
+                      "
                     >
-                      <el-button
-                        slot="prepend"
-                        icon="el-icon-search"
-                      ></el-button>
-                    </el-input>
-                  </div>
-                  <div class="col pt-0 text-right">
+                      {{ scope.row.contract_customer.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="Contract Number"
+                  width="200"
+                  prop="contract_number_id"
+                >
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_number &&
+                          scope.row.contract_number.name !== null
+                      "
+                    >
+                      {{ scope.row.contract_number.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="Award/ TO Number"
+                  width="200"
+                  prop="contract_award_to_id"
+                >
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_award_to &&
+                          scope.row.contract_award_to.name !== null
+                      "
+                    >
+                      {{ scope.row.contract_award_to.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Actions" align="right">
+                  <template slot-scope="scope">
                     <el-button
-                      class="confirm-save-group-names btn text-light bg-primary modalBtns"
-                      v-tooltip="`Save Vehicle(s)`"
-                      @click.prevent="importVehicleName"
-                      :disabled="portfolioVehicles.length <= 0"
+                      type="default"
+                      v-tooltip="`Add Vehicle`"
+                      @click.prevent="
+                        addExistingContract(scope.$index, scope.row)
+                      "
+                      class="bg-primary text-light btn-sm"
                     >
-                      <i class="fal fa-save"></i>
+                      <i class="far fa-plus-circle"></i>
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <span class="mt-3" v-else>
+                <h4><em>There are currently no vehicles to display</em></h4>
+              </span>
+            </div>
+          </template>
+        </el-dialog>
+      </div>
+
+      <el-dialog
+        :visible.sync="openUserPrivilegesDialog"
+        append-to-body
+        center
+        class="addUserRole p-0"
+      >
+        <span slot="title" class="text-left add-groups-header ">
+          <h5 style="color:#383838" v-if="vehicleData">
+            <i class="far fa-file-contract mr-1 mb-2 mh-orange-text"></i>
+            {{ vehicleData.name }}
+          </h5>
+        </span>
+        <div class="container-fluid p-0">
+          <div
+            class="pl-3 mt-0 row"
+            v-if="
+              viableContractUsers &&
+                viableContractUsers.length > 0 &&
+                _isallowed('write')
+            "
+          >
+            <div class="col-5 pt-0 pl-0">
+              <label class="font-md mb-0 d-flex">Add User(s) To Vehicle</label>
+              <el-select
+                v-model="contractRoleUsers"
+                filterable
+                class="w-100"
+                clearable
+                multiple
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Project Users"
+              >
+                <el-option
+                  v-for="item in viableContractUsers"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.fullName"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <div class="col-5 pt-0">
+              <label class="font-md mb-0 d-flex"
+                >Select Role for User(s)
+              </label>
+              <el-select
+                v-model="contractRoleNames"
+                filterable
+                class="w-100"
+                clearable
+                track-by="id"
+                value-key="id"
+                placeholder="Search and select Project Users"
+              >
+                <el-option
+                  v-for="item in getRoles.filter(
+                    (t) =>
+                      t.type_of == 'contract' &&
+                      t.name !== 'crud-row-contract-20220407'
+                  )"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <div class="col-2 pt-0 text-right">
+              <label class="font-md mb-0 d-flex" style="visibility:hidden"
+                >|</label
+              >
+
+              <el-button
+                type="default"
+                @click="saveContractUserRole()"
+                v-if="contractRoleNames && contractRoleUsers"
+                v-tooltip="`Confirm`"
+                class="bg-primary btn-sm text-light"
+              >
+                <i class="far fa-save"></i>
+              </el-button>
+            </div>
+          </div>
+          <div
+            class="pl-3 mt-0 row"
+            v-if="
+              getRolesLoaded &&
+                contentLoaded &&
+                viableContractUsers &&
+                viableContractUsers.length <= 0
+            "
+          >
+            There are currently no program users to assign to this vehicle. You
+            can either add new program users from portfolio or remove desired
+            user from current role in this vehicle.
+          </div>
+          <div class="mt-4 row">
+            <div class="col-12 pt-0">
+              <el-table
+                v-loading="!getRolesLoaded"
+                element-loading-spinner="el-icon-loading"
+                v-if="
+                  contractUsers &&
+                    contractUsers.roleIds &&
+                    contractUsers.roleIds.length > 0
+                "
+                :header-cell-style="{ background: '#EDEDED' }"
+                :data="contractUsers.roleIds"
+                height="375"
+                width="100%"
+              >
+                <el-table-column
+                  prop="user_full_name"
+                  width="200"
+                  sortable
+                  filterable
+                  label="Role"
+                >
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        (contractUsers.data.map(
+                          (t) => t.role_id == scope.row
+                        ) &&
+                          scope.$index !== rowIndex_1) ||
+                          (scope.$index == rowIndex_1 && isEditingRoles)
+                      "
+                    >
+                      {{
+                        contractUsers.data
+                          .filter((t) => t.role_id == scope.row)
+                          .map((t) => t.role_name)[0]
+                      }}
+                    </span>
+                    <span v-if="changeRoleMode && scope.$index == rowIndex_1">
+                      <el-select
+                        v-if="bulkChangeContractRoleNames.id"
+                        v-model="bulkChangeContractRoleNames"
+                        filterable
+                        class="w-100"
+                        track-by="id"
+                        value-key="id"
+                      >
+                        <el-option
+                          v-for="item in getRoles.filter(
+                            (t) => t.type_of == 'contract'
+                          )"
+                          :value="item"
+                          :key="item.id"
+                          :label="item.name"
+                        >
+                        </el-option>
+                      </el-select>
+                      <el-select
+                        v-if="
+                          currentRoleName && !bulkChangeContractRoleNames.id
+                        "
+                        v-model="currentRoleName"
+                        filterable
+                        class="w-100"
+                        track-by="id"
+                        value-key="id"
+                      >
+                        <el-option
+                          v-for="item in getRoles.filter(
+                            (t) => t.type_of == 'contract'
+                          )"
+                          :value="item"
+                          :key="item.id"
+                          :label="item.name"
+                        >
+                        </el-option>
+                      </el-select>
+                      <!-- {{ scope.row}}   -->
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="role_name"
+                  width="675"
+                  sortable
+                  filterable
+                  label="Users"
+                >
+                  <template slot-scope="scope">
+                    <span v-if="scope.$index !== rowIndex_1 || changeRoleMode">
+                      <span v-for="(item, i) in contractUsers.data" :key="i">
+                        <span
+                          v-if="
+                            item.user_id &&
+                              programUsers.map((t) => t.id == item.user_id) &&
+                              item.role_id == scope.row &&
+                              programUsers
+                                .filter((t) => item.user_id == t.id)
+                                .map((t) => t.fullName).length > 0
+                          "
+                          class="userNames"
+                        >
+                          {{
+                            programUsers
+                              .filter((t) => item.user_id == t.id)
+                              .map((t) => t.fullName)
+                              .join()
+                          }}
+                        </span>
+                      </span>
+                    </span>
+                    <span v-if="isEditingRoles && scope.$index == rowIndex_1">
+                      <el-select
+                        v-model="assignedContractUsers"
+                        :disabled="
+                          assignedContractUsers &&
+                            assignedContractUsers.length <= 0
+                        "
+                        filterable
+                        class="w-100 el-popper"
+                        :popper-append-to-body="false"
+                        popper-class="select-popper"
+                        clearable
+                        multiple
+                        track-by="id"
+                        value-key="id"
+                        placeholder="No Users Assigned to this Project"
+                      >
+                        <el-option
+                          v-for="item in programUsers"
+                          :value="item"
+                          :key="item.id"
+                          :label="item.fullName"
+                        >
+                        </el-option>
+                      </el-select>
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  width="145"
+                  fixed="right"
+                  align="center"
+                  v-if="_isallowed('delete') || _isallowed('write')"
+                >
+                  <template slot-scope="scope" class="px-0">
+                    <el-button
+                      type="default"
+                      @click="bulkChangeRole(scope.$index, scope.row)"
+                      v-if="scope.$index !== rowIndex_1 && _isallowed('write')"
+                      v-tooltip="`Change Role`"
+                      class="bg-light btn-sm mx-0"
+                    >
+                      <i class="fa-solid fa-users-gear text-primary"></i>
                     </el-button>
                     <el-button
-                      @click.prevent="closeImportVehicleBtn"
-                      v-tooltip="`Close`"
-                      class="btn bg-secondary ml-0 text-light modalBtns"
+                      type="default"
+                      @click="saveBulkChangeRole(scope.$index, scope.row)"
+                      v-if="
+                        scope.$index == rowIndex_1 &&
+                          changeRoleMode &&
+                          (bulkChangeContractRoleNames.id ||
+                            currentRoleName.id) &&
+                          scope.row !== bulkChangeContractRoleNames.id &&
+                          scope.row !== currentRoleName.id
+                      "
+                      v-tooltip="`Save`"
+                      class="bg-primary btn-sm text-light mx-0"
+                    >
+                      <i class="far fa-save"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      @click="saveRemoveUsers(scope.$index, scope.row)"
+                      v-if="isEditingRoles && scope.$index == rowIndex_1"
+                      v-tooltip="`Save`"
+                      class="bg-primary btn-sm text-light"
+                    >
+                      <i class="far fa-save"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      v-if="scope.$index !== rowIndex_1 && _isallowed('delete')"
+                      v-tooltip="`Remove all users from this role`"
+                      @click.prevent="removeAllUsers(scope.$index, scope.row)"
+                      class="bg-danger btn-sm mx-0"
+                    >
+                      <i class="fa-solid fa-users-slash mr-1 text-light"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      v-if="scope.$index !== rowIndex_1 && _isallowed('delete')"
+                      v-tooltip="`Remove user(s) from this role`"
+                      @click.prevent="editUsers(scope.$index, scope.row)"
+                      class="bg-danger text-light btn-sm mx-0"
+                    >
+                      <i class="fa-solid fa-user-slash text-light"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      v-if="isEditingRoles && scope.$index == rowIndex_1"
+                      v-tooltip="`Cancel`"
+                      @click.prevent="cancelEditRoles(scope.$index, scope.row)"
+                      class="btn btn-sm bg-secondary text-light"
                     >
                       <i class="fas fa-ban"></i>
                     </el-button>
-                  </div>
-                </div>
+                    <el-button
+                      type="default"
+                      v-if="changeRoleMode && scope.$index == rowIndex_1"
+                      v-tooltip="`Cancel`"
+                      @click.prevent="
+                        cancelBulkChangeRole(scope.$index, scope.row)
+                      "
+                      class="btn btn-sm bg-secondary text-light mx-0"
+                    >
+                      <i class="fas fa-ban"></i>
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <span class="" v-else>
+                No Users Assigned
+              </span>
+
+              <div class="right mt-3">
+                <button
+                  @click.prevent="closeUserRoles"
+                  class="btn btn-md bg-secondary text-light modalBtns"
+                  v-tooltip="`Close`"
+                >
+                  <i class="fas fa-ban"></i>
+                </button>
               </div>
-            </template>
-            <el-checkbox
-              :indeterminate="isIndeterminate"
-              v-model="checkAll"
-              @change="handleCheckAllChange"
-              ><i>Check all Vehicles</i></el-checkbox
-            >
-            <div style="margin: 15px 0;"></div>
-            <el-checkbox-group v-model="checkedPortfolioVehicles">
-              <div class="row">
-                <div class="col-4">
-                  <el-checkbox
-                    v-for="vehicle in portfolioVehicles.filter(
-                      (g) => g.is_portfolio
-                    )"
-                    :label="vehicle.id"
-                    class="d-flex"
-                    :key="vehicle.id"
-                    >{{ vehicle.name }}</el-checkbox
-                  >
-                </div>
-              </div>
-            </el-checkbox-group>
+            </div>
           </div>
-        </el-dialog>
-        <div class="container-fluid mt-2 mx-0">
-          <div
-            v-loading="!contentLoaded"
-            v-if="_isallowed('read')"
-            element-loading-text="Fetching your data. Please wait..."
-            element-loading-spinner="el-icon-loading"
-            element-loading-background="rgba(0, 0, 0, 0.8)"
-            class="mt-2"
-          >
-            <el-table
-              v-if="tableData"
-              :data="
-                tableData
-                  .filter(
-                    (data) =>
-                      !search ||
-                      data.name.toLowerCase().includes(search.toLowerCase())
-                  )
-                  .reverse()
-              "
-              style="width: 100%"
-              height="475"
-              highlight-current-row
-              :default-sort="{ prop: 'name', order: 'ascending' }"
-            >
-              <el-table-column prop="name" sortable label="Vehicles">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col-9">
-                      <el-input
-                        size="small"
-                        v-if="rowId == props.row.id"
-                        style="text-align:center"
-                        v-model="props.row.name"
-                        controls-position="right"
-                      >
-                      </el-input>
-                      <span v-else>
-                        <span
-                          v-if="props.row.isPortfolio"
-                          v-tooltip="`Portfolio Vehicle`"
-                          ><i class="fas fa-circle mr-2 text-success fs-50"></i
-                        ></span>
-                        {{ props.row.name }}
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column>
-                <template slot-scope="props">
-                  <span v-if="props.row.isDefault">
-                    <small><em>Default Vehicle</em></small>
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="Counts" width="165">
-                <template slot-scope="props">
-                  <div class="row">
-                    <div class="col">
-                      <i
-                        class="fal fa-clipboard-list mr-1 mh-green-text"
-                        v-tooltip="`Projects`"
-                      ></i>
-                      <span
-                        class="mr-4"
-                        v-if="
-                          vehicleProjects &&
-                            vehicleProjects
-                              .map((t) => t.facilityVehicleId)
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          vehicleProjects &&
-                            vehicleProjects
-                              .map((t) => t.facilityVehicleId)
-                              .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span class="mr-4" v-else>
-                        {{ 0 }}
-                      </span>
-                      <i
-                        class="far fa-file-contract mr-1 mh-orange-text"
-                        v-tooltip="`Contracts`"
-                      ></i>
-                      <span
-                        v-if="
-                          vehicleContracts &&
-                            vehicleContracts.length > 0 &&
-                            vehicleContracts
-                              .map(
-                                (t) =>
-                                  t &&
-                                  t.facility_vehicle &&
-                                  t.facility_vehicle.id
-                              )
-                              .filter((t) => t == props.row.id).length
-                        "
-                      >
-                        {{
-                          vehicleContracts
-                            .map((t) => t.facility_vehicle.id)
-                            .filter((t) => t == props.row.id).length
-                        }}
-                      </span>
-                      <span v-else>
-                        {{ 0 }}
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column type="expand">
-                <template slot-scope="props">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col">
-                        <h5 class="mh-orange-text">
-                          Projects
-                          <span
-                            v-if="
-                              groupProjects &&
-                                groupProjects
-                                  .map((t) => t.facilityGroupId)
-                                  .filter((t) => t == props.row.id).length > 0
-                            "
-                            class="badge badge-secondary badge-pill pill"
-                            >{{
-                              groupProjects &&
-                                groupProjects
-                                  .map((t) => t.facilityGroupId)
-                                  .filter((t) => t == props.row.id).length
-                            }}
-                          </span>
-                          <span
-                            v-else
-                            class="badge badge-secondary badge-pill pill"
-                            >{{ 0 }}
-                          </span>
-                        </h5>
-                        <span v-if="groupProjects">
-                          <ul
-                            class="pl-3 mb-0"
-                            v-for="(item, i) in groupProjects.filter(
-                              (t) => t.facilityGroupId == props.row.id
-                            )"
-                            :key="i"
-                          >
-                            <li>
-                              {{ item.facilityName }}
-                            </li>
-                          </ul>
-                        </span>
-                      </div>
-                      <div class="col">
-                        <h5 class="mh-orange-text">
-                          Contracts
-                          <span
-                            v-if="
-                              groupContracts &&
-                                groupContracts.length > 0 &&
-                                groupContracts.map((t) => t && t.facility_group)
-                            "
-                            class="badge badge-secondary badge-pill pill"
-                            >{{
-                              groupContracts
-                                .map((t) => t.facility_group.id)
-                                .filter((t) => t == props.row.id).length
-                            }}
-                          </span>
-                          <span
-                            v-else
-                            class="badge badge-secondary badge-pill pill"
-                            >{{ 0 }}
-                          </span>
-                        </h5>
-                        <span
-                          v-if="groupContracts && groupContracts.length > 0"
-                        >
-                          <ul class="pl-3 mb-0">
-                            <li
-                              v-for="(item, i) in groupContracts.filter(
-                                (t) => t.facility_group.id == props.row.id
-                              )"
-                              :key="i"
-                            >
-                              {{ item.name }}
-                            </li>
-                          </ul>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="Actions"
-                align="right"
-                v-if="_isallowed('delete') || _isallowed('write')"
-              >
-                <template slot-scope="scope">
-                  <el-button
-                    type="default"
-                    v-tooltip="`Save`"
-                    @click.prevent="saveEdits(scope.$index, scope.row)"
-                    v-if="scope.$index == rowIndex"
-                    class="bg-primary btn-sm text-light"
-                  >
-                    <i class="far fa-save"></i>
-                  </el-button>
-                  <el-button
-                    type="default"
-                    v-tooltip="`Cancel Edit`"
-                    v-if="scope.$index == rowIndex"
-                    @click.prevent="cancelEdits(scope.$index, scope.row)"
-                    class="bg-secondary  btn-sm text-light"
-                  >
-                    <i class="fas fa-ban"></i>
-                  </el-button>
-                  <el-button
-                    type="default"
-                    v-tooltip="`Edit Program Vehicle`"
-                    @click.prevent="editMode(scope.$index, scope.row)"
-                    v-if="
-                      !scope.row.isPortfolio &&
-                        scope.$index !== rowIndex &&
-                        _isallowed('write')
-                    "
-                    class="bg-light btn-sm "
-                  >
-                    <i class="fal fa-edit text-primary"></i>
-                  </el-button>
-                  <el-button
-                    type="default"
-                    class="bg-light btn-sm"
-                    v-tooltip="'Remove Portfolio Vehicle'"
-                    @click.prevent="removeVehicle(scope.$index, scope.row)"
-                    v-if="
-                      scope.$index !== rowIndex &&
-                        scope.row.isPortfolio &&
-                        _isallowed('delete')
-                    "
-                  >
-                    <i class="fa-light fa-circle-minus text-danger"></i>
-                  </el-button>
-                  <el-button
-                    type="default"
-                    v-tooltip="'Delete Program Vehicle'"
-                    @click.prevent="removeVehicle(scope.$index, scope.row)"
-                    v-if="
-                      !scope.row.isDefault &&
-                        scope.$index !== rowIndex &&
-                        !scope.row.isPortfolio &&
-                        _isallowed('delete')
-                    "
-                    class="bg-light btn-sm"
-                  >
-                    <i class="far fa-trash-alt text-danger "></i>
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <!-- <div v-else class="text-danger mx-2 mt-5">
-            <h5>
-              <i
-                >Sorry, you don't have read-permissions for this page! Please
-                contact your Program Administrator for access.</i
-              >
-            </h5>
-          </div> -->
         </div>
-      </div>
-      <!-- <div class="col-md-8" > -->
-      <!-- <div class="right-panel">
-       
-       </div> -->
-      <!-- </div> -->
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -475,231 +724,743 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import SettingsSidebar from "./SettingsSidebar.vue";
-import FormTabs from "../../shared/FormTabs.vue";
+// import { createUser, deleteUser, dbCollection } from "../../../packs/firebase";
 export default {
   name: "SettingsVehicles",
+  props: ["currentContract"],
   components: {
     SettingsSidebar,
-    FormTabs,
   },
-
   data() {
     return {
-      searchVehicles: "",
+      today: new Date().toISOString().slice(0, 10),
+      currentRoleName: {},
+      searchContractData: "",
+      newGroup: null,
+      contractDialogVisible: false,
+      rowIndex_1: null,
+      isEditingRoles: false,
+      roleRowId: null,
+      userids: null,
+      changeRoleMode: false,
+      expandRowKeys: [],
+      currentFacility: {},
+      contractData: null,
+      // currentContract: {},
       dialogVisible: false,
-      dialog2Visible: false,
-      isIndeterminate: true,
-      currentTab: "tab1",
-      currentFacilityVehicle: {},
-      componentKey: 0,
-      confirmTransfer: false,
+      openUserPrivilegesDialog: false,
+      // contractData: {},
+      currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
-      transferVehicleBack: null,
-      newVehicleName: null,
-      programId: this.$route.params.programId,
-      hideSaveBtn: false,
+      projId: null,
+      projectNameText: "",
+      searchRoleUsers: "",
       search: "",
-      selectedProjectVehicle: null,
+      searchContractUsers: "",
+      hideSaveBtn: false,
+      contractNameText: "",
+      contractNicknameText: "",
       expanded: {
         id: "",
       },
     };
   },
+  mounted() {
+    if (Vue.prototype.$contractPrivilegesRoles) {
+      console.log(Vue.prototype.$contractPrivilegesRoles);
+    }
+
+    this.fetchContracts(this.$route.params.programId);
+    this.fetchRoles(this.$route.params.programId);
+    if (this.groups && this.groups.length <= 0) {
+      this.fetchGroups(this.$route.params.programId);
+    }
+  },
   methods: {
     ...mapMutations([
-      "setProjectVehicleFilter",
+      "setProjectGroupFilter",
       "setContractTable",
-      "setVehicleFilter",
-      "SET_VEHICLE_STATUS",
-      "SET_TRANSFER_DATA",
-      "SET_NEW_VEHICLES",
-      "SET_CHECKED_PORTFOLIO_VEHICLES",
-      "SET_CHECK_ALL",
-      "SET_CHECKED_VEHICLES",
+      "setGroupFilter",
+      "SET_CONTRACT_STATUS",
+      "setContractTypeFilter",
+      "setNewContractGroupFilter",
+      "SET_CONTRACT_GROUP_TYPES",
+      "SET_ADD_USER_TO_ROLE_STATUS",
+      "SET_CONTRACT_ROLE_USERS",
+      "SET_CONTRACT_ROLE_NAMES",
+      "SET_BULK_CONTRACT_ROLE_NAMES",
+      "SET_ASSIGNED_CONTRACT_USERS",
+      "SET_REMOVE_CONTRACT_ROLE_STATUS",
+      "SET_ASSOCIATED_CONTRACTS_STATUS",
+      "SET_CONTRACTS_STATUS",
     ]),
     ...mapActions([
-      "createVehicle",
-      "fetchFacilityVehicles",
-      "updateVehicleName",
-      "removeOrDeleteVehicle",
-      "updateVehicle",
-      "fetchVehicles",
-      "fetchContracts",
       "fetchCurrentProject",
+      "createContract",
+      "fetchContractProjects",
+      "fetchContracts",
+      "fetchGroups",
+      "updateContract",
+      "deleteContract",
+      "addUserToRole",
+      "fetchRoles",
+      "removeUserRole",
+      "associateContractToProgram",
+      "removeContract",
+      "projectContracts",
+      "bulkUpdateUserRoles",
     ]),
+    _isallowed(salut) {
+      return this.checkPrivileges("SettingsVehicles", salut, this.$route, {
+        settingType: "Contracts",
+      });
+    },
+    _isallowedContracts(c, salut) {
+      console.log(c);
+      return this.checkPrivileges(
+        "ProjectSettingContractList",
+        salut,
+        this.$route,
+        { method: "isallowedContracts", project_contract_id: c }
+      );
+    },
     log(e) {
-      console.log(e);
+      // console.log('tableData:',  e)
     },
-    tableRowClassName({ row, rowIndex }) {
-      if (!row.isPortfolio) {
-        return "warning-row";
-      }
+    editUsers(index, rowData) {
+      this.userids = this.contractUsers.data.filter(
+        (t) => t.role_id == rowData
+      );
+      this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers);
+      this.rowIndex_1 = index;
+      this.roleRowId = rowData;
+      this.isEditingRoles = true;
+      // console.log(this.userids)
     },
-    cancelCreateVehicle() {
-      this.dialogVisible = false;
-    },
-    addAnotherVehicle() {
-      this.C_projectVehicleFilter = null;
-      this.newVehicleName = null;
-      this.hideSaveBtn = false;
-    },
-    handleCheckAllChange() {
-      this.isIndeterminate = false;
-    },
-    reRenderTable() {
-      this.componentKey += 1;
-    },
-    closeAddVehicleBtn() {
-      this.dialogVisible = false;
-      this.hideSaveBtn = false;
-    },
-    editMode(index, rows) {
-      this.rowIndex = index;
-      this.rowId = rows.id;
-    },
-    closeImportVehicleBtn() {
-      this.dialog2Visible = false;
-      this.SET_CHECKED_PORTFOLIO_VEHCILES([0]);
-    },
-    addVehicle() {
-      this.dialogVisible = true;
-      this.newVehicleName = null;
-      this.C_projectVehicleFilter = null;
-    },
-    openPortfolioVehicle() {
-      this.dialog2Visible = true;
-      console.log(this.vehicleContracts);
-    },
-    onChangeTab(tab) {
-      this.currentTab = tab ? tab.key : "tab1";
-      // console.log(this.currentTab)
-    },
-    saveEdits(index, rows) {
-      let id = rows.id;
-      let vehicleNameData = {
-        newNameData: {
-          name: rows.name,
+    saveRemoveUsers(index, rowData) {
+      let user_ids = this.assignedContractUsers.map((t) => t.id);
+      let assigned = this.assignedUsers.map((t) => t.id);
+      let ids = assigned.filter((t) => !user_ids.includes(t));
+      let projectUserRoleData = {
+        userData: {
+          roleId: rowData,
+          contractId: this.projId,
+          programId: this.$route.params.programId,
+          userIds: ids,
         },
-        project_id: this.$route.params.programId,
       };
-      this.updateVehicleName({
-        ...vehicleNameData,
+      // console.log(projectUserRoleData)
+      this.removeUserRole({
+        ...projectUserRoleData,
+      });
+    },
+    bulkChangeRole(index, rowData) {
+      this.currentRoleName = this.getRoles
+        .filter((t) => t.id == rowData)
+        .map((t) => t)[0];
+      this.changeRoleMode = true;
+      this.rowIndex_1 = index;
+      this.roleRowId = rowData;
+    },
+    saveBulkChangeRole(index, rowData) {
+      this.userids = this.contractUsers.data.filter(
+        (t) => t.role_id == rowData
+      );
+      this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers);
+      let old_role = this.getRoles
+        .filter((t) => t.id == rowData)
+        .map((t) => t)[0];
+      let new_role;
+      if (this.bulkChangeContractRoleNames.id) {
+        new_role = this.bulkChangeContractRoleNames;
+      } else new_role = this.currentRoleName;
+      let user_ids = this.assignedContractUsers.map((t) => t.id);
+      let ids = this.assignedContractUsers
+        .map((t) => t.id)
+        .filter((t) => user_ids.includes(t));
+      let roleUsers = this.contractUsers.data.filter(
+        (t) => t.role_id == rowData
+      );
+      // debugger
+      let projectUserRoleData = {
+        userData: {
+          roleId: new_role.id,
+          roleUserIds: roleUsers.map((t) => t.id),
+          userIds: ids,
+          programId: this.$route.params.programId,
+        },
+      };
+      console.log(ids);
+      this.bulkUpdateUserRoles({
+        ...projectUserRoleData,
+      });
+    },
+    // saveBulkChangeRole(index, rowData){
+    // let user_ids = this.assignedContractUsers.map(t => t.id);
+    // this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers)
+    // let user_ids = this.assignedContractUsers.map(t => t.id);
+    // let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t));
+    //   let projectUserRoleData = {
+    //             userData: {
+    //               roleId: rowData,
+    //               contractId: this.projId,
+    //               programId: this.$route.params.programId,
+    //               userIds: ids,
+    //           },
+    //         };
+
+    //          console.log(this.assignedUsers)
+    //         this.removeUserRole({
+    //           ...projectUserRoleData,
+    //         }).then(() => {
+    //           let user_ids = this.assignedContractUsers.map(t => t.id);
+    //           let ids = this.assignedUsers.map(t => t.id).filter(t => user_ids.includes(t));
+    //           let contractUserRoleData = {
+    //               userData: {
+    //                 roleId:  this.bulkChangeContractRoleNames.id,
+    //                 userIds:  ids,
+    //                 programId: this.$route.params.programId,
+    //                 contractId: this.projId
+    //             },
+    //           };
+    //         this.addUserToRole({
+    //           ...contractUserRoleData,
+    //         });
+    //      });
+    // },
+    removeAllUsers(index, rowData) {
+      this.userids = this.contractUsers.data.filter(
+        (t) => t.role_id == rowData
+      );
+      this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers);
+      this.$confirm(
+        `Are you sure you want to remove all users from this contract role?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      ).then(() => {
+        let user_ids = this.assignedContractUsers.map((t) => t.id);
+        let ids = this.assignedUsers
+          .map((t) => t.id)
+          .filter((t) => user_ids.includes(t));
+        let projectUserRoleData = {
+          userData: {
+            roleId: rowData,
+            contractId: this.projId,
+            programId: this.$route.params.programId,
+            userIds: ids,
+          },
+        };
+
+        console.log(this.assignedUsers);
+        this.removeUserRole({
+          ...projectUserRoleData,
+        });
+      });
+    },
+    cancelEditRoles(index, rowData) {
+      this.isEditingRoles = false;
+      this.roleRowId = null;
+      this.rowIndex_1 = null;
+    },
+    cancelBulkChangeRole() {
+      this.changeRoleMode = false;
+      this.roleRowId = null;
+      this.rowIndex_1 = null;
+      this.bulkChangeContractRoleNames = {};
+    },
+    saveContractUserRole(index, rows) {
+      let user_ids = this.contractRoleUsers.map((t) => t.id);
+      let contractUserRoleData = {
+        userData: {
+          roleId: this.contractRoleNames.id,
+          userIds: user_ids,
+          programId: this.$route.params.programId,
+          contractId: this.projId,
+        },
+      };
+      // console.log(contractUserRoleData)
+      this.addUserToRole({
+        ...contractUserRoleData,
+      });
+    },
+    closeUserRoles() {
+      this.openUserPrivilegesDialog = false;
+      this.isEditingRoles = false;
+      this.roleRowId = null;
+      this.rowIndex_1 = null;
+    },
+    addUserRole(index, rows) {
+      this.openUserPrivilegesDialog = true;
+      this.projId = rows.project_contract_id;
+      this.contractData = rows;
+      console.log(rows);
+    },
+    addExistingContract(index, rows) {
+      //  console.log(rows)
+      let contractData = {
+        contract: {
+          id: rows.id,
+          programId: this.$route.params.programId,
+        },
+      };
+      this.associateContractToProgram({ ...contractData });
+    },
+    goToContract(index, rows) {
+      console.log(rows);
+      //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
+      // window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
+      this.$router.push({
+        name: "SheetContract",
+        params: {
+          programId: this.$route.params.programId,
+          contractId: rows.project_contract_id,
+        },
+      });
+    },
+    handleExpandChange(row, expandedRows) {
+      this.projId = row.id;
+      const lastId = this.expandRowKeys[0];
+      // disable mutiple row expanded
+      this.expandRowKeys = this.projId === lastId ? [] : [this.projId];
+    },
+    removeContractBtn(index, rows) {
+      // console.log(rows)
+      // let id = [rows.id];
+      let contract = {
+        g: {
+          id: rows.project_contract_id,
+          pId: this.$route.params.programId,
+        },
+      };
+
+      this.$confirm(
+        `Are you sure you want to remove ${rows.name} from your program?`,
+        "Confirm Remove",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      ).then(() => {
+        this.removeContract({ ...contract });
+      });
+    },
+    // DO NOT DELETE This async method.  It is code for firebase cloud functionality
+    //  async onSubmit ()  {
+    //      const formData = {
+    //         contractName: this.contractNameText,
+    //         programName: this.currentProject.name,
+    //         mpathInstance: this.$mpath_instance
+
+    //       }
+    //     await createUser({...formData})
+    //     return { formData }
+
+    saveEdits(index, rows) {
+      let id = rows.project_contract_id;
+      let contractData = {
+        contract: {
+          facility_group_id: rows.facility_group_id,
+          programId: this.$route.params.programId,
+        },
+      };
+      // this.setNewContractGroupFilter(rows.facility_group_id);
+      this.updateContract({
+        ...contractData,
         id,
       });
+      // console.log(groupId)
       this.rowIndex = null;
       this.rowId = null;
     },
     cancelEdits(index, rows) {
       this.rowIndex = null;
       this.rowId = null;
-      // console.log(this.facilityVehicles)
     },
-    createNewVehicle() {
-      let vehicleData = {
-        vehicle: {
-          name: this.newVehicleName,
-          project_id: this.$route.params.programId,
-        },
-      };
-      this.createVehicle({
-        ...vehicleData,
-      });
-      this.hideSaveBtn = true;
+    editMode(index, rows) {
+      console.log(rows);
+      this.newGroup = null;
+      this.rowIndex = index;
+      this.rowId = rows.id;
     },
-    removeVehicle(index, rows) {
-      // let id = [rows.id];
-      let vehicle = {
-        g: {
-          id: rows.id,
-          programId: this.$route.params.programId,
-        },
-      };
-      if (rows.isPortfolio) {
-        this.$confirm(
-          `Are you sure you want to remove ${rows.name} from your program?`,
-          "Confirm Remove",
-          {
-            confirmButtonText: "Remove",
-            cancelButtonText: "Cancel",
-            type: "warning",
-          }
-        ).then(() => {
-          this.removeOrDeleteVehicle({ ...vehicle });
-        });
-      } else
-        this.$confirm(
-          `Are you sure you want to delete ${rows.name} from your program?`,
-          "Confirm Delete",
-          {
-            confirmButtonText: "Delete",
-            cancelButtonText: "Cancel",
-            type: "warning",
-          }
-        ).then(() => {
-          this.removeOrDeleteVehicle({ ...vehicle });
-        });
-    },
-    importVehicleName() {
-      let data = this.checkedPortfolioVehicles;
-      if (this.facilityVehicles && this.facilityVehicles.length > 0) {
-        let savedVehicles = this.facilityVehicles.map((g) => g.id);
-        for (let i = 0; i <= this.facilityVehicles.length; i++) {
-          if (savedVehicles[i] !== undefined) {
-            data.push(savedVehicles[i]);
-          }
+    deleteSelectedContract(index, rows) {
+      let id = rows.id;
+      this.$confirm(
+        `Are you sure you want to delete ${rows.name}?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
         }
-      }
-      let vehicle = {
-        vehicleData: {
-          ids: [...new Set(data)],
-          programId: this.$route.params.programId,
-        },
-      };
-
-      this.updateVehicle({
-        ...vehicle,
-      });
-      this.confirmTransfer = false;
-    },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    _isallowed(salut) {
-      return this.checkPrivileges("SettingsVehicles", salut, this.$route, {
-        settingType: "Vehicles",
+      ).then(() => {
+        this.deleteContract(id).then((value) => {
+          if (value === 200) {
+            this.fetchContracts();
+            this.$message({
+              message: `${rows.name} was deleted successfully.`,
+              type: "success",
+              showClose: true,
+            });
+          }
+        });
       });
     },
-  },
-  mounted() {
-    if (this.vehicles && this.vehicles.length <= 0) {
-      this.fetchVehicles(this.$route.params.programId);
-    }
-    this.fetchContracts(this.$route.params.programId);
+    closeAddContractBtn() {
+      this.dialogVisible = false;
+      this.hideSaveBtn = false;
+    },
+    addContract() {
+      //  if (this.allContracts  && this.allContracts.length > 0){
+      //       console.log(this.allContracts)
+      //           console.log('tableData', this.tableData)
+      //  }
+      console.log(this.tableData);
+      this.contractDialogVisible = true;
+      this.fetchContractProjects(this.$route.params.programId);
+    },
+    openUserPrivileges(index, rows) {
+      this.openUserPrivilegesDialog = true;
+      this.contractData = rows;
+    },
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
-      "facilities",
-      "vehicles",
+      "getRolesLoaded",
+      "contractsLoaded",
+      "getContractGroupTypes",
+      "getNewContractGroupFilter",
+      "contractStatus",
       "contracts",
+      "groups",
+      "getRoles",
+      "addUserToRoleStatus",
+      "getContractRoleUsers",
+      "getContractRoleNames",
+      "getBulkContractRoleNames",
       "getTransferData",
       "getContractTable",
+      "getProjectGroupFilter",
+      "getGroupFilter",
+      "getNewGroups",
+      "facilityGroups",
+      "removeContractRoleStatus",
       "currentProject",
+      "getAssignedContractUsers",
+      "contractProjects",
+      "associatedContractsStatus",
+      "contractProjectsLoaded",
+      "contractsStatus",
     ]),
     backToSettings() {
       return `/programs/${this.$route.params.programId}/settings`;
+    },
+
+    tableData() {
+      //Need to add filter for associated contracts only
+      if (this.contracts && this.contracts.length > 0) {
+        let con = this.contracts.filter((t) => t && t !== "null");
+        return con.filter((td) => {
+          if (
+            this.C_projectGroupFilter &&
+            this.C_projectGroupFilter.length > 0
+          ) {
+            let group = this.C_projectGroupFilter.map((t) => t.name);
+            return group.includes(td.facility_group.name);
+          } else return true;
+        });
+      } else return [];
+    },
+    allContracts() {
+      if (
+        (this.tableData && this.tableData == []) ||
+        this.tableData.length == 0
+      ) {
+        if (this.contractProjects && this.contractProjects.length > 0) {
+          console.log(
+            "no table data",
+            this.contractProjects.filter(
+              (t) => t.contract_end_date > this.today
+            )
+          );
+          return this.contractProjects.filter(
+            (t) => t.contract_end_date > this.today
+          );
+        }
+      } else if (
+        this.contractProjects &&
+        this.contractProjects.length > 0 &&
+        this.tableData &&
+        this.tableData.length > 0
+      ) {
+        let associatedContractIds = this.tableData.map((t) => t.id);
+        let data = this.contractProjects
+          .filter((t) => {
+            if (this.searchContractData !== "" && t) {
+              return (
+                t.name
+                  .toLowerCase()
+                  .match(this.searchContractData.toLowerCase()) ||
+                t.contract_number.name
+                  .toLowerCase()
+                  .match(this.searchContractData.toLowerCase()) ||
+                t.contract_customer.name
+                  .toLowerCase()
+                  .match(this.searchContractData.toLowerCase())
+              );
+            } else return true;
+          })
+          .filter((t) => {
+            return !associatedContractIds.includes(t.id);
+          })
+          .filter((t) => {
+            return t.contract_end_date > this.today || t.ignore_expired == true;
+          });
+        return data;
+      }
+    },
+    contractUsers() {
+      if (this.getRoles && this.getRoles.length > 0) {
+        let roleUsers = this.getRoles
+          .map((t) => t.role_users)
+          .filter((t) => t.length > 0);
+        if (this.projId) {
+          let groupByRoles = [].concat
+            .apply([], roleUsers)
+            .filter((t) => this.projId == t.project_contract_id);
+          return {
+            data: groupByRoles,
+            roleIds: _.uniq(groupByRoles.map((t) => t.role_id)),
+          };
+        } else return [].concat.apply([], roleUsers);
+      }
+    },
+    assignedUsers() {
+      //   //  Commenting out this setter which is executed in the handleExpandChange() method.  Useful if we want saved users to populate dropdown upon loading
+      if (
+        this.programUsers &&
+        this.contractUsers &&
+        this.contractUsers.data &&
+        this.contractUsers.data.length > 0
+      ) {
+        let tableUserIds = this.userids.map((t) => t.user_id);
+        return this.programUsers.filter((t) => tableUserIds.includes(t.id));
+      }
+    },
+    assignedContractUsers: {
+      get() {
+        return this.getAssignedContractUsers;
+      },
+      set(value) {
+        this.SET_ASSIGNED_CONTRACT_USERS(value);
+        console.log(value);
+      },
+    },
+    groupList() {
+      if (
+        this.groups &&
+        this.groups.length > 0 &&
+        this.facilityGroups &&
+        this.facilityGroups.length > 0
+      ) {
+        let programGroupIds = this.facilityGroups.map((t) => t.id);
+        return this.groups.filter((u) => programGroupIds.includes(u.id));
+      } else return [];
+    },
+    C_typeFilter: {
+      get() {
+        return this.getContractGroupTypes;
+      },
+      set(value) {
+        this.SET_CONTRACT_GROUP_TYPES(value);
+      },
+    },
+    // Filter when adding new Project
+    C_projectGroupFilter: {
+      get() {
+        return this.getGroupFilter;
+      },
+      set(value) {
+        // console.log(value)
+        this.setGroupFilter(value);
+      },
+    },
+    programUsers() {
+      if (this.currentProject) {
+        if (this.currentProject.users && this.currentProject.users.length > 0) {
+          return this.currentProject.users.filter((t) => t);
+        } else return [];
+      }
+    },
+    viableContractUsers() {
+      if (this.programUsers && this.contractUsers && this.contractUsers.data) {
+        let assignedUserIds = this.contractUsers.data.map((t) => t.user_id);
+        return this.programUsers.filter((t) => !assignedUserIds.includes(t.id));
+      }
+    },
+    contractRoleUsers: {
+      get() {
+        return this.getContractRoleUsers;
+      },
+      set(value) {
+        this.SET_CONTRACT_ROLE_USERS(value);
+      },
+    },
+    contractRoleNames: {
+      get() {
+        return this.getContractRoleNames;
+      },
+      set(value) {
+        this.SET_CONTRACT_ROLE_NAMES(value);
+      },
+    },
+    bulkChangeContractRoleNames: {
+      get() {
+        return this.getBulkContractRoleNames;
+      },
+      set(value) {
+        this.SET_BULK_CONTRACT_ROLE_NAMES(value);
+      },
+    },
+    C_newContractGroupFilter: {
+      get() {
+        return this.getNewContractGroupFilter;
+      },
+      set(value) {
+        // console.log(value)
+        this.setNewContractGroupFilter(value);
+      },
+    },
+  },
+  watch: {
+    contractStatus: {
+      handler() {
+        if (this.contractStatus == 200) {
+          this.$message({
+            message: `Contract saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.newGroup = null;
+          this.SET_CONTRACT_STATUS(0);
+          this.fetchContracts(this.$route.params.programId);
+          this.fetchCurrentProject(this.$route.params.programId);
+        }
+      },
+    },
+    contractsStatus: {
+      handler() {
+        if (this.contractsStatus == 200) {
+          this.$message({
+            message: `Successfully removed contract from program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_CONTRACTS_STATUS(0);
+          this.fetchContracts(this.$route.params.programId);
+          this.fetchContractProjects(this.$route.params.programId);
+          this.fetchCurrentProject(this.$route.params.programId);
+        }
+      },
+    },
+    associatedContractsStatus: {
+      handler() {
+        if (this.associatedContractsStatus == 200) {
+          this.$message({
+            message: `Contract successfully added to program.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_ASSOCIATED_CONTRACTS_STATUS(0);
+          this.fetchContractProjects(this.$route.params.programId);
+          this.fetchContracts(this.$route.params.programId);
+          this.fetchCurrentProject(this.$route.params.programId);
+        }
+      },
+    },
+    removeContractRoleStatus: {
+      handler() {
+        if (
+          this.removeContractRoleStatus == 204 ||
+          this.removeContractRoleStatus == 200
+        ) {
+          this.$message({
+            message: `Succesfully removed user(s) from role.`,
+            type: "success",
+            showClose: true,
+          });
+          this.fetchRoles(this.$route.params.programId);
+          this.SET_REMOVE_CONTRACT_ROLE_STATUS(0);
+          this.isEditingRoles = false;
+          this.rowIndex_1 = null;
+          this.changeRoleMode = false;
+        }
+      },
+    },
+    addUserToRoleStatus: {
+      handler() {
+        if (
+          this.addUserToRoleStatus == 204 ||
+          this.addUserToRoleStatus == 200
+        ) {
+          this.$message({
+            message: `Succesfully added user/role to project.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_ADD_USER_TO_ROLE_STATUS(0);
+          this.fetchRoles(this.$route.params.programId);
+          this.SET_CONTRACT_ROLE_NAMES([]);
+          this.SET_BULK_CONTRACT_ROLE_NAMES([]);
+          this.SET_CONTRACT_ROLE_USERS([]);
+          this.rowIndex_1 = null;
+          this.roleRowId = null;
+          this.changeRoleMode = false;
+        }
+      },
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-.right {
-  text-align: right;
+.addContractModal {
+  min-height: 300px;
+}
+/deep/.el-popper {
+  .select-popper {
+    display: none;
+  }
+}
+.userNames {
+  // background-color: #F8F9FA;
+  border-radius: 0.25rem;
+  margin-right: 2px;
+  padding: 1px 3px;
+  border: solid lightgray 0.75px;
 }
 .buttonWrapper {
   border-bottom: lightgray solid 1px;
+}
+.modalBtns {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+}
+/deep/.el-collapse-item__header {
+  padding-left: 1.5rem;
+}
+.right {
+  text-align: right;
+}
+/deep/.el-table__header,
+.el-table {
+  width: auto !important;
 }
 .fa-calendar {
   font-size: x-large;
@@ -708,6 +1469,23 @@ export default {
   color: #212529;
   font-size: 1.15rem;
 }
+.contractUsers {
+  /deep/.el-dialog {
+    width: 60% !important;
+
+    /deep/.el-dialog__body {
+      padding-top: 0;
+    }
+  }
+}
+// /deep/.el-dialog.contractUsers{
+//  width: 60% !important;
+//   }
+// .contractUsers{
+//  /deep/.el-dialog__body {
+//    padding-top: 0;
+//  }
+// }
 .tabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
@@ -736,162 +1514,46 @@ a {
   height: calc(100vh - 100px);
   overflow-y: auto;
 }
+/deep/.el-input__inner {
+  font-weight: 300 !important;
+}
 /deep/.el-table__row .el-input .el-input__inner {
   border-style: none;
-}
-/deep/.el-table {
-  font-size: 16px;
+  font-size: 16px !important;
 }
 /deep/.hover-row .el-input .el-input__inner {
   border-style: solid;
 }
-
-.container {
-  margin-left: 50px;
+/deep/.el-dialog.addContract {
+  width: 30%;
 }
-
-// Move el-transfer styles to Common file if more files require same CSS
-/deep/.el-transfer-panel {
-  width: 400px;
-  padding-bottom: 30px;
-}
-/deep/.el-transfer-panel__header {
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  font-weight: 600 !important;
-}
-/deep/.el-transfer-panel__body {
-  min-height: 400px;
-  margin-bottom: 30px;
-}
-/deep/.el-transfer-panel__list {
-  min-height: 425px;
-}
-/deep/.el-checkbox__input.is-disabled + span.el-checkbox__label {
-  color: #1d336f !important;
-  cursor: default;
-}
-/deep/.el-transfer-panel .el-transfer-panel__header {
-  background-color: #ededed;
-}
-/deep/.el-table {
-  .warning-row {
-    background: oldlace;
-  }
-
-  ::placeholder {
-    /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: lightgray;
-    font-family: "FuturaPTBook";
-  }
-}
-/deep/.el-input__inner {
-  font-size: 1.1rem;
-}
-
-/deep/.el-button.confirm-save-group-names {
-  background-color: rgba(40, 167, 69, 1);
-}
-
-label.el-checkbox {
-  margin-top: 15px;
-}
-
-div.sticky {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  text-align: right;
-  padding-top: 10px;
-  z-index: 10;
-  background: #fff;
-}
-.addVehiclesHeader,
-h5 {
-  line-height: 2.2;
-  word-break: break-word;
-}
-
-.portfolioNames {
-  /deep/.el-dialog__header {
-    padding-top: 0 !important;
-  }
-  /deep/.el-dialog__headerbtn {
-    display: none;
-  }
-
+.addContract {
   /deep/.el-dialog__body {
     padding-top: 0 !important;
-    height: 68vh;
   }
+}
+/deep/.el-dialog__close.el-icon.el-icon-close {
+  display: none;
+}
 
-  /deep/.el-checkbox-group {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 35vh;
+/deep/.el-table {
+  .el-input__inner {
+    font-size: 16px !important;
   }
 }
-.breakWord {
-  word-break: break-word !important;
-  // white-space: normal !important;
-  word-spacing: 2px !important;
+/deep/.el-dialog__close.el-icon.el-icon-close {
+  background-color: #dc3545;
+  border-radius: 50%;
+  color: white;
+  padding: 2px;
+  font-size: 0.7rem;
 }
-.createNewVehicle {
+.addUserRole {
   /deep/.el-dialog__body {
     padding-top: 0 !important;
   }
   /deep/.el-dialog {
-    width: 30%;
+    width: 55%;
   }
-}
-
-/deep/.el-dialog__close.el-icon.el-icon-close {
-  display: none;
-}
-.add-groups-header {
-  background-color: #fff;
-}
-.modalBtns {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
-.fs-50 {
-  font-size: 0.5rem;
-}
-.program-sphere {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: -webkit-radial-gradient(
-    65% 15%,
-    circle,
-    white 1px,
-    aqua 3%,
-    darkblue 60%,
-    aqua 100%
-  );
-  background: -moz-radial-gradient(
-    65% 15%,
-    circle,
-    white 1px,
-    aqua 3%,
-    darkblue 60%,
-    aqua 100%
-  );
-  background: -o-radial-gradient(
-    65% 15%,
-    circle,
-    white 1px,
-    aqua 3%,
-    darkblue 60%,
-    aqua 100%
-  );
-  background: radial-gradient(
-    circle at 65% 15%,
-    white 1px,
-    aqua 3%,
-    darkblue 60%,
-    aqua 100%
-  );
 }
 </style>
