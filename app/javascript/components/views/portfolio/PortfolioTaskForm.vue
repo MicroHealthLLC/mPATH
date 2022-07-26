@@ -23,10 +23,9 @@ export default {
   computed: {
     ...mapGetters(['portfolioTask'])
   },
-  beforeMount(){
+ mounted(){
     this.fetchPortfolioTask(this.$route.params)
     this.fetchPortfolioAssignees()
-    this.fetchPortfolioCategories()
     this.fetchPortfolioTaskStages()
   },
 };
