@@ -1432,7 +1432,7 @@
                     </thead>
                     <tbody>
                       <tr
-                        v-for="(task, index) in sortedTasks"
+                        v-for="(task, index) in sortedTasks.reverse()"
                         :key="index"
                         class="portTable taskHover"
                         @click="openTask(task)"
@@ -4977,6 +4977,7 @@ export default {
   },
   mounted() {
     this.fetchPortfolioPrograms();
+    this.fetchPortfolioCategories()
     this.$nextTick(function() {
      $(this.currTab).trigger("click");
       this.fetchPortfolioCounts();
@@ -6814,6 +6815,7 @@ export default {
       "fetchPortfolioRisks",
       "fetchPortfolioLessons",
       "fetchPortfolioPrograms",
+      "fetchPortfolioCategories"
     ]),
     log(e) {
       console.log(e);
@@ -7297,10 +7299,10 @@ export default {
           this.taskCount = this.portfolioTasks.total_count;
           let currCount = this.portfolioTasks.tasks.length;
           let total = this.portfolioTasks.total_count;
-          if(this.portfolioTasks.next_page && this.portfolioTasks.current_page != this.portfolioTasks.next_page){
-            let page = this.portfolioTasks.next_page
-            this.fetchPortfolioTasks({page});
-          }
+          // if(this.portfolioTasks.next_page){
+          //   let page = this.portfolioTasks.current_page 
+          //   this.fetchPortfolioTasks({page});
+          // }
           // if (currCount < total) {
           //   let size = (this.loadMoreItems += 250);
           //   this.fetchPortfolioTasks({ size });

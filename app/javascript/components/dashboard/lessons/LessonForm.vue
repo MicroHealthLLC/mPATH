@@ -39,7 +39,8 @@
             class="el-icon-arrow-right"
             style="font-size: 12px"
           ></el-icon>
-          <span>{{ lesson.title || "(Lesson Name)" }}</span>
+          <span v-if="lesson.title">{{ lesson.title }}</span>
+          <span v-else style="color: gray">(Lesson Name)</span>
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
@@ -1406,6 +1407,7 @@ export default {
     },
   },
 };
+//test1
 </script>
 
 <style lang="scss" scoped>

@@ -26,7 +26,7 @@ export default {
   beforeMount(){
     this.fetchPortfolioTask(this.$route.params)
     this.fetchPortfolioAssignees()
-    this.fetchPortfolioCategories()
+    // this.fetchPortfolioCategories()
     this.fetchPortfolioTaskStages()
   },
 };
