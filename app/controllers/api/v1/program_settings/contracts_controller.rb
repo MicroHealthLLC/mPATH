@@ -21,10 +21,10 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
 
   def index
 
-    project_contracts = @project.project_contracts.includes( [{ contract_project_datum: ContractProjectDatum.preload_array}, :facility_group ])
+    project_contracts = @project.project_contracts.includes([{ contract_project_datum: ContractProjectDatum.preload_array}, :facility_group ])
     c = []
     project_contracts.in_batches do |_project_contracts|
-      c += _project_contracts.map{|pc| pc.contract_project_datum.to_json({project_contract: pc}) }
+      c += _project_contracts.map{|pc| pc.to_json }
     end
     render json: {contracts: c, total_count: c.size}
   end
@@ -32,7 +32,7 @@ class Api::V1::ProgramSettings::ContractsController < AuthenticatedController
   def show
     project_contract = @project.project_contracts.find(params[:id])
     if project_contract
-      render json: {contract: project_contract.contract_project_datum.to_json({project_contract: project_contract}), message: "Successfully updated contract "}
+      render json: {contract: project_contract.to_json, message: "Successfully updated contract "}
     else
       render json: {error: "Error updating contract!"}, staus: 406
     end
