@@ -14,6 +14,10 @@ module Tasker
     # New contract functionality
     belongs_to :project_contract, optional: true
     has_one :contract_project_data, through: :project_contract
+
+    belongs_to :project_contract_vehicle, optional: true
+    has_one :contract_vehicle, through: :project_contract_vehicle
+
     has_one :facility, through: :facility_project
     has_one :project, through: :facility_project
     has_one :facility_group, through: :facility_project

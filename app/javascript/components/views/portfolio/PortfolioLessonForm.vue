@@ -24,7 +24,7 @@ export default {
   computed: {
     ...mapGetters(['portfolioLesson'])
   },
-  beforeMount(){
+ mounted(){
     this.fetchPortfolioLesson(this.$route.params)
     this.fetchPortfolioLessonStages()
     this.fetchPortfolioCategories()
