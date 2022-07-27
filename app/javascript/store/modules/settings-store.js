@@ -756,21 +756,21 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLE_LOADED", true);
         });
-    },
+    },*/
     fetchVehicles({ commit }, id) {
       commit("TOGGLE_VEHICLES_LOADED", false);
       // Retrieve vehicle by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/program_settings/vehicles?project_id=${id}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          commit("SET_VEHICLES", res.data.vehicles);
-          // console.log(res.data.vehicles);
+          commit("SET_VEHICLES", res.data.contract_vehicles);
+          console.log(res.data.contract_vehicles);
         })
         .catch((err) => {
           console.log(err);
@@ -778,8 +778,8 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    }, */
-    fetchPortfolioUsers({ commit }, id) {
+    },
+    /* fetchPortfolioUsers({ commit }, id) {
       commit("TOGGLE_USERS_LOADED", false);
       // Retrieve contract by id
       axios({
@@ -1039,7 +1039,7 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    fetchVehicles({ commit }) {
+    /* fetchVehicles({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
       axios({
@@ -1059,7 +1059,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
-    },
+    }, */
     fetchVehicleNumbers({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
@@ -1444,11 +1444,11 @@ const settingsStore = {
 
     // VEHICLES
     /* SET_VEHICLE: (state, vehicle) => (state.vehicle = vehicle),
-    SET_VEHICLES: (state, value) => (state.vehicles = value),
     SET_VEHICLE_STATUS: (state, value) => (state.vehicle_status = value),
     SET_VEHICLES_STATUS: (state, value) => (state.vehicles_status = value),
-    TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),
-    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded), */
+    TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),*/
+    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded), 
+    SET_VEHICLES: (state, value) => (state.vehicles = value),
 
     //ROLES MUTATIONS
     TOGGLE_ROLES_LOADED: (state, loaded) => (state.roles_loaded = loaded),
@@ -1529,8 +1529,8 @@ const settingsStore = {
       (state.vehicle_classifications = value), */
 
     SET_USER_STATUS: (state, value) => (state.user_status = value),
-    SET_VEHICLES: (state, value) => (state.vehicle_filter = value),
-    SET_VEHICLE_NUMBERS: (state, value) => (state.vehicle_number = value),
+    //SET_VEHICLES: (state, value) => (state.vehicle_filter = value),
+    //SET_VEHICLE_NUMBERS: (state, value) => (state.vehicle_number = value),
     SET_SUBCONTRACT_NUMBER: (state, value) =>
       (state.subcontract_number = value),
     SET_CONTRACT_NUMBER: (state, value) => (state.contract_number = value),
@@ -1639,16 +1639,16 @@ const settingsStore = {
 
     /* vehicle: (state) => state.vehicle,
     vehicleStatus: (state) => state.vehicle_status,
-    vehicles: (state) => state.vehicles,
-    vehiclesStatus: (state) => state.vehicles_status,
     getNewVehicleGroupFilter: (state) => state.new_vehicle_group_filter,
     editVehicleSheet: (state) => state.edit_vehicle_sheet,
     getVehicleStatusesFilter: (state) => state.vehicle_statuses_filter,
     getVehicleClassifications: (state) => state.vehicle_classifications,
     getVehicleGroupTypes: (state) => state.vehicle_group_types,
     getVehicleTable: (state) => state.vehicle_table,
-    vehicleLoaded: (state) => state.vehicle_loaded,
-    vehiclesLoaded: (state) => state.vehicles_loaded, */
+    vehicleLoaded: (state) => state.vehicle_loaded,*/
+    vehiclesLoaded: (state) => state.vehicles_loaded,
+    vehicles: (state) => state.vehicles, 
+    vehiclesStatus: (state) => state.vehicles_status,
 
     getNewUserId: (state) => state.new_user_id,
     getEditUserData: (state) => state.edit_user_data,
