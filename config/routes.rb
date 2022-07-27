@@ -62,9 +62,55 @@ Rails.application.routes.draw do
           end
         end
 
+        get "/contract_data/get_contract_data", to: "contract_data#get_contract_data"
+        get "/contract_data/contract_types", to: "contract_data#contract_types"
+        get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
+        get "/contract_data/contract_customeres", to: "contract_data#contract_customeres"
+        get "/contract_data/contract_vehicles", to: "contract_data#contract_vehicles"
+        get "/contract_data/contract_vehicle_number", to: "contract_data#contract_vehicle_number"
+        get "/contract_data/contract_number", to: "contract_data#contract_number"
+        get "/contract_data/subcontract_number", to: "contract_data#subcontract_number"
+        get "/contract_data/contract_prime", to: "contract_data#contract_prime"
+        get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
+        get "/contract_data/contract_classification", to: "contract_data#contract_classification"
+        get "/contract_data/contract_client_types", to: "contract_data#contract_client_types"
+        get "/contract_data/contract_sub_categories", to: "contract_data#contract_sub_categories"
+        get "/contract_data/contract_agencies", to: "contract_data#contract_agencies"
+        get "/contract_data/contract_vehicle_types", to: "contract_data#contract_vehicle_types"
+        get "/contract_data/contract_award_tos", to: "contract_data#contract_award_tos"
+        get "/contract_data/contract_naics", to: "contract_data#contract_naics"
+        get "/contract_data/contract_award_types", to: "contract_data#contract_award_types"
+        get "/contract_data/contract_pocs", to: "contract_data#contract_pocs"
+
+        post "/contract_data/contract_client_types", to: "contract_data#create_contract_category"
+        post "/contract_data/contract_categories", to: "contract_data#create_contract_client_type"
+        post "/contract_data/contract_type", to: "contract_data#create_contract_type"
+        post "/contract_data/contract_status", to: "contract_data#create_contract_status"
+        post "/contract_data/contract_customer", to: "contract_data#create_contract_customer"
+        post "/contract_data/contract_vehicle", to: "contract_data#create_contract_vehicle"
+        post "/contract_data/contract_vehicle_number", to: "contract_data#create_contract_vehicle_number"
+        post "/contract_data/contract_number", to: "contract_data#create_contract_number"
+        post "/contract_data/subcontract_number", to: "contract_data#create_subcontract_number"
+        post "/contract_data/contract_prime", to: "contract_data#create_contract_prime"
+        post "/contract_data/contract_current_pop", to: "contract_data#create_contract_current_pop"
+        post "/contract_data/contract_classification", to: "contract_data#create_contract_classification"
+      
       end
 
-      resources :contract_vehicles
+      namespace :portfolio do
+        resources :contract_vehicles
+        resources :contract_project_pocs
+        resources :contract_project_data do
+          post :add_project, on: :member
+        end
+        get "/programs", to: "portfolio#programs"
+        get "/lessons", to: "portfolio#lessons"
+        get "/tasks", to: "portfolio#tasks"
+        get "/risks", to: "portfolio#risks"
+        get "/issues", to: "portfolio#issues"
+        get "/tab_counts", to: "portfolio#tab_counts"
+        get "/contracts", to: "portfolio#contracts"
+      end
 
       resources :privileges do
         collection do
@@ -99,11 +145,6 @@ Rails.application.routes.draw do
           put :bulk_projects_update
         end
       end
-      
-      resources :contract_project_data do
-        post :add_project, on: :member
-      end
-      resources :contract_project_pocs
 
       resources :project_contracts do
         resources :notes #, module: :facilities
@@ -129,49 +170,10 @@ Rails.application.routes.draw do
       end
 
       # Contract data API
-      get "/contract_data/get_contract_data", to: "contract_data#get_contract_data"
-      get "/contract_data/contract_types", to: "contract_data#contract_types"
-      get "/contract_data/contract_statuses", to: "contract_data#contract_statuses"
-      get "/contract_data/contract_customeres", to: "contract_data#contract_customeres"
-      get "/contract_data/contract_vehicles", to: "contract_data#contract_vehicles"
-      get "/contract_data/contract_vehicle_number", to: "contract_data#contract_vehicle_number"
-      get "/contract_data/contract_number", to: "contract_data#contract_number"
-      get "/contract_data/subcontract_number", to: "contract_data#subcontract_number"
-      get "/contract_data/contract_prime", to: "contract_data#contract_prime"
-      get "/contract_data/contract_current_pop", to: "contract_data#contract_current_pop"
-      get "/contract_data/contract_classification", to: "contract_data#contract_classification"
-      get "/contract_data/contract_client_types", to: "contract_data#contract_client_types"
-      get "/contract_data/contract_sub_categories", to: "contract_data#contract_sub_categories"
-      get "/contract_data/contract_agencies", to: "contract_data#contract_agencies"
-      get "/contract_data/contract_vehicle_types", to: "contract_data#contract_vehicle_types"
-      get "/contract_data/contract_award_tos", to: "contract_data#contract_award_tos"
-      get "/contract_data/contract_naics", to: "contract_data#contract_naics"
-      get "/contract_data/contract_award_types", to: "contract_data#contract_award_types"
-      get "/contract_data/contract_pocs", to: "contract_data#contract_pocs"
 
-
-      post "/contract_data/contract_client_types", to: "contract_data#create_contract_category"
-      post "/contract_data/contract_categories", to: "contract_data#create_contract_client_type"
-      post "/contract_data/contract_type", to: "contract_data#create_contract_type"
-      post "/contract_data/contract_status", to: "contract_data#create_contract_status"
-      post "/contract_data/contract_customer", to: "contract_data#create_contract_customer"
-      post "/contract_data/contract_vehicle", to: "contract_data#create_contract_vehicle"
-      post "/contract_data/contract_vehicle_number", to: "contract_data#create_contract_vehicle_number"
-      post "/contract_data/contract_number", to: "contract_data#create_contract_number"
-      post "/contract_data/subcontract_number", to: "contract_data#create_subcontract_number"
-      post "/contract_data/contract_prime", to: "contract_data#create_contract_prime"
-      post "/contract_data/contract_current_pop", to: "contract_data#create_contract_current_pop"
-      post "/contract_data/contract_classification", to: "contract_data#create_contract_classification"
-      
 
       # Portfolio View
-      get "/portfolio/programs", to: "portfolio#programs"
-      get "/portfolio/lessons", to: "portfolio#lessons"
-      get "/portfolio/tasks", to: "portfolio#tasks"
-      get "/portfolio/risks", to: "portfolio#risks"
-      get "/portfolio/issues", to: "portfolio#issues"
-      get "/portfolio/tab_counts", to: "portfolio#tab_counts"
-      get "/portfolio/contracts", to: "portfolio#contracts"
+
       # get "/projects/:id", to: "projects#show"
 
       # Portfolio Contracts

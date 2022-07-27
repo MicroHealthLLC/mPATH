@@ -813,7 +813,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_types`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_types`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -834,7 +834,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_classification`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_classification`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -855,7 +855,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_customeres`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_customeres`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -876,7 +876,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_current_pop`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_current_pop`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -897,7 +897,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_prime`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_prime`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -918,7 +918,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_vehicles`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_vehicles`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -939,7 +939,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_vehicle_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_vehicle_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -960,7 +960,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_client_types`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_client_types`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -981,7 +981,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1002,7 +1002,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/subcontract_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/subcontract_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1022,7 +1022,7 @@ const settingsStore = {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_statuses`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_statuses`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
