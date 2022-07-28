@@ -107,8 +107,13 @@ const settingsStore = {
     bulk_contract_role_names: [],
     assigned_project_users: [],
     assigned_contract_users: [],
+    assigned_vehicle_users: [],
     users_contract_roles: [],
     users_admin_roles: [],
+
+    //VEHICLE USER ROLES
+    vehicle_role_names: [],
+    vehicle_role_users: [],
 
     //CONTRACT USER ROLES
     contract_role_users: [],
@@ -120,6 +125,7 @@ const settingsStore = {
 
     associated_projects: [],
     associated_contracts: [],
+    associated_vehicles: [],
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -473,6 +479,12 @@ const settingsStore = {
               userData.contractId
             );
           }
+          if (userData.vehicleId) {
+            formData.append(
+              "role_users[][project_contract_vehicle_id]",
+              userData.vehicleId
+            );
+          }
         });
       }
       commit("TOGGLE_NEW_ROLE_LOADED", false);
@@ -552,6 +564,10 @@ const settingsStore = {
           if (userData.contractId) {
             formData.append("users_from_contract_role", true);
             formData.append("project_contract_id", userData.contractId);
+          }
+          if (userData.vehicleId) {
+            formData.append("users_from_contract_role", true);
+            formData.append("project_contract_vehicle_id", userData.vehicleId);
           }
         });
       }
@@ -1439,7 +1455,7 @@ const settingsStore = {
       (state.contract_role_names = value),
 
     // VEHICLES
-    /* SET_ASSIGNED_VEHICLE_USERS: (state, value) =>
+    SET_ASSIGNED_VEHICLE_USERS: (state, value) =>
       (state.assigned_vehicle_users = value),
     SET_BULK_VEHICLE_ROLE_NAMES: (state, value) =>
       (state.bulk_vehicle_role_names = value),
@@ -1452,7 +1468,7 @@ const settingsStore = {
     SET_ASSOCIATED_VEHICLES: (state, value) =>
       (state.associated_vehicles = value),
     SET_EDIT_VEHICLE_SHEET: (state, value) =>
-      (state.edit_vehicle_sheet = value), */
+      (state.edit_vehicle_sheet = value),
 
     SET_ADMIN_ROLE_USERS: (state, value) => (state.admin_role_users = value),
     SET_ADMIN_ROLE_NAMES: (state, value) => (state.admin_role_names = value),
@@ -1611,6 +1627,8 @@ const settingsStore = {
     getProjectRoleUsers: (state) => state.project_role_users,
     getAssignedProjectUsers: (state) => state.assigned_project_users,
     getAssignedContractUsers: (state) => state.assigned_contract_users,
+    getAssignedVehicleUsers: (state) => state.assigned_vehicle_users,
+
     getUsersProjectRoles: (state) => state.users_project_roles,
     getUsersContractRoles: (state) => state.users_contract_roles,
     getUsersAdminRoles: (state) => state.users_admin_roles,
@@ -1631,6 +1649,7 @@ const settingsStore = {
 
     getAssociatedProjects: (state) => state.associated_projects,
     getAssociatedContracts: (state) => state.associated_contracts,
+    getAssociatedVehicles: (state) => state.associated_vehicles,
 
     getRolesLoaded: (state) => state.roles_loaded,
     newRoleStatus: (state) => state.new_role_status,
@@ -1645,12 +1664,11 @@ const settingsStore = {
     removeContractRoleStatus: (state) => state.remove_contract_role_status,
     showCreateRow: (state) => state.show_create_row,
 
-    getAssignedVehicleUsers: (state) => state.assigned_vehicle_users,
     getUsersVehicleRoles: (state) => state.users_vehicle_roles,
     getBulkVehicleRoleNames: (state) => state.bulk_vehicle_role_names,
     getVehicleRoleUsers: (state) => state.vehicle_role_users,
     getVehicleRoleNames: (state) => state.vehicle_role_names,
-    getAssociatedVehicles: (state) => state.associated_vehicles,
+    
     updatedVehicleRoleStatus: (state) => state.updated_vehicle_role_status,
     removeVehicleRoleStatus: (state) => state.remove_vehicle_role_status,
 
