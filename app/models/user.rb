@@ -877,6 +877,23 @@ class User < ApplicationRecord
 
   end
 
+    def authorized_contract_vehicle_ids(project_ids: []) 
+    user = self
+    # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
+    # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
+    # if project_ids.any?
+    #   project_contract_ids = ProjectContract.where(project_id: project_ids, id: project_contract_ids).pluck(:id)
+    # end
+    # project_contract_ids
+
+    fids = user.role_users.joins(:role_privileges).where("role_privileges.privilege REGEXP '^[RWD]' and role_users.project_contract_vehicle_id is not null").select("distinct(project_contract_vehicle_id)").map(&:project_contract_vehicle_id)
+    if project_ids.any?
+      fids = ProjectContractVehicle.where(project_id: project_ids, id: fids).pluck(:id)
+    end
+    fids
+
+  end
+
   def authorized_contracts(project_ids: [])
     ProjectContract.where(id: authorized_contract_ids(project_ids: project_ids) )
   end
