@@ -782,7 +782,7 @@ const settingsStore = {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
     },
-    /* fetchPortfolioUsers({ commit }, id) {
+    fetchPortfolioUsers({ commit }, id) {
       commit("TOGGLE_USERS_LOADED", false);
       // Retrieve contract by id
       axios({
@@ -937,7 +937,7 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* fetchVehicleGroupTypes({ commit }) {
+    fetchVehicleGroupTypes({ commit }) {
       commit("TOGGLE_VEHICLES_LOADED", false);
       // Retrieve vehicle by id
       axios({
@@ -957,7 +957,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    }, */
+    },
     fetchClassificationTypes({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
