@@ -10,6 +10,10 @@ const contractStore = {
     associated_contracts_status: 0,
     associated_contracts_loaded: true,
 
+    associated_vehicles: [],
+    associated_vehicles_status: 0,
+    associated_vehicles_loaded: true, 
+
     contract_data_options: [],
     contract_data_options_loaded: true,
 
@@ -24,7 +28,7 @@ const contractStore = {
     contract_project_loaded: true,
     
     //VEHICLES
-    contract_vehicles: {},
+    contract_vehicle: {},
     contract_vehicle_status: 0,
     contract_vehicle_loaded: true,
 
@@ -64,11 +68,11 @@ const contractStore = {
           commit("TOGGLE_CONTRACT_PROJECTS_LOADED", true);
         });
     },
-    fetchContractVehicles({ commit }) {
+    fetchContractVehicles({ commit }, id) {
       commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_vehicles`,
+        url: `${API_BASE_PATH}/contract_vehicles?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -76,7 +80,7 @@ const contractStore = {
       })
         .then((res) => {
           commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-          // console.log(res.data.roles)
+          console.log(res.data.contract_vehicles)
         })
         .catch((err) => {
           console.log(err);
@@ -283,6 +287,29 @@ const contractStore = {
           commit("TOGGLE_ASSOCIATED_CONTRACTS_LOADED", true);
         });
       },
+      associateVehicleToProgram({ commit }, { vehicle } ) {
+        commit("TOGGLE_ASSOCIATED_VEHICLES_LOADED", false);
+        axios({
+          method: "POST",
+          url: `${API_BASE_PATH}/program_settings/programs/add_contract_vehicle`,
+          data: {id: vehicle.programId, contract_vehicle_id: vehicle.id},
+          headers: {
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+              .attributes["content"].value,
+          },
+        })
+          .then((res) => {
+            commit("SET_ASSOCIATED_VEHICLES", res.data);
+            commit("SET_ASSOCIATED_VEHICLES_STATUS", res.status);
+            // console.log(res.data.roles)
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            commit("TOGGLE_ASSOCIATED_VEHICLES_LOADED", true);
+          });
+        },
         // UPDATE REQUESTS
   updateIgnoreExpired({ commit }, { cProjectData, id }) {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
@@ -522,6 +549,10 @@ const contractStore = {
     SET_ASSOCIATED_CONTRACTS_STATUS: (state, status) => (state.associated_contracts_status = status),   
     TOGGLE_ASSOCIATED_CONTRACTS_LOADED: (state, loaded) => (state.associated_contracts_loaded = loaded),
 
+    SET_ASSOCIATED_VEHICLES: (state, value) => (state.associated_vehicles = value),
+    SET_ASSOCIATED_VEHICLES_STATUS: (state, status) => (state.associated_vehicles_status = status),
+    TOGGLE_ASSOCIATED_VEHICLES_LOADED: (state, loaded) => (state.associated_vehicles_loaded = loaded),
+
     TOGGLE_CONTRACT_DATA_OPTIONS_LOADED: (state, loaded) => (state.contract_data_options_loaded = loaded),
 
     SET_CONTRACT_DATA_OPTIONS: (state, options) => (state.contract_data_options = options),
@@ -551,6 +582,9 @@ const contractStore = {
   getters: {
    associatedContracts: (state) => state.associated_contracts,
    associatedContractsStatus: (state) => state.associated_contracts_status,
+
+   associatedVehicles: (state) => state.associated_vehicles,
+   associatedVehiclesStatus: (state) => state.associated_vehicles_status,
 
 
    //CONTRACT PROJECTS DATA
