@@ -21,6 +21,7 @@ const settingsStore = {
     contract: {},
     contracts: [],
     vehicles: [],
+    vehicle: {},
     check_all: false,
     check_all_projects: false,
     client_types: [],
@@ -28,9 +29,11 @@ const settingsStore = {
     contract_loaded: true,
     contracts_loaded: true,
     vehicles_loaded: true,
+    vehicle_loaded: true,
     contract_status: 0,
     contracts_status: 0,
     vehicles_status: 0,
+    vehicle_status: 0,
     customer_agencies_filter: null,
     contract_statuses_filter: null,
     contract_classifications: [],
@@ -1264,6 +1267,38 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
+    updateVehicle({ commit }, { vehicle, id }) {
+      // Displays loader on front end
+      commit("TOGGLE_VEHICLES_LOADED", false);
+      let formData = new FormData();
+      // Utilize utility function to prep Lesson form data
+      // let formData = contractFormData(contract);
+      formData.append("project_id", vehicle.programId);
+      formData.append(
+        "project_contract_vehicle[facility_group_id]",
+        vehicle.facility_group_id
+      );
+      axios({
+        method: "PUT",
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${id}`,
+        data: formData,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          commit("SET_VEHICLE", res.data.contract_vehicle);
+          commit("SET_VEHICLE_STATUS", res.status);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_VEHICLES_LOADED", true);
+        });
+    },
     deleteContract({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
@@ -1443,10 +1478,10 @@ const settingsStore = {
       (state.contracts_loaded = loaded),
 
     // VEHICLES
-    /* SET_VEHICLE: (state, vehicle) => (state.vehicle = vehicle),
+    SET_VEHICLE: (state, value) => (state.vehicle = value),
     SET_VEHICLE_STATUS: (state, value) => (state.vehicle_status = value),
     SET_VEHICLES_STATUS: (state, value) => (state.vehicles_status = value),
-    TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),*/
+    TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),
     TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded), 
     SET_VEHICLES: (state, value) => (state.vehicles = value),
 
@@ -1637,7 +1672,7 @@ const settingsStore = {
     getCheckAllProjects: (state) => state.check_all_projects,
     getCheckedGroups: (state) => state.checked_groups,
 
-    /* vehicle: (state) => state.vehicle,
+    vehicle: (state) => state.vehicle,
     vehicleStatus: (state) => state.vehicle_status,
     getNewVehicleGroupFilter: (state) => state.new_vehicle_group_filter,
     editVehicleSheet: (state) => state.edit_vehicle_sheet,
@@ -1645,7 +1680,7 @@ const settingsStore = {
     getVehicleClassifications: (state) => state.vehicle_classifications,
     getVehicleGroupTypes: (state) => state.vehicle_group_types,
     getVehicleTable: (state) => state.vehicle_table,
-    vehicleLoaded: (state) => state.vehicle_loaded,*/
+    vehicleLoaded: (state) => state.vehicle_loaded,
     vehiclesLoaded: (state) => state.vehicles_loaded,
     vehicles: (state) => state.vehicles, 
     vehiclesStatus: (state) => state.vehicles_status,
