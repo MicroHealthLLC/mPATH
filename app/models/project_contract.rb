@@ -16,6 +16,23 @@ class ProjectContract < ApplicationRecord
   before_update :assign_default_facility_group 
   after_destroy :remove_roles
 
+  def to_json(options = {})
+    h = contract_project_datum.to_json
+    h.merge!({project_contract_id: id })
+    h.merge!({facility_group: facility_group.as_json })
+    h.merge!({facility_group_id: facility_group_id })
+    h.merge!({contract_customer: contract_project_datum.contract_customer.as_json})
+    h.merge!({contract_vehicle: contract_project_datum.contract_vehicle.to_json})
+    h.merge!({contract_award_to: contract_project_datum.contract_award_to.as_json})
+    h.merge!({contract_pop: contract_project_datum.contract_pop.as_json})
+    h.merge!({contract_naic: contract_project_datum.contract_naic.as_json})
+    h.merge!({contract_award_type: contract_project_datum.contract_award_type.as_json})
+    h.merge!({contract_type: contract_project_datum.contract_type.as_json})
+    h.merge!({contract_current_pop: contract_project_datum.contract_current_pop.as_json})
+    h.merge!({contract_number: contract_project_datum.contract_number.as_json})
+    h
+  end
+
   def remove_roles
     RoleUser.where(project_contract_id: self.id).destroy_all
   end

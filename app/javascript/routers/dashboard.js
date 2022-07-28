@@ -8,7 +8,9 @@ import TestCloudData from "./../components/views/settings/TestCloudData";
 import SettingsContracts from "./../components/views/settings/SettingsContracts";
 import SettingsGroups from "./../components/views/settings/SettingsGroups";
 import SettingsUsers from "./../components/views/settings/SettingsUsers";
+import SettingsVehicles from "./../components/views/settings/SettingsVehicles";
 import SettingsRolesIndex from "./../components/views/settings/roles/SettingsRolesIndex";
+
 // import SettingsRolesProjects from "./../components/views/settings/roles/SettingsRolesProjects"
 // import SettingsRolesContracts from "./../components/views/settings/roles/SettingsRolesContracts"
 
@@ -198,6 +200,11 @@ export default new VueRouter({
       name: "SettingsUsers",
       path: "/programs/:programId/settings/users",
       component: SettingsUsers,
+    },
+    {
+      name: "SettingsVehicles",
+      path: "/programs/:programId/settings/vehicles",
+      component: SettingsVehicles,
     },
     // {
     //   name: "SettingsRolesContracts",
