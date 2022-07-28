@@ -782,7 +782,7 @@ const settingsStore = {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
     },
-    /* fetchPortfolioUsers({ commit }, id) {
+    fetchPortfolioUsers({ commit }, id) {
       commit("TOGGLE_USERS_LOADED", false);
       // Retrieve contract by id
       axios({
@@ -824,7 +824,7 @@ const settingsStore = {
           commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
-    updateUserData({ commit }, { userData, program_id }) {
+    /* updateUserData({ commit }, { userData, program_id }) {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
       console.log(userData);
@@ -1482,7 +1482,7 @@ const settingsStore = {
     SET_VEHICLE_STATUS: (state, value) => (state.vehicle_status = value),
     SET_VEHICLES_STATUS: (state, value) => (state.vehicles_status = value),
     TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),
-    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded), 
+    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded),
     SET_VEHICLES: (state, value) => (state.vehicles = value),
 
     //ROLES MUTATIONS
@@ -1682,7 +1682,7 @@ const settingsStore = {
     getVehicleTable: (state) => state.vehicle_table,
     vehicleLoaded: (state) => state.vehicle_loaded,
     vehiclesLoaded: (state) => state.vehicles_loaded,
-    vehicles: (state) => state.vehicles, 
+    vehicles: (state) => state.vehicles,
     vehiclesStatus: (state) => state.vehicles_status,
 
     getNewUserId: (state) => state.new_user_id,

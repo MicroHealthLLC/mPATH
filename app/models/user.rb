@@ -930,12 +930,14 @@ class User < ApplicationRecord
     # return result
   end
 
+  # TODO: refactor logic to make it working for any object instead of adding new each time
   def has_permission_by_role?(args)
 
     program = args[:program]
     project = args[:project]
     action = args[:action]
     project_contract = args[:project_contract]
+    project_contract_vehicle = args[:project_contract_vehicle]
     resource = args[:resource]
 
     begin
@@ -948,6 +950,13 @@ class User < ApplicationRecord
         program_id = project_contract.project_id.to_s
 
         role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_id == project_contract.id }.map(&:role_id).compact.uniq
+        role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
+      elsif project_contract_vehicle
+        project_contract_vehicle = project_contract_vehicle.is_a?(ProjectContractVehicle) ? project_contract_vehicle : ProjectContractVehicle.find( project_contract_vehicle.to_s)
+
+        program_id = project_contract_vehicle.project_id.to_s
+
+        role_ids = user.role_users.select{|ru| ru.project_id == program_id.to_i &&  ru.project_contract_vehicle_id == project_contract_vehicle.id }.map(&:role_id).compact.uniq
         role_type = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES.detect{|rt| rt.include?(resource)}
       else
         program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
@@ -974,9 +983,9 @@ class User < ApplicationRecord
     return result
   end
 
-  def has_contract_permission?(action: "read", resource: , project_contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
+  def has_contract_permission?(action: "read", resource: , project_contract_vehicle: nil, project_contract: nil, project_privileges_hash: {},contract_privileges_hash: {} )
 
-    return has_permission_by_role?({action: "read", resource: resource , project_contract: project_contract})
+    return has_permission_by_role?({action: "read", resource: resource , project_contract_vehicle: project_contract_vehicle, project_contract: project_contract})
 
     # begin
     #   contract = contract.is_a?(Contract) ? contract : Contract.find(contract.to_s)
