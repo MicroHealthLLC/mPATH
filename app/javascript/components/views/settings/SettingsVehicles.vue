@@ -35,13 +35,14 @@
                 <i class="far fa-plus-circle mr-1"></i> Add Existing Vehicle(s)
               </el-button>
             </div>
-            <div class="col">
+            <div class="col-5">
               <el-input
                 type="search"
-                placeholder="Search by Name, SINS/Subcategories, Contracting Agency, or Type"
+                placeholder="Search by Vehicle Name, SINS/Subcategories, Contract Agency, or Type"
                 aria-label="Search"
+                class="pr-0"
                 aria-describedby="search-addon"
-                v-model="searchContractVehiclesData"
+                v-model="search"
                 data-cy=""
               >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
@@ -71,7 +72,7 @@
           </div>
         </div>
         <div
-          v-loading="!contractsLoaded"
+          v-loading="!vehiclesLoaded"
           element-loading-text="Fetching your data. Please wait..."
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -81,7 +82,16 @@
           <el-table
             v-if="tableData"
             :data="
-              tableData
+              tableData.filter(
+                  (data) =>
+                    !search ||
+                    data.contract_vehicle.name.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_vehicle.full_name.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_vehicle.contract_agency.name.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_vehicle.contract_sub_category.name.toLowerCase().includes(search.toLowerCase()) ||
+                    data.contract_vehicle.contract_vehicle_type.name.toLowerCase().includes(search.toLowerCase())
+                )
+                .reverse()
             "
             style="width: 100%"
             highlight-current-row
@@ -142,6 +152,46 @@
                 </span>
               </template>
             </el-table-column>
+              <el-table-column
+              prop="facility_group"
+              sortable
+              filterable
+              label="Group"
+            >
+            <template slot-scope="scope">
+               <el-select
+                v-model="scope.row.facility_group_id"
+                class="w-100"
+                v-if="rowId == scope.row.contract_vehicle.id"
+                filterable
+                track-by="id"
+                clearable
+                value-key="id"
+                placeholder="Search and select Group"
+                >
+                <el-option
+                  v-for="item in facilityGroups"
+                  :value="item.id"
+                  :key="item.id"
+                  :label="item.name"
+                >
+                </el-option>
+              </el-select>   
+
+             
+               <span v-else> 
+                 <span v-if="scope.row.facility_group && scope.row.facility_group.name && rowId !== scope.row.contract_vehicle.id">
+                    {{ scope.row.facility_group.name }}
+                 </span> 
+            
+               </span>
+              <!-- <el-input
+                size="small"
+                style="text-align:center"
+                v-model="scope.row.facilityGroupName"
+              ></el-input> -->
+            </template>
+          </el-table-column>
             <el-table-column label="Actions" align="right">
               <template slot-scope="scope">
                 <el-button
@@ -241,11 +291,11 @@
             <div class="col-7 text-right">
               <el-input
                 type="search"
-                placeholder="Search by Name, SINS/Subcategories, Contracting Agency, or Type"
+                placeholder="Search by Vehicle Name, SINS/Subcategories, Contract Agency, or Type"
                 aria-label="Search"
                 class="w-100"
                 aria-describedby="search-addon"
-                v-model="searchContractData"
+                v-model="searchContractVehiclesData"
                 data-cy=""
               >
                 <el-button slot="prepend" icon="el-icon-search"></el-button>
@@ -254,7 +304,7 @@
           </div>
           <template>
             <div
-              v-loading="!contractProjectsLoaded"
+              v-loading="!contractVehiclesLoaded"
               element-loading-text="Fetching your data. Please wait..."
               element-loading-spinner="el-icon-loading"
               element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -685,7 +735,6 @@ export default {
     return {
       today: new Date().toISOString().slice(0, 10),
       currentRoleName: {},
-      searchContractData: "",
       searchContractVehiclesData: "",
       newGroup: null,
       vehicleDialogVisible: false,
@@ -737,7 +786,7 @@ export default {
       "setProjectGroupFilter",
       "setContractTable",
       "setGroupFilter",
-      "SET_CONTRACT_STATUS",
+      "SET_VEHICLE_STATUS",
       "setContractTypeFilter",
       "setNewContractGroupFilter",
       "SET_CONTRACT_GROUP_TYPES",
@@ -747,7 +796,7 @@ export default {
       "SET_BULK_CONTRACT_ROLE_NAMES",
       "SET_ASSIGNED_CONTRACT_USERS",
       "SET_REMOVE_CONTRACT_ROLE_STATUS",
-      "SET_ASSOCIATED_CONTRACTS_STATUS",
+      "SET_ASSOCIATED_VEHICLES_STATUS",
       "SET_CONTRACTS_STATUS",
     ]),
     ...mapActions([
@@ -755,10 +804,9 @@ export default {
       "fetchVehicles",
       "fetchVehicleProjects",
       "fetchCurrentProject",
-
       "createContract",
       "fetchGroups",
-      "updateContract",
+      "updateVehicle",
       "deleteContract",
       "addUserToRole",
       "fetchRoles",
@@ -980,7 +1028,7 @@ export default {
       });
     },
     handleExpandChange(row, expandedRows) {
-      this.projId = row.id;
+      this.projId = row.contract_vehicle.id;
       const lastId = this.expandRowKeys[0];
       // disable mutiple row expanded
       this.expandRowKeys = this.projId === lastId ? [] : [this.projId];
@@ -1019,16 +1067,16 @@ export default {
     //     return { formData }
 
     saveEdits(index, rows) {
-      let id = rows.project_contract_id;
-      let contractData = {
-        contract: {
+      let id = rows.id;
+      let vehicleData = {
+        vehicle: {
           facility_group_id: rows.facility_group_id,
           programId: this.$route.params.programId,
         },
       };
       // this.setNewContractGroupFilter(rows.facility_group_id);
-      this.updateContract({
-        ...contractData,
+      this.updateVehicle({
+        ...vehicleData,
         id,
       });
       // console.log(groupId)
@@ -1043,7 +1091,7 @@ export default {
       console.log(rows);
       this.newGroup = null;
       this.rowIndex = index;
-      this.rowId = rows.id;
+      this.rowId = rows.contract_vehicle.id;
     },
     deleteSelectedContract(index, rows) {
       let id = rows.id;
@@ -1073,10 +1121,6 @@ export default {
       this.hideSaveBtn = false;
     },
     addVehicle() {
-      //  if (this.allVehicles  && this.allVehicles.length > 0){
-      //       console.log(this.allVehicles)
-      //           console.log('tableData', this.tableData)
-      //  }
       this.vehicleDialogVisible = true;
       this.fetchContractVehicles(this.$route.params.programId);
     },
@@ -1108,11 +1152,11 @@ export default {
       "getAssignedContractUsers",
       "contractProjects",
       "associatedVehiclesStatus",
-      "contractProjectsLoaded",
-      "contractsStatus",
+      "contractVehiclesLoaded",
+      "vehicleStatus",
       "getRolesLoaded",
       "contentLoaded",
-      "contractsLoaded",
+      "vehiclesLoaded",
 
       // Vehicles
       "contractVehicles",
@@ -1154,7 +1198,7 @@ export default {
         this.tableData &&
         this.tableData.length > 0
       ) {
-        let associatedContractVehiclesIds = this.tableData.map((t) => t.id);
+        let associatedContractVehiclesIds = this.tableData.map((t) => t.contract_vehicle.id);
         let data = this.contractVehicles
           .filter((t) => {
             if (this.searchContractVehiclesData !== "" && t) {
@@ -1178,6 +1222,7 @@ export default {
             } else return true;
           })
           .filter((t) => {
+            console.log("t:", t)
             return !associatedContractVehiclesIds.includes(t.id);
           });
         return data;
@@ -1329,7 +1374,7 @@ export default {
     },
     associatedVehiclesStatus: {
       handler() {
-        if (this.associateVehiclesStatus == 200) {
+        if (this.associatedVehiclesStatus == 200) {
           this.$message({
             message: `Vehicle successfully added to program.`,
             type: "success",
