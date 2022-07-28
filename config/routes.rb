@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
 
+      # Program settings routes
       namespace :program_settings do
 
         resources :projects, path: 'programs' do
@@ -30,12 +31,6 @@ Rails.application.routes.draw do
             put :bulk_project_update
           end
         end
-
-        # resources :contract_project_data do
-        #   collection do
-        #     put :add_contract
-        #   end
-        # end
   
         resources :facilities do
           collection do
@@ -97,6 +92,7 @@ Rails.application.routes.draw do
       
       end
 
+      # Portfolio routes
       namespace :portfolio do
         resources :contract_vehicles
         resources :contract_project_pocs
@@ -110,6 +106,12 @@ Rails.application.routes.draw do
         get "/issues", to: "portfolio#issues"
         get "/tab_counts", to: "portfolio#tab_counts"
         get "/contracts", to: "portfolio#contracts"
+      end
+
+      resources :contract_vehicles
+      resources :contract_project_pocs
+      resources :contract_project_data do
+        post :add_project, on: :member
       end
 
       resources :privileges do
@@ -145,6 +147,30 @@ Rails.application.routes.draw do
           put :bulk_projects_update
         end
       end
+
+      resources :project_contract_vehicles do
+        resources :notes #, module: :facilities
+        resources :issues do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :risks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+        resources :tasks do
+          post :batch_update, on: :collection
+          post :create_duplicate, on: :member
+          post :create_bulk_duplicate, on: :member
+        end
+
+        resources :lessons do
+          get :count, on: :collection
+        end
+      end
+
 
       resources :project_contracts do
         resources :notes #, module: :facilities

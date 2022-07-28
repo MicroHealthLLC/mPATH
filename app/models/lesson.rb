@@ -329,6 +329,7 @@ class Lesson < ApplicationRecord
       :important, 
       :draft, 
       :project_contract_id,
+      :project_contract_vehicle_id,
       :reportable, 
       :lesson_stage_id,
       sub_task_ids: [],

@@ -71,6 +71,7 @@ class Task < ApplicationRecord
       :important,
       :reportable,
       :project_contract_id,
+      :project_contract_vehicle_id,
       :nickname, 
       task_files: [],
       file_links: [],

@@ -172,6 +172,7 @@ class Issue < ApplicationRecord
       :on_hold,
       :draft,
       :project_contract_id,
+      :project_contract_vehicle_id,
       issue_files: [],
       file_links: [],
       user_ids: [],
