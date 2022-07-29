@@ -454,6 +454,15 @@ const settingsStore = {
         });
       }
 
+      if (userData.vehicleIds) {
+        userData.vehicleIds.forEach((ids) => {
+          formData.append("role_users[][user_id]", userData.userId);
+          formData.append("role_users[][project_id]", userData.programId);
+          formData.append("role_users[][role_id]", userData.roleId);
+          formData.append("role_users[][project_contract_vehicle_id]", ids);
+        });
+      }
+
       if (userData.adminRole) {
         formData.append("role_users[][user_id]", userData.userId);
         formData.append("role_users[][project_id]", userData.programId);
@@ -840,7 +849,7 @@ const settingsStore = {
           commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
-    /* updateUserData({ commit }, { userData, program_id }) {
+      updateUserData({ commit }, { userData, program_id }) {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
       console.log(userData);
@@ -1513,8 +1522,8 @@ const settingsStore = {
       (state.updated_project_role_status = status),
     SET_UPDATED_CONTRACT_ROLE_STATUS: (state, status) =>
       (state.updated_contract_role_status = status),
-    /* SET_UPDATED_VEHICLE_ROLE_STATUS: (state, status) =>
-      (state.updated_vehicle_role_status = status), */
+    SET_UPDATED_VEHICLE_ROLE_STATUS: (state, status) =>
+      (state.updated_vehicle_role_status = status),
     TOGGLE_ADD_USER_TO_ROLE_LOADED: (state, loaded) =>
       (state.add_user_to_role_loaded = loaded),
     TOGGLE_BULK_UPDATE_USER_ROLE_LOADED: (state, loaded) =>
@@ -1531,8 +1540,8 @@ const settingsStore = {
       (state.remove_project_role_status = status),
     SET_REMOVE_CONTRACT_ROLE_STATUS: (state, status) =>
       (state.remove_contract_role_status = status),
-    /* SET_REMOVE_VEHICLE_ROLE_STATUS: (state, status) =>
-      (state.remove_vehicle_role_status = status), */
+    SET_REMOVE_VEHICLE_ROLE_STATUS: (state, status) =>
+      (state.remove_vehicle_role_status = status),
     SET_REMOVE_ADMIN_ROLE_STATUS: (state, status) =>
       (state.remove_admin_role_status = status),
     TOGGLE_ROLE_REMOVED: (state, loaded) => (state.role_removed = loaded),
@@ -1572,12 +1581,12 @@ const settingsStore = {
     SET_CONTRACT_CLASSIFICATIONS: (state, value) =>
       (state.contract_classifications = value),
 
-    /* SET_VEHICLE_GROUP_TYPES: (state, loaded) =>
+    SET_VEHICLE_GROUP_TYPES: (state, loaded) =>
       (state.vehicle_group_types = loaded),
     SET_VEHICLE_STATUSES_FILTER: (state, loaded) =>
       (state.vehicle_statuses_filter = loaded),
     SET_VEHICLE_CLASSIFICATIONS: (state, value) =>
-      (state.vehicle_classifications = value), */
+      (state.vehicle_classifications = value),
 
     SET_USER_STATUS: (state, value) => (state.user_status = value),
     //SET_VEHICLES: (state, value) => (state.vehicle_filter = value),

@@ -617,12 +617,43 @@
                             .join()
                         }}
                       </span>
+                      <span
+                        v-if="
+                          vehicleNames &&
+                            item.project_contract_vehicle_id &&
+                            vehicleNames.map(
+                              (t) =>
+                                t.contract_vehicle_id ==
+                                item.project_contract_vehicle_id
+                            ) &&
+                            item.role_id == scope.row &&
+                            vehicleNames
+                              .filter(
+                                (t) =>
+                                  t.contract_vehicle_id ==
+                                  item.project_contract_vehicle_id
+                              )
+                              .map((t) => t.contract_vehicle.name).length > 0
+                        "
+                        class="projectNames"
+                      >
+                        {{
+                          vehicleNames
+                            .filter(
+                              (t) =>
+                                t.contract_vehicle_id ==
+                                item.project_contract_vehicle_id
+                            )
+                            .map((t) => t.contract_vehicle.name)
+                            .join()
+                        }}
+                      </span>
                     </span>
                   </span>
                   <span v-if="isEditingRoles && scope.$index == rowIndex_1">
                     <el-select
                       v-model="projectRoleUsers"
-                      v-if="!isEditingContractRoles"
+                      v-if="!isEditingContractRoles && !isEditingVehicleRoles"
                       :popper-append-to-body="false"
                       filterable
                       multiple
@@ -646,7 +677,7 @@
                   >
                     <el-select
                       v-model="contractRoleUsers"
-                      v-if="!isEditingRoles"
+                      v-if="!isEditingRoles && !isEditingVehicleRoles"
                       filterable
                       multiple
                       class="w-100 el-popper"
@@ -660,6 +691,29 @@
                         :value="item"
                         :key="item.project_contract_id"
                         :label="item.name"
+                      >
+                      </el-option>
+                    </el-select>
+                  </span>
+                  <span
+                    v-if="isEditingVehicleRoles && scope.$index == rowIndex_1"
+                  >
+                    <el-select
+                      v-model="contractRoleUsers"
+                      v-if="!isEditingRoles && !isEditingContractRoles"
+                      filterable
+                      multiple
+                      class="w-100 el-popper"
+                      track-by="id"
+                      value-key="id"
+                      :popper-append-to-body="false"
+                      popper-class="select-popper"
+                    >
+                      <el-option
+                        v-for="item in vehicleNames"
+                        :value="item"
+                        :key="item.contract_vehicle_id"
+                        :label="item.contract_vehicle.name"
                       >
                       </el-option>
                     </el-select>
@@ -1080,7 +1134,7 @@
             </div>
             <div class="mt-3 row">
               <div class="col-12 pt-0">
-                <span v-if="filteredVehicles && filteredVehicles.length > 0">
+                <span :load="log(filteredVehicles)" v-if="filteredVehicles && filteredVehicles.length > 0">
                   <label class="font-md mb-0 d-flex"
                     >Associate Vehicle to Role
                   </label>
@@ -1255,6 +1309,7 @@ export default {
       expandRowKeys: [],
       isEditingAdminRoles: false,
       isEditingContractRoles: false,
+      isEditingVehicleRoles: false,
       editRoleRowData: null,
       projId: null,
       userData: null,
@@ -1368,7 +1423,7 @@ export default {
       });
     },
     log(e) {
-      //  console.log(`contracts:  ${e}` )
+        console.log(`fV:  ${e}` )
     },
     removeAssociations(index, rowData) {
       if (this.isEditingRoles) {
@@ -1727,6 +1782,7 @@ export default {
       "getAdminRoleNames",
       "getAssociatedProjects",
       "getAssociatedContracts",
+      "getAssociatedVehicles",
       "getAddedUsersToProgram",
       "addedUsersToProgramStatus",
       "editUserDataStatus",
@@ -1834,14 +1890,14 @@ export default {
         let roleProjectIds = this.projectUsers.data.map(
           (t) => t.facility_project_id
         );
-        // console.log(this.projectNames)
+        //console.log(this.projectNames)
         return this.projectNames.filter(
           (t) => !roleProjectIds.includes(t.facilityProjectId)
         );
       }
     },
     contractNames() {
-      console.log(this.contracts);
+      //console.log(this.contracts);
       if (this.contracts) {
         if (this.contracts.length > 0) {
           //  console.log(this.contracts.map(t => t))
@@ -1850,7 +1906,7 @@ export default {
       }
     },
     vehicleNames() {
-      console.log(this.vehicles);
+      //console.log(this.vehicles);
       if (this.vehicles) {
         if (this.vehicles.length > 0) {
           //  console.log(this.contracts.map(t => t))
@@ -1874,21 +1930,24 @@ export default {
       }
     },
     filteredVehicles() {
-      //console.log(this.vehicleNames)
       if (
         this.projectUsers &&
         this.projectUsers.data &&
         this.vehicleNames &&
         this.vehicleNames.length > 0
       ) {
+        //console.log(this.projectUsers)
+        console.log(this.vehicleNames)
         let roleProjectIds = this.projectUsers.data.map((t) => {
-          t.contract_vehicle_id;
-          console.log(t);
+          t.project_contract_vehicle_id;
         });
+        //console.log(roleProjectIds);
+        console.log(this.projectUsers);
         return this.vehicleNames.filter((t) => {
-          console.log(t);
-          !roleProjectIds.includes(t.contract_vehicle_id);
+          !roleProjectIds.includes(t.id);
         });
+        
+
       }
     },
     admin_role_names() {
@@ -1946,7 +2005,7 @@ export default {
               .filter(
                 (t) =>
                   t.project_id == this.$route.params.programId &&
-                  (t.facility_project_id || t.project_contract_id)
+                  (t.facility_project_id || t.project_contract_id || t.project_contract_vehicle_id)
               )
               .map((t) => t.role_id)
           ),
@@ -1986,11 +2045,11 @@ export default {
         let ids = this.projectUsers.data.filter(
           (t) => t.role_id == this.roleRowId
         );
+        console.log("contracts id: " + ids)
         let tableContractIds = ids.map((t) => t.project_contract_id);
         let filteredContracts = this.contractNames.filter((t) =>
           tableContractIds.includes(t.project_contract_id)
         );
-        // console.log(filteredContracts)
         return filteredContracts;
       }
       // Thursday Night Notes:  Add filter to filter out projects not associated to row
@@ -2000,12 +2059,11 @@ export default {
         let ids = this.projectUsers.data.filter(
           (t) => t.role_id == this.roleRowId
         );
-        console.log(ids);
+        console.log("vehicles id:" + ids);
         let tableVehicleIds = ids.map((t) => t.contract_vehicle_id);
         let filteredVehicles = this.vehicleNames.filter((t) =>
           tableVehicleIds.includes(t.contract_vehicle_id)
         );
-        // console.log(filteredContracts)
         return filteredVehicles;
       }
     },

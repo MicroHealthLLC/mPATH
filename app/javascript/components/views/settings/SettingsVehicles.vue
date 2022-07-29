@@ -496,7 +496,7 @@
 
               <el-button
                 type="default"
-                @click="saveContractUserRole()"
+                @click="saveVehicleUserRole()"
                 v-if="contractRoleNames && contractRoleUsers"
                 v-tooltip="`Confirm`"
                 class="bg-primary btn-sm text-light"
@@ -1017,8 +1017,10 @@ export default {
       this.rowIndex_1 = null;
       this.bulkChangeContractRoleNames = {};
     },
-    saveContractUserRole(index, rows) {
+    saveVehicleUserRole(index, rows) {
       let user_ids = this.contractRoleUsers.map((t) => t.id);
+      console.log(this.contractRoleUsers)
+      console.log(this.contractRoleNames)
       let contractUserRoleData = {
         userData: {
           roleId: this.contractRoleNames.id,
@@ -1027,7 +1029,7 @@ export default {
           vehicleId: this.projId,
         },
       };
-      // console.log(contractUserRoleData)
+      console.log(contractUserRoleData)
       this.addUserToRole({
         ...contractUserRoleData,
       });
