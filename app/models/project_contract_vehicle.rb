@@ -1,6 +1,8 @@
 class ProjectContractVehicle < ApplicationRecord
   belongs_to :contract_vehicle
   belongs_to :project
+  belongs_to :contract_vehicle_project, class_name: "Project", foreign_key: :project_id
+  belongs_to :contract_vehicle_facility_group, class_name: "FacilityGroup", foreign_key: :facility_group_id, optional: true
   belongs_to :facility_group, optional: true
   validates :project_id, uniqueness: { scope: [ :contract_vehicle_id ], message: "Can't add same contract vehicle multiple times in same program."  }
 

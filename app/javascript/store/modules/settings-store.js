@@ -840,7 +840,7 @@ const settingsStore = {
           commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
-    updateUserData({ commit }, { userData, program_id }) {
+    /* updateUserData({ commit }, { userData, program_id }) {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
       console.log(userData);
@@ -937,7 +937,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_types`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_types`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -979,7 +979,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_classification`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_classification`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1000,7 +1000,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_customeres`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_customeres`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1021,7 +1021,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_current_pop`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_current_pop`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1042,7 +1042,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_prime`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_prime`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1063,7 +1063,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_vehicles`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_vehicles`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1084,7 +1084,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_vehicle_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_vehicle_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1105,7 +1105,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_client_types`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_client_types`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1126,7 +1126,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1147,7 +1147,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/subcontract_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/subcontract_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1167,7 +1167,7 @@ const settingsStore = {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_statuses`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_statuses`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1498,7 +1498,7 @@ const settingsStore = {
     SET_VEHICLE_STATUS: (state, value) => (state.vehicle_status = value),
     SET_VEHICLES_STATUS: (state, value) => (state.vehicles_status = value),
     TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),
-    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded), 
+    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded),
     SET_VEHICLES: (state, value) => (state.vehicles = value),
 
     //ROLES MUTATIONS
@@ -1700,7 +1700,7 @@ const settingsStore = {
     getVehicleTable: (state) => state.vehicle_table,
     vehicleLoaded: (state) => state.vehicle_loaded,
     vehiclesLoaded: (state) => state.vehicles_loaded,
-    vehicles: (state) => state.vehicles, 
+    vehicles: (state) => state.vehicles,
     vehiclesStatus: (state) => state.vehicles_status,
 
     getNewUserId: (state) => state.new_user_id,

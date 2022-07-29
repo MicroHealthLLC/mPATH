@@ -51,7 +51,7 @@ const contractStore = {
       
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_project_data?project_id=${id}`,
+        url: `${API_BASE_PATH}/portfolio/contract_project_data?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -93,7 +93,7 @@ const contractStore = {
       commit("TOGGLE_CONTRACT_DATA_OPTIONS_LOADED", false);   
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/get_contract_data`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/get_contract_data`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -165,7 +165,7 @@ const contractStore = {
       
     axios({
       method: "POST",
-      url: `${API_BASE_PATH}/contract_project_data`,
+      url: `${API_BASE_PATH}/portfolio/contract_project_data`,
       data: formData,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -318,7 +318,7 @@ const contractStore = {
     formData.append("contract_project_data[ignore_expired]", cProjectData.isExpired)    
     axios({
       method: "PUT",
-      url: `${API_BASE_PATH}/contract_project_data/${id}`,
+      url: `${API_BASE_PATH}/portfolio/contract_project_data/${id}`,
       data: formData,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -387,7 +387,7 @@ const contractStore = {
       formData.append("contract_project_data[comments]", cProjectData.notes)      
     axios({
       method: "PUT",
-      url: `${API_BASE_PATH}/contract_project_data/${id}`,
+      url: `${API_BASE_PATH}/portfolio/contract_project_data/${id}`,
       data: formData,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -482,7 +482,7 @@ const contractStore = {
     commit("TOGGLE_CONTRACT_PROJECT_LOADED", false);
     axios({
       method: "DELETE",
-      url: `${API_BASE_PATH}/contract_project_data/${id}`,
+      url: `${API_BASE_PATH}/portfolio/contract_project_data/${id}`,
       headers: {
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
           .attributes["content"].value,
