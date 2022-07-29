@@ -234,7 +234,7 @@
                   type="default"
                   class="bg-light btn-sm"
                   v-tooltip="'Remove Vehicle'"
-                  @click.prevent="removeContractBtn(scope.$index, scope.row)"
+                  @click.prevent="removeVehicleBtn(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex && _isallowed('write')"
                 >
                   <i class="fa-light fa-circle-minus text-danger"></i>
@@ -365,7 +365,7 @@
                       type="default"
                       v-tooltip="`Add Vehicle`"
                       @click.prevent="
-                        addExistingContract(scope.$index, scope.row)
+                        addExistingVehicle(scope.$index, scope.row)
                       "
                       class="bg-primary text-light btn-sm"
                     >
@@ -389,9 +389,9 @@
         class="addUserRole p-0"
       >
         <span slot="title" class="text-left add-groups-header ">
-          <h5 style="color:#383838" v-if="contractData">
-            <i class="far fa-file-contract mr-1 mb-2 mh-orange-text"></i>
-            {{ contractData.name }}
+          <h5 style="color:#383838" v-if="vehicleData">
+            <i class="far fa-car mr-1 mb-2 text-info"></i>
+            {{ vehicleData.name }}
           </h5>
         </span>
         <div class="container-fluid p-0">
@@ -745,11 +745,9 @@ export default {
       changeRoleMode: false,
       expandRowKeys: [],
       currentFacility: {},
-      contractData: null,
-      // currentContract: {},
+      vehicleData: null,
       dialogVisible: false,
       openUserPrivilegesDialog: false,
-      // contractData: {},
       currentFacilityGroup: {},
       rowIndex: null,
       rowId: null,
@@ -812,7 +810,8 @@ export default {
       "fetchRoles",
       "removeUserRole",
       "associateVehicleToProgram",
-      "removeContract",
+      "removeVehicle",
+      "deleteVehicle",
       "projectContracts",
       "bulkUpdateUserRoles",
     ]),
@@ -822,7 +821,7 @@ export default {
       });
     },
     _isallowedContracts(c, salut) {
-      console.log(c);
+      //console.log(c);
       return this.checkPrivileges(
         "ProjectSettingContractList",
         salut,
@@ -1002,10 +1001,10 @@ export default {
     addUserRole(index, rows) {
       this.openUserPrivilegesDialog = true;
       this.projId = rows.project_contract_id;
-      this.contractData = rows;
+      this.vehicleData = rows;
       console.log(rows);
     },
-    addExistingContract(index, rows) {
+    addExistingVehicle(index, rows) {
       //console.log(rows)
       let vehicleData = {
         vehicle: {
@@ -1033,18 +1032,19 @@ export default {
       // disable mutiple row expanded
       this.expandRowKeys = this.projId === lastId ? [] : [this.projId];
     },
-    removeContractBtn(index, rows) {
-      // console.log(rows)
+    removeVehicleBtn(index, rows) {
+       console.log(rows)
+       console.log(this.$route)
       // let id = [rows.id];
-      let contract = {
+      let vehicle = {
         g: {
-          id: rows.project_contract_id,
+          id: rows.id,
           pId: this.$route.params.programId,
         },
       };
 
       this.$confirm(
-        `Are you sure you want to remove ${rows.name} from your program?`,
+        `Are you sure you want to remove ${rows.contract_vehicle.name} from your program?`,
         "Confirm Remove",
         {
           confirmButtonText: "Remove",
@@ -1052,7 +1052,7 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        this.removeContract({ ...contract });
+        this.removeVehicle({ ...vehicle });
       });
     },
     // DO NOT DELETE This async method.  It is code for firebase cloud functionality
@@ -1093,10 +1093,10 @@ export default {
       this.rowIndex = index;
       this.rowId = rows.contract_vehicle.id;
     },
-    deleteSelectedContract(index, rows) {
-      let id = rows.id;
+    deleteSelectedVehicle(index, rows) {
+      let id = rows.contract_vehicles.id;
       this.$confirm(
-        `Are you sure you want to delete ${rows.name}?`,
+        `Are you sure you want to delete ${rows.contract_vehicles.name}?`,
         "Confirm Delete",
         {
           confirmButtonText: "Delete",
@@ -1104,11 +1104,11 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        this.deleteContract(id).then((value) => {
+        this.deleteVehicle(id).then((value) => {
           if (value === 200) {
-            this.fetchContracts();
+            this.fetchVehicles();
             this.$message({
-              message: `${rows.name} was deleted successfully.`,
+              message: `${rows.contract_vehicles.name} was deleted successfully.`,
               type: "success",
               showClose: true,
             });
@@ -1126,14 +1126,13 @@ export default {
     },
     /* openUserPrivileges(index, rows) {
       this.openUserPrivilegesDialog = true;
-      this.contractData = rows;
+      this.vehicleData = rows;
     }, */
   },
   computed: {
     ...mapGetters([
       "getContractGroupTypes",
       "getNewContractGroupFilter",
-      "contractStatus",
       "contracts",
       "groups",
       "getRoles",
@@ -1184,7 +1183,7 @@ export default {
       } else return [];
     },
     allVehicles() {
-      console.log(this.tableData)
+      //console.log(this.tableData)
       if (
         (this.tableData && this.tableData == []) ||
         this.tableData.length == 0

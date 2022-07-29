@@ -247,7 +247,7 @@
                         v-tooltip="`Projects`"
                       ></i>
                       <span
-                        class="mr-4"
+                        class="mr-3"
                         v-if="
                           groupProjects &&
                             groupProjects
@@ -262,7 +262,7 @@
                               .filter((t) => t == props.row.id).length
                         }}
                       </span>
-                      <span class="mr-4" v-else>
+                      <span class="mr-3" v-else>
                         {{ 0 }}
                       </span>
                       <i
@@ -270,6 +270,7 @@
                         v-tooltip="`Contracts`"
                       ></i>
                       <span
+                      class="mr-3"
                         v-if="
                           groupContracts && groupContracts.length > 0 &&
                             groupContracts
@@ -279,6 +280,27 @@
                       >
                         {{
                           groupContracts
+                            .map((t) => t.facility_group.id)
+                            .filter((t) => t == props.row.id).length
+                        }}
+                      </span>
+                      <span class="mr-3" v-else>
+                        {{ 0 }}
+                      </span>
+                      <i
+                        class="far fa-car mr-1 text-info"
+                        v-tooltip="`Vehicles`"
+                      ></i>
+                      <span
+                        v-if="
+                          groupVehicles && groupVehicles.length > 0 &&
+                            groupVehicles
+                              .map((t) => t && t.facility_group_id)
+                              .filter((t) => t == props.row.id).length
+                        "
+                      >
+                        {{
+                          groupVehicles
                             .map((t) => t.facility_group.id)
                             .filter((t) => t == props.row.id).length
                         }}
@@ -364,6 +386,42 @@
                               :key="i"
                             >
                               {{ item.name }}
+                            </li>
+                          </ul>
+                        </span>
+                      </div>
+                      <div class="col">
+                        <h5 class="mh-orange-text">
+                          Vehicles
+                          <span
+                            v-if="
+                              groupVehicles && groupVehicles.length > 0 &&
+                                groupVehicles
+                                  .map((t) => t && t.facility_group)
+                                  
+                            "
+                            class="badge badge-secondary badge-pill pill"
+                            >{{
+                              groupVehicles
+                                .map((t) => t.facility_group_id)
+                                .filter((t) => t == props.row.id).length
+                            }}
+                          </span>
+                          <span
+                            v-else
+                            class="badge badge-secondary badge-pill pill"
+                            >{{ 0 }}
+                          </span>
+                        </h5>
+                        <span v-if="groupVehicles && groupVehicles.length > 0">
+                          <ul class="pl-3 mb-0">
+                            <li
+                              v-for="(item, i) in groupVehicles.filter(
+                                (t) => t.facility_group_id == props.row.id
+                              )"
+                              :key="i"
+                            >
+                              {{ item.contract_vehicle.name }}
                             </li>
                           </ul>
                         </span>
@@ -512,6 +570,7 @@ export default {
       "updateGroup",
       "fetchGroups",
       "fetchContracts",
+      "fetchVehicles",
       "fetchCurrentProject",
     ]),
     log(e){
@@ -659,7 +718,8 @@ export default {
   if(this.groups && this.groups.length <= 0){
     this.fetchGroups(this.$route.params.programId);
     }
-    this.fetchContracts(this.$route.params.programId);  
+    this.fetchContracts(this.$route.params.programId);
+    this.fetchVehicles(this.$route.params.programId);  
   },
   computed: {
     ...mapGetters([
@@ -667,6 +727,7 @@ export default {
       "facilities",
       "groups",
       "contracts",
+      "vehicles",
       "groupStatus",
       "getNewGroups",
       "getTransferData",
@@ -815,6 +876,12 @@ export default {
      if (this.contracts && this.contracts.length > 0) {
           // console.log(this.contracts)
           return this.contracts.filter(t => t !== 'null');
+      } else return []
+    },
+    groupVehicles() {
+     if (this.vehicles && this.vehicles.length > 0) {
+          // console.log(this.vehicles)
+          return this.vehicles.filter(t => t !== 'null');
       } else return []
     },
     // groupContracts() {

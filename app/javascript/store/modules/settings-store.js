@@ -246,12 +246,12 @@ const settingsStore = {
           commit("TOGGLE_CONTRACT_LOADED", true);
         });
     },
-    /* removeVehicle({ commit }, { g }) {
+    removeVehicle({ commit }, { g }) {
       commit("TOGGLE_VEHICLE_LOADED", false);
       console.log(g);
       axios({
         method: "DELETE",
-        url: `${API_BASE_PATH}/program_settings/vehicles/${g.id}?project_id=${g.pId}`,
+        url: `${API_BASE_PATH}/program_settings/contract_vehicles/${g.id}?project_id=${g.pId}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -267,7 +267,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLE_LOADED", true);
         });
-    }, */
+    },
     //
     removeOrDeleteGroup({ commit }, { g }) {
       commit("TOGGLE_GROUPS_LOADED", false);
@@ -773,7 +773,7 @@ const settingsStore = {
       })
         .then((res) => {
           commit("SET_VEHICLES", res.data.contract_vehicles);
-          console.log(res.data.contract_vehicles);
+          //console.log(res.data.contract_vehicles);
         })
         .catch((err) => {
           console.log(err);
@@ -937,7 +937,7 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* fetchVehicleGroupTypes({ commit }) {
+    fetchVehicleGroupTypes({ commit }) {
       commit("TOGGLE_VEHICLES_LOADED", false);
       // Retrieve vehicle by id
       axios({
@@ -957,7 +957,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    }, */
+    },
     fetchClassificationTypes({ commit }) {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       // Retrieve contract by id
@@ -1343,11 +1343,11 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    },
+    },*/
     deleteVehicle({ commit }, id) {
       return new Promise((resolve, reject) => {
         http
-          .delete(`${API_BASE_PATH}/program_settings/vehicles/${id}`)
+          .delete(`${API_BASE_PATH}/program_settings/contract_vehicles/${id}`)
           .then((res) => {
             resolve(res.status);
           })
@@ -1356,7 +1356,7 @@ const settingsStore = {
             reject();
           });
       });
-    }, */
+    }, 
     removeProgramUser({ commit }, { userData }) {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
@@ -1645,14 +1645,14 @@ const settingsStore = {
     removeContractRoleStatus: (state) => state.remove_contract_role_status,
     showCreateRow: (state) => state.show_create_row,
 
-    /* getAssignedVehicleUsers: (state) => state.assigned_vehicle_users,
+    getAssignedVehicleUsers: (state) => state.assigned_vehicle_users,
     getUsersVehicleRoles: (state) => state.users_vehicle_roles,
     getBulkVehicleRoleNames: (state) => state.bulk_vehicle_role_names,
     getVehicleRoleUsers: (state) => state.vehicle_role_users,
     getVehicleRoleNames: (state) => state.vehicle_role_names,
     getAssociatedVehicles: (state) => state.associated_vehicles,
     updatedVehicleRoleStatus: (state) => state.updated_vehicle_role_status,
-    removeVehicleRoleStatus: (state) => state.remove_vehicle_role_status, */
+    removeVehicleRoleStatus: (state) => state.remove_vehicle_role_status,
 
     contract: (state) => state.contract,
     contracts: (state) => state.contracts,
