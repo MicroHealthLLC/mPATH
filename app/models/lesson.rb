@@ -430,6 +430,8 @@ class Lesson < ApplicationRecord
 
     if params[:project_contract_id]
       lesson.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      lesson.project_contract_vehicle_id = params[:project_contract_vehicle_id]
     end
 
     lesson.transaction do

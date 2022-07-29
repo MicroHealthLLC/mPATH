@@ -290,8 +290,13 @@ class Issue < ApplicationRecord
 
     task_type_name = self.task_type&.name
     sorted_notes = notes.sort_by(&:created_at).reverse
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
     
-    project = self.project_contract_id ? self.contract_project : self.project
     facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
@@ -394,6 +399,9 @@ class Issue < ApplicationRecord
 
     if params[:project_contract_id]
       issue.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      issue.project_contract_vehicle_id = params[:project_contract_vehicle_id]
+
     elsif !issue.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])

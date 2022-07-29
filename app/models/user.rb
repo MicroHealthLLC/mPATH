@@ -877,7 +877,7 @@ class User < ApplicationRecord
 
   end
 
-    def authorized_contract_vehicle_ids(project_ids: []) 
+  def authorized_contract_vehicle_ids(project_ids: []) 
     user = self
     # role_types = RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES + RolePrivilege::PROGRAM_SETTINGS_ROLE_TYPES
     # project_contract_ids = user.role_users.joins(:role_privileges).where("role_privileges.role_type in (?)", role_types).distinct.pluck(:project_contract_id).compact
