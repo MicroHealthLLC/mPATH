@@ -1133,8 +1133,8 @@
               </div>
             </div>
             <div class="mt-3 row">
-              <div class="col-12 pt-0">
-                <span :load="log(filteredVehicles)" v-if="filteredVehicles && filteredVehicles.length > 0">
+              <div :load="log(filteredVehicles)" class="col-12 pt-0">
+                <span v-if="filteredVehicles && filteredVehicles.length > 0">
                   <label class="font-md mb-0 d-flex"
                     >Associate Vehicle to Role
                   </label>
@@ -1152,7 +1152,7 @@
                       v-for="item in filteredVehicles"
                       :value="item"
                       :key="item.contract_vehicle_id"
-                      :label="item.name"
+                      :label="item.contract_vehicle.name"
                     >
                     </el-option>
                   </el-select>
@@ -1551,7 +1551,7 @@ export default {
       });
     },
     saveVehicleUserRole(index, rows) {
-      let vehicleIds = this.associatedContracts.map(
+      let vehicleIds = this.associatedVehicles.map(
         (t) => t.project_contract_id
       );
       let projectUserRoleData = {
@@ -1921,6 +1921,7 @@ export default {
         this.contractNames &&
         this.contractNames.length > 0
       ) {
+        console.log(this.contractNames)
         let roleProjectIds = this.projectUsers.data.map(
           (t) => t.project_contract_id
         );
@@ -1941,13 +1942,9 @@ export default {
         let roleProjectIds = this.projectUsers.data.map((t) => {
           t.project_contract_vehicle_id;
         });
-        //console.log(roleProjectIds);
-        console.log(this.projectUsers);
         return this.vehicleNames.filter((t) => {
-          !roleProjectIds.includes(t.id);
-        });
-        
-
+          !roleProjectIds.includes(t.project_id);
+        }); 
       }
     },
     admin_role_names() {

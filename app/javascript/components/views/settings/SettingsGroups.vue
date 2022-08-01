@@ -15,7 +15,6 @@
             <i class="fal fa-network-wired mr-1 mh-blue-text"></i> GROUPS
             <span
               v-if="tableData && tableData.length"
-              :load="log(tableData)"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ tableData.length }}
             </span>
@@ -394,6 +393,7 @@
                         <h5 class="mh-orange-text">
                           Vehicles
                           <span
+                          :load="log(groupVehicles)"
                             v-if="
                               groupVehicles && groupVehicles.length > 0 &&
                                 groupVehicles
@@ -926,6 +926,7 @@ export default {
           this.fetchGroups(this.$route.params.programId);
           this.fetchCurrentProject(this.$route.params.programId);
           this.fetchContracts(this.$route.params.programId);
+          this.fetchVehicles(this.$route.params.programId)
           //  this.newGroupName =
         }
       },
