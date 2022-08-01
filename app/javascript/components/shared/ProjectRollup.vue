@@ -8,7 +8,7 @@
         </span> 
         <br>    
         <el-button-group :class="{'d-none': !_isallowedContracts('read') || projectContracts.length <= 0 }">
-          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+          <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
           <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
           PROJECTS
           <span 
@@ -17,13 +17,22 @@
             >{{ currentProject.facilities.length }}
             </span>
         </el-button>
-        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2" v-show="isSheetsView"> 
+        <el-button :class="[ getShowContractStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2" v-show="isSheetsView"> 
           <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
           CONTRACTS 
             <span 
               v-if="projectContracts && projectContracts.length > 0"
               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
               >{{ projectContracts.length }}
+              </span>
+           </el-button>
+           <el-button :class="[ getShowVehicleStats ? 'lightBtn' : 'inactive']" @click.prevent="showVehicleStats" class="pr-2" v-show="isSheetsView"> 
+          <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
+          VEHICLES 
+            <span 
+              v-if="projectVehicles && projectVehicles.length > 0"
+              class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+              >{{ projectVehicles.length }}
               </span>
            </el-button>
        </el-button-group>
@@ -849,7 +858,7 @@
         v-if="from !== 'manager_view'"
         data-cy="facility_group_summary"
       >
-         <el-card class="box-card" v-if="getShowProjectStats">
+         <el-card class="box-card" v-if="getShowContractStats">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
@@ -949,7 +958,7 @@
             <loader type="code"></loader>
           </div>
         </el-card>
-         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="!getShowProjectStats">
+         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="getShowProjectStats">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
@@ -1145,8 +1154,9 @@
     </div>
 
      <div class="row">
-    <ProgramContractsSheet v-if="this.getShowProjectStats" />
-    <ProgramProjectsSheet v-else />      
+    <ProgramContractsSheet v-if="this.getShowContractStats" />
+    <ProgramProjectsSheet v-if="this.getShowProjectStats" />
+    <!-- <ProgramVehiclesSheet v-if="this.getShowVehicleStats" /> -->      
     </div>
     </el-tab-pane>
   
@@ -1178,6 +1188,8 @@ export default {
     ...mapGetters([
       "contentLoaded",    
       "getShowProjectStats",
+      "getShowContractStats",
+      "getShowVehicleStats",
       "getContractGroupOptions",
       "currentProject",
       "lessonsLoaded",
@@ -1185,6 +1197,7 @@ export default {
       "projectLessons",
       "programLessons",
       "projectContracts",
+      "projectVehicles",
       "programLessonsCount",
       'projects',
       "facilities",
@@ -1260,11 +1273,13 @@ export default {
         return this.currentProject.facilities
       },
     programResourceObj(){
-      if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
+      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
         return this.currentProject.facilities
-      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowProjectStats){
+      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
         console.log(this.projectContracts)
         return this.projectContracts
+      } else if (this.projectVehicles && this.projectVehicles.length > 0 && this.getShowVehicleStats) {
+        return this.projectVehicles
       }
     },
    C_taskTypeFilter: {
@@ -1331,10 +1346,12 @@ export default {
     },
     filteredLessons() {
       let programLessonsObj = [];
-      if(!this.getShowProjectStats){
+      if(this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
-      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
-      console.log(this.programLessons)
+      } else if (this.getShowContractStats) {
+        programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_vehicle_id)
+      //console.log(this.programLessons)
       // let programLessonsObj = this.programLessons;
 
       let typeIds = _.map(this.taskTypeFilter, "id");
@@ -1924,6 +1941,8 @@ export default {
         'setCurrProgramTab',
         'setHideInprogress',
         'setShowProjectStats',
+        'setShowContractStats',
+        'setShowVehicleStats',
         'setHidePlanned',
         'setHideOverdue',
         'setHideOngoing',
@@ -1940,16 +1959,25 @@ export default {
       this.showLess = "Show Less";
     },
     showContractStats(){
-     if(this.getShowProjectStats == false){
-        this.setShowProjectStats(!this.getShowProjectStats)
+     if(this.getShowContractStats == false){
+        this.setShowContractStats(true)
+        this.setShowProjectStats(false)
+        this.setShowVehicleStats(false)
      } else return
      
     },
     showProjectStats(){
-      if(this.getShowProjectStats == true){
-        // console.log(this.getShowProjectStats)
-        this.setShowProjectStats(!this.getShowProjectStats)
-          // console.log(this.getShowProjectStats)
+      if(this.getShowProjectStats == false){
+        this.setShowProjectStats(true)
+        this.setShowContractStats(false)
+        this.setShowVehicleStats(false)
+      } else return
+    },
+    showVehicleStats() {
+      if(this.getShowVehicleStats == false){
+        this.setShowVehicleStats(true)
+        this.setShowProjectStats(false)
+        this.setShowContractStats(false)
       } else return
     },
     handleClick(tab, event) {

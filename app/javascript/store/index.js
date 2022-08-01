@@ -47,7 +47,9 @@ export default new Vuex.Store({
     myAssignmentsFilter: [],
     contentLoaded: false,
     projectsLoaded: false,
-    showProjectStats: false,
+    showProjectStats: true,
+    showContractStats: false,
+    showVehicleStats: false,
     toggleRACI: true,
     expandedGroup: "", 
     showAllEventsToggle: false,
@@ -221,6 +223,10 @@ export default new Vuex.Store({
       (state.showAllEventsToggle = showAll),
     setShowProjectStats: (state, showStats) =>
     (state.showProjectStats = showStats),
+    setShowContractStats: (state, showStats) =>
+    (state.showContractStats = showStats),
+    setShowVehicleStats: (state, showStats) =>
+    (state.showVehicleStats = showStats),
     setLastFocusFilter: (state, lastFocus) =>
       (state.lastCalendarFocus = lastFocus),
     setMapLoading: (state, loading) => (state.mapLoading = loading),
@@ -228,6 +234,7 @@ export default new Vuex.Store({
     setProjects: (state, projects) => (state.projects = projects),
     setFacilities: (state, facilities) => (state.facilities = facilities),
     setContracts: (state, contracts) => (state.contracts = contracts),
+    setVehicles: (state, vehicles) => (state.vehicles = vehicles),
     setTableData: (state, tableData) => (state.tableData = tableData),
     setUnfilteredFacilities: (state, facilities) =>
       (state.unfilteredFacilities = facilities),
@@ -1121,6 +1128,8 @@ export default new Vuex.Store({
     projectsLoaded: (state) => state.projectsLoaded,
     getToggleRACI: (state) => state.toggleRACI,
     getShowProjectStats: (state) => state.showProjectStats,
+    getShowContractStats: (state) => state.showContractStats,
+    getShowVehicleStats: (state) => state.showVehicleStats,
     getShowAllEventsToggle: (state) => state.showAllEventsToggle,
     getShowAdvancedFilter: (state) => state.showAdvancedFilter,
     getLastFocusFilter: (state) => state.lastCalendarFocus,
@@ -1130,6 +1139,7 @@ export default new Vuex.Store({
     projects: (state) => state.projects,
     facilities: (state) => state.facilities,
     projectContracts: (state) => state.contracts,
+    projectVehicles: (state) => state.vehicles,
     tableData: (state) => state.tableData, 
     facilityGroups: (state) => state.facilityGroups,
     statuses: (state) => state.statuses,
@@ -3033,6 +3043,25 @@ export default new Vuex.Store({
           });
       });
     },
+    fetchProjectVehicles({ commit, dispatch }, id) {
+      return new Promise((resolve, reject) => {
+        http
+          .get(`${API_BASE_PATH}/program_settings/contract_vehicles?project_id=${id}`)
+          .then((res) => {
+            console.log(res)
+            let vehicles = [];
+            for (let v of res.data.contracts) {
+              vehicles.push({ ...v, ...v });
+            }           
+            commit("setVehicles", vehicles);
+            resolve();
+          })
+          .catch((err) => {
+            console.error(err);
+            reject();
+          });
+      });
+    },
     fetchCurrentProject({ commit, dispatch }, id) {
       let spaths = window.location.pathname.split("/")
       let url = `${API_BASE_PATH}/programs/${id}.json`
@@ -3053,8 +3082,13 @@ export default new Vuex.Store({
             for (let c of res.data.project.contracts) {
               contracts.push({ ...c, ...c });
             }
+            let vehicles = [];
+            for (let v of res.data.project.contractVehicles) {
+              vehicles.push({ ...v, ...v });
+            }
             commit("setFacilities", facilities);
             commit("setContracts", contracts);
+            commit("setVehicles", vehicles);
             commit("setCurrentProject", res.data.project);
             commit("setFacilityGroups", res.data.project.facilityGroups);
             commit("setProjectUsers", res.data.project.users);
