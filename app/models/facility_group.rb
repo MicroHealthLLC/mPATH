@@ -3,6 +3,7 @@ class FacilityGroup < SortableRecord
   has_many :facilities
   has_many :facility_projects
   has_many :project_contracts
+  has_many :project_contract_vehicles
   has_many :project_facility_groups
   has_many :projects, through: :project_facility_groups
   has_many :contracts

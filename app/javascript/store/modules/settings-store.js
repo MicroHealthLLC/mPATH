@@ -107,8 +107,13 @@ const settingsStore = {
     bulk_contract_role_names: [],
     assigned_project_users: [],
     assigned_contract_users: [],
+    assigned_vehicle_users: [],
     users_contract_roles: [],
     users_admin_roles: [],
+
+    //VEHICLE USER ROLES
+    vehicle_role_names: [],
+    vehicle_role_users: [],
 
     //CONTRACT USER ROLES
     contract_role_users: [],
@@ -120,6 +125,7 @@ const settingsStore = {
 
     associated_projects: [],
     associated_contracts: [],
+    associated_vehicles: [],
   }),
   actions: {
     createContract({ commit }, { contract }) {
@@ -448,6 +454,15 @@ const settingsStore = {
         });
       }
 
+      if (userData.vehicleIds) {
+        userData.vehicleIds.forEach((ids) => {
+          formData.append("role_users[][user_id]", userData.userId);
+          formData.append("role_users[][project_id]", userData.programId);
+          formData.append("role_users[][role_id]", userData.roleId);
+          formData.append("role_users[][project_contract_vehicle_id]", ids);
+        });
+      }
+
       if (userData.adminRole) {
         formData.append("role_users[][user_id]", userData.userId);
         formData.append("role_users[][project_id]", userData.programId);
@@ -471,6 +486,12 @@ const settingsStore = {
             formData.append(
               "role_users[][project_contract_id]",
               userData.contractId
+            );
+          }
+          if (userData.vehicleId) {
+            formData.append(
+              "role_users[][project_contract_vehicle_id]",
+              userData.vehicleId
             );
           }
         });
@@ -552,6 +573,10 @@ const settingsStore = {
           if (userData.contractId) {
             formData.append("users_from_contract_role", true);
             formData.append("project_contract_id", userData.contractId);
+          }
+          if (userData.vehicleId) {
+            formData.append("users_from_contract_role", true);
+            formData.append("project_contract_vehicle_id", userData.vehicleId);
           }
         });
       }
@@ -824,7 +849,7 @@ const settingsStore = {
           commit("TOGGLE_PROGRAM_USERS_LOADED", true);
         });
     },
-    updateUserData({ commit }, { userData, program_id }) {
+      updateUserData({ commit }, { userData, program_id }) {
       commit("TOGGLE_PROGRAM_USERS_LOADED", false);
       let formData = new FormData();
       console.log(userData);
@@ -921,7 +946,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_types`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_types`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -963,7 +988,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_classification`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_classification`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -984,7 +1009,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_customeres`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_customeres`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1005,7 +1030,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_current_pop`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_current_pop`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1026,7 +1051,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_prime`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_prime`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1047,7 +1072,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_vehicles`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_vehicles`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1068,7 +1093,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_vehicle_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_vehicle_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1089,7 +1114,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_client_types`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_client_types`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1110,7 +1135,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1131,7 +1156,7 @@ const settingsStore = {
       // Retrieve contract by id
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/subcontract_number`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/subcontract_number`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1151,7 +1176,7 @@ const settingsStore = {
       commit("TOGGLE_CONTRACTS_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_data/contract_statuses`,
+        url: `${API_BASE_PATH}/program_settings/contract_data/contract_statuses`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -1439,7 +1464,7 @@ const settingsStore = {
       (state.contract_role_names = value),
 
     // VEHICLES
-    /* SET_ASSIGNED_VEHICLE_USERS: (state, value) =>
+    SET_ASSIGNED_VEHICLE_USERS: (state, value) =>
       (state.assigned_vehicle_users = value),
     SET_BULK_VEHICLE_ROLE_NAMES: (state, value) =>
       (state.bulk_vehicle_role_names = value),
@@ -1452,7 +1477,7 @@ const settingsStore = {
     SET_ASSOCIATED_VEHICLES: (state, value) =>
       (state.associated_vehicles = value),
     SET_EDIT_VEHICLE_SHEET: (state, value) =>
-      (state.edit_vehicle_sheet = value), */
+      (state.edit_vehicle_sheet = value),
 
     SET_ADMIN_ROLE_USERS: (state, value) => (state.admin_role_users = value),
     SET_ADMIN_ROLE_NAMES: (state, value) => (state.admin_role_names = value),
@@ -1482,7 +1507,7 @@ const settingsStore = {
     SET_VEHICLE_STATUS: (state, value) => (state.vehicle_status = value),
     SET_VEHICLES_STATUS: (state, value) => (state.vehicles_status = value),
     TOGGLE_VEHICLE_LOADED: (state, loaded) => (state.vehicle_loaded = loaded),
-    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded), 
+    TOGGLE_VEHICLES_LOADED: (state, loaded) => (state.vehicles_loaded = loaded),
     SET_VEHICLES: (state, value) => (state.vehicles = value),
 
     //ROLES MUTATIONS
@@ -1497,8 +1522,8 @@ const settingsStore = {
       (state.updated_project_role_status = status),
     SET_UPDATED_CONTRACT_ROLE_STATUS: (state, status) =>
       (state.updated_contract_role_status = status),
-    /* SET_UPDATED_VEHICLE_ROLE_STATUS: (state, status) =>
-      (state.updated_vehicle_role_status = status), */
+    SET_UPDATED_VEHICLE_ROLE_STATUS: (state, status) =>
+      (state.updated_vehicle_role_status = status),
     TOGGLE_ADD_USER_TO_ROLE_LOADED: (state, loaded) =>
       (state.add_user_to_role_loaded = loaded),
     TOGGLE_BULK_UPDATE_USER_ROLE_LOADED: (state, loaded) =>
@@ -1515,8 +1540,8 @@ const settingsStore = {
       (state.remove_project_role_status = status),
     SET_REMOVE_CONTRACT_ROLE_STATUS: (state, status) =>
       (state.remove_contract_role_status = status),
-    /* SET_REMOVE_VEHICLE_ROLE_STATUS: (state, status) =>
-      (state.remove_vehicle_role_status = status), */
+    SET_REMOVE_VEHICLE_ROLE_STATUS: (state, status) =>
+      (state.remove_vehicle_role_status = status),
     SET_REMOVE_ADMIN_ROLE_STATUS: (state, status) =>
       (state.remove_admin_role_status = status),
     TOGGLE_ROLE_REMOVED: (state, loaded) => (state.role_removed = loaded),
@@ -1556,12 +1581,12 @@ const settingsStore = {
     SET_CONTRACT_CLASSIFICATIONS: (state, value) =>
       (state.contract_classifications = value),
 
-    /* SET_VEHICLE_GROUP_TYPES: (state, loaded) =>
+    SET_VEHICLE_GROUP_TYPES: (state, loaded) =>
       (state.vehicle_group_types = loaded),
     SET_VEHICLE_STATUSES_FILTER: (state, loaded) =>
       (state.vehicle_statuses_filter = loaded),
     SET_VEHICLE_CLASSIFICATIONS: (state, value) =>
-      (state.vehicle_classifications = value), */
+      (state.vehicle_classifications = value),
 
     SET_USER_STATUS: (state, value) => (state.user_status = value),
     //SET_VEHICLES: (state, value) => (state.vehicle_filter = value),
@@ -1611,6 +1636,8 @@ const settingsStore = {
     getProjectRoleUsers: (state) => state.project_role_users,
     getAssignedProjectUsers: (state) => state.assigned_project_users,
     getAssignedContractUsers: (state) => state.assigned_contract_users,
+    getAssignedVehicleUsers: (state) => state.assigned_vehicle_users,
+
     getUsersProjectRoles: (state) => state.users_project_roles,
     getUsersContractRoles: (state) => state.users_contract_roles,
     getUsersAdminRoles: (state) => state.users_admin_roles,
@@ -1631,6 +1658,7 @@ const settingsStore = {
 
     getAssociatedProjects: (state) => state.associated_projects,
     getAssociatedContracts: (state) => state.associated_contracts,
+    getAssociatedVehicles: (state) => state.associated_vehicles,
 
     getRolesLoaded: (state) => state.roles_loaded,
     newRoleStatus: (state) => state.new_role_status,
@@ -1645,12 +1673,11 @@ const settingsStore = {
     removeContractRoleStatus: (state) => state.remove_contract_role_status,
     showCreateRow: (state) => state.show_create_row,
 
-    getAssignedVehicleUsers: (state) => state.assigned_vehicle_users,
     getUsersVehicleRoles: (state) => state.users_vehicle_roles,
     getBulkVehicleRoleNames: (state) => state.bulk_vehicle_role_names,
     getVehicleRoleUsers: (state) => state.vehicle_role_users,
     getVehicleRoleNames: (state) => state.vehicle_role_names,
-    getAssociatedVehicles: (state) => state.associated_vehicles,
+    
     updatedVehicleRoleStatus: (state) => state.updated_vehicle_role_status,
     removeVehicleRoleStatus: (state) => state.remove_vehicle_role_status,
 
@@ -1682,7 +1709,7 @@ const settingsStore = {
     getVehicleTable: (state) => state.vehicle_table,
     vehicleLoaded: (state) => state.vehicle_loaded,
     vehiclesLoaded: (state) => state.vehicles_loaded,
-    vehicles: (state) => state.vehicles, 
+    vehicles: (state) => state.vehicles,
     vehiclesStatus: (state) => state.vehicles_status,
 
     getNewUserId: (state) => state.new_user_id,

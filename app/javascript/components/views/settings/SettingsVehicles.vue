@@ -79,167 +79,195 @@
           class=""
           v-if="_isallowed('read')"
         >
-          <el-table
-            v-if="tableData"
-            :data="
-              tableData.filter(
-                  (data) =>
-                    !search ||
-                    data.contract_vehicle.name.toLowerCase().includes(search.toLowerCase()) ||
-                    data.contract_vehicle.full_name.toLowerCase().includes(search.toLowerCase()) ||
-                    data.contract_vehicle.contract_agency.name.toLowerCase().includes(search.toLowerCase()) ||
-                    data.contract_vehicle.contract_sub_category.name.toLowerCase().includes(search.toLowerCase()) ||
-                    data.contract_vehicle.contract_vehicle_type.name.toLowerCase().includes(search.toLowerCase())
-                )
-                .reverse()
-            "
-            style="width: 100%"
-            highlight-current-row
-            height="450"
-            ref="table"
-            :row-key="(row) => row.id"
-            :expand-row-keys="expandRowKeys"
-            @expand-change="handleExpandChange"
-            :default-sort="{ prop: 'name', order: 'ascending' }"
-          >
-            <el-table-column prop="name" label="Vehicle">
-              <template slot-scope="scope">
-                <span v-if="scope.row.contract_vehicle.name">
-                  {{ scope.row.contract_vehicle.name }}
-                </span>
+          <!--<el-tabs type="card">
+            <el-tab-pane class="p-3">-->
+              <template slot="label">
+                <i class="fas fa-check mr-1"></i>
+                PRIME
               </template>
-            </el-table-column>
-            <el-table-column label="Vehicle Full Name">
-              <template slot-scope="scope">
-                <span v-if="scope.row.contract_vehicle.full_name">
-                  {{ scope.row.contract_vehicle.full_name }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column label="SINS or Subcategories">
-              <template slot-scope="scope">
-                <span
-                  v-if="
-                    scope.row.contract_vehicle.contract_sub_category &&
-                      scope.row.contract_vehicle.contract_sub_category.name !== null
-                  "
+              <el-table
+                v-if="tableData"
+                :data="
+                  tableData
+                    .filter(
+                      (data) =>
+                        !search ||
+                        data.contract_vehicle.name
+                          .toLowerCase()
+                          .includes(search.toLowerCase()) ||
+                        data.contract_vehicle.full_name
+                          .toLowerCase()
+                          .includes(search.toLowerCase()) ||
+                        data.contract_vehicle.contract_agency.name
+                          .toLowerCase()
+                          .includes(search.toLowerCase()) ||
+                        data.contract_vehicle.contract_sub_category.name
+                          .toLowerCase()
+                          .includes(search.toLowerCase()) ||
+                        data.contract_vehicle.contract_vehicle_type.name
+                          .toLowerCase()
+                          .includes(search.toLowerCase())
+                    )
+                    .reverse()
+                "
+                style="width: 100%"
+                highlight-current-row
+                height="450"
+                ref="table"
+                :row-key="(row) => row.id"
+                :expand-row-keys="expandRowKeys"
+                @expand-change="handleExpandChange"
+                :default-sort="{ prop: 'name', order: 'ascending' }"
+              >
+                <el-table-column prop="name" label="Vehicle">
+                  <template slot-scope="scope">
+                    <span v-if="scope.row.contract_vehicle.name">
+                      {{ scope.row.contract_vehicle.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Vehicle Full Name">
+                  <template slot-scope="scope">
+                    <span v-if="scope.row.contract_vehicle.full_name">
+                      {{ scope.row.contract_vehicle.full_name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="SINS or Subcategories">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_vehicle.contract_sub_category &&
+                          scope.row.contract_vehicle.contract_sub_category
+                            .name !== null
+                      "
+                    >
+                      {{
+                        scope.row.contract_vehicle.contract_sub_category.name
+                      }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Contracting Agency">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_vehicle.contract_agency &&
+                          scope.row.contract_vehicle.contract_agency.name !==
+                            null
+                      "
+                    >
+                      {{ scope.row.contract_vehicle.contract_agency.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Vehicle Type">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_vehicle.contract_vehicle_type &&
+                          scope.row.contract_vehicle.contract_vehicle_type
+                            .name !== null
+                      "
+                    >
+                      {{
+                        scope.row.contract_vehicle.contract_vehicle_type.name
+                      }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="facility_group"
+                  sortable
+                  filterable
+                  label="Group"
                 >
-                  {{ scope.row.contract_vehicle.contract_sub_category.name }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column label="Contracting Agency">
-              <template slot-scope="scope">
-                <span
-                  v-if="
-                    scope.row.contract_vehicle.contract_agency &&
-                      scope.row.contract_vehicle.contract_agency.name !== null
-                  "
-                >
-                  {{ scope.row.contract_vehicle.contract_agency.name }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column label="Vehicle Type">
-              <template slot-scope="scope">
-                <span
-                  v-if="
-                    scope.row.contract_vehicle.contract_vehicle_type &&
-                      scope.row.contract_vehicle.contract_vehicle_type.name !== null
-                  "
-                >
-                  {{ scope.row.contract_vehicle.contract_vehicle_type.name }}
-                </span>
-              </template>
-            </el-table-column>
-              <el-table-column
-              prop="facility_group"
-              sortable
-              filterable
-              label="Group"
-            >
-            <template slot-scope="scope">
-               <el-select
-                v-model="scope.row.facility_group_id"
-                class="w-100"
-                v-if="rowId == scope.row.contract_vehicle.id"
-                filterable
-                track-by="id"
-                clearable
-                value-key="id"
-                placeholder="Search and select Group"
-                >
-                <el-option
-                  v-for="item in facilityGroups"
-                  :value="item.id"
-                  :key="item.id"
-                  :label="item.name"
-                >
-                </el-option>
-              </el-select>   
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="scope.row.facility_group_id"
+                      class="w-100"
+                      v-if="rowId == scope.row.contract_vehicle.id"
+                      filterable
+                      track-by="id"
+                      clearable
+                      value-key="id"
+                      placeholder="Search and select Group"
+                    >
+                      <el-option
+                        v-for="item in facilityGroups"
+                        :value="item.id"
+                        :key="item.id"
+                        :label="item.name"
+                      >
+                      </el-option>
+                    </el-select>
 
-             
-               <span v-else> 
-                 <span v-if="scope.row.facility_group && scope.row.facility_group.name && rowId !== scope.row.contract_vehicle.id">
-                    {{ scope.row.facility_group.name }}
-                 </span> 
-            
-               </span>
-              <!-- <el-input
+                    <span v-else>
+                      <span
+                        v-if="
+                          scope.row.facility_group &&
+                            scope.row.facility_group.name &&
+                            rowId !== scope.row.contract_vehicle.id
+                        "
+                      >
+                        {{ scope.row.facility_group.name }}
+                      </span>
+                    </span>
+                    <!-- <el-input
                 size="small"
                 style="text-align:center"
                 v-model="scope.row.facilityGroupName"
               ></el-input> -->
-            </template>
-          </el-table-column>
-            <el-table-column label="Actions" align="right">
-              <template slot-scope="scope">
-                <el-button
-                  type="default"
-                  v-tooltip="`Change Group`"
-                  @click.prevent="editMode(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex && _isallowed('write')"
-                  class="bg-light btn-sm"
-                >
-                  <i class="fal fa-network-wired mh-blue-text"></i>
-                </el-button>
-                <el-button
-                  type="default"
-                  v-tooltip="`Manage User(s)`"
-                  @click.prevent="addUserRole(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex"
-                  class="bg-primary text-light btn-sm"
-                >
-                  <i class="fas fa-users-medical mr-1"></i>
-                </el-button>
-                <el-button
-                  type="default"
-                  v-if="scope.$index == rowIndex"
-                  @click.prevent="saveEdits(scope.$index, scope.row)"
-                  v-tooltip="`Save`"
-                  class="bg-primary btn-sm text-light"
-                >
-                  <i class="far fa-save"></i>
-                </el-button>
-                <el-button
-                  type="default"
-                  v-tooltip="`Cancel Edit`"
-                  v-if="scope.$index == rowIndex"
-                  @click.prevent="cancelEdits(scope.$index, scope.row)"
-                  class="bg-secondary btn-sm text-light"
-                >
-                  <i class="fas fa-ban"></i>
-                </el-button>
-                <el-button
-                  type="default"
-                  class="bg-light btn-sm"
-                  v-tooltip="'Remove Vehicle'"
-                  @click.prevent="removeVehicleBtn(scope.$index, scope.row)"
-                  v-if="scope.$index !== rowIndex && _isallowed('write')"
-                >
-                  <i class="fa-light fa-circle-minus text-danger"></i>
-                </el-button>
-                <!-- <el-button
+                  </template>
+                </el-table-column>
+                <el-table-column label="Actions" align="right">
+                  <template slot-scope="scope">
+                    <el-button
+                      type="default"
+                      v-tooltip="`Change Group`"
+                      @click.prevent="editMode(scope.$index, scope.row)"
+                      v-if="scope.$index !== rowIndex && _isallowed('write')"
+                      class="bg-light btn-sm"
+                    >
+                      <i class="fal fa-network-wired mh-blue-text"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      v-tooltip="`Manage User(s)`"
+                      @click.prevent="addUserRole(scope.$index, scope.row)"
+                      v-if="scope.$index !== rowIndex"
+                      class="bg-primary text-light btn-sm"
+                    >
+                      <i class="fas fa-users-medical mr-1"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      v-if="scope.$index == rowIndex"
+                      @click.prevent="saveEdits(scope.$index, scope.row)"
+                      v-tooltip="`Save`"
+                      class="bg-primary btn-sm text-light"
+                    >
+                      <i class="far fa-save"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      v-tooltip="`Cancel Edit`"
+                      v-if="scope.$index == rowIndex"
+                      @click.prevent="cancelEdits(scope.$index, scope.row)"
+                      class="bg-secondary btn-sm text-light"
+                    >
+                      <i class="fas fa-ban"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
+                      class="bg-light btn-sm"
+                      v-tooltip="'Remove Vehicle'"
+                      @click.prevent="removeVehicleBtn(scope.$index, scope.row)"
+                      v-if="scope.$index !== rowIndex && _isallowed('write')"
+                    >
+                      <i class="fa-light fa-circle-minus text-danger"></i>
+                    </el-button>
+                    <!-- <el-button
                   type="default" 
                   v-tooltip="`Go To Contract`"    
                   v-if=" _isallowedThisContract(scope.row.project_contract_id, 'read')"          
@@ -248,22 +276,33 @@
                   >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button> -->
-                <el-button
-                  type="default"
-                  v-tooltip="`Go To Vehicle`"
-                  v-if="
-                    _isallowedContracts(scope.row.project_contract_id, 'read')
-                  "
-                  @click.prevent="goToContract(scope.$index, scope.row)"
-                  class="bg-success text-light btn-sm"
-                >
-                  <i class="fas fa-arrow-alt-circle-right"></i>
-                </el-button>
+                    <el-button
+                      type="default"
+                      v-tooltip="`Go To Vehicle`"
+                      v-if="
+                        _isallowedContracts(
+                          scope.row.project_contract_id,
+                          'read'
+                        )
+                      "
+                      @click.prevent="goToContract(scope.$index, scope.row)"
+                      class="bg-success text-light btn-sm"
+                    >
+                      <i class="fas fa-arrow-alt-circle-right"></i>
+                    </el-button>
 
-                <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+                    <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
+                  </template>
+                </el-table-column>
+              </el-table>
+            <!-- </el-tab-pane>
+            <el-tab-pane class="p-3"> -->
+              <template slot="label">
+                <i class="fas fa-user-helmet-safety mr-1"></i>
+                SUB
               </template>
-            </el-table-column>
-          </el-table>
+            <!-- </el-tab-pane>
+          </el-tabs> -->
         </div>
         <div v-else class="text-danger mx-2 mt-5">
           <h5>
@@ -391,15 +430,15 @@
         <span slot="title" class="text-left add-groups-header ">
           <h5 style="color:#383838" v-if="vehicleData">
             <i class="far fa-car mr-1 mb-2 text-info"></i>
-            {{ vehicleData.name }}
+            {{ vehicleData.contract_vehicle.name }}
           </h5>
         </span>
         <div class="container-fluid p-0">
           <div
             class="pl-3 mt-0 row"
             v-if="
-              viableContractUsers &&
-                viableContractUsers.length > 0 &&
+              viableVehicleUsers &&
+                viableVehicleUsers.length > 0 &&
                 _isallowed('write')
             "
           >
@@ -416,7 +455,7 @@
                 placeholder="Search and select Project Users"
               >
                 <el-option
-                  v-for="item in viableContractUsers"
+                  v-for="item in viableVehicleUsers"
                   :value="item"
                   :key="item.id"
                   :label="item.fullName"
@@ -457,7 +496,7 @@
 
               <el-button
                 type="default"
-                @click="saveContractUserRole()"
+                @click="saveVehicleUserRole()"
                 v-if="contractRoleNames && contractRoleUsers"
                 v-tooltip="`Confirm`"
                 class="bg-primary btn-sm text-light"
@@ -471,8 +510,8 @@
             v-if="
               getRolesLoaded &&
                 contentLoaded &&
-                viableContractUsers &&
-                viableContractUsers.length <= 0
+                viableVehicleUsers &&
+                viableVehicleUsers.length <= 0
             "
           >
             There are currently no program users to assign to this vehicle. You
@@ -759,6 +798,7 @@ export default {
       hideSaveBtn: false,
       contractNameText: "",
       contractNicknameText: "",
+      showPrime: true,
       expanded: {
         id: "",
       },
@@ -849,7 +889,7 @@ export default {
       let projectUserRoleData = {
         userData: {
           roleId: rowData,
-          contractId: this.projId,
+          vehicleId: this.projId,
           programId: this.$route.params.programId,
           userIds: ids,
         },
@@ -977,17 +1017,19 @@ export default {
       this.rowIndex_1 = null;
       this.bulkChangeContractRoleNames = {};
     },
-    saveContractUserRole(index, rows) {
+    saveVehicleUserRole(index, rows) {
       let user_ids = this.contractRoleUsers.map((t) => t.id);
+      console.log(this.contractRoleUsers)
+      console.log(this.contractRoleNames)
       let contractUserRoleData = {
         userData: {
           roleId: this.contractRoleNames.id,
           userIds: user_ids,
           programId: this.$route.params.programId,
-          contractId: this.projId,
+          vehicleId: this.projId,
         },
       };
-      // console.log(contractUserRoleData)
+      console.log(contractUserRoleData)
       this.addUserToRole({
         ...contractUserRoleData,
       });
@@ -999,10 +1041,10 @@ export default {
       this.rowIndex_1 = null;
     },
     addUserRole(index, rows) {
+      console.log(rows)
       this.openUserPrivilegesDialog = true;
-      this.projId = rows.project_contract_id;
+      this.projId = rows.project_id;
       this.vehicleData = rows;
-      console.log(rows);
     },
     addExistingVehicle(index, rows) {
       //console.log(rows)
@@ -1033,8 +1075,8 @@ export default {
       this.expandRowKeys = this.projId === lastId ? [] : [this.projId];
     },
     removeVehicleBtn(index, rows) {
-       console.log(rows)
-       console.log(this.$route)
+      console.log(rows);
+      console.log(this.$route);
       // let id = [rows.id];
       let vehicle = {
         g: {
@@ -1197,7 +1239,9 @@ export default {
         this.tableData &&
         this.tableData.length > 0
       ) {
-        let associatedContractVehiclesIds = this.tableData.map((t) => t.contract_vehicle.id);
+        let associatedContractVehiclesIds = this.tableData.map(
+          (t) => t.contract_vehicle.id
+        );
         let data = this.contractVehicles
           .filter((t) => {
             if (this.searchContractVehiclesData !== "" && t) {
@@ -1221,7 +1265,7 @@ export default {
             } else return true;
           })
           .filter((t) => {
-            console.log("t:", t)
+            console.log("t:", t);
             return !associatedContractVehiclesIds.includes(t.id);
           });
         return data;
@@ -1300,7 +1344,8 @@ export default {
         } else return [];
       }
     },
-    viableContractUsers() {
+    viableVehicleUsers() {
+      console.log(this.contractUsers)
       if (this.programUsers && this.contractUsers && this.contractUsers.data) {
         let assignedUserIds = this.contractUsers.data.map((t) => t.user_id);
         return this.programUsers.filter((t) => !assignedUserIds.includes(t.id));
