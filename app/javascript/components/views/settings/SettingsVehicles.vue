@@ -1043,7 +1043,7 @@ export default {
     addUserRole(index, rows) {
       console.log(rows)
       this.openUserPrivilegesDialog = true;
-      this.projId = rows.project_id;
+      this.projId = rows.id;      
       this.vehicleData = rows;
     },
     addExistingVehicle(index, rows) {
@@ -1279,7 +1279,7 @@ export default {
         if (this.projId) {
           let groupByRoles = [].concat
             .apply([], roleUsers)
-            .filter((t) => this.projId == t.project_contract_id);
+            .filter((t) => this.projId == t.project_contract_vehicle_id);
           return {
             data: groupByRoles,
             roleIds: _.uniq(groupByRoles.map((t) => t.role_id)),

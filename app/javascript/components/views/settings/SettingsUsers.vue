@@ -1110,7 +1110,7 @@
               <div class="col-12 pt-0">
                 <label class="font-md mb-0 d-flex">Assign Vehicle Role</label>
                 <el-select
-                  v-model="contractRoleNames"
+                  v-model="vehicleRoleNames"
                   filterable
                   class="w-100"
                   clearable
@@ -1151,7 +1151,7 @@
                     <el-option
                       v-for="item in filteredVehicles"
                       :value="item"
-                      :key="item.contract_vehicle_id"
+                      :key="item.id"
                       :label="item.contract_vehicle.name"
                     >
                     </el-option>
@@ -1169,7 +1169,7 @@
                   type="default"
                   @click="saveVehicleUserRole()"
                   v-if="
-                    contractRoleNames &&
+                    vehicleRoleNames &&
                       associatedVehicles &&
                       associatedVehicles.length > 0
                   "
@@ -1388,6 +1388,7 @@ export default {
       "SET_VEHICLE_ROLE_NAMES",
       "SET_CONTRACT_ROLE_NAMES",
       "SET_ASSOCIATED_CONTRACTS",
+      "SET_ASSOCIATED_VEHICLES",
       "SET_ASSOCIATED_PROJECTS",
       "SET_ADD_USER_TO_ROLE_STATUS",
       "SET_USERS_PROJECT_ROLES",
@@ -1552,18 +1553,21 @@ export default {
     },
     saveVehicleUserRole(index, rows) {
       let vehicleIds = this.associatedVehicles.map(
-        (t) => t.project_contract_id
+        (t) => t.id
       );
       let projectUserRoleData = {
         userData: {
-          roleId: this.contractRoleNames.id,
+          roleId: this.vehicleRoleNames.id,
           userId: this.projId,
           programId: this.$route.params.programId,
           vehicleIds: vehicleIds,
           userRoles: true,
         },
       };
-      // console.log(contractIds)
+    //  console.log(vehicleIds)
+    //   console.log(this.associatedVehicles)
+    //    console.log(this.contractRoleNames)
+    //      console.log(this.vehicleRoleNames)
       this.addUserToRole({
         ...projectUserRoleData,
       });
@@ -1648,7 +1652,8 @@ export default {
       if (this.getRoles && this.getRoles.length <= 0) {
         this.fetchRoles(this.$route.params.programId);
       }
-      // console.log(this.projectUsers)
+    // console.log(this.projectUsers)
+        console.log(rows)
       this.openUserRoles = true;
       this.userData = rows;
       this.fetchContracts(this.$route.params.programId);
@@ -1778,7 +1783,7 @@ export default {
       "getNewUserId",
       "getProjectRoleNames",
       "getContractRoleNames",
-      //"getVehicleRoleNames",
+      "getVehicleRoleNames",
       "getAdminRoleNames",
       "getAssociatedProjects",
       "getAssociatedContracts",
@@ -1853,7 +1858,7 @@ export default {
         //  console.log(value)
       },
     },
-    /* vehicleRoleNames: {
+     vehicleRoleNames: {
       get() {
         return this.getVehicleRoleNames;
       },
@@ -1861,7 +1866,7 @@ export default {
         this.SET_VEHICLE_ROLE_NAMES(value);
         //  console.log(value)
       },
-    }, */
+    }, 
     adminRoleNames: {
       get() {
         return this.getAdminRoleNames;
@@ -1937,14 +1942,16 @@ export default {
         this.vehicleNames &&
         this.vehicleNames.length > 0
       ) {
-        //console.log(this.projectUsers)
-        console.log(this.vehicleNames)
-        let roleProjectIds = this.projectUsers.data.map((t) => {
-          t.project_contract_vehicle_id;
-        });
-        return this.vehicleNames.filter((t) => {
-          !roleProjectIds.includes(t.project_id);
-        }); 
+         console.log(this.projectUsers)
+         console.log(this.projectUsers.data)
+         console.log(this.vehicleNames)
+        let roleProjectIds = this.projectUsers.data.map(
+         (t) => t.project_contract_vehicle_id
+        );
+        console.log(roleProjectIds)
+        return this.vehicleNames.filter(
+          (t) => !roleProjectIds.includes(t.id)
+        ); 
       }
     },
     admin_role_names() {
@@ -2001,6 +2008,7 @@ export default {
             data
               .filter(
                 (t) =>
+               
                   t.project_id == this.$route.params.programId &&
                   (t.facility_project_id || t.project_contract_id || t.project_contract_vehicle_id)
               )
@@ -2210,6 +2218,7 @@ export default {
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
           this.SET_ASSOCIATED_PROJECTS([]);
           this.SET_ASSOCIATED_CONTRACTS([]);
+          this.SET_ASSOCIATED_VEHICLES([]);
           this.SET_PROJECT_ROLE_NAMES([]);
           this.SET_ADMIN_ROLE_NAMES([]);
           this.SET_CONTRACT_ROLE_NAMES([]);
