@@ -8,7 +8,9 @@ const settingsStore = {
     show_create_row: false,
     user_status: true,
     edit_contract_sheet: false,
+    edit_vehicle_sheet: false,
     contract_table: [],
+    vehicle_table: [],
     group_filter: null,
     transfer_data: [],
     new_groups: [],
@@ -44,7 +46,9 @@ const settingsStore = {
     prime: null,
     current_pop: [],
     contract_type_filter: 0,
+    vehicle_type_filter: 0,
     contract_group_types: {},
+    vehicle_group_types: {},
 
     portfolio_projects: [],
     portfolio_projects_loaded: true,
@@ -75,6 +79,7 @@ const settingsStore = {
     new_user_status: 0,
 
     new_contract_group_filter: null,
+    new_vehicle_group_filter: null,
     new_user_loaded: true,
     new_user_id: null,
 
@@ -1434,10 +1439,10 @@ const settingsStore = {
       (state.new_contract_group_filter = loaded),
 
     // VEHICLES
-    /* setVehicleTypeFilter: (state, value) => (state.vehicle_type_filter = value),
+    setVehicleTypeFilter: (state, value) => (state.vehicle_type_filter = value),
     setVehicleTable: (state, value) => (state.vehicle_table = value),
     setNewVehicleGroupFilter: (state, loaded) =>
-      (state.new_vehicle_group_filter = loaded), */
+      (state.new_vehicle_group_filter = loaded),
 
     SET_IS_EDITTING_ROLE: (state, value) => (state.is_editting_role = value),
     SET_PROJECT_ROLE_USERS: (state, value) =>
@@ -1763,6 +1768,7 @@ const settingsStore = {
     contractLoaded: (state) => state.contract_loaded,
     contractsLoaded: (state) => state.contracts_loaded,
     getContractTypeFilter: (state) => state.contract_type_filter,
+    getVehicleTypeFilter: (state) => state.vehicle_type_filter,
     facilityGroupContracts: (state, getters) => (group) => {
       return {
         contracts: {

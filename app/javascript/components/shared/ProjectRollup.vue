@@ -1156,7 +1156,7 @@
      <div class="row">
     <ProgramContractsSheet v-if="this.getShowContractStats" />
     <ProgramProjectsSheet v-if="this.getShowProjectStats" />
-    <!-- <ProgramVehiclesSheet v-if="this.getShowVehicleStats" /> -->      
+    <ProgramVehiclesSheet v-if="this.getShowVehicleStats" />      
     </div>
     </el-tab-pane>
   
@@ -1168,6 +1168,7 @@
 import Loader from "./loader";
 import ProgramContractsSheet from "../views/program/ProgramContractsSheet.vue"
 import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
+import ProgramVehiclesSheet from "../views/program/ProgramVehiclesSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
@@ -1175,7 +1176,8 @@ export default {
   components: {
     Loader,
     ProgramContractsSheet,
-    ProgramProjectsSheet 
+    ProgramProjectsSheet,
+    ProgramVehiclesSheet
   },
   data() {
     return {
