@@ -248,7 +248,8 @@ class Risk < ApplicationRecord
       :risk_approach,
       :on_hold,
       :draft,
-      :project_contract_id, 
+      :project_contract_id,
+      :project_contract_vehicle_id,
       :ongoing,
       :duration,
       :duration_name,
@@ -504,6 +505,9 @@ class Risk < ApplicationRecord
 
     if params[:project_contract_id]
       risk.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      risk.project_contract_vehicle_id = params[:project_contract_vehicle_id]
+
     elsif !risk.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])

@@ -329,6 +329,7 @@ class Lesson < ApplicationRecord
       :important, 
       :draft, 
       :project_contract_id,
+      :project_contract_vehicle_id,
       :reportable, 
       :lesson_stage_id,
       sub_task_ids: [],
@@ -429,6 +430,8 @@ class Lesson < ApplicationRecord
 
     if params[:project_contract_id]
       lesson.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      lesson.project_contract_vehicle_id = params[:project_contract_vehicle_id]
     end
 
     lesson.transaction do

@@ -18,7 +18,7 @@
   <el-table-column
     fixed
     prop="role"
-    label="Contracts Role"
+    label="Contract/Vehicle Role"
     width="250">
 
   <template slot-scope="scope">

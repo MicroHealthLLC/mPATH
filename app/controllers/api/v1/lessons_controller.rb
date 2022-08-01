@@ -15,6 +15,8 @@ class Api::V1::LessonsController < AuthenticatedController
 
     if params[:project_contract_id]
       raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'lessons', project_contract: params[:project_contract_id])
+    elsif params[:project_contract_vehicle_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'risks', project_contract_vehicle: params[:project_contract_vehicle_id])
     else
       raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'lessons', program: params[:project_id], project: params[:facility_id])
     end
@@ -83,7 +85,7 @@ class Api::V1::LessonsController < AuthenticatedController
         raise ActiveRecord::RecordNotFound
       end
 
-else
+    else
       raise ActionController::BadRequest 
     end
     render json: response_hash, status: status_code
