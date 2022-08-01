@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_08_165712) do
+ActiveRecord::Schema.define(version: 2022_07_26_111526) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -460,6 +460,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_165712) do
     t.boolean "reportable", default: false
     t.integer "contract_id"
     t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -509,6 +510,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_165712) do
     t.boolean "draft", default: false
     t.integer "contract_id"
     t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -568,6 +570,15 @@ ActiveRecord::Schema.define(version: 2022_07_08_165712) do
     t.datetime "updated_at", null: false
     t.index ["checklist_id"], name: "index_progress_lists_on_checklist_id"
     t.index ["user_id"], name: "index_progress_lists_on_user_id"
+  end
+
+  create_table "project_contract_vehicles", charset: "utf8", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "contract_vehicle_id", null: false
+    t.integer "user_id"
+    t.integer "facility_group_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "project_contracts", charset: "utf8", force: :cascade do |t|
@@ -833,6 +844,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_165712) do
     t.date "closed_date"
     t.integer "contract_id"
     t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -965,6 +977,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_165712) do
     t.date "closed_date"
     t.integer "contract_id"
     t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"

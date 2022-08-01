@@ -28,6 +28,11 @@
           <i class="far fa-file-contract mr-3 mh-orange-text"></i>  Contracts
         </li>
     </router-link>
+    <router-link :to="adminVehiclesView" v-if="_isallowedContracts('read')"> 
+       <li class="p-3 entity">
+          <i class="far fa-car mr-3 text-info"></i>Vehicles
+        </li>
+    </router-link>
        <router-link :to="adminRolesView" v-if="_isallowedUserRoles('read')"> 
        <li class="p-3 entity">
         <i class="fal fa-user-lock mr-2 pr-1 bootstrap-purple-text"></i>Roles
@@ -91,6 +96,9 @@ export default {
     },
     adminContractsView() {
      return `/programs/${this.$route.params.programId}/settings/contracts`
+    },
+    adminVehiclesView() {
+     return `/programs/${this.$route.params.programId}/settings/vehicles`
     },
     adminGroupsView() {
      return `/programs/${this.$route.params.programId}/settings/groups`

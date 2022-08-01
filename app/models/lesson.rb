@@ -16,6 +16,9 @@ class Lesson < ApplicationRecord
   belongs_to :project_contract, optional: true
   has_one :contract_project_data, through: :project_contract
   
+  belongs_to :project_contract_vehicle, optional: true
+  has_one :contract_vehicle, through: :project_contract_vehicle
+
   # Line 12 was commmented out and caused page error.  Uncommented by JR and fixed view.  Need AS to re-examine line and modify as appropriate
 
   has_one :contract_project, class_name: "Project", through: :project_contract

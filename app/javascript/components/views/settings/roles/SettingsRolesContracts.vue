@@ -647,7 +647,7 @@
       class="bg-light btn-sm"
       v-tooltip="`Cancel Create`"                  
       >
-      <i class="far fa-trash-alt text-danger"></i>
+      <i class="fas fa-ban"></i>
      </el-button>
    </template>
       

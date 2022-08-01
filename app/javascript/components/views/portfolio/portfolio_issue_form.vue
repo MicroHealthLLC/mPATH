@@ -1379,7 +1379,7 @@ export default {
     }
     this.loading = false;
     this._ismounted = true;
-  },
+   },
   methods: {
     ...mapMutations(["setTaskForManager", "updateIssuesHash"]),
     ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues", 'fetchPortfolioIssue']),
