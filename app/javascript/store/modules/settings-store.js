@@ -96,6 +96,7 @@ const settingsStore = {
     remove_role_status: 0,
     remove_project_role_status: 0,
     remove_contract_role_status: 0,
+    remove_vehicle_role_status: 0,
     remove_admin_role_status: 0,
     role_removed: true,
 
@@ -523,7 +524,7 @@ const settingsStore = {
     //REMOVE USER FROM ROLE OR PROJECT OR CONTRACT
     removeUserRole({ commit }, { userData }) {
       // let formData =  userRoleData(userData);
-      // console.log(userData)
+      console.log(userData)
       let formData = new FormData();
 
       if (userData.removeRole) {
@@ -599,6 +600,7 @@ const settingsStore = {
           if (
             userData.projectIds ||
             userData.contractIds ||
+            userData.vehicleIds ||
             userData.adminRole ||
             userData.removeRole
           ) {
@@ -618,6 +620,11 @@ const settingsStore = {
           if (userData.userIds && userData.contractId) {
             console.log("removed from ProgramSettingContracts");
             commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
+          }
+
+          if (userData.userIds && userData.vehicleId) {
+            console.log("removed from ProgramSettingVehicles");
+            commit("SET_REMOVE_VEHICLE_ROLE_STATUS", res.status);
           }
         })
         .catch((err) => {

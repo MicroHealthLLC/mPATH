@@ -834,6 +834,7 @@ export default {
       "SET_BULK_CONTRACT_ROLE_NAMES",
       "SET_ASSIGNED_CONTRACT_USERS",
       "SET_REMOVE_CONTRACT_ROLE_STATUS",
+      "SET_REMOVE_VEHICLE_ROLE_STATUS",
       "SET_ASSOCIATED_VEHICLES_STATUS",
       "SET_CONTRACTS_STATUS",
     ]),
@@ -873,9 +874,11 @@ export default {
       // console.log('tableData:',  e)
     },
     editUsers(index, rowData) {
+      console.log(rowData)
       this.userids = this.contractUsers.data.filter(
         (t) => t.role_id == rowData
       );
+      console.log(this.userids)
       this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers);
       this.rowIndex_1 = index;
       this.roleRowId = rowData;
@@ -894,7 +897,7 @@ export default {
           userIds: ids,
         },
       };
-      // console.log(projectUserRoleData)
+       console.log(projectUserRoleData)
       this.removeUserRole({
         ...projectUserRoleData,
       });
@@ -1188,7 +1191,7 @@ export default {
       "getGroupFilter",
       "getNewGroups",
       "facilityGroups",
-      "removeContractRoleStatus",
+      "removeVehicleRoleStatus",
       "currentProject",
       "getAssignedContractUsers",
       "contractProjects",
@@ -1431,11 +1434,11 @@ export default {
         }
       },
     },
-    removeContractRoleStatus: {
+    removeVehicleRoleStatus: {
       handler() {
         if (
-          this.removeContractRoleStatus == 204 ||
-          this.removeContractRoleStatus == 200
+          this.removeVehicleRoleStatus == 204 ||
+          this.removeVehicleRoleStatus == 200
         ) {
           this.$message({
             message: `Succesfully removed user(s) from role.`,
@@ -1443,7 +1446,7 @@ export default {
             showClose: true,
           });
           this.fetchRoles(this.$route.params.programId);
-          this.SET_REMOVE_CONTRACT_ROLE_STATUS(0);
+          this.SET_REMOVE_VEHICLE_ROLE_STATUS(0);
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false;
