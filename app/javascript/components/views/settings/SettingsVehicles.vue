@@ -982,7 +982,7 @@ export default {
       );
       this.SET_ASSIGNED_CONTRACT_USERS(this.assignedUsers);
       this.$confirm(
-        `Are you sure you want to remove all users from this contract role?`,
+        `Are you sure you want to remove all users from this vehicle role?`,
         "Confirm Remove",
         {
           confirmButtonText: "Remove",
@@ -997,7 +997,7 @@ export default {
         let projectUserRoleData = {
           userData: {
             roleId: rowData,
-            contractId: this.projId,
+            vehicleId: this.projId,
             programId: this.$route.params.programId,
             userIds: ids,
           },
