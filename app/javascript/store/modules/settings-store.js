@@ -111,6 +111,7 @@ const settingsStore = {
     assigned_vehicle_users: [],
     users_contract_roles: [],
     users_admin_roles: [],
+    users_vehicle_roles: [],
 
     //VEHICLE USER ROLES
     vehicle_role_names: [],
@@ -435,7 +436,7 @@ const settingsStore = {
     //ADD USER TO ROLE
     addUserToRole({ commit }, { userData }) {
       // let formData =  userRoleData(userData);
-      console.log(userData);
+      //console.log(userData);
       let formData = new FormData();
       if (userData.projectIds) {
         userData.projectIds.forEach((ids) => {
@@ -524,8 +525,8 @@ const settingsStore = {
     //REMOVE USER FROM ROLE OR PROJECT OR CONTRACT
     removeUserRole({ commit }, { userData }) {
       // let formData =  userRoleData(userData);
-      console.log(userData)
       let formData = new FormData();
+      console.log(userData)
 
       if (userData.removeRole) {
         formData.append("user_id", userData.userId);
@@ -552,6 +553,16 @@ const settingsStore = {
           formData.append("project_contract_id[]", ids);
         });
       }
+      if (userData.vehicleIds) {
+        formData.append("role_from_users", true);
+        userData.vehicleIds.forEach((ids) => {
+          formData.append("user_id", userData.userId);
+          formData.append("project_id", userData.programId);
+          formData.append("role_id", userData.roleId);
+          formData.append("project_contract_vehicle_id[]", ids);
+        });
+      }
+      console.log(userData)
       if (userData.adminRole || userData.adminRoleIndex) {
         formData.append("role_from_users", true);
         formData.append("user_id[]", userData.userId);

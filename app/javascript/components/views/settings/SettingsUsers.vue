@@ -653,7 +653,7 @@
                   <span v-if="isEditingRoles && scope.$index == rowIndex_1">
                     <el-select
                       v-model="projectRoleUsers"
-                      v-if="!isEditingContractRoles && !isEditingVehicleRoles"
+                      v-if="!isEditingContractRoles"
                       :popper-append-to-body="false"
                       filterable
                       multiple
@@ -677,7 +677,7 @@
                   >
                     <el-select
                       v-model="contractRoleUsers"
-                      v-if="!isEditingRoles && !isEditingVehicleRoles"
+                      v-if="!isEditingRoles"
                       filterable
                       multiple
                       class="w-100 el-popper"
@@ -689,13 +689,20 @@
                       <el-option
                         v-for="item in contractNames"
                         :value="item"
-                        :key="item.project_contract_id"
+                        :key="'C'+item.project_contract_id"
                         :label="item.name"
+                      >
+                      </el-option>
+                      <el-option
+                        v-for="item in vehicleNames"
+                        :value="item"
+                        :key="'V'+item.id"
+                        :label="item.contract_vehicle.name"
                       >
                       </el-option>
                     </el-select>
                   </span>
-                  <span
+                  <!-- <span
                     v-if="isEditingVehicleRoles && scope.$index == rowIndex_1"
                   >
                     <el-select
@@ -717,7 +724,7 @@
                       >
                       </el-option>
                     </el-select>
-                  </span>
+                  </span> -->
                 </template>
               </el-table-column>
               <el-table-column
@@ -833,8 +840,15 @@
                       <el-option
                         v-for="item in contractNames"
                         :value="item"
-                        :key="item.project_contract_id"
+                        :key="'C'+item.project_contract_id"
                         :label="item.name"
+                      >
+                      </el-option>
+                      <el-option
+                        v-for="item in vehicleNames"
+                        :value="item"
+                        :key="'V'+item.id"
+                        :label="item.contract_vehicle.name"
                       >
                       </el-option>
                     </el-select>
@@ -1133,7 +1147,7 @@
               </div>
             </div>
             <div class="mt-3 row">
-              <div :load="log(filteredVehicles)" class="col-12 pt-0">
+              <div class="col-12 pt-0">
                 <span v-if="filteredVehicles && filteredVehicles.length > 0">
                   <label class="font-md mb-0 d-flex"
                     >Associate Vehicle to Role
@@ -1309,7 +1323,7 @@ export default {
       expandRowKeys: [],
       isEditingAdminRoles: false,
       isEditingContractRoles: false,
-      isEditingVehicleRoles: false,
+      //isEditingVehicleRoles: false,
       editRoleRowData: null,
       projId: null,
       userData: null,
@@ -1393,6 +1407,7 @@ export default {
       "SET_ADD_USER_TO_ROLE_STATUS",
       "SET_USERS_PROJECT_ROLES",
       "SET_USERS_CONTRACT_ROLES",
+      "SET_USERS_VEHICLE_ROLES",
       "SET_USERS_ADMIN_ROLES",
       "SET_REMOVE_ROLE_STATUS",
       "SET_PROGRAM_USERS_STATUS",
@@ -1424,7 +1439,7 @@ export default {
       });
     },
     log(e) {
-        console.log(`fV:  ${e}` )
+        console.log(`${e}`)
     },
     removeAssociations(index, rowData) {
       if (this.isEditingRoles) {
@@ -1447,22 +1462,60 @@ export default {
         });
       }
       if (this.isEditingContractRoles) {
-        let cIds = this.contractRoleUsers.map((t) => t.project_contract_id);
+        let projectUserRoleData = [];
+        let cProjectUserRoleData, vProjectUserRoleData, cIds, vIds;
+        console.log(this.contractRoleUsers)
+        console.log(this.assignedUserContracts)
+        console.log(this.assignedUserVehicles)
+        /* if ("project_contract_id" in this.contractRoleUsers) {
+          cIds = this.contractRoleUsers.map((t) => t.project_contract_id)
+        } else if ("contract_vehicle_id" in this.contractRoleUsers) {
+          vIds = this.contractRoleUsers.map((t) => t.id)
+        } */
+
+        // HAving trouble mapping because there is no way to distinguish between contract or vehicle, just by data structure?
+
+        cIds = this.contractRoleUsers.map((t) => t.project_contract_id);
+        vIds = this.contractRoleUsers.map((t) => t.id);
+        /* let cvIds = this.contractRoleUsers.map((t) => {
+          !t.project_contract_id ? t.id : t.project_contract_id
+        }) */
         let assignedContracts = this.assignedUserContracts.map(
           (t) => t.project_contract_id
         );
+        console.log(assignedContracts)
+        //console.log(this.assignedUserVehicles)
+        let assignedVehicles = this.assignedUserVehicles.map(
+          (t) => t.facilityProjectId
+        );
+        console.log(assignedVehicles)
         let aCids = assignedContracts.filter((t) => !cIds.includes(t));
-        let projectUserRoleData = {
-          userData: {
-            roleId: rowData,
-            userId: this.userData.id,
-            programId: this.$route.params.programId,
-            contractIds: aCids,
-          },
-        };
-        // console.log(aCids)
+        let aVids = assignedVehicles.filter((t) => !vIds.includes(t));
+        if (aCids && aCids.length > 0) {
+          cProjectUserRoleData = {
+            userData: {
+              roleId: rowData,
+              userId: this.userData.id,
+              programId: this.$route.params.programId,
+              contractIds: aCids,
+            }
+          }
+          projectUserRoleData.push(cProjectUserRoleData)
+        } else if (aVids && aVids.length > 0) {
+          vProjectUserRoleData = {
+            userData: {
+              roleId: rowData,
+              userId: this.userData.id,
+              programId: this.$route.params.programId,
+              vehicleIds: aVids,
+            }
+          }
+          projectUserRoleData.push(vProjectUserRoleData)
+        }
+        projectUserRoleData.flat()
+        console.log(projectUserRoleData)
         this.removeUserRole({
-          ...projectUserRoleData,
+          ...projectUserRoleData[0],
         });
       }
     },
@@ -1493,20 +1546,18 @@ export default {
     editRoles(index, rowData) {
       this.roleRowId = rowData;
       this.editRoleRowData = rowData;
-      // console.log(this.projectUsers)
       this.rowIndex_1 = index;
       this.SET_USERS_PROJECT_ROLES(this.assignedUserProjects);
       this.SET_USERS_CONTRACT_ROLES(this.assignedUserContracts);
       this.SET_USERS_VEHICLE_ROLES(this.assignedUserVehicles);
-      if (this.assignedUserContracts && this.assignedUserContracts.length > 0) {
+      if ((this.assignedUserContracts && this.assignedUserContracts.length > 0) 
+      || (this.assignedUserVehicles && this.assignedUserVehicles.length > 0)) {
         this.isEditingContractRoles = true;
       }
       if (this.assignedUserProjects && this.assignedUserProjects.length > 0) {
         this.isEditingRoles = true;
       }
-      if (this.assignedUserVehicles && this.assignedUserVehicles.length > 0) {
-        this.isEditingVehicleRoles = true;
-      }
+      //console.log(this.contractRoleUsers)
     },
     editAdminRole() {
       this.isEditingAdminRoles = true;
@@ -1514,7 +1565,7 @@ export default {
     cancelEditRoles(index, rowData) {
       this.isEditingRoles = false;
       this.isEditingContractRoles = false;
-      this.isEditingVehicleRoles = false;
+      //this.isEditingVehicleRoles = false;
       this.isEditingAdminRoles = false;
       this.rowIndex_1 = null;
     },
@@ -1653,7 +1704,7 @@ export default {
         this.fetchRoles(this.$route.params.programId);
       }
     // console.log(this.projectUsers)
-        console.log(rows)
+        //console.log(rows)
       this.openUserRoles = true;
       this.userData = rows;
       this.fetchContracts(this.$route.params.programId);
@@ -1797,6 +1848,7 @@ export default {
       "addUserToRoleStatus",
       "getUsersProjectRoles",
       "getUsersContractRoles",
+      "getUserVehicleRoles",
       "getUsersAdminRoles",
       "removeRoleStatus",
     ]),
@@ -1926,7 +1978,7 @@ export default {
         this.contractNames &&
         this.contractNames.length > 0
       ) {
-        console.log(this.contractNames)
+        //console.log(this.contractNames)
         let roleProjectIds = this.projectUsers.data.map(
           (t) => t.project_contract_id
         );
@@ -1942,13 +1994,13 @@ export default {
         this.vehicleNames &&
         this.vehicleNames.length > 0
       ) {
-         console.log(this.projectUsers)
-         console.log(this.projectUsers.data)
-         console.log(this.vehicleNames)
+         //console.log(this.projectUsers)
+         //console.log(this.projectUsers.data)
+         //console.log(this.vehicleNames)
         let roleProjectIds = this.projectUsers.data.map(
          (t) => t.project_contract_vehicle_id
         );
-        console.log(roleProjectIds)
+        //console.log(roleProjectIds)
         return this.vehicleNames.filter(
           (t) => !roleProjectIds.includes(t.id)
         ); 
@@ -2030,7 +2082,6 @@ export default {
         // console.log(filteredProjects)
         return filteredProjects;
       }
-      // Thursday Night Notes:  Add filter to filter out projects not associated to row
     },
     assignedAdminRoles() {
       if (
@@ -2046,28 +2097,35 @@ export default {
       }
     },
     assignedUserContracts() {
+      let assignedUserContractsVehicles = [];
       if (this.contractNames && this.contractNames.length > 0) {
         let ids = this.projectUsers.data.filter(
           (t) => t.role_id == this.roleRowId
         );
-        console.log("contracts id: " + ids)
+        //console.log(ids)
         let tableContractIds = ids.map((t) => t.project_contract_id);
         let filteredContracts = this.contractNames.filter((t) =>
           tableContractIds.includes(t.project_contract_id)
         );
-        return filteredContracts;
+        if (this.assignedUserVehicles && this.assignedUserVehicles.length > 0) {
+          assignedUserContractsVehicles.push(filteredContracts);
+          assignedUserContractsVehicles.push(this.assignedUserVehicles)
+          return assignedUserContractsVehicles.flat()
+        } else {
+          return filteredContracts;
+        }
+        
       }
-      // Thursday Night Notes:  Add filter to filter out projects not associated to row
     },
     assignedUserVehicles() {
       if (this.vehicleNames && this.vehicleNames.length > 0) {
         let ids = this.projectUsers.data.filter(
           (t) => t.role_id == this.roleRowId
         );
-        console.log("vehicles id:" + ids);
-        let tableVehicleIds = ids.map((t) => t.contract_vehicle_id);
+        //console.log(ids);
+        let tableVehicleIds = ids.map((t) => t.project_contract_vehicle_id);
         let filteredVehicles = this.vehicleNames.filter((t) =>
-          tableVehicleIds.includes(t.contract_vehicle_id)
+          tableVehicleIds.includes(t.id)
         );
         return filteredVehicles;
       }
@@ -2087,6 +2145,15 @@ export default {
       },
       set(value) {
         this.SET_USERS_CONTRACT_ROLES(value);
+        //  console.log(value)
+      },
+    },
+    vehicleRoleUsers: {
+      get() {
+        return this.getUsersVehiclesRoles;
+      },
+      set(value) {
+        this.SET_USERS_VEHICLE_ROLES(value);
         //  console.log(value)
       },
     },
@@ -2239,7 +2306,7 @@ export default {
           this.SET_REMOVE_ROLE_STATUS(0);
           this.isEditingRoles = false;
           this.isEditingContractRoles = false;
-          this.isEditingVehicleRoles = false;
+          //this.isEditingVehicleRoles = false;
           this.isEditingAdminRoles = false;
           this.rowIndex_1 = null;
         }
