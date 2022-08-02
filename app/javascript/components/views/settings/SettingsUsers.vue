@@ -623,14 +623,14 @@
                             item.project_contract_vehicle_id &&
                             vehicleNames.map(
                               (t) =>
-                                t.contract_vehicle_id ==
+                                t.id ==
                                 item.project_contract_vehicle_id
                             ) &&
                             item.role_id == scope.row &&
                             vehicleNames
                               .filter(
                                 (t) =>
-                                  t.contract_vehicle_id ==
+                                  t.id ==
                                   item.project_contract_vehicle_id
                               )
                               .map((t) => t.contract_vehicle.name).length > 0
@@ -641,7 +641,7 @@
                           vehicleNames
                             .filter(
                               (t) =>
-                                t.contract_vehicle_id ==
+                                t.id ==
                                 item.project_contract_vehicle_id
                             )
                             .map((t) => t.contract_vehicle.name)
@@ -712,7 +712,7 @@
                       <el-option
                         v-for="item in vehicleNames"
                         :value="item"
-                        :key="item.contract_vehicle_id"
+                        :key="item.id"
                         :label="item.contract_vehicle.name"
                       >
                       </el-option>
