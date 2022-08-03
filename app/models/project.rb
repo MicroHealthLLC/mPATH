@@ -262,7 +262,7 @@ class Project < SortableRecord
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = (all_facility_projects.map(&:facility_group_id) + all_project_contracts.map(&:facility_group_id) ).compact.uniq
     all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
-    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects, :project_contracts, :project_facility_groups).where("id in (?)", all_facility_group_ids)
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects, :project_contracts, :project_contract_vehicles, :project_facility_groups).where("id in (?)", all_facility_group_ids)
 
     facility_projects_hash = []
     facility_projects_hash2 = {}

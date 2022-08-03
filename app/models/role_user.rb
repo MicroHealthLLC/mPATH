@@ -16,6 +16,23 @@ class RoleUser < ApplicationRecord
   
   after_create :create_program_admin_record
 
+  def update_resource_field
+    ru = self
+    if ru.facility_project_id
+      ru.resource_type = "FacilityProject"
+      ru.resource_id = ru.facility_project_id
+    end
+    if ru.project_contract_id
+      ru.resource_type = "ProjectContract"
+      ru.resource_id = ru.project_contract_id
+    end
+    if ru.project_contract_vehicle_id
+      ru.resource_type = "ProjectContractVehicle"
+      ru.resource_id = ru.project_contract_vehicle_id
+    end
+    ru.save(validate: false)
+  end
+
   def create_program_admin_record
     admin_role = Role.program_admin_user_role
     if self.project_id && admin_role && (self.role_id == admin_role.id)
