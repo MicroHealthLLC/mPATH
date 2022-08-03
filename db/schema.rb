@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_28_204034) do
+ActiveRecord::Schema.define(version: 2022_08_02_210024) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -877,6 +877,8 @@ ActiveRecord::Schema.define(version: 2022_07_28_204034) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "project_contract_id"
     t.integer "project_contract_vehicle_id"
+    t.string "resource_type"
+    t.integer "resource_id"
     t.index ["facility_project_id", "project_contract_id"], name: "index_role_users_on_facility_project_id_and_project_contract_id"
     t.index ["role_id", "user_id", "project_id"], name: "index_role_users_on_role_id_and_user_id_and_project_id"
   end

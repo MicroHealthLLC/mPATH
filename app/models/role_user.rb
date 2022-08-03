@@ -2,6 +2,9 @@ class RoleUser < ApplicationRecord
   belongs_to :user
   belongs_to :role
   has_many :role_privileges, through: :role
+
+  belongs_to :resource, polymorphic: true
+  
   belongs_to :facility_project, optional: true
   belongs_to :project_contract, optional: true
   belongs_to :project_contract_vehicle, optional: true
