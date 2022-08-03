@@ -12,6 +12,7 @@ class FacilityProject < ApplicationRecord
   has_many :facility_privileges, dependent: :destroy
   belongs_to :facility_group, optional: true
 
+  has_many :role_users, as: :resource
   scope :active, -> {joins(:facility).where("facilities.status = ?", 1).distinct}
 
   validates :facility, uniqueness: {scope: :project}
