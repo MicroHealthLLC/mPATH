@@ -5,6 +5,10 @@ class RoleUser < ApplicationRecord
 
   belongs_to :resource, polymorphic: true
   
+  # TODO: remove fields: facility_project_id, project_contract_id, project_contract_vehicle_id
+  # and add virtual attribute so that we can set resource_id and resource_type
+  # attr_accessor :facility_project_id, :project_contract_id, :project_contract_vehicle_id
+
   belongs_to :facility_project, optional: true
   belongs_to :project_contract, optional: true
   belongs_to :project_contract_vehicle, optional: true
@@ -30,7 +34,7 @@ class RoleUser < ApplicationRecord
       ru.resource_type = "ProjectContractVehicle"
       ru.resource_id = ru.project_contract_vehicle_id
     end
-    ru.save(validate: false)
+    # ru.save(validate: false)
   end
 
   def create_program_admin_record
