@@ -562,7 +562,6 @@ const settingsStore = {
           formData.append("project_contract_vehicle_id[]", ids);
         });
       }
-      console.log(userData)
       if (userData.adminRole || userData.adminRoleIndex) {
         formData.append("role_from_users", true);
         formData.append("user_id[]", userData.userId);
@@ -604,7 +603,7 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          // console.log(res)
+           console.log(res)
           //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
           // commit("SET_NEW_ROLE", res);
           Vue.prototype.getRolePrivileges();

@@ -1462,37 +1462,23 @@ export default {
         });
       }
       if (this.isEditingContractRoles) {
-        let projectUserRoleData = [];
-        let cProjectUserRoleData, vProjectUserRoleData, cIds, vIds;
         console.log(this.contractRoleUsers)
+
+        let cIds = this.contractRoleUsers.filter((f) => "billings_to_date" in f).map((t) => t.project_contract_id);
+        let vIds = this.contractRoleUsers.filter((f) => !("billings_to_date" in f)).map((t) => t.id);
+        console.log(cIds)
+        console.log(vIds)
+        
         console.log(this.assignedUserContracts)
-        console.log(this.assignedUserVehicles)
-        /* if ("project_contract_id" in this.contractRoleUsers) {
-          cIds = this.contractRoleUsers.map((t) => t.project_contract_id)
-        } else if ("contract_vehicle_id" in this.contractRoleUsers) {
-          vIds = this.contractRoleUsers.map((t) => t.id)
-        } */
-
-        // HAving trouble mapping because there is no way to distinguish between contract or vehicle, just by data structure?
-
-        cIds = this.contractRoleUsers.map((t) => t.project_contract_id);
-        vIds = this.contractRoleUsers.map((t) => t.id);
-        /* let cvIds = this.contractRoleUsers.map((t) => {
-          !t.project_contract_id ? t.id : t.project_contract_id
-        }) */
-        let assignedContracts = this.assignedUserContracts.map(
-          (t) => t.project_contract_id
-        );
+        let assignedContracts = this.assignedUserContracts.map((t) => t.project_contract_id).filter((f) => f !== undefined);
         console.log(assignedContracts)
-        //console.log(this.assignedUserVehicles)
-        let assignedVehicles = this.assignedUserVehicles.map(
-          (t) => t.facilityProjectId
-        );
+        let assignedVehicles = this.assignedUserContracts.filter((f) => !("billings_to_date" in f)).map((t) => t.id);
         console.log(assignedVehicles)
+
         let aCids = assignedContracts.filter((t) => !cIds.includes(t));
-        let aVids = assignedVehicles.filter((t) => !vIds.includes(t));
-        if (aCids && aCids.length > 0) {
-          cProjectUserRoleData = {
+        console.log(aCids)
+        if (aCids && aCids.length > 0 ) {
+          let cProjectUserRoleData = {
             userData: {
               roleId: rowData,
               userId: this.userData.id,
@@ -1500,9 +1486,16 @@ export default {
               contractIds: aCids,
             }
           }
-          projectUserRoleData.push(cProjectUserRoleData)
-        } else if (aVids && aVids.length > 0) {
-          vProjectUserRoleData = {
+          console.log(cProjectUserRoleData)
+          this.removeUserRole({
+          ...cProjectUserRoleData,
+        });
+        }
+
+        let aVids = assignedVehicles.filter((t) => !vIds.includes(t));
+        console.log(aVids)
+        if (aVids && aVids.length > 0) {
+          let vProjectUserRoleData = {
             userData: {
               roleId: rowData,
               userId: this.userData.id,
@@ -1510,13 +1503,11 @@ export default {
               vehicleIds: aVids,
             }
           }
-          projectUserRoleData.push(vProjectUserRoleData)
-        }
-        projectUserRoleData.flat()
-        console.log(projectUserRoleData)
-        this.removeUserRole({
-          ...projectUserRoleData[0],
+          console.log(vProjectUserRoleData)
+          this.removeUserRole({
+          ...vProjectUserRoleData,
         });
+        }
       }
     },
     removeRole(index, rowData) {
