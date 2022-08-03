@@ -145,12 +145,7 @@ export default {
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
     privileges(){
-      let programId = this.$route.params.programId
-      let projectId = this.$route.params.projectId;
-      let contractId = this.$route.params.contractId;
-       if(contractId){
-         return this.$contractPrivileges[programId][this.$route.params.contractId] 
-      } else return this.$projectPrivileges[programId][projectId];
+      return this.checkPrivileges("ProjectTabs", 'read', this.$route)
     },
     currentCtab() {
       let c = this.cTabs.map(t => t.key)

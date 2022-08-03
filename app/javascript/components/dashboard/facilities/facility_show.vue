@@ -538,13 +538,6 @@
       //TODO: change the method name of isAllowed
       _isallowed(salut) {
         return this.checkPrivileges("facility_show", salut, this.$route)
-
-        // var programId = this.$route.params.programId;
-        // var projectId = this.$route.params.projectId
-        // let fPrivilege = this.$projectPrivileges[programId][projectId]
-        // let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        // let s = permissionHash[salut]
-        // return  fPrivilege.tasks.includes(s); 
       },
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'overview'

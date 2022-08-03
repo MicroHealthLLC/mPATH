@@ -27,10 +27,10 @@ class Api::V1::ProgramSettings::UsersController < AuthenticatedController
     else
       response_hash = {
         program_admin_role: Role.program_admin_user_role.to_json,
-        program_privilegs_roles: current_user.project_privileges_hash_by_role(program_ids: [project.id]),
-        contract_privilegs_roles: current_user.privileges_hash_by_role(program_ids: [project.id], resource_type: 'contract'),
+        program_privileges_roles: current_user.project_privileges_hash_by_role(program_ids: [project.id]),
+        contract_privileges_roles: current_user.privileges_hash_by_role(program_ids: [project.id], resource_type: 'contract'),
         contract_vehicle_privileges_roles: current_user.privileges_hash_by_role(program_ids: [project.id], resource_type: 'contract_vehicle'),
-        project_privilegs_roles: current_user.facility_privileges_hash_by_role(program_ids: [project.id]),
+        project_privileges_roles: current_user.privileges_hash_by_role(program_ids: [project.id], resource_type: 'facility_project'),
         program_settings_privileges_roles: current_user.program_settings_privileges_hash_by_role(program_ids: [project.id])
       }
       render json: response_hash, status: 200
