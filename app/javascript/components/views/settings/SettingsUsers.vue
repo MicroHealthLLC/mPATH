@@ -1462,21 +1462,11 @@ export default {
         });
       }
       if (this.isEditingContractRoles) {
-        console.log(this.contractRoleUsers)
-
         let cIds = this.contractRoleUsers.filter((f) => "billings_to_date" in f).map((t) => t.project_contract_id);
-        let vIds = this.contractRoleUsers.filter((f) => !("billings_to_date" in f)).map((t) => t.id);
-        console.log(cIds)
-        console.log(vIds)
-        
-        console.log(this.assignedUserContracts)
+        let vIds = this.contractRoleUsers.filter((f) => !("billings_to_date" in f)).map((t) => t.id);       
         let assignedContracts = this.assignedUserContracts.map((t) => t.project_contract_id).filter((f) => f !== undefined);
-        console.log(assignedContracts)
         let assignedVehicles = this.assignedUserContracts.filter((f) => !("billings_to_date" in f)).map((t) => t.id);
-        console.log(assignedVehicles)
-
         let aCids = assignedContracts.filter((t) => !cIds.includes(t));
-        console.log(aCids)
         if (aCids && aCids.length > 0 ) {
           let cProjectUserRoleData = {
             userData: {
@@ -1486,14 +1476,11 @@ export default {
               contractIds: aCids,
             }
           }
-          console.log(cProjectUserRoleData)
           this.removeUserRole({
           ...cProjectUserRoleData,
         });
         }
-
         let aVids = assignedVehicles.filter((t) => !vIds.includes(t));
-        console.log(aVids)
         if (aVids && aVids.length > 0) {
           let vProjectUserRoleData = {
             userData: {
@@ -1503,7 +1490,6 @@ export default {
               vehicleIds: aVids,
             }
           }
-          console.log(vProjectUserRoleData)
           this.removeUserRole({
           ...vProjectUserRoleData,
         });
