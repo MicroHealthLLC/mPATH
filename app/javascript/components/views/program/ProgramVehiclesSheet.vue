@@ -61,8 +61,8 @@
     label="Vehicle Full Name"
     prop="contractCustomerId">
       <template slot-scope="scope" >
-      <span v-if="scope.row.contractCustomer && scope.row.contractCustomer.name !== null">
-        {{ scope.row.contractCustomer.name }}
+      <span><!-- v-if="scope.row.contractCustomer && scope.row.contractCustomer.name !== null" -->
+        {{ scope.row.fullName }}
         </span>
       </template>
     </el-table-column>
@@ -70,8 +70,8 @@
       label="SINS or Subcategories"
       prop="contractNumberId">
       <template slot-scope="scope" >
-      <span v-if="scope.row.contractNumber && scope.row.contractNumber.name !== null">
-      {{ scope.row.contractNumber.name}}
+      <span> <!-- v-if="scope.row.contractSubCategory && scope.row.contractNumber.name !== null"> -->
+      {{ scope.row.contractAgency}}
       </span>
       </template>
       </el-table-column>
@@ -115,7 +115,7 @@
         <el-button
           v-tooltip="`Go to Vehicle`"
           type="default"       
-          @click.prevent="goToContract(scope.$index, scope.row)"
+          @click.prevent="goToVehicle(scope.$index, scope.row)"
           class="bg-light"
         >
          <i class="far fa-car text-info" style="font-size:1rem"></i> 
@@ -172,13 +172,14 @@ export default {
         // let s = permissionHash[salut]
         // return pPrivilege.contracts.includes(s);     
       },
-    goToContract(index, rows){        
+    goToVehicle(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
+      console.log(rows)
       this.$router.push({
-        name: "SheetContract",
+        name: "SheetVehicle",
         params: {
           programId: this.$route.params.programId,
-          contractId: rows.projectContractId.toString(),          
+          vehicleId: rows.id.toString(),          
         },
       });
     
@@ -199,7 +200,7 @@ export default {
     //  TO DO: Write logic to listen for onchange event.  If nothing edited, use default value
     //  if (rows && rows !== undefined) {
         let id = rows.id;
-        let contractData = {
+        let vehicleData = {
           contract: {
             nickname: rows.nickname,
             facility_group_name: rows.facilityGroupName,  
@@ -209,7 +210,7 @@ export default {
           }
         }
          this.updateContract({
-            ...contractData, id
+            ...vehicleData, id
           })
     },
     addAnotherContract() {
@@ -231,8 +232,8 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "getVehicleGroupTypes",
-      'getNewContractGroupFilter',
-      "projectContracts",
+      'getNewVehicleGroupFilter',
+      "projectVehicles",
       'editContractSheet',
       'getContractTable',
       'getProjectGroupFilter',
@@ -241,10 +242,10 @@ export default {
       'currentProject'
     ]), 
     tableData(){
-      if(this.projectContracts &&
-         this.projectContracts.length > 0 
+      if(this.projectVehicles &&
+         this.projectVehicles.length > 0 
          ){
-     let contractData = this.projectContracts.map(t => t)
+     let vehicleData = this.projectVehicles.map(t => t)
       .filter((td) => {
         //  console.log(td)
           if (this.C_projectGroupFilter && this.C_projectGroupFilter.length > 0 ) {
@@ -253,10 +254,12 @@ export default {
            
           } else return true;
         });
-       return contractData
-      }    
+       return vehicleData
+      }
+      console.log(vehicleData)    
    },
    groupsArr(){
+    console.log(this.currentProject)
       if (this.currentProject && this.currentProject.facilityGroups.length > 0 ){   
        return this.currentProject.facilityGroups
       }    

@@ -472,7 +472,7 @@ class Project < SortableRecord
       contract_types: ContractType.all.as_json,
       contract_statues: ContractStatus.all.as_json,
       contract_customers: ContractCustomer.all.as_json,
-      contract_vehicles: ContractVehicle.all.as_json,
+      # contract_vehicles: ContractVehicle.all.as_json,
       contract_vehicle_numbers: ContractVehicleNumber.all.as_json,
       contract_numbers: ContractNumber.all.as_json,
       subcontract_numbers: SubcontractNumber.all.as_json,

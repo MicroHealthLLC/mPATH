@@ -62,6 +62,7 @@ export default new Vuex.Store({
     tableData: new Array(),
     facilities: new Array(),
     contracts: new Array(),
+    vehicles: new Array(),
     facilityGroups: new Array(),
     statuses: new Array(),
     advancedFilterOptions: new Array(),
@@ -362,6 +363,26 @@ export default new Vuex.Store({
           contract.tasks.push(task);
         }
         Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateVehicleTasks: (state, { task, action }) => {
+      let vehicle_i = state.vehicles.findIndex(
+        (f) => f.projectVehicleId == task.projectVehicleId
+      );
+      if (vehicle_i > -1) {
+        let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
+        let task_i = vehicle.tasks.findIndex((t) => t.id == task.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.vehicles, "tasks"))) {
+            _.remove(t.subTaskIds, (id) => id == t.id);
+          }
+          Vue.delete(vehicle.tasks, task_i);
+        } else if (task_i > -1) {
+          Vue.set(vehicle.tasks, task_i, task);
+        } else if (task_i == -1) {
+          vehicle.tasks.push(task);
+        }
+        Vue.set(state.vehicles, vehicle_i, vehicle);
       }
     },
     updateContractIssues: (state, { issue, action }) => {
@@ -3050,7 +3071,7 @@ export default new Vuex.Store({
           .then((res) => {
             console.log(res)
             let vehicles = [];
-            for (let v of res.data.contracts) {
+            for (let v of res.data.contract_vehicles) {
               vehicles.push({ ...v, ...v });
             }           
             commit("setVehicles", vehicles);
