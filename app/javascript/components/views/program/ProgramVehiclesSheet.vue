@@ -61,35 +61,35 @@
     label="Vehicle Full Name"
     prop="contractCustomerId">
       <template slot-scope="scope" >
-      <span><!-- v-if="scope.row.contractCustomer && scope.row.contractCustomer.name !== null" -->
+      <span v-if="scope.row.fullName && scope.row.fullName !== null">
         {{ scope.row.fullName }}
         </span>
       </template>
     </el-table-column>
       <el-table-column
       label="SINS or Subcategories"
-      prop="contractNumberId">
+      prop="contractSubCategoryId">
       <template slot-scope="scope" >
-      <span> <!-- v-if="scope.row.contractSubCategory && scope.row.contractNumber.name !== null"> -->
-      {{ scope.row.contractAgency}}
+      <span v-if="scope.row.contractSubCategory && scope.row.contractSubCategory.name !== null">
+      {{ scope.row.contractSubCategory.name}}
       </span>
       </template>
       </el-table-column>
       <el-table-column
         label="Contract Agency"  
-        prop="contractAwardToId">
+        prop="contractAgencyId">
         <template slot-scope="scope" >
-        <span v-if="scope.row.contractAwardTo && scope.row.contractAwardTo.name !== null">
-        {{ scope.row.contractAwardTo.name }}
+        <span v-if="scope.row.contractAgency && scope.row.contractAgency.name !== null">
+        {{ scope.row.contractAgency.name }}
         </span>
         </template>
       </el-table-column>
       <el-table-column
         label="Vehicle Type"  
-        prop="contractAwardToId">
+        prop="contractVehicleTypeId">
         <template slot-scope="scope" >
-        <span v-if="scope.row.contractAwardTo && scope.row.contractAwardTo.name !== null">
-        {{ scope.row.contractAwardTo.name }}
+        <span v-if="scope.row.contractVehicleType && scope.row.contractVehicleType.name !== null">
+        {{ scope.row.contractVehicleType.name }}
         </span>
         </template>
       </el-table-column>
