@@ -110,6 +110,10 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
       conditions[:project_contract_id] = params[:project_contract_id]
     end
 
+    if params[:project_contract_vehicle_id]
+      conditions[:project_contract_vehicle_id] = params[:project_contract_vehicle_id]
+    end
+
     if !conditions[:role_id] || !conditions[:role_id].any?
       render json: {message: "Invalid parameter: Role must be provided."}, status: 406
     
