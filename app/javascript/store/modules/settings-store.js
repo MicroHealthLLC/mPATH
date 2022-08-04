@@ -768,7 +768,7 @@ const settingsStore = {
           commit("TOGGLE_CONTRACTS_LOADED", true);
         });
     },
-    /* fetchVehicle({ commit }, { id, programId }) {
+    fetchVehicle({ commit }, { id, programId }) {
       console.log(id, programId);
       commit("TOGGLE_VEHICLE_LOADED", false);
       // Retrieve vehicle by id
@@ -789,7 +789,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLE_LOADED", true);
         });
-    },*/
+    },
     fetchVehicles({ commit }, id) {
       commit("TOGGLE_VEHICLES_LOADED", false);
       // Retrieve vehicle by id
@@ -1342,7 +1342,7 @@ const settingsStore = {
           });
       });
     },
-    /* updateVehicle({ commit }, { vehicle, id }) {
+    updateVehicle({ commit }, { vehicle, id }) {
       // Displays loader on front end
       commit("TOGGLE_VEHICLES_LOADED", false);
       let formData = new FormData();
@@ -1373,7 +1373,7 @@ const settingsStore = {
         .finally(() => {
           commit("TOGGLE_VEHICLES_LOADED", true);
         });
-    },*/
+    },
     deleteVehicle({ commit }, id) {
       return new Promise((resolve, reject) => {
         http

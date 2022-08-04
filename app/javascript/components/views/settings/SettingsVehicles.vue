@@ -280,8 +280,8 @@
                       type="default"
                       v-tooltip="`Go To Vehicle`"
                       v-if="
-                        _isallowedContracts(
-                          scope.row.project_contract_id,
+                        _isallowedVehicles(
+                          scope.row.project_contract_vehicle_id,
                           'read'
                         )
                       "
@@ -857,16 +857,16 @@ export default {
     ]),
     _isallowed(salut) {
       return this.checkPrivileges("SettingsVehicles", salut, this.$route, {
-        settingType: "Contracts",
+        settingType: "Vehicles",
       });
     },
-    _isallowedContracts(c, salut) {
+    _isallowedVehicles(c, salut) {
       //console.log(c);
       return this.checkPrivileges(
-        "ProjectSettingContractList",
+        "ProjectSettingVehicleList",
         salut,
         this.$route,
-        { method: "isallowedContracts", project_contract_id: c }
+        { method: "isallowedVehicles", project_contract_vehicle_id: c }
       );
     },
     log(e) {

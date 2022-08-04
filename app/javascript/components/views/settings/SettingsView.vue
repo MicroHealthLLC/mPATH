@@ -13,6 +13,7 @@
             <!-- Move back into li attributes after finished with Users module   :class="{'d-none': !_isallowedProgramSettings(item, 'read') }" -->
             <li
               v-show="
+              //contentLoaded &&
                 (item == 'Groups' && _isallowedGroups('read')) ||
                   (item == 'Projects' && _isallowedProjects('read')) ||
                   ((item == 'Contracts' || item == 'Vehicles') && _isallowedContracts('read')) ||

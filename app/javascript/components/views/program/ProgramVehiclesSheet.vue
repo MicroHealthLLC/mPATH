@@ -101,8 +101,8 @@
       >
         <template slot-scope="scope">
           <span v-if="scope.row.facilityGroup && scope.row.facilityGroup.name">
-              {{ scope.row.facilityGroup.name }}
-            </span> 
+            {{ scope.row.facilityGroup.name }}
+          </span> 
       
         </template>
     </el-table-column>
@@ -174,7 +174,6 @@ export default {
       },
     goToVehicle(index, rows){        
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
-      console.log(rows)
       this.$router.push({
         name: "SheetVehicle",
         params: {

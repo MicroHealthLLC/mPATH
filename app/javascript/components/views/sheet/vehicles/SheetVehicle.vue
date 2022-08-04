@@ -9,7 +9,7 @@
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.8)"
           > -->
-          <div v-if="true" class="container-fluid px-0 mx-1">
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
            <div  class="row mt-3">
            <div class="col-4">
@@ -130,7 +130,6 @@ export default {
     },    
     _isallowed(salut) {
       console.log(salut)
-        console.log(this.$route)
       return this.checkPrivileges("SheetContract", salut, this.$route)
     },
     log(e){
@@ -142,9 +141,10 @@ export default {
       "contentLoaded",
       "vehicleLoaded",
       "vehicleStatus",
-       "vehicles",
+      "vehicles",
     ]),
     v(){
+      console.log(this.vehicle)
       if(this.vehicle){
           return this.vehicle
       }
