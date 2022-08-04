@@ -13,9 +13,10 @@
     <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded" >
         <div
-          v-for="(group, index) in sortedGroups.filter(t => t.contracts.length > 0 || t.facilities.length > 0)"
+          v-for="(group, index) in sortedGroups.filter(t => t.contracts.length > 0 || t.facilities.length > 0 || t.contract_vehicles.length > 0)"
            :key="index + 'a'"  
            class="my-2 px-2 container"
+           :load="log(sortedGroups)"
         >
           <div
             class="d-flex row expandable"
@@ -41,11 +42,16 @@
            <div class="col py-0 text-right"  >
             <span class="badge badge-secondary badge-pill pill" v-if="isContractsView">
              <!-- <span v-if="_isallowedProjectCounts(facilityGroupFacilities(group).projects.a, 'read')">  -->
-
-            
              {{ 
               facilityGroupFacilities(group).projects.a.length +  
               facilityGroupFacilities(group).contracts.b.length
+              }}
+             </span>
+             <span class="badge badge-secondary badge-pill pill" v-if="isVehiclesView">
+             <!-- <span v-if="_isallowedProjectCounts(facilityGroupFacilities(group).projects.a, 'read')">  -->
+             {{ 
+              facilityGroupFacilities(group).projects.a.length +  
+              facilityGroupFacilities(group).contract_vehicles.b.length
               }}
              </span> 
             <!-- </span>  -->
@@ -101,7 +107,29 @@
                 </div>
               </router-link>
          
-            </div>           
+            </div>
+            <div                          
+                v-for="v in projectVehicles.filter(t => t.facilityGroup && t.facilityGroup.id == group.id)" 
+                 v-show="isVehiclesView"    
+                :key="v.projectVehicleId + 'a'"
+                >              
+              <router-link               
+                :to="
+                  `/programs/${$route.params.programId}/${tab}/vehicles/${v.projectVehicleId}${pathTab}`
+                "
+              >
+                <div
+                  class="d-flex align-items-center expandable fac-name"
+                  @click="showFacility(v)"
+                  :class="{ active: v.projectVehicleId == $route.params.vehicleId }"
+                >
+                <p class="facility-header" data-cy="facilities">
+                  <i class="far fa-car mr-1 text-info"></i>   {{ v.name }}
+                  </p>
+                </div>
+              </router-link>
+         
+            </div>                      
           </div>
         </div>
       </div>
@@ -128,11 +156,12 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract", "currentContractGroup"],
+  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract", "currentContractGroup", , "currentVehicle", "currentVehicleGroup"],
    data() {
       return {
         value: '',
         totalGroupContract: 0,
+        totalGroupVehicle: 0,
         filteredGroupSize: null, 
         projectCount: 0
         
@@ -157,9 +186,13 @@ export default {
       "filteredFacilityGroups",
       "facilityGroupFacilities",
        "facilityGroupContracts",
+       "facilityGroupVehicles",
     ]),
    isContractsView() {
      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
+    },
+    isVehiclesView() {
+     return this.$route.name.includes("Sheet") || this.$route.name.includes("Vehicle")
     },
     programName() {
       if (
@@ -206,6 +239,8 @@ export default {
         return "/analytics";
       } if (this.$route.name === "ContractRisks") {
         return "/risks";
+      } if (this.$route.name === "VehicleRisks") {
+        return "/risks"; 
       } if (this.$route.name === "SheetRisks") {
         return "/risks";
       } if (url.includes("lessons")) {
@@ -221,20 +256,26 @@ export default {
   },
   methods: {
    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn', 'SET_EXPANDED_GROUP']), 
-   ...mapActions(["createContract", "updateContract"]),
+   ...mapActions(["createContract", "updateContract", "createVehicle", "updateVehicle"]),
      expandFacilityGroup(group) {
        if (this.currentContract && this.currentFacility == {}) {
          group = this.currentContract.facilityGroup.id
+       } else if (this.currentVehicle && this.currentFacility == {}) {
+         group = this.currentVehicle.facilityGroup.id
        }
       this.$emit("on-expand-facility-group", group);
 
     },
     log(e){
-          // console.log(e)
+       console.log(e)
     },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedContracts", contract_id: c.projectContractId})
+    },
+    _isallowedVehicles(c, salut) {
+      // console.log(this.$route)
+        return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedVehicles", contract_vehicle_id: c.projectVehicleId})
     },
     _isallowedProjects(c, salut) {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.facilityProjectId})
@@ -280,7 +321,7 @@ export default {
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&
-      (!this.$route.params.projectId || !this.$route.params.contractId)
+      (!this.$route.params.projectId || !this.$route.params.contractId || !this.$route.params.vehicleId)
     ) {
       this.expandFacilityGroup(this.filteredFacilityGroups[0]);
     }
@@ -288,18 +329,23 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        if (this.currentFacility && !this.$route.params.contractId && this.currentFacilityGroup ){             
+        if (this.currentFacility && !this.$route.params.contractId && !this.$route.params.vehicleId && this.currentFacilityGroup ){             
           this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
         }
-         if (this.currentContract && !this.$route.params.projectId && this.currentContractGroup) {
-           console.log(this.currentContract)
-             console.log(this.currentContractGroup)
+        if (this.currentContract && !this.$route.params.projectId && !this.$route.params.vehicleId && this.currentContractGroup) {
+          console.log(this.currentContract)
+          console.log(this.currentContractGroup)
           this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
+        }
+        if (this.currentVehicle && !this.$route.params.projectId && !this.$route.params.contractId && this.currentVehicleGroup) {
+          console.log(this.currentVehicle)
+          console.log(this.currentVehicleGroup)
+          this.SET_EXPANDED_GROUP(this.currentVehicleGroup.id)
         }
          // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
-          (!this.$route.params.projectId || !this.$route.params.contractId )
+          (!this.$route.params.projectId || !this.$route.params.contractId || !this.$route.params.vehicleId)
         ) {
           this.expandFacilityGroup(this.filteredFacilityGroups[0]);
         }
