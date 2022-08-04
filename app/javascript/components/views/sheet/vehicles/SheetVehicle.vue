@@ -9,24 +9,24 @@
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.8)"
           > -->
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
+          <div v-if="true" class="container-fluid px-0 mx-1">
             <!-- <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1"> -->
            <div  class="row mt-3">
            <div class="col-4">
             <!-- {{ c }}  -->
             <el-card
-              v-if="c"
+              v-if="v"
               class="box-card mb-2 pb-3"
               style="background-color:#fff"
              >   
-            <h4 v-if="c.name">{{ c.name }}</h4>
+            <h4 v-if="v.name">{{ v.name }}</h4>
             <hr>
              <div class="row">
              <div class="col">
               <b>GROUP NAME:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.facilityGroup">{{ c.facilityGroup.name }} </h5>
+               <h5 v-if="v.facilityGroup">{{ v.facilityGroup.name }} </h5>
                </div>  
            </div>  
            <div class="row">
@@ -34,7 +34,7 @@
               <b>FULL NAME:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.fullName">{{ c.fullName }} </h5>
+               <h5 v-if="v.fullName">{{ v.fullName }} </h5>
               </div>  
            </div>  
           
@@ -43,7 +43,7 @@
               <b>SINS or SUBCATEGORIES:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.contractSubCategory">{{ c.contractSubCategory }}</h5>
+               <h5 v-if="v.contractSubCategory">{{ v.contractSubCategory }}</h5>
               </div>  
            </div>  
 
@@ -52,7 +52,7 @@
               <b>CONTRACT AGENCY:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.contractAgency">{{ c.contractAgency }}</h5>
+               <h5 v-if="v.contractAgency">{{ v.contractAgency }}</h5>
               </div>  
              </div>
              
@@ -61,7 +61,7 @@
               <b>VEHICLE TYPE:</b>
               </div>  
               <div class="col">
-               <h5 v-if="c.contractVehicleType">{{ c.contractVehicleType }}</h5>
+               <h5 v-if="v.contractVehicleType">{{ v.contractVehicleType }}</h5>
               </div>  
              </div>
            </el-card>  
@@ -90,7 +90,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["contractClass", 'currentContract', "contract"], 
+  props: ["vehicleClass", 'currentVehicle', "vehicle"], 
   data() {
     return {
       loading: true,
@@ -119,7 +119,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      "fetchContract",
+      "fetchVehicle",
       ]),
     ...mapMutations([
 
@@ -140,13 +140,13 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
-      "contractLoaded",
-      "contractStatus",
-       "contracts",
+      "vehicleLoaded",
+      "vehicleStatus",
+       "vehicles",
     ]),
-    c(){
-      if(this.contract){
-          return this.contract
+    v(){
+      if(this.vehicle){
+          return this.vehicle
       }
     },  
   },
