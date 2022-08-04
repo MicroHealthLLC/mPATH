@@ -252,7 +252,7 @@ class Project < SortableRecord
     all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
 
     all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: project_contract_vehicle_ids_with_contract_notes, noteable_type: "ProjectContractVehicle")
-    all_project_contract_vehicles = ProjectContractVehicle.includes(:contract_vehicle).where(id: project_contract_vehicle_ids)
+    all_project_contract_vehicles = ProjectContractVehicle.includes(:contract_vehicle, :facility_group).where(id: project_contract_vehicle_ids)
     all_contract_vehicle_poject_data = ContractVehicle.where(id: all_project_contract_vehicles.pluck(:contract_vehicle_id).uniq )
 
 
@@ -261,7 +261,7 @@ class Project < SortableRecord
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = (all_facility_projects.map(&:facility_group_id) + all_project_contracts.map(&:facility_group_id) ).compact.uniq
     all_facility_group_ids = (all_facility_group_ids + project.project_facility_groups.pluck(:facility_group_id) ).compact.uniq
-    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects, :project_contracts, :project_facility_groups).where("id in (?)", all_facility_group_ids)
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects, :project_contracts, :project_facility_groups, :project_contract_vehicles).where("id in (?)", all_facility_group_ids)
 
     facility_projects_hash = []
     facility_projects_hash2 = {}
@@ -337,6 +337,7 @@ class Project < SortableRecord
       next if !c
 
       c_hash = c.to_json
+      c_hash.merge!({facility_group: pc.facility_group.as_json})
 
       c_hash[:tasks] = []
       if user.has_contract_permission?(resource: 'tasks', project_contract_vehicle: pc)
