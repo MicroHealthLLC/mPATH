@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_26_111526) do
+ActiveRecord::Schema.define(version: 2022_07_28_204034) do
 
-  create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
+  create_table "active_admin_comments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
     t.string "resource_type"
@@ -21,12 +21,12 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.bigint "author_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
-  create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
+  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", charset: "utf8", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -49,13 +49,13 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", charset: "utf8", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "admin_users", charset: "utf8", force: :cascade do |t|
+  create_table "admin_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -72,7 +72,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "checklists", charset: "utf8", force: :cascade do |t|
+  create_table "checklists", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "listable_type"
     t.integer "listable_id"
     t.boolean "checked"
@@ -88,93 +88,93 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
-  create_table "contract_agencies", charset: "utf8", force: :cascade do |t|
+  create_table "contract_agencies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_award_tos", charset: "utf8", force: :cascade do |t|
+  create_table "contract_award_tos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_award_types", charset: "utf8", force: :cascade do |t|
+  create_table "contract_award_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_categories", charset: "utf8", force: :cascade do |t|
+  create_table "contract_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_classifications", charset: "utf8", force: :cascade do |t|
+  create_table "contract_classifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_client_types", charset: "utf8", force: :cascade do |t|
+  create_table "contract_client_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_current_pops", charset: "utf8", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.integer "user_id"
-  end
-
-  create_table "contract_customers", charset: "utf8", force: :cascade do |t|
+  create_table "contract_current_pops", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_naics", charset: "utf8", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.integer "user_id"
-  end
-
-  create_table "contract_numbers", charset: "utf8", force: :cascade do |t|
+  create_table "contract_customers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_pocs", charset: "utf8", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "contract_pops", charset: "utf8", force: :cascade do |t|
+  create_table "contract_naics", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_primes", charset: "utf8", force: :cascade do |t|
+  create_table "contract_numbers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_pocs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contract_pops", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+  end
+
+  create_table "contract_primes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_privileges", charset: "utf8", force: :cascade do |t|
+  create_table "contract_privileges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "overview", default: "--- []\n"
     t.string "tasks", default: "--- []\n"
     t.string "notes", default: "--- []\n"
@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_project_data", charset: "utf8", force: :cascade do |t|
+  create_table "contract_project_data", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "charge_code"
     t.string "name"
     t.integer "contract_customer_id"
@@ -221,7 +221,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.boolean "ignore_expired", default: false
   end
 
-  create_table "contract_project_pocs", charset: "utf8", force: :cascade do |t|
+  create_table "contract_project_pocs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "poc_type"
     t.string "email"
@@ -234,40 +234,40 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.integer "user_id"
   end
 
-  create_table "contract_statuses", charset: "utf8", force: :cascade do |t|
+  create_table "contract_statuses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_sub_categories", charset: "utf8", force: :cascade do |t|
+  create_table "contract_sub_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_types", charset: "utf8", force: :cascade do |t|
+  create_table "contract_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_vehicle_numbers", charset: "utf8", force: :cascade do |t|
+  create_table "contract_vehicle_numbers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "contract_vehicle_types", charset: "utf8", force: :cascade do |t|
+  create_table "contract_vehicle_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
   end
 
-  create_table "contract_vehicles", charset: "utf8", force: :cascade do |t|
+  create_table "contract_vehicles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -285,7 +285,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.decimal "caf_fees", precision: 4, scale: 2, default: "0.0"
   end
 
-  create_table "contracts", charset: "utf8", force: :cascade do |t|
+  create_table "contracts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "contract_type_id", null: false
     t.integer "project_code"
     t.string "nickname"
@@ -321,9 +321,8 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["project_id"], name: "index_contracts_on_project_id"
   end
 
-  create_table "facilities", charset: "utf8", force: :cascade do |t|
+  create_table "facilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
-    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -346,14 +345,14 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["status"], name: "index_facilities_on_status"
   end
 
-  create_table "facility_groups", charset: "utf8", force: :cascade do |t|
+  create_table "facility_groups", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "code"
     t.integer "status", default: 1
     t.integer "region_type", default: 0
-    t.string "center"
+    t.string "center", default: "[]"
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.boolean "is_portfolio", default: false
@@ -363,7 +362,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
-  create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
+  create_table "facility_privileges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "overview", default: "---\n- R\n"
     t.string "tasks", default: "---\n- R\n"
     t.string "notes", default: "---\n- R\n"
@@ -375,13 +374,13 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.integer "facility_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "lessons", default: "---\n- R\n"
     t.integer "project_id"
     t.integer "group_number", default: 0
     t.string "facility_project_ids", default: "--- []\n"
+    t.string "lessons", default: "---\n- R\n"
   end
 
-  create_table "facility_projects", charset: "utf8", force: :cascade do |t|
+  create_table "facility_projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "facility_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -396,7 +395,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
   end
 
-  create_table "favorite_filters", charset: "utf8", force: :cascade do |t|
+  create_table "favorite_filters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.integer "project_id"
     t.integer "user_id"
@@ -407,26 +406,26 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "issue_severities", charset: "utf8", force: :cascade do |t|
+  create_table "issue_severities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "issue_stages", charset: "utf8", force: :cascade do |t|
+  create_table "issue_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "percentage", default: 0
   end
 
-  create_table "issue_types", charset: "utf8", force: :cascade do |t|
+  create_table "issue_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "issue_users", charset: "utf8", force: :cascade do |t|
+  create_table "issue_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "issue_id"
     t.datetime "created_at", null: false
@@ -437,7 +436,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_type"], name: "index_issue_users_on_user_type"
   end
 
-  create_table "issues", charset: "utf8", force: :cascade do |t|
+  create_table "issues", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
     t.text "description", size: :long
     t.bigint "issue_type_id"
@@ -468,7 +467,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["task_type_id"], name: "index_issues_on_task_type_id"
   end
 
-  create_table "lesson_details", charset: "utf8", force: :cascade do |t|
+  create_table "lesson_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "finding"
     t.text "recommendation"
     t.integer "user_id"
@@ -478,13 +477,13 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.string "detail_type", default: "success"
   end
 
-  create_table "lesson_stages", charset: "utf8", force: :cascade do |t|
+  create_table "lesson_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "lesson_users", charset: "utf8", force: :cascade do |t|
+  create_table "lesson_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "lesson_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -494,7 +493,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_lesson_users_on_user_id"
   end
 
-  create_table "lessons", charset: "utf8", force: :cascade do |t|
+  create_table "lessons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.datetime "date"
@@ -504,8 +503,8 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "important", default: false
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
     t.integer "contract_id"
@@ -517,7 +516,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_lessons_on_user_id"
   end
 
-  create_table "notes", charset: "utf8", force: :cascade do |t|
+  create_table "notes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "noteable_type"
     t.integer "noteable_id"
     t.bigint "user_id"
@@ -530,13 +529,13 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_notes_on_user_id"
   end
 
-  create_table "organizations", charset: "utf8", force: :cascade do |t|
+  create_table "organizations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "privileges", charset: "utf8", force: :cascade do |t|
+  create_table "privileges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "overview"
     t.string "tasks"
     t.string "notes"
@@ -562,7 +561,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
-  create_table "progress_lists", charset: "utf8", force: :cascade do |t|
+  create_table "progress_lists", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "body"
     t.integer "user_id"
     t.integer "checklist_id"
@@ -572,7 +571,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_progress_lists_on_user_id"
   end
 
-  create_table "project_contract_vehicles", charset: "utf8", force: :cascade do |t|
+  create_table "project_contract_vehicles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "contract_vehicle_id", null: false
     t.integer "user_id"
@@ -581,7 +580,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "project_contracts", charset: "utf8", force: :cascade do |t|
+  create_table "project_contracts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "contract_project_datum_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -590,7 +589,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.integer "facility_group_id"
   end
 
-  create_table "project_facility_groups", charset: "utf8", force: :cascade do |t|
+  create_table "project_facility_groups", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "facility_group_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -598,7 +597,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.boolean "is_default", default: false
   end
 
-  create_table "project_issue_severities", charset: "utf8", force: :cascade do |t|
+  create_table "project_issue_severities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "issue_severity_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -607,7 +606,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["project_id"], name: "index_project_issue_severities_on_project_id"
   end
 
-  create_table "project_issue_stages", charset: "utf8", force: :cascade do |t|
+  create_table "project_issue_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id"
     t.integer "issue_stage_id"
     t.datetime "created_at", null: false
@@ -616,7 +615,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["project_id"], name: "index_project_issue_stages_on_project_id"
   end
 
-  create_table "project_issue_types", charset: "utf8", force: :cascade do |t|
+  create_table "project_issue_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "issue_type_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -625,14 +624,14 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["project_id"], name: "index_project_issue_types_on_project_id"
   end
 
-  create_table "project_lesson_stages", charset: "utf8", force: :cascade do |t|
+  create_table "project_lesson_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id"
     t.integer "lesson_stage_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "project_privileges", charset: "utf8", force: :cascade do |t|
+  create_table "project_privileges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "overview", default: "---\n- R\n"
     t.string "tasks", default: "---\n- R\n"
     t.string "notes", default: "---\n- R\n"
@@ -657,7 +656,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.string "admin_facilities", default: "--- []\n"
   end
 
-  create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
+  create_table "project_risk_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id"
     t.integer "risk_stage_id"
     t.datetime "created_at", null: false
@@ -666,7 +665,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["risk_stage_id"], name: "index_project_risk_stages_on_risk_stage_id"
   end
 
-  create_table "project_statuses", charset: "utf8", force: :cascade do |t|
+  create_table "project_statuses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "status_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -675,7 +674,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["status_id"], name: "index_project_statuses_on_status_id"
   end
 
-  create_table "project_task_stages", charset: "utf8", force: :cascade do |t|
+  create_table "project_task_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "project_id"
     t.integer "task_stage_id"
     t.datetime "created_at", null: false
@@ -684,7 +683,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["task_stage_id"], name: "index_project_task_stages_on_task_stage_id"
   end
 
-  create_table "project_task_types", charset: "utf8", force: :cascade do |t|
+  create_table "project_task_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "task_type_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -693,14 +692,13 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["task_type_id"], name: "index_project_task_types_on_task_type_id"
   end
 
-  create_table "project_types", charset: "utf8", force: :cascade do |t|
+  create_table "project_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["id"], name: "index_project_types_on_id"
   end
 
-  create_table "project_users", charset: "utf8", force: :cascade do |t|
+  create_table "project_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "project_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -709,7 +707,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_project_users_on_user_id"
   end
 
-  create_table "projects", charset: "utf8", force: :cascade do |t|
+  create_table "projects", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "description", size: :long
     t.datetime "created_at", null: false
@@ -722,7 +720,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
 
-  create_table "query_filters", charset: "utf8", force: :cascade do |t|
+  create_table "query_filters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "filter_key"
     t.text "filter_value"
@@ -734,7 +732,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_query_filters_on_user_id"
   end
 
-  create_table "rails_settings", id: :integer, charset: "utf8", force: :cascade do |t|
+  create_table "rails_settings", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "var", null: false
     t.text "value"
     t.string "target_type", null: false
@@ -742,10 +740,10 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["target_type", "target_id", "var"], name: "index_rails_settings_on_target_type_and_target_id_and_var", unique: true
-    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
+    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target"
   end
 
-  create_table "region_states", charset: "utf8", force: :cascade do |t|
+  create_table "region_states", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "facility_group_id"
     t.bigint "state_id"
     t.datetime "created_at", null: false
@@ -754,7 +752,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["state_id"], name: "index_region_states_on_state_id"
   end
 
-  create_table "related_issues", charset: "utf8", force: :cascade do |t|
+  create_table "related_issues", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "relatable_type"
     t.integer "relatable_id"
     t.bigint "issue_id"
@@ -765,7 +763,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["relatable_type"], name: "index_related_issues_on_relatable_type"
   end
 
-  create_table "related_risks", charset: "utf8", force: :cascade do |t|
+  create_table "related_risks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "relatable_type"
     t.integer "relatable_id"
     t.bigint "risk_id"
@@ -776,7 +774,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["risk_id"], name: "index_related_risks_on_risk_id"
   end
 
-  create_table "related_tasks", charset: "utf8", force: :cascade do |t|
+  create_table "related_tasks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "relatable_type"
     t.integer "relatable_id"
     t.bigint "task_id"
@@ -787,14 +785,14 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["task_id"], name: "index_related_tasks_on_task_id"
   end
 
-  create_table "risk_stages", charset: "utf8", force: :cascade do |t|
+  create_table "risk_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.integer "percentage", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "risk_users", charset: "utf8", force: :cascade do |t|
+  create_table "risk_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "risk_id"
     t.string "timestamps"
@@ -804,7 +802,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_type"], name: "index_risk_users_on_user_type"
   end
 
-  create_table "risks", charset: "utf8", force: :cascade do |t|
+  create_table "risks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "risk_description"
     t.text "impact_description"
     t.date "start_date"
@@ -852,7 +850,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_id"], name: "index_risks_on_user_id"
   end
 
-  create_table "role_privileges", charset: "utf8", force: :cascade do |t|
+  create_table "role_privileges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "role_id", null: false
     t.string "name", null: false
     t.string "privilege"
@@ -862,7 +860,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["role_id", "role_type"], name: "index_role_privileges_on_role_id_and_role_type"
   end
 
-  create_table "role_users", charset: "utf8", force: :cascade do |t|
+  create_table "role_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "role_id"
     t.integer "user_id"
     t.integer "project_id"
@@ -870,11 +868,12 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "project_contract_id"
+    t.integer "project_contract_vehicle_id"
     t.index ["facility_project_id", "project_contract_id"], name: "index_role_users_on_facility_project_id_and_project_contract_id"
     t.index ["role_id", "user_id", "project_id"], name: "index_role_users_on_role_id_and_user_id_and_project_id"
   end
 
-  create_table "roles", charset: "utf8", force: :cascade do |t|
+  create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.integer "project_id"
     t.integer "user_id"
@@ -886,7 +885,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["project_id", "user_id", "is_default"], name: "index_roles_on_project_id_and_user_id_and_is_default"
   end
 
-  create_table "settings", charset: "utf8", force: :cascade do |t|
+  create_table "settings", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "office365_key"
     t.text "office365_secret"
     t.text "google_map_key"
@@ -897,7 +896,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.text "passwords_key"
   end
 
-  create_table "sorts", charset: "utf8", force: :cascade do |t|
+  create_table "sorts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "relation"
     t.string "column", default: "id"
     t.string "order", default: "asc"
@@ -908,7 +907,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["relation"], name: "index_sorts_on_relation"
   end
 
-  create_table "states", charset: "utf8", force: :cascade do |t|
+  create_table "states", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "code"
     t.string "center", default: "[]"
@@ -916,34 +915,34 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "statuses", charset: "utf8", force: :cascade do |t|
+  create_table "statuses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color"
   end
 
-  create_table "subcontract_numbers", charset: "utf8", force: :cascade do |t|
+  create_table "subcontract_numbers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "task_stages", charset: "utf8", force: :cascade do |t|
+  create_table "task_stages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "percentage", default: 0
   end
 
-  create_table "task_types", charset: "utf8", force: :cascade do |t|
+  create_table "task_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "progress", default: 0
   end
 
-  create_table "task_users", charset: "utf8", force: :cascade do |t|
+  create_table "task_users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "task_id"
     t.datetime "created_at", null: false
@@ -954,7 +953,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["user_type"], name: "index_task_users_on_user_type"
   end
 
-  create_table "tasks", charset: "utf8", force: :cascade do |t|
+  create_table "tasks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "text"
     t.text "description", size: :long
     t.date "due_date"
@@ -984,7 +983,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
   end
 
-  create_table "users", charset: "utf8", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -1009,6 +1008,7 @@ ActiveRecord::Schema.define(version: 2022_07_26_111526) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
+    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
