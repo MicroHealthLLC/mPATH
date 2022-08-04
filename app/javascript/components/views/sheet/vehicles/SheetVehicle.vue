@@ -130,7 +130,7 @@ export default {
     },    
     _isallowed(salut) {
       console.log(salut)
-      return this.checkPrivileges("SheetContract", salut, this.$route)
+      return this.checkPrivileges("SheetVehicle", salut, this.$route)
     },
     log(e){
       console.log(e)
