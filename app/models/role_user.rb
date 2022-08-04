@@ -7,7 +7,7 @@ class RoleUser < ApplicationRecord
   
   # TODO: remove fields: facility_project_id, project_contract_id, project_contract_vehicle_id
   # and add virtual attribute so that we can set resource_id and resource_type
-  # attr_accessor :facility_project_id, :project_contract_id, :project_contract_vehicle_id
+  attr_accessor :_facility_project_id, :_project_contract_id, :_project_contract_vehicle_id
 
   belongs_to :facility_project, optional: true
   belongs_to :project_contract, optional: true
@@ -25,12 +25,10 @@ class RoleUser < ApplicationRecord
     if ru.facility_project_id
       ru.resource_type = "FacilityProject"
       ru.resource_id = ru.facility_project_id
-    end
-    if ru.project_contract_id
+    elsif ru.project_contract_id
       ru.resource_type = "ProjectContract"
       ru.resource_id = ru.project_contract_id
-    end
-    if ru.project_contract_vehicle_id
+    elsif ru.project_contract_vehicle_id
       ru.resource_type = "ProjectContractVehicle"
       ru.resource_id = ru.project_contract_vehicle_id
     end
