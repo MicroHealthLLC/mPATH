@@ -90,7 +90,7 @@ export default {
     Loader,
     FormTabs,
   },
-  props: ["vehicleClass", 'currentVehicle', "vehicle"], 
+  props: ["currentVehicle", "vehicle"], 
   data() {
     return {
       loading: true,

@@ -2,20 +2,23 @@
   <div
     v-loading="!contentLoaded"
     element-loading-text="Fetching your data. Please wait..."
-    element-loading-spinner="el-icon-loading"  
+    element-loading-spinner="el-icon-loading"
     class="row"
-    element-loading-background="rgba(0, 0, 0, 0.8)"   
+    element-loading-background="rgba(0, 0, 0, 0.8)"
   >
     <div class="col-md-2">
       <ProjectSidebar
         :current-facility-group="currentFacilityGroup"
         :current-contract-group="currentContractGroup"
+        :current-vehicle-group="currentVehicleGroup"
         :expanded="C_expanded"
         :current-facility="currentFacility"
         :current-contract="currentContract"
+        :current-vehicle="currentVehicle"
         @on-expand-facility-group="expandFacilityGroup"
         @on-expand-facility="showFacility"
         @on-expand-contract="showContract"
+        @on-expand-vehicle="showVehicle"
       />
     </div>
     <div class="col-md-10">
@@ -32,24 +35,42 @@
               $route.name !== 'ContractIssueForm' &&
               $route.name !== 'ContractRiskForm' &&
               $route.name !== 'ContractNoteForm' &&
-              $route.name !== 'ContractLessonForm'
+              $route.name !== 'ContractLessonForm' &&
+              $route.name !== 'VehicleTaskForm' &&
+              $route.name !== 'VehicleIssueForm' &&
+              $route.name !== 'VehicleRiskForm' &&
+              $route.name !== 'VehicleNoteForm' &&
+              $route.name !== 'VehicleLessonForm'
           "
           class="d-flex align-items-center my-1 ml-1"
         >
           <!-- <span class="fbody-icon"><i class="fas fa-suitcase"></i></span> -->
-          <h5 class="f-head mb-0" v-if="currentContract && $route.params.contractId">
-               <i class="far fa-file-contract mh-orange-text"></i>
+          <h5
+            class="f-head mb-0"
+            v-if="currentContract && $route.params.contractId"
+          >
+            <i class="far fa-file-contract mh-orange-text"></i>
             {{ currentContract.name || "Loading..." }}
           </h5>
-           <h5 class="f-head mb-0"  v-if="currentFacility && $route.params.projectId">
-               <i class="fal fa-clipboard-list mh-green-text"></i>
+          <h5
+            class="f-head mb-0"
+            v-if="currentVehicle && $route.params.vehicleId"
+          >
+            <i class="far fa-car text-info"></i>
+            {{ currentVehicle.name || "Loading..." }}
+          </h5>
+          <h5
+            class="f-head mb-0"
+            v-if="currentFacility && $route.params.projectId"
+          >
+            <i class="fal fa-clipboard-list mh-green-text"></i>
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
         </div>
         <div class="pr-3 ml-1">
           <ProjectTabs
-            v-if="            
-                $route.name !== 'SheetRollup' &&
+            v-if="
+              $route.name !== 'SheetRollup' &&
                 $route.name !== 'SheetTaskForm' &&
                 $route.name !== 'SheetIssueForm' &&
                 $route.name !== 'SheetRiskForm' &&
@@ -59,17 +80,24 @@
                 $route.name !== 'ContractIssueForm' &&
                 $route.name !== 'ContractRiskForm' &&
                 $route.name !== 'ContractNoteForm' &&
-                $route.name !== 'ContractLessonForm'
+                $route.name !== 'ContractLessonForm'&&
+                $route.name !== 'VehicleTaskForm' &&
+                $route.name !== 'VehicleIssueForm' &&
+                $route.name !== 'VehicleRiskForm' &&
+                $route.name !== 'VehicleNoteForm' &&
+                $route.name !== 'VehicleLessonForm'
             "
           />
-         </div>
+        </div>
         <div class="pr-3">
           <router-view
             :key="$route.path"
             :facility="currentFacility"
             :contract="currentContract"
+            :vehicle="currentVehicle"
             :facilityGroup="currentFacilityGroup"
             :contractGroup="currentContractGroup"
+            :vehicleGroup="currentVehicleGroup"
           ></router-view>
         </div>
       </div>
@@ -78,21 +106,23 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations} from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import ProjectSidebar from "../../shared/ProjectSidebar";
 import ProjectTabs from "../../shared/ProjectTabs";
 export default {
   name: "SheetView",
   components: {
     ProjectSidebar,
-    ProjectTabs
+    ProjectTabs,
   },
   data() {
     return {
       currentFacility: {},
       currentContract: {},
-      facGroupId:null,
+      currentVehicle: {},
+      facGroupId: null,
       currentContractGroup: {},
+      currentVehicleGroup: {},
       currentFacilityGroup: {},
       expanded: {
         id: "",
@@ -100,33 +130,43 @@ export default {
     };
   },
   methods: {
-     ...mapActions([]),
-     ...mapMutations([
-      "SET_EXPANDED_GROUP"
-     ]), 
-    expandFacilityGroup(group) {      
-     if (group && this.getExpandedGroup !== group.id ) {
-      this.SET_EXPANDED_GROUP(group.id);
+    ...mapActions([]),
+    ...mapMutations(["SET_EXPANDED_GROUP"]),
+    expandFacilityGroup(group) {
+      if (group && this.getExpandedGroup !== group.id) {
+        this.SET_EXPANDED_GROUP(group.id);
         this.currentFacilityGroup = group;
-         this.currentContractGroup = group
-       } else {
-        this.SET_EXPANDED_GROUP('');
+        this.currentContractGroup = group;
+        this.currentVehicleGroup = group;
+      } else {
+        this.SET_EXPANDED_GROUP("");
         this.currentFacilityGroup = {};
-          this.currentContractGroup = {};
-        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};     
+        this.currentContractGroup = {};
+        this.currentVehicleGroup = {};
+        // this.currentFacility = this.facilityGroupFacilities(group)[0] || {};
       }
     },
-    log(e){
+    log(e) {
       // console.log(e)
     },
-     expandContractGroup(group) {
-      if (group &&  this.getExpandedGroup !== group.id) {
-         this.SET_EXPANDED_GROUP(group.id);
-         this.currentContractGroup = group;
+    expandContractGroup(group) {
+      if (group && this.getExpandedGroup !== group.id) {
+        this.SET_EXPANDED_GROUP(group.id);
+        this.currentContractGroup = group;
       } else {
-       this.SET_EXPANDED_GROUP('');
-       this.currentContractGroup = {};
-      //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
+        this.SET_EXPANDED_GROUP("");
+        this.currentContractGroup = {};
+        //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
+      }
+    },
+    expandVehicleGroup(group) {
+      if (group && this.getExpandedGroup !== group.id) {
+        this.SET_EXPANDED_GROUP(group.id);
+        this.currentVehicleGroup = group;
+      } else {
+        this.SET_EXPANDED_GROUP("");
+        this.currentVehicleGroup = {};
+        //  this.currentContract = this.facilityGroupFacilities(group)[0] || {};
       }
     },
     showFacility(facility) {
@@ -134,6 +174,9 @@ export default {
     },
     showContract(contract) {
       this.currentContract = contract;
+    },
+    showVehicle(vehicle) {
+      this.currentVehicle = vehicle;
     },
     changeTab(tab) {
       // console.log(tab);
@@ -144,15 +187,16 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "contractsLoaded",
+      "vehiclesLoaded",
       "currentProject",
       "facilities",
       "projectContracts",
+      "projectVehicles",
       "getExpandedGroup",
       "facilityGroupFacilities",
       "facilityGroups",
       "getPreviousRoute",
       "getUnfilteredFacilities",
-
     ]),
 
     C_expanded: {
@@ -164,9 +208,9 @@ export default {
         this.SET_EXPANDED_GROUP(value);
       },
     },
- },
-  mounted() { 
-  if (
+  },
+  mounted() {
+    if (
       this.getPreviousRoute.includes("Map") &&
       this.facilities.length !== this.getUnfilteredFacilities.length
     ) {
@@ -181,59 +225,99 @@ export default {
   },
 
   beforeMount() {
-  // this.fetchContracts()  
+    // this.fetchContracts()
     if (this.contentLoaded && this.$route.params.projectId) {
       this.currentFacility = this.facilities.find(
         (facility) => facility.facilityId == this.$route.params.projectId
       );
     }
-   if (this.contentLoaded && this.$route.params.contractId) { 
-        this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
+    if (this.contentLoaded && this.$route.params.contractId) {
+      this.currentContract = this.projectContracts.find(
+        (c) => c.projectContractId == this.$route.params.contractId
+      );
+    }
+    if (this.contentLoaded && this.$route.params.vehicleId) {
+      this.currentVehicle = this.projectVehicles.find(
+        (c) => c.projectVehicleId == this.$route.params.vehicleId
+      );
     }
   },
   watch: {
     contentLoaded: {
       handler() {
-      if (this.$route.params.projectId) {
+        if (this.$route.params.projectId) {
           this.currentFacility = this.facilities.find(
             (facility) => facility.id == this.$route.params.projectId
           );
-        }
-         else if (this.$route.params.contractId) {
-         this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
-            // console.log(this.currentContract)
-           
+        } else if (this.$route.params.contractId) {
+          this.currentContract = this.projectContracts.find(
+            (c) => c.projectContractId == this.$route.params.contractId
+          );
+          // console.log(this.currentContract)
+        } else if (this.$route.params.vehicleId) {
+          this.currentVehicle = this.projectVehicles.find(
+            (c) => c.projectVehicleId == this.$route.params.vehicleId
+          );
         }
       },
     },
-   currentFacility: {
+    currentFacility: {
       handler() {
-        if(this.$route.params.projectId) {
-          this.currentFacility = this.currentProject.facilities.find((facility) => facility.facilityId == this.$route.params.projectId)         
-          this.currentFacilityGroup = this.facilityGroups.find((group) => group.id == this.currentFacility.facility.facilityGroupId);
-        }      
+        if (this.$route.params.projectId) {
+          this.currentFacility = this.currentProject.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+          this.currentFacilityGroup = this.facilityGroups.find(
+            (group) => group.id == this.currentFacility.facility.facilityGroupId
+          );
+        }
       },
     },
-     currentContract: {
+    currentContract: {
       handler() {
-       if(this.$route.params.contractId) {       
-            this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
-            // console.log(this.currentContract)
-            this.currentContractGroup = this.facilityGroups.find((group) => group.id == this.currentContract.facilityGroup.id);
+        if (this.$route.params.contractId) {
+          this.currentContract = this.projectContracts.find(
+            (c) => c.projectContractId == this.$route.params.contractId
+          );
+          // console.log(this.currentContract)
+          this.currentContractGroup = this.facilityGroups.find(
+            (group) => group.id == this.currentContract.facilityGroup.id
+          );
         }
-     
+      },
+    },
+    currentVehicle: {
+      handler() {
+        if (this.$route.params.vehicleId) {
+          this.currentVehicle = this.projectVehicles.find(
+            (c) => c.projectVehicleId == this.$route.params.vehicleId
+          );
+          // console.log(this.currentContract)
+          this.currentVehicleGroup = this.facilityGroups.find(
+            (group) => group.id == this.currentVehicle.facilityGroup.id
+          );
+        }
       },
     },
     "$route.path": {
       handler() {
         if (this.$route.params.projectId) {
-          this.currentFacility = this.facilities.find(facility => facility.id == this.$route.params.projectId);
-         }
-         if (this.$route.params.contractId) {
-              // console.log(this.currentContract)
-             this.currentContract = this.projectContracts.find((c) => c.projectContractId == this.$route.params.contractId)
-         }
-
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.id == this.$route.params.projectId
+          );
+        }
+        if (this.$route.params.contractId) {
+          // console.log(this.currentContract)
+          this.currentContract = this.projectContracts.find(
+            (c) => c.projectContractId == this.$route.params.contractId
+          );
+        }
+        if (this.$route.params.vehicleId) {
+          // console.log(this.currentContract)
+          this.currentVehicle = this.projectVehicles.find(
+            (c) => c.projectVehicleId == this.$route.params.vehicleId
+          );
+        }
       },
     },
   },
