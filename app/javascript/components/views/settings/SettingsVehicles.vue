@@ -281,7 +281,7 @@
                       v-tooltip="`Go To Vehicle`"
                       v-if="
                         _isallowedContracts(
-                          scope.row.project_contract_id,
+                          scope.row.project_contract_vehicle_id,
                           'read'
                         )
                       "
@@ -864,10 +864,10 @@ export default {
     _isallowedContracts(c, salut) {
       //console.log(c);
       return this.checkPrivileges(
-        "ProjectSettingContractList",
+        "ProjectSettingVehicleList",
         salut,
         this.$route,
-        { method: "isallowedContracts", project_contract_id: c }
+        { method: "isallowedVehicles", project_contract_vehicle_id: c }
       );
     },
     log(e) {
