@@ -56,6 +56,9 @@ class Task < ApplicationRecord
       :text,
       :task_type_id,
       :task_stage_id,
+      :_facility_project_id,
+      :_project_contract_id,
+      :_project_contract_vehicle_id,
       :facility_project_id,
       :due_date,
       :start_date,
@@ -106,6 +109,8 @@ class Task < ApplicationRecord
       ]
     ]
   end
+
+
 
   def update_facility_project
     if self.previous_changes.keys.include?("progress")
@@ -418,7 +423,7 @@ class Task < ApplicationRecord
 
     task.attributes = t_params 
     if params[:project_contract_id]
-      task.project_contract_id = params[:project_contract_id]
+      task.project_contract_id = params[:project_contract_id]     
     elsif params[:project_contract_vehicle_id]
       task.project_contract_vehicle_id = params[:project_contract_vehicle_id]
 

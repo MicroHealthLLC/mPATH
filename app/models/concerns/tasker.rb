@@ -34,6 +34,8 @@ module Tasker
     has_many :sub_issues, through: :related_issues, class_name: "Issue"
     has_many :sub_risks, through: :related_risks, class_name: "Risk"
 
+    belongs_to :owner, polymorphic: :true, optional: true
+
     accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
     accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
@@ -43,6 +45,22 @@ module Tasker
     after_save :remove_on_watch
     after_save :handle_related_taskers
     after_validation :setup_facility_project
+    before_save :update_owner_record
+    attr_accessor :_facility_project_id, :_project_contract_id, :_project_contract_vehicle_id
+    
+    def update_owner_record
+      ru = self
+      if facility_project_id
+        ru.owner_type = "FacilityProject"
+        ru.owner_id = ru.facility_project_id
+      elsif project_contract_id
+        ru.owner_type = "ProjectContract"
+        ru.owner_id = ru.project_contract_id
+      elsif project_contract_vehicle_id
+        ru.owner_type = "ProjectContractVehicle"
+        ru.owner_id = ru.project_contract_vehicle_id
+      end
+    end
 
     def valid_url?(url)
       uri = URI.parse(url)
