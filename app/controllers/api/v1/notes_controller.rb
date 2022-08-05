@@ -17,6 +17,8 @@ class Api::V1::NotesController < AuthenticatedController
 
     if params[:project_contract_id]
       raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'notes', project_contract: params[:project_contract_id])
+    elsif params[:project_contract_vehicle_id]
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'risks', project_contract_vehicle: params[:project_contract_vehicle_id])
     else
       raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
     end
@@ -69,7 +71,7 @@ class Api::V1::NotesController < AuthenticatedController
   end
 
   def create
-    @note = @noteable.notes.new(note_params)
+    @note = @owner.notes.new(note_params)
     @note.user = current_user
     if @note.save
       render json: {note: @note.to_json, message: "Note created successfully!!!" }, status: 200
@@ -80,7 +82,7 @@ class Api::V1::NotesController < AuthenticatedController
 
   def update
     destroy_files_first if destroy_file_ids.present?
-    if @note.update(note_params.merge({noteable: @noteable}))
+    if @note.update(note_params.merge({noteable: @owner}))
       render json: {note: @note.to_json, message: "Note updated successfully!!!" }, status: 200
     else
       render json: {errors: @note.errors.full_messages}, status: 406
@@ -97,14 +99,17 @@ class Api::V1::NotesController < AuthenticatedController
 
   private
   def set_noteable
+
+    @owner = nil
     if params[:project_contract_id]
-      @noteable = current_user.authorized_contracts.find_by(id: params[:project_contract_id] )
-    elsif params[:project_id].present? && params[:facility_id].present?
-      @project = current_user.authorized_programs.find(params[:project_id])
-      @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
-    elsif params[:facility_project_id].present?
-      @noteable = FacilityProject.find(params[:facility_project_id])      
+      @owner = current_user.authorized_contracts.find_by(id: params[:project_contract_id] )
+    elsif params[:project_contract_vehicle_id]
+      @owner = ProjectContractVehicle.find_by(id: params[:project_contract_vehicle_id] )
+    else
+      @project = current_user.authorized_programs.find_by(id: params[:project_id])
+      @owner = @project.facility_projects.find_by(facility_id: params[:facility_id])
     end
+    
   end
 
   def set_note

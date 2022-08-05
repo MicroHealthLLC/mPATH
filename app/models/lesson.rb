@@ -19,10 +19,9 @@ class Lesson < ApplicationRecord
   belongs_to :project_contract_vehicle, optional: true
   has_one :contract_vehicle, through: :project_contract_vehicle
 
-  # Line 12 was commmented out and caused page error.  Uncommented by JR and fixed view.  Need AS to re-examine line and modify as appropriate
-
   has_one :contract_project, class_name: "Project", through: :project_contract
   has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
+  has_one :contract_vehicle_project, class_name: "Project", through: :project_contract_vehicle
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -191,7 +190,12 @@ class Lesson < ApplicationRecord
 
     sorted_notes = notes.sort_by(&:created_at).reverse
 
-    project = self.project_contract_id ? self.contract_project : self.project
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
     facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
     fp = self.facility_project
 
@@ -283,7 +287,12 @@ class Lesson < ApplicationRecord
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
-    project = self.project_contract_id ? self.contract_project : self.project
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
     facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
     fp = self.facility_project
 
@@ -329,6 +338,7 @@ class Lesson < ApplicationRecord
       :important, 
       :draft, 
       :project_contract_id,
+      :project_contract_vehicle_id,
       :reportable, 
       :lesson_stage_id,
       sub_task_ids: [],
@@ -429,6 +439,8 @@ class Lesson < ApplicationRecord
 
     if params[:project_contract_id]
       lesson.project_contract_id = params[:project_contract_id]
+    elsif params[:project_contract_vehicle_id]
+      lesson.project_contract_vehicle_id = params[:project_contract_vehicle_id]
     end
 
     lesson.transaction do
