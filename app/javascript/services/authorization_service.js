@@ -5,6 +5,7 @@ const AuthorizationService = {
   projectPrivilegesRoles: {},
   programPrivilegesRoles: {},
   contractPrivilegesRoles: {},
+  contractVehiclePrivilegesRoles: {},
   programSettingPrivilegesRoles: {},
   projectFacilityHash: JSON.parse(
     window.project_facility_hash.replace(/&quot;/g, '"')
@@ -45,6 +46,8 @@ const AuthorizationService = {
           res.data.program_privilegs_roles;
         AuthorizationService.contractPrivilegesRoles =
           res.data.contract_privilegs_roles;
+        AuthorizationService.contractVehiclePrivilegesRoles =
+          res.data.contract_vehicle_privileges_roles;
         AuthorizationService.programSettingPrivilegesRoles =
           res.data.program_settings_privileges_roles;
       })

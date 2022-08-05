@@ -335,7 +335,12 @@ class Task < ApplicationRecord
     sorted_notes = notes.sort_by(&:created_at).reverse
     fp = self.facility_project
 
-    project = self.project_contract_id ? self.contract_project : self.project
+    project = self.project
+    if self.project_contract_id
+      project = self.contract_project
+    elsif self.project_contract_vehicle_id
+      project = self.contract_vehicle_project
+    end
     facility_group = self.project_contract_id ? self.contract_facility_group : self.facility_group
 
     self.as_json.merge(
