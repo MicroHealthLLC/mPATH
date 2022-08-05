@@ -111,6 +111,10 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
       conditions[:project_contract_id] = params[:project_contract_id]
     end
 
+    if params[:project_contract_vehicle_id]
+      conditions[:project_contract_vehicle_id] = params[:project_contract_vehicle_id]
+    end
+
     if !conditions[:role_id] || !conditions[:role_id].any?
       render json: {message: "Invalid parameter: Role must be provided."}, status: 406
     
@@ -161,7 +165,7 @@ class Api::V1::ProgramSettings::RolesController < AuthenticatedController
 
   private
   def role_users_params
-    params.permit(role_users: [:role_id, :user_id, :project_id, :project_contract_id, :facility_id, :facility_project_id])
+    params.permit(role_users: [:role_id, :user_id, :project_id, :project_contract_id, :project_contract_vehicle_id, :facility_id, :facility_project_id])
   end
   def roles_params
     params.require(:role).permit(:id, :name, :project_id, :type_of, role_privileges: [:id, :privilege, :role_type, :name])

@@ -69,10 +69,10 @@ const contractStore = {
         });
     },
     fetchContractVehicles({ commit }, id) {
-      commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);   
+      commit("TOGGLE_CONTRACT_VEHICLES_LOADED", false);
       axios({
         method: "GET",
-        url: `${API_BASE_PATH}/contract_vehicles?project_id=${id}`,
+        url: `${API_BASE_PATH}/portfolio/contract_vehicles?project_id=${id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -80,7 +80,7 @@ const contractStore = {
       })
         .then((res) => {
           commit("SET_CONTRACT_VEHICLES", res.data.contract_vehicles);
-          console.log(res.data.contract_vehicles)
+          console.log(res)
         })
         .catch((err) => {
           console.log(err);
@@ -203,7 +203,7 @@ const contractStore = {
         formData.append("contract_vehicle[option_period_end]", cVehicleData.op_endDate);  
       axios({
         method: "POST",
-        url: `${API_BASE_PATH}/contract_vehicles`,
+        url: `${API_BASE_PATH}/portfolio/contract_vehicles`,
         data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')

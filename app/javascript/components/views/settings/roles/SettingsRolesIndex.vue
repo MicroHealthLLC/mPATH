@@ -526,7 +526,7 @@
                       </template>
                     </el-table-column>
                   </el-table-column>
-                  <el-table-column label="Contracts">
+                  <el-table-column label="Contracts/Vehicles">
                     <el-table-column
                       prop="contractsRead"
                       label="Read"
@@ -1033,7 +1033,7 @@
               </el-tab-pane>
               <el-tab-pane class="px-3" style="postion:relative">
                 <template slot="label" class="text-right" v-if="true">
-                  CONTRACTS
+                  CONTRACTS/VEHICLES
                   <span class="badge badge-secondary badge-pill">
                     <span v-if="tableCounts && tableCounts.n">{{
                       tableCounts.n.contracts
