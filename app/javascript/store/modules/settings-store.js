@@ -1,6 +1,7 @@
 import http from "./../../common/http";
 import axios from "axios";
 import { API_BASE_PATH } from "./../../mixins/utils";
+import AuthorizationService from "./../../services/authorization_service";
 
 const settingsStore = {
   state: () => ({
@@ -424,7 +425,7 @@ const settingsStore = {
           if (res.data && res.data.role.type_of == "contract") {
             commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
           }
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -513,7 +514,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           // console.log(res)
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -606,7 +607,7 @@ const settingsStore = {
            console.log(res)
           //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
           // commit("SET_NEW_ROLE", res);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
           if (
             userData.projectIds ||
             userData.contractIds ||
@@ -673,7 +674,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           console.log(res);
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
