@@ -69,7 +69,9 @@ module Tasker
     after_save :handle_related_taskers
     after_validation :setup_facility_project
     before_save :update_owner_record
-    attr_accessor :_facility_project_id, :_project_contract_id, :_project_contract_vehicle_id
+
+    #NOTE: once everything is working fine without below fields, remove it from database. So we will use owner_id and owner_type
+    attr_accessor :facility_project_id, :project_contract_id, :project_contract_vehicle_id
     
     def update_owner_record
       ru = self

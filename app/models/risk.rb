@@ -8,7 +8,6 @@ class Risk < ApplicationRecord
   belongs_to :task_type, optional: true
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
-  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
