@@ -1,42 +1,15 @@
 class Lesson < ApplicationRecord
+  include Normalizer
+  include Tasker
+
   belongs_to :user
   belongs_to :task_type, optional: true
 
   belongs_to :lesson_stage, optional: true
-    
-  has_many :lesson_users, dependent: :destroy
-  has_many :users, through: :lesson_users
   
-  belongs_to :facility_project, optional: true
-
-  has_one :facility, through: :facility_project
-  has_one :project, through: :facility_project
-  has_one :facility_group, through: :facility_project
-
-  belongs_to :project_contract, optional: true
-  has_one :contract_project_data, through: :project_contract
-  
-  belongs_to :project_contract_vehicle, optional: true
-  has_one :contract_vehicle, through: :project_contract_vehicle
-
-  has_one :contract_project, class_name: "Project", through: :project_contract
-  has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
-  has_one :contract_vehicle_project, class_name: "Project", through: :project_contract_vehicle
-
-  has_many :notes, as: :noteable, dependent: :destroy
-  has_many_attached :lesson_files, dependent: :destroy
-
   has_many :lesson_details, dependent: :destroy
 
-  has_many :related_tasks, as: :relatable, dependent: :destroy
-  has_many :related_issues, as: :relatable, dependent: :destroy
-  has_many :related_risks, as: :relatable, dependent: :destroy
-  has_many :sub_tasks, through: :related_tasks
-  has_many :sub_issues, through: :related_issues
-  has_many :sub_risks, through: :related_risks
-
   validates :title, :description, :date, presence: true
-  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   attr_accessor :file_links
   
@@ -334,6 +307,8 @@ class Lesson < ApplicationRecord
       :date, 
       :task_type_id,  
       :facility_project_id,
+      :owner_id,
+      :owner_type,
       :reportable, 
       :important, 
       :draft, 

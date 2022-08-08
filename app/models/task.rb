@@ -5,15 +5,10 @@ class Task < ApplicationRecord
   belongs_to :task_type
   belongs_to :task_stage, optional: true
 
-  has_many :task_users, dependent: :destroy
-  has_many :users, through: :task_users
-  has_many_attached :task_files, dependent: :destroy
-  has_many :notes, as: :noteable, dependent: :destroy
 
   validates :text, presence: true
   validates :start_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   validates :due_date, presence: true, if: -> { progress != 100 && ongoing == false && on_hold == false }
-  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_update :validate_states
@@ -59,6 +54,8 @@ class Task < ApplicationRecord
       :_facility_project_id,
       :_project_contract_id,
       :_project_contract_vehicle_id,
+      :owner_id,
+      :owner_type,
       :facility_project_id,
       :due_date,
       :start_date,

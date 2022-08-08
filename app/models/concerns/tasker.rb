@@ -4,8 +4,10 @@ module Tasker
   extend ActiveSupport::Concern
 
   included do
-    default_scope {order(due_date: :asc)}
-
+    # Do not include it for Lesson
+    if name != "Lesson"
+      default_scope {order(due_date: :asc)}
+    end
     scope :complete, -> {where("progress = ?", 100)}
     scope :incomplete, -> {where("progress < ?", 100)}
 
@@ -26,6 +28,8 @@ module Tasker
     has_one :contract_facility_group, class_name: "FacilityGroup", through: :project_contract
 
     has_many :checklists, as: :listable, dependent: :destroy
+  
+    has_many :notes, as: :noteable, dependent: :destroy
 
     has_many :related_tasks, as: :relatable, dependent: :destroy
     has_many :related_issues, as: :relatable, dependent: :destroy
@@ -36,8 +40,27 @@ module Tasker
 
     belongs_to :owner, polymorphic: :true, optional: true
 
+    if name == "Lesson"
+      has_many :lesson_users, dependent: :destroy
+      has_many :users, through: :lesson_users
+      has_many_attached :lesson_files, dependent: :destroy
+    elsif name == "Issue"
+      has_many :issue_users, dependent: :destroy
+      has_many :users, through: :issue_users
+      has_many_attached :issue_files, dependent: :destroy
+    elsif name == "Task"
+      has_many :task_users, dependent: :destroy
+      has_many :users, through: :task_users
+      has_many_attached :task_files, dependent: :destroy
+    elsif name == "Risk"
+      has_many :risk_users, dependent: :destroy
+      has_many :users, through: :risk_users
+      has_many_attached :risk_files, dependent: :destroy
+    end
+
     accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
     accepts_nested_attributes_for :facility_project, reject_if: :all_blank
+    accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
     validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
 
