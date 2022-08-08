@@ -4,6 +4,7 @@ class RoleUser < ApplicationRecord
   has_many :role_privileges, through: :role
   belongs_to :facility_project, optional: true
   belongs_to :project_contract, optional: true
+  belongs_to :project_contract_vehicle, optional: true
   belongs_to :project, optional: true
 
   validate :check_valid_data
@@ -48,6 +49,12 @@ class RoleUser < ApplicationRecord
         self.errors.add(:base, "#{role.name} is already assigned to contract to user #{user.full_name}")
         return false
       end
+    elsif project_contract_vehicle_id
+      if RoleUser.where(user_id: user_id, role_id: role_id, project_contract_vehicle_id: project_contract_vehicle_id).exists?
+        project_contract_vehicle = self.project_contract_vehicle
+        self.errors.add(:base, "#{role.name} is already assigned to contract vehicle to user #{user.full_name}")
+        return false
+      end
     elsif project_id
       if RoleUser.where(user_id: user_id, role_id: role_id, project_id: project_id).exists?
         project = self.project
@@ -58,11 +65,11 @@ class RoleUser < ApplicationRecord
   end
 
   def check_valid_data
-    if !facility_project_id && !project_contract_id && !project_id
-      self.errors.add(:base, "One of the facility project, contract or project must be assigned!")
+    if !facility_project_id && !project_contract_id && !project_contract_vehicle_id && !project_id
+      self.errors.add(:base, "One of the facility project, contract, contract vehicle or project must be assigned!")
     end
-    if RoleUser.where(user_id: self.user_id, project_id: self.project_id, facility_project_id: self.facility_project_id, project_contract_id: self.project_contract_id ).count > 0
-      self.errors.add(:base, "Can't assign multiple roles on same project or contract!")
+    if RoleUser.where(user_id: self.user_id, project_id: self.project_id, facility_project_id: self.facility_project_id, project_contract_id: self.project_contract_id, project_contract_vehicle_id: self.project_contract_vehicle_id ).count > 0
+      self.errors.add(:base, "Can't assign multiple roles on same project or contract or contract vehicle!")
     end
   end
 
