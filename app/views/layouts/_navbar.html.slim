@@ -14,7 +14,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
     -if  params[:action] != "dataviewer"
       ul.navbar-nav.my-2.my-lg-0
         -if user_signed_in?
-          -if current_user.admin?
+          -if current_user.admin? && !ENV['TEST_MODE'].present? && ENV['TEST_MODE'] != "true"
             li.nav-item
               =link_to admin_root_path, class: "nav-link", data: { turbolinks: false, cy: 'admin_panel' } do
                 | Admin Panel

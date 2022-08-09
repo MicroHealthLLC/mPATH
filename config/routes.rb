@@ -1,12 +1,17 @@
 Rails.application.routes.draw do
 
-  devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
-  authenticate :user, lambda {|u| u.admin?} do
-    begin
-      ActiveAdmin.routes(self)
-    rescue Exception => e
-      puts "ActiveAdmin: #{e.class}: #{e}"
+    devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
+
+  if !ENV['TEST_MODE'].present? && ENV['TEST_MODE'] != "true"
+
+    authenticate :user, lambda {|u| u.admin?} do
+      begin
+        ActiveAdmin.routes(self)
+      rescue Exception => e
+        puts "ActiveAdmin: #{e.class}: #{e}"
+      end
     end
+
   end
 
   namespace :api, defaults: {format: :json} do

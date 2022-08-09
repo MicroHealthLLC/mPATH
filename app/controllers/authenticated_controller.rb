@@ -1,12 +1,19 @@
 class AuthenticatedController < ApplicationController
   # Above code is just for testing purpose. Once the token based authentication is implemented, remove this code.
 
-  protect_from_forgery with: :exception, prepend: true, if: -> {ENV['API_TEST_MODE'].nil? ||  ENV['API_TEST_MODE'] == "false"}
-  before_action :authenticate_user!, if: -> {ENV['API_TEST_MODE'].nil? || ENV['API_TEST_MODE'] == "false"}
+  protect_from_forgery with: :exception, prepend: true, if: -> {ENV['TEST_MODE'].nil? ||  ENV['TEST_MODE'] == "false"}
+  before_action :authenticate_user!, if: -> {ENV['TEST_MODE'].nil? || ENV['TEST_MODE'] == "false"}
 
-  if ENV['API_TEST_MODE'].present? && ENV['API_TEST_MODE'] == "true"
+  if ENV['TEST_MODE'].present? && ENV['TEST_MODE'] == "true"
     def current_user
-      email = request.headers["Email"].present? ? request.headers["Email"] : 'admin@example.com'
+      if params[:email]
+        email = params[:email]
+      elsif request.headers["Email"].present?
+        email = request.headers["Email"]
+      else
+        email = 'admin@example.com'
+      end
+
       @current_user ||= User.find_by(email: email)
     end
   end
