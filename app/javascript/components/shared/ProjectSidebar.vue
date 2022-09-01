@@ -27,7 +27,7 @@
             </div>
             <!-- v-if="_isallowedProjectCounts(group, 'read')" -->
             <div class="col py-0 text-right">
-              <span :load="log(facilityGroupFacilities(group))" class="badge badge-secondary badge-pill pill" v-if="isContractsView || isVehiclesView">
+              <span class="badge badge-secondary badge-pill pill" v-if="isContractsView || isVehiclesView">
                 <!-- <span v-if="_isallowedProjectCounts(facilityGroupFacilities(group).projects.a, 'read')">  -->
                 {{
                  facilityGroupFacilities(group).projects.a.length +

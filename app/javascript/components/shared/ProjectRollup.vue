@@ -963,8 +963,7 @@
               </h5>
                <h4 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">
-                      #
-                     <!-- {{ programResourceObj.length }} -->
+                     {{ programResourceObj.length }}
                     </span>
                   </h4>
               <hr />
@@ -987,8 +986,8 @@
               </div>
             </div>
           <div
-            v-for="(group, index) in facilityGroups.filter(t => t.contracts.length > 0)"
-            :key="index"
+            v-for="(group, index) in facilityGroups.filter(t => t.contractVehicles.length > 0)"
+            :key="index" :load="log(facilityGroups)"
             >
             <div class="row py-1">
               <div class="col-5 mb-2">
@@ -999,7 +998,7 @@
               </div>
               <div class="col-1 pl-0">              
                 <span class="badge badge-secondary badge-pill">{{
-                  facilityGroupFacilities(group).contracts.b.length
+                  facilityGroupFacilities(group).vehicles.c.length
                 }}</span>
               </div>
               <div class="col-5">
@@ -1377,32 +1376,12 @@ export default {
       if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
         return this.currentProject.facilities
       } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
-        //console.log(this.projectContracts)
-        //console.log(this.projectVehicles)
         return this.projectContracts
-      }
-    },
-    // With added vehicles?
-    /* programResourceObj(){ 
-      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
-        return this.currentProject.facilities
-      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
-        console.log(this.projectContracts)
-        return this.projectContracts
-      }
-    },
-    // With added vehicles?
-    /* programResourceObj(){ 
-      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
-        return this.currentProject.facilities
-      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
-        console.log(this.projectContracts)
-        return this.projectContracts
-      } else if (this.projectVehicles && this.projectVehicles.length > 0 && this.getShowVehicleStats) {
-        console.log(this.projectVehicles)
+      } else if (this.projectVehicles && this.projectVehicles.length > 0 && this.getShowVehicleStats){
+        //console.log(this.facilityGroups)
         return this.projectVehicles
       }
-    }, */
+    },
    C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter;
@@ -2107,7 +2086,7 @@ export default {
         'setHideDraft',
       ]),
     log(e){
-      // console.log(e)
+      console.log(e)
     },
     _isallowedContracts(salut) {
       return this.checkPrivileges("ProjectRollup", salut, this.$route, {method: "isallowedContracts"})

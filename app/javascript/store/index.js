@@ -2702,7 +2702,6 @@ export default new Vuex.Store({
       );
     },
     facilityGroupFacilities: (state, getters) => (group, status = "active") => {
-      console.log(getters.filteredVehicles)
       return {
       projects: { 
           a: getters.filteredFacilities(status)
