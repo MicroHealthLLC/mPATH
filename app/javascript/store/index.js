@@ -367,7 +367,7 @@ export default new Vuex.Store({
     },
     updateVehicleTasks: (state, { task, action }) => {
       let vehicle_i = state.vehicles.findIndex(
-        (f) => f.projectVehicleId == task.projectVehicleId
+        (f) => f.id == task.id
       );
       if (vehicle_i > -1) {
         let vehicle = Object.assign({}, state.vehicles[vehicle_i]);

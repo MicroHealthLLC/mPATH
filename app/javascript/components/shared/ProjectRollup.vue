@@ -987,8 +987,7 @@
             </div>
           <div
             v-for="(group, index) in facilityGroups.filter(t => t.contractVehicles.length > 0)"
-            :key="index" :load="log(facilityGroups)"
-            >
+            :key="index">
             <div class="row py-1">
               <div class="col-5 mb-2">
                 <span :class="{ 'font-sm': isMapView }">{{

@@ -110,7 +110,6 @@ import CalendarRisks from "./../components/views/calendar/CalendarRisks";
 import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
 
 import PageNotFound from "./../components/views/PageNotFound"
-import { FormSelectPlugin } from "bootstrap-vue";
 
 export default new VueRouter({
   routes: [
@@ -298,7 +297,7 @@ export default new VueRouter({
         var programId = to.params.programId;
         var vehicleId = to.params.vehicleId;
         var fPrivilege = _.filter(
-          Vue.prototype.$contractPrivileges,
+          Vue.prototype.$contractVehiclePrivileges,
           (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
         )[0];
         if (!fPrivilege) {
@@ -349,7 +348,7 @@ export default new VueRouter({
         var programId = to.params.programId;
         var vehicleId = to.params.vehicleId;
         var fPrivilege = _.filter(
-          Vue.prototype.$contractPrivileges,
+          Vue.prototype.$contractVehiclePrivileges,
           (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
         )[0];
         if (!fPrivilege) {
@@ -400,7 +399,7 @@ export default new VueRouter({
         var programId = to.params.programId;
         var vehicleId = to.params.vehicleId;
         var fPrivilege = _.filter(
-          Vue.prototype.$contractPrivileges,
+          Vue.prototype.$contractVehiclePrivileges,
           (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
         )[0];
         if (!fPrivilege) {
@@ -451,7 +450,7 @@ export default new VueRouter({
         var programId = to.params.programId;
         var vehicleId = to.params.vehicleId;
         var fPrivilege = _.filter(
-          Vue.prototype.$contractPrivileges,
+          Vue.prototype.$contractVehiclePrivileges,
           (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
         )[0];
         if (!fPrivilege) {
@@ -601,7 +600,7 @@ export default new VueRouter({
             var programId = to.params.programId;
             var contractId = to.params.contractId;
             var fPrivilege = _.filter(
-              Vue.prototype.$projectPrivileges,
+              Vue.prototype.$contractPrivileges,
               (f) => f.program_id == programId && f.contract_id == contractId
             )[0];
             if (!fPrivilege) {
@@ -659,7 +658,7 @@ export default new VueRouter({
             var programId = to.params.programId;
             var vehicleId = to.params.vehicleId;
             var fPrivilege = _.filter(
-              Vue.prototype.$projectPrivileges,
+              Vue.prototype.$contractVehiclePrivileges,
               (f) => f.program_id == programId && f.contract_vehicle_id == vehicleId
             )[0];
             if (!fPrivilege) {

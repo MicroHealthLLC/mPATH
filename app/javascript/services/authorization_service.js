@@ -94,7 +94,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.VehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_risks &&
@@ -133,7 +133,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_issues &&
@@ -193,7 +193,7 @@ const AuthorizationService = {
         );
       } else if (extraData["method"] == "isallowedVehicles") {
         let contract_privileges =
-          AuthorizationService.contractPrivilegesRoles[
+          AuthorizationService.contractVehiclePrivilegesRoles[
             extraData["project_contract_vehicle_id"]
           ];
         console.log(contract_privileges, extraData["project_contract_vehicle_id"]);
@@ -263,7 +263,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_lessons &&
@@ -303,7 +303,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_notes &&
@@ -342,7 +342,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_risks &&
@@ -383,7 +383,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_tasks &&
@@ -426,7 +426,7 @@ const AuthorizationService = {
         );
       } else if (contract_vehicle_id) {
         let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[contract_vehicle_id];
+          AuthorizationService.contractVehiclePrivilegesRoles[contract_vehicle_id];
         return (
           contract_vehicle_privileges &&
           contract_vehicle_privileges.contract_vehicle_analytics &&

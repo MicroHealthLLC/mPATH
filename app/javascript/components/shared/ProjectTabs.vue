@@ -64,7 +64,7 @@ export default {
         },
         {
           label: "Vehicle",
-          key: "vehicles",
+          key: "vehicle",
           closable: false,
           hidden: false,
         },
@@ -181,12 +181,14 @@ export default {
       let projectId = this.$route.params.projectId;
       let contractId = this.$route.params.contractId;
       let vehicleId = this.$route.params.vehicleId;
+      console.log(this.$contractPrivileges)
+      console.log(this.$contractVehiclePrivileges)
       if (contractId) {
         return this.$contractPrivileges[programId][
           this.$route.params.contractId
         ];
-      } else if (vehicleId) {
-        return this.$contractPrivileges[programId][
+      } if (vehicleId) {
+        return this.$contractVehiclePrivileges[programId][
           this.$route.params.vehicleId
         ];
       } else return this.$projectPrivileges[programId][projectId];

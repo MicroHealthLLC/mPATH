@@ -146,7 +146,6 @@ export default {
       return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
     },
     isVehiclesView() {
-      console.log(this.$route)
       return this.$route.name.includes("Sheet") || this.$route.name.includes("Vehicle")
     },
     programName() {
@@ -230,7 +229,7 @@ export default {
     },
     _isallowedVehicles(c, salut) {
       // console.log(this.$route)
-      return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedVehicles", contract_vehicle_id: c.projectVehicleId })
+      return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedVehicles", contract_vehicle_id: c.id })
     },
     _isallowedProjects(c, salut) {
       return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedProject", facility_project_id: c.facilityProjectId })
