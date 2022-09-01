@@ -1377,8 +1377,8 @@ export default {
       if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
         return this.currentProject.facilities
       } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
-        console.log(this.projectContracts)
-        console.log(this.projectVehicles)
+        //console.log(this.projectContracts)
+        //console.log(this.projectVehicles)
         return this.projectContracts
       }
     },
@@ -1470,7 +1470,7 @@ export default {
       if(!this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
       } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
-      console.log(this.programLessons)
+      //console.log(this.programLessons)
       // let programLessonsObj = this.programLessons;
 
       let typeIds = _.map(this.taskTypeFilter, "id");

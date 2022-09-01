@@ -2257,6 +2257,386 @@ export default new Vuex.Store({
         return valid;
       });
     },
+    filteredVehicles: (state, getters) => {
+      return _.filter(getters.projectVehicles, (vehicle) => {
+        let valid = vehicle.id || null;
+        // valid = valid && facility.facilityGroupStatus == "active";
+        if (!valid) return valid;
+        if (state.mapFilters.length < 1) return valid;
+
+        var resources1 = [];
+        resources1.push(...vehicle.tasks);
+        resources1.push(...vehicle.issues);
+        resources1.push(...vehicle.risks);
+  
+        _.each(state.mapFilters, (f) => {
+          let k = Object.keys(f)[0];
+          switch (k) {
+            case "advancedFilter": {
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "dueDate": {
+              let range = moment.range(f[k][0], f[k][1]);
+              valid =
+                valid &&
+                vehicle[k] &&
+                range.contains(new Date(vehicle[k].replace(/-/g, "/")));
+              break;
+            }
+            case "noteDate": {
+              let taksIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredVehicles",
+                  vehicle
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _notes = _.flatten(_.map(resources, "notes"));
+              var is_valid = false;
+              for (var n of _notes) {
+                var nDate = moment(n.createdAt, "YYYY-MM-DD");
+                is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                if (is_valid) break;
+              }
+
+              valid = valid && is_valid;
+              break;
+            }
+            case "taskIssueDueDate": {
+              let taksIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              let resources = [];
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredVehicles",
+                  vehicle
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+
+              var startDate = moment(f[k][0], "YYYY-MM-DD");
+              var endDate = moment(f[k][1], "YYYY-MM-DD");
+              var _dueDates = _.flatten(_.map(resources, "dueDate"));
+              var is_valid = false;
+
+              if (_dueDates.length < 1) {
+                valid = valid && is_valid;
+                break;
+              } else {
+                for (var dueDate of _dueDates) {
+                  var nDate = moment(dueDate, "YYYY-MM-DD");
+                  is_valid = nDate.isBetween(startDate, endDate, "days", true);
+                  if (is_valid) break;
+                }
+                valid = valid && is_valid;
+                break;
+              }
+            }
+            // This is for facility progress
+            case "progress": {
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                is_valid =
+                  range[1] !== undefined
+                    ? range[0] <= vehicle[k] && range[1] >= vehicle[k]
+                    : vehicle[k] == range[0];
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            // TODO: Improve this function
+            case "taskIssueProgress": {
+              let progressFor = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              let resources = [];
+              for (let r of progressFor) {
+                var v = getters.filterDataForAdvancedFilter(
+                  [r],
+                  "filteredVehicles",
+                  vehicle
+                );
+                if (v) {
+                  resources.push(r);
+                }
+              }
+              let progress = _.uniq(_.map(resources, "progress"));
+              let ranges = f[k].map((r) => r.split("-").map(Number));
+              let is_valid = false;
+              for (let range of ranges) {
+                let size = range[1] ? range[1] - range[0] + 1 : 1;
+                is_valid =
+                  _.intersection(
+                    progress,
+                    Array.from(Array(size), (_, i) => i + range[0])
+                  ).length > 0;
+                if (is_valid) break;
+              }
+              valid = valid && is_valid;
+              break;
+            }
+            case "issueTypeIds": {
+              var issues = vehicle.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+
+              break;
+            }
+            case "issueSeverityIds": {
+              var issues = vehicle.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueSeverityId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+
+              break;
+            }
+            case "issueStageIds": {
+              var issues = vehicle.issues;
+              var resources = _.filter(issues, (ti) =>
+                f[k].includes(ti.issueStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "taskTypeIds": {
+              var tasksIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              var resources = _.filter(tasksIssues, (ti) =>
+                f[k].includes(ti.taskTypeId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+
+              break;
+            }
+            case "taskStageIds": {
+              var tasks = vehicle.tasks;
+              var resources = _.filter(tasks, (ti) =>
+                f[k].includes(ti.taskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskStageIds": {
+              var risks = vehicle.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskStageId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskPriorityLevelIds": {
+              var risks = vehicle.risks;
+              var resources = _.filter(risks, (ti) =>
+                f[k].includes(ti.riskPriorityLevelId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskApproachFilter": {
+              var risks = vehicle.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproach)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskApproachFilterIds": {
+              var risks = vehicle.risks;
+              var fApproaches = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fApproaches.includes(ti.riskApproachId)
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "riskPriorityLevelFilter": {
+              var risks = vehicle.risks;
+              var fPriorityLevels = _.map(f[k], "id");
+              var resources = _.filter(risks, (ti) =>
+                fPriorityLevels.includes(ti.priorityLevelName.toLowerCase())
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "taskIssueUsers": {
+              var taskIssues = vehicle.tasks
+                .concat(vehicle.issues)
+                .concat(vehicle.risks);
+              var resources = _.filter(
+                taskIssues,
+                (ti) => _.intersection(ti.userIds, f[k]).length > 0
+              );
+              if (resources.length < 1) {
+                valid = false;
+              }
+              valid =
+                valid &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "facilityGroupIds": {
+              valid =
+                valid &&
+                f[k].includes(vehicle.vehicleGroupId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "ids": {
+              valid =
+                valid &&
+                f[k].includes(vehicle.project_contract_vehicle_id) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            case "statusIds": {
+              valid =
+                valid &&
+                f[k].includes(vehicle.statusId) &&
+                getters.filterDataForAdvancedFilter(
+                  resources1,
+                  "filteredVehicles",
+                  vehicle
+                );
+              break;
+            }
+            default: {
+              valid = valid && vehicle[k] == f[k];
+              break;
+            }
+          }
+        });
+        return valid;
+      });
+    },
     filteredFacilityGroups: (state, getters) => {
       let ids = _.map(getters.facilities, "facilityGroupId");
       return _.filter(
@@ -2322,6 +2702,7 @@ export default new Vuex.Store({
       );
     },
     facilityGroupFacilities: (state, getters) => (group, status = "active") => {
+      console.log(getters.filteredVehicles)
       return {
       projects: { 
           a: getters.filteredFacilities(status)
@@ -2335,7 +2716,13 @@ export default new Vuex.Store({
           .filter(f => 
               f.facilityGroup.id == group.id 
               ).sort((a, b) => a.name.localeCompare(b.name)),
-         }      
+         },
+      vehicles: { 
+          c: getters.filteredVehicles
+          .filter(f => 
+              f.facilityGroup.id == group.id 
+              ).sort((a, b) => a.name.localeCompare(b.name)),
+      }      
       }
     },
     // for gantt chart view
