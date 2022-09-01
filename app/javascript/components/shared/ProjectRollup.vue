@@ -1389,6 +1389,15 @@ export default {
       } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
         console.log(this.projectContracts)
         return this.projectContracts
+      }
+    },
+    // With added vehicles?
+    /* programResourceObj(){ 
+      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
+        return this.currentProject.facilities
+      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
+        console.log(this.projectContracts)
+        return this.projectContracts
       } else if (this.projectVehicles && this.projectVehicles.length > 0 && this.getShowVehicleStats) {
         console.log(this.projectVehicles)
         return this.projectVehicles
@@ -1457,6 +1466,24 @@ export default {
       }
     },
     filteredLessons() {
+      let programLessonsObj = [];
+      if(!this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      console.log(this.programLessons)
+      // let programLessonsObj = this.programLessons;
+
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(programLessonsObj, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    },
+    // With adding vehicles?
+    /* filteredLessons() {
       let programLessonsObj = [];
       if(this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
