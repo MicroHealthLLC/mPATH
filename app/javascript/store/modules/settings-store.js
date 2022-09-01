@@ -1,6 +1,7 @@
 import http from "./../../common/http";
 import axios from "axios";
 import { API_BASE_PATH } from "./../../mixins/utils";
+import AuthorizationService from "./../../services/authorization_service";
 
 const settingsStore = {
   state: () => ({
@@ -101,6 +102,7 @@ const settingsStore = {
     remove_role_status: 0,
     remove_project_role_status: 0,
     remove_contract_role_status: 0,
+    remove_vehicle_role_status: 0,
     remove_admin_role_status: 0,
     role_removed: true,
 
@@ -115,6 +117,7 @@ const settingsStore = {
     assigned_vehicle_users: [],
     users_contract_roles: [],
     users_admin_roles: [],
+    users_vehicle_roles: [],
 
     //VEHICLE USER ROLES
     vehicle_role_names: [],
@@ -427,7 +430,7 @@ const settingsStore = {
           if (res.data && res.data.role.type_of == "contract") {
             commit("SET_UPDATED_CONTRACT_ROLE_STATUS", res.status);
           }
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -439,7 +442,7 @@ const settingsStore = {
     //ADD USER TO ROLE
     addUserToRole({ commit }, { userData }) {
       // let formData =  userRoleData(userData);
-      console.log(userData);
+      //console.log(userData);
       let formData = new FormData();
       if (userData.projectIds) {
         userData.projectIds.forEach((ids) => {
@@ -516,7 +519,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           // console.log(res)
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);
@@ -528,8 +531,8 @@ const settingsStore = {
     //REMOVE USER FROM ROLE OR PROJECT OR CONTRACT
     removeUserRole({ commit }, { userData }) {
       // let formData =  userRoleData(userData);
-      // console.log(userData)
       let formData = new FormData();
+      console.log(userData)
 
       if (userData.removeRole) {
         formData.append("user_id", userData.userId);
@@ -554,6 +557,15 @@ const settingsStore = {
           formData.append("project_id", userData.programId);
           formData.append("role_id", userData.roleId);
           formData.append("project_contract_id[]", ids);
+        });
+      }
+      if (userData.vehicleIds) {
+        formData.append("role_from_users", true);
+        userData.vehicleIds.forEach((ids) => {
+          formData.append("user_id", userData.userId);
+          formData.append("project_id", userData.programId);
+          formData.append("role_id", userData.roleId);
+          formData.append("project_contract_vehicle_id[]", ids);
         });
       }
       if (userData.adminRole || userData.adminRoleIndex) {
@@ -597,13 +609,14 @@ const settingsStore = {
         },
       })
         .then((res) => {
-          // console.log(res)
+           console.log(res)
           //  commit("SET_ADD_USER_TO_ROLE", res.data.roles);
           // commit("SET_NEW_ROLE", res);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
           if (
             userData.projectIds ||
             userData.contractIds ||
+            userData.vehicleIds ||
             userData.adminRole ||
             userData.removeRole
           ) {
@@ -623,6 +636,11 @@ const settingsStore = {
           if (userData.userIds && userData.contractId) {
             console.log("removed from ProgramSettingContracts");
             commit("SET_REMOVE_CONTRACT_ROLE_STATUS", res.status);
+          }
+
+          if (userData.userIds && userData.vehicleId) {
+            console.log("removed from ProgramSettingVehicles");
+            commit("SET_REMOVE_VEHICLE_ROLE_STATUS", res.status);
           }
         })
         .catch((err) => {
@@ -661,7 +679,7 @@ const settingsStore = {
           commit("SET_NEW_ROLE", res);
           console.log(res);
           commit("SET_ADD_USER_TO_ROLE_STATUS", res.status);
-          Vue.prototype.getRolePrivileges();
+          AuthorizationService.getRolePrivileges();
         })
         .catch((err) => {
           console.log(err);

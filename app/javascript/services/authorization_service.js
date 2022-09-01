@@ -5,7 +5,7 @@ const AuthorizationService = {
   projectPrivilegesRoles: {},
   programPrivilegesRoles: {},
   contractPrivilegesRoles: {},
-  vehiclePrivilegesRoles: {},
+  contractVehiclePrivilegesRoles: {},
   programSettingPrivilegesRoles: {},
   projectFacilityHash: JSON.parse(
     window.project_facility_hash.replace(/&quot;/g, '"')
@@ -46,8 +46,8 @@ const AuthorizationService = {
           res.data.program_privilegs_roles;
         AuthorizationService.contractPrivilegesRoles =
           res.data.contract_privilegs_roles;
-        AuthorizationService.vehiclePrivilegesRoles =
-          res.data.contract_vehicle_privilegs_roles;
+        AuthorizationService.contractVehiclePrivilegesRoles =
+          res.data.contract_vehicle_privileges_roles;
         AuthorizationService.programSettingPrivilegesRoles =
           res.data.program_settings_privileges_roles;
       })
@@ -192,20 +192,20 @@ const AuthorizationService = {
             contract_privileges.contract_tasks)
         );
       } else if (extraData["method"] == "isallowedVehicles") {
-        let contract_vehicle_privileges =
-          AuthorizationService.vehiclePrivilegesRoles[
+        let contract_privileges =
+          AuthorizationService.contractPrivilegesRoles[
             extraData["project_contract_vehicle_id"]
           ];
-        console.log(contract_vehicle_privileges, extraData["project_contract_vehicle_id"]);
+        console.log(contract_privileges, extraData["project_contract_vehicle_id"]);
 
         return (
-          contract_vehicle_privileges &&
-          (contract_vehicle_privileges.contract_vehicle_analytics ||
-            contract_vehicle_privileges.contract_vehicle_issues ||
-            contract_vehicle_privileges.contract_vehicle_lessons ||
-            contract_vehicle_privileges.contract_vehicle_notes ||
-            contract_vehicle_privileges.contract_vehicle_risks ||
-            contract_vehicle_privileges.contract_vehicle_tasks)
+          contract_privileges &&
+          (contract_privileges.contract_analytics ||
+            contract_privileges.contract_issues ||
+            contract_privileges.contract_lessons ||
+            contract_privileges.contract_notes ||
+            contract_privileges.contract_risks ||
+            contract_privileges.contract_tasks)
         );
       } else if (extraData["method"] == "isallowedProject") {
         let facility_project_privileges =

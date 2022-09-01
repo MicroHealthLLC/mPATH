@@ -290,11 +290,11 @@ export default {
         return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProgramSettings"})
     },
     toggleAdminView() {
-      window.location.pathname = `/programs/${this.$route.params.programId}/settings`
+      // window.location.pathname = `/programs/${this.$route.params.programId}/settings`
         // this.setShowAdminBtn(!this.getShowAdminBtn);
-        //  this.$router.push(
-        // `/programs/${this.$route.params.programId}/settings`
-        // );
+        this.$router.push({
+        name: "SettingsView"       
+      });
 
       },
      handleClose(done) {

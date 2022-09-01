@@ -51,6 +51,7 @@ class Project < SortableRecord
 
   has_many :project_contract_vehicles, dependent: :destroy
   has_many :contract_vehicles, through: :project_contract_vehicles
+  has_many :project_contract_vehicle_groups, through: :project_contract_vehicles, class_name: "FacilityGroup"
 
   enum status: [:inactive, :active].freeze
 
