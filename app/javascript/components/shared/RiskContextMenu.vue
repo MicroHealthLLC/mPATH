@@ -128,6 +128,8 @@ export default {
    placeholder(){
       if(this.$route.params.contractId){
         return "Filter Contracts"
+      } else if(this.$route.params.vehicleId){
+        return "Filter Vehicles"
       } else return "Filter Projects"
     },
     treeFormattedData() {
@@ -177,6 +179,31 @@ export default {
           // debugger
       return [...data];    
      }
+
+     if(this.$route.params.vehicleId){
+      let data = [];
+        let vehicleGroups = this.currentProject.vehicles
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (vehicle) => this.isAllowedFacility("write", 'risks', vehicle.id) && vehicle.id !== this.risk.projectVehicleId
+                  )
+                  .map((vehicle) => {
+                    return {
+                      id: vehicle.id,
+                      label: vehicle.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
    
     },
     submitDisabled() {
@@ -192,7 +219,7 @@ export default {
   },
   methods: {
     ...mapActions(["riskDeleted"]),
-    ...mapMutations(["updateRisksHash", "updateContractRisks"]),
+    ...mapMutations(["updateRisksHash", "updateContractRisks", "updateVehicleRisks"]),
     isAllowed(salut) {
       return this.checkPrivileges("task_form", salut, this.$route)
      },
@@ -241,6 +268,8 @@ export default {
         let formData = new FormData();
         if (this.$route.params.contractId) {
              formData.append("risk[contract_id]", facilityProjectId);
+         } else if (this.$route.params.vehicleId) {
+             formData.append("risk[contract_vehicle_id]", facilityProjectId);
          } else {
              formData.append("risk[facility_project_id]", facilityProjectId);
          }
@@ -250,6 +279,9 @@ export default {
         if (this.$route.params.contractId) {
              method = "PATCH";
              url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${risk.id}.json`;
+         } else if (this.$route.params.vehicleId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${risk.id}.json`;
          } else {
              method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${risk.facilityId}/risks/${risk.id}.json`;
@@ -271,6 +303,8 @@ export default {
 
           if (this.$route.params.contractId){
                this.updateContractRisks({ risk: responseRisk });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleRisks({ risk: responseRisk });
             } else {
                this.updateFacilities(
               humps.camelizeKeys(response.data.risk),
@@ -298,6 +332,7 @@ export default {
             this.loading = false;
             this.updateRisksHash({ risk: risk, action: "delete" });
             this.updateContractRisks({ risk: risk, action: "delete" });
+            this.updateVehicleRisks({ risk: risk, action: "delete" });
           });
       });
     },
@@ -323,6 +358,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_duplicate.json`;
+      } else if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${this.risk.id}/create_duplicate.json`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
       }
@@ -348,6 +385,10 @@ export default {
 
           if (this.$route.params.contractId){
               this.updateContractRisks({
+               risk: responseRisk
+              });
+            } else if (this.$route.params.vehicleId){
+              this.updateVehicleRisks({
                risk: responseRisk
               });
             } else {
@@ -402,6 +443,9 @@ export default {
       if (this.$route.params.contractId) {
           method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}/create_bulk_duplicate?`;
+      } else if (this.$route.params.vehicleId) {
+          method = "PATCH";
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${this.risk.id}/create_bulk_duplicate?`;
       } else {
           method = "POST";
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
@@ -419,6 +463,10 @@ export default {
           url += `contract_ids[]=${id}`;
         } else if (index !== 0 && this.$route.params.contractId)  {
           url += `&contract_ids[]=${id}`;
+        } if (index === 0 && this.$route.params.vehicleId) {
+          url += `contract_vehicle_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.vehicleId)  {
+          url += `&contract_vehicle_ids[]=${id}`;
         } 
       });
      let formData = new FormData();
@@ -426,6 +474,8 @@ export default {
 
       if ( this.$route.params.contractId){
          formData.append("contract_ids", ids);
+      } else if ( this.$route.params.vehicleId){
+         formData.append("contract_vehicle_ids", ids);
       } else {
           formData.append("facility_project_ids", ids);
       } 
@@ -449,7 +499,12 @@ export default {
                 risk: humps.camelizeKeys(risk)
                });
               });
-           
+         } else if (this.$route.params.vehicleId){
+             response.data.risks.forEach((risk) => {
+              this.updateVehicleRisks({
+                risk: humps.camelizeKeys(risk)
+               });
+              });
          } else {                 
            response.data.risks.forEach((risk) => {
             this.updateFacilityRisk(

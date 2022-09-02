@@ -1,12 +1,12 @@
 <template>
-  <NotesSheetsIndex :vehicle="vehicle" :contract="contract" class="mt-4" />
+  <NotesSheetsIndex :vehicle="vehicle" class="mt-4" />
 </template>
 
 <script>
 import NotesSheetsIndex from "../../../dashboard/notes/notes_sheets_index.vue";
 
 export default {
-  props: ["contract", "vehicle"],
+  props: ["vehicle"],
   components: { NotesSheetsIndex },
 };
 </script>

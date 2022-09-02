@@ -551,7 +551,7 @@
     components: {
       RiskSheets
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         risks: Object,
@@ -645,6 +645,10 @@
        if(this.contractRoute) {
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/risks/new`
+        );
+        } else if(this.vehicleRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/risks/new`
         );
         } else
         this.$router.push(
@@ -768,9 +772,14 @@
       contractRoute(){
          return this.$route.params.contractId
       },
+      vehicleRoute(){
+         return this.$route.params.vehicleId
+      },
       object(){
       if (this.$route.params.contractId) {
         return this.contract
+       } else if (this.$route.params.vehicleId) {
+        return this.vehicle
        } else return this.facility
       },
       filteredRisks() {

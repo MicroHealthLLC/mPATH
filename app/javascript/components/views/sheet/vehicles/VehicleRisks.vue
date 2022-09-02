@@ -1,6 +1,6 @@
 <template>
   <div>
-    <RiskSheetsIndex :facility="facility" :contract="contract" :vehicle="vehicle" />
+    <RiskSheetsIndex :facility="facility" :vehicle="vehicle" />
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import RiskSheetsIndex from "../../../dashboard/risks/sheets/risk_sheets_index.vue";
 
 export default {
-  props: ["facility", "contract", "vehicle"],
+  props: ["facility", "vehicle"],
   components: { RiskSheetsIndex },
 };
 </script>

@@ -128,6 +128,8 @@ export default {
     placeholder(){
       if(this.$route.params.contractId){
         return "Filter Contracts"
+      } else if(this.$route.params.vehicleId){
+        return "Filter Vehicles"
       } else return "Filter Projects"
     },
     treeFormattedData() {
@@ -177,6 +179,31 @@ export default {
           // debugger
       return [...data];    
      }
+
+     if(this.$route.params.vehicleId){
+          let data = [];
+        let vehicleGroups = this.currentProject.vehicles
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (vehicle) => this.isAllowedFacility("write", 'issues', vehicle.id) && vehicle.id !== this.issue.projectVehicleId
+                  )
+                  .map((vehicle) => {
+                    return {
+                      id: vehicle.id,
+                      label: vehicle.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
    
     },
     submitDisabled() {
@@ -192,7 +219,7 @@ export default {
   },
   methods: {
     ...mapActions(["issueDeleted"]),
-    ...mapMutations(["updateIssuesHash", "updateContractIssues"]),
+    ...mapMutations(["updateIssuesHash", "updateContractIssues", "updateVehicleIssues"]),
     isAllowed(salut) {
       return this.checkPrivileges("issue_form", salut, this.$route)
      },
@@ -252,7 +279,8 @@ export default {
 
         if (this.$route.params.contractId) {
            formData.append("issue[contract_id]", facilityProjectId);
-          
+         } else if (this.$route.params.vehicleId) {
+           formData.append("issue[contract_vehicle_id]", facilityProjectId);
          } else {
             formData.append("issue[facility_project_id]", facilityProjectId);
          }
@@ -262,6 +290,10 @@ export default {
              method = "PATCH";
              url =  `${API_BASE_PATH}/project_contracts/${issue.projectContractId}/issues/${issue.id}.json`;
               console.log(`issue.id: ${issue.projectContractId}`)
+         } else if (this.$route.params.vehicleId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contract_vehicles/${issue.projectVehicleId}/issues/${issue.id}.json`;
+              console.log(`issue.id: ${issue.projectVehicleId}`)
          } else {
              method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${issue.facilityId}/issues/${issue.id}.json`;
@@ -285,6 +317,8 @@ export default {
             
            if (this.$route.params.contractId){
                this.updateContractIssues({ issue: responseIssue });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleIssues({ issue: responseIssue });
             } else {
             this.updateFacilities(
               humps.camelizeKeys(response.data.issue),
@@ -312,7 +346,7 @@ export default {
             this.loading = false;
             this.updateIssuesHash({ issue: issue, action: "delete" });
             this.updateContractIssues({ issue: issue, action: "delete" });
-
+            this.updateVehicleIssues({ issue: issue, action: "delete" });
           });
       });
     },
@@ -338,6 +372,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/issues/${this.issue.id}/create_duplicate.json`;
+      } else if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/issues/${this.issue.id}/create_duplicate.json`;
       } else {
           url =`${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.issue.facilityId}/issues/${this.issue.id}/create_duplicate.json`;
       }
@@ -364,6 +400,10 @@ export default {
           
           if (this.$route.params.contractId){
               this.updateContractIssues({
+               issue: responseIssue 
+              });
+            } else if (this.$route.params.vehicleId){
+              this.updateVehicleIssues({
                issue: responseIssue 
               });
             } else {
@@ -419,6 +459,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/issues/${this.issue.id}/create_bulk_duplicate?`;
+      } else if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/issues/${this.issue.id}/create_bulk_duplicate?`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.issue.facilityId}/issues/${this.issue.id}/create_bulk_duplicate?`;
       }
@@ -436,6 +478,10 @@ export default {
           url += `contract_ids[]=${id}`;
         } else if (index !== 0 && this.$route.params.contractId)  {
           url += `&contract_ids[]=${id}`;
+        } if (index === 0 && this.$route.params.vehicleId) {
+          url += `contract_vehicle_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.vehicleId)  {
+          url += `&contract_vehicle_ids[]=${id}`;
         } 
       });
 
@@ -444,6 +490,8 @@ export default {
 
       if ( this.$route.params.contractId){
          formData.append("contract_ids", ids); 
+      } else if ( this.$route.params.vehicleId){
+         formData.append("contract_vehicle_ids", ids); 
       } else {
           formData.append("facility_project_ids", ids);      
       } 
@@ -464,6 +512,14 @@ export default {
             response.data.issues.forEach((issue) => {
                 //  console.log(`task: ${task}`)
                 this.updateContractIssues({
+                issue: humps.camelizeKeys(issue)
+               });
+              });
+           
+         } else if (this.$route.params.vehicleId){
+            response.data.issues.forEach((issue) => {
+                //  console.log(`task: ${task}`)
+                this.updateVehicleIssues({
                 issue: humps.camelizeKeys(issue)
                });
               });

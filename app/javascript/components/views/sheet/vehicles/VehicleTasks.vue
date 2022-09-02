@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TaskSheetsIndex :facility="facility" :contract="contract" :vehicle="vehicle" />
+    <TaskSheetsIndex :facility="facility" :vehicle="vehicle" />
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import TaskSheetsIndex from "../../../dashboard/tasks/task_sheets_index.vue";
 
 export default {
-  props: ["facility", "contract", "vehicle"],
+  props: ["facility", "vehicle"],
   components: {
     TaskSheetsIndex,
   },

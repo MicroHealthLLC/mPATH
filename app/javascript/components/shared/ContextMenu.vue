@@ -128,6 +128,8 @@ export default {
     placeholder(){
       if(this.$route.params.contractId){
         return "Filter Contracts"
+      } else if(this.$route.params.vehicleId){
+        return "Filter Vehicles"
       } else return "Filter Projects"
     },
    treeFormattedData() {
@@ -179,6 +181,31 @@ export default {
           // debugger
       return [...data];    
      }
+
+     if(this.$route.params.vehicleId){
+          let data = [];
+        let vehicleGroups = this.currentProject.vehicles
+          this.facilityGroups.forEach((group, index) => {
+            data.push({
+              id: index,
+              label: group.name,         
+              children: [
+                  ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
+                  .filter(
+                    (vehicle) => this.isAllowed("write", 'tasks', vehicle.id) && vehicle.id !== this.task.projectVehicleId
+                  )
+                  .map((vehicle) => {
+                    return {
+                      id: vehicle.id,
+                      label: vehicle.name,
+                    };
+                  }),
+              ],
+            });
+          });
+          // debugger
+      return [...data];    
+     }
    
     },
     submitDisabled() {
@@ -194,7 +221,7 @@ export default {
   },
   methods: {
     ...mapActions(["taskDeleted"]),
-    ...mapMutations(["updateTasksHash", "updateContractTasks"]),
+    ...mapMutations(["updateTasksHash", "updateContractTasks", "updateVehicleTasks"]),
     //TODO: change the method name of isAllowed
     // isAllowed(salut, module) {
     //   var programId = this.$route.params.programId;
@@ -257,6 +284,8 @@ export default {
       
         if (this.$route.params.contractId) {
              formData.append("task[project_contract_id]", task.projectContractId);
+         } else if (this.$route.params.vehicleId) {
+             formData.append("task[project_contract_vehicle_id]", task.projectVehicleId);
          } else {
              formData.append("task[facility_project_id]", facilityProjectId);
          }
@@ -266,6 +295,9 @@ export default {
         if (this.$route.params.contractId) {
              method = "PATCH";
              url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
+         } else if (this.$route.params.vehicleId) {
+             method = "PATCH";
+             url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
          } else {
              method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${task.facilityId}/tasks/${task.id}.json`;
@@ -287,6 +319,8 @@ export default {
 
            if (this.$route.params.contractId){
                this.updateContractTasks({ task: responseTask });
+            } else if (this.$route.params.vehicleId){
+               this.updateVehicleTasks({ task: responseTask });
             } else {
               this.updateFacilities(
               responseTask,
@@ -315,6 +349,7 @@ export default {
             this.loading = false;
             this.updateTasksHash({ task: task, action: "delete" });
              this.updateContractTasks({ task: task, action: "delete" });
+             this.updateVehicleTasks({ task: task, action: "delete" });
           });
       });
     },
@@ -334,6 +369,13 @@ export default {
     
       });
     },
+    updateVehicles(updatedTask) {
+      var vehicles = this.currentProject.vehicles;
+      vehicles.forEach((c) => {       
+          c.tasks.push(updatedTask);
+    
+      });
+    },
     updateFacilityTask(task) {
       var facilities = this.getUnfilteredFacilities;
 
@@ -347,6 +389,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_duplicate.json`;
+      } if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}/create_duplicate.json`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
       }
@@ -371,6 +415,10 @@ export default {
 
           if (this.$route.params.contractId){
               this.updateContractTasks({
+               task: responseTask 
+              });
+            } else if (this.$route.params.vehicleId){
+              this.updateVehicleTasks({
                task: responseTask 
               });
             } else {
@@ -424,6 +472,8 @@ export default {
       let url;
       if (this.$route.params.contractId) {
           url =  `${API_BASE_PATH}/contracts/${this.$route.params.contractId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      } else if (this.$route.params.vehicleId) {
+          url =  `${API_BASE_PATH}/vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}/create_bulk_duplicate?`;
       } else {
           url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
       }
@@ -440,13 +490,19 @@ export default {
           url += `contract_ids[]=${id}`;
         } else if (index !== 0 && this.$route.params.contractId)  {
           url += `&contract_ids[]=${id}`;
-        } 
+        } if (index === 0 && this.$route.params.vehicleId) {
+          url += `vehicle_ids[]=${id}`;
+        } else if (index !== 0 && this.$route.params.vehicleId)  {
+          url += `&vehicle_ids[]=${id}`;
+        }
       });
 
       let formData = new FormData();
           formData.append("id", this.task.id);
       if ( this.$route.params.contractId){
          formData.append("contract_ids", ids);
+      } else if ( this.$route.params.vehicleId){
+         formData.append("vehicle_ids", ids);
       } else {
        formData.append("facility_project_ids", ids);
       } 
@@ -470,6 +526,14 @@ export default {
             response.data.tasks.forEach((task) => {
                  console.log(`task: ${task}`)
                 this.updateContractTasks({
+                task: humps.camelizeKeys(task)
+               });
+              });
+           
+         } else if (this.$route.params.vehicleId){
+            response.data.tasks.forEach((task) => {
+                 console.log(`task: ${task}`)
+                this.updateVehicleTasks({
                 task: humps.camelizeKeys(task)
                });
               });
