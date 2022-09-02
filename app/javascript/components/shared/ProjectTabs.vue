@@ -3,7 +3,9 @@
     <span v-if="$route.params.projectId" class="d-flex">
       <div v-for="cTab in cTabs" :key="cTab.key" class="d-flex">
         <div
-          v-if="!cTab.hidden && cTab.key !== 'contract'  && cTab.key !== 'vehicle'"
+          v-if="
+            !cTab.hidden && cTab.key !== 'contract' && cTab.key !== 'vehicle'
+          "
           class="badge mx-0"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
@@ -16,7 +18,9 @@
     <span v-else-if="$route.params.contractId" class="d-flex">
       <div v-for="cTab in cTabs" :key="cTab.key">
         <div
-          v-if="!cTab.hidden && cTab.key !== 'project' && cTab.key !== 'vehicle'"
+          v-if="
+            !cTab.hidden && cTab.key !== 'project' && cTab.key !== 'vehicle'
+          "
           class="badge mx-0"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
@@ -29,7 +33,9 @@
     <span v-else-if="$route.params.vehicleId" class="d-flex">
       <div v-for="cTab in cTabs" :key="cTab.key">
         <div
-          v-if="!cTab.hidden && cTab.key !== 'project' && cTab.key !== 'contract'"
+          v-if="
+            !cTab.hidden && cTab.key !== 'project' && cTab.key !== 'contract'
+          "
           class="badge mx-0"
           :class="{ active: currentCtab == cTab.key, disabled: cTab.disabled }"
           @click="changeCtab(cTab)"
@@ -43,6 +49,8 @@
 
 <script>
 import { mapGetters } from "vuex";
+import AuthorizationService from "../../services/authorization_service";
+
 // When routing from any tab back to Analytics, the url is still going to OVerview
 export default {
   name: "ProjectTabs",
@@ -177,21 +185,12 @@ export default {
   computed: {
     ...mapGetters(["contentLoaded", "currentProject"]),
     privileges() {
-      let programId = this.$route.params.programId;
-      let projectId = this.$route.params.projectId;
-      let contractId = this.$route.params.contractId;
-      let vehicleId = this.$route.params.vehicleId;
-      console.log(this.$contractPrivileges)
-      console.log(this.$contractVehiclePrivileges)
-      if (contractId) {
-        return this.$contractPrivileges[programId][
-          this.$route.params.contractId
-        ];
-      } if (vehicleId) {
-        return this.$contractVehiclePrivileges[programId][
-          this.$route.params.vehicleId
-        ];
-      } else return this.$projectPrivileges[programId][projectId];
+      console.log(
+        "privileges()",
+        AuthorizationService.getProjectTabPrivilege(this.$route),
+        this.$route
+      );
+      return AuthorizationService.getProjectTabPrivilege(this.$route);
     },
     currentCtab() {
       let c = this.cTabs.map((t) => t.key);
