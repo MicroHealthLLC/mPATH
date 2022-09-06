@@ -1848,7 +1848,7 @@ export default {
             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/issues.json`
          }
          if (this.vehicle) {
-            url =  `${API_BASE_PATH}/project_vehicles/${this.$route.params.vehicleId}/issues.json`
+            url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/issues.json`
          }
         let method = "POST";
         let callback = "issue-created";
@@ -1866,7 +1866,7 @@ export default {
         }
         if (this.issue && this.issue.id && this.issue.projectVehicleId) {
           method = "PATCH";
-          url =  `${API_BASE_PATH}/project_vehicles/${this.$route.params.vehicleId}/issues/${this.issue.id}.json`;
+          url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/issues/${this.issue.id}.json`;
         }
        axios({
           method: method,
