@@ -129,8 +129,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_risks &&
-          contract_vehicle_privileges.contract_vehicle_risks.includes(s)
+          contract_vehicle_privileges.contract_risks &&
+          contract_vehicle_privileges.contract_risks.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -305,8 +305,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_lessons &&
-          contract_vehicle_privileges.contract_vehicle_lessons.includes(s)
+          contract_vehicle_privileges.contract_lessons &&
+          contract_vehicle_privileges.contract_lessons.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -347,8 +347,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_notes &&
-          contract_vehicle_privileges.contract_vehicle_notes.includes(s)
+          contract_vehicle_privileges.contract_notes &&
+          contract_vehicle_privileges.contract_notes.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -388,8 +388,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_risks &&
-          contract_vehicle_privileges.contract_vehicle_risks.includes(s)
+          contract_vehicle_privileges.contract_risks &&
+          contract_vehicle_privileges.contract_risks.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -431,8 +431,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_tasks &&
-          contract_vehicle_privileges.contract_vehicle_tasks.includes(s)
+          contract_vehicle_privileges.contract_tasks &&
+          contract_vehicle_privileges.contract_tasks.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -476,8 +476,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_analytics &&
-          contract_vehicle_privileges.contract_vehicle_analytics.includes(s)
+          contract_vehicle_privileges.contract_analytics &&
+          contract_vehicle_privileges.contract_analytics.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(

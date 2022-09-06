@@ -112,15 +112,17 @@ class Api::V1::LessonsController < AuthenticatedController
         status_code = 200
       end
     elsif params[:project_contract_id]
-      allowed_project_contract_ids = current_user.authorized_contract_ids(project_ids: [params[:project_id]])
+      project_contract = ProjectContract.find(params[:project_contract_id])
+      allowed_project_contract_ids = current_user.authorized_contract_ids(project_ids: [project_contract.project_id])
       if allowed_project_contract_ids.include?(params[:project_contract_id].to_i)
         lessons = Lesson.where(project_contract_id: params[:project_contract_id]).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
       end
     elsif params[:project_contract_vehicle_id]
-      allowed_project_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids(project_ids: [params[:project_id]])
-      if allowed_project_contract_ids.include?(params[:project_contract_vehicle_id].to_i)
+      project_contract_vehicle = ProjectContractVehicle.find(params[:project_contract_vehicle_id])
+      allowed_project_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids(project_ids: [project_contract_vehicle.project_id])
+      if allowed_project_contract_vehicle_ids.include?(params[:project_contract_vehicle_id].to_i)
         lessons = Lesson.where(project_contract_vehicle_id: params[:project_contract_vehicle_id]).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
