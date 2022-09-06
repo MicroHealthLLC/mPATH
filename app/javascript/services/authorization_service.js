@@ -77,7 +77,7 @@ const AuthorizationService = {
         contract_vehicle_id
       ];
     } else {
-      let facility_project_id = Vue.prototype.findFacilityProjectId(
+      let facility_project_id = AuthorizationService.findFacilityProjectId(
         program_id,
         project_id
       );
@@ -133,7 +133,7 @@ const AuthorizationService = {
           contract_vehicle_privileges.contract_vehicle_risks.includes(s)
         );
       } else {
-        let facility_project_id = Vue.prototype.findFacilityProjectId(
+        let facility_project_id = AuthorizationService.findFacilityProjectId(
           program_id,
           project_id
         );
