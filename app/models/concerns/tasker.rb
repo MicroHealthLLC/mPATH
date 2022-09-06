@@ -44,6 +44,8 @@ module Tasker
     after_save :handle_related_taskers
     after_validation :setup_facility_project
 
+    URL_FILENAME_LENGTH = 252
+
     def valid_url?(url)
       uri = URI.parse(url)
       (uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS) ) && !uri.host.nil?
