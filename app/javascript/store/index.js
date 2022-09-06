@@ -2259,7 +2259,7 @@ export default new Vuex.Store({
     },
     filteredVehicles: (state, getters) => {
       return _.filter(getters.projectVehicles, (vehicle) => {
-        let valid = vehicle.id || null;
+        let valid = vehicle.projectContractVehicleId || null;
         // valid = valid && facility.facilityGroupStatus == "active";
         if (!valid) return valid;
         if (state.mapFilters.length < 1) return valid;

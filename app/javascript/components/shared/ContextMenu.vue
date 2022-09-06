@@ -192,11 +192,11 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowed("write", 'tasks', vehicle.id) && vehicle.id !== this.task.projectVehicleId
+                    (vehicle) => this.isAllowed("write", 'tasks', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.task.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
-                      id: vehicle.id,
+                      id: vehicle.projectContractVehicleId,
                       label: vehicle.name,
                     };
                   }),
@@ -285,7 +285,7 @@ export default {
         if (this.$route.params.contractId) {
              formData.append("task[project_contract_id]", task.projectContractId);
          } else if (this.$route.params.vehicleId) {
-             formData.append("task[project_contract_vehicle_id]", task.projectVehicleId);
+             formData.append("task[project_contract_vehicle_id]", task.projectContractVehicleId);
          } else {
              formData.append("task[facility_project_id]", facilityProjectId);
          }

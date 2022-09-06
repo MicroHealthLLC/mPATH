@@ -190,11 +190,11 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowedFacility("write", 'issues', vehicle.id) && vehicle.id !== this.issue.projectVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'issues', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.issue.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
-                      id: vehicle.id,
+                      id: vehicle.projectContractVehicleId,
                       label: vehicle.name,
                     };
                   }),
@@ -292,8 +292,8 @@ export default {
               console.log(`issue.id: ${issue.projectContractId}`)
          } else if (this.$route.params.vehicleId) {
              method = "PATCH";
-             url =  `${API_BASE_PATH}/project_contract_vehicles/${issue.projectVehicleId}/issues/${issue.id}.json`;
-              console.log(`issue.id: ${issue.projectVehicleId}`)
+             url =  `${API_BASE_PATH}/project_contract_vehicles/${issue.projectContractVehicleId}/issues/${issue.id}.json`;
+              console.log(`issue.id: ${issue.projectContractVehicleId}`)
          } else {
              method = "PUT";
              url = `${API_BASE_PATH}/programs/${this.currentProject.id}/projects/${issue.facilityId}/issues/${issue.id}.json`;

@@ -741,7 +741,6 @@ export default {
     },
     _isallowed(salut) {
       return this.checkPrivileges("VehicleAnalytics", salut, this.$route)
-
     },
   },
   computed: {

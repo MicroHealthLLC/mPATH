@@ -190,11 +190,11 @@ export default {
               children: [
                   ...vehicleGroups.filter(t => t.facilityGroup.id == group.id)
                   .filter(
-                    (vehicle) => this.isAllowedFacility("write", 'risks', vehicle.id) && vehicle.id !== this.risk.projectVehicleId
+                    (vehicle) => this.isAllowedFacility("write", 'risks', vehicle.projectContractVehicleId) && vehicle.projectContractVehicleId !== this.risk.projectContractVehicleId
                   )
                   .map((vehicle) => {
                     return {
-                      id: vehicle.id,
+                      id: vehicle.projectContractVehicleId,
                       label: vehicle.name,
                     };
                   }),

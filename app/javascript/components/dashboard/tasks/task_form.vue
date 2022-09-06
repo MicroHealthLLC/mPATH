@@ -1892,7 +1892,7 @@ export default {
              }  else if (this.isProgramView && this.task.projectContractId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/task/${response.data.task.id}`
               );
-              } else if (this.isProgramView && this.task.projectVehicleId) { this.$router.push(
+              } else if (this.isProgramView && this.task.projectContractVehicleId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/contract_vehicle/${this.$route.params.vehicleId}/task/${response.data.task.id}`
               );
               } else this.$router.push(`/programs/${this.$route.params.programId}/dataviewer/project/${this.$route.params.projectId}/task/${response.data.task.id}`);

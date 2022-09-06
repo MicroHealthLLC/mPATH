@@ -2728,7 +2728,7 @@ export default {
           method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/risks/${this.risk.id}.json`;
         }
-        if (this.risk && this.risk.id && this.risk.projectVehicleId) {
+        if (this.risk && this.risk.id && this.risk.projectContractVehicleId) {
           method = "PATCH";
           url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/risks/${this.risk.id}.json`;
         }
@@ -2781,7 +2781,7 @@ export default {
              } else if (this.isProgramView && this.risk.projectContractId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/contract/${this.$route.params.contractId}/risk/${response.data.risk.id}`
               );
-              } else if (this.isProgramView && this.risk.projectVehicleId) { this.$router.push(
+              } else if (this.isProgramView && this.risk.projectContractVehicleId) { this.$router.push(
                 `/programs/${this.$route.params.programId}/dataviewer/vehicle/${this.$route.params.vehicleId}/risk/${response.data.risk.id}`
               );
               } else this.$router.push(
