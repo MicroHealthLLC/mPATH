@@ -190,7 +190,7 @@
                     scope.row.project_contract_vehicle_id,
                     'read'
                   )
-                " @click.prevent="goToContract(scope.$index, scope.row)" class="bg-success text-light btn-sm">
+                " @click.prevent="goToVehicle(scope.$index, scope.row)" class="bg-success text-light btn-sm">
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
 

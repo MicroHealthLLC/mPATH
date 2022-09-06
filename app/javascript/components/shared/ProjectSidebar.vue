@@ -316,7 +316,7 @@ export default {
       // console.log(this.$route)
       return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
         method: "isallowedVehicles",
-        contract_vehicle_id: c.id,
+        contract_vehicle_id: c.projectContractVehicleId,
       });
     },
     _isallowedProjects(c, salut) {

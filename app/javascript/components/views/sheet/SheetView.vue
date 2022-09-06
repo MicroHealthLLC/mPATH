@@ -240,7 +240,7 @@ export default {
     }
     if (this.contentLoaded && this.$route.params.vehicleId) {
       this.currentVehicle = this.projectVehicles.find(
-        (c) => c.id == this.$route.params.vehicleId
+        (c) => c.projectContractVehicleId == this.$route.params.vehicleId
 
       );
     }
@@ -293,7 +293,7 @@ export default {
       handler() {
         if (this.$route.params.vehicleId) {
           this.currentVehicle = this.projectVehicles.find(
-            (c) => c.id == this.$route.params.vehicleId
+            (c) => c.projectContractVehicleId == this.$route.params.vehicleId
           );
           // console.log(this.currentContract)
           this.currentVehicleGroup = this.facilityGroups.find(
@@ -318,7 +318,7 @@ export default {
         if (this.$route.params.vehicleId) {
           // console.log(this.currentContract)
           this.currentVehicle = this.projectVehicles.find(
-            (c) => c.id == this.$route.params.vehicleId
+            (c) => c.projectContractVehicleId == this.$route.params.vehicleId
           );
         }
       },

@@ -43,7 +43,7 @@
               <b>SINS or SUBCATEGORIES:</b>
               </div>  
               <div class="col">
-               <h5 v-if="v.contractSubCategory">{{ v.contractSubCategory }}</h5>
+               <h5 v-if="v.contractSubCategory">{{ v.contractSubCategory.name }}</h5>
               </div>  
            </div>  
 
@@ -52,7 +52,7 @@
               <b>CONTRACT AGENCY:</b>
               </div>  
               <div class="col">
-               <h5 v-if="v.contractAgency">{{ v.contractAgency }}</h5>
+               <h5 v-if="v.contractAgency">{{ v.contractAgency.name }}</h5>
               </div>  
              </div>
              
@@ -61,7 +61,7 @@
               <b>VEHICLE TYPE:</b>
               </div>  
               <div class="col">
-               <h5 v-if="v.contractVehicleType">{{ v.contractVehicleType }}</h5>
+               <h5 v-if="v.contractVehicleType">{{ v.contractVehicleType.name }}</h5>
               </div>  
              </div>
            </el-card>  

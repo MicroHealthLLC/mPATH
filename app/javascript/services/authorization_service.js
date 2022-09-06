@@ -170,8 +170,8 @@ const AuthorizationService = {
           ];
         return (
           contract_vehicle_privileges &&
-          contract_vehicle_privileges.contract_vehicle_issues &&
-          contract_vehicle_privileges.contract_vehicle_issues.includes(s)
+          contract_vehicle_privileges.contract_issues &&
+          contract_vehicle_privileges.contract_issues.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
