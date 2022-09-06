@@ -1,19 +1,34 @@
 <template>
   <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
     <div class="stick">
-      <div @click="deselectProject" id="program_name" class="programNameDiv smallCaps pl-2 pr-3">
-        {{  programName  }}
+      <div
+        @click="deselectProject"
+        id="program_name"
+        class="programNameDiv smallCaps pl-2 pr-3"
+      >
+        {{ programName }}
       </div>
     </div>
-    <h4 class="mt-4 text-info text-center" v-if="title">{{  title  }}</h4>
+    <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 pb-4 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
         <div
-          v-for="(group, index) in sortedGroups.filter(t => t.contracts.length > 0 || t.facilities.length > 0 || t.contractVehicles.length > 0)"
-          :key="index + 'a'" class="my-2 px-2 container">
-          <div class="d-flex row expandable" @click="expandFacilityGroup(group)"
-            :class="{ active: group.id == currentFacilityGroup.id }" data-cy="facility_groups" :key="index">
-
+          v-for="(group, index) in sortedGroups.filter(
+            (t) =>
+              t.contracts.length > 0 ||
+              t.facilities.length > 0 ||
+              t.contractVehicles.length > 0
+          )"
+          :key="index + 'a'"
+          class="my-2 px-2 container"
+        >
+          <div
+            class="d-flex row expandable"
+            @click="expandFacilityGroup(group)"
+            :class="{ active: group.id == currentFacilityGroup.id }"
+            data-cy="facility_groups"
+            :key="index"
+          >
             <div class="col-8 py-0 pr-0">
               <span class="d-flex">
                 <span v-show="getExpandedGroup != group.id">
@@ -22,66 +37,100 @@
                 <span v-show="getExpandedGroup == group.id">
                   <i class="fa fa-angle-down font-md mr-2 clickable"></i>
                 </span>
-                <p class="clickable groupName expandText">{{  group.name  }}</p>
+                <p class="clickable groupName expandText">{{ group.name }}</p>
               </span>
             </div>
             <!-- v-if="_isallowedProjectCounts(group, 'read')" -->
             <div class="col py-0 text-right">
-              <span class="badge badge-secondary badge-pill pill" v-if="isContractsView || isVehiclesView">
+              <span
+                class="badge badge-secondary badge-pill pill"
+                v-if="isContractsView || isVehiclesView"
+              >
                 <!-- <span v-if="_isallowedProjectCounts(facilityGroupFacilities(group).projects.a, 'read')">  -->
                 {{
-                 facilityGroupFacilities(group).projects.a.length +
-                 facilityGroupFacilities(group).contracts.b.length +
-                 facilityGroupFacilities(group).vehicles.c.length
+                  facilityGroupFacilities(group).projects.a.length +
+                    facilityGroupFacilities(group).contracts.b.length +
+                    facilityGroupFacilities(group).vehicles.c.length
                 }}
               </span>
 
               <!-- </span>  -->
               <span v-else class="badge badge-secondary badge-pill pill">
-                {{  facilityGroupFacilities(group).projects.a.length  }}
+                {{ facilityGroupFacilities(group).projects.a.length }}
               </span>
             </div>
           </div>
           <div v-show="getExpandedGroup == group.id" class="ml-2">
-            <div v-for="facility in facilityGroupFacilities(group).projects.a" :key="facility.id">
-              <router-link :to="
-                `/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`
-              ">
-                <div class="d-flex align-items-center expandable fac-name" v-if="_isallowedProjects(facility, 'read')"
-                  @click="showFacility(facility)" :class="{ active: facility.id == $route.params.projectId }">
+            <div
+              v-for="facility in facilityGroupFacilities(group).projects.a"
+              :key="facility.id"
+            >
+              <router-link
+                :to="
+                  `/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`
+                "
+              >
+                <div
+                  class="d-flex align-items-center expandable fac-name"
+                  v-if="_isallowedProjects(facility, 'read')"
+                  @click="showFacility(facility)"
+                  :class="{ active: facility.id == $route.params.projectId }"
+                >
                   <p class="facility-header" data-cy="facilities">
-                    <i class="fal fa-clipboard-list mr-1 mh-green-text"></i> {{  facility.facilityName  }}
+                    <i class="fal fa-clipboard-list mr-1 mh-green-text"></i>
+                    {{ facility.facilityName }}
                   </p>
                 </div>
               </router-link>
             </div>
-            <div v-for="c in projectContracts.filter(t => t.facilityGroup && t.facilityGroup.id == group.id)"
-              v-show="isContractsView" :key="c.projectContractId + 'a'">
-              <router-link :to="
-                `/programs/${$route.params.programId}/${tab}/contracts/${c.projectContractId}${pathTab}`
-              ">
-                <div class="d-flex align-items-center expandable fac-name" @click="showFacility(c)"
-                  :class="{ active: c.projectContractId == $route.params.contractId }">
+            <div
+              v-for="c in projectContracts.filter(
+                (t) => t.facilityGroup && t.facilityGroup.id == group.id
+              )"
+              v-show="isContractsView"
+              :key="c.projectContractId + 'a'"
+            >
+              <router-link
+                :to="
+                  `/programs/${$route.params.programId}/${tab}/contracts/${c.projectContractId}${pathTab}`
+                "
+              >
+                <div
+                  class="d-flex align-items-center expandable fac-name"
+                  @click="showFacility(c)"
+                  :class="{
+                    active: c.projectContractId == $route.params.contractId,
+                  }"
+                >
                   <p class="facility-header" data-cy="facilities">
-                    <i class="far fa-file-contract mr-1 mh-orange-text"></i> {{  c.name  }}
+                    <i class="far fa-file-contract mr-1 mh-orange-text"></i>
+                    {{ c.name }}
                   </p>
                 </div>
               </router-link>
-
             </div>
-            <div v-for="v in projectVehicles.filter(t => t.facilityGroup && t.facilityGroup.id == group.id)"
-              v-show="isVehiclesView" :key="v.id + 'a'">
-              <router-link :to="
-                `/programs/${$route.params.programId}/${tab}/vehicles/${v.id}${pathTab}`
-              ">
-                <div class="d-flex align-items-center expandable fac-name" @click="showFacility(v)"
-                  :class="{ active: v.id == $route.params.vehicleId }">
-                  <p class="facility-header" data-cy="facilities">
-                    <i class="far fa-car mr-1 text-info"></i> {{  v.name  }}
+            <div
+              v-for="v in projectVehicles.filter(
+                (t) => t.facilityGroup && t.facilityGroup.id == group.id
+              )"
+              v-show="isVehiclesView"
+              :key="v.projectContractVehicleId + 'a'"
+            >
+              <router-link
+                :to="
+                  `/programs/${$route.params.programId}/${tab}/vehicles/${v.projectContractVehicleId}${pathTab}`
+                "
+              >
+                <div
+                  class="d-flex align-items-center expandable fac-name"
+                  @click="showFacility(v)"
+                  :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"
+                >
+                  <p class="facility-header1" data-cy="facilities">
+                    <i class="far fa-car mr-1 text-info"></i> {{ v.name }}
                   </p>
                 </div>
               </router-link>
-
             </div>
           </div>
         </div>
@@ -93,9 +142,13 @@
       </div>
     </div>
     <!-- <router-link  >  -->
-    <button v-if="_isallowedProgramSettings('read')" class="btn btn-sm btn-light program-settings-btn"
-      @click.prevent="toggleAdminView" style="cursor: pointer">
-      <h6> <i class="far fa-cog"></i> Program Settings </h6>
+    <button
+      v-if="_isallowedProgramSettings('read')"
+      class="btn btn-sm btn-light program-settings-btn"
+      @click.prevent="toggleAdminView"
+      style="cursor: pointer"
+    >
+      <h6><i class="far fa-cog"></i> Program Settings</h6>
     </button>
     <!-- </router-link> -->
   </div>
@@ -110,43 +163,57 @@ export default {
   components: {
     Loader,
   },
-  props: ["title", "currentFacility", "currentFacilityGroup", "currentContract", "currentContractGroup", , "currentVehicle", "currentVehicleGroup"],
+  props: [
+    "title",
+    "currentFacility",
+    "currentFacilityGroup",
+    "currentContract",
+    "currentContractGroup",
+    ,
+    "currentVehicle",
+    "currentVehicleGroup",
+  ],
   data() {
     return {
-      value: '',
+      value: "",
       totalGroupContract: 0,
       totalGroupVehicle: 0,
       filteredGroupSize: null,
-      projectCount: 0
-
-    }
+      projectCount: 0,
+    };
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
-      'getShowAdminBtn',
+      "getShowAdminBtn",
       "currentProject",
       "getExpandedGroup",
       "facilities",
-      'contracts',
+      "contracts",
       "vehicles",
       "projectVehicles",
-      'projectContracts',
+      "projectContracts",
       "facilityGroups",
-      'filteredContracts',
+      "filteredContracts",
       "filteredVehicles",
       "filteredFacilities",
-      'getProjectGroupFilter',
+      "getProjectGroupFilter",
       "filteredFacilityGroups",
       "facilityGroupFacilities",
       "facilityGroupContracts",
       "facilityGroupVehicles",
     ]),
     isContractsView() {
-      return this.$route.name.includes("Sheet") || this.$route.name.includes("Contract")
+      return (
+        this.$route.name.includes("Sheet") ||
+        this.$route.name.includes("Contract")
+      );
     },
     isVehiclesView() {
-      return this.$route.name.includes("Sheet") || this.$route.name.includes("Vehicle")
+      return (
+        this.$route.name.includes("Sheet") ||
+        this.$route.name.includes("Vehicle")
+      );
     },
     programName() {
       if (
@@ -167,9 +234,7 @@ export default {
     },
     sortedGroups() {
       // Sort groups by name
-      return this.facilityGroups.sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
+      return this.facilityGroups.sort((a, b) => a.name.localeCompare(b.name));
     },
     tab() {
       let url = this.$route.path;
@@ -187,83 +252,110 @@ export default {
       let url = this.$route.path;
       if (url.includes("tasks")) {
         return "/tasks";
-      } if (url.includes("issues")) {
+      }
+      if (url.includes("issues")) {
         return "/issues";
-      } if (url.includes("analytics")) {
+      }
+      if (url.includes("analytics")) {
         return "/analytics";
-      } if (this.$route.name === "ContractRisks") {
+      }
+      if (this.$route.name === "ContractRisks") {
         return "/risks";
-      } if (this.$route.name === "VehicleRisks") {
+      }
+      if (this.$route.name === "VehicleRisks") {
         return "/risks";
-      } if (this.$route.name === "SheetRisks") {
+      }
+      if (this.$route.name === "SheetRisks") {
         return "/risks";
-      } if (url.includes("lessons")) {
+      }
+      if (url.includes("lessons")) {
         return "/lessons";
-      } if (url.includes("notes")) {
+      }
+      if (url.includes("notes")) {
         return "/notes";
-      } if (url.includes("kanban")) {
+      }
+      if (url.includes("kanban")) {
         return "/tasks";
-      } if (url.includes("calendar")) {
+      }
+      if (url.includes("calendar")) {
         return "/tasks";
-      } else return "/"
+      } else return "/";
     },
   },
   methods: {
-    ...mapMutations(['setProjectGroupFilter', 'setShowAdminBtn', 'SET_EXPANDED_GROUP']),
-    ...mapActions(["createContract", "updateContract", "createVehicle", "updateVehicle"]),
+    ...mapMutations([
+      "setProjectGroupFilter",
+      "setShowAdminBtn",
+      "SET_EXPANDED_GROUP",
+    ]),
+    ...mapActions([
+      "createContract",
+      "updateContract",
+      "createVehicle",
+      "updateVehicle",
+    ]),
     expandFacilityGroup(group) {
       if (this.currentContract && this.currentFacility == {}) {
-        group = this.currentContract.facilityGroup.id
+        group = this.currentContract.facilityGroup.id;
       } else if (this.currentVehicle && this.currentFacility == {}) {
-        group = this.currentVehicle.facilityGroup.id
+        group = this.currentVehicle.facilityGroup.id;
       }
       this.$emit("on-expand-facility-group", group);
-
     },
     log(e) {
-      console.log(e)
+      console.log(e);
     },
     _isallowedContracts(c, salut) {
       // console.log(this.$route)
-      return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedContracts", contract_id: c.projectContractId })
+      return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
+        method: "isallowedContracts",
+        contract_id: c.projectContractId,
+      });
     },
     _isallowedVehicles(c, salut) {
       // console.log(this.$route)
-      return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedVehicles", contract_vehicle_id: c.id })
+      return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
+        method: "isallowedVehicles",
+        contract_vehicle_id: c.id,
+      });
     },
     _isallowedProjects(c, salut) {
-      return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedProject", facility_project_id: c.facilityProjectId })
+      return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
+        method: "isallowedProject",
+        facility_project_id: c.facilityProjectId,
+      });
     },
     // _isallowedProjectCounts(c, salut) {
     //   // console.log(c)
-    //   if (c && c.length > 0) {       
+    //   if (c && c.length > 0) {
     //    return this.checkPrivileges("ProjectSidebar", salut, this.$route, {method: "isallowedProject", facility_project_id: c.map(t => t.facilityProjectId)})
-    //   }     
+    //   }
     // },
     _isallowedProgramSettings(salut) {
-      return this.checkPrivileges("ProjectSidebar", salut, this.$route, { method: "isallowedProgramSettings" })
+      return this.checkPrivileges("ProjectSidebar", salut, this.$route, {
+        method: "isallowedProgramSettings",
+      });
     },
     toggleAdminView() {
       // window.location.pathname = `/programs/${this.$route.params.programId}/settings`
       // this.setShowAdminBtn(!this.getShowAdminBtn);
       this.$router.push({
-        name: "SettingsView"
+        name: "SettingsView",
       });
-
     },
     handleClose(done) {
-      this.$confirm('Are you sure to close this dialog?')
-        .then(_ => {
+      this.$confirm("Are you sure to close this dialog?")
+        .then((_) => {
           done();
         })
-        .catch(_ => { });
+        .catch((_) => {});
     },
     showFacility(c) {
       this.$emit("on-expand-facility", c);
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
-        this.SET_EXPANDED_GROUP("")
+        this.SET_EXPANDED_GROUP("");
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );
@@ -275,7 +367,9 @@ export default {
     if (
       this.filteredFacilityGroups.length === 1 &&
       this.contentLoaded &&
-      (!this.$route.params.projectId || !this.$route.params.contractId || !this.$route.params.vehicleId)
+      (!this.$route.params.projectId ||
+        !this.$route.params.contractId ||
+        !this.$route.params.vehicleId)
     ) {
       this.expandFacilityGroup(this.filteredFacilityGroups[0]);
     }
@@ -283,29 +377,45 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        if (this.currentFacility && !this.$route.params.contractId && !this.$route.params.vehicleId && this.currentFacilityGroup) {
-          this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id)
+        if (
+          this.currentFacility &&
+          !this.$route.params.contractId &&
+          !this.$route.params.vehicleId &&
+          this.currentFacilityGroup
+        ) {
+          this.SET_EXPANDED_GROUP(this.currentFacilityGroup.id);
         }
-        if (this.currentContract && !this.$route.params.projectId && !this.$route.params.vehicleId && this.currentContractGroup) {
+        if (
+          this.currentContract &&
+          !this.$route.params.projectId &&
+          !this.$route.params.vehicleId &&
+          this.currentContractGroup
+        ) {
           //console.log(this.currentContract)
           //console.log(this.currentContractGroup)
-          this.SET_EXPANDED_GROUP(this.currentContractGroup.id)
+          this.SET_EXPANDED_GROUP(this.currentContractGroup.id);
         }
-        if (this.currentVehicle && !this.$route.params.projectId && !this.$route.params.contractId && this.currentVehicleGroup) {
+        if (
+          this.currentVehicle &&
+          !this.$route.params.projectId &&
+          !this.$route.params.contractId &&
+          this.currentVehicleGroup
+        ) {
           //console.log(this.currentVehicle)
           //console.log(this.currentVehicleGroup)
-          this.SET_EXPANDED_GROUP(this.currentVehicleGroup.id)
+          this.SET_EXPANDED_GROUP(this.currentVehicleGroup.id);
         }
         // Expand the project tree if there is only one project group on refresh
         if (
           this.filteredFacilityGroups.length === 1 &&
-          (!this.$route.params.projectId || !this.$route.params.contractId || !this.$route.params.vehicleId)
+          (!this.$route.params.projectId ||
+            !this.$route.params.contractId ||
+            !this.$route.params.vehicleId)
         ) {
           this.expandFacilityGroup(this.filteredFacilityGroups[0]);
         }
       },
     },
-
   },
 };
 </script>
@@ -320,19 +430,19 @@ export default {
 
 /deep/.el-dialog__title {
   padding: 5px 10px;
-  background-color: #DD9036;
+  background-color: #dd9036;
   color: white;
   font-size: 16px;
   font-weight: lighter;
-  border-radius: .25rem;
-
+  border-radius: 0.25rem;
 }
 
 // /deep/.el-dialog__body {
 //     padding: 10px 20px;
 //  }
 .saveBtns {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
 }
 
 #facility_sidebar {
@@ -355,7 +465,7 @@ export default {
     z-index: 1;
     color: #fff;
     max-width: 15%;
-    background-color: #DD9036;
+    background-color: #dd9036;
   }
 
   .stick:hover {
@@ -427,7 +537,6 @@ export default {
 
     &.active,
     &:hover {
-
       h5,
       h6 {
         font-weight: 900 !important;
@@ -455,7 +564,6 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     // white-space: nowrap;
-
   }
 }
 </style>

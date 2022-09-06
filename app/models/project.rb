@@ -338,7 +338,7 @@ class Project < SortableRecord
       next if !c
 
       c_hash = c.to_json
-      c_hash.merge!({facility_group: pc.facility_group.as_json})
+      c_hash.merge!({project_contract_vehicle_id: pc.id,facility_group: pc.facility_group.as_json})
 
       c_hash[:tasks] = []
       if user.has_contract_permission?(resource: 'tasks', project_contract_vehicle: pc)
