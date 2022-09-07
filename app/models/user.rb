@@ -792,6 +792,7 @@ class User < ApplicationRecord
       role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES).distinct
 
     elsif resource_type == 'contract_vehicle'
+      # We will be using Contract privileges to assign for contract vehicle. i.e. we will use same privileges values for contract vehicle as well.
       role_users = user.role_users.joins(:role_privileges).where("role_users.project_id in (?) and role_privileges.role_type in (?) and role_users.project_contract_vehicle_id is not null", program_ids, RolePrivilege::CONTRACT_PRIVILEGS_ROLE_TYPES).distinct
     end
 

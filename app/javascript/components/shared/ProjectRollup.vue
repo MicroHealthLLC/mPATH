@@ -8,22 +8,28 @@
         </span> 
         <br>    
         <el-button-group :class="{'d-none': !_isallowedContracts('read') || projectContracts.length <= 0 }">
-          <el-button :class="[ !getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
-          <!-- <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'inactive' : 'mh-green-text']"></i> -->
-          PROJECTS
+          <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="pr-2">  
+          <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats ? 'mh-green-text' : 'inactive']"></i>PROJECTS
           <span 
             v-if="currentProject && currentProject.facilities"
             class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
             >{{ currentProject.facilities.length }}
             </span>
         </el-button>
-        <el-button :class="[ getShowProjectStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2" v-show="isSheetsView"> 
-          <!-- <i class="far fa-file-contract mr-1" :class="[ getShowProjectStats == false ? 'inactive' : 'mh-orange-text']"></i> -->
-          CONTRACTS 
+        <el-button :class="[ getShowContractStats ? 'lightBtn' : 'inactive']" @click.prevent="showContractStats" class="pr-2" v-show="isSheetsView"> 
+          <i class="far fa-file-contract mr-1" :class="[ getShowContractStats ? 'mh-orange-text' : 'inactive']"></i>CONTRACTS 
             <span 
               v-if="projectContracts && projectContracts.length > 0"
               class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
               >{{ projectContracts.length }}
+              </span>
+           </el-button>
+           <el-button :class="[ getShowVehicleStats ? 'lightBtn' : 'inactive']" @click.prevent="showVehicleStats" class="pr-2" v-show="isSheetsView"> 
+          <i class="far fa-car mr-1" :class="[ getShowVehicleStats ? 'text-info' : 'inactive']"></i>VEHICLES
+            <span 
+              v-if="projectVehicles && projectVehicles.length > 0"
+              class="ml-1 badge badge-secondary badge-pill pill pill-toggle"
+              >{{ projectVehicles.length }}
               </span>
            </el-button>
        </el-button-group>
@@ -849,7 +855,7 @@
         v-if="from !== 'manager_view'"
         data-cy="facility_group_summary"
       >
-         <el-card class="box-card" v-if="getShowProjectStats">
+         <el-card class="box-card" v-if="getShowContractStats">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="far fa-file-contract mr-1 mh-orange-text"></i>
@@ -949,7 +955,106 @@
             <loader type="code"></loader>
           </div>
         </el-card>
-         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="!getShowProjectStats">
+        <el-card class="box-card" v-if="getShowVehicleStats">
+          <div class="row">
+            <div class="col">
+              <h5 class="d-inline"><i class="far fa-car mr-1 text-info"></i>
+               VEHICLES
+              </h5>
+               <h4 v-if="contentLoaded" class="d-inline">
+                    <span class="badge bg-secondary text-light badge-pill float-right">
+                     {{ programResourceObj.length }}
+                    </span>
+                  </h4>
+              <hr />
+            </div>
+          </div>
+          <div v-if="contentLoaded">
+          <div
+           style="height:215px; overflow-y:auto; overflow-x:hidden;"
+           class="pb-2"
+          >
+         <div class="row py-1">
+            <div class="col-5">
+               <small class="underline">Group</small>               
+              </div>
+              <div class="col-1 pl-0">              
+                 <small class="underline">Vehicles</small>
+              </div>
+              <div class="col-5">
+                <small class="underline">Total Progress</small>
+              </div>
+            </div>
+          <div
+            v-for="(group, index) in facilityGroups.filter(t => t.contractVehicles.length > 0)"
+            :key="index">
+            <div class="row py-1">
+              <div class="col-5 mb-2">
+                <span :class="{ 'font-sm': isMapView }">{{
+                 group.name
+                }}</span>
+               
+              </div>
+              <div class="col-1 pl-0">              
+                <span class="badge badge-secondary badge-pill">{{
+                  facilityGroupFacilities(group).vehicles.c.length
+                }}</span>
+              </div>
+              <div class="col-5">
+                <span
+                  class="w-100 mt-1 ml-2 progress pg-content"
+                  :class="{
+                    'font-sm': isMapView,
+                    'progress-0': facilityGroupProgress(group) <= 0,
+                  }"
+                >
+                  <div
+                    class="progress-bar bg-info"
+                    :style="`width: ${facilityGroupProgress(group)}%`"
+                  >
+                    {{ facilityGroupProgress(group) }} %
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+   
+           </div>
+            <!-- <div class="pb-2">
+               <div class="row mb-1">
+                   <div class="col-10 mb-0 py-1 card-title">
+                     Project Group Name
+                   </div>
+                    <div class="col-2 mb-0 pl-3 py-1 card-title">   
+                      #
+                    </div>      
+                 </div>
+              <div class="row my-0" v-for="item, i in getContractGroupOptions" :key="i">
+                <div class="col-10 py-1">
+               
+                  <span :class="{ 'font-sm': isMapView }">
+                  {{ item.name }}</span
+                  >                
+                </div>
+                <div class="col-2 py-1">                
+                  <span v-if="item.id == 1" class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.prime
+                  }}</span>
+                    <span v-if="item.id == 2"   class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.nonPrime
+                  }}</span>
+                    <span v-if="item.id == 3"  class="badge badge-secondary badge-pill font-sm">{{
+                    contractCategoryCount.primeV_IDIQs
+                  }}</span>
+                </div>
+               </div>
+             </div> -->
+          </div>
+          <div v-if="!contentLoaded" class="my-4">
+            <loader type="code"></loader>
+          </div>
+        </el-card>
+         <el-card class="box-card" data-cy="projet_group_summary" style="max-height: auto" v-if="getShowProjectStats">
           <div class="row">
             <div class="col">
               <h5 class="d-inline"><i class="fal fa-clipboard-list mh-green-text mr-1"></i>
@@ -1120,6 +1225,7 @@
        </div>   
     </div>    
     </el-tab-pane>
+
     <el-tab-pane class="p-3" v-if="currentProject && currentProject.facilities.length <= 0 && !this.getShowProjectStats"> 
       <template slot="label">
        <i class="fal fa-table mr-1"></i>
@@ -1145,8 +1251,9 @@
     </div>
 
      <div class="row">
-    <ProgramContractsSheet v-if="this.getShowProjectStats" />
-    <ProgramProjectsSheet v-else />      
+    <ProgramContractsSheet v-if="this.getShowContractStats" />
+    <ProgramProjectsSheet v-if="this.getShowProjectStats" />
+    <ProgramVehiclesSheet v-if="this.getShowVehicleStats" />      
     </div>
     </el-tab-pane>
   
@@ -1158,6 +1265,7 @@
 import Loader from "./loader";
 import ProgramContractsSheet from "../views/program/ProgramContractsSheet.vue"
 import ProgramProjectsSheet from "../views/program/ProgramProjectsSheet.vue"
+import ProgramVehiclesSheet from "../views/program/ProgramVehiclesSheet.vue"
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "ProjectRollup",
@@ -1165,7 +1273,8 @@ export default {
   components: {
     Loader,
     ProgramContractsSheet,
-    ProgramProjectsSheet 
+    ProgramProjectsSheet,
+    ProgramVehiclesSheet
   },
   data() {
     return {
@@ -1178,6 +1287,8 @@ export default {
     ...mapGetters([
       "contentLoaded",    
       "getShowProjectStats",
+      "getShowContractStats",
+      "getShowVehicleStats",
       "getContractGroupOptions",
       "currentProject",
       "lessonsLoaded",
@@ -1185,6 +1296,7 @@ export default {
       "projectLessons",
       "programLessons",
       "projectContracts",
+      "projectVehicles",
       "programLessonsCount",
       'projects',
       "facilities",
@@ -1256,15 +1368,17 @@ export default {
     //  this.setAdvancedFilter({id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'}) 
     this.setHideOverdue(!this.getHideOverdue)    
     },
-     projectObj() {
+    projectObj(){
         return this.currentProject.facilities
-      },
+    },
     programResourceObj(){
-      if (this.currentProject && this.currentProject.facilities && !this.getShowProjectStats ){
+      if (this.currentProject && this.currentProject.facilities && this.getShowProjectStats ){
         return this.currentProject.facilities
-      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowProjectStats){
-        console.log(this.projectContracts)
+      } else if (this.projectContracts && this.projectContracts.length > 0 && this.getShowContractStats){
         return this.projectContracts
+      } else if (this.projectVehicles && this.projectVehicles.length > 0 && this.getShowVehicleStats){
+        //console.log(this.facilityGroups)
+        return this.projectVehicles
       }
     },
    C_taskTypeFilter: {
@@ -1334,7 +1448,7 @@ export default {
       if(!this.getShowProjectStats){
         programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
       } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
-      console.log(this.programLessons)
+      //console.log(this.programLessons)
       // let programLessonsObj = this.programLessons;
 
       let typeIds = _.map(this.taskTypeFilter, "id");
@@ -1346,6 +1460,44 @@ export default {
         return valid;
       })
     },
+    // With adding vehicles?
+    /* filteredLessons() {
+      let programLessonsObj = [];
+      if(this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      //console.log(this.programLessons)
+      // let programLessonsObj = this.programLessons;
+
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(programLessonsObj, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    },
+    // With adding vehicles?
+    /* filteredLessons() {
+      let programLessonsObj = [];
+      if(this.getShowProjectStats){
+        programLessonsObj = this.programLessons.filter(l => l.facility_project_id)
+      } else if (this.getShowContractStats) {
+        programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
+      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_vehicle_id)
+      //console.log(this.programLessons)
+      // let programLessonsObj = this.programLessons;
+
+      let typeIds = _.map(this.taskTypeFilter, "id");
+      return _.filter(programLessonsObj, (resource) => {
+        let valid = true;
+        valid = valid && this.filterDataForAdvancedFilter([resource], "facilityRollupLessons");
+        if (typeIds.length > 0)
+          valid = valid && typeIds.includes(resource.task_type_id);
+        return valid;
+      })
+    }, */
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, "id");
       let stageIds = _.map(this.taskStageFilter, "id");
@@ -1924,6 +2076,8 @@ export default {
         'setCurrProgramTab',
         'setHideInprogress',
         'setShowProjectStats',
+        'setShowContractStats',
+        'setShowVehicleStats',
         'setHidePlanned',
         'setHideOverdue',
         'setHideOngoing',
@@ -1931,7 +2085,7 @@ export default {
         'setHideDraft',
       ]),
     log(e){
-      // console.log(e)
+      console.log(e)
     },
     _isallowedContracts(salut) {
       return this.checkPrivileges("ProjectRollup", salut, this.$route, {method: "isallowedContracts"})
@@ -1940,16 +2094,25 @@ export default {
       this.showLess = "Show Less";
     },
     showContractStats(){
-     if(this.getShowProjectStats == false){
-        this.setShowProjectStats(!this.getShowProjectStats)
+     if(this.getShowContractStats == false){
+        this.setShowContractStats(true)
+        this.setShowProjectStats(false)
+        this.setShowVehicleStats(false)
      } else return
      
     },
     showProjectStats(){
-      if(this.getShowProjectStats == true){
-        // console.log(this.getShowProjectStats)
-        this.setShowProjectStats(!this.getShowProjectStats)
-          // console.log(this.getShowProjectStats)
+      if(this.getShowProjectStats == false){
+        this.setShowProjectStats(true)
+        this.setShowContractStats(false)
+        this.setShowVehicleStats(false)
+      } else return
+    },
+    showVehicleStats() {
+      if(this.getShowVehicleStats == false){
+        this.setShowVehicleStats(true)
+        this.setShowProjectStats(false)
+        this.setShowContractStats(false)
       } else return
     },
     handleClick(tab, event) {
