@@ -197,6 +197,17 @@ const contractStore = {
         if (cVehicleData.cafFees){
           formData.append("contract_vehicle[caf_fees]", cVehicleData.cafFees);
         }
+        if (cVehicleData.subprime_name){
+          formData.append("contract_vehicle[subprime_name]", cVehicleData.subprime_name);
+        }
+        // prime
+        if (cVehicleData.prime_name){
+          formData.append("contract_vehicle[prime_name]", cVehicleData.prime_name);
+        }
+        // contract_name
+        if (cVehicleData.contract_name){
+          formData.append("contract_vehicle[contract_name]", cVehicleData.contract_name);
+        }
         formData.append("contract_vehicle[base_period_start]", cVehicleData.bp_startDate);
         formData.append("contract_vehicle[base_period_end]", cVehicleData.bp_endDate);
         formData.append("contract_vehicle[option_period_start]", cVehicleData.op_startDate);
