@@ -5,6 +5,7 @@
         title="Add Note"
         :facility="DV_facility"
         :contract="contract"
+        :vehicle="vehicle"
         @close-note-input="newNote=false"
         @note-created="noteCreated"
         class="notes_form_modal"
@@ -58,8 +59,10 @@
             :key="note.id" 
             :facility="DV_facility"
             :contract="contract"
+            :vehicle="vehicle"
             :note="note"
             :contractNote="note"
+            :vehicleNote="note"
             id="notesHover"
             :from="from"
             @note-updated="noteUpdated"
@@ -82,6 +85,7 @@
   import {mapMutations, mapGetters, mapActions} from "vuex"
   import NotesForm from './notes_form'
   import ContractNotesForm from './contract_notes_form'
+  import VehicleNotesForm from './vehicle_notes_form'
   import NotesSheets from './notes_sheets'
   import {SweetModal} from 'sweet-modal-vue'
 
@@ -89,11 +93,12 @@
     name: 'NotesSheetsIndex',
     components: {
       NotesForm,
-      ContractNotesForm, 
+      ContractNotesForm,
+      VehicleNotesForm, 
       NotesSheets,
       SweetModal
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         loading: true,
@@ -111,7 +116,8 @@
         'updateFacilityHash'
       ]),
        ...mapActions([
-        'fetchContractNotes',       
+        'fetchContractNotes',
+        'fetchVehicleNotes'       
       ]),
       _isallowed(salut) {
         return this.checkPrivileges("notes_sheets_index", salut, this.$route)
@@ -134,6 +140,10 @@
         if(this.$route.params.contractId){
         this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/notes/new`
+        );
+        } else if(this.$route.params.vehicleId){
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/notes/new`
         );
         } else
         this.$router.push(
@@ -162,20 +172,25 @@
     mounted() {
     // GET request action to retrieve all lessons for project
     //  console.log(this.filteredLessons.filtered.lessons)
-    if (this.$route.params.contractId && !this.facility){
+    if (this.$route.params.contractId && !this.vehicle && !this.facility){
         this.fetchContractNotes(this.$route.params);
+     } else if (this.$route.params.vehicleId && !this.contract &&!this.facility){
+        this.fetchVehicleNotes(this.$route.params);
      }   
     },
     computed: {
       ...mapGetters([
         'myActionsFilter',
-        'contractNotes'
+        'contractNotes',
+        'vehicleNotes'
       ]),
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
         let notes = this.DV_facility.notes;
         if (this.$route.params.contractId){
           notes = this.contractNotes
+        } else if (this.$route.params.vehicleId){
+          notes = this.vehicleNotes
         }    
          return _.filter(notes, n => {
           //  console.log(notes)

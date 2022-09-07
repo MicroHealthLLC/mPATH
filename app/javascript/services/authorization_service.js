@@ -56,6 +56,36 @@ const AuthorizationService = {
       })
       .finally(() => {});
   },
+  getProjectTabPrivilege: (route) => {
+
+    let program_id = route.params.programId;
+    let contract_id = route.params.contractId;
+    let project_id = route.params.projectId;
+    let contract_vehicle_id = route.params.vehicleId;
+    console.log(
+      "getProjectTabPrivilege",
+      program_id,
+      contract_id,
+      project_id,
+      contract_vehicle_id,
+      AuthorizationService.contractVehiclePrivilegesRoles
+    );
+    if (contract_id) {
+      return AuthorizationService.contractPrivilegesRoles[contract_id];
+    } else if (contract_vehicle_id) {
+      return AuthorizationService.contractVehiclePrivilegesRoles[
+        contract_vehicle_id
+      ];
+    } else {
+      let facility_project_id = AuthorizationService.findFacilityProjectId(
+        program_id,
+        project_id
+      );
+      return AuthorizationService.projectPrivilegesRoles[
+        facility_project_id
+      ];
+    }
+  },
   checkPortfolioContractPrivileges: (page, salut, route, extraData) => {
     let permissionHash = { write: "W", read: "R", delete: "D" };
     let s = permissionHash[salut];
@@ -65,14 +95,25 @@ const AuthorizationService = {
       AuthorizationService.privilege.contract_data.includes(s)
     );
   },
+  checkPortfolioVehiclePrivileges: (page, salut, route, extraData) => {
+    let permissionHash = { write: "W", read: "R", delete: "D" };
+    let s = permissionHash[salut];
+    return (
+      AuthorizationService.privilege &&
+      AuthorizationService.privilege.contract_vehicle_data &&
+      AuthorizationService.privilege.contract_vehicle_data.includes(s)
+    );
+  },
   checkPrivileges: (page, salut, route, extraData) => {
     let permissionHash = { write: "W", read: "R", delete: "D" };
     let s = permissionHash[salut];
     let program_id = route.params.programId;
     let contract_id = route.params.contractId;
     let project_id = route.params.projectId;
+    let contract_vehicle_id = route.params.vehicleId;
 
-    if (["portfolio_risk_form"].includes(page)) {
+    if (["project_tabs"].includes(page)) {
+    } else if (["portfolio_risk_form"].includes(page)) {
       if (contract_id) {
         let contract_privileges =
           AuthorizationService.contractPrivilegesRoles[contract_id];
@@ -81,8 +122,18 @@ const AuthorizationService = {
           contract_privileges.contract_risks &&
           contract_privileges.contract_risks.includes(s)
         );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_risks &&
+          contract_vehicle_privileges.contract_risks.includes(s)
+        );
       } else {
-        let facility_project_id = Vue.prototype.findFacilityProjectId(
+        let facility_project_id = AuthorizationService.findFacilityProjectId(
           program_id,
           project_id
         );
@@ -111,6 +162,16 @@ const AuthorizationService = {
           contract_privileges &&
           contract_privileges.contract_issues &&
           contract_privileges.contract_issues.includes(s)
+        );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_issues &&
+          contract_vehicle_privileges.contract_issues.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -141,6 +202,8 @@ const AuthorizationService = {
             pPrivileges["program_setting_groups"].includes(s)) ||
           (pPrivileges["program_setting_contracts"] &&
             pPrivileges["program_setting_contracts"].includes(s)) ||
+          (pPrivileges["program_setting_contract_vehicles"] &&
+            pPrivileges["program_setting_contract_vehicles"].includes(s)) ||
           (pPrivileges["program_setting_projects"] &&
             pPrivileges["program_setting_projects"].includes(s)) ||
           (pPrivileges["program_setting_users_roles"] &&
@@ -164,11 +227,9 @@ const AuthorizationService = {
         );
       } else if (extraData["method"] == "isallowedVehicles") {
         let contract_privileges =
-          AuthorizationService.contractPrivilegesRoles[
+          AuthorizationService.contractVehiclePrivilegesRoles[
             extraData["project_contract_vehicle_id"]
           ];
-        // console.log(contract_privileges, extraData["project_contract_vehicle_id"]);
-
         return (
           contract_privileges &&
           (contract_privileges.contract_analytics ||
@@ -204,17 +265,24 @@ const AuthorizationService = {
           pPrivileges["program_setting_contracts"] &&
           pPrivileges["program_setting_contracts"].includes(s)
         );
+      } else if (extraData["method"] == "isallowedVehicles") {
+        return (
+          pPrivileges["program_setting_contract_vehicles"] &&
+          pPrivileges["program_setting_contract_vehicles"].includes(s)
+        );
       } else {
         return false;
       }
     } else if (
       [
         "ContractLessons",
+        "VehicleLessons",
         "SheetLessons",
         "portfolio_lesson_form",
         "MapLessons",
         "LessonContextMenu",
         "ContractLessonForm",
+        "VehicleLessonForm",
         "LessonForm",
       ].includes(page)
     ) {
@@ -225,6 +293,16 @@ const AuthorizationService = {
           contract_privileges &&
           contract_privileges.contract_lessons &&
           contract_privileges.contract_lessons.includes(s)
+        );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_lessons &&
+          contract_vehicle_privileges.contract_lessons.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -244,6 +322,7 @@ const AuthorizationService = {
         "notes_show",
         "notes_sheets",
         "contract_notes_form",
+        "vehicle_notes_form",
         "notes_form",
         "notes_index",
         "notes_sheets_index",
@@ -256,6 +335,16 @@ const AuthorizationService = {
           contract_privileges &&
           contract_privileges.contract_notes &&
           contract_privileges.contract_notes.includes(s)
+        );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_notes &&
+          contract_vehicle_privileges.contract_notes.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -287,6 +376,16 @@ const AuthorizationService = {
           contract_privileges &&
           contract_privileges.contract_risks &&
           contract_privileges.contract_risks.includes(s)
+        );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_risks &&
+          contract_vehicle_privileges.contract_risks.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -321,6 +420,16 @@ const AuthorizationService = {
           contract_privileges.contract_tasks &&
           contract_privileges.contract_tasks.includes(s)
         );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_tasks &&
+          contract_vehicle_privileges.contract_tasks.includes(s)
+        );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
           program_id,
@@ -337,12 +446,14 @@ const AuthorizationService = {
     } else if (
       [
         "SheetContract",
+        "SheetVehicle",
         "MapAnalytics",
         "MapOverview",
         "MapProject",
         "SheetAnalytics",
         "SheetProject",
         "ContractAnalytics",
+        "VehicleAnalytics",
         "Kanban",
       ].includes(page)
     ) {
@@ -353,6 +464,16 @@ const AuthorizationService = {
           contract_privileges &&
           contract_privileges.contract_analytics &&
           contract_privileges.contract_analytics.includes(s)
+        );
+      } else if (contract_vehicle_id) {
+        let contract_vehicle_privileges =
+          AuthorizationService.contractVehiclePrivilegesRoles[
+            contract_vehicle_id
+          ];
+        return (
+          contract_vehicle_privileges &&
+          contract_vehicle_privileges.contract_analytics &&
+          contract_vehicle_privileges.contract_analytics.includes(s)
         );
       } else {
         let facility_project_id = AuthorizationService.findFacilityProjectId(
@@ -401,6 +522,14 @@ const AuthorizationService = {
         extraData["settingType"] == "Contracts" &&
         pPrivileges["program_setting_contracts"] &&
         pPrivileges["program_setting_contracts"].includes(permissionHash[salut])
+      ) {
+        return true;
+      } else if (
+        extraData["settingType"] == "Vehicles" &&
+        pPrivileges["program_setting_contract_vehicles"] &&
+        pPrivileges["program_setting_contract_vehicles"].includes(
+          permissionHash[salut]
+        )
       ) {
         return true;
       } else if (

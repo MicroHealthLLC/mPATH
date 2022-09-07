@@ -512,7 +512,7 @@
     components: {
       TaskSheets
     },
-    props: ['facility', 'from', "contract"],
+    props: ['facility', 'from', "contract", "vehicle"],
     data() {
       return {
         tasks: Object,
@@ -521,6 +521,7 @@
         tasksQuery: '',
         showFilters: false,
         contractRoute: this.$route.params.contractId,
+        vehicleRoute: this.$route.params.vehicleId,
         id: this.$route.params.projectId,
         datePicker: false, 
         sortedResponsibleUser: 'responsibleUsersFirstName',
@@ -646,6 +647,10 @@
         if(this.contractRoute) {
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/tasks/new`
+        );
+        } else if(this.vehicleRoute) {
+             this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/tasks/new`
         );
         } else
         this.$router.push(
@@ -925,6 +930,8 @@
     object(){
       if (this.$route.params.contractId) {
         return this.contract
+      } else if (this.$route.params.vehicleId) {
+        return this.vehicle
       } else return this.facility
      },
       C_sheetsTaskFilter: {
