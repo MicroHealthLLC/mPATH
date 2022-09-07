@@ -17,6 +17,7 @@ class ProjectContractVehicle < ApplicationRecord
 
   def to_json(options: {})
     h = self.as_json
+    h.merge!({project_contract_vehicle_id: self.id})
     h.merge!({contract_vehicle: contract_vehicle.to_json})
     h.merge!({facility_group: facility_group.as_json })
     h

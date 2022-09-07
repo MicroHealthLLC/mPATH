@@ -188,7 +188,7 @@
                 <el-button type="default" v-tooltip="`Go To Vehicle`"
                   v-if="
                     _isallowedContracts(
-                      scope.row.id,  // should be scope.row.project_contract_vehicle_id but returns undefined
+                      scope.row.project_contract_vehicle_id,  // should be scope.row.project_contract_vehicle_id but returns undefined
                       'read'
                     )
                   " @click.prevent="goToVehicle(scope.$index, scope.row)" class="bg-success text-light btn-sm">
