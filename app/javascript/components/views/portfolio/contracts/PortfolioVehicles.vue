@@ -1,21 +1,43 @@
 <template>
   <div class="">
     <el-tabs type="border-card" @tab-click="handleClick">
-      <el-tab-pane class="p-3"  style="postion:relative" label="PRIME" >        
-      <div style="height:100%; overflow-y:auto">
+      <el-tab-pane class="px-3"  style="postion:relative" label="PRIME" >        
+      <div style="height:72vh; overflow-y:auto">
       <el-table
       :data="tableData"
       :summary-method="getSummaries"
       show-summary
-      border
-      height="700"
+      border    
       style="width: 95%">
       <el-table-column
         fixed
         label="Prime*"
         width="215"
         >
-          <span>MicroHealth, LLC</span> 
+        <template slot-scope="scope">
+      <el-input
+        tabindex="1"
+        size="small"
+        v-if="( _isallowed('write') ) && scope.$index == createRow"
+        placeholder=""
+        style="text-align:center"
+        v-model="scope.row.prime_name"
+        controls-position="right"
+      ></el-input>
+      <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+      <el-input
+        size="small"
+        placeholder=""
+        style="text-align:center"
+        v-model="scope.row.prime_name"
+        controls-position="right"
+        ></el-input>
+      </span>
+    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+    {{ scope.row.prime_name }} 
+    </span>
+
+          </template>
       </el-table-column>
     <el-table-column
         fixed
@@ -472,41 +494,40 @@
       </div>
 
       </el-tab-pane>
-      <el-tab-pane class="p-3"  style="postion:relative" label="SUBCONTRACT">
-      <div style="height: 100%; overflow-y:auto">
+      <el-tab-pane class="px-3"  style="postion:relative" label="SUBCONTRACT">
+      <div style="height:72vh; overflow-y:auto">
       <el-table
-        :data="tableData"
+        :data="subTableData"
         :summary-method="getSummaries"
         show-summary
-        border
-        height="700"
+        border      
         style="width: 95%">
       <el-table-column
           fixed
           label="Subcontract Prime*"
           width="215"
-          prop="name">
+          prop="subprime_name">
         <template slot-scope="scope">
         <el-input
           tabindex="1"
           size="small"
-          v-if="( _isallowed('write') ) && scope.$index == createRow"
+          v-if="( _isallowed('write') ) && scope.$index == subCreateRow"
           placeholder=""
           style="text-align:center"
-          v-model="scope.row.name"
+          v-model="scope.row.subprime_name"
           controls-position="right"
         ></el-input>
-        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== subCreateRow">
         <el-input
           size="small"
           placeholder=""
           style="text-align:center"
-          v-model="scope.row.name"
+          v-model="scope.row.subprime_name"
           controls-position="right"
           ></el-input>
         </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-      {{ scope.row.name }} 
+      <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow">
+      {{ scope.row.subprime_name }} 
       </span>
 
             </template>
@@ -520,13 +541,13 @@
         <el-input
           tabindex="1"
           size="small"
-          v-if="( _isallowed('write') ) && scope.$index == createRow"
+          v-if="( _isallowed('write') ) && scope.$index == subCreateRow"
           placeholder=""
           style="text-align:center"
           v-model="scope.row.name"
           controls-position="right"
         ></el-input>
-        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== subCreateRow">
         <el-input
           size="small"
           placeholder=""
@@ -535,7 +556,7 @@
           controls-position="right"
           ></el-input>
         </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+      <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow">
       {{ scope.row.name }} 
       </span>
 
@@ -549,13 +570,13 @@
         <el-input
           tabindex="2"
           size="small"
-          v-if="( _isallowed('write') ) && scope.$index == createRow"
+          v-if="( _isallowed('write') ) && scope.$index == subCreateRow"
           placeholder=""
           style="text-align:center"
           v-model="scope.row.full_name"
           controls-position="right"
           ></el-input>
-        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== subCreateRow">
         <el-input
           size="small"
           placeholder=""
@@ -564,7 +585,7 @@
           controls-position="right"
           ></el-input>
         </span>
-          <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
+          <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow">
           {{ scope.row.full_name }}
           </span>
 
@@ -576,35 +597,30 @@
           width="325"
         >
 
-        <template slot-scope="scope" >
-        <span v-if=" _isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
-          <el-select
-            tabindex="4"
-            v-model="scope.row.contract_agency_id"
-            filterable       
-            track-by="name"        
-            value-key="id"
-            class="w-100"
-            clearable
-            allow-create
-            default-first-option
-            placeholder=""
+        <template slot-scope="scope">
+        <el-input
+          tabindex="2"
+          size="small"
+          v-if="( _isallowed('write') ) && scope.$index == subCreateRow"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.contract_name"
+          controls-position="right"
+          ></el-input>
+        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== subCreateRow">
+        <el-input
+          size="small"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.contract_name"
+          controls-position="right"
+          ></el-input>
+        </span>
+          <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow">
+          {{ scope.row.contract_name }}
+          </span>
 
-          >
-            <el-option
-              v-for="item in contractAgencyOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-          </span>
-        <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
-          (scope.row.contract_agency && scope.row.contract_agency.name !== null)">
-          {{ scope.row.contract_agency.name }}
-          </span>
-          </template>
+        </template>
         </el-table-column>
         <el-table-column
           label="Contracting Agency*"
@@ -612,7 +628,7 @@
         >
 
         <template slot-scope="scope" >
-        <span v-if=" _isallowed('write') && (rowId == scope.row.id || scope.$index == createRow)">
+        <span v-if=" _isallowed('write') && (rowId == scope.row.id || scope.$index == subCreateRow)">
           <el-select
             tabindex="4"
             v-model="scope.row.contract_agency_id"
@@ -635,7 +651,7 @@
             </el-option>
           </el-select>
           </span>
-        <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+        <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow &&
           (scope.row.contract_agency && scope.row.contract_agency.name !== null)">
           {{ scope.row.contract_agency.name }}
           </span>
@@ -646,7 +662,7 @@
           width="125"
         >
         <template slot-scope="scope" >
-        <span v-if=" _isallowed('write')  && (rowId == scope.row.id || scope.$index == createRow)">
+        <span v-if=" _isallowed('write')  && (rowId == scope.row.id || scope.$index == subCreateRow)">
           <el-select
             tabindex="5"
             v-model="scope.row.contract_vehicle_type_id"
@@ -669,7 +685,7 @@
             </el-option>
           </el-select>
           </span>
-          <span v-if="rowId !== scope.row.id && scope.$index !== createRow &&
+          <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow &&
             (scope.row.contract_vehicle_type && scope.row.contract_vehicle_type.name !== null)">
           {{ scope.row.contract_vehicle_type.name }}
           </span>
@@ -684,7 +700,7 @@
           <el-input
           tabindex="7"
           size="small"
-          v-if="( _isallowed('write') ) && scope.$index == createRow"
+          v-if="( _isallowed('write') ) && scope.$index == subCreateRow"
           placeholder=""
           style="text-align:center"
           v-model="newContractNum"
@@ -693,7 +709,7 @@
         <span v-if="( _isallowed('write') )">
         <el-input
           size="small"
-          v-if="rowId == scope.row.id && scope.$index !== createRow  && scope.row.contract_number"
+          v-if="rowId == scope.row.id && scope.$index !== subCreateRow  && scope.row.contract_number"
           placeholder=""
           style="text-align:center"
           v-model="scope.row.contract_number.name"
@@ -701,14 +717,14 @@
           ></el-input>
           <el-input
           size="small"
-          v-if="rowId == scope.row.id && scope.$index !== createRow  && !scope.row.contract_number"
+          v-if="rowId == scope.row.id && scope.$index !== subCreateRow  && !scope.row.contract_number"
           placeholder=""
           style="text-align:center"
           v-model="updateContractNum"
           controls-position="right"
           ></el-input>
         </span>
-      <span v-if="rowId !== scope.row.id && scope.$index !== createRow && scope.row.contract_number">
+      <span v-if="rowId !== scope.row.id && scope.$index !== subCreateRow && scope.row.contract_number">
       {{ scope.row.contract_number.name }} 
       </span>
 
@@ -747,20 +763,20 @@
               type="default"
               v-tooltip="`Edit`" 
               class="bg-light btn-sm"
-              v-if="( _isallowed('write') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
+              v-if="( _isallowed('write') ) && (scope.$index !== rowIndex) && (scope.$index !== subCreateRow)"
               @click="editMode(scope.$index, scope.row)"><i class="fal fa-edit text-primary"></i>
               </el-button>
               <el-button
               type="default"
               v-tooltip="`Delete`" 
               class="bg-light btn-sm"
-              v-if="( _isallowed('delete') ) && (scope.$index !== rowIndex) && (scope.$index !== createRow)"
+              v-if="( _isallowed('delete') ) && (scope.$index !== rowIndex) && (scope.$index !== subCreateRow)"
               @click="deleteContractVeh(scope.$index, scope.row)"><i class="far fa-trash-alt text-danger "></i>   
               </el-button>
               <el-button
               type="default"
               @click="saveContractVehicle(scope.$index, scope.row)"
-              v-if="( _isallowed('write') )  && scope.$index == createRow && (scope.row.name && 
+              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.name && 
               scope.row.full_name && scope.row.contract_sub_category_id &&
               scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
               newBpStart && newBpEnd)" 
@@ -1007,6 +1023,9 @@ export default {
       let contractVehicleData = {
           cVehicleData: {
             name: rows.name,
+            prime_name: rows.prime_name,
+            subprime_name: rows.subprime_name,
+            contract_name: rows.contract_name, 
             fullName: rows.full_name,
             subCatId: rows.contract_sub_category_id,
             cAgencyId: rows.contract_agency_id,        
@@ -1068,6 +1087,24 @@ export default {
     },
     createRow(){
       let lastItem = this.tableData.length - 1
+      //  console.log(lastItem)
+      return lastItem
+
+    },
+    subTableData(){
+      if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
+        let data = this.contractVehicles.filter(t => t.subprime_name)
+        console.log(data)
+        data.push({})
+        return data
+     } else {
+        let data = []
+         data.push({})
+         return data
+     }  
+    },
+    subCreateRow(){
+      let lastItem = this.subTableData.length - 1
       //  console.log(lastItem)
       return lastItem
 

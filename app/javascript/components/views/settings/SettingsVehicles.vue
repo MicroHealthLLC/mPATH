@@ -527,202 +527,7 @@
             >
           </h5>
         </div>
-        <el-dialog
-          :visible.sync="vehicleDialogVisible"
-          append-to-body
-          center
-          class="contractForm addVehicle p-0"
-        >
-          <div class="row mb-3">
-            <div class="col-5">
-              <span slot="title" class="text-left add-groups-header ">
-                <h5 class="text-dark">
-                  <i class="far fa-plus-circle mr-1 mb-3"></i>Add Existing
-                  Vehicle
-                </h5>
-              </span>
-            </div>
-            <div class="col-7 text-right">
-              <el-input
-                type="search"
-                placeholder="Search by Vehicle Name, SINS/Subcategories, Contract Agency, or Type"
-                aria-label="Search"
-                class="w-100"
-                aria-describedby="search-addon"
-                v-model="searchContractVehiclesData"
-                data-cy=""
-              >
-                <el-button slot="prepend" icon="el-icon-search"></el-button>
-              </el-input>
-            </div>
-          </div>
-          <template>
-            <div
-              v-loading="!contractVehiclesLoaded"
-              element-loading-text="Fetching your data. Please wait..."
-              element-loading-spinner="el-icon-loading"
-              element-loading-background="rgba(0, 0, 0, 0.8)"
-              class="addVehicleModal"
-            >
-            <el-tabs type="border-card" @tab-click="handleClick">
-            <el-tab-pane class="p-3"  style="postion:relative" label="PRIME" >       
-              <el-table
-                :data="allVehicles"
-                v-if="allVehicles && allVehicles.length > 0"
-                style="width: auto"
-              >
-               <el-table-column  
-               fixed prop="name" 
-               label="Prime"
-               width="215"
-               >
-                MicroHealth,LLC 
-              </el-table-column>
-                <el-table-column 
-                fixed 
-                width="215"
-                prop="name" 
-                label="Vehicle Nickname"> 
-              </el-table-column>
-                <el-table-column label="Vehicle Full Name" width="225">
-                  <template slot-scope="scope">
-                    <span v-if="scope.row.full_name">
-                      {{ scope.row.full_name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="SINS or Subcategories" width="175">
-                  <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.contract_sub_category &&
-                          scope.row.contract_sub_category.name !== null
-                      "
-                    >
-                      {{ scope.row.contract_sub_category.name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Contracting Agency" width="150">
-                  <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.contract_agency &&
-                          scope.row.contract_agency.name !== null
-                      "
-                    >
-                      {{ scope.row.contract_agency.name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Vehicle Type" width="150">
-                  <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.contract_vehicle_type &&
-                          scope.row.contract_vehicle_type.name !== null
-                      "
-                    >
-                      {{ scope.row.contract_vehicle_type.name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Actions"  fixed="right" align="right">
-                  <template slot-scope="scope">
-                    <el-button
-                      type="default"
-                      v-tooltip="`Add Vehicle`"
-                      @click.prevent="
-                        addExistingVehicle(scope.$index, scope.row)
-                      "
-                      class="bg-primary text-light btn-sm"
-                    >
-                      <i class="far fa-plus-circle"></i>
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <span class="mt-3" v-else>
-                <h4><em>There are currently no vehicles to display</em></h4>
-              </span>
-            </el-tab-pane>
-
-            <el-tab-pane class="p-3"  style="postion:relative" label="SUBCONTRACT">   
-              <el-table
-                :data="allVehicles"
-                v-if="allVehicles && allVehicles.length > 0"
-                style="width: 100%"
-              >
-              <el-table-column fixed prop="name" label="Subcontract"> </el-table-column>
-                <el-table-column fixed prop="name" label="Vehicle Nickname"> </el-table-column>
-                <el-table-column label="Vehicle Full Name" width="225">
-                  <template slot-scope="scope">
-                    <span v-if="scope.row.full_name">
-                      {{ scope.row.full_name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="SINS or Subcategories" width="175">
-                  <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.contract_sub_category &&
-                          scope.row.contract_sub_category.name !== null
-                      "
-                    >
-                      {{ scope.row.contract_sub_category.name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Contracting Agency" width="150">
-                  <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.contract_agency &&
-                          scope.row.contract_agency.name !== null
-                      "
-                    >
-                      {{ scope.row.contract_agency.name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Vehicle Type" width="150">
-                  <template slot-scope="scope">
-                    <span
-                      v-if="
-                        scope.row.contract_vehicle_type &&
-                          scope.row.contract_vehicle_type.name !== null
-                      "
-                    >
-                      {{ scope.row.contract_vehicle_type.name }}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column label="Actions" fixed="right" align="right">
-                  <template slot-scope="scope">
-                    <el-button
-                      type="default"
-                      v-tooltip="`Add Vehicle`"
-                      @click.prevent="
-                        addExistingVehicle(scope.$index, scope.row)
-                      "
-                      class="bg-primary text-light btn-sm"
-                    >
-                      <i class="far fa-plus-circle"></i>
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <span class="mt-3" v-else>
-                <h4><em>There are currently no vehicles to display</em></h4>
-              </span>
-            </el-tab-pane>
-            </el-tabs>
-
-           
-            </div>
-          </template>
-        </el-dialog>
+     
       </div>
 
       <el-dialog
@@ -1060,6 +865,223 @@
           </div>
         </div>
       </el-dialog>
+      <el-dialog
+          :visible.sync="vehicleDialogVisible"
+          append-to-body
+          center
+          class="contractForm addVehicle p-0"
+        >
+          <div class="row mb-3">
+            <div class="col-5">
+              <span slot="title" class="text-left add-groups-header ">
+                <h5 class="text-dark">
+                  <i class="far fa-plus-circle mr-1 mb-3"></i>Add Existing
+                  Vehicle
+                </h5>
+              </span>
+            </div>
+            <div class="col-7 text-right">
+              <el-input
+                type="search"
+                placeholder="Search by Vehicle Name, SINS/Subcategories, Contract Agency, or Type"
+                aria-label="Search"
+                class="w-100"
+                aria-describedby="search-addon"
+                v-model="searchContractVehiclesData"
+                data-cy=""
+              >
+                <el-button slot="prepend" icon="el-icon-search"></el-button>
+              </el-input>
+            </div>
+          </div>
+          <template>
+            <div
+              v-loading="!contractVehiclesLoaded"
+              element-loading-text="Fetching your data. Please wait..."
+              element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)"
+              class="addVehicleModal"
+            >
+            <el-tabs type="border-card" @tab-click="handleClick">
+            <el-tab-pane class="p-3"  style="postion:relative" label="PRIME" >       
+              <el-table
+                :data="allVehicles"
+                v-if="allVehicles && allVehicles.length > 0"
+                style="width: 100%"
+              >
+              <el-table-column  
+              
+               prop="name" 
+               label="Prime"                    
+              >              
+              </el-table-column>
+              <el-table-column 
+                      
+              prop="name" 
+              label="Vehicle Nickname"        
+              > 
+              </el-table-column>
+              <el-table-column 
+                label="Vehicle Full Name"                
+              >
+              <template slot-scope="scope">
+                <span v-if="scope.row.full_name">
+                  {{ scope.row.full_name }}
+                </span>
+              </template>
+              </el-table-column>
+              <el-table-column label="SINS or Subcategories">
+                <template slot-scope="scope">
+                  <span
+                    v-if="
+                      scope.row.contract_sub_category &&
+                        scope.row.contract_sub_category.name !== null
+                    "
+                  >
+                    {{ scope.row.contract_sub_category.name }}
+                  </span>
+                </template>
+              </el-table-column>
+               <el-table-column label="Contracting Agency" >
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_agency &&
+                          scope.row.contract_agency.name !== null
+                      "
+                    >
+                      {{ scope.row.contract_agency.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                    <el-table-column label="Vehicle Type">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_vehicle_type &&
+                          scope.row.contract_vehicle_type.name !== null
+                      "
+                    >
+                      {{ scope.row.contract_vehicle_type.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                 <el-table-column 
+                  label="Actions"  
+                  fixed="right"  
+                  align="right"              
+                  >
+                  <template slot-scope="scope">
+                    <el-button
+                      type="default"
+                      v-tooltip="`Add Vehicle`"
+                      @click.prevent="
+                        addExistingVehicle(scope.$index, scope.row)
+                      "
+                      class="bg-primary text-light btn-sm"
+                    >
+                      <i class="far fa-plus-circle"></i>
+                    </el-button>
+
+                  </template>
+                  </el-table-column> 
+              </el-table>
+              <span class="mt-3" v-else>
+                <h4><em>There are currently no vehicles to display</em></h4>
+              </span>
+            </el-tab-pane>
+
+            <el-tab-pane class="p-3"  style="postion:relative" label="SUBCONTRACT">   
+              <el-table
+                :data="allVehicles"
+                v-if="allVehicles && allVehicles.length > 0"
+                style="width: 100%"
+              >
+              <el-table-column                
+               prop="name" 
+               label="Subcontract Prime"                    
+              >              
+              </el-table-column>
+              <el-table-column 
+                      
+              prop="name" 
+              label="Vehicle Nickname"        
+              > 
+              </el-table-column>
+              <el-table-column 
+                label="Vehicle Full Name"                
+              >
+              <template slot-scope="scope">
+                <span v-if="scope.row.full_name">
+                  {{ scope.row.full_name }}
+                </span>
+              </template>
+              </el-table-column>
+              <el-table-column label="SINS or Subcategories">
+                <template slot-scope="scope">
+                  <span
+                    v-if="
+                      scope.row.contract_sub_category &&
+                        scope.row.contract_sub_category.name !== null
+                    "
+                  >
+                    {{ scope.row.contract_sub_category.name }}
+                  </span>
+                </template>
+              </el-table-column>
+               <el-table-column label="Contracting Agency" >
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_agency &&
+                          scope.row.contract_agency.name !== null
+                      "
+                    >
+                      {{ scope.row.contract_agency.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                    <el-table-column label="Vehicle Type">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="
+                        scope.row.contract_vehicle_type &&
+                          scope.row.contract_vehicle_type.name !== null
+                      "
+                    >
+                      {{ scope.row.contract_vehicle_type.name }}
+                    </span>
+                  </template>
+                </el-table-column>
+                 <el-table-column 
+                  label="Actions"  
+                  fixed="right"  
+                 >
+                  <template slot-scope="scope">
+                    <el-button
+                      type="default"
+                      v-tooltip="`Add Vehicle`"
+                      @click.prevent="
+                        addExistingVehicle(scope.$index, scope.row)
+                      "
+                      class="bg-primary text-light btn-sm"
+                    >
+                      <i class="far fa-plus-circle"></i>
+                    </el-button>
+
+                  </template>
+                  </el-table-column> 
+              </el-table>
+              <span class="mt-3" v-else>
+                <h4><em>There are currently no vehicles to display</em></h4>
+              </span>
+            </el-tab-pane>
+            </el-tabs>
+
+           
+            </div>
+          </template>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -1164,6 +1186,10 @@ export default {
       return this.checkPrivileges("SettingsVehicles", salut, this.$route, {
         settingType: "Contracts",
       });
+    },
+    handleClick(tab, event){
+      console.log(tab)
+      console.log(`${"event:", event}`)
     },
     _isallowedContracts(c, salut) {
       //console.log(c);
@@ -1830,7 +1856,7 @@ export default {
 
 /deep/.el-table th.el-table__cell > .cell {
   color: #212529;
-  font-size: 1.15rem;
+  font-size: 1rem;
   word-break: break-word;
 }
 
