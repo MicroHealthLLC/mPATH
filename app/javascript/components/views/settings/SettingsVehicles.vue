@@ -915,7 +915,19 @@
               <el-table-column                
                prop="prime_name" 
                label="Prime"                    
-              >              
+              >  
+              <template slot-scope="scope">
+                  <span
+                    v-if="scope.row.prime_name"
+                  >
+                    {{ scope.row.prime_name }}
+                  </span>
+                  <span
+                    v-else
+                  >
+                  MicroHealth, LLC.
+                  </span>
+                </template>
               </el-table-column>
               <el-table-column                       
               prop="name" 
