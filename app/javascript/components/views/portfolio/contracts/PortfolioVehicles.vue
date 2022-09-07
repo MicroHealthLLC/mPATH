@@ -14,30 +14,34 @@
         label="Prime*"
         width="215"
         >
-        <template slot-scope="scope">
-      <el-input
-        tabindex="1"
-        size="small"
-        v-if="( _isallowed('write') ) && scope.$index == createRow"
-        placeholder=""
-        style="text-align:center"
-        v-model="scope.row.prime_name"
-        controls-position="right"
-      ></el-input>
-      <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
-      <el-input
+       <template slot-scope="scope">
+        <el-input
+          tabindex="1"
+          size="small"
+          v-if="( _isallowed('write') ) && scope.$index == createRow"
+          placeholder=""
+          style="text-align:center"
+          v-model="scope.row.prime_name"
+          controls-position="right"
+        ></el-input>
+        <span v-if="( _isallowed('write') ) && rowId == scope.row.id && scope.$index !== createRow">
+        <el-input
         size="small"
         placeholder=""
         style="text-align:center"
         v-model="scope.row.prime_name"
         controls-position="right"
         ></el-input>
-      </span>
-    <span v-if="rowId !== scope.row.id && scope.$index !== createRow">
-    {{ scope.row.prime_name }} 
-    </span>
-
-          </template>
+        </span>
+        <span v-if="rowId !== scope.row.id && scope.$index !== createRow">   
+          <span v-if="scope.row.prime_name ">
+            {{ scope.row.prime_name }} 
+          </span>
+          <span v-else>
+            MicroHealth, LLC
+          </span>     
+        </span>
+        </template>
       </el-table-column>
     <el-table-column
         fixed
@@ -492,15 +496,12 @@
       </el-table-column>
       </el-table>
       </div>
-
       </el-tab-pane>
       <el-tab-pane class="px-3"  style="postion:relative" label="SUBCONTRACT">
       <div style="height:72vh; overflow-y:auto">
       <el-table
         :data="subTableData"
-        :summary-method="getSummaries"
-        show-summary
-        border      
+         border      
         style="width: 95%">
       <el-table-column
           fixed
@@ -743,12 +744,10 @@
             <el-button
             type="default"
             @click="saveContractVehicle(scope.$index, scope.row)"
-            v-if="( _isallowed('write') )  && scope.$index == rowIndex && (scope.row.name && 
-              scope.row.full_name && scope.row.contract_sub_category_id &&
-              scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
-              bpStart && bpEnd)" 
-            v-tooltip="`Save`" 
-            class="bg-primary btn-sm text-light mx-0">               
+            v-if="( _isallowed('write') )  && scope.$index == rowIndex && (scope.row.subprime_name && scope.row.name && 
+              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
+              v-tooltip="`Save`" 
+              class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
             </el-button>
           <el-button 
@@ -776,10 +775,8 @@
               <el-button
               type="default"
               @click="saveContractVehicle(scope.$index, scope.row)"
-              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.name && 
-              scope.row.full_name && scope.row.contract_sub_category_id &&
-              scope.row.contract_agency_id && scope.row.contract_vehicle_type_id &&
-              newBpStart && newBpEnd)" 
+              v-if="( _isallowed('write') )  && scope.$index == subCreateRow && (scope.row.subprime_name && scope.row.name && 
+              scope.row.full_name && scope.row.contract_agency_id && scope.row.contract_vehicle_type_id)" 
               v-tooltip="`Save`" 
               class="bg-primary btn-sm text-light mx-0">               
             <i class="far fa-save"></i>
@@ -1042,7 +1039,7 @@ export default {
       console.log(contractNumberId)
       if (id){
         this.updateContractVehicle({...contractVehicleData, id})
-        // console.log(contractVehicleData)
+        console.log(contractVehicleData)
       } else {
         this.createContractVehicle({...contractVehicleData})     
       }
@@ -1076,7 +1073,8 @@ export default {
     ]),   
     tableData(){
       if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
-        let data = this.contractVehicles
+        let data = this.contractVehicles.filter(v => v && !v.is_subprime)
+        console.log(data)
         data.push({})
         return data
      } else {
@@ -1093,7 +1091,7 @@ export default {
     },
     subTableData(){
       if (this.contractVehiclesLoaded && this.contractVehicles && this.contractVehicles.length > 0){
-        let data = this.contractVehicles.filter(t => t.subprime_name)
+        let data = this.contractVehicles.filter(v => v && v.is_subprime)
         console.log(data)
         data.push({})
         return data
