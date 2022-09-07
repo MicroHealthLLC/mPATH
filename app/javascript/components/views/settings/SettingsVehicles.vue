@@ -789,15 +789,15 @@ export default {
       };
       this.associateVehicleToProgram({ ...vehicleData });
     },
-    goToContract(index, rows) {
+    goToVehicle(index, rows) {
       console.log(rows);
       //Needs to be optimzed using router.push.  However, Project Sidebar file has logic that affects this routing
       // window.location.pathname = `/programs/${this.$route.params.programId}/sheet/contracts/${rows.project_contract_id}/`
       this.$router.push({
-        name: "SheetContract",
+        name: "SheetVehicle",
         params: {
           programId: this.$route.params.programId,
-          contractId: rows.project_contract_id,
+          vehicleId: rows.id,
         },
       });
     },
