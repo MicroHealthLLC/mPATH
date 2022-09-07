@@ -27,48 +27,14 @@ class Api::V1::NotesController < AuthenticatedController
 
   def index
 
-    fph = current_user.facility_privileges_hash
-
-    # authorize!(:read, Lesson.new(project_id: params[:project_id]))    
-    if params[:project_id] && params[:facility_id] && fph[params[:project_id]] && fph[params[:project_id]][params[:facility_id]] && fph[params[:project_id]][params[:facility_id]]["notes"].present?
-      # facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
-      facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
-      
-      if facility_project
-        notes = Note.where(facility_project_id: facility_project.id)
-        response_hash = {notes: notes.map(&:to_json)}
-        status_code = 200
-      else
-        response_hash = {errors: "Program or Project not found"}
-        status_code = 404
-      end
-    elsif params[:project_id]
-      allowed_facility_ids = fph[params[:project_id]].map{|k,v| k if v["notes"].present? }.compact
-
-      fp_ids = FacilityProject.where(project_id: params[:project_id], facility_id: allowed_facility_ids).pluck(:id)
-      
-      if fp_ids.any?
-        notes = Note.joins(:facility_project).where(facility_project_id: fp_ids)
-        response_hash = {notes: notes.map(&:to_json)}
-        status_code = 200
-      end
-    elsif params[:project_contract_id]
-      notes = Note.where(noteable_id: params[:project_contract_id], noteable_type: "ProjectContract")
+    if @owner
+      notes = Note.where(noteable_id: @owner.id, noteable_type: @owner.class.name)
       response_hash = {notes: notes.map(&:to_json)}
       status_code = 200
     else
       response_hash = {errors: "Program or Project not found"}
       status_code = 404
     end
-  elsif params[:project_contract_vehicle_id]
-    notes = Note.where(noteable_id: params[:project_contract_vehicle_id], noteable_type: "ProjectContractVehicle")
-    response_hash = {notes: notes.map(&:to_json)}
-    status_code = 200
-  else
-    response_hash = {errors: "Program or Project not found"}
-    status_code = 404
-  end
-
     render json: response_hash, status: status_code
 
   end
