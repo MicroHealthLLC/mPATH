@@ -9,7 +9,7 @@ class Api::V1::NotesController < AuthenticatedController
     action = nil
     if ["index", "show" ].include?(params[:action]) 
       action = "read"
-    elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
+    elsif ["create", "update"].include?(params[:action]) 
       action = "write"
     elsif ["destroy"].include?(params[:action]) 
       action = "delete"
@@ -18,7 +18,7 @@ class Api::V1::NotesController < AuthenticatedController
     if params[:project_contract_id]
       raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'notes', project_contract: params[:project_contract_id])
     elsif params[:project_contract_vehicle_id]
-      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'risks', project_contract_vehicle: params[:project_contract_vehicle_id])
+      raise(CanCan::AccessDenied) if !current_user.has_contract_permission?(action: action,resource: 'notes', project_contract_vehicle: params[:project_contract_vehicle_id])
     else
       raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'notes', program: params[:project_id], project: params[:facility_id])
     end

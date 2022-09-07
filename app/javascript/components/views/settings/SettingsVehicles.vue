@@ -15,9 +15,9 @@
             <i class="fal fa-car mr-1 text-info"></i> VEHICLES
             <span
               v-if="tableData && tableData.length"
-              :load="log(tableData)"
+         
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
-              >{{ tableData.length }}
+              >{{ tableData.length + subTableData.length }}
             </span>
             <span v-else class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ 0 }}
@@ -83,6 +83,7 @@
           <el-tab-pane class="p-3"  style="postion:relative" label="PRIME" >       
           <el-table
             v-if="tableData"
+            :load="log(contractVehicles.filter(t => t && t.contract_vehicle && !t.contract_vehicle.is_subprime))"
             :data="
               tableData
                 .filter(
@@ -115,9 +116,14 @@
             @expand-change="handleExpandChange"
             :default-sort="{ prop: 'name', order: 'ascending' }"
           >
-          <el-table-column prop="name" label="Prime">
-              <template>                
-                  MicroHealth, LLC
+          <el-table-column prop="prime_name" label="Prime">
+            <template slot-scope="scope">
+                <span v-if="scope.row.contract_vehicle.prime_name">
+                  {{ scope.row.contract_vehicle.prime_name }}
+                </span>
+                <span v-else>
+                 MicroHealth, LLC
+                </span>
               </template>
             </el-table-column>
             <el-table-column prop="name" label="Vehicle Nickname">
@@ -299,11 +305,11 @@
           </el-tab-pane>
           <el-tab-pane class="p-3"  style="postion:relative" label="SUBCONTRACT">       
           <el-table
-                v-if="tableData"
+                v-if="subTableData"
                 :data="
-                  tableData
+                  subTableData
                     .filter(
-                      (data) =>
+                      (data) =>                          
                         !search ||
                         data.contract_vehicle.name
                           .toLowerCase()
@@ -314,7 +320,7 @@
                         data.contract_vehicle.contract_agency.name
                           .toLowerCase()
                           .includes(search.toLowerCase()) ||
-                        data.contract_vehicle.contract_sub_category.name
+                        data.contract_vehicle.contract_vehicle.subprime_name
                           .toLowerCase()
                           .includes(search.toLowerCase()) ||
                         data.contract_vehicle.contract_vehicle_type.name
@@ -332,10 +338,10 @@
                 @expand-change="handleExpandChange"
                 :default-sort="{ prop: 'name', order: 'ascending' }"
               >
-                <el-table-column prop="name" label="Subcontract Prime">
+                <el-table-column prop="subprime_name" label="Subcontract Prime">
                   <template slot-scope="scope">
-                    <span v-if="scope.row.contract_vehicle.name">
-                      {{ scope.row.contract_vehicle.name }}
+                    <span v-if="scope.row.contract_vehicle.subprime_name">
+                      {{ scope.row.contract_vehicle.subprime_name }}
                     </span>
                   </template>
                 </el-table-column>
@@ -357,13 +363,10 @@
                   <template slot-scope="scope">
                     <span
                       v-if="
-                        scope.row.contract_vehicle.contract_sub_category &&
-                          scope.row.contract_vehicle.contract_sub_category
-                            .name !== null
-                      "
+                        scope.row.contract_vehicle.contract_name"
                     >
                       {{
-                        scope.row.contract_vehicle.contract_sub_category.name
+                        scope.row.contract_vehicle.contract_name
                       }}
                     </span>
                   </template>
@@ -909,14 +912,12 @@
                 v-if="allVehicles && allVehicles.length > 0"
                 style="width: 100%"
               >
-              <el-table-column  
-              
-               prop="name" 
+              <el-table-column                
+               prop="prime_name" 
                label="Prime"                    
               >              
               </el-table-column>
-              <el-table-column 
-                      
+              <el-table-column                       
               prop="name" 
               label="Vehicle Nickname"        
               > 
@@ -993,12 +994,12 @@
 
             <el-tab-pane class="p-3"  style="postion:relative" label="SUBCONTRACT">   
               <el-table
-                :data="allVehicles"
-                v-if="allVehicles && allVehicles.length > 0"
+                :data="allSubVehicles"
+                v-if="allSubVehicles && allSubVehicles.length > 0"
                 style="width: 100%"
               >
               <el-table-column                
-               prop="name" 
+               prop="subprime_name" 
                label="Subcontract Prime"                    
               >              
               </el-table-column>
@@ -1009,6 +1010,15 @@
               > 
               </el-table-column>
               <el-table-column 
+                label="Contract Name"                
+              >
+              <template slot-scope="scope">
+                <span v-if="scope.row.contract_name">
+                  {{ scope.row.contract_name }}
+                </span>
+              </template>
+              </el-table-column>
+              <el-table-column 
                 label="Vehicle Full Name"                
               >
               <template slot-scope="scope">
@@ -1017,19 +1027,7 @@
                 </span>
               </template>
               </el-table-column>
-              <el-table-column label="SINS or Subcategories">
-                <template slot-scope="scope">
-                  <span
-                    v-if="
-                      scope.row.contract_sub_category &&
-                        scope.row.contract_sub_category.name !== null
-                    "
-                  >
-                    {{ scope.row.contract_sub_category.name }}
-                  </span>
-                </template>
-              </el-table-column>
-               <el-table-column label="Contracting Agency" >
+              <el-table-column label="Contracting Agency" >
                   <template slot-scope="scope">
                     <span
                       v-if="
@@ -1201,7 +1199,7 @@ export default {
       );
     },
     log(e) {
-      // console.log('tableData:',  e)
+      console.log(e)
     },
     editUsers(index, rowData) {
       console.log(rowData)
@@ -1545,7 +1543,23 @@ export default {
     tableData() {
       //Need to add filter for associated contracts only
       if (this.vehicles && this.vehicles.length > 0) {
-        let con = this.vehicles.filter((t) => t && t !== "null");
+        let con = this.vehicles.filter((t) => t && t !== "null" && !t.contract_vehicle.is_subprime);
+       
+        return con.filter((td) => {
+          if (
+            this.C_projectGroupFilter &&
+            this.C_projectGroupFilter.length > 0
+          ) {
+            let group = this.C_projectGroupFilter.map((t) => t.name);
+            return group.includes(td.facility_group.name);
+          } else return true;
+        });
+      } else return [];
+    },
+    subTableData() {
+      //Need to add filter for associated contracts only
+      if (this.vehicles && this.vehicles.length > 0) {
+        let con = this.vehicles.filter((t) => t && t !== "null" && t.contract_vehicle.is_subprime);
         return con.filter((td) => {
           if (
             this.C_projectGroupFilter &&
@@ -1564,7 +1578,8 @@ export default {
         this.tableData.length == 0
       ) {
         if (this.contractVehicles && this.contractVehicles.length > 0) {
-          return this.contractVehicles;
+          console.log(this.contractVehicles.filter(t => t && !t.is_subprime))
+          return this.contractVehicles.filter(t => t && !t.is_subprime)
         }
       } else if (
         this.contractVehicles &&
@@ -1575,7 +1590,8 @@ export default {
         let associatedContractVehiclesIds = this.tableData.map(
           (t) => t.contract_vehicle.id
         );
-        let data = this.contractVehicles
+        let primeVehicles = this.contractVehicles.filter(t => t && !t.is_subprime)
+        let data = primeVehicles
           .filter((t) => {
             if (this.searchContractVehiclesData !== "" && t) {
               return (
@@ -1586,6 +1602,57 @@ export default {
                   .toLowerCase()
                   .match(this.searchContractVehiclesData.toLowerCase()) ||
                 t.contract_sub_category.name
+                  .toLowerCase()
+                  .match(this.searchContractVehiclesData.toLowerCase()) ||
+                t.contract_vehicle_type.name
+                  .toLowerCase()
+                  .match(this.searchContractVehiclesData.toLowerCase()) ||
+                t.contract_agency.name
+                  .toLowerCase()
+                  .match(this.searchContractVehiclesData.toLowerCase())
+              );
+            } else return true;
+          })
+          .filter((t) => {
+            console.log("t:", t);
+            return !associatedContractVehiclesIds.includes(t.id);
+          });
+        return data;
+      }
+    },
+    allSubVehicles() {
+      //console.log(this.tableData)
+      if (
+        (this.subTableData && this.subTableData == []) ||
+        this.subTableData.length == 0
+      ) {
+        if (this.contractVehicles && this.contractVehicles.length > 0) {
+          return this.contractVehicles.filter(t => t && t.is_subprime)
+        }
+      } else if (
+        this.contractVehicles &&
+        this.contractVehicles.length > 0 &&
+        this.subTableData &&
+        this.subTableData.length > 0
+      ) {
+        let associatedContractVehiclesIds = this.subTableData.map(
+          (t) => t.contract_vehicle.id
+        );
+        let subprimeVehicles =this.contractVehicles.filter(t => t && t.is_subprime)
+        let data = subprimeVehicles
+          .filter((t) => {
+            if (this.searchContractVehiclesData !== "" && t) {
+              return (
+                t.name
+                  .toLowerCase()
+                  .match(this.searchContractVehiclesData.toLowerCase()) ||
+                t.full_name
+                  .toLowerCase()
+                  .match(this.searchContractVehiclesData.toLowerCase()) ||
+                t.contract_name
+                  .toLowerCase()
+                  .match(this.searchContractVehiclesData.toLowerCase()) ||
+                t.subprime_name
                   .toLowerCase()
                   .match(this.searchContractVehiclesData.toLowerCase()) ||
                 t.contract_vehicle_type.name
@@ -1678,7 +1745,7 @@ export default {
       }
     },
     viableVehicleUsers() {
-      console.log(this.contractUsers)
+      // console.log(this.contractUsers)
       if (this.programUsers && this.contractUsers && this.contractUsers.data) {
         let assignedUserIds = this.contractUsers.data.map((t) => t.user_id);
         return this.programUsers.filter((t) => !assignedUserIds.includes(t.id));
