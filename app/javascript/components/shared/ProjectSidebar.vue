@@ -65,11 +65,7 @@
               v-for="facility in facilityGroupFacilities(group).projects.a"
               :key="facility.id"
             >
-              <router-link
-                :to="
-                  `/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`
-                "
-              >
+              <router-link :to="`/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`">
                 <div
                   class="d-flex align-items-center expandable fac-name"
                   v-if="_isallowedProjects(facility, 'read')"
@@ -86,8 +82,7 @@
             <div
               v-for="c in projectContracts.filter(
                 (t) => t.facilityGroup && t.facilityGroup.id == group.id
-              )"
-              v-show="isContractsView"
+              )" 
               :key="c.projectContractId + 'a'"
             >
               <router-link
@@ -113,7 +108,6 @@
               v-for="v in projectVehicles.filter(
                 (t) => t.facilityGroup && t.facilityGroup.id == group.id
               )"
-              v-show="isVehiclesView"
               :key="v.projectContractVehicleId + 'a'"
             >
               <router-link
@@ -126,7 +120,7 @@
                   @click="showFacility(v)"
                   :class="{ active: v.projectContractVehicleId == $route.params.vehicleId }"
                 >
-                  <p class="facility-header1" data-cy="facilities">
+                  <p class="facility-header" data-cy="facilities">
                     <i class="far fa-car mr-1 text-info"></i> {{ v.name }}
                   </p>
                 </div>

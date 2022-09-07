@@ -695,7 +695,7 @@
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/issues/new`
         );
-        } else if(this.vehicleRoute) {
+        } if(this.vehicleRoute) {
              this.$router.push(
           `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/issues/new`
         );

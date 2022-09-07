@@ -27,12 +27,12 @@
               > <i class="fal fa-clipboard-list mb-1 mh-green-text"></i>
             </span>
              <router-link :to="projectNameLink">
-               <span v-if="!isProgramView && (!contract || !vehicle || facility)">
+               <span  v-if="!isProgramView && !contract && !vehicle">
                  {{ facility.facilityName }}
                </span>
-               <span v-if="this.$route.params.projectId && issue && !isProgramView">
+               <!-- <span v-if="this.$route.params.projectId && issue && !isProgramView">
                  {{  issue.facilityName }}
-                </span>
+                </span> -->
                 <span v-if="isProgramView && issue">
                     {{ issue.facilityName || issue.contractNickname || issue.vehicleNickname }}
                </span>
@@ -1436,6 +1436,9 @@ export default {
         checklists: [],
         notes: [],
       };
+    },
+    log(e) {
+      console.log(e)
     },
     _isallowed(salut) {
       return this.checkPrivileges("issue_form", salut, this.$route)

@@ -179,7 +179,7 @@ export default {
         name: "SheetVehicle",
         params: {
           programId: this.$route.params.programId,
-          vehicleId: rows.id.toString(),          
+          vehicleId: rows.projectContractVehicleId.toString(),          
         },
       });
     

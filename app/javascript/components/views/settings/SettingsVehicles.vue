@@ -12,7 +12,7 @@
           </el-breadcrumb-item>
           <h4 class="mt-4 ml-3">
             <i class="fal fa-car mr-1 text-info"></i> VEHICLES
-            <span v-if="tableData && tableData.length" :load="log(tableData)"
+            <span v-if="tableData && tableData.length"
               class="ml-2 pb-1 badge badge-secondary badge-pill pill">{{  tableData.length  }}
             </span>
             <span v-else class="ml-2 pb-1 badge badge-secondary badge-pill pill">{{  0  }}
@@ -171,7 +171,7 @@
                   @click.prevent="cancelEdits(scope.$index, scope.row)" class="bg-secondary btn-sm text-light">
                   <i class="fas fa-ban"></i>
                 </el-button>
-                <el-button type="default" class="bg-light btn-sm" v-tooltip="'Remove Vehicle'"
+                <el-button :load=log(scope.row) type="default" class="bg-light btn-sm" v-tooltip="'Remove Vehicle'"
                   @click.prevent="removeVehicleBtn(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex && _isallowed('write')">
                   <i class="fa-light fa-circle-minus text-danger"></i>
@@ -185,12 +185,13 @@
                   >
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button> -->
-                <el-button type="default" v-tooltip="`Go To Vehicle`" v-if="
-                  _isallowedContracts(
-                    scope.row.project_contract_vehicle_id,
-                    'read'
-                  )
-                " @click.prevent="goToVehicle(scope.$index, scope.row)" class="bg-success text-light btn-sm">
+                <el-button type="default" v-tooltip="`Go To Vehicle`"
+                  v-if="
+                    _isallowedContracts(
+                      scope.row.id,  // should be scope.row.project_contract_vehicle_id but returns undefined
+                      'read'
+                    )
+                  " @click.prevent="goToVehicle(scope.$index, scope.row)" class="bg-success text-light btn-sm">
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
 
@@ -351,8 +352,7 @@
                 contractUsers &&
                 contractUsers.roleIds &&
                 contractUsers.roleIds.length > 0
-              " :header-cell-style="{ background: '#EDEDED' }" :data="contractUsers.roleIds" height="375"
-                width="100%">
+              " :header-cell-style="{ background: '#EDEDED' }" :data="contractUsers.roleIds" height="375" width="100%">
                 <el-table-column prop="user_full_name" width="200" sortable filterable label="Role">
                   <template slot-scope="scope">
                     <span v-if="
@@ -366,6 +366,7 @@
                        contractUsers.data
                        .filter((t) => t.role_id == scope.row)
                        .map((t) => t.role_name)[0]
+
 
                       }}
                     </span>
@@ -407,6 +408,7 @@
                            .map((t) => t.fullName)
                            .join()
 
+
                           }}
                         </span>
                       </span>
@@ -415,9 +417,8 @@
                       <el-select v-model="assignedContractUsers" :disabled="
                         assignedContractUsers &&
                         assignedContractUsers.length <= 0
-                      " filterable class="w-100 el-popper" :popper-append-to-body="false"
-                        popper-class="select-popper" clearable multiple track-by="id" value-key="id"
-                        placeholder="No Users Assigned to this Project">
+                      " filterable class="w-100 el-popper" :popper-append-to-body="false" popper-class="select-popper"
+                        clearable multiple track-by="id" value-key="id" placeholder="No Users Assigned to this Project">
                         <el-option v-for="item in programUsers" :value="item" :key="item.id" :label="item.fullName">
                         </el-option>
                       </el-select>
@@ -600,7 +601,7 @@ export default {
       );
     },
     log(e) {
-      // console.log('tableData:',  e)
+      console.log(e)
     },
     editUsers(index, rowData) {
       console.log(rowData)
@@ -1077,7 +1078,7 @@ export default {
       }
     },
     viableVehicleUsers() {
-      console.log(this.contractUsers)
+      //console.log(this.contractUsers)
       if (this.programUsers && this.contractUsers && this.contractUsers.data) {
         let assignedUserIds = this.contractUsers.data.map((t) => t.user_id);
         return this.programUsers.filter((t) => !assignedUserIds.includes(t.id));

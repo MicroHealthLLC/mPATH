@@ -287,6 +287,7 @@ const AuthorizationService = {
         "MapLessons",
         "LessonContextMenu",
         "ContractLessonForm",
+        "VehicleLessonForm",
         "LessonForm",
       ].includes(page)
     ) {

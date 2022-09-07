@@ -214,6 +214,7 @@
                   <i class="fas fa-ban"></i>
                 </el-button>
                 <el-button
+                    :load="log(scope.row)"
                     type="default"            
                     class="bg-light btn-sm"
                     v-tooltip="'Remove Contract'"            
@@ -709,7 +710,7 @@ export default {
         return this.checkPrivileges("ProjectSettingContractList", salut, this.$route, {method: "isallowedContracts", project_contract_id: c})
     },
     log(e){
-      // console.log('tableData:',  e)
+      console.log(e)
     },
     editUsers(index, rowData){
       this.userids = this.contractUsers.data.filter(t => t.role_id == rowData)

@@ -60,6 +60,14 @@ class Api::V1::NotesController < AuthenticatedController
       response_hash = {errors: "Program or Project not found"}
       status_code = 404
     end
+  elsif params[:project_contract_vehicle_id]
+    notes = Note.where(noteable_id: params[:project_contract_vehicle_id], noteable_type: "ProjectContractVehicle")
+    response_hash = {notes: notes.map(&:to_json)}
+    status_code = 200
+  else
+    response_hash = {errors: "Program or Project not found"}
+    status_code = 404
+  end
 
     render json: response_hash, status: status_code
 

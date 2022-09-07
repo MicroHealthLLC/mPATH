@@ -656,7 +656,7 @@
         );
       },
       showAllToggle() {
-         this.setToggleRACI(!this.getToggleRACI)  ;
+         this.setToggleRACI(!this.getToggleRACI);
       },
       editRisk(risk) {
         this.$emit('show-hide', risk)
