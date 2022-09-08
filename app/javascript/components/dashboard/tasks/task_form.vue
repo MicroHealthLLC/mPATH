@@ -1819,6 +1819,7 @@ export default {
             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks.json`
          }
          if (this.vehicle) {
+          console.log(this.vehicle)
             url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks.json`
          }
         let method = "POST";
@@ -1835,7 +1836,7 @@ export default {
            method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
-        if (this.task && this.task.id && this.task.projectContractId) {
+        if (this.task && this.task.id && this.task.projectContractVehicleId) {
            method = "PATCH";
           url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
         }
