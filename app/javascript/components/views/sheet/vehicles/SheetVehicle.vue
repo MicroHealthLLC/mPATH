@@ -21,6 +21,15 @@
              >   
             <h4 v-if="v.name">{{ v.name }}</h4>
             <hr>
+            <div class="row">
+             <div class="col">
+              <b>VEHICLE PRIME:</b>
+              </div>  
+              <div class="col">
+               <h5 v-if="v.subprimeName">{{ v.subprimeName }} </h5>
+               <h5 v-else>{{ 'MicroHealth, LLC' }} </h5>
+               </div>  
+           </div>  
              <div class="row">
              <div class="col">
               <b>GROUP NAME:</b>
@@ -38,12 +47,12 @@
               </div>  
            </div>  
           
-            <div class="row">
+            <div v-if="v.contractSubCategory" class="row">
              <div class="col">
               <b>SINS or SUBCATEGORIES:</b>
               </div>  
               <div class="col">
-               <h5 v-if="v.contractSubCategory">{{ v.contractSubCategory.name }}</h5>
+               <h5>{{ v.contractSubCategory.name }}</h5>
               </div>  
            </div>  
 
