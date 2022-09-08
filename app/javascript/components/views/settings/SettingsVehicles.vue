@@ -113,7 +113,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="SINS or Subcategories">
+            <!-- <el-table-column label="SINS or Subcategories">
               <template slot-scope="scope">
                 <span
                   v-if="
@@ -127,7 +127,7 @@
                   }}
                 </span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column label="Contracting Agency">
               <template slot-scope="scope">
                 <span
@@ -198,16 +198,17 @@
               ></el-input> -->
               </template>
             </el-table-column>
-            <el-table-column label="Actions" align="right">
+            <el-table-column label="Actions" align="right" >
               <template slot-scope="scope">
-                <el-button type="default" v-tooltip="`Change Group`" @click.prevent="editMode(scope.$index, scope.row)"
+                <span class="px-0">
+                  <el-button type="default" v-tooltip="`Change Group`" @click.prevent="editMode(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex && _isallowed('write')" class="bg-light btn-sm">
                   <i class="fal fa-network-wired mh-blue-text"></i>
                 </el-button>
                 <el-button type="default" v-tooltip="`Manage User(s)`"
                   @click.prevent="addUserRole(scope.$index, scope.row)" v-if="scope.$index !== rowIndex"
                   class="bg-primary text-light btn-sm">
-                  <i class="fas fa-users-medical mr-1"></i>
+                  <i class="fas fa-users-medical"></i>
                 </el-button>
                 <el-button type="default" v-if="scope.$index == rowIndex"
                   @click.prevent="saveEdits(scope.$index, scope.row)" v-tooltip="`Save`"
@@ -242,6 +243,9 @@
                   <i class="fas fa-arrow-alt-circle-right"></i>
                 </el-button>
 
+                </span>
+               
+
                 <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
               </template>
             </el-table-column>
@@ -264,7 +268,7 @@
                         data.contract_vehicle.contract_agency.name
                           .toLowerCase()
                           .includes(search.toLowerCase()) ||
-                        data.contract_vehicle.contract_vehicle.subprime_name
+                        data.contract_vehicle.subprime_name
                           .toLowerCase()
                           .includes(search.toLowerCase()) ||
                         data.contract_vehicle.contract_vehicle_type.name
@@ -318,10 +322,10 @@
                 <el-table-column label="Contracting Agency" width="150">
                   <template slot-scope="scope">
                     <span v-if="
-                      scope.row.contract_agency &&
-                      scope.row.contract_agency.name !== null
+                      scope.row.contract_vehicle.contract_agency &&
+                      scope.row.contract_vehicle.contract_agency.name !== null
                     ">
-                      {{  scope.row.contract_agency.name  }}
+                      {{  scope.row.contract_vehicle.contract_agency.name  }}
                     </span>
                   </template>
                 </el-table-column>
@@ -712,7 +716,19 @@
               <el-table-column                
                prop="prime_name" 
                label="Prime"                    
-              >              
+              >  
+              <template slot-scope="scope">
+                  <span
+                    v-if="scope.row.prime_name"
+                  >
+                    {{ scope.row.prime_name }}
+                  </span>
+                  <span
+                    v-else
+                  >
+                  MicroHealth, LLC.
+                  </span>
+                </template>
               </el-table-column>
               <el-table-column                       
               prop="name" 
@@ -728,7 +744,7 @@
                 </span>
               </template>
               </el-table-column>
-              <el-table-column label="SINS or Subcategories">
+              <!-- <el-table-column label="SINS or Subcategories">
                 <template slot-scope="scope">
                   <span
                     v-if="
@@ -739,7 +755,7 @@
                     {{ scope.row.contract_sub_category.name }}
                   </span>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
                <el-table-column label="Contracting Agency" >
                   <template slot-scope="scope">
                     <span
