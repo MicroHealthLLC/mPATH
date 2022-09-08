@@ -8,7 +8,9 @@ class ContractVehicle < ApplicationRecord
 
   has_many :contract_project_data
  
-  validates_presence_of :name
+  # validates_presence_of :name
+
+  before_save :set_is_subprime
 
   def to_json
     h = self.as_json
@@ -25,9 +27,14 @@ class ContractVehicle < ApplicationRecord
   end
 
   def self.params_to_permit
-    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id, :caf_fees]
+    [:name, :id, :full_name, :contract_agency_id, :contract_vehicle_type_id, :contract_number, :ceiling, :base_period_start, :base_period_end, :option_period_start, :option_period_end, :contract_sub_category_id, :user_id, :contract_number_id, :caf_fees, :subprime_name, :prime_name, :contract_name, :is_subprime]
   end
 
+  def set_is_subprime
+    if subprime_name.present?
+      self.is_subprime = true
+    end
+  end
   def create_or_update_contract_vehicle(params, user)
     contract_params = params.require(:contract_vehicle).permit(ContractVehicle.params_to_permit)
     c_params = contract_params.dup

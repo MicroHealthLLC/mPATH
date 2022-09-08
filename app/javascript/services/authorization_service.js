@@ -214,7 +214,7 @@ const AuthorizationService = {
           AuthorizationService.contractPrivilegesRoles[
             extraData["project_contract_id"]
           ];
-        console.log(contract_privileges, extraData["project_contract_id"]);
+        // console.log(contract_privileges, extraData["project_contract_id"]);
 
         return (
           contract_privileges &&
@@ -230,11 +230,6 @@ const AuthorizationService = {
           AuthorizationService.contractVehiclePrivilegesRoles[
             extraData["project_contract_vehicle_id"]
           ];
-        console.log(
-          contract_privileges,
-          extraData["project_contract_vehicle_id"]
-        );
-
         return (
           contract_privileges &&
           (contract_privileges.contract_analytics ||
