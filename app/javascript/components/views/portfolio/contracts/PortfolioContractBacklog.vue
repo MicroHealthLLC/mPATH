@@ -1,6 +1,6 @@
 <template>
    <div style="height:80vh" class="portfolio-contracts-module">
-    <div  style="height: 100%; overflow-y:auto">
+    <div style="height: 80vh; overflow-y:auto">
      <el-table
     :data="tableData"
     border

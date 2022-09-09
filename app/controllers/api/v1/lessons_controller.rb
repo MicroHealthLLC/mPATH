@@ -33,7 +33,8 @@ class Api::V1::LessonsController < AuthenticatedController
 
     authorized_facility_project_ids = current_user.authorized_facility_project_ids(project_ids: [project_id])
     authorized_project_contract_ids = current_user.authorized_contract_ids(project_ids: [project_id])
-
+    authorized_project_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids(project_ids: [project_id])
+  
     if project_id && authorized_program_ids.include?(project_id.to_i)
 
       fp_ids = FacilityProject.where(project_id: project_id, id: authorized_facility_project_ids).pluck(:id)
@@ -43,6 +44,11 @@ class Api::V1::LessonsController < AuthenticatedController
       if authorized_project_contract_ids.any?
         c_lesson_ids = Lesson.where(project_contract_id: authorized_project_contract_ids).pluck(:id)
       end
+
+      if authorized_project_contract_vehicle_ids.any?
+        c_lesson_ids = Lesson.where(project_contract_vehicle_id: authorized_project_contract_vehicle_ids).pluck(:id)
+      end
+
       if fp_ids.any?
         lesson_ids += Lesson.where(facility_project_id: fp_ids).pluck(:id)
       end
@@ -112,15 +118,17 @@ class Api::V1::LessonsController < AuthenticatedController
         status_code = 200
       end
     elsif params[:project_contract_id]
-      allowed_project_contract_ids = current_user.authorized_contract_ids(project_ids: [params[:project_id]])
+      project_contract = ProjectContract.find(params[:project_contract_id])
+      allowed_project_contract_ids = current_user.authorized_contract_ids(project_ids: [project_contract.project_id])
       if allowed_project_contract_ids.include?(params[:project_contract_id].to_i)
         lessons = Lesson.where(project_contract_id: params[:project_contract_id]).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
       end
     elsif params[:project_contract_vehicle_id]
-      allowed_project_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids(project_ids: [params[:project_id]])
-      if allowed_project_contract_ids.include?(params[:project_contract_vehicle_id].to_i)
+      project_contract_vehicle = ProjectContractVehicle.find(params[:project_contract_vehicle_id])
+      allowed_project_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids(project_ids: [project_contract_vehicle.project_id])
+      if allowed_project_contract_vehicle_ids.include?(params[:project_contract_vehicle_id].to_i)
         lessons = Lesson.where(project_contract_vehicle_id: params[:project_contract_vehicle_id]).includes(Lesson.lesson_preload_array)
         response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
@@ -129,6 +137,7 @@ class Api::V1::LessonsController < AuthenticatedController
 
       authorized_facility_project_ids = current_user.authorized_facility_project_ids(project_ids: [project_id])
       authorized_project_contract_ids = current_user.authorized_contract_ids(project_ids: [project_id])
+      authorized_project_contract_vehicle_ids = current_user.authorized_contract_vehicle_ids(project_ids: [project_id])
   
       response_lessons = []
       lesson_ids = []
@@ -139,6 +148,10 @@ class Api::V1::LessonsController < AuthenticatedController
       
       if authorized_project_contract_ids.any?
         lesson_ids += Lesson.where(project_contract_id: authorized_project_contract_ids).distinct.pluck(:id)
+      end
+
+      if authorized_project_contract_vehicle_ids.any?
+        lesson_ids += Lesson.where(project_contract_vehicle_id: authorized_project_contract_vehicle_ids).distinct.pluck(:id)
       end
 
       lessons = Lesson.includes(Lesson.lesson_preload_array).where(id: lesson_ids.compact.uniq).order(:id)
@@ -199,7 +212,7 @@ class Api::V1::LessonsController < AuthenticatedController
   private
 
   def lesson_params
-    params.require(:lesson).permit(:title, :description, :date, :stage, :task_type_id, :task_id, :risk_id, :issue_id, :issue_type_id, :user_id, :project_id, :project_contract_id )
+    params.require(:lesson).permit(:title, :description, :date, :stage, :task_type_id, :task_id, :risk_id, :issue_id, :issue_type_id, :user_id, :project_id, :project_contract_id, :project_contract_vehicle_id )
   end
 
 end

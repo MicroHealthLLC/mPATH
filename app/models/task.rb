@@ -392,6 +392,7 @@ class Task < ApplicationRecord
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       contract_nickname: self.contract_project_data.try(:name),
+      vehicle_nickname: self.contract_vehicle.try(:name),
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -527,7 +528,11 @@ class Task < ApplicationRecord
     if link_files && link_files.any?
       link_files.each do |f|
         next if !f.present? || f.nil? || !valid_url?(f)
-        self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+        filename = f
+        if f.length > URL_FILENAME_LENGTH
+          filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+        end        
+        self.task_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
       end
     end
   end

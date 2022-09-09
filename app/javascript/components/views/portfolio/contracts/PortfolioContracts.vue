@@ -1,9 +1,8 @@
 <template>
-  <div class="container-fluid mt-3 mx-3">       
-    <div style="height:85px">
+  <div class="container-fluid mx-3">       
+    <div style="height:85px" class="pt-2">
       <span @click.prevent="backHomeBtn">
-        <img
-          class="mb-2"
+        <img         
           style="width: 147px;cursor:pointer"
           :src="require('../../../../../assets/images/microhealthllc.png')"
         />
@@ -25,6 +24,7 @@
     v-loading="!contractVehiclesLoaded"
     element-loading-text="Fetching your data. Please wait..."
     element-loading-spinner="el-icon-loading"
+
     >
      <span slot="label"> <i class="fa-solid fa-car mr-1" :class="[ pane0? 'mh-green-text' : 'txt-secondary']"></i>
      VEHICLES
@@ -39,7 +39,7 @@
     >
      <span slot="label"> <i class="far fa-file-contract mr-1" :class="[ pane1? 'mh-orange-text' : 'txt-secondary']"></i>CONTRACT DETAILS</span>
     <div style="height:80vh" class="portfolio-contracts-module">
-      <div  style="height: 100%; overflow-y:auto">
+      <div style="height: 80vh; overflow-y:auto">
     <el-table
     :data="tableData"
     border
@@ -1739,7 +1739,7 @@ export default {
   }
   .bottomTabs{
     position: absolute;
-    bottom: 2.5%;
+    bottom: 3.5%;
     width: 100%;
   }
  /deep/.el-dialog {
