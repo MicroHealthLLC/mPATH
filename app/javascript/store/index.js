@@ -367,7 +367,7 @@ export default new Vuex.Store({
     },
     updateVehicleTasks: (state, { task, action }) => {
       let vehicle_i = state.vehicles.findIndex(
-        (f) => f.id == task.id
+        (f) => f.projectContractVehicleId == task.projectContractVehicleId
       );
       if (vehicle_i > -1) {
         let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
@@ -403,6 +403,26 @@ export default new Vuex.Store({
           contract.issues.push(issue);
         }
         Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateVehicleIssues: (state, { issue, action }) => {
+      let vehicle_i = state.vehicles.findIndex(
+        (f) => f.projectContractVehicleId == issue.projectContractVehicleId
+      );
+      if (vehicle_i > -1) {
+        let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
+        let issue_i = vehicle.issues.findIndex((t) => t.id == issue.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.vehicles, "issues"))) {
+            _.remove(t.subIssueIds, (id) => id == t.id);
+          }
+          Vue.delete(vehicle.issues, issue_i);
+        } else if (issue_i > -1) {
+          Vue.set(vehicle.issues, issue_i, issue);
+        } else if (issue_i == -1) {
+          vehicle.issues.push(issue);
+        }
+        Vue.set(state.vehicles, vehicle_i, vehicle);
       }
     },
     updateIssuesHash: (state, { issue, action }) => {
@@ -464,6 +484,26 @@ export default new Vuex.Store({
           contract.risks.push(risk);
         }
         Vue.set(state.contracts, contract_i, contract);
+      }
+    },
+    updateVehicleRisks: (state, { risk, action }) => {
+      let vehicle_i = state.vehicles.findIndex(
+        (f) => f.projectContractVehicleId == risk.projectContractVehicleId
+      );
+      if (vehicle_i > -1) {
+        let vehicle = Object.assign({}, state.vehicles[vehicle_i]);
+        let risk_i = vehicle.risks.findIndex((t) => t.id == risk.id);
+        if (action === "delete") {
+          for (let t of _.flatten(_.map(state.vehicles, "risks"))) {
+            _.remove(t.subRiskIds, (id) => id == t.id);
+          }
+          Vue.delete(vehicle.risks, risk_i);
+        } else if (risk_i > -1) {
+          Vue.set(vehicle.risks, risk_i, risk);
+        } else if (risk_i == -1) {
+          vehicle.risks.push(risk);
+        }
+        Vue.set(state.vehicles, vehicle_i, vehicle);
       }
     },
     updateNotesHash: (state, { note, facilityId, action }) => {

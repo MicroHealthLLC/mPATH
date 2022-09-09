@@ -564,7 +564,11 @@ class Lesson < ApplicationRecord
       if link_files && link_files.any?
         link_files.each do |f|
           next if !f.present? || f.nil? || !valid_url?(f)
-          self.lesson_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+          filename = f
+          if f.length > URL_FILENAME_LENGTH
+            filename = f.truncate(URL_FILENAME_LENGTH, :separator => '') + "..."
+          end 
+          self.lesson_files.attach(io: StringIO.new(f), filename: filename, content_type: "text/plain")
         end
       end
     rescue Exception => e

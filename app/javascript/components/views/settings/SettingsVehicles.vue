@@ -201,6 +201,15 @@
             <el-table-column label="Actions" align="right" >
               <template slot-scope="scope">
                 <span class="px-0">
+                  <el-button :load="log(scope.row)" type="default" v-tooltip="`Go To Vehicle`"
+                  v-if="
+                    _isallowedContracts(
+                      scope.row.id,  // should be scope.row.project_contract_vehicle_id but returns undefined
+                      'read'
+                    )
+                  " @click.prevent="goToVehicle(scope.$index, scope.row)" class="bg-success text-light btn-sm">
+                  <i class="fas fa-arrow-alt-circle-right"></i>
+                </el-button>
                   <el-button type="default" v-tooltip="`Change Group`" @click.prevent="editMode(scope.$index, scope.row)"
                   v-if="scope.$index !== rowIndex && _isallowed('write')" class="bg-light btn-sm">
                   <i class="fal fa-network-wired mh-blue-text"></i>
@@ -224,28 +233,7 @@
                   v-if="scope.$index !== rowIndex && _isallowed('write')">
                   <i class="fa-light fa-circle-minus text-danger"></i>
                 </el-button>
-                <!-- <el-button
-                  type="default" 
-                  v-tooltip="`Go To Contract`"    
-                  v-if=" _isallowedThisContract(scope.row.project_contract_id, 'read')"          
-                  @click.prevent="goToContract(scope.$index, scope.row)"
-                  class="bg-success text-light btn-sm"
-                  >
-                  <i class="fas fa-arrow-alt-circle-right"></i>
-                </el-button> -->
-                <el-button type="default" v-tooltip="`Go To Vehicle`"
-                  v-if="
-                    _isallowedContracts(
-                      scope.row.id,  // should be scope.row.project_contract_vehicle_id but returns undefined
-                      'read'
-                    )
-                  " @click.prevent="goToVehicle(scope.$index, scope.row)" class="bg-success text-light btn-sm">
-                  <i class="fas fa-arrow-alt-circle-right"></i>
-                </el-button>
-
                 </span>
-               
-
                 <!-- <el-button type="primary" @click="handleEditRow(scope.$index)">Edit</el-button> -->
               </template>
             </el-table-column>
@@ -392,6 +380,20 @@
                   <template slot-scope="scope">
                     <el-button
                       type="default"
+                      v-tooltip="`Go To Vehicle`"
+                      v-if="
+                        _isallowedContracts(
+                          scope.row.id,
+                          'read'
+                        )
+                      "
+                      @click.prevent="goToVehicle(scope.$index, scope.row)"
+                      class="bg-success text-light btn-sm"
+                    >
+                      <i class="fas fa-arrow-alt-circle-right"></i>
+                    </el-button>
+                    <el-button
+                      type="default"
                       v-tooltip="`Change Group`"
                       @click.prevent="editMode(scope.$index, scope.row)"
                       v-if="scope.$index !== rowIndex && _isallowed('write')"
@@ -434,29 +436,6 @@
                       v-if="scope.$index !== rowIndex && _isallowed('write')"
                     >
                       <i class="fa-light fa-circle-minus text-danger"></i>
-                    </el-button>
-                    <!-- <el-button
-                  type="default" 
-                  v-tooltip="`Go To Contract`"    
-                  v-if=" _isallowedThisContract(scope.row.project_contract_id, 'read')"          
-                  @click.prevent="goToContract(scope.$index, scope.row)"
-                  class="bg-success text-light btn-sm"
-                  >
-                  <i class="fas fa-arrow-alt-circle-right"></i>
-                </el-button> -->
-                    <el-button
-                      type="default"
-                      v-tooltip="`Go To Vehicle`"
-                      v-if="
-                        _isallowedContracts(
-                          scope.row.project_contract_vehicle_id,
-                          'read'
-                        )
-                      "
-                      @click.prevent="goToContract(scope.$index, scope.row)"
-                      class="bg-success text-light btn-sm"
-                    >
-                      <i class="fas fa-arrow-alt-circle-right"></i>
                     </el-button>
                   </template>
                 </el-table-column>
