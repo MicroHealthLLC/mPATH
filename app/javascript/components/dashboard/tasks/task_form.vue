@@ -1819,6 +1819,7 @@ export default {
             url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks.json`
          }
          if (this.vehicle) {
+          console.log(this.vehicle)
             url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks.json`
          }
         let method = "POST";
@@ -1835,7 +1836,7 @@ export default {
            method = "PATCH";
           url =  `${API_BASE_PATH}/project_contracts/${this.$route.params.contractId}/tasks/${this.task.id}.json`;
         }
-        if (this.task && this.task.id && this.task.projectContractId) {
+        if (this.task && this.task.id && this.task.projectContractVehicleId) {
            method = "PATCH";
           url =  `${API_BASE_PATH}/project_contract_vehicles/${this.$route.params.vehicleId}/tasks/${this.task.id}.json`;
         }
@@ -2209,7 +2210,7 @@ export default {
       if (this.$route.params.contractId && !this.isProgramView) {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/tasks`
       } else if (this.$route.params.vehicleId && !this.isProgramView) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/contract_vehicles/${this.$route.params.vehicleId}/tasks`
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/tasks`
       }
       if (this.$route.path.includes("map") || this.$route.path.includes("sheet") ||  this.$route.path.includes("kanban") || this.$route.path.includes("calendar")   ) {
         return  `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
@@ -2221,7 +2222,7 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/contracts/${this.$route.params.contractId}/`;
      },
      backToVehicle(){
-        return `/programs/${this.$route.params.programId}/${this.tab}/contract_vehicles/${this.$route.params.contractId}/`;
+        return `/programs/${this.$route.params.programId}/${this.tab}/vehicles/${this.$route.params.vehicleId}/`;
      },
     projectNameLink() {
      if (!this.contract && !this.vehicle && this.$route.path.includes("map") || this.$route.path.includes("sheet") ) {
@@ -2231,7 +2232,7 @@ export default {
       } else if (this.$route.params.contractId) {
         return `/programs/${this.$route.params.programId}/sheet/contracts/${this.$route.params.contractId}/analytics`;
       } else if (this.$route.params.vehicleId) {
-        return `/programs/${this.$route.params.programId}/sheet/contract_vehicles/${this.$route.params.vehicleId}/analytics`;
+        return `/programs/${this.$route.params.programId}/sheet/vehicles/${this.$route.params.vehicleId}/analytics`;
       } else  {
         return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/analytics`;
       }

@@ -253,7 +253,7 @@ class Project < SortableRecord
     all_contract_poject_data = ContractProjectDatum.where(id: all_project_contracts.pluck(:contract_project_datum_id).uniq )
 
     all_notes += Note.unscoped.includes([{note_files_attachments: :blob}, :user]).where(noteable_id: project_contract_vehicle_ids_with_contract_notes, noteable_type: "ProjectContractVehicle")
-    all_project_contract_vehicles = ProjectContractVehicle.includes(:contract_vehicle, :facility_group).where(id: project_contract_vehicle_ids)
+    all_project_contract_vehicles = ProjectContractVehicle.includes(:contract_vehicle, :facility_group).where(id: all_project_contract_vehicle_ids)
     all_contract_vehicle_poject_data = ContractVehicle.where(id: all_project_contract_vehicles.pluck(:contract_vehicle_id).uniq )
 
 
