@@ -13,7 +13,7 @@
           <h4 class="mt-4 ml-3">
             <i class="fal fa-car mr-1 text-info"></i> VEHICLES
             <span
-              v-if="tableData && tableData.length"
+              v-if="tableData || subTableData"
          
               class="ml-2 pb-1 badge badge-secondary badge-pill pill"
               >{{ tableData.length + subTableData.length }}
@@ -1638,6 +1638,7 @@ export default {
           this.isEditingRoles = false;
           this.rowIndex_1 = null;
           this.changeRoleMode = false;
+          this.fetchCurrentProject(this.$route.params.programId);
         }
       },
     },
@@ -1653,6 +1654,7 @@ export default {
             showClose: true,
           });
           this.SET_ADD_USER_TO_ROLE_STATUS(0);
+          this.fetchCurrentProject(this.$route.params.programId);
           this.fetchRoles(this.$route.params.programId);
           this.SET_CONTRACT_ROLE_NAMES([]);
           this.SET_BULK_CONTRACT_ROLE_NAMES([]);
