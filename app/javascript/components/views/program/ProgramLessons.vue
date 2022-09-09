@@ -6,7 +6,10 @@
          <h5 class="pl-2 mt-3 d-inline-block px-3 mh-blue text-light" style="cursor:pointer; position:absolute; left:0; top:0">
           <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_id">
             <i class="far fa-file-contract text-light py-2 mr-1"></i> </span>
-          <span v-else><i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
+          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_vehicle_id">
+          <i class="far fa-car text-light py-2 mr-1"></i> </span>
+          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_id">
+            <i class="fal fa-clipboard-list text-light py-2 mr-1"></i></span>
           LESSON
           </h5>
         <div v-for="number in [currentLessonSlide]" :key="number" >
@@ -62,7 +65,8 @@
                 
                     <div class="col truncate-line-two">    
                           <h6 class="leftColLabel text-light mh-orange">GROUP</h6>
-                      <h4> {{dynamicObj[currentLessonSlide].project_group}}  </h4>
+                      <h4 v-if="dynamicObj[currentLessonSlide].project_group"> {{dynamicObj[currentLessonSlide].project_group}}  </h4>
+                      <h4 v-else> Unassigned</h4>
                                                     
                     </div>  
             
@@ -70,6 +74,10 @@
                           <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_id">
                           <h6 class="leftColLabel text-light mh-orange">CONTRACT</h6>
                             <h4>{{ dynamicObj[currentLessonSlide].contract_nickname}}  </h4>   
+                          </span> 
+                          <span v-if="dynamicObj[currentLessonSlide] && dynamicObj[currentLessonSlide].project_contract_vehicle_id">
+                          <h6 class="leftColLabel text-light mh-orange">VEHICLE</h6>
+                            <h4>{{ dynamicObj[currentLessonSlide].vehicle_nickname}}  </h4>   
                           </span> 
                           <span v-else>
                             <h6 class="leftColLabel text-light mh-orange">PROJECT</h6>
@@ -377,7 +385,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-        <th class="pl-1 sort-th twenty" v-if="!getShowProjectStats" @click="sortCol2('project_name')">
+        <th class="pl-1 sort-th twenty" v-if="getShowProjectStats == 0" @click="sortCol2('project_name')">
         Project Name 
         <span
             class="inactive-sort-icon scroll"
@@ -418,7 +426,7 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             <i class="fas fa-sort-down"></i
         ></span>
         </th> 
-           <th v-if="getShowProjectStats" class="pl-1 sort-th twenty" @click="sortCol2('contract_nickname')">
+           <th v-if="getShowProjectStats == 1" class="pl-1 sort-th twenty" @click="sortCol2('contract_nickname')">
           Contract Name 
           <span
             class="inactive-sort-icon scroll"
@@ -459,6 +467,47 @@ v-if="filteredLessons.filtered.lessons.length > 0"
             <i class="fas fa-sort-down"></i
           ></span>
         </th>  
+        <th v-if="getShowProjectStats == 2" class="pl-1 sort-th twenty" @click="sortCol2('name')">
+            Nickname 
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="currentSortCol2 !== 'name'"
+          >
+            <i class="fas fa-sort"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'asc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'asc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-up"></i
+          ></span>
+          <span
+            class="sort-icon main scroll"
+            v-if="
+              currentSortDir2 === 'desc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+          <span
+            class="inactive-sort-icon scroll"
+            v-if="
+              currentSortDir2 !== 'desc' && currentSortCol2 === 'name'
+            "
+          >
+            <i class="fas fa-sort-down"></i
+          ></span>
+        </th>     
 
         <th class="pl-1 sort-th" @click="sort('title')">
             Lessons Learned
@@ -745,8 +794,9 @@ v-if="filteredLessons.filtered.lessons.length > 0"
     <tbody>
         <!-- <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)"> -->
         <tr v-for="(lesson, index) in sortedLessons" :key="index" class="portTable taskHover" @click="openLesson(lesson)">
-          <td>{{ lesson.project_group }}</td>
-          <td>{{ lesson.project_name || lesson.contract_nickname }}</td>
+          <td v-if=" lesson.project_group">{{ lesson.project_group }}</td>
+          <td v-else>Unassigned</td>
+          <td>{{ lesson.project_name || lesson.contract_nickname || lesson.vehicle_nickname }}</td>
           <td>{{ lesson.title }}</td>
           <td>
            <span v-if="lesson.notes.length > 0">       
@@ -965,6 +1015,8 @@ export default {
     "getShowProjectStats",
     'currLessonPage',
     "lessonsLoaded",
+    "getShowVehicleStats",
+    "getShowContractStats",
     "projectLessons",
     "programLessons",
     'projects',
@@ -1074,10 +1126,15 @@ export default {
     },
     filteredLessons() {
      let programLessonsObj = [];
-      if(!this.getShowProjectStats){
+      if(this.getShowProjectStats == 0){
         programLessonsObj = this.programLessons.filter(l => l.project_id)
-      } else programLessonsObj =  this.programLessons.filter(l => l.project_contract_id)
-
+      } 
+      if(this.getShowProjectStats == 1 || this.getShowContractStats){
+        programLessonsObj = this.programLessons.filter(l =>  l.project_contract_id)
+      }  
+      if(this.getShowProjectStats == 2 || this.getShowVehicleStats){
+        programLessonsObj = this.programLessons.filter(l => l.project_contract_vehicle_id)
+      } 
       let lessons = programLessonsObj
       .filter(lesson => {
         // debugger
@@ -1254,7 +1311,7 @@ export default {
       done();
     },
   openLesson(lesson) {  
-    if(!this.getShowProjectStats){
+    if(this.getShowProjectStats == 0){
       this.$router.push({
       name: "ProgramLessonForm",
       params: {
@@ -1265,7 +1322,7 @@ export default {
       },
     });
     }   
-     if(this.getShowProjectStats){
+     if(this.getShowProjectStats == 1){
       // console.log(lesson)
       this.$router.push({
       name: "ProgramContractLessonForm",
@@ -1275,7 +1332,18 @@ export default {
         lessonId: lesson.id, 
       },
     });
-    }       
+    }  
+    if(this.getShowProjectStats == 2){
+      // console.log(lesson)
+      this.$router.push({
+      name: "ProgramVehicleLessonForm",
+      params: {
+        programId: lesson.program_id,
+        vehicleId: lesson.project_contract_vehicle_id,
+        lessonId: lesson.id, 
+      },
+    });
+    }            
  
     // console.log(this.$route.params)
     },

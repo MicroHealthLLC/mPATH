@@ -1860,12 +1860,14 @@ export default {
             //this.$emit(callback, responseTask)
             if (this.$route.params.contractId){
                this.updateContractTasks({ task: responseTask });
-            } else if (this.$route.params.vehicleId){
+            }
+            if (this.$route.params.vehicleId){
                this.updateVehicleTasks({ task: responseTask });
-            } else {
+            }
+            if (this.$route.params.projectId) {
                this.updateTasksHash({ task: responseTask });
             }           
-            if (response.status === 200) {
+            if  (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
                 type: "success",

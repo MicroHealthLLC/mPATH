@@ -27,13 +27,15 @@ export default {
     ...mapGetters(["contentLoaded", 'programLessons', 'getShowProjectStats']),
   },
   mounted() {
-    
-    if(!this.getShowProjectStats){
+    if (this.getShowProjectStats == 0)  {
         this.allProgramLessons = this.programLessons.filter(l => l.project_id)
-      } else if (this.getShowProjectStats){
-         this.allProgramLessons =  this.programLessons.filter(l => l && l.project_contract_vehicle_id)
-       
-      } 
+    } 
+    if (this.getShowProjectStats == 1){
+        this.allProgramLessons = this.programLessons.filter(l => l.project_contract_id)
+      }
+    if (this.getShowProjectStats == 2){
+        this.allProgramLessons =  this.programLessons.filter(l => l && l.project_contract_vehicle_id)       
+    } 
     if (this.contentLoaded) {
       this.lesson =  this.allProgramLessons.find(
         (lesson) => lesson.id == this.$route.params.lessonId
