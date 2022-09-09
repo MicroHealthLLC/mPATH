@@ -7,7 +7,7 @@
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span> 
         <br>    
-        <el-button-group :class="{'d-none': !_isallowedContracts('read') || projectContracts.length <= 0 || projectVehicles.length <= 0  }">
+        <el-button-group :class="{'d-none': !_isallowedContracts('read')}"  v-if="projectContracts.length > 0 || projectVehicles.length > 0">
           <el-button :class="[ getShowProjectStats == 0 ? 'lightBtn' : 'inactive']" @click.prevent="showProjectStats" class="p-2">  
           <i class="fal fa-clipboard-list mr-1" :class="[ getShowProjectStats == 0 ? 'mh-green-text' : 'inactive']"></i>PROJECTS
           <span 

@@ -51,10 +51,25 @@
     style="width:100%" 
     >
     <el-table-column 
+      prop="subprimeName"  
+      sortable  
+      width="200"
+      label="Vehicle Prime"
+      > 
+      <template slot-scope="scope" >
+      <span v-if="scope.row.subprimeName">
+        {{ scope.row.subprimeName }}
+        </span>
+        <span v-else>
+        MicroHealth, LLC
+        </span>
+      </template>
+   </el-table-column>
+    <el-table-column 
       prop="name"  
       sortable  
       width="200"
-      label="Vehicle Name"
+      label="Vehicle Nickname"
       > 
    </el-table-column>
   <el-table-column    
@@ -66,16 +81,7 @@
         </span>
       </template>
     </el-table-column>
-      <el-table-column
-      label="SINS or Subcategories"
-      prop="contractSubCategoryId">
-      <template slot-scope="scope" >
-      <span v-if="scope.row.contractSubCategory && scope.row.contractSubCategory.name !== null">
-      {{ scope.row.contractSubCategory.name}}
-      </span>
-      </template>
-      </el-table-column>
-      <el-table-column
+    <el-table-column
         label="Contract Agency"  
         prop="contractAgencyId">
         <template slot-scope="scope" >
